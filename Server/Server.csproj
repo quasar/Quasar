@@ -1,0 +1,363 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{14CA405B-8BAC-48AB-9FBA-8FB5DF88FD0D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>xRAT_2</RootNamespace>
+    <AssemblyName>xRAT 2</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <NoWin32Manifest>true</NoWin32Manifest>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>xRAT-64x64.ico</ApplicationIcon>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Mono.Cecil">
+      <HintPath>lib\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\MainMenuEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Client.cs" />
+    <Compile Include="Core\Build\ClientBuilder.cs" />
+    <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Compression\LZ4\LZ4Compressor32.cs" />
+    <Compile Include="Core\Compression\LZ4\LZ4Decompressor32.cs" />
+    <Compile Include="Core\Compression\LZ4\LZ4Util.cs" />
+    <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Encryption\RC4.cs" />
+    <Compile Include="Core\Misc\InputBox.cs" />
+    <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
+    <Compile Include="Core\Misc\ListViewExtensions.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\DesktopResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\DirectoryResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\DownloadFileResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\DrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\GetProcessesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\GetSystemInfoResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\MonitorsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\ShellCommandResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\UserStatus.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Connection\Initialize.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
+    <Compile Include="Core\Packets\IPacket.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Disconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\DownloadAndExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\DownloadFile.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Drives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\GetProcesses.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\GetSystemInfo.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\KillProcess.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Monitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\ShellCommand.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\ShowMessageBox.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Uninstall.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Update.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Connection\InitializeCommand.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Connection\KeepAlive.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Reconnect.cs" />
+    <Compile Include="Core\Packets\UnknownPacket.cs" />
+    <Compile Include="Core\ProtoBuf\BclHelpers.cs" />
+    <Compile Include="Core\ProtoBuf\BufferExtension.cs" />
+    <Compile Include="Core\ProtoBuf\BufferPool.cs" />
+    <Compile Include="Core\ProtoBuf\DataFormat.cs" />
+    <Compile Include="Core\ProtoBuf\Helpers.cs" />
+    <Compile Include="Core\ProtoBuf\IExtensible.cs" />
+    <Compile Include="Core\ProtoBuf\IExtension.cs" />
+    <Compile Include="Core\ProtoBuf\ImplicitFields.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\AttributeMap.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\BasicList.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\CallbackSet.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\MetaType.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\RuntimeTypeModel.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\SubType.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\TypeFormatEventArgs.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\TypeModel.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\ValueMember.cs" />
+    <Compile Include="Core\ProtoBuf\NetObjectCache.cs" />
+    <Compile Include="Core\ProtoBuf\PrefixStyle.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoContractAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoEnumAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoException.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoIgnoreAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoIncludeAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoMemberAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoReader.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoWriter.cs" />
+    <Compile Include="Core\ProtoBuf\SerializationContext.cs" />
+    <Compile Include="Core\ProtoBuf\Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ArrayDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\BlobSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\BooleanSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ByteSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\CharSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\CompiledSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\DateTimeSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\DecimalSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\DefaultValueDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\DoubleSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\EnumSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\FieldDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\GuidSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\Int16Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\Int32Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\Int64Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\IProtoSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\IProtoTypeSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ISerializerProxy.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\KeyValuePairDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ListDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\MemberSpecifiedDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\NetObjectSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\NullDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ParseableSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\PropertyDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ProtoDecoratorBase.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\SByteSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\SingleSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\StringSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\SubItemSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\SurrogateSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\SystemTypeSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\TagDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\TimeSpanSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\TupleSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\TypeSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\UInt16Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\UInt32Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\UInt64Serializer.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\UriDecorator.cs" />
+    <Compile Include="Core\ProtoBuf\ServiceModel\ProtoBehaviorAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ServiceModel\ProtoBehaviorExtensionElement.cs" />
+    <Compile Include="Core\ProtoBuf\ServiceModel\ProtoEndpointBehavior.cs" />
+    <Compile Include="Core\ProtoBuf\ServiceModel\ProtoOperationBehavior.cs" />
+    <Compile Include="Core\ProtoBuf\ServiceModel\XmlProtoSerializer.cs" />
+    <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
+    <Compile Include="Core\ProtoBuf\WireType.cs" />
+    <Compile Include="Core\Build\Renamer.cs" />
+    <Compile Include="Core\Server.cs" />
+    <Compile Include="Core\Helper\Helper.cs" />
+    <Compile Include="Core\UserState.cs" />
+    <Compile Include="Forms\frmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmAbout.Designer.cs">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmBuilder.Designer.cs">
+      <DependentUpon>frmBuilder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmDownloadAndExecute.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmDownloadAndExecute.Designer.cs">
+      <DependentUpon>frmDownloadAndExecute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmFileManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmFileManager.Designer.cs">
+      <DependentUpon>frmFileManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmMain.Designer.cs">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\frmRemoteDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmRemoteDesktop.Designer.cs">
+      <DependentUpon>frmRemoteDesktop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmRemoteShell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmRemoteShell.Designer.cs">
+      <DependentUpon>frmRemoteShell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSettings.Designer.cs">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmShowMessagebox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmShowMessagebox.Designer.cs">
+      <DependentUpon>frmShowMessagebox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmStatistics.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmStatistics.Designer.cs">
+      <DependentUpon>frmStatistics.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmSystemInformation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmSystemInformation.Designer.cs">
+      <DependentUpon>frmSystemInformation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmTaskManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmTaskManager.Designer.cs">
+      <DependentUpon>frmTaskManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmTermsOfUse.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmTermsOfUse.Designer.cs">
+      <DependentUpon>frmTermsOfUse.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmVisitWebsite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmVisitWebsite.Designer.cs">
+      <DependentUpon>frmVisitWebsite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\frmUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmUpdate.Designer.cs">
+      <DependentUpon>frmUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Settings\ProfileManager.cs" />
+    <Compile Include="Settings\Settings.cs" />
+    <EmbeddedResource Include="Forms\frmAbout.resx">
+      <DependentUpon>frmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmBuilder.resx">
+      <DependentUpon>frmBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmDownloadAndExecute.resx">
+      <DependentUpon>frmDownloadAndExecute.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmFileManager.resx">
+      <DependentUpon>frmFileManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmMain.resx">
+      <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmRemoteDesktop.resx">
+      <DependentUpon>frmRemoteDesktop.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmRemoteShell.resx">
+      <DependentUpon>frmRemoteShell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmSettings.resx">
+      <DependentUpon>frmSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmShowMessagebox.resx">
+      <DependentUpon>frmShowMessagebox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmStatistics.resx">
+      <DependentUpon>frmStatistics.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmSystemInformation.resx">
+      <DependentUpon>frmSystemInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmTaskManager.resx">
+      <DependentUpon>frmTaskManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmTermsOfUse.resx">
+      <DependentUpon>frmTermsOfUse.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmVisitWebsite.resx">
+      <DependentUpon>frmVisitWebsite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmUpdate.resx">
+      <DependentUpon>frmUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="xRAT-64x64.ico" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

