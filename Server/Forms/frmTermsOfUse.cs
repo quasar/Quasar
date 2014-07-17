@@ -44,8 +44,12 @@ namespace xRAT_2.Forms
                 catch
                 { }
             }
-            btnAccept.Text = "Accept";
-            btnAccept.Enabled = true;
+
+            this.Invoke((MethodInvoker)delegate
+            {
+                btnAccept.Text = "Accept";
+                btnAccept.Enabled = true;
+            });
         }
 
         private void btnDecline_Click(object sender, EventArgs e)
