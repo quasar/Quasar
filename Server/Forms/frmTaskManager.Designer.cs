@@ -38,6 +38,7 @@
             this.hProcessname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -46,9 +47,10 @@
             this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtKillProcess,
             this.ctxtStartProcess,
+            this.ctxtLine,
             this.ctxtRefresh});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 92);
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 98);
             // 
             // ctxtKillProcess
             // 
@@ -106,6 +108,11 @@
             this.hTitle.Text = "Title";
             this.hTitle.Width = 115;
             // 
+            // ctxtLine
+            // 
+            this.ctxtLine.Name = "ctxtLine";
+            this.ctxtLine.Size = new System.Drawing.Size(149, 6);
+            // 
             // frmTaskManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -136,5 +143,6 @@
         private System.Windows.Forms.ColumnHeader hProcessname;
         private System.Windows.Forms.ColumnHeader hPID;
         private System.Windows.Forms.ColumnHeader hTitle;
+        private System.Windows.Forms.ToolStripSeparator ctxtLine;
     }
 }
