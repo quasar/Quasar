@@ -85,6 +85,7 @@
     <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Disconnect.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Core\Packets\ServerPackets\Commands\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Monitors.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\ShellCommand.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\ShowMessageBox.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
