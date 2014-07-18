@@ -329,28 +329,30 @@ namespace Core.Commands
 			if (client.Value.frmSI == null)
 				return;
 
-			ListViewItem lviCPU = new ListViewItem(new string[] { "Processor (CPU)", packet.CPU });
-			ListViewItem lviRAM = new ListViewItem(new string[] { "Memory (RAM)", packet.RAM + " MB" });
-			ListViewItem lviGPU = new ListViewItem(new string[] { "Video Card (GPU)", packet.GPU });
-			ListViewItem lviUN = new ListViewItem(new string[] { "Username", packet.Username });
-			ListViewItem lviPC = new ListViewItem(new string[] { "PC Name", packet.PCName });
-			ListViewItem lviUP = new ListViewItem(new string[] { "Uptime", packet.Uptime });
-			ListViewItem lviLAN = new ListViewItem(new string[] { "LAN IP Address", packet.LAN });
-			ListViewItem lviWAN = new ListViewItem(new string[] { "WAN IP Address", packet.WAN });
+			ListViewItem[] lviCollection = new ListViewItem[packet.SystemInfos.Length / 2];
+			int j = 0;
+			for (int i = 0; i < packet.SystemInfos.Length; i+= 2)
+			{
+				if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
+				{
+					lviCollection[j] = new ListViewItem(new string[] { packet.SystemInfos[i], packet.SystemInfos[i + 1] });
+					j++;
+				}
+			}
+
+			if (client.Value.frmSI == null)
+				return;
 
 			try
 			{
 				client.Value.frmSI.Invoke((MethodInvoker)delegate
 				{
 					client.Value.frmSI.lstSystem.Items.RemoveAt(2); // Loading... Information
-					client.Value.frmSI.lstSystem.Items.Add(lviCPU);
-					client.Value.frmSI.lstSystem.Items.Add(lviRAM);
-					client.Value.frmSI.lstSystem.Items.Add(lviGPU);
-					client.Value.frmSI.lstSystem.Items.Add(lviUN);
-					client.Value.frmSI.lstSystem.Items.Add(lviPC);
-					client.Value.frmSI.lstSystem.Items.Add(lviUP);
-					client.Value.frmSI.lstSystem.Items.Add(lviLAN);
-					client.Value.frmSI.lstSystem.Items.Add(lviWAN);
+					foreach(var lviItem in lviCollection)
+					{
+						if (lviItem != null)
+							client.Value.frmSI.lstSystem.Items.Add(lviItem);
+					}
 				});
 
 				ListViewExtensions.autosizeColumns(client.Value.frmSI.lstSystem);
