@@ -162,5 +162,11 @@ namespace Core
 
             return bmpRes;
         }
+
+        public static bool IsWindowsXP()
+        {
+            var OsVersion = Environment.OSVersion.Version;
+            return OsVersion.Major == 5 && OsVersion.Minor >= 1;
+        }
     }
 }

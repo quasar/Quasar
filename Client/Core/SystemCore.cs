@@ -162,6 +162,42 @@ namespace Core
             return (localIP == "-") ? localIP : localIP.Remove(localIP.Length - 2); ;
         }
 
+        public static string GetAntivirus()
+        {
+            try
+            {
+                string AntivirusName = string.Empty;
+                string Scope = (Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string Query = "SELECT * FROM AntivirusProduct";
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
+                foreach (ManagementObject Mobject in searcher.Get())
+                    AntivirusName = Mobject["displayName"].ToString();
+                return AntivirusName;
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+
+        public static string GetFirewall()
+        {
+            try
+            {
+                string FirewallName = string.Empty;
+                string Scope = (Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string Query = "SELECT * FROM FirewallProduct";
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
+                foreach (ManagementObject Mobject in searcher.Get())
+                    FirewallName = Mobject["displayName"].ToString();
+                return FirewallName;
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+
         public static void InitializeGeoIp()
         {
             GeoIP gIP = new GeoIP();
