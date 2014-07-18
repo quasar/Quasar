@@ -58,5 +58,16 @@ namespace xRAT_2.Forms
                 e.SuppressKeyPress = true;
             }
         }
+
+        private void txtConsoleOutput_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            if (e.KeyChar != (char)2)
+            {
+                txtConsoleInput.Text += e.KeyChar.ToString();
+                txtConsoleInput.Focus();
+                txtConsoleInput.SelectionStart = txtConsoleOutput.TextLength;
+                txtConsoleInput.ScrollToCaret();
+            }
+        }
     }
 }

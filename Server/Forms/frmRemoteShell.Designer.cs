@@ -48,6 +48,7 @@
             this.txtConsoleOutput.Size = new System.Drawing.Size(637, 307);
             this.txtConsoleOutput.TabIndex = 1;
             this.txtConsoleOutput.TextChanged += new System.EventHandler(this.txtConsoleOutput_TextChanged);
+            this.txtConsoleOutput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtConsoleOutput_KeyPress);
             // 
             // txtConsoleInput
             // 
