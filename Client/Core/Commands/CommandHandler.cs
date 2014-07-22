@@ -519,5 +519,39 @@ namespace Core.Commands
 			catch
 			{ }
 		}
+
+		public static void HandleAction(Core.Packets.ServerPackets.Action command, Core.Client client)
+		{
+			try
+			{
+				ProcessStartInfo startInfo = new ProcessStartInfo();
+				switch(command.Mode)
+				{
+					case 0:
+						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						startInfo.CreateNoWindow = true;
+						startInfo.UseShellExecute = true;
+						startInfo.Arguments = "/s /t 0"; // shutdown
+						startInfo.FileName = "shutdown";
+						Process.Start(startInfo);
+						break;
+					case 1:
+						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						startInfo.CreateNoWindow = true;
+						startInfo.UseShellExecute = true;
+						startInfo.Arguments = "/r /t 0"; // restart
+						startInfo.FileName = "shutdown";
+						Process.Start(startInfo);
+						break;
+					case 2:
+						Application.SetSuspendState(PowerState.Suspend, true, true); // standby
+						break;
+				}
+			}
+			catch
+			{
+				new Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
+			}
+		}
 	}
 }

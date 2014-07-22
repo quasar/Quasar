@@ -19,10 +19,10 @@ Features
 * Remote Desktop
 * Download & Execute
 * System Information
+* Computer Commands (Restart, Shutdown, Standby)
 
 ToDo
 ---
-* Computer Commands (Restart, Shutdown, Standby)
 * DDoS Functions
 * Enable/Disable Keyboard and Mouse
 * Password Stealer (Browsers, FTP-Clients)

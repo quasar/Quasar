@@ -63,6 +63,16 @@ namespace xRAT_2.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap actions {
+            get {
+                object obj = ResourceManager.GetObject("actions", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bricks {
             get {
                 object obj = ResourceManager.GetObject("bricks", resourceCulture);
@@ -203,6 +213,16 @@ namespace xRAT_2.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap restart {
+            get {
+                object obj = ResourceManager.GetObject("restart", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap run {
             get {
                 object obj = ResourceManager.GetObject("run", resourceCulture);
@@ -256,6 +276,26 @@ namespace xRAT_2.Properties {
         internal static System.Drawing.Bitmap server_uninstall {
             get {
                 object obj = ResourceManager.GetObject("server-uninstall", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap shutdown {
+            get {
+                object obj = ResourceManager.GetObject("shutdown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap standby {
+            get {
+                object obj = ResourceManager.GetObject("standby", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

@@ -68,6 +68,7 @@
     <Compile Include="Core\Packets\ClientPackets\Commands\MonitorsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\UserStatus.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Action.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
