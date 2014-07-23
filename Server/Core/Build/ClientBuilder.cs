@@ -2,7 +2,6 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
-using System.Reflection;
 using System.Windows.Forms;
 using xRAT_2.Settings;
 
@@ -91,7 +90,7 @@ namespace Core.Build
                                     }
                                     ints++;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // number for directory
+                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
                                 {
                                     methodDef.Body.Instructions[i].Operand = GetSpecialFolder(installpath);
                                 }
@@ -105,7 +104,7 @@ namespace Core.Build
             Renamer r = new Renamer(assembly);
             r.Perform();
             if (!r.Success)
-                throw new System.Exception("renaming failed");
+                throw new Exception("renaming failed");
 
             // PHASE 3 - Saving
             r.AsmDef.Write(output);
