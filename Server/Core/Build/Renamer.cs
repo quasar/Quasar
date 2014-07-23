@@ -8,7 +8,6 @@ namespace Core.Build
     public class Renamer
     {
         public AssemblyDefinition AsmDef { get; set; }
-        public bool Success { get; set; }
 
         private int length { get; set; }
         private MemberOverloader TypeOverloader;
@@ -30,7 +29,7 @@ namespace Core.Build
             eventOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
         }
 
-        public void Perform()
+        public bool Perform()
         {
             try
             {
@@ -41,11 +40,11 @@ namespace Core.Build
                         RenameInType(typeDef);
                     }
                 }
-                Success = true;
+                return true;
             }
             catch
             {
-                Success = false;
+                return false;
             }
         }
 

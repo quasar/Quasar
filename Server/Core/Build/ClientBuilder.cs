@@ -13,9 +13,9 @@ namespace Core.Build
         {
             // PHASE 1 - Settings
             string encKey = Helper.GetRandomName(20);
-            AssemblyDefinition assembly = AssemblyDefinition.ReadAssembly("client.bin");
+            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
-            foreach (var typeDef in assembly.Modules[0].Types)
+            foreach (var typeDef in asmDef.Modules[0].Types)
             {
                 if (typeDef.FullName == "Client.Settings")
                 {
@@ -101,9 +101,8 @@ namespace Core.Build
             }
 
             // PHASE 2 - Renaming
-            Renamer r = new Renamer(assembly);
-            r.Perform();
-            if (!r.Success)
+            Renamer r = new Renamer(asmDef);
+            if (!r.Perform())
                 throw new Exception("renaming failed");
 
             // PHASE 3 - Saving

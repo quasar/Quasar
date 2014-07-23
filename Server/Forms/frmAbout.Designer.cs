@@ -72,6 +72,7 @@
             // 
             // btnOkay
             // 
+            this.btnOkay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
             this.btnOkay.Location = new System.Drawing.Point(341, 406);
             this.btnOkay.Name = "btnOkay";
             this.btnOkay.Size = new System.Drawing.Size(75, 23);
@@ -124,6 +125,7 @@
             this.AcceptButton = this.btnOkay;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.CancelButton = this.btnOkay;
             this.ClientSize = new System.Drawing.Size(428, 441);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.rtxtContent);
