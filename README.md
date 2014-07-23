@@ -39,4 +39,8 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 
 Credits
 ---
-**[protobuf](https://code.google.com/p/protobuf/)** - Protocol Buffers
+Protocol Buffers - Google's data interchange format
+
+Copyright 2008 Google Inc.
+
+http://code.google.com/apis/protocolbuffers/
