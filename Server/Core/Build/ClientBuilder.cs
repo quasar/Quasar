@@ -1,6 +1,8 @@
 ﻿using Core.Encryption;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using System;
+using System.Reflection;
 using System.Windows.Forms;
 using xRAT_2.Settings;
 
