@@ -72,6 +72,7 @@ namespace Core
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", Query);
                 foreach (ManagementObject Mobject in searcher.Get())
                     CPUName = Mobject["Name"].ToString();
+                
                 return CPUName;
             }
             catch
@@ -125,19 +126,16 @@ namespace Core
                 string GPUName = string.Empty;
                 string Query = "SELECT * FROM Win32_DisplayConfiguration";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Query);
-
                 foreach (ManagementObject Mobject in searcher.Get())
                 {
                     foreach (PropertyData property in Mobject.Properties)
                     {
                         if (property.Name == "Description")
-                        {
                             GPUName = property.Value.ToString();
-                        }
                     }
                 }
 
-                return GPUName;
+                return (!string.IsNullOrEmpty(GPUName)) ? GPUName : "N/A";
             }
             catch
             {
@@ -172,7 +170,8 @@ namespace Core
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
                 foreach (ManagementObject Mobject in searcher.Get())
                     AntivirusName = Mobject["displayName"].ToString();
-                return AntivirusName;
+
+                return (!string.IsNullOrEmpty(AntivirusName)) ? AntivirusName : "N/A";
             }
             catch
             {
@@ -190,7 +189,8 @@ namespace Core
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
                 foreach (ManagementObject Mobject in searcher.Get())
                     FirewallName = Mobject["displayName"].ToString();
-                return FirewallName;
+
+                return (!string.IsNullOrEmpty(FirewallName)) ? FirewallName : "N/A";
             }
             catch
             {
