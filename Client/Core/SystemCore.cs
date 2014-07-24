@@ -98,7 +98,7 @@ namespace Core
             }
             catch
             {
-                return 0;
+                return -1;
             }
         }
 

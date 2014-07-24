@@ -155,7 +155,7 @@ namespace Core.Build
                 case 3:
                     return 37; // System
                 default:
-                    return 26; // Appdata
+                    throw new ArgumentException("InstallPath");
             }
         }
     }
