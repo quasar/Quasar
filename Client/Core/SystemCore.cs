@@ -127,13 +127,7 @@ namespace Core
                 string Query = "SELECT * FROM Win32_DisplayConfiguration";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Query);
                 foreach (ManagementObject Mobject in searcher.Get())
-                {
-                    foreach (PropertyData property in Mobject.Properties)
-                    {
-                        if (property.Name == "Description")
-                            GPUName = property.Value.ToString();
-                    }
-                }
+                    GPUName = Mobject["Description"].ToString();
 
                 return (!string.IsNullOrEmpty(GPUName)) ? GPUName : "N/A";
             }
