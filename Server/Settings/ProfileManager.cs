@@ -38,6 +38,15 @@ namespace xRAT_2.Settings
                     root.AppendChild(doc.CreateElement("RegistryName"));
                     root.AppendChild(doc.CreateElement("AdminElevation")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ChangeIcon")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("ChangeAsmInfo")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("ProductName"));
+                    root.AppendChild(doc.CreateElement("Description"));
+                    root.AppendChild(doc.CreateElement("CompanyName"));
+                    root.AppendChild(doc.CreateElement("Copyright"));
+                    root.AppendChild(doc.CreateElement("Trademarks"));
+                    root.AppendChild(doc.CreateElement("OriginalFilename"));
+                    root.AppendChild(doc.CreateElement("ProductVersion"));
+                    root.AppendChild(doc.CreateElement("FileVersion"));
 
                     doc.Save(settingsFilePath);
                 }
@@ -72,13 +81,22 @@ namespace xRAT_2.Settings
         {
             try
             {
-                XmlTextReader reader = new XmlTextReader(settingsFilePath);
-                XmlDocument doc = new XmlDocument();
-                doc.Load(reader);
-                reader.Close();
                 XmlNode oldNode;
+                XmlDocument doc = new XmlDocument();
+                using (var reader = new XmlTextReader(settingsFilePath))
+                {
+                    doc.Load(reader);
+                }
+
                 XmlElement root = doc.DocumentElement;
-                oldNode = root.SelectSingleNode("/settings/" + pstrValueToRead);
+                oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
+                if (oldNode == null) // create if not exist
+                {
+                    oldNode = doc.SelectSingleNode("settings");
+                    oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
+                    doc.Save(settingsFilePath);
+                    return true;
+                }
                 oldNode.InnerText = pstrValueToWrite;
                 doc.Save(settingsFilePath);
                 return true;

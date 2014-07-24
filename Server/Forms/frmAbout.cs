@@ -14,6 +14,7 @@ namespace xRAT_2.Forms
 
             lblCredits.Text =
                 "Credits: Banksy\n" +
+                "              ResourceLib (Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013)\n" +
                 "              protobuf (Copyright 2008 Google Inc.)\n\n" +
                 "Elevation Form Translators: Xenocode, Increment, DeadLine, Perfectionist,\n" +
                 "                                               Qmz_, GameFire, navaro21";
