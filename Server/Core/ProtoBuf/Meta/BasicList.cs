@@ -3,20 +3,6 @@ using System.Collections;
 
 namespace ProtoBuf.Meta
 {
-
-    internal sealed class MutableList : BasicList
-    {
-        /*  Like BasicList, but allows existing values to be changed
-         */ 
-        public new object this[int index] {
-            get { return head[index]; }
-            set { head[index] = value; }
-        }
-        public void RemoveLast()
-        {
-            head.RemoveLastWithMutate();
-        }
-    }
     internal class BasicList : IEnumerable
     {
         /* Requirements:
@@ -32,47 +18,83 @@ namespace ProtoBuf.Meta
          *     be mutable (i.e. array is fine as long as we don't screw it up)
          */
         private static readonly Node nil = new Node(null, 0);
+
         public void CopyTo(Array array, int offset)
         {
             head.CopyTo(array, offset);
         }
+
         protected Node head = nil;
+
         public int Add(object value)
         {
             return (head = head.Append(value)).Length - 1;
         }
-        public object this[int index] { get { return head[index]; } }
+
+        public object this[int index]
+        {
+            get { return head[index]; }
+        }
+
         public object TryGet(int index)
         {
             return head.TryGet(index);
         }
-        public void Trim() { head = head.Trim(); }
-        public int Count { get { return head.Length; } }
-        IEnumerator IEnumerable.GetEnumerator() { return new NodeEnumerator(head); }
-        public NodeEnumerator GetEnumerator() { return new NodeEnumerator(head); }
+
+        public void Trim()
+        {
+            head = head.Trim();
+        }
+
+        public int Count
+        {
+            get { return head.Length; }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return new NodeEnumerator(head);
+        }
+
+        public NodeEnumerator GetEnumerator()
+        {
+            return new NodeEnumerator(head);
+        }
 
         public struct NodeEnumerator : IEnumerator
         {
             private int position;
             private readonly Node node;
+
             internal NodeEnumerator(Node node)
             {
                 this.position = -1;
                 this.node = node;
             }
-            void IEnumerator.Reset() { position = -1; }
-            public object Current { get { return node[position]; } }
+
+            void IEnumerator.Reset()
+            {
+                position = -1;
+            }
+
+            public object Current
+            {
+                get { return node[position]; }
+            }
+
             public bool MoveNext()
             {
                 int len = node.Length;
                 return (position <= len) && (++position < len);
             }
         }
+
         internal sealed class Node
         {
             public object this[int index]
             {
-                get {
+                get
+                {
                     if (index >= 0 && index < length)
                     {
                         return data[index];
@@ -91,27 +113,36 @@ namespace ProtoBuf.Meta
                     }
                 }
             }
+
             public object TryGet(int index)
             {
                 return (index >= 0 && index < length) ? data[index] : null;
             }
+
             private readonly object[] data;
-            
+
             private int length;
-            public int Length { get { return length; } }
+
+            public int Length
+            {
+                get { return length; }
+            }
+
             internal Node(object[] data, int length)
             {
                 Helpers.DebugAssert((data == null && length == 0) ||
-                    (data != null && length > 0 && length <= data.Length));
+                                    (data != null && length > 0 && length <= data.Length));
                 this.data = data;
 
                 this.length = length;
             }
+
             public void RemoveLastWithMutate()
             {
                 if (length == 0) throw new InvalidOperationException();
                 length -= 1;
             }
+
             public Node Append(object value)
             {
                 object[] newData;
@@ -122,15 +153,17 @@ namespace ProtoBuf.Meta
                 }
                 else if (length == data.Length)
                 {
-                    newData = new object[data.Length * 2];
+                    newData = new object[data.Length*2];
                     Array.Copy(data, newData, length);
-                } else
+                }
+                else
                 {
                     newData = data;
                 }
                 newData[length] = value;
                 return new Node(newData, newLength);
             }
+
             public Node Trim()
             {
                 if (length == 0 || length == data.Length) return this;
@@ -143,11 +176,12 @@ namespace ProtoBuf.Meta
             {
                 for (int i = 0; i < length; i++)
                 {
-                    if ((object)instance == (object)data[i]) return i;
+                    if ((object) instance == (object) data[i]) return i;
                 } // ^^^ (object) above should be preserved, even if this was typed; needs
-                  // to be a reference check
+                // to be a reference check
                 return -1;
             }
+
             internal int IndexOf(IPredicate predicate)
             {
                 for (int i = 0; i < length; i++)
@@ -170,6 +204,7 @@ namespace ProtoBuf.Meta
         {
             return head.IndexOf(predicate);
         }
+
         internal int IndexOfReference(object instance)
         {
             return head.IndexOfReference(instance);
@@ -188,26 +223,33 @@ namespace ProtoBuf.Meta
             }
             return false;
         }
+
         internal class Group
         {
             public readonly int First;
             public readonly BasicList Items;
+
             public Group(int first)
             {
                 this.First = first;
                 this.Items = new BasicList();
             }
         }
+
         internal static BasicList GetContiguousGroups(int[] keys, object[] values)
         {
             if (keys == null) throw new ArgumentNullException("keys");
             if (values == null) throw new ArgumentNullException("values");
-            if (values.Length < keys.Length) throw new ArgumentException("Not all keys are covered by values", "values");
+            if (values.Length < keys.Length)
+                throw new ArgumentException("Not all keys are covered by values", "values");
             BasicList outer = new BasicList();
             Group group = null;
             for (int i = 0; i < keys.Length; i++)
             {
-                if (i == 0 || keys[i] != keys[i - 1]) { group = null; }
+                if (i == 0 || keys[i] != keys[i - 1])
+                {
+                    group = null;
+                }
                 if (group == null)
                 {
                     group = new Group(keys[i]);
@@ -218,6 +260,4 @@ namespace ProtoBuf.Meta
             return outer;
         }
     }
-
-
 }

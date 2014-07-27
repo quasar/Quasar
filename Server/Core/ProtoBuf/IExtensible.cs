@@ -1,8 +1,5 @@
-﻿
-namespace ProtoBuf
+﻿namespace ProtoBuf
 {
-
-    
     /// <summary>
     /// Indicates that the implementing type has support for protocol-buffer
     /// <see cref="IExtension">extensions</see>.
@@ -22,6 +19,4 @@ namespace ProtoBuf
         /// and true during deserialization upon encountering unexpected fields.</remarks>
         IExtension GetExtensionObject(bool createIfMissing);
     }
-
-    
 }

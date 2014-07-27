@@ -5,7 +5,9 @@ namespace Core.Packets.ServerPackets
     [ProtoContract]
     public class GetProcesses : IPacket
     {
-        public GetProcesses() { }
+        public GetProcesses()
+        {
+        }
 
         public void Execute(Client client)
         {

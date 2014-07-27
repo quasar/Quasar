@@ -1,5 +1,4 @@
-﻿
-namespace ProtoBuf
+﻿namespace ProtoBuf
 {
     /// <summary>
     /// Sub-format to use when serializing/deserializing data

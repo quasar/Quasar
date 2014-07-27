@@ -27,9 +27,4 @@ namespace xRAT_2.Forms
             txtURL.Text = _Update.DownloadURL;
         }
     }
-
-    public class _Update
-    {
-        public static string DownloadURL { get; set; }
-    }
 }

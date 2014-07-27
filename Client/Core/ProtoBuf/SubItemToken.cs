@@ -1,5 +1,4 @@
-﻿
-namespace ProtoBuf
+﻿namespace ProtoBuf
 {
     /// <summary>
     /// Used to hold particulars relating to nested objects. This is opaque to the caller - simply
@@ -8,7 +7,9 @@ namespace ProtoBuf
     public struct SubItemToken
     {
         internal readonly int value;
-        internal SubItemToken(int value) {
+
+        internal SubItemToken(int value)
+        {
             this.value = value;
         }
     }

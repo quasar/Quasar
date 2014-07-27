@@ -50,8 +50,6 @@
       <HintPath>lib\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -120,13 +118,18 @@
     <Compile Include="Core\ProtoBuf\IExtensible.cs" />
     <Compile Include="Core\ProtoBuf\IExtension.cs" />
     <Compile Include="Core\ProtoBuf\ImplicitFields.cs" />
+    <Compile Include="Core\ProtoBuf\MemberSerializationOptions.cs" />
     <Compile Include="Core\ProtoBuf\Meta\AttributeMap.cs" />
     <Compile Include="Core\ProtoBuf\Meta\BasicList.cs" />
     <Compile Include="Core\ProtoBuf\Meta\CallbackSet.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\LockContentedEventArgs.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\LockContentedEventHandler.cs" />
     <Compile Include="Core\ProtoBuf\Meta\MetaType.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\MutableList.cs" />
     <Compile Include="Core\ProtoBuf\Meta\RuntimeTypeModel.cs" />
     <Compile Include="Core\ProtoBuf\Meta\SubType.cs" />
     <Compile Include="Core\ProtoBuf\Meta\TypeFormatEventArgs.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\TypeFormatEventHandler.cs" />
     <Compile Include="Core\ProtoBuf\Meta\TypeModel.cs" />
     <Compile Include="Core\ProtoBuf\Meta\ValueMember.cs" />
     <Compile Include="Core\ProtoBuf\NetObjectCache.cs" />
@@ -137,7 +140,10 @@
     <Compile Include="Core\ProtoBuf\ProtoIgnoreAttribute.cs" />
     <Compile Include="Core\ProtoBuf\ProtoIncludeAttribute.cs" />
     <Compile Include="Core\ProtoBuf\ProtoMemberAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoPartialIgnoreAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoPartialMemberAttribute.cs" />
     <Compile Include="Core\ProtoBuf\ProtoReader.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoTypeCode.cs" />
     <Compile Include="Core\ProtoBuf\ProtoWriter.cs" />
     <Compile Include="Core\ProtoBuf\SerializationContext.cs" />
     <Compile Include="Core\ProtoBuf\Serializer.cs" />
@@ -188,11 +194,13 @@
     <Compile Include="Core\ProtoBuf\ServiceModel\ProtoOperationBehavior.cs" />
     <Compile Include="Core\ProtoBuf\ServiceModel\XmlProtoSerializer.cs" />
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
+    <Compile Include="Core\ProtoBuf\TimeSpanScale.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Build\Renamer.cs" />
     <Compile Include="Core\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\UserState.cs" />
+    <Compile Include="Forms\DownloadAndExecute.cs" />
     <Compile Include="Forms\frmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -286,10 +294,12 @@
     <Compile Include="Forms\frmUpdate.Designer.cs">
       <DependentUpon>frmUpdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\VisitWebsite.cs" />
+    <Compile Include="Forms\_Update.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ProfileManager.cs" />
-    <Compile Include="Settings\Settings.cs" />
+    <Compile Include="Settings\XMLSettings.cs" />
     <EmbeddedResource Include="Forms\frmAbout.resx">
       <DependentUpon>frmAbout.cs</DependentUpon>
     </EmbeddedResource>

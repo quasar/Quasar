@@ -11,7 +11,10 @@ namespace Core.Packets.ServerPackets
         [ProtoMember(2)]
         public int Number { get; set; }
 
-        public Desktop() { }
+        public Desktop()
+        {
+        }
+
         public Desktop(int mode, int number)
         {
             this.Mode = mode;

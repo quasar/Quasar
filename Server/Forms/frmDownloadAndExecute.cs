@@ -29,10 +29,4 @@ namespace xRAT_2.Forms
             chkRunHidden.Checked = DownloadAndExecute.RunHidden;
         }
     }
-
-    public class DownloadAndExecute
-    {
-        public static string URL { get; set; }
-        public static bool RunHidden { get; set; }
-    }
 }

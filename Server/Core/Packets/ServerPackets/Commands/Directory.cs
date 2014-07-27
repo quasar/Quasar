@@ -8,7 +8,10 @@ namespace Core.Packets.ServerPackets
         [ProtoMember(1)]
         public string RemotePath { get; set; }
 
-        public Directory() { }
+        public Directory()
+        {
+        }
+
         public Directory(string remotepath)
         {
             this.RemotePath = remotepath;

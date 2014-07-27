@@ -3,6 +3,7 @@
 #if REMOTING
 using System.Runtime.Serialization;
 #endif
+
 namespace ProtoBuf
 {
     /// <summary>
@@ -14,16 +15,22 @@ namespace ProtoBuf
     public class ProtoException : Exception
     {
         /// <summary>Creates a new ProtoException instance.</summary>
-        public ProtoException() { }
+        public ProtoException()
+        {
+        }
 
         /// <summary>Creates a new ProtoException instance.</summary>
-        public ProtoException(string message) : base(message) { }
+        public ProtoException(string message) : base(message)
+        {
+        }
 
         /// <summary>Creates a new ProtoException instance.</summary>
-        public ProtoException(string message, Exception innerException) : base(message, innerException) { }
+        public ProtoException(string message, Exception innerException) : base(message, innerException)
+        {
+        }
 
 #if REMOTING
-        /// <summary>Creates a new ProtoException instance.</summary>
+    /// <summary>Creates a new ProtoException instance.</summary>
         protected ProtoException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 #endif
     }

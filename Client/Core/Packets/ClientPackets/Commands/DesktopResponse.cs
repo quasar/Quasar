@@ -8,7 +8,10 @@ namespace Core.Packets.ClientPackets
         [ProtoMember(1)]
         public byte[] Image { get; set; }
 
-        public DesktopResponse() { }
+        public DesktopResponse()
+        {
+        }
+
         public DesktopResponse(byte[] image)
         {
             this.Image = image;

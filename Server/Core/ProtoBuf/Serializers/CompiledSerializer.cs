@@ -1,4 +1,5 @@
-﻿#if FEAT_COMPILER && !(FX11 || FEAT_IKVM)
+﻿
+#if FEAT_COMPILER && !(FX11 || FEAT_IKVM)
 using System;
 using ProtoBuf.Meta;
 

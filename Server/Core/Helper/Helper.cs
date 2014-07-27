@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Core
 {
-    class Helper
+    internal class Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static Random _rnd = new Random(Environment.TickCount);
@@ -36,13 +36,13 @@ namespace Core
 
         public static string GetFileSize(long size)
         {
-            string[] sizes = { "B", "KB", "MB", "GB" };
+            string[] sizes = {"B", "KB", "MB", "GB"};
             double len = size;
             int order = 0;
             while (len >= 1024 && order + 1 < sizes.Length)
             {
                 order++;
-                len = len / 1024;
+                len = len/1024;
             }
             return string.Format("{0:0.##} {1}", len, sizes[order]);
         }

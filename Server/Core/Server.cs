@@ -15,6 +15,7 @@ namespace Core
         public long BytesSent { get; set; }
 
         public event ServerStateEventHandler ServerState;
+
         public delegate void ServerStateEventHandler(Server s, bool listening);
 
         private void OnServerState(bool listening)
@@ -26,6 +27,7 @@ namespace Core
         }
 
         public event ClientStateEventHandler ClientState;
+
         public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         private void OnClientState(Client c, bool connected)
@@ -37,6 +39,7 @@ namespace Core
         }
 
         public event ClientReadEventHandler ClientRead;
+
         public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
         private void OnClientRead(Client c, IPacket packet)
@@ -48,6 +51,7 @@ namespace Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
+
         public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length);
 
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
@@ -70,12 +74,10 @@ namespace Core
         private List<KeepAlive> _keepAlives;
 
         private List<Client> _clients;
+
         public Client[] Clients
         {
-            get
-            {
-                return Listening ? _clients.ToArray() : new Client[0];
-            }
+            get { return Listening ? _clients.ToArray() : new Client[0]; }
         }
 
         public int ConnectedClients { get; set; }
@@ -169,7 +171,6 @@ namespace Core
                 {
                     Disconnect();
                 }
-
             }
             catch
             {
@@ -180,10 +181,8 @@ namespace Core
 
         private void SendKeepAlives()
         {
-
             new Thread(() =>
             {
-
                 while (true)
                 {
                     try
@@ -201,25 +200,21 @@ namespace Core
                     }
                     catch
                     {
-
                     }
                     Thread.Sleep(10000);
                 }
-
-            }) { IsBackground = true }.Start();
-
+            }) {IsBackground = true}.Start();
         }
 
         private void KeepAliveCallback(object state)
         {
-            KeepAlive keepAlive = (KeepAlive)state;
+            KeepAlive keepAlive = (KeepAlive) state;
 
             if (_keepAlives.Contains(keepAlive))
             {
                 keepAlive.Client.Disconnect();
                 _keepAlives.Remove(keepAlive);
             }
-
         }
 
         internal void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
@@ -265,6 +260,5 @@ namespace Core
                 OnClientState(s, false);
             }
         }
-
     }
 }

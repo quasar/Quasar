@@ -5,7 +5,9 @@ namespace Core.Packets.ServerPackets
     [ProtoContract]
     public class Drives : IPacket
     {
-        public Drives() { }
+        public Drives()
+        {
+        }
 
         public void Execute(Client client)
         {

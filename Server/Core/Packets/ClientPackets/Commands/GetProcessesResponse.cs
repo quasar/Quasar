@@ -14,7 +14,10 @@ namespace Core.Packets.ClientPackets
         [ProtoMember(3)]
         public string[] Titles { get; set; }
 
-        public GetProcessesResponse() { }
+        public GetProcessesResponse()
+        {
+        }
+
         public GetProcessesResponse(string[] processes, int[] ids, string[] titles)
         {
             this.Processes = processes;
