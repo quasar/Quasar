@@ -11,7 +11,6 @@ namespace Core
 
         public static string GetRandomFilename(int length, string extension)
         {
-
             char[] tempChars = new char[length];
             for (int i = 0; i < length; i++)
                 tempChars[i] = CHARS[_rnd.Next(CHARS.Length)];

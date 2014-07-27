@@ -3,7 +3,7 @@ Changelog - xRAT 2.0
 
 xRAT v2.0.0.0 RELEASE2 [24.07.2014]
 ---
-* Added Remote Shell
+* Improved Remote Shell
 * Added changeable Assembly Information
 * Added Computer Commands (Restart, Shutdown, Standby)
 * Added dynamic sizes for system information (easily expandable)
