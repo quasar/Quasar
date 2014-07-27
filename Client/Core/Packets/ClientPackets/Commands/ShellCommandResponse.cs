@@ -8,7 +8,10 @@ namespace Core.Packets.ClientPackets
         [ProtoMember(1)]
         public string Output { get; set; }
 
-        public ShellCommandResponse() { }
+        public ShellCommandResponse()
+        {
+        }
+
         public ShellCommandResponse(string output)
         {
             this.Output = output;

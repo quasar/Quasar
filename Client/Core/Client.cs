@@ -20,6 +20,7 @@ namespace Core
         //TODO: Create and handle ReadQueue.
 
         public event ClientFailEventHandler ClientFail;
+
         public delegate void ClientFailEventHandler(Client s, Exception ex);
 
         private void OnClientFail(Exception ex)
@@ -31,6 +32,7 @@ namespace Core
         }
 
         public event ClientStateEventHandler ClientState;
+
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
         private void OnClientState(bool connected)
@@ -42,6 +44,7 @@ namespace Core
         }
 
         public event ClientReadEventHandler ClientRead;
+
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         private void OnClientRead(byte[] e)
@@ -58,13 +61,14 @@ namespace Core
 
                     using (MemoryStream deserialized = new MemoryStream(e))
                     {
-                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
+                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                            PrefixStyle.Fixed32);
 
-                        if (packet.GetType() == typeof(KeepAliveResponse))
-                            _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this);
+                        if (packet.GetType() == typeof (KeepAliveResponse))
+                            _parentServer.HandleKeepAlivePacket((KeepAliveResponse) packet, this);
 
-                        else if (packet.GetType() == typeof(KeepAlive))
-                            new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
+                        else if (packet.GetType() == typeof (KeepAlive))
+                            new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
 
                         else
                             ClientRead(this, packet);
@@ -78,6 +82,7 @@ namespace Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
+
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
@@ -106,12 +111,10 @@ namespace Core
         public int BufferSize { get; set; }
 
         private IPEndPoint _endPoint;
+
         public IPEndPoint EndPoint
         {
-            get
-            {
-                return _endPoint ?? new IPEndPoint(IPAddress.None, 0);
-            }
+            get { return _endPoint ?? new IPEndPoint(IPAddress.None, 0); }
         }
 
         private const bool encryptionEnabled = true;
@@ -133,7 +136,7 @@ namespace Core
         {
             try
             {
-                AddTypesToSerializer(typeof(IPacket), packets);
+                AddTypesToSerializer(typeof (IPacket), packets);
 
                 _parentServer = server;
 
@@ -149,7 +152,7 @@ namespace Core
                 _handle.NoDelay = true;
 
                 BufferSize = size;
-                _endPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                _endPoint = (IPEndPoint) _handle.RemoteEndPoint;
                 Connected = true;
 
                 if (!_handle.ReceiveAsync(_item[0]))
@@ -199,12 +202,11 @@ namespace Core
 
         private void Initialize()
         {
-
-            AddTypesToSerializer(typeof(IPacket), new Type[]
+            AddTypesToSerializer(typeof (IPacket), new Type[]
             {
-                typeof(UnknownPacket),
-                typeof(KeepAlive),
-                typeof(KeepAliveResponse)
+                typeof (UnknownPacket),
+                typeof (KeepAlive),
+                typeof (KeepAliveResponse)
             });
 
             _processing = new bool[2];
@@ -257,11 +259,11 @@ namespace Core
                     switch (e.LastOperation)
                     {
                         case SocketAsyncOperation.Connect:
-                            _endPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                            _endPoint = (IPEndPoint) _handle.RemoteEndPoint;
                             Connected = true;
                             _item[0].SetBuffer(new byte[BufferSize], 0, BufferSize);
 
-                            _asyncOperation.Post(x => OnClientState((bool)x), true);
+                            _asyncOperation.Post(x => OnClientState((bool) x), true);
                             if (!_handle.ReceiveAsync(e))
                                 Process(null, e);
                             break;
@@ -345,7 +347,7 @@ namespace Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 
@@ -437,7 +439,7 @@ namespace Core
 
                 if (_readIndex >= _readBuffer.Length)
                 {
-                    _asyncOperation.Post(x => OnClientRead((byte[])x), _readBuffer);
+                    _asyncOperation.Post(x => OnClientRead((byte[]) x), _readBuffer);
                 }
 
                 if (read < (length - index))

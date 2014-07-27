@@ -1,4 +1,5 @@
-﻿#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
+﻿
+#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
 using System.ServiceModel.Description;
 
 namespace ProtoBuf.ServiceModel

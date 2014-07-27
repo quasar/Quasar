@@ -1,21 +1,21 @@
 ﻿#if !NO_RUNTIME
 using System;
-
 using ProtoBuf.Meta;
-
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
 namespace ProtoBuf.Serializers
 {
-    sealed class NullDecorator : ProtoDecoratorBase
+    internal sealed class NullDecorator : ProtoDecoratorBase
     {
         private readonly Type expectedType;
         public const int Tag = 1;
+
         public NullDecorator(TypeModel model, IProtoSerializer tail) : base(tail)
         {
             if (!tail.ReturnsValue)
@@ -33,21 +33,23 @@ namespace ProtoBuf.Serializers
             {
                 expectedType = tail.ExpectedType;
             }
-
         }
 
         public override Type ExpectedType
         {
             get { return expectedType; }
         }
+
         public override bool ReturnsValue
         {
             get { return true; }
         }
+
         public override bool RequiresOldValue
         {
             get { return true; }
         }
+
 #if FEAT_COMPILER
         protected override void EmitRead(Compiler.CompilerContext ctx, Compiler.Local valueFrom)
         {
@@ -155,21 +157,25 @@ namespace ProtoBuf.Serializers
         {
             SubItemToken tok = ProtoReader.StartSubItem(source);
             int field;
-            while((field = source.ReadFieldHeader()) > 0)
+            while ((field = source.ReadFieldHeader()) > 0)
             {
-                if(field == Tag) {
+                if (field == Tag)
+                {
                     value = Tail.Read(value, source);
-                } else {
+                }
+                else
+                {
                     source.SkipField();
                 }
             }
             ProtoReader.EndSubItem(tok, source);
             return value;
         }
+
         public override void Write(object value, ProtoWriter dest)
         {
             SubItemToken token = ProtoWriter.StartSubItem(null, dest);
-            if(value != null)
+            if (value != null)
             {
                 Tail.Write(value, dest);
             }
@@ -178,4 +184,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

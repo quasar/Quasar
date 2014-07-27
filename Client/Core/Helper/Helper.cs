@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace Core
 {
-    class Helper
+    internal class Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static Random _rnd = new Random(Environment.TickCount);
@@ -72,9 +72,12 @@ namespace Core
             {
                 bmpRes = new Bitmap(bmp.Width, bmp.Height);
 
-                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 IntPtr scan0 = bmData.Scan0;
                 IntPtr scan02 = bmData2.Scan0;
@@ -90,12 +93,12 @@ namespace Core
                 for (int y = 0; y < nHeight; y++)
                 {
                     //define the pointers inside the first loop for parallelizing
-                    byte* p = (byte*)scan0.ToPointer();
-                    p += y * stride;
-                    byte* p2 = (byte*)scan02.ToPointer();
-                    p2 += y * stride2;
-                    byte* pRes = (byte*)scan0Res.ToPointer();
-                    pRes += y * strideRes;
+                    byte* p = (byte*) scan0.ToPointer();
+                    p += y*stride;
+                    byte* p2 = (byte*) scan02.ToPointer();
+                    p2 += y*stride2;
+                    byte* pRes = (byte*) scan0Res.ToPointer();
+                    pRes += y*strideRes;
 
                     for (int x = 0; x < nWidth; x++)
                     {
@@ -129,7 +132,8 @@ namespace Core
                         bmp.UnlockBits(bmData);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmData2 != null)
@@ -139,7 +143,8 @@ namespace Core
                         bmp2.UnlockBits(bmData2);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmDataRes != null)
@@ -149,7 +154,8 @@ namespace Core
                         bmpRes.UnlockBits(bmDataRes);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmpRes != null)

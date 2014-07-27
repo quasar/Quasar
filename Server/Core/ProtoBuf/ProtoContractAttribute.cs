@@ -5,14 +5,20 @@ namespace ProtoBuf
     /// <summary>
     /// Indicates that a type is defined for protocol-buffer serialization.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface,
+    [AttributeUsage(
+        AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Enum | AttributeTargets.Interface,
         AllowMultiple = false, Inherited = false)]
     public sealed class ProtoContractAttribute : Attribute
     {
         /// <summary>
         /// Gets or sets the defined name of the type.
         /// </summary>
-        public string Name { get { return name; } set { name = value; } }
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
         private string name;
 
         /// <summary>
@@ -28,6 +34,7 @@ namespace ProtoBuf
                 implicitFirstTag = value;
             }
         }
+
         private int implicitFirstTag;
 
         /// <summary>
@@ -54,7 +61,12 @@ namespace ProtoBuf
         /// for members. This option should be used in advanced scenarios only.
         /// Please review the important notes against the ImplicitFields enumeration.
         /// </summary>
-        public ImplicitFields ImplicitFields { get { return implicitFields; } set { implicitFields = value; } }
+        public ImplicitFields ImplicitFields
+        {
+            get { return implicitFields; }
+            set { implicitFields = value; }
+        }
+
         private ImplicitFields implicitFields;
 
 
@@ -70,7 +82,8 @@ namespace ProtoBuf
         public bool InferTagFromName
         {
             get { return HasFlag(OPTIONS_InferTagFromName); }
-            set {
+            set
+            {
                 SetFlag(OPTIONS_InferTagFromName, value);
                 SetFlag(OPTIONS_InferTagFromNameHasValue, true);
             }
@@ -117,16 +130,18 @@ namespace ProtoBuf
         public bool AsReferenceDefault
         {
             get { return HasFlag(OPTIONS_AsReferenceDefault); }
-            set {
-                SetFlag(OPTIONS_AsReferenceDefault, value);
-            }
+            set { SetFlag(OPTIONS_AsReferenceDefault, value); }
         }
 
-        private bool HasFlag(byte flag) { return (flags & flag) == flag; }
+        private bool HasFlag(byte flag)
+        {
+            return (flags & flag) == flag;
+        }
+
         private void SetFlag(byte flag, bool value)
         {
             if (value) flags |= flag;
-            else flags = (byte)(flags & ~flag);
+            else flags = (byte) (flags & ~flag);
         }
 
         private byte flags;

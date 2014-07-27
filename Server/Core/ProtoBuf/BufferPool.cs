@@ -1,5 +1,5 @@
-﻿
-using System.Threading;
+﻿using System.Threading;
+
 namespace ProtoBuf
 {
     internal class BufferPool
@@ -18,15 +18,19 @@ namespace ProtoBuf
             }
 #endif
         }
-        private BufferPool() { }
-        const int PoolSize = 20;
+
+        private BufferPool()
+        {
+        }
+
+        private const int PoolSize = 20;
         internal const int BufferLength = 1024;
         private static readonly object[] pool = new object[PoolSize];
 
         internal static byte[] GetBuffer()
         {
             object tmp;
-            #if PLAT_NO_INTERLOCKED
+#if PLAT_NO_INTERLOCKED
             lock(pool)
             {
                 for (int i = 0; i < pool.Length; i++)
@@ -41,12 +45,14 @@ namespace ProtoBuf
 #else
             for (int i = 0; i < pool.Length; i++)
             {
-                if ((tmp = Interlocked.Exchange(ref pool[i], null)) != null) return (byte[])tmp;
+                if ((tmp = Interlocked.Exchange(ref pool[i], null)) != null) return (byte[]) tmp;
             }
 #endif
             return new byte[BufferLength];
         }
-        internal static void ResizeAndFlushLeft(ref byte[] buffer, int toFitAtLeastBytes, int copyFromIndex, int copyBytes)
+
+        internal static void ResizeAndFlushLeft(ref byte[] buffer, int toFitAtLeastBytes, int copyFromIndex,
+            int copyBytes)
         {
             Helpers.DebugAssert(buffer != null);
             Helpers.DebugAssert(toFitAtLeastBytes > buffer.Length);
@@ -54,7 +60,7 @@ namespace ProtoBuf
             Helpers.DebugAssert(copyBytes >= 0);
 
             // try doubling, else match
-            int newLength = buffer.Length * 2;
+            int newLength = buffer.Length*2;
             if (newLength < toFitAtLeastBytes) newLength = toFitAtLeastBytes;
 
             byte[] newBuffer = new byte[newLength];
@@ -68,6 +74,7 @@ namespace ProtoBuf
             }
             buffer = newBuffer;
         }
+
         internal static void ReleaseBufferToPool(ref byte[] buffer)
         {
             if (buffer == null) return;
@@ -98,6 +105,5 @@ namespace ProtoBuf
             // if no space, just drop it on the floor
             buffer = null;
         }
-
     }
 }

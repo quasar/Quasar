@@ -1,18 +1,17 @@
 ﻿#if !NO_RUNTIME
 using System;
 using ProtoBuf.Meta;
-
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
 namespace ProtoBuf.Serializers
 {
-
-    sealed class NetObjectSerializer : IProtoSerializer
+    internal sealed class NetObjectSerializer : IProtoSerializer
     {
         private readonly int key;
         private readonly Type type;
@@ -23,7 +22,7 @@ namespace ProtoBuf.Serializers
         {
             bool dynamicType = (options & BclHelpers.NetObjectOptions.DynamicType) != 0;
             this.key = dynamicType ? -1 : key;
-            this.type = dynamicType ? model.MapType(typeof(object)) : type;
+            this.type = dynamicType ? model.MapType(typeof (object)) : type;
             this.options = options;
         }
 
@@ -31,19 +30,23 @@ namespace ProtoBuf.Serializers
         {
             get { return type; }
         }
+
         public bool ReturnsValue
         {
             get { return true; }
         }
+
         public bool RequiresOldValue
         {
             get { return true; }
         }
+
 #if !FEAT_IKVM
         public object Read(object value, ProtoReader source)
         {
-            return BclHelpers.ReadNetObject(value, source, key, type == typeof(object) ? null : type, options);
+            return BclHelpers.ReadNetObject(value, source, key, type == typeof (object) ? null : type, options);
         }
+
         public void Write(object value, ProtoWriter dest)
         {
             BclHelpers.WriteNetObject(value, dest, key, options);
@@ -75,4 +78,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

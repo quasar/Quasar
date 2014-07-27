@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Core
 {
-    class InputBox
+    internal class InputBox
     {
         public static DialogResult Show(string title, string promptText, ref string value)
         {
@@ -36,7 +36,7 @@ namespace Core
                 buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
                 form.ClientSize = new Size(396, 107);
-                form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+                form.Controls.AddRange(new Control[] {label, textBox, buttonOk, buttonCancel});
                 form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
                 form.FormBorderStyle = FormBorderStyle.FixedDialog;
                 form.StartPosition = FormStartPosition.CenterScreen;

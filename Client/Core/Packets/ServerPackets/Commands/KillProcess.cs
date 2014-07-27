@@ -8,7 +8,10 @@ namespace Core.Packets.ServerPackets
         [ProtoMember(1)]
         public int PID { get; set; }
 
-        public KillProcess() { }
+        public KillProcess()
+        {
+        }
+
         public KillProcess(int pid)
         {
             this.PID = pid;

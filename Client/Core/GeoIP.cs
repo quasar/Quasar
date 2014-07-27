@@ -4,7 +4,7 @@ using System.Xml;
 
 namespace Core
 {
-    class GeoIP
+    internal class GeoIP
     {
         public string WANIP { get; private set; }
         public string Country { get; private set; }
@@ -16,9 +16,9 @@ namespace Core
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("http://freegeoip.net/xml/");
                 request.Proxy = null;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                HttpWebResponse response = (HttpWebResponse) request.GetResponse();
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);
                 string responseString = reader.ReadToEnd();
@@ -30,10 +30,18 @@ namespace Core
                 doc.LoadXml(responseString);
 
                 WANIP = doc.SelectSingleNode("Response//Ip").InnerXml.ToString();
-                Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml.ToString())) ? doc.SelectSingleNode("Response//CountryName").InnerXml.ToString() : "Unknown";
-                CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString())) ? doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString() : "-";
-                Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml.ToString())) ? doc.SelectSingleNode("Response//RegionName").InnerXml.ToString() : "Unknown";
-                City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml.ToString())) ? doc.SelectSingleNode("Response//City").InnerXml.ToString() : "Unknown";
+                Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml.ToString()))
+                    ? doc.SelectSingleNode("Response//CountryName").InnerXml.ToString()
+                    : "Unknown";
+                CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString()))
+                    ? doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString()
+                    : "-";
+                Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml.ToString()))
+                    ? doc.SelectSingleNode("Response//RegionName").InnerXml.ToString()
+                    : "Unknown";
+                City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml.ToString()))
+                    ? doc.SelectSingleNode("Response//City").InnerXml.ToString()
+                    : "Unknown";
             }
             catch
             {

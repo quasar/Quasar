@@ -29,8 +29,12 @@ namespace Core.Packets.ClientPackets
         [ProtoMember(8)]
         public int ImageIndex { get; set; }
 
-        public Initialize() { }
-        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode, string region, string city, int imageindex)
+        public Initialize()
+        {
+        }
+
+        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode,
+            string region, string city, int imageindex)
         {
             Version = version;
             OperatingSystem = operatingsystem;

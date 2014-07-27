@@ -52,7 +52,8 @@ namespace xRAT_2.Settings
                 }
             }
             catch
-            { }
+            {
+            }
         }
 
         public string ReadValue(string pstrValueToRead)

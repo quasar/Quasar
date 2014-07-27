@@ -7,7 +7,7 @@ using Type = IKVM.Reflection.Type;
 
 namespace ProtoBuf.Serializers
 {
-    interface IProtoSerializer
+    internal interface IProtoSerializer
     {
         /// <summary>
         /// The type that this serializer is intended to work for.
@@ -30,31 +30,33 @@ namespace ProtoBuf.Serializers
         /// <returns>The updated / replacement value.</returns>
         object Read(object value, ProtoReader source);
 #endif
+
         /// <summary>
         /// Indicates whether a Read operation <em>replaces</em> the existing value, or
         /// <em>extends</em> the value. If false, the "value" parameter to Read is
         /// discarded, and should be passed in as null.
         /// </summary>
         bool RequiresOldValue { get; }
+
         /// <summary>
         /// Now all Read operations return a value (although most do); if false no
         /// value should be expected.
         /// </summary>
         bool ReturnsValue { get; }
-        
+
 #if FEAT_COMPILER
 
 
 
-        /// <summary>Emit the IL necessary to perform the given actions
-        /// to serialize this data.
-        /// </summary>
-        /// <param name="ctx">Details and utilities for the method being generated.</param>
-        /// <param name="valueFrom">The source of the data to work against;
-        /// If the value is only needed once, then LoadValue is sufficient. If
-        /// the value is needed multiple times, then note that a "null"
-        /// means "the top of the stack", in which case you should create your
-        /// own copy - GetLocalWithValue.</param>
+    /// <summary>Emit the IL necessary to perform the given actions
+    /// to serialize this data.
+    /// </summary>
+    /// <param name="ctx">Details and utilities for the method being generated.</param>
+    /// <param name="valueFrom">The source of the data to work against;
+    /// If the value is only needed once, then LoadValue is sufficient. If
+    /// the value is needed multiple times, then note that a "null"
+    /// means "the top of the stack", in which case you should create your
+    /// own copy - GetLocalWithValue.</param>
         void EmitWrite(Compiler.CompilerContext ctx, Compiler.Local valueFrom);
 
         /// <summary>
@@ -68,4 +70,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

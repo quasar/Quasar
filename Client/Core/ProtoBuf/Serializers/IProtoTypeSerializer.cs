@@ -1,8 +1,9 @@
 ﻿#if !NO_RUNTIME
 using ProtoBuf.Meta;
+
 namespace ProtoBuf.Serializers
 {
-    interface IProtoTypeSerializer : IProtoSerializer
+    internal interface IProtoTypeSerializer : IProtoSerializer
     {
         bool HasCallbacks(TypeModel.CallbackType callbackType);
         bool CanCreateInstance();
@@ -18,4 +19,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

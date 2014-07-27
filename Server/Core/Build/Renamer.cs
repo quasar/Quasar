@@ -11,13 +11,14 @@ namespace Core.Build
 
         private int length { get; set; }
         private MemberOverloader TypeOverloader;
-        Dictionary<TypeDefinition, MemberOverloader> methodOverloaders;
-        Dictionary<TypeDefinition, MemberOverloader> fieldOverloaders;
-        Dictionary<TypeDefinition, MemberOverloader> eventOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> methodOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> fieldOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> eventOverloaders;
 
         public Renamer(AssemblyDefinition asmDef)
             : this(asmDef, 20)
-        { }
+        {
+        }
 
         public Renamer(AssemblyDefinition asmDef, int length)
         {
@@ -50,7 +51,9 @@ namespace Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.Contains("My") || typeDef.Namespace.Contains("Core.Packets") || typeDef.Namespace == "Core" || typeDef.Namespace == "Core.Elevation" || typeDef.Namespace.Contains("LZ4") || typeDef.Namespace.Contains("ProtoBuf"))
+            if (typeDef.Namespace.Contains("My") || typeDef.Namespace.Contains("Core.Packets") ||
+                typeDef.Namespace == "Core" || typeDef.Namespace == "Core.Elevation" ||
+                typeDef.Namespace.Contains("LZ4") || typeDef.Namespace.Contains("ProtoBuf"))
                 return;
 
             TypeOverloader.GiveName(typeDef);
@@ -97,7 +100,8 @@ namespace Core.Build
             return GetOverloader(this.eventOverloaders, typeDef);
         }
 
-        private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary, TypeDefinition targetTypeDef)
+        private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary,
+            TypeDefinition targetTypeDef)
         {
             MemberOverloader overloader;
             if (!overloaderDictionary.TryGetValue(targetTypeDef, out overloader))
@@ -155,7 +159,7 @@ namespace Core.Build
 
                 for (int i = 0; i < StartingLength; i++)
                 {
-                    builder.Append((char)new Random(Guid.NewGuid().GetHashCode()).Next(int.MinValue, int.MaxValue));
+                    builder.Append((char) new Random(Guid.NewGuid().GetHashCode()).Next(int.MinValue, int.MaxValue));
                 }
 
                 return builder.ToString();

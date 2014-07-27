@@ -5,7 +5,10 @@
 *.suo
 *.user
 *.sln.docstates
-
+*.jtconfig
+*.jmconfig
+*.DotSettings
+Log_*
 # Build results
 [Dd]ebug/
 [Dd]ebugPublic/

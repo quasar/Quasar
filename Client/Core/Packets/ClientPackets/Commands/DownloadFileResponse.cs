@@ -14,7 +14,10 @@ namespace Core.Packets.ClientPackets
         [ProtoMember(3)]
         public int ID { get; set; }
 
-        public DownloadFileResponse() { }
+        public DownloadFileResponse()
+        {
+        }
+
         public DownloadFileResponse(string filename, byte[] filebyte, int id)
         {
             this.Filename = filename;

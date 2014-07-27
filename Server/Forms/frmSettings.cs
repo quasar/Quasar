@@ -6,12 +6,12 @@ namespace xRAT_2.Forms
 {
     public partial class frmSettings : Form
     {
-        Core.Server listenServer;
+        private Core.Server listenServer;
 
         public frmSettings(Core.Server listenServer)
         {
             this.listenServer = listenServer;
-            
+
             InitializeComponent();
 
             if (listenServer.Listening)
@@ -67,7 +67,8 @@ namespace xRAT_2.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                System.Windows.Forms.DialogResult.Yes)
                 this.Close();
         }
     }

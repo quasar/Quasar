@@ -20,16 +20,22 @@ namespace xRAT_2.Forms
         {
             if (cClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", cClient.EndPoint.Address.ToString(),
+                    cClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.GetSystemInfo().Execute(cClient);
 
                 if (cClient.Value != null)
                 {
-                    ListViewItem lvi = new ListViewItem(new string[] { "Operating System", cClient.Value.OperatingSystem });
+                    ListViewItem lvi = new ListViewItem(new string[] {"Operating System", cClient.Value.OperatingSystem});
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "Architecture", (cClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)" });
+                    lvi =
+                        new ListViewItem(new string[]
+                        {
+                            "Architecture",
+                            (cClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
+                        });
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "", "Getting more information..." });
+                    lvi = new ListViewItem(new string[] {"", "Getting more information..."});
                     lstSystem.Items.Add(lvi);
                 }
             }

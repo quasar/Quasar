@@ -22,7 +22,8 @@ namespace Client
         public static bool ENABLEUACESCALATION = false;
 
         public static void Initialize()
-        { }
+        {
+        }
 #else
         public static string VERSION = "1.0.0.0r";
         public static string HOST = "localhost";

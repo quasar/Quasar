@@ -6,7 +6,6 @@ namespace xRAT_2.Controls
     {
         public MainMenuEx()
         {
-
         }
     }
 }

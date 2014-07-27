@@ -33,7 +33,10 @@ namespace xRAT_2.Forms
             chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
 
             // new profile options - fallback for old version
-            chkChangeAsmInfo.Checked = bool.Parse((!string.IsNullOrEmpty(pm.ReadValue("ChangeAsmInfo"))) ? pm.ReadValue("ChangeAsmInfo") : "False");
+            chkChangeAsmInfo.Checked =
+                bool.Parse((!string.IsNullOrEmpty(pm.ReadValue("ChangeAsmInfo")))
+                    ? pm.ReadValue("ChangeAsmInfo")
+                    : "False");
             txtProductName.Text = pm.ReadValue("ProductName");
             txtDescription.Text = pm.ReadValue("Description");
             txtCompanyName.Text = pm.ReadValue("CompanyName");
@@ -97,7 +100,9 @@ namespace xRAT_2.Forms
 
         private void frmBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your current settings?", "Save your settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (
+                MessageBox.Show("Do you want to save your current settings?", "Save your settings?",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 SaveProfile("Default");
             }
@@ -122,14 +127,16 @@ namespace xRAT_2.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(System.IO.Path.GetInvalidPathChars()) + new string(System.IO.Path.GetInvalidFileNameChars());
+            string illegal = new string(System.IO.Path.GetInvalidPathChars()) +
+                             new string(System.IO.Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(System.IO.Path.GetInvalidPathChars()) + new string(System.IO.Path.GetInvalidFileNameChars());
+            string illegal = new string(System.IO.Path.GetInvalidPathChars()) +
+                             new string(System.IO.Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }
@@ -190,23 +197,33 @@ namespace xRAT_2.Forms
         {
             string path = string.Empty;
             if (rbAppdata.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    System.IO.Path.Combine(
+                        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                            txtInstallsub.Text), txtInstallname.Text);
             else if (rbProgramFiles.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    System.IO.Path.Combine(
+                        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                            txtInstallsub.Text), txtInstallname.Text);
             else if (rbSystem.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    System.IO.Path.Combine(
+                        System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System),
+                            txtInstallsub.Text), txtInstallname.Text);
 
-            this.Invoke((MethodInvoker)delegate
-            {
-                txtExamplePath.Text = path + ".exe";
-            });
+            this.Invoke((MethodInvoker) delegate { txtExamplePath.Text = path + ".exe"; });
         }
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text))
+            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) &&
+                !string.IsNullOrEmpty(txtDelay.Text) && !string.IsNullOrEmpty(txtPassword.Text) &&
+                !string.IsNullOrEmpty(txtMutex.Text))
             {
-                if (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) && !string.IsNullOrEmpty(txtInstallsub.Text)))
+                if (!chkInstall.Checked ||
+                    (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) &&
+                     !string.IsNullOrEmpty(txtInstallsub.Text)))
                 {
                     if (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))
                     {
@@ -240,9 +257,11 @@ namespace xRAT_2.Forms
                                 string[] asmInfo = null;
                                 if (chkChangeAsmInfo.Checked)
                                 {
-                                    if (!IsValidVersionNumber(txtProductVersion.Text) || !IsValidVersionNumber(txtFileVersion.Text))
+                                    if (!IsValidVersionNumber(txtProductVersion.Text) ||
+                                        !IsValidVersionNumber(txtFileVersion.Text))
                                     {
-                                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0",
+                                            "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                         return;
                                     }
                                     asmInfo = new string[8];
@@ -255,23 +274,32 @@ namespace xRAT_2.Forms
                                     asmInfo[6] = txtProductVersion.Text;
                                     asmInfo[7] = txtFileVersion.Text;
                                 }
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo);
-                                MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text,
+                                    txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text,
+                                    chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text),
+                                    int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo);
+                                MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Information);
                             }
                             catch (Exception ex)
                             {
-                                MessageBox.Show(string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message, ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                                MessageBox.Show(
+                                    string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}",
+                                        ex.Message, ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                             }
                         }
                     }
                     else
-                        MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
                 }
                 else
-                    MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
             }
             else
-                MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private int GetInstallpath()
@@ -303,14 +331,14 @@ namespace xRAT_2.Forms
 
         private void ToggleAsmInfoControls()
         {
-            this.Invoke((MethodInvoker)delegate
+            this.Invoke((MethodInvoker) delegate
             {
                 foreach (Control ctrl in groupAsmInfo.Controls)
                 {
                     if (ctrl is Label)
-                        ((Label)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                        ((Label) ctrl).Enabled = chkChangeAsmInfo.Checked;
                     else if (ctrl is TextBox)
-                        ((TextBox)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                        ((TextBox) ctrl).Enabled = chkChangeAsmInfo.Checked;
                 }
             });
         }

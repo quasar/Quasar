@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Core.Encryption
 {
-    class AES
+    internal class AES
     {
         public static string Encrypt(string input, string keyy)
         {

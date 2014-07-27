@@ -22,26 +22,36 @@ namespace LZ4
         {
             while (length >= 16)
             {
-                *(ulong*)dst = *(ulong*)src; dst += 8; src += 8;
-                *(ulong*)dst = *(ulong*)src; dst += 8; src += 8;
+                *(ulong*) dst = *(ulong*) src;
+                dst += 8;
+                src += 8;
+                *(ulong*) dst = *(ulong*) src;
+                dst += 8;
+                src += 8;
                 length -= 16;
             }
 
             if (length >= 8)
             {
-                *(ulong*)dst = *(ulong*)src; dst += 8; src += 8;
+                *(ulong*) dst = *(ulong*) src;
+                dst += 8;
+                src += 8;
                 length -= 8;
             }
 
             if (length >= 4)
             {
-                *(uint*)dst = *(uint*)src; dst += 4; src += 4;
+                *(uint*) dst = *(uint*) src;
+                dst += 4;
+                src += 4;
                 length -= 4;
             }
 
             if (length >= 2)
             {
-                *(ushort*)dst = *(ushort*)src; dst += 2; src += 2;
+                *(ushort*) dst = *(ushort*) src;
+                dst += 2;
+                src += 2;
                 length -= 2;
             }
 

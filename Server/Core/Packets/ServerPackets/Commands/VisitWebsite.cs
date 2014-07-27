@@ -11,7 +11,10 @@ namespace Core.Packets.ServerPackets
         [ProtoMember(2)]
         public bool Hidden { get; set; }
 
-        public VisitWebsite() { }
+        public VisitWebsite()
+        {
+        }
+
         public VisitWebsite(string url, bool hidden)
         {
             this.URL = url;
