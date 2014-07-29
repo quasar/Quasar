@@ -11,6 +11,7 @@ namespace xRAT_2.Settings
         public static ushort ListenPort { get; set; }
         public static bool AutoListen { get; set; }
         public static bool ShowPopup { get; set; }
+        public static bool UseUPnP { get; set; }
         public static string Password { get; set; }
 
         private static string settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
@@ -30,6 +31,7 @@ namespace xRAT_2.Settings
                     root.AppendChild(doc.CreateElement("ShowPopup")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("Password")).InnerText = "1234";
                     root.AppendChild(doc.CreateElement("ShowToU")).InnerText = "True";
+                    root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
 
                     doc.Save(settingsFilePath);
                 }
