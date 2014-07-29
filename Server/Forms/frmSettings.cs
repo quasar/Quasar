@@ -28,12 +28,18 @@ namespace xRAT_2.Forms
             chkAutoListen.Checked = XMLSettings.AutoListen;
             chkPopup.Checked = XMLSettings.ShowPopup;
             txtPassword.Text = XMLSettings.Password;
+            chkUseUpnp.Checked = XMLSettings.UseUPnP;
         }
 
         private void btnListen_Click(object sender, EventArgs e)
         {
             if (btnListen.Text == "Start listening" && !listenServer.Listening)
             {
+                if (chkUseUpnp.Checked)
+                {
+                    Core.UPnP.UseUPnP(ushort.Parse(ncPort.Value.ToString()));
+                }
+
                 listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
                 btnListen.Text = "Stop listening";
                 ncPort.Enabled = false;
@@ -61,6 +67,9 @@ namespace xRAT_2.Forms
 
             XMLSettings.WriteValue("Password", txtPassword.Text);
             XMLSettings.Password = txtPassword.Text;
+
+            XMLSettings.WriteValue("UseUPnP", chkUseUpnp.Checked.ToString());
+            XMLSettings.UseUPnP = chkUseUpnp.Checked;
 
             this.Close();
         }
