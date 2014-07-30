@@ -1,11 +1,11 @@
-﻿using System;
+﻿using Core.Packets;
+using Core.Packets.ClientPackets;
+using Core.Packets.ServerPackets;
+using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using Core.Packets;
-using Core.Packets.ClientPackets;
-using Core.Packets.ServerPackets;
 
 namespace Core
 {
@@ -177,13 +177,10 @@ namespace Core
             }
         }
 
-
         private void SendKeepAlives()
         {
-
             new Thread(() =>
             {
-
                 while (true)
                 {
                     try
@@ -196,7 +193,7 @@ namespace Core
                                 _keepAlives.Add(keepAlive);
                             }
                             keepAlive.Execute(client);
-                            Timer timer = new Timer(KeepAliveCallback, keepAlive, 10000, Timeout.Infinite);
+                            Timer timer = new Timer(KeepAliveCallback, keepAlive, 15000, Timeout.Infinite);
                         }
                     }
                     catch

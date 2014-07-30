@@ -175,7 +175,6 @@
     <Compile Include="Core\ProtoBuf\ServiceModel\XmlProtoSerializer.cs" />
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
-    <Compile Include="Core\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\GeoIP.cs" />
     <Compile Include="Program.cs" />

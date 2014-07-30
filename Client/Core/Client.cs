@@ -1,16 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using Client;
+﻿using Client;
 using Core.Encryption;
 using Core.Packets;
 using Core.Packets.ClientPackets;
 using Core.Packets.ServerPackets;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 
 namespace Core
 {
@@ -60,12 +60,8 @@ namespace Core
                     {
                         IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
 
-                        if (packet.GetType() == typeof(KeepAliveResponse))
-                            _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this);
-
-                        else if (packet.GetType() == typeof(KeepAlive))
+                        if (packet.GetType() == typeof(KeepAlive))
                             new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
-
                         else
                             ClientRead(this, packet);
                     }
@@ -117,8 +113,6 @@ namespace Core
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        private Server _parentServer;
-
         public bool Connected { get; private set; }
 
         private int _typeIndex = 0;
@@ -129,13 +123,11 @@ namespace Core
             BufferSize = bufferSize;
         }
 
-        internal Client(Server server, Socket sock, int size, Type[] packets)
+        internal Client(Socket sock, int size, Type[] packets)
         {
             try
             {
                 AddTypesToSerializer(typeof(IPacket), packets);
-
-                _parentServer = server;
 
                 _asyncOperation = AsyncOperationManager.CreateOperation(null);
 

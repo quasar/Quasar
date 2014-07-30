@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.IO;
-using System.Net;
-using System.Net.Sockets;
-using Core.Encryption;
+﻿using Core.Encryption;
 using Core.Packets;
 using Core.Packets.ClientPackets;
 using Core.Packets.ServerPackets;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.IO;
+using System.Net;
+using System.Net.Sockets;
 using xRAT_2.Settings;
 
 namespace Core
@@ -65,10 +65,6 @@ namespace Core
 
                         if (packet.GetType() == typeof(KeepAliveResponse))
                             _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this);
-
-                        else if (packet.GetType() == typeof(KeepAlive))
-                            new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
-
                         else
                             ClientRead(this, packet);
                     }
