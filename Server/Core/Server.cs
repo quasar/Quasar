@@ -166,10 +166,7 @@ namespace Core
                         Process(null, e);
                 }
                 else
-                {
                     Disconnect();
-                }
-
             }
             catch
             {
@@ -204,7 +201,6 @@ namespace Core
                 }
 
             }) { IsBackground = true }.Start();
-
         }
 
         private void KeepAliveCallback(object state)
@@ -216,7 +212,6 @@ namespace Core
                 keepAlive.Client.Disconnect();
                 _keepAlives.Remove(keepAlive);
             }
-
         }
 
         internal void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
@@ -262,6 +257,5 @@ namespace Core
                 OnClientState(s, false);
             }
         }
-
     }
 }

