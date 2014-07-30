@@ -125,6 +125,9 @@ namespace xRAT_2.Forms
             if (listenServer.Listening)
                 listenServer.Disconnect();
 
+            if (XMLSettings.UseUPnP)
+                UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+
             nIcon.Visible = false;
         }
 
