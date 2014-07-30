@@ -38,6 +38,7 @@
             this.btnCancel = new System.Windows.Forms.Button();
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
+            this.chkUseUpnp = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
@@ -138,11 +139,22 @@
             this.txtPassword.Size = new System.Drawing.Size(158, 22);
             this.txtPassword.TabIndex = 8;
             // 
+            // chkUseUpnp
+            // 
+            this.chkUseUpnp.AutoSize = true;
+            this.chkUseUpnp.Location = new System.Drawing.Point(15, 109);
+            this.chkUseUpnp.Name = "chkUseUpnp";
+            this.chkUseUpnp.Size = new System.Drawing.Size(230, 17);
+            this.chkUseUpnp.TabIndex = 9;
+            this.chkUseUpnp.Text = "Try to automatically port forward (UPnP)";
+            this.chkUseUpnp.UseVisualStyleBackColor = true;
+            // 
             // frmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(314, 245);
+            this.Controls.Add(this.chkUseUpnp);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.lblPassword);
             this.Controls.Add(this.btnCancel);
@@ -178,5 +190,6 @@
         private System.Windows.Forms.Button btnCancel;
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
+        private System.Windows.Forms.CheckBox chkUseUpnp;
     }
 }

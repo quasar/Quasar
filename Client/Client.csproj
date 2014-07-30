@@ -82,6 +82,7 @@
     <Compile Include="Core\Packets\ServerPackets\Commands\ShellCommand.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\ShowMessageBox.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Update.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\UploadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
