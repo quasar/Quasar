@@ -25,9 +25,18 @@ namespace ProtoBuf
         Stream source;
         byte[] ioBuffer;
         TypeModel model;
+        int fieldNumber, depth, dataRemaining, ioIndex, position, available, blockEnd;
+        WireType wireType;
+        bool isFixedLength, internStrings;
+        private NetObjectCache netCache;
 
-        private int fieldNumber;
-        WireType wireType = WireType.None;
+        // this is how many outstanding objects do not currently have
+        // values for the purposes of reference tracking; we'll default
+        // to just trapping the root object
+        // note: objects are trapped (the ref and key mapped) via NoteObject
+        uint trapCount; // uint is so we can use beq/bne more efficiently than bgt
+
+
         /// <summary>
         /// Gets the number of the field being processed.
         /// </summary>
@@ -43,15 +52,14 @@ namespace ProtoBuf
         /// <param name="source">The source stream</param>
         /// <param name="model">The model to use for serialization; this can be null, but this will impair the ability to deserialize sub-objects</param>
         /// <param name="context">Additional context about this serialization operation</param>
-        public ProtoReader(Stream source, TypeModel model, SerializationContext context) :
-            this(source, model, context, -1)
-        { }
+        public ProtoReader(Stream source, TypeModel model, SerializationContext context) 
+        {
+            Init(this, source, model, context, TO_EOF);
+        }
 
-
-
-        private int dataRemaining;
-        private readonly bool isFixedLength;
-        private bool internStrings = true;
+        internal const int TO_EOF = -1;
+        
+        
         /// <summary>
         /// Gets / sets a flag indicating whether strings should be checked for repetition; if
         /// true, any repeated UTF-8 byte sequence will result in the same String instance, rather
@@ -69,19 +77,32 @@ namespace ProtoBuf
         /// <param name="length">The number of bytes to read, or -1 to read until the end of the stream</param>
         public ProtoReader(Stream source, TypeModel model, SerializationContext context, int length)
         {
+            Init(this, source, model, context, length);
+        }
+
+        private static void Init(ProtoReader reader, Stream source, TypeModel model, SerializationContext context, int length)
+        {
             if (source == null) throw new ArgumentNullException("source");
             if (!source.CanRead) throw new ArgumentException("Cannot read from stream", "source");
-            this.source = source;
-            this.ioBuffer = BufferPool.GetBuffer();
-            this.model = model;
-            isFixedLength = length >= 0;
-            dataRemaining = isFixedLength ? length : 0;
+            reader.source = source;
+            reader.ioBuffer = BufferPool.GetBuffer();
+            reader.model = model;
+            bool isFixedLength = length >= 0;
+            reader.isFixedLength = isFixedLength;
+            reader.dataRemaining = isFixedLength ? length : 0;
 
             if (context == null) { context = SerializationContext.Default; }
             else { context.Freeze(); }
-            this.context = context;
+            reader.context = context;
+            reader.position = reader.available = reader.depth = reader.fieldNumber = reader.ioIndex = 0;
+            reader.blockEnd = int.MaxValue;
+            reader.internStrings = true;
+            reader.wireType = WireType.None;
+            reader.trapCount = 1;
+            if(reader.netCache == null) reader.netCache = new NetObjectCache();            
         }
-        private readonly SerializationContext context;
+
+        private SerializationContext context;
 
         /// <summary>
         /// Addition information about this deserialization operation.
@@ -98,6 +119,8 @@ namespace ProtoBuf
             source = null;
             model = null;
             BufferPool.ReleaseBufferToPool(ref ioBuffer);
+            if(stringInterner != null) stringInterner.Clear();
+            if(netCache != null) netCache.Clear();
         }
         internal int TryReadUInt32VariantWithoutMoving(bool trimNegative, out uint value)
         {
@@ -194,7 +217,7 @@ namespace ProtoBuf
                     throw CreateWireTypeException();
             }
         }
-        int ioIndex, position, available; // maxPosition
+        
         /// <summary>
         /// Returns the position of the current reader (note that this is not necessarily the same as the position
         /// in the underlying stream, if multiple readers are used on the same stream)
@@ -496,7 +519,7 @@ namespace ProtoBuf
         public void ThrowEnumException(System.Type type, int value)
         {
             string desc = type == null ? "<null>" : type.FullName;
-            throw AddErrorData(new ProtoException("No " + desc + " enum is mapped to the wire-value " + value), this);
+            throw AddErrorData(new ProtoException("No " + desc + " enum is mapped to the wire-value " + value.ToString()), this);
         }
         private Exception CreateWireTypeException()
         {
@@ -575,6 +598,7 @@ namespace ProtoBuf
         /// </summary>
         public static void EndSubItem(SubItemToken token, ProtoReader reader)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             int value = token.value;
             switch (reader.wireType)
             {
@@ -605,6 +629,7 @@ namespace ProtoBuf
         /// <remarks>The token returned must be help and used when callining EndSubItem</remarks>
         public static SubItemToken StartSubItem(ProtoReader reader)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             switch (reader.wireType)
             {
                 case WireType.StartGroup:
@@ -623,7 +648,6 @@ namespace ProtoBuf
             }
         }
 
-        int depth = 0, blockEnd = int.MaxValue;
         /// <summary>
         /// Reads a field header from the stream, setting the wire-type and retuning the field number. If no
         /// more fields are available, then 0 is returned. This methods respects sub-messages.
@@ -639,7 +663,7 @@ namespace ProtoBuf
             {
                 wireType = (WireType)(tag & 7);
                 fieldNumber = (int)(tag >> 3);
-                if(fieldNumber < 1) throw new ProtoException("Invalid field in source data: " + fieldNumber);
+                if(fieldNumber < 1) throw new ProtoException("Invalid field in source data: " + fieldNumber.ToString());
             }
             else
             {
@@ -859,6 +883,7 @@ namespace ProtoBuf
         /// </summary>
         public static byte[] AppendBytes(byte[] value, ProtoReader reader)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             switch (reader.wireType)
             {
                 case WireType.String:
@@ -908,19 +933,19 @@ namespace ProtoBuf
             }
         }
 
-        static byte[] ReadBytes(Stream stream, int length)
-        {
-            if (stream == null) throw new ArgumentNullException("stream");
-            if (length < 0) throw new ArgumentOutOfRangeException("length");
-            byte[] buffer = new byte[length];
-            int offset = 0, read;
-            while (length > 0 && (read = stream.Read(buffer, offset, length)) > 0)
-            {
-                length -= read;
-            }
-            if (length > 0) throw EoF(null);
-            return buffer;
-        }
+        //static byte[] ReadBytes(Stream stream, int length)
+        //{
+        //    if (stream == null) throw new ArgumentNullException("stream");
+        //    if (length < 0) throw new ArgumentOutOfRangeException("length");
+        //    byte[] buffer = new byte[length];
+        //    int offset = 0, read;
+        //    while (length > 0 && (read = stream.Read(buffer, offset, length)) > 0)
+        //    {
+        //        length -= read;
+        //    }
+        //    if (length > 0) throw EoF(null);
+        //    return buffer;
+        //}
         private static int ReadByteOrThrow(Stream source)
         {
             int val = source.ReadByte();
@@ -972,6 +997,7 @@ namespace ProtoBuf
         public static void DirectReadBytes(Stream source, byte[] buffer, int offset, int count)
         {
             int read;
+            if (source == null) throw new ArgumentNullException("source");
             while(count > 0 && (read = source.Read(buffer, offset, count)) > 0)
             {
                 count -= read;
@@ -1227,6 +1253,7 @@ namespace ProtoBuf
         /// </summary>
         public static bool HasSubValue(ProtoBuf.WireType wireType, ProtoReader source)
         {
+            if (source == null) throw new ArgumentNullException("source");
             // check for virtual end of stream
             if (source.blockEnd <= source.position || wireType == WireType.EndGroup) { return false; }
             source.wireType = wireType;
@@ -1238,7 +1265,6 @@ namespace ProtoBuf
             return model.GetKey(ref type);
         }
 
-        private readonly NetObjectCache netCache = new NetObjectCache();
         internal NetObjectCache NetCache
         {
             get { return netCache; }
@@ -1255,17 +1281,13 @@ namespace ProtoBuf
             trapCount--;
         }
 
-        // this is how many outstanding objects do not currently have
-        // values for the purposes of reference tracking; we'll default
-        // to just trapping the root object
-        // note: objects are trapped (the ref and key mapped) via NoteObject
-        uint trapCount = 1; // uint is so we can use beq/bne more efficiently than bgt
-
+        
         /// <summary>
         /// Utility method, not intended for public use; this helps maintain the root object is complex scenarios
         /// </summary>
         public static void NoteObject(object value, ProtoReader reader)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             if(reader.trapCount != 0)
             {
                 reader.netCache.RegisterTrappedObject(value);
@@ -1305,6 +1327,7 @@ namespace ProtoBuf
         /// </summary>
         public static object Merge(ProtoReader parent, object from, object to)
         {
+            if (parent == null) throw new ArgumentNullException("parent");
             TypeModel model = parent.Model;
             SerializationContext ctx = parent.Context;
             if(model == null) throw new InvalidOperationException("Types cannot be merged unless a type-model has been specified");
@@ -1315,5 +1338,77 @@ namespace ProtoBuf
                 return model.Deserialize(ms, to, null);
             }
         }
+
+#region RECYCLER
+
+        internal static ProtoReader Create(Stream source, TypeModel model, SerializationContext context, int len)
+        {
+            ProtoReader reader = GetRecycled();
+            if (reader == null)
+            {
+                return new ProtoReader(source, model, context, len);
+            }
+            Init(reader, source, model, context, len);
+            return reader;
+        }
+
+#if !PLAT_NO_THREADSTATIC
+        [ThreadStatic]
+        private static ProtoReader lastReader;
+
+        private static ProtoReader GetRecycled()
+        {
+            ProtoReader tmp = lastReader;
+            lastReader = null;
+            return tmp;
+        }
+        internal static void Recycle(ProtoReader reader)
+        {
+            if(reader != null)
+            {
+                reader.Dispose();
+                lastReader = reader;
+            }
+        }
+#elif !PLAT_NO_INTERLOCKED
+        private static object lastReader;
+        private static ProtoReader GetRecycled()
+        {
+            return (ProtoReader)System.Threading.Interlocked.Exchange(ref lastReader, null);
+        }
+        internal static void Recycle(ProtoReader reader)
+        {
+            if(reader != null)
+            {
+                reader.Dispose();
+                System.Threading.Interlocked.Exchange(ref lastReader, reader);
+            }
+        }
+#else
+        private static readonly object recycleLock = new object();
+        private static ProtoReader lastReader;
+        private static ProtoReader GetRecycled()
+        {
+            lock(recycleLock)
+            {
+                ProtoReader tmp = lastReader;
+                lastReader = null;
+                return tmp;
+            }            
+        }
+        internal static void Recycle(ProtoReader reader)
+        {
+            if(reader != null)
+            {
+                reader.Dispose();
+                lock(recycleLock)
+                {
+                    lastReader = reader;
+                }
+            }
+        }
+#endif
+
+#endregion
     }
 }

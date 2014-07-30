@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace ProtoBuf.Serializers
 {
-    class SystemTypeSerializer : IProtoSerializer
+    sealed class SystemTypeSerializer : IProtoSerializer
     {
 #if FEAT_IKVM
         readonly Type expectedType;

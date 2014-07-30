@@ -19,7 +19,7 @@ namespace ProtoBuf
     /// </summary>
     [AttributeUsage(AttributeTargets.Class,
             AllowMultiple = true, Inherited = false)]
-    public class ProtoPartialIgnoreAttribute : ProtoIgnoreAttribute
+    public sealed class ProtoPartialIgnoreAttribute : ProtoIgnoreAttribute
     {
         /// <summary>
         /// Creates a new ProtoPartialIgnoreAttribute instance.

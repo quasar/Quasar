@@ -52,6 +52,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteTimeSpan(TimeSpan timeSpan, ProtoWriter dest)
         {
+            if (dest == null) throw new ArgumentNullException("dest");
             long value;
             switch(dest.WireType)
             {
@@ -143,6 +144,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteDateTime(DateTime value, ProtoWriter dest)
         {
+            if (dest == null) throw new ArgumentNullException("dest");
             TimeSpan delta;
             switch (dest.WireType)
             {
@@ -488,7 +490,7 @@ namespace ProtoBuf
 #if FEAT_IKVM
             throw new NotSupportedException();
 #else
-            Helpers.DebugAssert(value != null);
+            if (dest == null) throw new ArgumentNullException("dest");
             bool dynamicType = (options & NetObjectOptions.DynamicType) != 0,
                  asReference = (options & NetObjectOptions.AsReference) != 0;
             WireType wireType = dest.WireType;

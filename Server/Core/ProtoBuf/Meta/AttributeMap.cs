@@ -11,8 +11,10 @@ namespace ProtoBuf.Meta
 {
     internal abstract class AttributeMap
     {
+#if DEBUG
         [Obsolete("Please use AttributeType instead")]
         new public Type GetType() { return AttributeType; }
+#endif
         public abstract bool TryGet(string key, bool publicOnly, out object value);
         public bool TryGet(string key, out object value)
         {
@@ -100,7 +102,7 @@ namespace ProtoBuf.Meta
 #endif
         }
 #if FEAT_IKVM
-        private class AttributeDataMap : AttributeMap
+        private sealed class AttributeDataMap : AttributeMap
         {
             public override Type AttributeType
             {
@@ -139,7 +141,7 @@ namespace ProtoBuf.Meta
         }
 #else
         public abstract object Target { get; }
-        private class ReflectionAttributeMap : AttributeMap
+        private sealed class ReflectionAttributeMap : AttributeMap
         {
             public override object Target
             {

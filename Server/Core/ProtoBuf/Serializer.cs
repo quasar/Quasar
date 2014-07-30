@@ -456,7 +456,8 @@ namespace ProtoBuf
             /// <param name="fieldNumber">The tag used as a prefix to each record (only used with base-128 style prefixes).</param>
             public static void SerializeWithLengthPrefix(Stream destination, object instance, PrefixStyle style, int fieldNumber)
             {
-                RuntimeTypeModel model = RuntimeTypeModel.Default;
+                if (instance == null) throw new ArgumentNullException("instance");
+                RuntimeTypeModel model = RuntimeTypeModel.Default;                
                 model.SerializeWithLengthPrefix(destination, instance, model.MapType(instance.GetType()), style, fieldNumber);
             }
             /// <summary>

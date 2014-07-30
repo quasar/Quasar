@@ -355,7 +355,7 @@ namespace ProtoBuf.Meta
                     }
                     else
                     {
-                        ser = new ListDecorator(model, memberType, defaultType, ser, fieldNumber, IsPacked, wireType, member != null && PropertyDecorator.CanWrite(model, member), OverwriteList, SupportNull);
+                        ser = ListDecorator.Create(model, memberType, defaultType, ser, fieldNumber, IsPacked, wireType, member != null && PropertyDecorator.CanWrite(model, member), OverwriteList, SupportNull);
                     }
                 }
                 else if (defaultValue != null && !IsRequired && getSpecified == null)
@@ -423,7 +423,10 @@ namespace ProtoBuf.Meta
             bool asReference, bool dynamicType, bool overwriteList, bool allowComplexTypes)
         {
 #if !NO_GENERICS
-            type = Helpers.GetUnderlyingType(type) ?? type;
+            {
+                Type tmp = Helpers.GetUnderlyingType(type);
+                if (tmp != null) type = tmp;
+            }
 #endif
             if (Helpers.IsEnum(type))
             {
@@ -608,7 +611,7 @@ namespace ProtoBuf.Meta
         }
 
         
-        internal class Comparer : System.Collections.IComparer
+        internal sealed class Comparer : System.Collections.IComparer
 #if !NO_GENERICS
 , System.Collections.Generic.IComparer<ValueMember>
 #endif

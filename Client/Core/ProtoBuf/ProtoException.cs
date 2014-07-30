@@ -1,6 +1,6 @@
 ﻿using System;
 
-#if REMOTING
+#if PLAT_BINARYFORMATTER && !(WINRT || PHONE8)
 using System.Runtime.Serialization;
 #endif
 namespace ProtoBuf
@@ -8,8 +8,8 @@ namespace ProtoBuf
     /// <summary>
     /// Indicates an error during serialization/deserialization of a proto stream.
     /// </summary>
-#if REMOTING
-    [ProtoContract]
+#if PLAT_BINARYFORMATTER && !(WINRT || PHONE8)
+    [Serializable]
 #endif
     public class ProtoException : Exception
     {
@@ -22,7 +22,7 @@ namespace ProtoBuf
         /// <summary>Creates a new ProtoException instance.</summary>
         public ProtoException(string message, Exception innerException) : base(message, innerException) { }
 
-#if REMOTING
+#if PLAT_BINARYFORMATTER && !(WINRT || PHONE8)
         /// <summary>Creates a new ProtoException instance.</summary>
         protected ProtoException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 #endif

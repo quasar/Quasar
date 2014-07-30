@@ -2,7 +2,7 @@
 using System.Threading;
 namespace ProtoBuf
 {
-    internal class BufferPool
+    internal sealed class BufferPool
     {
         internal static void Flush()
         {

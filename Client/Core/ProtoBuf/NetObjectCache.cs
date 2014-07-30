@@ -35,7 +35,10 @@ namespace ProtoBuf
             }
 
             object tmp = list[key];
-            if (tmp == null) throw new ProtoException("A deferred key does not have a value yet");
+            if (tmp == null)
+            {
+                throw new ProtoException("A deferred key does not have a value yet");
+            }
             return tmp;
         }
 
@@ -57,7 +60,7 @@ namespace ProtoBuf
                     {
                         list[key] = value;
                     }
-                    else if (!ReferenceEquals(oldVal, value))
+                    else if (!ReferenceEquals(oldVal, value) )
                     {
                         throw new ProtoException("Reference-tracked objects cannot change reference");
                     } // otherwise was the same; nothing to do
@@ -114,12 +117,12 @@ namespace ProtoBuf
             }
 #else
 
-            if (s == null)
+            if(s == null)
             {
 #if CF || PORTABLE // CF has very limited proper object ref-tracking; so instead, we'll search it the hard way
                 index = list.IndexOfReference(value);
 #else
-                if (objectKeys == null)
+                if (objectKeys == null) 
                 {
                     objectKeys = new System.Collections.Generic.Dictionary<object, int>(ReferenceComparer.Default);
                     index = -1;
@@ -136,7 +139,7 @@ namespace ProtoBuf
                 {
                     stringKeys = new System.Collections.Generic.Dictionary<string, int>();
                     index = -1;
-                }
+                } 
                 else
                 {
                     if (!stringKeys.TryGetValue(s, out index)) index = -1;
@@ -163,7 +166,7 @@ namespace ProtoBuf
         }
 
         private int trapStartIndex; // defaults to 0 - optimization for RegisterTrappedObject
-        // to make it faster at seeking to find deferred-objects
+                                    // to make it faster at seeking to find deferred-objects
 
         internal void RegisterTrappedObject(object value)
         {
@@ -173,17 +176,17 @@ namespace ProtoBuf
             }
             else
             {
-                if (underlyingList != null)
+                if(underlyingList != null)
                 {
                     for (int i = trapStartIndex; i < underlyingList.Count; i++)
                     {
                         trapStartIndex = i + 1; // things never *become* null; whether or
-                        // not the next item is null, it will never
-                        // need to be checked again
+                                                // not the next item is null, it will never
+                                                // need to be checked again
 
-                        if (underlyingList[i] == null)
+                        if(underlyingList[i] == null)
                         {
-                            underlyingList[i] = value;
+                            underlyingList[i] = value;    
                             break;
                         }
                     }
@@ -213,7 +216,7 @@ namespace ProtoBuf
         private sealed class ReferenceComparer : System.Collections.Generic.IEqualityComparer<object>
         {
             public readonly static ReferenceComparer Default = new ReferenceComparer();
-            private ReferenceComparer() { }
+            private ReferenceComparer() {}
 
             bool System.Collections.Generic.IEqualityComparer<object>.Equals(object x, object y)
             {
@@ -228,5 +231,16 @@ namespace ProtoBuf
 #endif
 
 #endif
+
+        internal void Clear()
+        {
+            trapStartIndex = 0;
+            rootObject = null;
+            if (underlyingList != null) underlyingList.Clear();
+            if (stringKeys != null) stringKeys.Clear();
+#if !CF && !PORTABLE
+            if (objectKeys != null) objectKeys.Clear();
+#endif
+        }
     }
 }

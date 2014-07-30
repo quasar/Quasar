@@ -31,7 +31,7 @@ namespace ProtoBuf.Meta
                     case TypeModel.CallbackType.AfterSerialize: return afterSerialize;
                     case TypeModel.CallbackType.BeforeDeserialize: return beforeDeserialize;
                     case TypeModel.CallbackType.AfterDeserialize: return afterDeserialize;
-                    default: throw new ArgumentException();
+                    default: throw new ArgumentException("Callback type not supported: " + callbackType.ToString(), "callbackType");
                 }
             }
         }

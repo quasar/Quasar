@@ -101,7 +101,8 @@ namespace ProtoBuf.Serializers
         }
         private void EmitBranchIfDefaultValue(Compiler.CompilerContext ctx, Compiler.CodeLabel label)
         {
-            switch (Helpers.GetTypeCode(ExpectedType))
+            Type expected = ExpectedType;
+            switch (Helpers.GetTypeCode(expected))
             {
                 case ProtoTypeCode.Boolean:
                     if ((bool)defaultValue)
@@ -121,7 +122,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(byte)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.SByte:
@@ -132,7 +133,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(sbyte)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.Int16:
@@ -143,7 +144,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(short)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.UInt16:
@@ -154,7 +155,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(ushort)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.Int32:
@@ -165,7 +166,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.UInt32:
@@ -176,7 +177,7 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(uint)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.Char:
@@ -187,34 +188,34 @@ namespace ProtoBuf.Serializers
                     else
                     {
                         ctx.LoadValue((int)(char)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.Int64:
                     ctx.LoadValue((long)defaultValue);
-                    EmitBeq(ctx, label, ExpectedType);
+                    EmitBeq(ctx, label, expected);
                     break;
                 case ProtoTypeCode.UInt64:
                     ctx.LoadValue((long)(ulong)defaultValue);
-                    EmitBeq(ctx, label, ExpectedType);
+                    EmitBeq(ctx, label, expected);
                     break;
                 case ProtoTypeCode.Double:
                     ctx.LoadValue((double)defaultValue);
-                    EmitBeq(ctx, label, ExpectedType);
+                    EmitBeq(ctx, label, expected);
                     break;
                 case ProtoTypeCode.Single:
                     ctx.LoadValue((float)defaultValue);
-                    EmitBeq(ctx, label, ExpectedType);
+                    EmitBeq(ctx, label, expected);
                     break;
                 case ProtoTypeCode.String:
                     ctx.LoadValue((string)defaultValue);
-                    EmitBeq(ctx, label, ExpectedType);
+                    EmitBeq(ctx, label, expected);
                     break;
                 case ProtoTypeCode.Decimal:
                     {
                         decimal d = (decimal)defaultValue;
                         ctx.LoadValue(d);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                     }
                     break;
                 case ProtoTypeCode.TimeSpan:
@@ -229,13 +230,13 @@ namespace ProtoBuf.Serializers
                             ctx.LoadValue(ts.Ticks);
                             ctx.EmitCall(ctx.MapType(typeof(TimeSpan)).GetMethod("FromTicks"));
                         }
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                         break;
                     }
                 case ProtoTypeCode.Guid:
                     {
                         ctx.LoadValue((Guid)defaultValue);
-                        EmitBeq(ctx, label, ExpectedType);
+                        EmitBeq(ctx, label, expected);
                         break;
                     }
                 case ProtoTypeCode.DateTime:
@@ -247,12 +248,12 @@ namespace ProtoBuf.Serializers
                         ctx.LoadValue(((DateTime)defaultValue).ToBinary());
                         ctx.EmitCall(ctx.MapType(typeof(DateTime)).GetMethod("FromBinary"));
 #endif
-                        
-                        EmitBeq(ctx, label, ExpectedType);
+
+                        EmitBeq(ctx, label, expected);
                         break;
                     }
                 default:
-                    throw new NotSupportedException("Type cannot be represented as a default value: " + ExpectedType.FullName);
+                    throw new NotSupportedException("Type cannot be represented as a default value: " + expected.FullName);
             }
         }
         protected override void EmitRead(Compiler.CompilerContext ctx, Compiler.Local valueFrom)

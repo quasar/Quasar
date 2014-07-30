@@ -14,7 +14,7 @@ namespace ProtoBuf.ServiceModel
     {
         private readonly TypeModel model;
         private readonly int key;
-        private readonly bool isList;
+        private readonly bool isList, isEnum;
         private readonly Type type;
         internal XmlProtoSerializer(TypeModel model, int key, Type type, bool isList)
         {
@@ -25,6 +25,7 @@ namespace ProtoBuf.ServiceModel
             this.key = key;
             this.isList = isList;
             this.type = type;
+            this.isEnum = Helpers.IsEnum(type);
         }
         /// <summary>
         /// Attempt to create a new serializer for the given model and type
@@ -54,6 +55,7 @@ namespace ProtoBuf.ServiceModel
             key = GetKey(model, ref type, out isList);
             this.model = model;
             this.type = type;
+            this.isEnum = Helpers.IsEnum(type);
             if (key < 0) throw new ArgumentOutOfRangeException("type", "Type not recognised by the model: " + type.FullName);
         }
         static int GetKey(TypeModel model, ref Type type, out bool isList)
@@ -87,6 +89,7 @@ namespace ProtoBuf.ServiceModel
         /// </summary>
         public override void WriteEndObject(System.Xml.XmlDictionaryWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             writer.WriteEndElement();
         }
         /// <summary>
@@ -94,6 +97,7 @@ namespace ProtoBuf.ServiceModel
         /// </summary>
         public override void WriteStartObject(System.Xml.XmlDictionaryWriter writer, object graph)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             writer.WriteStartElement(PROTO_ELEMENT);
         }
         private const string PROTO_ELEMENT = "proto";
@@ -102,6 +106,7 @@ namespace ProtoBuf.ServiceModel
         /// </summary>
         public override void WriteObjectContent(System.Xml.XmlDictionaryWriter writer, object graph)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             if (graph == null)
             {
                 writer.WriteAttributeString("nil", "true");
@@ -132,6 +137,7 @@ namespace ProtoBuf.ServiceModel
         /// </summary>
         public override bool IsStartObject(System.Xml.XmlDictionaryReader reader)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             reader.MoveToContent();
             return reader.NodeType == System.Xml.XmlNodeType.Element && reader.Name == PROTO_ELEMENT;
         }
@@ -141,6 +147,7 @@ namespace ProtoBuf.ServiceModel
         /// </summary>
         public override object ReadObject(System.Xml.XmlDictionaryReader reader, bool verifyObjectName)
         {
+            if (reader == null) throw new ArgumentNullException("reader");
             reader.MoveToContent();
             bool isSelfClosed = reader.IsEmptyElement, isNil = reader.GetAttribute("nil") == "true";
             reader.ReadStartElement(PROTO_ELEMENT);
@@ -153,13 +160,19 @@ namespace ProtoBuf.ServiceModel
             }
             if(isSelfClosed) // no real content
             {
-                if (isList)
+                if (isList || isEnum)
                 {
                     return model.Deserialize(Stream.Null, null, type, null);
                 }
-                using (ProtoReader protoReader = new ProtoReader(Stream.Null, model, null))
+                ProtoReader protoReader = null;
+                try
                 {
+                    protoReader = ProtoReader.Create(Stream.Null, model, null, ProtoReader.TO_EOF);
                     return model.Deserialize(key, null, protoReader);
+                }
+                finally
+                {
+                    ProtoReader.Recycle(protoReader);
                 }
             }
 
@@ -167,15 +180,21 @@ namespace ProtoBuf.ServiceModel
             Helpers.DebugAssert(reader.CanReadBinaryContent, "CanReadBinaryContent");
             using (MemoryStream ms = new MemoryStream(reader.ReadContentAsBase64()))
             {
-                if (isList)
+                if (isList || isEnum)
                 {
                     result = model.Deserialize(ms, null, type, null);
                 }
                 else
                 {
-                    using (ProtoReader protoReader = new ProtoReader(ms, model, null))
+                    ProtoReader protoReader = null;
+                    try
                     {
+                        protoReader = ProtoReader.Create(ms, model, null, ProtoReader.TO_EOF);
                         result = model.Deserialize(key, null, protoReader);
+                    }
+                    finally
+                    {
+                        ProtoReader.Recycle(protoReader);
                     }
                 }
             }

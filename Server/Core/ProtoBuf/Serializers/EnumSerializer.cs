@@ -43,7 +43,7 @@ namespace ProtoBuf.Serializers
                 {
                     if (map[i].WireValue == map[j].WireValue && !Equals(map[i].RawValue, map[j].RawValue))
                     {
-                        throw new ProtoException("Multiple enums with wire-value " + map[i].WireValue);
+                        throw new ProtoException("Multiple enums with wire-value " + map[i].WireValue.ToString());
                     }
                     if (Equals(map[i].RawValue, map[j].RawValue) && map[i].WireValue != map[j].WireValue)
                     {

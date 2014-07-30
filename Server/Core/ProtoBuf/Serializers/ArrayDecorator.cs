@@ -199,8 +199,9 @@ namespace ProtoBuf.Serializers
 #else
             listType = ctx.MapType(typeof(System.Collections.Generic.List<>)).MakeGenericType(itemType);
 #endif
-            using (Compiler.Local oldArr = AppendToCollection ? ctx.GetLocalWithValue(ExpectedType, valueFrom) : null)
-            using (Compiler.Local newArr = new Compiler.Local(ctx, ExpectedType))
+            Type expected = ExpectedType;
+            using (Compiler.Local oldArr = AppendToCollection ? ctx.GetLocalWithValue(expected, valueFrom) : null)
+            using (Compiler.Local newArr = new Compiler.Local(ctx, expected))
             using (Compiler.Local list = new Compiler.Local(ctx, listType))
             {
                 ctx.EmitCtor(listType);
@@ -230,7 +231,7 @@ namespace ProtoBuf.Serializers
                         ctx.LoadValue(newArr);
                         ctx.LoadValue(0); // index in target
 
-                        ctx.EmitCall(ExpectedType.GetMethod("CopyTo", copyToArrayInt32Args));
+                        ctx.EmitCall(expected.GetMethod("CopyTo", copyToArrayInt32Args));
                         ctx.MarkLabel(nothingToCopy);
 
                         ctx.LoadValue(list);
@@ -250,7 +251,7 @@ namespace ProtoBuf.Serializers
                         ctx.LoadValue(0);
                     }
 
-                    copyToArrayInt32Args[0] = ExpectedType; // // prefer: CopyTo(T[], int)
+                    copyToArrayInt32Args[0] = expected; // // prefer: CopyTo(T[], int)
                     MethodInfo copyTo = listType.GetMethod("CopyTo", copyToArrayInt32Args);
                     if (copyTo == null)
                     { // fallback: CopyTo(Array, int)

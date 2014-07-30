@@ -107,54 +107,52 @@ namespace ProtoBuf.Serializers
                 throw new InvalidOperationException("Attempt to mutate struct on the head of the stack; changes would be lost");
             }
 
-            ctx.LoadAddress(valueFrom, ExpectedType); // stack is: old-addr
-            if (writeValue && Tail.RequiresOldValue)
-            { // need to read and write
-                ctx.CopyValue();
-            }
-            // stack is: [old-addr]|old-addr
-            if (Tail.RequiresOldValue)
+            using (Compiler.Local loc = ctx.GetLocalWithValue(ExpectedType, valueFrom))
             {
-                ctx.LoadValue(property); // stack is: [old-addr]|old-value
-            }
-            ctx.ReadNullCheckedTail(property.PropertyType, Tail, null); // stack is [old-addr]|[new-value]
-            
-            if (writeValue)
-            {
-                // stack is old-addr|new-value
-                Compiler.CodeLabel @skip = new Compiler.CodeLabel(), allDone = new Compiler.CodeLabel(); // <=== default structs
-                if (!property.PropertyType.IsValueType)
-                { // if the tail returns a null, intepret that as *no assign*
-                    ctx.CopyValue(); // old-addr|new-value|new-value
-                    @skip = ctx.DefineLabel();
-                    allDone = ctx.DefineLabel();
-                    ctx.BranchIfFalse(@skip, true); // old-addr|new-value
-                }
-                
-                if (shadowSetter == null)
+                if (Tail.RequiresOldValue)
                 {
-                    ctx.StoreValue(property);
+                    ctx.LoadAddress(loc, ExpectedType); // stack is: old-addr
+                    ctx.LoadValue(property); // stack is: old-value
+                }
+                Type propertyType = property.PropertyType;
+                ctx.ReadNullCheckedTail(propertyType, Tail, null); // stack is [new-value]
+
+                if (writeValue)
+                {
+                    using (Compiler.Local newVal = new Compiler.Local(ctx, property.PropertyType))
+                    {
+                        ctx.StoreValue(newVal); // stack is empty
+
+                        Compiler.CodeLabel allDone = new Compiler.CodeLabel(); // <=== default structs
+                        if (!propertyType.IsValueType)
+                        { // if the tail returns a null, intepret that as *no assign*
+                            allDone = ctx.DefineLabel();
+                            ctx.LoadValue(newVal); // stack is: new-value
+                            ctx.BranchIfFalse(@allDone, true); // stack is empty
+                        }
+                        // assign the value
+                        ctx.LoadAddress(loc, ExpectedType); // parent-addr
+                        ctx.LoadValue(newVal); // parent-obj|new-value
+                        if (shadowSetter == null)
+                        {
+                            ctx.StoreValue(property); // empty
+                        }
+                        else
+                        {
+                            ctx.EmitCall(shadowSetter); // empty
+                        }
+                        if (!propertyType.IsValueType)
+                        {
+                            ctx.MarkLabel(allDone);
+                        }
+                    }
+
                 }
                 else
-                {
-                    ctx.EmitCall(shadowSetter);
+                { // don't want return value; drop it if anything there
+                    // stack is [new-value]
+                    if (Tail.ReturnsValue) { ctx.DiscardValue(); }
                 }
-                if (!property.PropertyType.IsValueType)
-                {
-                    ctx.Branch(allDone, true);
-
-                    ctx.MarkLabel(@skip); // old-addr|new-value
-                    ctx.DiscardValue();
-                    ctx.DiscardValue();
-
-                    ctx.MarkLabel(allDone);
-                }
-
-            }
-            else
-            { // don't want return value; drop it if anything there
-                // stack is [new-value]
-                if (Tail.ReturnsValue) { ctx.DiscardValue(); }
             }
         }
 #endif

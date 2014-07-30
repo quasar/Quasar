@@ -9,7 +9,7 @@ namespace ProtoBuf.Meta
     /// </summary>
     public sealed class SubType
     {
-        internal class Comparer : System.Collections.IComparer
+        internal sealed class Comparer : System.Collections.IComparer
 #if !NO_GENERICS
 , System.Collections.Generic.IComparer<SubType>
 #endif

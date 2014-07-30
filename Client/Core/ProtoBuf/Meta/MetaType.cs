@@ -26,7 +26,7 @@ namespace ProtoBuf.Meta
     /// </summary>
     public class MetaType : ISerializerProxy
     {
-        internal class Comparer : IComparer
+        internal sealed class Comparer : IComparer
 #if !NO_GENERICS
              , System.Collections.Generic.IComparer<MetaType>
 #endif
@@ -231,6 +231,8 @@ namespace ProtoBuf.Meta
             if (surrogate != null) return model[surrogate].GetSchemaTypeName();
 
             if (!Helpers.IsNullOrEmpty(name)) return name;
+
+            string typeName = type.Name;
 #if !NO_GENERICS
             if (type
 #if WINRT
@@ -238,8 +240,8 @@ namespace ProtoBuf.Meta
 #endif       
                 .IsGenericType)
             {
-                StringBuilder sb = new StringBuilder(type.Name);
-                int split = type.Name.IndexOf('`');
+                StringBuilder sb = new StringBuilder(typeName);
+                int split = typeName.IndexOf('`');
                 if (split >= 0) sb.Length = split;
                 foreach (Type arg in type
 #if WINRT
@@ -266,7 +268,7 @@ namespace ProtoBuf.Meta
                 return sb.ToString();
             }
 #endif
-            return type.Name;
+            return typeName;
         }
 
         private string name;
@@ -359,7 +361,7 @@ namespace ProtoBuf.Meta
         {
             if ((flags & OPTIONS_Frozen)!=0) throw new InvalidOperationException("The type cannot be changed once a serializer has been generated for " + type.FullName);
         }
-        internal void Freeze() { flags |= OPTIONS_Frozen; }
+        //internal void Freeze() { flags |= OPTIONS_Frozen; }
 
         private readonly Type type;
         /// <summary>
@@ -427,7 +429,7 @@ namespace ProtoBuf.Meta
             {
                 MetaType mt = model[surrogate], mtBase;
                 while ((mtBase = mt.baseType) != null) { mt = mtBase; }
-                return new SurrogateSerializer(type, surrogate, mt.Serializer);
+                return new SurrogateSerializer(model, type, surrogate, mt.Serializer);
             }
             if (IsAutoTuple)
             {
@@ -546,7 +548,8 @@ namespace ProtoBuf.Meta
             {
                 AttributeMap item = (AttributeMap)typeAttribs[i];
                 object tmp;
-                if (!isEnum && item.AttributeType.FullName == "ProtoBuf.ProtoIncludeAttribute")
+                string fullAttributeTypeName = item.AttributeType.FullName;
+                if (!isEnum && fullAttributeTypeName == "ProtoBuf.ProtoIncludeAttribute")
                 {
                     int tag = 0;
                     if (item.TryGet("tag", out tmp)) tag = (int)tmp;
@@ -575,8 +578,8 @@ namespace ProtoBuf.Meta
                     }
                     if(IsValidSubType(knownType)) AddSubType(tag, knownType, dataFormat);
                 }
-                
-                if(item.AttributeType.FullName == "ProtoBuf.ProtoPartialIgnoreAttribute")
+
+                if (fullAttributeTypeName == "ProtoBuf.ProtoPartialIgnoreAttribute")
                 {
                     if (item.TryGet("MemberName", out tmp) && tmp != null)
                     {
@@ -584,16 +587,30 @@ namespace ProtoBuf.Meta
                         partialIgnores.Add((string)tmp);
                     }
                 }
-                if (!isEnum && item.AttributeType.FullName == "ProtoBuf.ProtoPartialMemberAttribute")
+                if (!isEnum && fullAttributeTypeName == "ProtoBuf.ProtoPartialMemberAttribute")
                 {
                     if (partialMembers == null) partialMembers = new BasicList();
                     partialMembers.Add(item);
                 }
-                
-                if (item.AttributeType.FullName == "ProtoBuf.ProtoContractAttribute")
+
+                if (fullAttributeTypeName == "ProtoBuf.ProtoContractAttribute")
                 {
                     if (item.TryGet("Name", out tmp)) name = (string) tmp;
-                    if (!isEnum)
+                    if (Helpers.IsEnum(type)) // note this is subtly different to isEnum; want to do this even if [Flags]
+                    {
+#if !FEAT_IKVM
+                        // IKVM can't access EnumPassthruHasValue, but conveniently, InferTagFromName will only be returned if set via ctor or property
+                        if (item.TryGet("EnumPassthruHasValue", false, out tmp) && (bool)tmp)
+#endif
+                        {
+                            if (item.TryGet("EnumPassthru", out tmp))
+                            {
+                                EnumPassthru = (bool)tmp;
+                                if (EnumPassthru) isEnum = false; // no longer treated as an enum
+                            }
+                        }
+                    }
+                    else
                     {
                         if (item.TryGet("DataMemberOffset", out tmp)) dataMemberOffset = (int) tmp;
 
@@ -617,11 +634,11 @@ namespace ProtoBuf.Meta
                     }
                 }
 
-                if (item.AttributeType.FullName == "System.Runtime.Serialization.DataContractAttribute")
+                if (fullAttributeTypeName == "System.Runtime.Serialization.DataContractAttribute")
                 {
                     if (name == null && item.TryGet("Name", out tmp)) name = (string)tmp;
                 }
-                if (item.AttributeType.FullName == "System.Xml.Serialization.XmlTypeAttribute")
+                if (fullAttributeTypeName == "System.Xml.Serialization.XmlTypeAttribute")
                 {
                     if (name == null && item.TryGet("TypeName", out tmp)) name = (string)tmp;
                 }
@@ -655,7 +672,7 @@ namespace ProtoBuf.Meta
             MemberInfo[] foundList = type.GetMembers(isEnum ? BindingFlags.Public | BindingFlags.Static
                 : BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 #endif
-                foreach (MemberInfo member in foundList)
+            foreach (MemberInfo member in foundList)
             {
                 if (member.DeclaringType != type) continue;
                 if (member.IsDefined(model.MapType(typeof(ProtoIgnoreAttribute)), true)) continue;
@@ -1326,6 +1343,7 @@ namespace ProtoBuf.Meta
         /// </summary>     
         public MetaType Add(params string[] memberNames)
         {
+            if (memberNames == null) throw new ArgumentNullException("memberNames");
             int next = GetNextFieldNumber();
             for (int i = 0; i < memberNames.Length; i++)
             {
@@ -1680,7 +1698,7 @@ namespace ProtoBuf.Meta
         internal bool IsPrepared()
         {
             #if FEAT_COMPILER && !FEAT_IKVM && !FX11
-            return (serializer as CompiledSerializer) != null;
+            return serializer is CompiledSerializer;
             #else
             return false;
             #endif

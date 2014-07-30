@@ -84,6 +84,13 @@
     <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
+    <Compile Include="Core\ProtoBuf\CallbackAttributes.cs" />
+    <Compile Include="Core\ProtoBuf\Extensible.cs" />
+    <Compile Include="Core\ProtoBuf\ExtensibleUtil.cs" />
+    <Compile Include="Core\ProtoBuf\GlobalSuppressions.cs" />
+    <Compile Include="Core\ProtoBuf\KeyValuePairProxy.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Encryption\RC4.cs" />

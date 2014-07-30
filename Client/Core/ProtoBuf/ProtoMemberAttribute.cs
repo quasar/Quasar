@@ -209,7 +209,7 @@ namespace ProtoBuf
     /// </summary>
     [AttributeUsage(AttributeTargets.Class,
             AllowMultiple = true, Inherited = false)]
-    public class ProtoPartialMemberAttribute : ProtoMemberAttribute
+    public sealed class ProtoPartialMemberAttribute : ProtoMemberAttribute
     {
         /// <summary>
         /// Creates a new ProtoMemberAttribute instance.

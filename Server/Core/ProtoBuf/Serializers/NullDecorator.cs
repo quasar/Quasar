@@ -21,17 +21,18 @@ namespace ProtoBuf.Serializers
             if (!tail.ReturnsValue)
                 throw new NotSupportedException("NullDecorator only supports implementations that return values");
 
-            if (Helpers.IsValueType(tail.ExpectedType))
+            Type tailType = tail.ExpectedType;
+            if (Helpers.IsValueType(tailType))
             {
 #if NO_GENERICS
                 throw new NotSupportedException("NullDecorator cannot be used with a struct without generics support");
 #else
-                expectedType = model.MapType(typeof (Nullable<>)).MakeGenericType(tail.ExpectedType);
+                expectedType = model.MapType(typeof(Nullable<>)).MakeGenericType(tailType);
 #endif
             }
             else
             {
-                expectedType = tail.ExpectedType;
+                expectedType = tailType;
             }
 
         }

@@ -80,7 +80,7 @@ namespace ProtoBuf
         /// Has a InferTagFromName value been explicitly set? if not, the default from the type-model is assumed.
         /// </summary>
         internal bool InferTagFromNameHasValue
-        {
+        { // note that this property is accessed via reflection and should not be removed
             get { return HasFlag(OPTIONS_InferTagFromNameHasValue); }
         }
 
@@ -137,6 +137,29 @@ namespace ProtoBuf
             OPTIONS_UseProtoMembersOnly = 4,
             OPTIONS_SkipConstructor = 8,
             OPTIONS_IgnoreListHandling = 16,
-            OPTIONS_AsReferenceDefault = 32;
+            OPTIONS_AsReferenceDefault = 32,
+            OPTIONS_EnumPassthru = 64,
+            OPTIONS_EnumPassthruHasValue = 128;
+
+        /// <summary>
+        /// Applies only to enums (not to DTO classes themselves); gets or sets a value indicating that an enum should be treated directly as an int/short/etc, rather
+        /// than enforcing .proto enum rules. This is useful *in particul* for [Flags] enums.
+        /// </summary>
+        public bool EnumPassthru
+        {
+            get { return HasFlag(OPTIONS_EnumPassthru); }
+            set {
+                SetFlag(OPTIONS_EnumPassthru, value);
+                SetFlag(OPTIONS_EnumPassthruHasValue, true);
+            }
+        }
+
+        /// <summary>
+        /// Has a EnumPassthru value been explicitly set?
+        /// </summary>
+        internal bool EnumPassthruHasValue
+        { // note that this property is accessed via reflection and should not be removed
+            get { return HasFlag(OPTIONS_EnumPassthruHasValue); }
+        }
     }
 }

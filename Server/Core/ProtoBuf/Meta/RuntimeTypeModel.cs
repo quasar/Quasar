@@ -16,6 +16,7 @@ using System.Reflection.Emit;
 
 using ProtoBuf.Serializers;
 using System.Threading;
+using System.IO;
 
 
 namespace ProtoBuf.Meta
@@ -103,7 +104,7 @@ namespace ProtoBuf.Meta
         }
         
 
-        private class Singleton
+        private sealed class Singleton
         {
             private Singleton() { }
             internal static readonly RuntimeTypeModel Value = new RuntimeTypeModel(true);
@@ -408,23 +409,17 @@ namespace ProtoBuf.Meta
             Type underlyingType = ResolveProxies(type);
             return underlyingType == null ? null : FindWithoutAdd(underlyingType);
         }
-        sealed class MetaTypeFinder : BasicList.IPredicate
+
+        static readonly BasicList.MatchPredicate
+            MetaTypeFinder = new BasicList.MatchPredicate(MetaTypeFinderImpl),
+            BasicTypeFinder = new BasicList.MatchPredicate(BasicTypeFinderImpl);
+        static bool MetaTypeFinderImpl(object value, object ctx)
         {
-            private readonly Type type;
-            public MetaTypeFinder(Type type) { this.type = type; }
-            public bool IsMatch(object obj)
-            {
-                return ((MetaType)obj).Type == type;
-            }
+            return ((MetaType)value).Type == (Type)ctx;
         }
-        sealed class BasicTypeFinder : BasicList.IPredicate
+        static bool BasicTypeFinderImpl(object value, object ctx)
         {
-            private readonly Type type;
-            public BasicTypeFinder(Type type) { this.type = type; }
-            public bool IsMatch(object obj)
-            {
-                return ((BasicType)obj).Type == type;
-            }
+            return ((BasicType)value).Type == (Type)ctx;
         }
 
         private void WaitOnLock(MetaType type)
@@ -441,7 +436,7 @@ namespace ProtoBuf.Meta
         }
         BasicList basicTypes = new BasicList();
 
-        class BasicType
+        sealed class BasicType
         {
             private readonly Type type;
             public Type Type { get { return type; } }
@@ -455,8 +450,7 @@ namespace ProtoBuf.Meta
         }
         internal IProtoSerializer TryGetBasicTypeSerializer(Type type)
         {
-            BasicList.IPredicate predicate = new BasicTypeFinder(type);
-            int idx = basicTypes.IndexOf(predicate);
+            int idx = basicTypes.IndexOf(BasicTypeFinder, type);
 
             if (idx >= 0) return ((BasicType)basicTypes[idx]).Serializer;
 
@@ -464,7 +458,7 @@ namespace ProtoBuf.Meta
             { // don't need a full model lock for this
 
                 // double-checked
-                idx = basicTypes.IndexOf(predicate);
+                idx = basicTypes.IndexOf(BasicTypeFinder, type);
                 if (idx >= 0) return ((BasicType)basicTypes[idx]).Serializer;
 
                 WireType defaultWireType;
@@ -481,8 +475,7 @@ namespace ProtoBuf.Meta
 
         internal int FindOrAddAuto(Type type, bool demand, bool addWithContractOnly, bool addEvenIfAutoDisabled)
         {
-            MetaTypeFinder predicate = new MetaTypeFinder(type);
-            int key = types.IndexOf(predicate);
+            int key = types.IndexOf(MetaTypeFinder, type);
             MetaType metaType;
 
             // the fast happy path: meta-types we've already seen
@@ -511,8 +504,7 @@ namespace ProtoBuf.Meta
             Type underlyingType = ResolveProxies(type);
             if (underlyingType != null)
             {
-                predicate = new MetaTypeFinder(underlyingType);
-                key = types.IndexOf(predicate);
+                key = types.IndexOf(MetaTypeFinder, underlyingType);
                 type = underlyingType; // if new added, make it reflect the underlying type
             }
 
@@ -544,7 +536,7 @@ namespace ProtoBuf.Meta
                     bool weAdded = false;
 
                     // double-checked
-                    int winner = types.IndexOf(predicate);
+                    int winner = types.IndexOf(MetaTypeFinder, type);
                     if (winner < 0)
                     {
                         ThrowIfFrozen();
@@ -786,6 +778,7 @@ namespace ProtoBuf.Meta
         }
 
 #if FEAT_COMPILER
+        // this is used by some unit-tests; do not remove
         internal Compiler.ProtoSerializer GetSerializer(IProtoSerializer serializer, bool compiled)
         {
 #if FEAT_IKVM
@@ -842,7 +835,7 @@ namespace ProtoBuf.Meta
             }
         }
 #if !SILVERLIGHT
-        internal class SerializerPair : IComparable
+        internal sealed class SerializerPair : IComparable
         {
             int IComparable.CompareTo(object obj)
             {
@@ -969,6 +962,7 @@ namespace ProtoBuf.Meta
             /// </summary>
             public void SetFrameworkOptions(MetaType from)
             {
+                if (from == null) throw new ArgumentNullException("from");
                 AttributeMap[] attribs = AttributeMap.Create(from.Model, from.Type.Assembly);
                 foreach (AttributeMap attrib in attribs)
                 {
@@ -1016,6 +1010,22 @@ namespace ProtoBuf.Meta
             /// The acecssibility of the generated serializer
             /// </summary>
             public Accessibility Accessibility { get { return accessibility; } set { accessibility = value; } }
+
+#if FEAT_IKVM
+            /// <summary>
+            /// The name of the container that holds the key pair.
+            /// </summary>
+            public string KeyContainer { get; set; }
+            /// <summary>
+            /// The path to a file that hold the key pair.
+            /// </summary>
+            public string KeyFile { get; set; }
+
+            /// <summary>
+            /// The public  key to sign the file with.
+            /// </summary>
+            public string PublicKey { get; set; }
+#endif
         }
         /// <summary>
         /// Type accessibility
@@ -1045,19 +1055,6 @@ namespace ProtoBuf.Meta
             options.TypeName = name;
             options.OutputPath = path;
             return Compile(options);
-        }
-
-        sealed class StringFinder : BasicList.IPredicate
-        {
-            private readonly string value;
-            public StringFinder(string value)
-            {
-                this.value = value;
-            }
-            bool BasicList.IPredicate.IsMatch(object obj)
-            {
-                return value == (string)obj;
-            }
         }
 
         /// <summary>
@@ -1097,6 +1094,18 @@ namespace ProtoBuf.Meta
             IKVM.Reflection.AssemblyName an = new IKVM.Reflection.AssemblyName();
             an.Name = assemblyName;
             AssemblyBuilder asm = universe.DefineDynamicAssembly(an, AssemblyBuilderAccess.Save);
+            if (!Helpers.IsNullOrEmpty(options.KeyFile))
+            {
+                asm.__SetAssemblyKeyPair(new StrongNameKeyPair(File.OpenRead(options.KeyFile)));
+            }
+            else if (!Helpers.IsNullOrEmpty(options.KeyContainer))
+            {
+                asm.__SetAssemblyKeyPair(new StrongNameKeyPair(options.KeyContainer));
+            }
+            else if (!Helpers.IsNullOrEmpty(options.PublicKey))
+            {
+                asm.__SetAssemblyPublicKey(FromHex(options.PublicKey));
+            }
             if(!Helpers.IsNullOrEmpty(options.ImageRuntimeVersion) && options.MetaDataVersion != 0)
             {
                 asm.__SetImageRuntimeVersion(options.ImageRuntimeVersion, options.MetaDataVersion);
@@ -1112,341 +1121,55 @@ namespace ProtoBuf.Meta
                                         : asm.DefineDynamicModule(moduleName);
 #endif
 
-            if (!Helpers.IsNullOrEmpty(options.TargetFrameworkName))
-            {
-                // get [TargetFramework] from mscorlib/equivalent and burn into the new assembly
-                Type versionAttribType = null;
-                try
-                { // this is best-endeavours only
-                    versionAttribType = GetType("System.Runtime.Versioning.TargetFrameworkAttribute", MapType(typeof(string)).Assembly);
-                }
-                catch { /* don't stress */ }
-                if (versionAttribType != null)
-                {
-                    PropertyInfo[] props;
-                    object[] propValues;
-                    if (Helpers.IsNullOrEmpty(options.TargetFrameworkDisplayName))
-                    {
-                        props = new PropertyInfo[0];
-                        propValues = new object[0];
-                    }
-                    else
-                    {
-                        props = new PropertyInfo[1] { versionAttribType.GetProperty("FrameworkDisplayName") };
-                        propValues = new object[1] { options.TargetFrameworkDisplayName };
-                    }
-                    CustomAttributeBuilder builder = new CustomAttributeBuilder(
-                        versionAttribType.GetConstructor(new Type[] { MapType(typeof(string)) }),
-                        new object[] { options.TargetFrameworkName },
-                        props,
-                        propValues);
-                    asm.SetCustomAttribute(builder);
-                }
-            }
+            WriteAssemblyAttributes(options, assemblyName, asm);
 
-            // copy assembly:InternalsVisibleTo
-            Type internalsVisibleToAttribType = null;
-#if !FX11
-            try
-            {
-                internalsVisibleToAttribType = MapType(typeof(System.Runtime.CompilerServices.InternalsVisibleToAttribute));
-            }
-            catch { /* best endeavors only */ }
-#endif   
-            if (internalsVisibleToAttribType != null)
-            {
-                BasicList internalAssemblies = new BasicList(), consideredAssemblies = new BasicList();
-                foreach (MetaType metaType in types)
-                {
-                    Assembly assembly = metaType.Type.Assembly;
-                    if (consideredAssemblies.IndexOfReference(assembly) >= 0) continue;
-                    consideredAssemblies.Add(assembly);
+            TypeBuilder type = WriteBasicTypeModel(options, typeName, module);
 
-                    AttributeMap[] assemblyAttribsMap = AttributeMap.Create(this, assembly);
-                    for (int i = 0; i < assemblyAttribsMap.Length; i++)
-                    {
-                        
-                        if (assemblyAttribsMap[i].AttributeType != internalsVisibleToAttribType) continue;
+            int index;
+            bool hasInheritance;
+            SerializerPair[] methodPairs;
+            Compiler.CompilerContext.ILVersion ilVersion;
+            WriteSerializers(options, assemblyName, type, out index, out hasInheritance, out methodPairs, out ilVersion);
 
-                        object privelegedAssemblyObj;
-                        assemblyAttribsMap[i].TryGet("AssemblyName", out privelegedAssemblyObj);
-                        string privelegedAssemblyName = privelegedAssemblyObj as string;
-                        if (privelegedAssemblyName == assemblyName || Helpers.IsNullOrEmpty(privelegedAssemblyName)) continue; // ignore
-
-                        if (internalAssemblies.IndexOf(new StringFinder(privelegedAssemblyName)) >= 0) continue; // seen it before
-                        internalAssemblies.Add(privelegedAssemblyName);
-
-
-                        CustomAttributeBuilder builder = new CustomAttributeBuilder(
-                            internalsVisibleToAttribType.GetConstructor(new Type[] { MapType(typeof(string)) }),
-                            new object[] { privelegedAssemblyName });
-                        asm.SetCustomAttribute(builder);
-                    }
-                }
-            }
-            Type baseType = MapType(typeof(TypeModel));
-            TypeAttributes typeAttributes = (baseType.Attributes & ~TypeAttributes.Abstract) | TypeAttributes.Sealed;
-            if(options.Accessibility == Accessibility.Internal)
-            {
-                typeAttributes &= ~TypeAttributes.Public;
-            }
-            
-            TypeBuilder type = module.DefineType(typeName, typeAttributes, baseType);
-            Compiler.CompilerContext ctx;
-            
-            int index = 0;
-            bool hasInheritance = false;
-            SerializerPair[] methodPairs = new SerializerPair[types.Count];
-            foreach (MetaType metaType in types)
-            {
-                MethodBuilder writeMethod = type.DefineMethod("Write"
-#if DEBUG
- + metaType.Type.Name
-#endif
-                    ,
-                    MethodAttributes.Private | MethodAttributes.Static, CallingConventions.Standard,
-                    MapType(typeof(void)), new Type[] { metaType.Type, MapType(typeof(ProtoWriter)) });
-
-                MethodBuilder readMethod = type.DefineMethod("Read"
-#if DEBUG
- + metaType.Type.Name
-#endif              
-                    ,
-                    MethodAttributes.Private | MethodAttributes.Static, CallingConventions.Standard,
-                    metaType.Type, new Type[] { metaType.Type, MapType(typeof(ProtoReader)) });
-
-                SerializerPair pair = new SerializerPair(
-                    GetKey(metaType.Type, true, false), GetKey(metaType.Type, true, true), metaType,
-                    writeMethod, readMethod, writeMethod.GetILGenerator(), readMethod.GetILGenerator());
-                methodPairs[index++] = pair;
-                if (pair.MetaKey != pair.BaseKey) hasInheritance = true;
-            }
-            if (hasInheritance)
-            {
-                Array.Sort(methodPairs);
-            }
-
-            Compiler.CompilerContext.ILVersion ilVersion = Compiler.CompilerContext.ILVersion.Net2;
-            if (options.MetaDataVersion == 0x10000)
-            {
-                ilVersion = Compiler.CompilerContext.ILVersion.Net1; // old-school!
-            }
-            for(index = 0; index < methodPairs.Length ; index++)
-            {
-                SerializerPair pair = methodPairs[index];
-                ctx = new Compiler.CompilerContext(pair.SerializeBody, true, true, methodPairs, this, ilVersion, assemblyName, pair.Type.Type);
-                ctx.CheckAccessibility(pair.Deserialize.ReturnType);
-                pair.Type.Serializer.EmitWrite(ctx, ctx.InputValue);
-                ctx.Return();
-
-                ctx = new Compiler.CompilerContext(pair.DeserializeBody, true, false, methodPairs, this, ilVersion, assemblyName, pair.Type.Type);
-                pair.Type.Serializer.EmitRead(ctx, ctx.InputValue);
-                if (!pair.Type.Serializer.ReturnsValue)
-                {
-                    ctx.LoadValue(ctx.InputValue);
-                }
-                ctx.Return();
-            }
-
-            ILGenerator il = Override(type, "GetKeyImpl");
+            ILGenerator il;
             int knownTypesCategory;
             FieldBuilder knownTypes;
             Type knownTypesLookupType;
-            const int KnownTypes_Array = 1, KnownTypes_Dictionary = 2, KnownTypes_Hashtable = 3, KnownTypes_ArrayCutoff = 20;
+            WriteGetKeyImpl(type, hasInheritance, methodPairs, ilVersion, assemblyName, out il, out knownTypesCategory, out knownTypes, out knownTypesLookupType);
 
-            if (types.Count <= KnownTypes_ArrayCutoff)
-            {
-                knownTypesCategory = KnownTypes_Array;
-                knownTypesLookupType = MapType(typeof(System.Type[]), true);
-            }
-            else
-            {
-#if NO_GENERICS
-                knownTypesLookupType = null;
-#else
-                knownTypesLookupType = MapType(typeof(System.Collections.Generic.Dictionary<System.Type, int>), false);
-#endif
-                if (knownTypesLookupType == null)
-                {
-                    knownTypesLookupType = MapType(typeof(Hashtable), true);
-                    knownTypesCategory = KnownTypes_Hashtable;
-                }
-                else
-                {
-                    knownTypesCategory = KnownTypes_Dictionary; 
-                }
-            }
-            knownTypes = type.DefineField("knownTypes", knownTypesLookupType, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static);
+            Compiler.CompilerContext ctx = WriteSerializeDeserialize(assemblyName, type, methodPairs, ilVersion, ref il);
+
+            WriteConstructors(type, ref index, methodPairs, ref il, knownTypesCategory, knownTypes, knownTypesLookupType, ctx);
             
-            switch(knownTypesCategory)
+
+
+            Type finalType = type.CreateType();
+            if(!Helpers.IsNullOrEmpty(path))
             {
-                case KnownTypes_Array:
-                    {
-                        il.Emit(OpCodes.Ldsfld, knownTypes);
-                        il.Emit(OpCodes.Ldarg_1);
-                        // note that Array.IndexOf is not supported under CF
-                        il.EmitCall(OpCodes.Callvirt, MapType(typeof(IList)).GetMethod(
-                            "IndexOf", new Type[] { MapType(typeof(object)) }), null);
-                        if (hasInheritance)
-                        {
-                            il.DeclareLocal(MapType(typeof(int))); // loc-0
-                            il.Emit(OpCodes.Dup);
-                            il.Emit(OpCodes.Stloc_0);
-
-                            BasicList getKeyLabels = new BasicList();
-                            int lastKey = -1;
-                            for (int i = 0; i < methodPairs.Length; i++)
-                            {
-                                if (methodPairs[i].MetaKey == methodPairs[i].BaseKey) break;
-                                if (lastKey == methodPairs[i].BaseKey)
-                                {   // add the last label again
-                                    getKeyLabels.Add(getKeyLabels[getKeyLabels.Count - 1]);
-                                }
-                                else
-                                {   // add a new unique label
-                                    getKeyLabels.Add(il.DefineLabel());
-                                    lastKey = methodPairs[i].BaseKey;
-                                }
-                            }
-                            Label[] subtypeLabels = new Label[getKeyLabels.Count];
-                            getKeyLabels.CopyTo(subtypeLabels, 0);
-
-                            il.Emit(OpCodes.Switch, subtypeLabels);
-                            il.Emit(OpCodes.Ldloc_0); // not a sub-type; use the original value
-                            il.Emit(OpCodes.Ret);
-
-                            lastKey = -1;
-                            // now output the different branches per sub-type (not derived type)
-                            for (int i = subtypeLabels.Length - 1; i >= 0; i--)
-                            {
-                                if (lastKey != methodPairs[i].BaseKey)
-                                {
-                                    lastKey = methodPairs[i].BaseKey;
-                                    // find the actual base-index for this base-key (i.e. the index of
-                                    // the base-type)
-                                    int keyIndex = -1;
-                                    for (int j = subtypeLabels.Length; j < methodPairs.Length; j++)
-                                    {
-                                        if (methodPairs[j].BaseKey == lastKey && methodPairs[j].MetaKey == lastKey)
-                                        {
-                                            keyIndex = j;
-                                            break;
-                                        }
-                                    }
-                                    il.MarkLabel(subtypeLabels[i]);
-                                    Compiler.CompilerContext.LoadValue(il, keyIndex);
-                                    il.Emit(OpCodes.Ret);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            il.Emit(OpCodes.Ret);
-                        }
-                    }
-                    break;
-                case KnownTypes_Dictionary:
-                    {
-                        LocalBuilder result = il.DeclareLocal(MapType(typeof(int)));
-                        Label otherwise = il.DefineLabel();
-                        il.Emit(OpCodes.Ldsfld, knownTypes);
-                        il.Emit(OpCodes.Ldarg_1);
-                        il.Emit(OpCodes.Ldloca_S, result);
-                        il.EmitCall(OpCodes.Callvirt, knownTypesLookupType.GetMethod("TryGetValue", BindingFlags.Instance | BindingFlags.Public), null);
-                        il.Emit(OpCodes.Brfalse_S, otherwise);
-                        il.Emit(OpCodes.Ldloc_S, result);
-                        il.Emit(OpCodes.Ret);
-                        il.MarkLabel(otherwise);
-                        il.Emit(OpCodes.Ldc_I4_M1);
-                        il.Emit(OpCodes.Ret);
-                    }
-                    break;
-                case KnownTypes_Hashtable:
-                    {
-                        Label otherwise = il.DefineLabel();
-                        il.Emit(OpCodes.Ldsfld, knownTypes);
-                        il.Emit(OpCodes.Ldarg_1);
-                        il.EmitCall(OpCodes.Callvirt, knownTypesLookupType.GetProperty("Item").GetGetMethod(), null);
-                        il.Emit(OpCodes.Dup);
-                        il.Emit(OpCodes.Brfalse_S, otherwise);
-#if FX11
-                        il.Emit(OpCodes.Unbox, MapType(typeof(int)));
-                        il.Emit(OpCodes.Ldobj, MapType(typeof(int)));
+                asm.Save(path);
+                Helpers.DebugWriteLine("Wrote dll:" + path);
+            }
+#if FEAT_IKVM
+            return null;
 #else
-                        if (ilVersion == Compiler.CompilerContext.ILVersion.Net1)
-                        {
-                            il.Emit(OpCodes.Unbox, MapType(typeof(int)));
-                            il.Emit(OpCodes.Ldobj, MapType(typeof(int)));
-                        }
-                        else
-                        {
-                            il.Emit(OpCodes.Unbox_Any, MapType(typeof(int)));
-                        }
+            return (TypeModel)Activator.CreateInstance(finalType);
 #endif
-                        il.Emit(OpCodes.Ret);
-                        il.MarkLabel(otherwise);
-                        il.Emit(OpCodes.Pop);
-                        il.Emit(OpCodes.Ldc_I4_M1);
-                        il.Emit(OpCodes.Ret);
-                    }
-                    break;
-                default:
-                    throw new InvalidOperationException();
-            }
-            
-            il = Override(type, "Serialize");
-            ctx = new Compiler.CompilerContext(il, false, true, methodPairs, this, ilVersion, assemblyName, MapType(typeof(object)));
-            // arg0 = this, arg1 = key, arg2=obj, arg3=dest
-            Label[] jumpTable = new Label[types.Count];
-            for (int i = 0; i < jumpTable.Length; i++) {
-                jumpTable[i] = il.DefineLabel();
-            }
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Switch, jumpTable);
-            ctx.Return();
-            for (int i = 0; i < jumpTable.Length; i++)
+        }
+#if FEAT_IKVM
+        private byte[] FromHex(string value)
+        {
+            if (Helpers.IsNullOrEmpty(value)) throw new ArgumentNullException("value");
+            int len = value.Length / 2;
+            byte[] result = new byte[len];
+            for(int i = 0 ; i < len ; i++)
             {
-                SerializerPair pair = methodPairs[i];
-                il.MarkLabel(jumpTable[i]);
-                il.Emit(OpCodes.Ldarg_2);
-                ctx.CastFromObject(pair.Type.Type);
-                il.Emit(OpCodes.Ldarg_3);
-                il.EmitCall(OpCodes.Call, pair.Serialize, null);
-                ctx.Return();
+                result[i] = Convert.ToByte(value.Substring(i * 2, 2), 16);
             }
-
-            il = Override(type, "Deserialize");
-            ctx = new Compiler.CompilerContext(il, false, false, methodPairs, this, ilVersion, assemblyName, MapType(typeof(object)));
-            // arg0 = this, arg1 = key, arg2=obj, arg3=source
-            for (int i = 0; i < jumpTable.Length; i++)
-            {
-                jumpTable[i] = il.DefineLabel();
-            }
-            il.Emit(OpCodes.Ldarg_1);
-            il.Emit(OpCodes.Switch, jumpTable);
-            ctx.LoadNullRef();
-            ctx.Return();
-            for (int i = 0; i < jumpTable.Length; i++)
-            {
-                SerializerPair pair = methodPairs[i];
-                il.MarkLabel(jumpTable[i]);
-                Type keyType = pair.Type.Type;
-                if (keyType.IsValueType)
-                {
-                    il.Emit(OpCodes.Ldarg_2);
-                    il.Emit(OpCodes.Ldarg_3);
-                    il.EmitCall(OpCodes.Call, EmitBoxedSerializer(type, i, keyType, methodPairs, this, ilVersion, assemblyName), null);
-                    ctx.Return();
-                }
-                else
-                {
-                    il.Emit(OpCodes.Ldarg_2);
-                    ctx.CastFromObject(keyType);
-                    il.Emit(OpCodes.Ldarg_3);
-                    il.EmitCall(OpCodes.Call, pair.Deserialize, null);
-                    ctx.Return();
-                }
-            }
+            return result;
+        }
+#endif
+        private void WriteConstructors(TypeBuilder type, ref int index, SerializerPair[] methodPairs, ref ILGenerator il, int knownTypesCategory, FieldBuilder knownTypes, Type knownTypesLookupType, Compiler.CompilerContext ctx)
+        {
             type.DefineDefaultConstructor(MethodAttributes.Public);
             il = type.DefineTypeInitializer().GetILGenerator();
             switch (knownTypesCategory)
@@ -1472,7 +1195,7 @@ namespace ProtoBuf.Meta
                 case KnownTypes_Dictionary:
                     {
                         Compiler.CompilerContext.LoadValue(il, types.Count);
-                        LocalBuilder loc = il.DeclareLocal(knownTypesLookupType);
+                        //LocalBuilder loc = il.DeclareLocal(knownTypesLookupType);
                         il.Emit(OpCodes.Newobj, knownTypesLookupType.GetConstructor(new Type[] { MapType(typeof(int)) }));
                         il.Emit(OpCodes.Stsfld, knownTypes);
                         int typeIndex = 0;
@@ -1534,26 +1257,367 @@ namespace ProtoBuf.Meta
                 default:
                     throw new InvalidOperationException();
             }
-            
+        }
 
-
-            Type finalType = type.CreateType();
-            if(!Helpers.IsNullOrEmpty(path))
+        private Compiler.CompilerContext WriteSerializeDeserialize(string assemblyName, TypeBuilder type, SerializerPair[] methodPairs, Compiler.CompilerContext.ILVersion ilVersion, ref ILGenerator il)
+        {
+            il = Override(type, "Serialize");
+            Compiler.CompilerContext ctx = new Compiler.CompilerContext(il, false, true, methodPairs, this, ilVersion, assemblyName, MapType(typeof(object)));
+            // arg0 = this, arg1 = key, arg2=obj, arg3=dest
+            Compiler.CodeLabel[] jumpTable = new Compiler.CodeLabel[types.Count];
+            for (int i = 0; i < jumpTable.Length; i++)
             {
-                asm.Save(path);
-                Helpers.DebugWriteLine("Wrote dll:" + path);
+                jumpTable[i] = ctx.DefineLabel();
             }
-#if FEAT_IKVM
-            return null;
+            il.Emit(OpCodes.Ldarg_1);
+            ctx.Switch(jumpTable);
+            ctx.Return();
+            for (int i = 0; i < jumpTable.Length; i++)
+            {
+                SerializerPair pair = methodPairs[i];
+                ctx.MarkLabel(jumpTable[i]);
+                il.Emit(OpCodes.Ldarg_2);
+                ctx.CastFromObject(pair.Type.Type);
+                il.Emit(OpCodes.Ldarg_3);
+                il.EmitCall(OpCodes.Call, pair.Serialize, null);
+                ctx.Return();
+            }
+
+            il = Override(type, "Deserialize");
+            ctx = new Compiler.CompilerContext(il, false, false, methodPairs, this, ilVersion, assemblyName, MapType(typeof(object)));
+            // arg0 = this, arg1 = key, arg2=obj, arg3=source
+            for (int i = 0; i < jumpTable.Length; i++)
+            {
+                jumpTable[i] = ctx.DefineLabel();
+            }
+            il.Emit(OpCodes.Ldarg_1);
+            ctx.Switch(jumpTable);
+            ctx.LoadNullRef();
+            ctx.Return();
+            for (int i = 0; i < jumpTable.Length; i++)
+            {
+                SerializerPair pair = methodPairs[i];
+                ctx.MarkLabel(jumpTable[i]);
+                Type keyType = pair.Type.Type;
+                if (keyType.IsValueType)
+                {
+                    il.Emit(OpCodes.Ldarg_2);
+                    il.Emit(OpCodes.Ldarg_3);
+                    il.EmitCall(OpCodes.Call, EmitBoxedSerializer(type, i, keyType, methodPairs, this, ilVersion, assemblyName), null);
+                    ctx.Return();
+                }
+                else
+                {
+                    il.Emit(OpCodes.Ldarg_2);
+                    ctx.CastFromObject(keyType);
+                    il.Emit(OpCodes.Ldarg_3);
+                    il.EmitCall(OpCodes.Call, pair.Deserialize, null);
+                    ctx.Return();
+                }
+            }
+            return ctx;
+        }
+
+        private const int KnownTypes_Array = 1, KnownTypes_Dictionary = 2, KnownTypes_Hashtable = 3, KnownTypes_ArrayCutoff = 20;
+        private void WriteGetKeyImpl(TypeBuilder type, bool hasInheritance, SerializerPair[] methodPairs, Compiler.CompilerContext.ILVersion ilVersion, string assemblyName, out ILGenerator il, out int knownTypesCategory, out FieldBuilder knownTypes, out Type knownTypesLookupType)
+        {
+
+            il = Override(type, "GetKeyImpl");
+            Compiler.CompilerContext ctx = new Compiler.CompilerContext(il, false, false, methodPairs, this, ilVersion, assemblyName, MapType(typeof(System.Type), true));
+            
+            if (types.Count <= KnownTypes_ArrayCutoff)
+            {
+                knownTypesCategory = KnownTypes_Array;
+                knownTypesLookupType = MapType(typeof(System.Type[]), true);
+            }
+            else
+            {
+#if NO_GENERICS
+                knownTypesLookupType = null;
 #else
-            return (TypeModel)Activator.CreateInstance(finalType);
+                knownTypesLookupType = MapType(typeof(System.Collections.Generic.Dictionary<System.Type, int>), false);
 #endif
+                if (knownTypesLookupType == null)
+                {
+                    knownTypesLookupType = MapType(typeof(Hashtable), true);
+                    knownTypesCategory = KnownTypes_Hashtable;
+                }
+                else
+                {
+                    knownTypesCategory = KnownTypes_Dictionary;
+                }
+            }
+            knownTypes = type.DefineField("knownTypes", knownTypesLookupType, FieldAttributes.Private | FieldAttributes.InitOnly | FieldAttributes.Static);
+
+            switch (knownTypesCategory)
+            {
+                case KnownTypes_Array:
+                    {
+                        il.Emit(OpCodes.Ldsfld, knownTypes);
+                        il.Emit(OpCodes.Ldarg_1);
+                        // note that Array.IndexOf is not supported under CF
+                        il.EmitCall(OpCodes.Callvirt, MapType(typeof(IList)).GetMethod(
+                            "IndexOf", new Type[] { MapType(typeof(object)) }), null);
+                        if (hasInheritance)
+                        {
+                            il.DeclareLocal(MapType(typeof(int))); // loc-0
+                            il.Emit(OpCodes.Dup);
+                            il.Emit(OpCodes.Stloc_0);
+
+                            BasicList getKeyLabels = new BasicList();
+                            int lastKey = -1;
+                            for (int i = 0; i < methodPairs.Length; i++)
+                            {
+                                if (methodPairs[i].MetaKey == methodPairs[i].BaseKey) break;
+                                if (lastKey == methodPairs[i].BaseKey)
+                                {   // add the last label again
+                                    getKeyLabels.Add(getKeyLabels[getKeyLabels.Count - 1]);
+                                }
+                                else
+                                {   // add a new unique label
+                                    getKeyLabels.Add(ctx.DefineLabel());
+                                    lastKey = methodPairs[i].BaseKey;
+                                }
+                            }
+                            Compiler.CodeLabel[] subtypeLabels = new Compiler.CodeLabel[getKeyLabels.Count];
+                            getKeyLabels.CopyTo(subtypeLabels, 0);
+
+                            ctx.Switch(subtypeLabels);
+                            il.Emit(OpCodes.Ldloc_0); // not a sub-type; use the original value
+                            il.Emit(OpCodes.Ret);
+
+                            lastKey = -1;
+                            // now output the different branches per sub-type (not derived type)
+                            for (int i = subtypeLabels.Length - 1; i >= 0; i--)
+                            {
+                                if (lastKey != methodPairs[i].BaseKey)
+                                {
+                                    lastKey = methodPairs[i].BaseKey;
+                                    // find the actual base-index for this base-key (i.e. the index of
+                                    // the base-type)
+                                    int keyIndex = -1;
+                                    for (int j = subtypeLabels.Length; j < methodPairs.Length; j++)
+                                    {
+                                        if (methodPairs[j].BaseKey == lastKey && methodPairs[j].MetaKey == lastKey)
+                                        {
+                                            keyIndex = j;
+                                            break;
+                                        }
+                                    }
+                                    ctx.MarkLabel(subtypeLabels[i]);
+                                    Compiler.CompilerContext.LoadValue(il, keyIndex);
+                                    il.Emit(OpCodes.Ret);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            il.Emit(OpCodes.Ret);
+                        }
+                    }
+                    break;
+                case KnownTypes_Dictionary:
+                    {
+                        LocalBuilder result = il.DeclareLocal(MapType(typeof(int)));
+                        Label otherwise = il.DefineLabel();
+                        il.Emit(OpCodes.Ldsfld, knownTypes);
+                        il.Emit(OpCodes.Ldarg_1);
+                        il.Emit(OpCodes.Ldloca_S, result);
+                        il.EmitCall(OpCodes.Callvirt, knownTypesLookupType.GetMethod("TryGetValue", BindingFlags.Instance | BindingFlags.Public), null);
+                        il.Emit(OpCodes.Brfalse_S, otherwise);
+                        il.Emit(OpCodes.Ldloc_S, result);
+                        il.Emit(OpCodes.Ret);
+                        il.MarkLabel(otherwise);
+                        il.Emit(OpCodes.Ldc_I4_M1);
+                        il.Emit(OpCodes.Ret);
+                    }
+                    break;
+                case KnownTypes_Hashtable:
+                    {
+                        Label otherwise = il.DefineLabel();
+                        il.Emit(OpCodes.Ldsfld, knownTypes);
+                        il.Emit(OpCodes.Ldarg_1);
+                        il.EmitCall(OpCodes.Callvirt, knownTypesLookupType.GetProperty("Item").GetGetMethod(), null);
+                        il.Emit(OpCodes.Dup);
+                        il.Emit(OpCodes.Brfalse_S, otherwise);
+#if FX11
+                        il.Emit(OpCodes.Unbox, MapType(typeof(int)));
+                        il.Emit(OpCodes.Ldobj, MapType(typeof(int)));
+#else
+                        if (ilVersion == Compiler.CompilerContext.ILVersion.Net1)
+                        {
+                            il.Emit(OpCodes.Unbox, MapType(typeof(int)));
+                            il.Emit(OpCodes.Ldobj, MapType(typeof(int)));
+                        }
+                        else
+                        {
+                            il.Emit(OpCodes.Unbox_Any, MapType(typeof(int)));
+                        }
+#endif
+                        il.Emit(OpCodes.Ret);
+                        il.MarkLabel(otherwise);
+                        il.Emit(OpCodes.Pop);
+                        il.Emit(OpCodes.Ldc_I4_M1);
+                        il.Emit(OpCodes.Ret);
+                    }
+                    break;
+                default:
+                    throw new InvalidOperationException();
+            }
+        }
+
+        private void WriteSerializers(CompilerOptions options, string assemblyName, TypeBuilder type, out int index, out bool hasInheritance, out SerializerPair[] methodPairs, out Compiler.CompilerContext.ILVersion ilVersion)
+        {
+            Compiler.CompilerContext ctx;
+
+            index = 0;
+            hasInheritance = false;
+            methodPairs = new SerializerPair[types.Count];
+            foreach (MetaType metaType in types)
+            {
+                MethodBuilder writeMethod = type.DefineMethod("Write"
+#if DEBUG
+ + metaType.Type.Name
+#endif
+,
+                    MethodAttributes.Private | MethodAttributes.Static, CallingConventions.Standard,
+                    MapType(typeof(void)), new Type[] { metaType.Type, MapType(typeof(ProtoWriter)) });
+
+                MethodBuilder readMethod = type.DefineMethod("Read"
+#if DEBUG
+ + metaType.Type.Name
+#endif
+,
+                    MethodAttributes.Private | MethodAttributes.Static, CallingConventions.Standard,
+                    metaType.Type, new Type[] { metaType.Type, MapType(typeof(ProtoReader)) });
+
+                SerializerPair pair = new SerializerPair(
+                    GetKey(metaType.Type, true, false), GetKey(metaType.Type, true, true), metaType,
+                    writeMethod, readMethod, writeMethod.GetILGenerator(), readMethod.GetILGenerator());
+                methodPairs[index++] = pair;
+                if (pair.MetaKey != pair.BaseKey) hasInheritance = true;
+            }
+
+            if (hasInheritance)
+            {
+                Array.Sort(methodPairs);
+            }
+
+            ilVersion = Compiler.CompilerContext.ILVersion.Net2;
+            if (options.MetaDataVersion == 0x10000)
+            {
+                ilVersion = Compiler.CompilerContext.ILVersion.Net1; // old-school!
+            }
+            for (index = 0; index < methodPairs.Length; index++)
+            {
+                SerializerPair pair = methodPairs[index];
+                ctx = new Compiler.CompilerContext(pair.SerializeBody, true, true, methodPairs, this, ilVersion, assemblyName, pair.Type.Type);
+                ctx.CheckAccessibility(pair.Deserialize.ReturnType);
+                pair.Type.Serializer.EmitWrite(ctx, ctx.InputValue);
+                ctx.Return();
+
+                ctx = new Compiler.CompilerContext(pair.DeserializeBody, true, false, methodPairs, this, ilVersion, assemblyName, pair.Type.Type);
+                pair.Type.Serializer.EmitRead(ctx, ctx.InputValue);
+                if (!pair.Type.Serializer.ReturnsValue)
+                {
+                    ctx.LoadValue(ctx.InputValue);
+                }
+                ctx.Return();
+            }
+        }
+
+        private TypeBuilder WriteBasicTypeModel(CompilerOptions options, string typeName, ModuleBuilder module)
+        {
+            Type baseType = MapType(typeof(TypeModel));
+            TypeAttributes typeAttributes = (baseType.Attributes & ~TypeAttributes.Abstract) | TypeAttributes.Sealed;
+            if (options.Accessibility == Accessibility.Internal)
+            {
+                typeAttributes &= ~TypeAttributes.Public;
+            }
+
+            TypeBuilder type = module.DefineType(typeName, typeAttributes, baseType);
+            return type;
+        }
+
+        private void WriteAssemblyAttributes(CompilerOptions options, string assemblyName, AssemblyBuilder asm)
+        {
+            if (!Helpers.IsNullOrEmpty(options.TargetFrameworkName))
+            {
+                // get [TargetFramework] from mscorlib/equivalent and burn into the new assembly
+                Type versionAttribType = null;
+                try
+                { // this is best-endeavours only
+                    versionAttribType = GetType("System.Runtime.Versioning.TargetFrameworkAttribute", MapType(typeof(string)).Assembly);
+                }
+                catch { /* don't stress */ }
+                if (versionAttribType != null)
+                {
+                    PropertyInfo[] props;
+                    object[] propValues;
+                    if (Helpers.IsNullOrEmpty(options.TargetFrameworkDisplayName))
+                    {
+                        props = new PropertyInfo[0];
+                        propValues = new object[0];
+                    }
+                    else
+                    {
+                        props = new PropertyInfo[1] { versionAttribType.GetProperty("FrameworkDisplayName") };
+                        propValues = new object[1] { options.TargetFrameworkDisplayName };
+                    }
+                    CustomAttributeBuilder builder = new CustomAttributeBuilder(
+                        versionAttribType.GetConstructor(new Type[] { MapType(typeof(string)) }),
+                        new object[] { options.TargetFrameworkName },
+                        props,
+                        propValues);
+                    asm.SetCustomAttribute(builder);
+                }
+            }
+
+            // copy assembly:InternalsVisibleTo
+            Type internalsVisibleToAttribType = null;
+#if !FX11
+            try
+            {
+                internalsVisibleToAttribType = MapType(typeof(System.Runtime.CompilerServices.InternalsVisibleToAttribute));
+            }
+            catch { /* best endeavors only */ }
+#endif
+            if (internalsVisibleToAttribType != null)
+            {
+                BasicList internalAssemblies = new BasicList(), consideredAssemblies = new BasicList();
+                foreach (MetaType metaType in types)
+                {
+                    Assembly assembly = metaType.Type.Assembly;
+                    if (consideredAssemblies.IndexOfReference(assembly) >= 0) continue;
+                    consideredAssemblies.Add(assembly);
+
+                    AttributeMap[] assemblyAttribsMap = AttributeMap.Create(this, assembly);
+                    for (int i = 0; i < assemblyAttribsMap.Length; i++)
+                    {
+
+                        if (assemblyAttribsMap[i].AttributeType != internalsVisibleToAttribType) continue;
+
+                        object privelegedAssemblyObj;
+                        assemblyAttribsMap[i].TryGet("AssemblyName", out privelegedAssemblyObj);
+                        string privelegedAssemblyName = privelegedAssemblyObj as string;
+                        if (privelegedAssemblyName == assemblyName || Helpers.IsNullOrEmpty(privelegedAssemblyName)) continue; // ignore
+
+                        if (internalAssemblies.IndexOfString(privelegedAssemblyName) >= 0) continue; // seen it before
+                        internalAssemblies.Add(privelegedAssemblyName);
+
+                        CustomAttributeBuilder builder = new CustomAttributeBuilder(
+                            internalsVisibleToAttribType.GetConstructor(new Type[] { MapType(typeof(string)) }),
+                            new object[] { privelegedAssemblyName });
+                        asm.SetCustomAttribute(builder);
+                    }
+                }
+            }
         }
 
         private static MethodBuilder EmitBoxedSerializer(TypeBuilder type, int i, Type valueType, SerializerPair[] methodPairs, TypeModel model, Compiler.CompilerContext.ILVersion ilVersion, string assemblyName)
         {
             MethodInfo dedicated = methodPairs[i].Deserialize;
-            MethodBuilder boxedSerializer = type.DefineMethod("_" + i, MethodAttributes.Static, CallingConventions.Standard,
+            MethodBuilder boxedSerializer = type.DefineMethod("_" + i.ToString(), MethodAttributes.Static, CallingConventions.Standard,
                 model.MapType(typeof(object)), new Type[] { model.MapType(typeof(object)), model.MapType(typeof(ProtoReader)) });
             Compiler.CompilerContext ctx = new Compiler.CompilerContext(boxedSerializer.GetILGenerator(), true, false, methodPairs, model, ilVersion, assemblyName, model.MapType(typeof(object)));
             ctx.LoadValue(ctx.InputValue);
@@ -1585,10 +1649,12 @@ namespace ProtoBuf.Meta
         
 #endif
 #endif
-        internal bool IsDefined(Type type, int fieldNumber)
-        {
-            return FindWithoutAdd(type).IsDefined(fieldNumber);
-        }
+        //internal bool IsDefined(Type type, int fieldNumber)
+        //{
+        //    return FindWithoutAdd(type).IsDefined(fieldNumber);
+        //}
+
+        // note that this is used by some of the unit tests
         internal bool IsPrepared(Type type)
         {
             MetaType meta = FindWithoutAdd(type);
@@ -1704,7 +1770,7 @@ namespace ProtoBuf.Meta
                         string stackTrace;
                         try
                         {
-                            throw new Exception();
+                            throw new ProtoException();
                         }
                         catch(Exception ex)
                         {

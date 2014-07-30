@@ -56,10 +56,9 @@ namespace ProtoBuf.Serializers
         {
             using (Compiler.Local loc = ctx.GetLocalWithValue(ExpectedType, valueFrom))
             {
-                ctx.LoadAddress(loc, ExpectedType);
                 if (Tail.RequiresOldValue)
                 {
-                    ctx.CopyValue();
+                    ctx.LoadAddress(loc, ExpectedType);
                     ctx.LoadValue(field);  
                 }
                 // value is either now on the stack or not needed
@@ -67,31 +66,28 @@ namespace ProtoBuf.Serializers
 
                 if (Tail.ReturnsValue)
                 {
-                    if (field.FieldType.IsValueType)
+                    using (Compiler.Local newVal = new Compiler.Local(ctx, field.FieldType))
                     {
-                        // stack is now the return value
-                        ctx.StoreValue(field);
-                    }
-                    else
-                    {
-                        
-                        Compiler.CodeLabel hasValue = ctx.DefineLabel(), allDone = ctx.DefineLabel();
-                        ctx.CopyValue();
-                        ctx.BranchIfTrue(hasValue, true); // interpret null as "don't assign"
+                        ctx.StoreValue(newVal);
+                        if (field.FieldType.IsValueType)
+                        {
+                            ctx.LoadAddress(loc, ExpectedType);
+                            ctx.LoadValue(newVal);
+                            ctx.StoreValue(field);
+                        }
+                        else
+                        {
+                            Compiler.CodeLabel allDone = ctx.DefineLabel();
+                            ctx.LoadValue(newVal);
+                            ctx.BranchIfFalse(allDone, true); // interpret null as "don't assign"
 
-                        // no value, discard
-                        ctx.DiscardValue();
-                        ctx.DiscardValue();
-                        ctx.Branch(allDone, true);
+                            ctx.LoadAddress(loc, ExpectedType);
+                            ctx.LoadValue(newVal);
+                            ctx.StoreValue(field);
 
-                        ctx.MarkLabel(hasValue);
-                        ctx.StoreValue(field);
-                        ctx.MarkLabel(allDone);
+                            ctx.MarkLabel(allDone);
+                        }
                     }
-                }
-                else
-                {
-                    ctx.DiscardValue();
                 }
             }
         }

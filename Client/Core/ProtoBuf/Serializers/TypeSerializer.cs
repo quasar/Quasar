@@ -203,14 +203,15 @@ namespace ProtoBuf.Serializers
                     {
                         IProtoSerializer ser = serializers[i];
                         //Helpers.DebugWriteLine(": " + ser.ToString());
+                        Type serType = ser.ExpectedType;
                         if (value == null)
                         {
-                            if (ser.ExpectedType == forType) value = CreateInstance(source, true);
+                            if (serType == forType) value = CreateInstance(source, true);
                         }
                         else
                         {
-                            if (ser.ExpectedType != forType && ((IProtoTypeSerializer)ser).CanCreateInstance()
-                                && ser.ExpectedType
+                            if (serType != forType && ((IProtoTypeSerializer)ser).CanCreateInstance()
+                                && serType
 #if WINRT
                                 .GetTypeInfo()
 #endif
@@ -309,14 +310,12 @@ namespace ProtoBuf.Serializers
             }
             else if (useConstructor)
             {
-                //if (!hasConstructor)
-                //    TypeModel.ThrowCannotCreateInstance(constructType);
-                obj = Activator.CreateInstance(constructType, true);
-//                    (constructType
-//#if !CF && !SILVERLIGHT && !WINRT && !PORTABLE 
-//                    , true
-//#endif
-//                    );
+                if (!hasConstructor) TypeModel.ThrowCannotCreateInstance(constructType);
+                obj = Activator.CreateInstance(constructType
+#if !CF && !SILVERLIGHT && !WINRT && !PORTABLE 
+                    , true
+#endif
+                    );
             }
             else
             {
@@ -350,11 +349,12 @@ namespace ProtoBuf.Serializers
                     for (int i = 0; i < serializers.Length; i++)
                     {
                         IProtoSerializer ser = serializers[i];
-                        if (ser.ExpectedType != forType)
+                        Type serType = ser.ExpectedType;
+                        if (serType != forType)
                         {
                             Compiler.CodeLabel ifMatch = ctx.DefineLabel(), nextTest = ctx.DefineLabel();
                             ctx.LoadValue(loc);
-                            ctx.TryCast(ser.ExpectedType);
+                            ctx.TryCast(serType);
                             ctx.CopyValue();
                             ctx.BranchIfTrue(ifMatch, true);
                             ctx.DiscardValue();
@@ -440,7 +440,9 @@ namespace ProtoBuf.Serializers
                     }
                     else if (parameterType == ctx.MapType(typeof(System.Type)))
                     {
-                        ctx.LoadValue(constructType ?? type);
+                        Type tmp = constructType;
+                        if (tmp == null) tmp = type; // no ?? in some C# profiles
+                        ctx.LoadValue(tmp);
                     }
 #if PLAT_BINARYFORMATTER
                     else if (parameterType == ctx.MapType(typeof(System.Runtime.Serialization.StreamingContext)))
@@ -515,12 +517,13 @@ namespace ProtoBuf.Serializers
                 {
                     IProtoSerializer ser = serializers[i];
                     IProtoTypeSerializer typeser;
-                    if (ser.ExpectedType != forType &&
+                    Type serType = ser.ExpectedType;
+                    if (serType != forType &&
                         (typeser = (IProtoTypeSerializer) ser).HasCallbacks(callbackType))
                     {
                         Compiler.CodeLabel ifMatch = ctx.DefineLabel(), nextTest = ctx.DefineLabel();
                         ctx.CopyValue();
-                        ctx.TryCast(ser.ExpectedType);
+                        ctx.TryCast(serType);
                         ctx.CopyValue();
                         ctx.BranchIfTrue(ifMatch, true);
                         ctx.DiscardValue();
@@ -636,12 +639,13 @@ namespace ProtoBuf.Serializers
             Compiler.CodeLabel handler, Compiler.CodeLabel @continue, IProtoSerializer serializer)
         {
             ctx.MarkLabel(handler);
-            if (serializer.ExpectedType == forType) {
+            Type serType = serializer.ExpectedType;
+            if (serType == forType) {
                 EmitCreateIfNull(ctx, loc);
                 serializer.EmitRead(ctx, loc);
             }
             else {
-                RuntimeTypeModel rtm = (RuntimeTypeModel)ctx.Model;
+                //RuntimeTypeModel rtm = (RuntimeTypeModel)ctx.Model;
                 if (((IProtoTypeSerializer)serializer).CanCreateInstance())
                 {
                     Compiler.CodeLabel allDone = ctx.DefineLabel();
@@ -650,7 +654,7 @@ namespace ProtoBuf.Serializers
                     ctx.BranchIfFalse(allDone, false); // null is always ok
 
                     ctx.LoadValue(loc);
-                    ctx.TryCast(serializer.ExpectedType);
+                    ctx.TryCast(serType);
                     ctx.BranchIfTrue(allDone, false); // not null, but of the correct type
 
                     // otherwise, need to convert it
@@ -665,7 +669,7 @@ namespace ProtoBuf.Serializers
                     ctx.MarkLabel(allDone);
                 }
                 ctx.LoadValue(loc);
-                ctx.Cast(serializer.ExpectedType);
+                ctx.Cast(serType);
                 serializer.EmitRead(ctx, null);
                       
             }

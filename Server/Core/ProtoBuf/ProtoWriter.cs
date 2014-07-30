@@ -34,6 +34,7 @@ namespace ProtoBuf
 #if FEAT_IKVM
             throw new NotSupportedException();
 #else
+            if (writer == null) throw new ArgumentNullException("writer");
             if (writer.model == null)
             {
                 throw new InvalidOperationException("Cannot serialize sub-objects unless a model is provided");
@@ -65,6 +66,7 @@ namespace ProtoBuf
         /// <param name="writer">The destination.</param>
         public static void WriteRecursionSafeObject(object value, int key, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             if (writer.model == null)
             {
                 throw new InvalidOperationException("Cannot serialize sub-objects unless a model is provided");
@@ -133,8 +135,9 @@ namespace ProtoBuf
         /// Writes a field-header, indicating the format of the next data we plan to write.
         /// </summary>
         public static void WriteFieldHeader(int fieldNumber, WireType wireType, ProtoWriter writer) {
-            if (writer.wireType != WireType.None) throw new InvalidOperationException("Cannot write a " + wireType
-                + " header until the " + writer.wireType + " data has been written");
+            if (writer == null) throw new ArgumentNullException("writer");
+            if (writer.wireType != WireType.None) throw new InvalidOperationException("Cannot write a " + wireType.ToString()
+                + " header until the " + writer.wireType.ToString() + " data has been written");
             if(fieldNumber < 0) throw new ArgumentOutOfRangeException("fieldNumber");
 #if DEBUG
             switch (wireType)
@@ -149,7 +152,7 @@ namespace ProtoBuf
                 case WireType.None:
                 case WireType.EndGroup:
                 default:
-                    throw new ArgumentException("Invalid wire-type: " + wireType, "wireType");                
+                    throw new ArgumentException("Invalid wire-type: " + wireType.ToString(), "wireType");                
             }
 #endif
             if (writer.packedFieldNumber == 0) {
@@ -167,14 +170,14 @@ namespace ProtoBuf
                     case WireType.SignedVariant:
                         break; // fine
                     default:
-                        throw new InvalidOperationException("Wire-type cannot be encoded as packed: " + wireType);
+                        throw new InvalidOperationException("Wire-type cannot be encoded as packed: " + wireType.ToString());
                 }
                 writer.fieldNumber = fieldNumber;
                 writer.wireType = wireType;
             }
             else
             {
-                throw new InvalidOperationException("Field mismatch during packed encoding; expected " + writer.packedFieldNumber + " but received " + fieldNumber);
+                throw new InvalidOperationException("Field mismatch during packed encoding; expected " + writer.packedFieldNumber.ToString() + " but received " + fieldNumber.ToString());
             }
         }
         internal static void WriteHeaderCore(int fieldNumber, WireType wireType, ProtoWriter writer)
@@ -189,6 +192,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteBytes(byte[] data, ProtoWriter writer)
         {
+            if (data == null) throw new ArgumentNullException("data");
             ProtoWriter.WriteBytes(data, 0, data.Length, writer);
         }
         /// <summary>
@@ -196,8 +200,8 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteBytes(byte[] data, int offset, int length, ProtoWriter writer)
         {
-            if (data == null) throw new ArgumentNullException("blob");
-
+            if (data == null) throw new ArgumentNullException("data");
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed32:
@@ -314,6 +318,7 @@ namespace ProtoBuf
 
         private static SubItemToken StartSubItem(object instance, ProtoWriter writer, bool allowFixed)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             if (++writer.depth > RecursionCheckDepth)
             {
                 writer.CheckRecursionStackAndPush(instance);
@@ -361,6 +366,7 @@ namespace ProtoBuf
         }
         private static void EndSubItem(SubItemToken token, ProtoWriter writer, PrefixStyle style)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             if (writer.wireType != WireType.None) { throw CreateException(writer); }
             int value = token.value;
             if (writer.depth <= 0) throw CreateException(writer);
@@ -478,6 +484,7 @@ namespace ProtoBuf
 
         private byte[] ioBuffer;
         private int ioIndex;
+        // note that this is used by some of the unit tests and should not be removed
         internal static int GetPosition(ProtoWriter writer) { return writer.position; }
         private int position;
         private static void DemandSpace(int required, ProtoWriter writer)
@@ -571,6 +578,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteString(string value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             if (writer.wireType != WireType.String) throw CreateException(writer);
             if (value == null) throw new ArgumentNullException("value"); // written header; now what?
             int len = value.Length;
@@ -600,6 +608,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteUInt64(ulong value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed64:
@@ -624,6 +633,7 @@ namespace ProtoBuf
         {
             byte[] buffer;
             int index;
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed64:
@@ -681,6 +691,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteUInt32(uint value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed32:
@@ -742,6 +753,7 @@ namespace ProtoBuf
         {
             byte[] buffer;
             int index;
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed32:
@@ -802,6 +814,7 @@ namespace ProtoBuf
 
                 static void WriteDouble(double value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed32:
@@ -833,6 +846,7 @@ namespace ProtoBuf
 #endif
             static void WriteSingle(float value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             switch (writer.wireType)
             {
                 case WireType.Fixed32:
@@ -854,13 +868,15 @@ namespace ProtoBuf
         /// </summary>
         public static void ThrowEnumException(ProtoWriter writer, object enumValue)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             string rhs = enumValue == null ? "<null>" : (enumValue.GetType().FullName + "." + enumValue.ToString());
-            throw new ProtoException("No wire-value is mapped to the enum " + rhs);
+            throw new ProtoException("No wire-value is mapped to the enum " + rhs + " at position " + writer.position.ToString());
         }
         // general purpose serialization exception message
         internal static Exception CreateException(ProtoWriter writer)
         {
-            return new ProtoException("Invalid serialization operation with wire-type " + writer.wireType + " at position " + writer.position);
+            if (writer == null) throw new ArgumentNullException("writer");
+            return new ProtoException("Invalid serialization operation with wire-type " + writer.wireType.ToString() + " at position " + writer.position.ToString());
         }
 
         /// <summary>
@@ -877,6 +893,7 @@ namespace ProtoBuf
         public static void AppendExtensionData(IExtensible instance, ProtoWriter writer)
         {
             if (instance == null) throw new ArgumentNullException("instance");
+            if (writer == null) throw new ArgumentNullException("writer");
             // we expect the writer to be raw here; the extension data will have the
             // header detail, so we'll copy it implicitly
             if(writer.wireType != WireType.None) throw CreateException(writer);
@@ -906,6 +923,7 @@ namespace ProtoBuf
         public static void SetPackedField(int fieldNumber, ProtoWriter writer)
         {
             if (fieldNumber <= 0) throw new ArgumentOutOfRangeException("fieldNumber");
+            if (writer == null) throw new ArgumentNullException("writer");
             writer.packedFieldNumber = fieldNumber;
         }
 
@@ -926,6 +944,7 @@ namespace ProtoBuf
         /// </summary>
         public static void WriteType(System.Type value, ProtoWriter writer)
         {
+            if (writer == null) throw new ArgumentNullException("writer");
             WriteString(writer.SerializeType(value), writer);
         }
     }

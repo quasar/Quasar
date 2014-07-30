@@ -60,7 +60,7 @@ namespace ProtoBuf.Serializers
                     }
                     else
                     {
-                        serializer = new ListDecorator(model, finalType, defaultType, tail, i + 1, false, wireType, true, false, false);
+                        serializer = ListDecorator.Create(model, finalType, defaultType, tail, i + 1, false, wireType, true, false, false);
                     }
                 }
                 tails[i] = serializer;

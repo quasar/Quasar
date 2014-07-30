@@ -31,7 +31,7 @@ namespace ProtoBuf.Serializers
         private readonly MethodInfo toTail, fromTail;
         IProtoTypeSerializer rootTail;
 
-        public SurrogateSerializer(Type forType, Type declaredType, IProtoTypeSerializer rootTail)
+        public SurrogateSerializer(TypeModel model, Type forType, Type declaredType, IProtoTypeSerializer rootTail)
         {
             Helpers.DebugAssert(forType != null, "forType");
             Helpers.DebugAssert(declaredType != null, "declaredType");
@@ -42,10 +42,10 @@ namespace ProtoBuf.Serializers
             this.forType = forType;
             this.declaredType = declaredType;
             this.rootTail = rootTail;
-            toTail = GetConversion(true);
-            fromTail = GetConversion(false);
+            toTail = GetConversion(model, true);
+            fromTail = GetConversion(model, false);
         }
-        private static bool HasCast(Type type, Type from, Type to, out MethodInfo op)
+        private static bool HasCast(TypeModel model, Type type, Type from, Type to, out MethodInfo op)
         {
 #if WINRT
             System.Collections.Generic.List<MethodInfo> list = new System.Collections.Generic.List<MethodInfo>();
@@ -58,6 +58,31 @@ namespace ProtoBuf.Serializers
             const BindingFlags flags = BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic;
             MethodInfo[] found = type.GetMethods(flags);
 #endif
+            ParameterInfo[] paramTypes;
+            Type convertAttributeType = null;
+            for (int i = 0; i < found.Length; i++)
+            {
+                MethodInfo m = found[i];
+                if (m.ReturnType != to) continue;
+                paramTypes = m.GetParameters();
+                if(paramTypes.Length == 1 && paramTypes[0].ParameterType == from)
+                {
+                    if (convertAttributeType == null)
+                    {
+                        convertAttributeType = model.MapType(typeof(ProtoConverterAttribute), false);
+                        if (convertAttributeType == null)
+                        { // attribute isn't defined in the source assembly: stop looking
+                            break;
+                        }
+                    }
+                    if (m.IsDefined(convertAttributeType, true))
+                    {
+                        op = m;
+                        return true;
+                    }
+                }
+            }
+
             for(int i = 0 ; i < found.Length ; i++)
             {
                 MethodInfo m = found[i];
@@ -65,7 +90,7 @@ namespace ProtoBuf.Serializers
                 {
                     continue;
                 }
-                ParameterInfo[] paramTypes = m.GetParameters();
+                paramTypes = m.GetParameters();
                 if(paramTypes.Length == 1 && paramTypes[0].ParameterType == from)
                 {
                     op = m;
@@ -76,12 +101,12 @@ namespace ProtoBuf.Serializers
             return false;
         }
 
-        public MethodInfo GetConversion(bool toTail)
+        public MethodInfo GetConversion(TypeModel model, bool toTail)
         {
             Type to = toTail ? declaredType : forType;
             Type from = toTail ? forType : declaredType;
             MethodInfo op;
-            if (HasCast(declaredType, from, to, out op) || HasCast(forType, from, to, out op))
+            if (HasCast(model, declaredType, from, to, out op) || HasCast(model, forType, from, to, out op))
             {
                 return op;
             }
