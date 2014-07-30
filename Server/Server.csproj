@@ -365,7 +365,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <None Include="images\upload.png" />
     <Content Include="xRAT-64x64.ico" />
   </ItemGroup>
   <ItemGroup>
