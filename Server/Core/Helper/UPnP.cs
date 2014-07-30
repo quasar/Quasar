@@ -1,8 +1,6 @@
-﻿using System;
-using System.IO;
-using NATUPNPLib;
-using System.Net.Sockets;
+﻿using NATUPNPLib;
 using System.Net;
+using System.Net.Sockets;
 using System.Threading;
 
 namespace Core

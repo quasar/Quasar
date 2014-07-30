@@ -245,7 +245,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap server_add {
             get {
-                object obj = ResourceManager.GetObject("server-add", resourceCulture);
+                object obj = ResourceManager.GetObject("server_add", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -255,7 +255,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap server_disconnect {
             get {
-                object obj = ResourceManager.GetObject("server-disconnect", resourceCulture);
+                object obj = ResourceManager.GetObject("server_disconnect", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -265,7 +265,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap server_reconnect {
             get {
-                object obj = ResourceManager.GetObject("server-reconnect", resourceCulture);
+                object obj = ResourceManager.GetObject("server_reconnect", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -275,7 +275,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap server_uninstall {
             get {
-                object obj = ResourceManager.GetObject("server-uninstall", resourceCulture);
+                object obj = ResourceManager.GetObject("server_uninstall", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -305,7 +305,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap task_manager {
             get {
-                object obj = ResourceManager.GetObject("task-manager", resourceCulture);
+                object obj = ResourceManager.GetObject("task_manager", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -355,7 +355,17 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap uac_shield {
             get {
-                object obj = ResourceManager.GetObject("uac-shield", resourceCulture);
+                object obj = ResourceManager.GetObject("uac_shield", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap upload {
+            get {
+                object obj = ResourceManager.GetObject("upload", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -375,7 +385,7 @@ namespace xRAT_2.Properties {
         /// </summary>
         internal static System.Drawing.Bitmap xRAT_64x64 {
             get {
-                object obj = ResourceManager.GetObject("xRAT-64x64", resourceCulture);
+                object obj = ResourceManager.GetObject("xRAT_64x64", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
