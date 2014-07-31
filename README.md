@@ -10,6 +10,7 @@ Features
 * Protocol Buffers
 * Compressed & Encrypted traffic between Client <-> Server
 * Multi-Threaded
+* UPnP Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
