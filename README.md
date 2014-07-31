@@ -18,6 +18,7 @@ Features
 * Remote Desktop
 * Remote Shell
 * Download & Execute
+* Upload & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
 
