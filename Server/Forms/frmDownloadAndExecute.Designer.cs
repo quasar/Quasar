@@ -40,7 +40,7 @@
             this.btnDownloadAndExecute.Location = new System.Drawing.Point(246, 37);
             this.btnDownloadAndExecute.Name = "btnDownloadAndExecute";
             this.btnDownloadAndExecute.Size = new System.Drawing.Size(138, 23);
-            this.btnDownloadAndExecute.TabIndex = 0;
+            this.btnDownloadAndExecute.TabIndex = 3;
             this.btnDownloadAndExecute.Text = "Download && Execute";
             this.btnDownloadAndExecute.UseVisualStyleBackColor = true;
             this.btnDownloadAndExecute.Click += new System.EventHandler(this.btnDownloadAndExecute_Click);
@@ -58,7 +58,7 @@
             this.lblURL.Location = new System.Drawing.Point(12, 9);
             this.lblURL.Name = "lblURL";
             this.lblURL.Size = new System.Drawing.Size(30, 13);
-            this.lblURL.TabIndex = 2;
+            this.lblURL.TabIndex = 0;
             this.lblURL.Text = "URL:";
             // 
             // chkRunHidden
@@ -67,7 +67,7 @@
             this.chkRunHidden.Location = new System.Drawing.Point(48, 41);
             this.chkRunHidden.Name = "chkRunHidden";
             this.chkRunHidden.Size = new System.Drawing.Size(106, 17);
-            this.chkRunHidden.TabIndex = 3;
+            this.chkRunHidden.TabIndex = 2;
             this.chkRunHidden.Text = "Run file hidden";
             this.chkRunHidden.UseVisualStyleBackColor = true;
             // 

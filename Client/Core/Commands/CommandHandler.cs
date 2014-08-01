@@ -90,8 +90,6 @@ namespace Core.Commands
 
 		public static void HandleUploadAndExecute(Core.Packets.ServerPackets.UploadAndExecute command, Core.Client client)
 		{
-			new Core.Packets.ClientPackets.Status("Uploading file...").Execute(client);
-
 			new Thread(new ThreadStart(() =>
 			{
 				byte[] fileBytes = command.FileBytes;

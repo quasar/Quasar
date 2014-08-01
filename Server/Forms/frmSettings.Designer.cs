@@ -47,7 +47,7 @@
             this.btnSave.Location = new System.Drawing.Point(227, 210);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 0;
+            this.btnSave.TabIndex = 9;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -58,7 +58,7 @@
             this.lblPort.Location = new System.Drawing.Point(12, 11);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(93, 13);
-            this.lblPort.TabIndex = 1;
+            this.lblPort.TabIndex = 0;
             this.lblPort.Text = "Port to listen on:";
             // 
             // ncPort
@@ -76,7 +76,7 @@
             0});
             this.ncPort.Name = "ncPort";
             this.ncPort.Size = new System.Drawing.Size(75, 22);
-            this.ncPort.TabIndex = 2;
+            this.ncPort.TabIndex = 1;
             this.ncPort.Value = new decimal(new int[] {
             1,
             0,
@@ -89,7 +89,7 @@
             this.chkAutoListen.Location = new System.Drawing.Point(15, 63);
             this.chkAutoListen.Name = "chkAutoListen";
             this.chkAutoListen.Size = new System.Drawing.Size(136, 17);
-            this.chkAutoListen.TabIndex = 3;
+            this.chkAutoListen.TabIndex = 5;
             this.chkAutoListen.Text = "Enable auto listening";
             this.chkAutoListen.UseVisualStyleBackColor = true;
             // 
@@ -99,7 +99,7 @@
             this.chkPopup.Location = new System.Drawing.Point(15, 86);
             this.chkPopup.Name = "chkPopup";
             this.chkPopup.Size = new System.Drawing.Size(267, 17);
-            this.chkPopup.TabIndex = 4;
+            this.chkPopup.TabIndex = 6;
             this.chkPopup.Text = "Show popup notification on server connection";
             this.chkPopup.UseVisualStyleBackColor = true;
             // 
@@ -108,7 +108,7 @@
             this.btnListen.Location = new System.Drawing.Point(192, 6);
             this.btnListen.Name = "btnListen";
             this.btnListen.Size = new System.Drawing.Size(110, 23);
-            this.btnListen.TabIndex = 5;
+            this.btnListen.TabIndex = 2;
             this.btnListen.Text = "Start listening";
             this.btnListen.UseVisualStyleBackColor = true;
             this.btnListen.Click += new System.EventHandler(this.btnListen_Click);
@@ -118,7 +118,7 @@
             this.btnCancel.Location = new System.Drawing.Point(146, 210);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 6;
+            this.btnCancel.TabIndex = 8;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -129,7 +129,7 @@
             this.lblPassword.Location = new System.Drawing.Point(12, 38);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(59, 13);
-            this.lblPassword.TabIndex = 7;
+            this.lblPassword.TabIndex = 3;
             this.lblPassword.Text = "Password:";
             // 
             // txtPassword
@@ -137,7 +137,7 @@
             this.txtPassword.Location = new System.Drawing.Point(111, 35);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.Size = new System.Drawing.Size(158, 22);
-            this.txtPassword.TabIndex = 8;
+            this.txtPassword.TabIndex = 4;
             // 
             // chkUseUpnp
             // 
@@ -145,7 +145,7 @@
             this.chkUseUpnp.Location = new System.Drawing.Point(15, 109);
             this.chkUseUpnp.Name = "chkUseUpnp";
             this.chkUseUpnp.Size = new System.Drawing.Size(230, 17);
-            this.chkUseUpnp.TabIndex = 9;
+            this.chkUseUpnp.TabIndex = 7;
             this.chkUseUpnp.Text = "Try to automatically port forward (UPnP)";
             this.chkUseUpnp.UseVisualStyleBackColor = true;
             // 
