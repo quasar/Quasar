@@ -42,7 +42,7 @@
             this.rtxtContent.Name = "rtxtContent";
             this.rtxtContent.ReadOnly = true;
             this.rtxtContent.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtxtContent.Size = new System.Drawing.Size(438, 312);
+            this.rtxtContent.Size = new System.Drawing.Size(398, 242);
             this.rtxtContent.TabIndex = 0;
             this.rtxtContent.Text = "";
             // 
@@ -59,7 +59,7 @@
             // btnAccept
             // 
             this.btnAccept.Enabled = false;
-            this.btnAccept.Location = new System.Drawing.Point(375, 369);
+            this.btnAccept.Location = new System.Drawing.Point(335, 291);
             this.btnAccept.Name = "btnAccept";
             this.btnAccept.Size = new System.Drawing.Size(75, 23);
             this.btnAccept.TabIndex = 2;
@@ -69,7 +69,7 @@
             // 
             // btnDecline
             // 
-            this.btnDecline.Location = new System.Drawing.Point(276, 369);
+            this.btnDecline.Location = new System.Drawing.Point(254, 291);
             this.btnDecline.Name = "btnDecline";
             this.btnDecline.Size = new System.Drawing.Size(75, 23);
             this.btnDecline.TabIndex = 3;
@@ -80,7 +80,7 @@
             // chkDontShowAgain
             // 
             this.chkDontShowAgain.AutoSize = true;
-            this.chkDontShowAgain.Location = new System.Drawing.Point(17, 373);
+            this.chkDontShowAgain.Location = new System.Drawing.Point(12, 295);
             this.chkDontShowAgain.Name = "chkDontShowAgain";
             this.chkDontShowAgain.Size = new System.Drawing.Size(120, 17);
             this.chkDontShowAgain.TabIndex = 4;
@@ -91,7 +91,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(462, 404);
+            this.ClientSize = new System.Drawing.Size(422, 326);
             this.Controls.Add(this.chkDontShowAgain);
             this.Controls.Add(this.btnDecline);
             this.Controls.Add(this.btnAccept);
