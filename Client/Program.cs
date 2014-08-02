@@ -11,7 +11,7 @@ static class Program
 {
     public static Core.Client _Client;
     static bool Reconnect = true;
-    static bool Connected = false;
+    static volatile bool Connected = false;
     static Mutex AppMutex;
 
     [STAThread]

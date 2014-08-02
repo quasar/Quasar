@@ -65,6 +65,8 @@ namespace Core
 
                         if (packet.GetType() == typeof(KeepAliveResponse))
                             _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this);
+                        else if (packet.GetType() == typeof(KeepAlive))
+                            new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
                         else
                             ClientRead(this, packet);
                     }
