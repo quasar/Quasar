@@ -245,6 +245,8 @@ namespace Core
                 }
             }
 
+            _keepAlives = null;
+
             Listening = false;
             OnServerState(false);
         }

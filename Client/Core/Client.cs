@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Threading;
 
 namespace Core
 {
@@ -62,6 +63,8 @@ namespace Core
 
                         if (packet.GetType() == typeof(KeepAlive))
                             new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
+                        else if (packet.GetType() == typeof(KeepAliveResponse))
+                            HandleKeepAlivePacket((KeepAliveResponse)packet, this);
                         else
                             ClientRead(this, packet);
                     }
@@ -96,6 +99,8 @@ namespace Core
         private Queue<byte[]> _sendQueue;
 
         private SocketAsyncEventArgs[] _item = new SocketAsyncEventArgs[2];
+
+        private List<KeepAlive> _keepAlives;
 
         private bool[] _processing = new bool[2];
 
@@ -209,6 +214,8 @@ namespace Core
 
             _sendQueue = new Queue<byte[]>();
 
+            _keepAlives = new List<KeepAlive>();
+
             _item[0] = new SocketAsyncEventArgs();
             _item[0].Completed += Process;
             _item[1] = new SocketAsyncEventArgs();
@@ -249,13 +256,20 @@ namespace Core
                     switch (e.LastOperation)
                     {
                         case SocketAsyncOperation.Connect:
+
                             _endPoint = (IPEndPoint)_handle.RemoteEndPoint;
+
                             Connected = true;
+
                             _item[0].SetBuffer(new byte[BufferSize], 0, BufferSize);
 
                             _asyncOperation.Post(x => OnClientState((bool)x), true);
+
+                            SendKeepAlives();
+
                             if (!_handle.ReceiveAsync(e))
                                 Process(null, e);
+
                             break;
                         case SocketAsyncOperation.Receive:
                             if (!Connected)
@@ -317,6 +331,8 @@ namespace Core
                 _handle.Close();
             if (_sendQueue != null)
                 _sendQueue.Clear();
+            if (_keepAlives != null)
+                _keepAlives.Clear();
 
             _sendBuffer = new byte[0];
             _readBuffer = new byte[0];
@@ -440,6 +456,54 @@ namespace Core
             catch
             {
                 Disconnect();
+            }
+        }
+
+        private void SendKeepAlives()
+        {
+            new Thread(() =>
+            {
+                while (Connected)
+                {
+                    try
+                    {
+                        KeepAlive keepAlive = new KeepAlive();
+                        lock (_keepAlives)
+                        {
+                            _keepAlives.Add(keepAlive);
+                        }
+                        keepAlive.Execute(this);
+                        Timer timer = new Timer(KeepAliveCallback, keepAlive, 25000, Timeout.Infinite);
+                    }
+                    catch
+                    {
+
+                    }
+                    Thread.Sleep(15000);
+                }
+
+            }) { IsBackground = true }.Start();
+        }
+
+        private void KeepAliveCallback(object state)
+        {
+            KeepAlive keepAlive = (KeepAlive)state;
+
+            if (_keepAlives.Contains(keepAlive))
+            {
+                Disconnect();
+            }
+        }
+
+        private void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
+        {
+            foreach (KeepAlive keepAlive in _keepAlives)
+            {
+                if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
+                {
+                    _keepAlives.Remove(keepAlive);
+                    break;
+                }
             }
         }
     }
