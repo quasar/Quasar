@@ -174,13 +174,13 @@ namespace Core.Commands
 			string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ? 
 					"@echo off" + "\n" +
 					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 15 localhost > nul" + "\n" +
+					"ping -n 20 localhost > nul" + "\n" +
 					"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 					"del " + "\"" + filename + "\""
 				:
 					"@echo off" + "\n" +
 					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 15 localhost > nul" + "\n" +
+					"ping -n 20 localhost > nul" + "\n" +
 					"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 					"del " + "\"" + filename + "\""
 				;
@@ -465,7 +465,7 @@ namespace Core.Commands
 					string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
 							"@echo off" + "\n" +
 							"echo DONT CLOSE THIS WINDOW!" + "\n" +
-							"ping -n 15 localhost > nul" + "\n" +
+							"ping -n 20 localhost > nul" + "\n" +
 							"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
@@ -473,7 +473,7 @@ namespace Core.Commands
 						:
 							"@echo off" + "\n" +
 							"echo DONT CLOSE THIS WINDOW!" + "\n" +
-							"ping -n 15 localhost > nul" + "\n" +
+							"ping -n 20 localhost > nul" + "\n" +
 							"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
