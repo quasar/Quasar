@@ -1,6 +1,17 @@
 Changelog - xRAT 2.0
 ====================
 
+xRAT v2.0.0.0 RELEASE3 [10.08.2014]
+---
+* Optimized connection between Client & Server (!)
+* Added UPnP support
+* Added Upload & Execute
+* Updated Protocol Buffers
+* Fixed Keepalive between Client & Server (!)
+* Fixed and hardened installation on same computer with new mutex
+* Some minor fixes
+
+
 xRAT v2.0.0.0 RELEASE2 [24.07.2014]
 ---
 * Improved Remote Shell

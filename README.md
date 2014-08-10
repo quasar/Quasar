@@ -25,6 +25,7 @@ Features
 
 ToDo
 ---
+* Socks5 Proxy
 * DDoS Methods (Slowloris, UDP, SYN)
 * Password Stealer (Browsers, FTP-Clients)
 * Keylogger
