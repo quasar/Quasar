@@ -93,7 +93,6 @@
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
     <Compile Include="Core\SystemCore.cs" />
-    <Compile Include="Core\Encryption\RC4.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Connection\Initialize.cs" />
     <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />

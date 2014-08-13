@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using xRAT_2.Settings;
 
 namespace Core
@@ -55,9 +56,9 @@ namespace Core
 
                     if (compressionEnabled)
                         e = new LZ4.LZ4Decompressor32().Decompress(e);
-
+                    
                     if (encryptionEnabled)
-                        e = RC4.Decrypt(e, XMLSettings.Password);
+                        e = AES.Decrypt(e, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
                     using (MemoryStream deserialized = new MemoryStream(e))
                     {
@@ -363,14 +364,13 @@ namespace Core
             }
         }
 
-
         private void Send(byte[] data)
         {
             if (!Connected)
                 return;
 
             if (encryptionEnabled)
-                data = RC4.Encrypt(data, XMLSettings.Password);
+                data = AES.Encrypt(data, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
             if (compressionEnabled)
                 data = new LZ4.LZ4Compressor32().Compress(data);
@@ -385,7 +385,6 @@ namespace Core
                 HandleSendQueue();
             }
         }
-
 
         private void HandleSendQueue()
         {

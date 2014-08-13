@@ -11,6 +11,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Text;
 using System.Threading;
 
 namespace Core
@@ -55,7 +56,7 @@ namespace Core
                         e = new LZ4.LZ4Decompressor32().Decompress(e);
 
                     if (encryptionEnabled)
-                        e = RC4.Decrypt(e, Settings.PASSWORD);
+                        e = AES.Decrypt(e, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
                     using (MemoryStream deserialized = new MemoryStream(e))
                     {
@@ -375,7 +376,7 @@ namespace Core
                 return;
 
             if (encryptionEnabled)
-                data = RC4.Encrypt(data, Settings.PASSWORD);
+                data = AES.Encrypt(data, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
             if (compressionEnabled)
                 data = new LZ4.LZ4Compressor32().Compress(data);
