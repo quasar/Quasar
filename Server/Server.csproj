@@ -69,6 +69,7 @@
     <Compile Include="Core\Compression\LZ4\LZ4Decompressor32.cs" />
     <Compile Include="Core\Compression\LZ4\LZ4Util.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Encryption\RC4.cs" />
     <Compile Include="Core\Helper\UPnP.cs" />
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
@@ -232,6 +233,12 @@
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Forms\frmProfileChooser.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\frmProfileChooser.designer.cs">
+      <DependentUpon>frmProfileChooser.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\frmRemoteDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -316,6 +323,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmMain.resx">
       <DependentUpon>frmMain.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\frmProfileChooser.resx">
+      <DependentUpon>frmProfileChooser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\frmRemoteDesktop.resx">
       <DependentUpon>frmRemoteDesktop.cs</DependentUpon>

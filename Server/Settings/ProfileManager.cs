@@ -48,6 +48,12 @@ namespace xRAT_2.Settings
                     root.AppendChild(doc.CreateElement("ProductVersion"));
                     root.AppendChild(doc.CreateElement("FileVersion"));
 
+                    root.AppendChild(doc.CreateElement("CheckedStubModifying")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("StubPath"));
+                    root.AppendChild(doc.CreateElement("CheckedStubEncryption")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("StubKey"));
+                    root.AppendChild(doc.CreateElement("VersionName")).InnerText = "1.0.03r";
+
                     doc.Save(settingsFilePath);
                 }
             }
