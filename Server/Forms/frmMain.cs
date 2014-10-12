@@ -507,7 +507,7 @@ namespace xRAT_2.Forms
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
-            using (var frm = new frmBuilder())
+            using (var frm = new frmProfileChooser())
             {
                 frm.ShowDialog();
             }

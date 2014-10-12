@@ -68,28 +68,41 @@
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
             this.groupAsmInfo = new System.Windows.Forms.GroupBox();
-            this.lblProductName = new System.Windows.Forms.Label();
-            this.txtProductName = new System.Windows.Forms.TextBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
-            this.lblDescription = new System.Windows.Forms.Label();
-            this.txtCompanyName = new System.Windows.Forms.TextBox();
-            this.lblCompanyName = new System.Windows.Forms.Label();
-            this.txtCopyright = new System.Windows.Forms.TextBox();
-            this.lblCopyright = new System.Windows.Forms.Label();
-            this.txtTrademarks = new System.Windows.Forms.TextBox();
-            this.lblTrademarks = new System.Windows.Forms.Label();
-            this.txtOriginalFilename = new System.Windows.Forms.TextBox();
-            this.lblOriginalFilename = new System.Windows.Forms.Label();
-            this.txtProductVersion = new System.Windows.Forms.TextBox();
-            this.lblProductVersion = new System.Windows.Forms.Label();
+            this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
             this.txtFileVersion = new System.Windows.Forms.TextBox();
             this.lblFileVersion = new System.Windows.Forms.Label();
-            this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
+            this.txtProductVersion = new System.Windows.Forms.TextBox();
+            this.lblProductVersion = new System.Windows.Forms.Label();
+            this.txtOriginalFilename = new System.Windows.Forms.TextBox();
+            this.lblOriginalFilename = new System.Windows.Forms.Label();
+            this.txtTrademarks = new System.Windows.Forms.TextBox();
+            this.lblTrademarks = new System.Windows.Forms.Label();
+            this.txtCopyright = new System.Windows.Forms.TextBox();
+            this.lblCopyright = new System.Windows.Forms.Label();
+            this.txtCompanyName = new System.Windows.Forms.TextBox();
+            this.lblCompanyName = new System.Windows.Forms.Label();
+            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.lblDescription = new System.Windows.Forms.Label();
+            this.txtProductName = new System.Windows.Forms.TextBox();
+            this.lblProductName = new System.Windows.Forms.Label();
+            this.groupMisc = new System.Windows.Forms.GroupBox();
+            this.txtVersion = new System.Windows.Forms.TextBox();
+            this.lblVersionName = new System.Windows.Forms.Label();
+            this.lblClientBinFile = new System.Windows.Forms.Label();
+            this.groupStub = new System.Windows.Forms.GroupBox();
+            this.btnCstmStubFilePath = new System.Windows.Forms.Button();
+            this.chkCustomStub = new System.Windows.Forms.CheckBox();
+            this.txtStubKey = new System.Windows.Forms.TextBox();
+            this.txtStubPath = new System.Windows.Forms.TextBox();
+            this.lblStubKey = new System.Windows.Forms.Label();
+            this.chkStubEncryption = new System.Windows.Forms.CheckBox();
             this.groupConnection.SuspendLayout();
             this.groupInstall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.groupAsmInfo.SuspendLayout();
+            this.groupMisc.SuspendLayout();
+            this.groupStub.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupConnection
@@ -499,117 +512,16 @@
             this.groupAsmInfo.TabStop = false;
             this.groupAsmInfo.Text = "Assembly Information";
             // 
-            // lblProductName
+            // chkChangeAsmInfo
             // 
-            this.lblProductName.AutoSize = true;
-            this.lblProductName.Location = new System.Drawing.Point(22, 43);
-            this.lblProductName.Name = "lblProductName";
-            this.lblProductName.Size = new System.Drawing.Size(82, 13);
-            this.lblProductName.TabIndex = 1;
-            this.lblProductName.Text = "Product Name:";
-            // 
-            // txtProductName
-            // 
-            this.txtProductName.Location = new System.Drawing.Point(110, 40);
-            this.txtProductName.Name = "txtProductName";
-            this.txtProductName.Size = new System.Drawing.Size(201, 22);
-            this.txtProductName.TabIndex = 2;
-            // 
-            // txtDescription
-            // 
-            this.txtDescription.Location = new System.Drawing.Point(110, 68);
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(201, 22);
-            this.txtDescription.TabIndex = 4;
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(35, 71);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(69, 13);
-            this.lblDescription.TabIndex = 3;
-            this.lblDescription.Text = "Description:";
-            // 
-            // txtCompanyName
-            // 
-            this.txtCompanyName.Location = new System.Drawing.Point(110, 96);
-            this.txtCompanyName.Name = "txtCompanyName";
-            this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
-            this.txtCompanyName.TabIndex = 6;
-            // 
-            // lblCompanyName
-            // 
-            this.lblCompanyName.AutoSize = true;
-            this.lblCompanyName.Location = new System.Drawing.Point(14, 99);
-            this.lblCompanyName.Name = "lblCompanyName";
-            this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
-            this.lblCompanyName.TabIndex = 5;
-            this.lblCompanyName.Text = "Company Name:";
-            // 
-            // txtCopyright
-            // 
-            this.txtCopyright.Location = new System.Drawing.Point(110, 124);
-            this.txtCopyright.Name = "txtCopyright";
-            this.txtCopyright.Size = new System.Drawing.Size(201, 22);
-            this.txtCopyright.TabIndex = 8;
-            // 
-            // lblCopyright
-            // 
-            this.lblCopyright.AutoSize = true;
-            this.lblCopyright.Location = new System.Drawing.Point(43, 127);
-            this.lblCopyright.Name = "lblCopyright";
-            this.lblCopyright.Size = new System.Drawing.Size(61, 13);
-            this.lblCopyright.TabIndex = 7;
-            this.lblCopyright.Text = "Copyright:";
-            // 
-            // txtTrademarks
-            // 
-            this.txtTrademarks.Location = new System.Drawing.Point(110, 152);
-            this.txtTrademarks.Name = "txtTrademarks";
-            this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
-            this.txtTrademarks.TabIndex = 10;
-            // 
-            // lblTrademarks
-            // 
-            this.lblTrademarks.AutoSize = true;
-            this.lblTrademarks.Location = new System.Drawing.Point(36, 155);
-            this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
-            this.lblTrademarks.TabIndex = 9;
-            this.lblTrademarks.Text = "Trademarks:";
-            // 
-            // txtOriginalFilename
-            // 
-            this.txtOriginalFilename.Location = new System.Drawing.Point(110, 180);
-            this.txtOriginalFilename.Name = "txtOriginalFilename";
-            this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
-            this.txtOriginalFilename.TabIndex = 12;
-            // 
-            // lblOriginalFilename
-            // 
-            this.lblOriginalFilename.AutoSize = true;
-            this.lblOriginalFilename.Location = new System.Drawing.Point(3, 183);
-            this.lblOriginalFilename.Name = "lblOriginalFilename";
-            this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
-            this.lblOriginalFilename.TabIndex = 11;
-            this.lblOriginalFilename.Text = "Original Filename:";
-            // 
-            // txtProductVersion
-            // 
-            this.txtProductVersion.Location = new System.Drawing.Point(110, 208);
-            this.txtProductVersion.Name = "txtProductVersion";
-            this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
-            this.txtProductVersion.TabIndex = 14;
-            // 
-            // lblProductVersion
-            // 
-            this.lblProductVersion.AutoSize = true;
-            this.lblProductVersion.Location = new System.Drawing.Point(12, 211);
-            this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
-            this.lblProductVersion.TabIndex = 13;
-            this.lblProductVersion.Text = "Product Version:";
+            this.chkChangeAsmInfo.AutoSize = true;
+            this.chkChangeAsmInfo.Location = new System.Drawing.Point(110, 17);
+            this.chkChangeAsmInfo.Name = "chkChangeAsmInfo";
+            this.chkChangeAsmInfo.Size = new System.Drawing.Size(180, 17);
+            this.chkChangeAsmInfo.TabIndex = 0;
+            this.chkChangeAsmInfo.Text = "Change Assembly Information";
+            this.chkChangeAsmInfo.UseVisualStyleBackColor = true;
+            this.chkChangeAsmInfo.CheckedChanged += new System.EventHandler(this.chkChangeAsmInfo_CheckedChanged);
             // 
             // txtFileVersion
             // 
@@ -627,16 +539,228 @@
             this.lblFileVersion.TabIndex = 15;
             this.lblFileVersion.Text = "File Version:";
             // 
-            // chkChangeAsmInfo
+            // txtProductVersion
             // 
-            this.chkChangeAsmInfo.AutoSize = true;
-            this.chkChangeAsmInfo.Location = new System.Drawing.Point(110, 17);
-            this.chkChangeAsmInfo.Name = "chkChangeAsmInfo";
-            this.chkChangeAsmInfo.Size = new System.Drawing.Size(180, 17);
-            this.chkChangeAsmInfo.TabIndex = 0;
-            this.chkChangeAsmInfo.Text = "Change Assembly Information";
-            this.chkChangeAsmInfo.UseVisualStyleBackColor = true;
-            this.chkChangeAsmInfo.CheckedChanged += new System.EventHandler(this.chkChangeAsmInfo_CheckedChanged);
+            this.txtProductVersion.Location = new System.Drawing.Point(110, 208);
+            this.txtProductVersion.Name = "txtProductVersion";
+            this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtProductVersion.TabIndex = 14;
+            // 
+            // lblProductVersion
+            // 
+            this.lblProductVersion.AutoSize = true;
+            this.lblProductVersion.Location = new System.Drawing.Point(12, 211);
+            this.lblProductVersion.Name = "lblProductVersion";
+            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
+            this.lblProductVersion.TabIndex = 13;
+            this.lblProductVersion.Text = "Product Version:";
+            // 
+            // txtOriginalFilename
+            // 
+            this.txtOriginalFilename.Location = new System.Drawing.Point(110, 180);
+            this.txtOriginalFilename.Name = "txtOriginalFilename";
+            this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
+            this.txtOriginalFilename.TabIndex = 12;
+            // 
+            // lblOriginalFilename
+            // 
+            this.lblOriginalFilename.AutoSize = true;
+            this.lblOriginalFilename.Location = new System.Drawing.Point(3, 183);
+            this.lblOriginalFilename.Name = "lblOriginalFilename";
+            this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
+            this.lblOriginalFilename.TabIndex = 11;
+            this.lblOriginalFilename.Text = "Original Filename:";
+            // 
+            // txtTrademarks
+            // 
+            this.txtTrademarks.Location = new System.Drawing.Point(110, 152);
+            this.txtTrademarks.Name = "txtTrademarks";
+            this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
+            this.txtTrademarks.TabIndex = 10;
+            // 
+            // lblTrademarks
+            // 
+            this.lblTrademarks.AutoSize = true;
+            this.lblTrademarks.Location = new System.Drawing.Point(36, 155);
+            this.lblTrademarks.Name = "lblTrademarks";
+            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.TabIndex = 9;
+            this.lblTrademarks.Text = "Trademarks:";
+            // 
+            // txtCopyright
+            // 
+            this.txtCopyright.Location = new System.Drawing.Point(110, 124);
+            this.txtCopyright.Name = "txtCopyright";
+            this.txtCopyright.Size = new System.Drawing.Size(201, 22);
+            this.txtCopyright.TabIndex = 8;
+            // 
+            // lblCopyright
+            // 
+            this.lblCopyright.AutoSize = true;
+            this.lblCopyright.Location = new System.Drawing.Point(43, 127);
+            this.lblCopyright.Name = "lblCopyright";
+            this.lblCopyright.Size = new System.Drawing.Size(61, 13);
+            this.lblCopyright.TabIndex = 7;
+            this.lblCopyright.Text = "Copyright:";
+            // 
+            // txtCompanyName
+            // 
+            this.txtCompanyName.Location = new System.Drawing.Point(110, 96);
+            this.txtCompanyName.Name = "txtCompanyName";
+            this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
+            this.txtCompanyName.TabIndex = 6;
+            // 
+            // lblCompanyName
+            // 
+            this.lblCompanyName.AutoSize = true;
+            this.lblCompanyName.Location = new System.Drawing.Point(14, 99);
+            this.lblCompanyName.Name = "lblCompanyName";
+            this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
+            this.lblCompanyName.TabIndex = 5;
+            this.lblCompanyName.Text = "Company Name:";
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Location = new System.Drawing.Point(110, 68);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(201, 22);
+            this.txtDescription.TabIndex = 4;
+            // 
+            // lblDescription
+            // 
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Location = new System.Drawing.Point(35, 71);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(69, 13);
+            this.lblDescription.TabIndex = 3;
+            this.lblDescription.Text = "Description:";
+            // 
+            // txtProductName
+            // 
+            this.txtProductName.Location = new System.Drawing.Point(110, 40);
+            this.txtProductName.Name = "txtProductName";
+            this.txtProductName.Size = new System.Drawing.Size(201, 22);
+            this.txtProductName.TabIndex = 2;
+            // 
+            // lblProductName
+            // 
+            this.lblProductName.AutoSize = true;
+            this.lblProductName.Location = new System.Drawing.Point(22, 43);
+            this.lblProductName.Name = "lblProductName";
+            this.lblProductName.Size = new System.Drawing.Size(82, 13);
+            this.lblProductName.TabIndex = 1;
+            this.lblProductName.Text = "Product Name:";
+            // 
+            // groupMisc
+            // 
+            this.groupMisc.Controls.Add(this.txtVersion);
+            this.groupMisc.Controls.Add(this.lblVersionName);
+            this.groupMisc.Location = new System.Drawing.Point(343, 423);
+            this.groupMisc.Name = "groupMisc";
+            this.groupMisc.Size = new System.Drawing.Size(317, 68);
+            this.groupMisc.TabIndex = 4;
+            this.groupMisc.TabStop = false;
+            this.groupMisc.Text = "Miscellaneous";
+            // 
+            // txtVersion
+            // 
+            this.txtVersion.Location = new System.Drawing.Point(110, 19);
+            this.txtVersion.Name = "txtVersion";
+            this.txtVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtVersion.TabIndex = 1;
+            this.txtVersion.Text = "1.0.0.3r";
+            // 
+            // lblVersionName
+            // 
+            this.lblVersionName.AutoSize = true;
+            this.lblVersionName.Location = new System.Drawing.Point(24, 22);
+            this.lblVersionName.Name = "lblVersionName";
+            this.lblVersionName.Size = new System.Drawing.Size(80, 13);
+            this.lblVersionName.TabIndex = 0;
+            this.lblVersionName.Text = "Version name:";
+            // 
+            // lblClientBinFile
+            // 
+            this.lblClientBinFile.AutoSize = true;
+            this.lblClientBinFile.Location = new System.Drawing.Point(30, 47);
+            this.lblClientBinFile.Name = "lblClientBinFile";
+            this.lblClientBinFile.Size = new System.Drawing.Size(74, 13);
+            this.lblClientBinFile.TabIndex = 2;
+            this.lblClientBinFile.Text = "Path to Stub:";
+            // 
+            // groupStub
+            // 
+            this.groupStub.Controls.Add(this.chkStubEncryption);
+            this.groupStub.Controls.Add(this.btnCstmStubFilePath);
+            this.groupStub.Controls.Add(this.chkCustomStub);
+            this.groupStub.Controls.Add(this.txtStubKey);
+            this.groupStub.Controls.Add(this.txtStubPath);
+            this.groupStub.Controls.Add(this.lblStubKey);
+            this.groupStub.Controls.Add(this.lblClientBinFile);
+            this.groupStub.Location = new System.Drawing.Point(343, 287);
+            this.groupStub.Name = "groupStub";
+            this.groupStub.Size = new System.Drawing.Size(317, 130);
+            this.groupStub.TabIndex = 5;
+            this.groupStub.TabStop = false;
+            this.groupStub.Text = "Stub Settings";
+            // 
+            // btnCstmStubFilePath
+            // 
+            this.btnCstmStubFilePath.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
+            this.btnCstmStubFilePath.Location = new System.Drawing.Point(284, 44);
+            this.btnCstmStubFilePath.Name = "btnCstmStubFilePath";
+            this.btnCstmStubFilePath.Size = new System.Drawing.Size(27, 22);
+            this.btnCstmStubFilePath.TabIndex = 7;
+            this.btnCstmStubFilePath.Text = "...";
+            this.btnCstmStubFilePath.UseVisualStyleBackColor = true;
+            this.btnCstmStubFilePath.Click += new System.EventHandler(this.btnCstmStubFilePath_Click);
+            // 
+            // chkCustomStub
+            // 
+            this.chkCustomStub.AutoSize = true;
+            this.chkCustomStub.Location = new System.Drawing.Point(110, 21);
+            this.chkCustomStub.Name = "chkCustomStub";
+            this.chkCustomStub.Size = new System.Drawing.Size(92, 17);
+            this.chkCustomStub.TabIndex = 6;
+            this.chkCustomStub.Text = "Custom Stub";
+            this.chkCustomStub.UseVisualStyleBackColor = true;
+            this.chkCustomStub.CheckedChanged += new System.EventHandler(this.chkCustomStub_CheckedChanged);
+            // 
+            // txtStubKey
+            // 
+            this.txtStubKey.Enabled = false;
+            this.txtStubKey.Location = new System.Drawing.Point(110, 95);
+            this.txtStubKey.Name = "txtStubKey";
+            this.txtStubKey.Size = new System.Drawing.Size(201, 22);
+            this.txtStubKey.TabIndex = 5;
+            // 
+            // txtStubPath
+            // 
+            this.txtStubPath.Location = new System.Drawing.Point(110, 44);
+            this.txtStubPath.Name = "txtStubPath";
+            this.txtStubPath.Size = new System.Drawing.Size(168, 22);
+            this.txtStubPath.TabIndex = 4;
+            // 
+            // lblStubKey
+            // 
+            this.lblStubKey.AutoSize = true;
+            this.lblStubKey.Enabled = false;
+            this.lblStubKey.Location = new System.Drawing.Point(22, 98);
+            this.lblStubKey.Name = "lblStubKey";
+            this.lblStubKey.Size = new System.Drawing.Size(85, 13);
+            this.lblStubKey.TabIndex = 3;
+            this.lblStubKey.Text = "Encryption Key:";
+            // 
+            // chkStubEncryption
+            // 
+            this.chkStubEncryption.AutoSize = true;
+            this.chkStubEncryption.Location = new System.Drawing.Point(110, 72);
+            this.chkStubEncryption.Name = "chkStubEncryption";
+            this.chkStubEncryption.Size = new System.Drawing.Size(81, 17);
+            this.chkStubEncryption.TabIndex = 8;
+            this.chkStubEncryption.Text = "Encryption";
+            this.chkStubEncryption.UseVisualStyleBackColor = true;
+            this.chkStubEncryption.CheckedChanged += new System.EventHandler(this.chkStubEncryption_CheckedChanged);
             // 
             // frmBuilder
             // 
@@ -644,6 +768,8 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
             this.ClientSize = new System.Drawing.Size(673, 560);
+            this.Controls.Add(this.groupStub);
+            this.Controls.Add(this.groupMisc);
             this.Controls.Add(this.groupAsmInfo);
             this.Controls.Add(this.btnBuild);
             this.Controls.Add(this.groupInstall);
@@ -666,6 +792,10 @@
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.groupAsmInfo.ResumeLayout(false);
             this.groupAsmInfo.PerformLayout();
+            this.groupMisc.ResumeLayout(false);
+            this.groupMisc.PerformLayout();
+            this.groupStub.ResumeLayout(false);
+            this.groupStub.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -727,5 +857,16 @@
         private System.Windows.Forms.TextBox txtProductVersion;
         private System.Windows.Forms.Label lblProductVersion;
         private System.Windows.Forms.CheckBox chkChangeAsmInfo;
+        private System.Windows.Forms.GroupBox groupMisc;
+        private System.Windows.Forms.Label lblVersionName;
+        private System.Windows.Forms.TextBox txtVersion;
+        private System.Windows.Forms.Label lblClientBinFile;
+        private System.Windows.Forms.GroupBox groupStub;
+        private System.Windows.Forms.TextBox txtStubKey;
+        private System.Windows.Forms.TextBox txtStubPath;
+        private System.Windows.Forms.Label lblStubKey;
+        private System.Windows.Forms.CheckBox chkCustomStub;
+        private System.Windows.Forms.Button btnCstmStubFilePath;
+        private System.Windows.Forms.CheckBox chkStubEncryption;
     }
 }

