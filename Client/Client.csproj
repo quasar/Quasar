@@ -36,8 +36,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Windows.Forms" />
@@ -68,6 +66,8 @@
     <Compile Include="Core\Packets\ClientPackets\Commands\MonitorsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\UserStatus.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Action.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\DownloadFile.cs" />
@@ -76,15 +76,24 @@
     <Compile Include="Core\Packets\ServerPackets\Commands\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Monitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\ShellCommand.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\ShowMessageBox.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\TextToSpeech.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\Update.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Commands\UploadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
     <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
+    <Compile Include="Core\ProtoBuf\CallbackAttributes.cs" />
+    <Compile Include="Core\ProtoBuf\Extensible.cs" />
+    <Compile Include="Core\ProtoBuf\ExtensibleUtil.cs" />
+    <Compile Include="Core\ProtoBuf\GlobalSuppressions.cs" />
+    <Compile Include="Core\ProtoBuf\KeyValuePairProxy.cs" />
+    <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
+    <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
     <Compile Include="Core\SystemCore.cs" />
-    <Compile Include="Core\Encryption\RC4.cs" />
     <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Connection\Initialize.cs" />
     <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />
@@ -173,9 +182,8 @@
     <Compile Include="Core\ProtoBuf\ServiceModel\XmlProtoSerializer.cs" />
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
-    <Compile Include="Core\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
-    <Compile Include="GeoIP.cs" />
+    <Compile Include="Core\GeoIP.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Settings.cs" />
@@ -201,6 +209,17 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <COMReference Include="SpeechLib">
+      <Guid>{C866CA3A-32F7-11D2-9602-00C04F8EE628}</Guid>
+      <VersionMajor>5</VersionMajor>
+      <VersionMinor>4</VersionMinor>
+      <Lcid>0</Lcid>
+      <WrapperTool>tlbimp</WrapperTool>
+      <Isolated>False</Isolated>
+      <EmbedInteropTypes>True</EmbedInteropTypes>
+    </COMReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

