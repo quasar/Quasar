@@ -938,7 +938,7 @@ namespace Core
         #region PINVOKE
         #region GET
         #region PRODUCT INFO
-        [DllImport("Kernel32.dll")]
+        [DllImport("kernel32.dll")]
         internal static extern bool GetProductInfo(
             int osMajorVersion,
             int osMinorVersion,
