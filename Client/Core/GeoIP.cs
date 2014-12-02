@@ -18,6 +18,7 @@ namespace Core
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.Proxy = null;
+                request.Timeout = 5000;
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
                 Stream dataStream = response.GetResponseStream();
                 StreamReader reader = new StreamReader(dataStream);
@@ -29,7 +30,7 @@ namespace Core
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(responseString);
 
-                WANIP = doc.SelectSingleNode("Response//Ip").InnerXml.ToString();
+                WANIP = doc.SelectSingleNode("Response//IP").InnerXml.ToString();
                 Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml.ToString())) ? doc.SelectSingleNode("Response//CountryName").InnerXml.ToString() : "Unknown";
                 CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString())) ? doc.SelectSingleNode("Response//CountryCode").InnerXml.ToString() : "-";
                 Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml.ToString())) ? doc.SelectSingleNode("Response//RegionName").InnerXml.ToString() : "Unknown";
