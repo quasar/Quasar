@@ -1,8 +1,11 @@
 ﻿using System;
+#if !DEBUG
+using xClient.Core.Encryption;
+#endif
 
 namespace xClient.Config
 {
-    public class Settings
+    public static class Settings
     {
 #if DEBUG
         public static string VERSION = "1.0.0.0d";

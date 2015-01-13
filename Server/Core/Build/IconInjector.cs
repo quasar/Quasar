@@ -4,9 +4,8 @@ using System.Security;
 
 namespace xServer.Core.Build
 {
-    public class IconInjector
+    public static class IconInjector
     {
-
         // Basically, you can change icons with the UpdateResource api call.
         // When you make the call you say "I'm updating an icon", and you send the icon data.
         // The main problem is that ICO files store the icons in one set of structures, and exe/dll files store them in

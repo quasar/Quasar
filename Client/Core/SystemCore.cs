@@ -13,7 +13,7 @@ using xClient.Config;
 
 namespace xClient.Core
 {
-    class SystemCore
+    public static class SystemCore
     {
         [DllImport("user32.dll")]
         static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);

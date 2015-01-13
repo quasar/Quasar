@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace xClient.Core
 {
-    class GeoIP
+    public class GeoIP
     {
         public string WANIP { get; private set; }
         public string Country { get; private set; }

@@ -5,7 +5,7 @@ using System.Windows.Forms;
 
 namespace xClient.Core.Helper
 {
-    class Helper
+    public static class Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static Random _rnd = new Random(Environment.TickCount);

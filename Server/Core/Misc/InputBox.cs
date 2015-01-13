@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace xServer.Core.Misc
 {
-    class InputBox
+    public static class InputBox
     {
         public static DialogResult Show(string title, string promptText, ref string value)
         {

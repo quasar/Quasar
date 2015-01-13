@@ -9,7 +9,7 @@ using xServer.Settings;
 
 namespace xServer.Core.Commands
 {
-	public class CommandHandler
+	public static class CommandHandler
 	{
 		public static void HandleInitialize(Client client, Initialize packet, frmMain mainForm)
 		{

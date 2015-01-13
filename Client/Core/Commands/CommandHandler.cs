@@ -12,7 +12,7 @@ using xClient.Core.RemoteShell;
 
 namespace xClient.Core.Commands
 {
-	public class CommandHandler
+	public static class CommandHandler
 	{
 		[DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
 		[return: MarshalAs(UnmanagedType.Bool)]

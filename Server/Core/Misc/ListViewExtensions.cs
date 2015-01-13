@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace xServer.Core.Misc
 {
-    public class ListViewExtensions
+    public static class ListViewExtensions
     {
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);

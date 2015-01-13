@@ -5,7 +5,7 @@ using System.Text;
 
 namespace xServer.Core.Encryption
 {
-    class AES
+    public static class AES
     {
         private const int IVLENGTH = 16;
 
