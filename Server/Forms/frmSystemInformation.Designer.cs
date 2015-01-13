@@ -1,4 +1,6 @@
-﻿namespace xRAT_2.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class frmSystemInformation
     {
@@ -30,7 +32,7 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSystemInformation));
-            this.lstSystem = new xRAT_2.Controls.ListViewEx();
+            this.lstSystem = new ListViewEx();
             this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -72,7 +74,7 @@
             // 
             // ctxtCopy
             // 
-            this.ctxtCopy.Image = global::xRAT_2.Properties.Resources.copy;
+            this.ctxtCopy.Image = global::xServer.Properties.Resources.copy;
             this.ctxtCopy.Name = "ctxtCopy";
             this.ctxtCopy.Size = new System.Drawing.Size(152, 22);
             this.ctxtCopy.Text = "Copy";

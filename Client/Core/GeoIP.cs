@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text.RegularExpressions;
 
-namespace Core
+namespace xClient.Core
 {
     class GeoIP
     {

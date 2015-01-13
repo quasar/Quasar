@@ -1,4 +1,4 @@
-﻿namespace Core.Elevation
+﻿namespace xClient.Core.Elevation
 {
     partial class frmElevation
     {
@@ -85,7 +85,7 @@
             // 
             // picInfo
             // 
-            this.picInfo.Image = global::Client.Properties.Resources.information;
+            this.picInfo.Image = global::xClient.Properties.Resources.information;
             this.picInfo.Location = new System.Drawing.Point(12, 10);
             this.picInfo.Name = "picInfo";
             this.picInfo.Size = new System.Drawing.Size(16, 16);

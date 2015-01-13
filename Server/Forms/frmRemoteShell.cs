@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using Core;
+using xServer.Core;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmRemoteShell : Form
     {

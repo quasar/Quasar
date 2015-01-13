@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace xRAT_2.Settings
+namespace xServer.Settings
 {
     public class ProfileManager
     {

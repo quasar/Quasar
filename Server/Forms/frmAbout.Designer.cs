@@ -1,4 +1,4 @@
-﻿namespace xRAT_2.Forms
+﻿namespace xServer.Forms
 {
     partial class frmAbout
     {
@@ -42,7 +42,7 @@
             // 
             // picXRAT
             // 
-            this.picXRAT.Image = global::xRAT_2.Properties.Resources.xRAT_64x64;
+            this.picXRAT.Image = global::xServer.Properties.Resources.xRAT_64x64;
             this.picXRAT.Location = new System.Drawing.Point(12, 12);
             this.picXRAT.Name = "picXRAT";
             this.picXRAT.Size = new System.Drawing.Size(64, 64);

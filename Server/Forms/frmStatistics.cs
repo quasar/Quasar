@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmStatistics : Form
     {

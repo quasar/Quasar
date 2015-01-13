@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace xRAT_2.Properties {
+namespace xServer.Properties {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace xRAT_2.Properties {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("xRAT_2.Properties.Resources", typeof(Resources).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("xServer.Properties.Resources", typeof(Resources).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -332,7 +332,7 @@ namespace xRAT_2.Properties {
         ///    xRAT 2.0 is distributed in the hope that it will be useful,
         ///    but WITHOUT ANY WARRANTY; without even the implied warranty of
         ///    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        ///    GNU [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///    GNU General Pu [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string TermsOfUse {
             get {

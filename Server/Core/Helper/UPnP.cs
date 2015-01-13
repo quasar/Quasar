@@ -1,11 +1,11 @@
-﻿using NATUPNPLib;
-using System.Net;
+﻿using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using NATUPNPLib;
 
-namespace Core
+namespace xServer.Core.Helper
 {
-    class UPnP
+    static class UPnP
     {
         public static void ForwardPort(ushort port)
         {

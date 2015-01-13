@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
-using xRAT_2.Forms;
+using xServer.Forms;
 
-namespace Core
+namespace xServer.Core
 {
     public class UserState
     {

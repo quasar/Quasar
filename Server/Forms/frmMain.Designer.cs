@@ -1,4 +1,6 @@
-﻿namespace xRAT_2.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class frmMain
     {
@@ -58,7 +60,7 @@
             this.botListen = new System.Windows.Forms.ToolStripStatusLabel();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
             this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.lstClients = new xRAT_2.Controls.ListViewEx();
+            this.lstClients = new ListViewEx();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSocket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -67,7 +69,7 @@
             this.hCountry = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hOS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hAccountType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.mainMenu = new xRAT_2.Controls.MainMenuEx();
+            this.mainMenu = new MainMenuEx();
             this.menuFile = new System.Windows.Forms.MenuItem();
             this.menuClose = new System.Windows.Forms.MenuItem();
             this.menuSettings = new System.Windows.Forms.MenuItem();
@@ -199,14 +201,14 @@
             this.ctxtShutdown,
             this.ctxtRestart,
             this.ctxtStandby});
-            this.ctxtActions.Image = global::xRAT_2.Properties.Resources.actions;
+            this.ctxtActions.Image = global::xServer.Properties.Resources.actions;
             this.ctxtActions.Name = "ctxtActions";
             this.ctxtActions.Size = new System.Drawing.Size(178, 22);
             this.ctxtActions.Text = "Actions";
             // 
             // ctxtShutdown
             // 
-            this.ctxtShutdown.Image = global::xRAT_2.Properties.Resources.shutdown;
+            this.ctxtShutdown.Image = global::xServer.Properties.Resources.shutdown;
             this.ctxtShutdown.Name = "ctxtShutdown";
             this.ctxtShutdown.Size = new System.Drawing.Size(128, 22);
             this.ctxtShutdown.Text = "Shutdown";
@@ -214,7 +216,7 @@
             // 
             // ctxtRestart
             // 
-            this.ctxtRestart.Image = global::xRAT_2.Properties.Resources.restart;
+            this.ctxtRestart.Image = global::xServer.Properties.Resources.restart;
             this.ctxtRestart.Name = "ctxtRestart";
             this.ctxtRestart.Size = new System.Drawing.Size(128, 22);
             this.ctxtRestart.Text = "Restart";
@@ -222,7 +224,7 @@
             // 
             // ctxtStandby
             // 
-            this.ctxtStandby.Image = global::xRAT_2.Properties.Resources.standby;
+            this.ctxtStandby.Image = global::xServer.Properties.Resources.standby;
             this.ctxtStandby.Name = "ctxtStandby";
             this.ctxtStandby.Size = new System.Drawing.Size(128, 22);
             this.ctxtStandby.Text = "Standby";
@@ -267,7 +269,7 @@
             // 
             // ctxtUploadAndExecute
             // 
-            this.ctxtUploadAndExecute.Image = global::xRAT_2.Properties.Resources.upload;
+            this.ctxtUploadAndExecute.Image = global::xServer.Properties.Resources.upload;
             this.ctxtUploadAndExecute.Name = "ctxtUploadAndExecute";
             this.ctxtUploadAndExecute.Size = new System.Drawing.Size(184, 22);
             this.ctxtUploadAndExecute.Text = "Upload && Execute";

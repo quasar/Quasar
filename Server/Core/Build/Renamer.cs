@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using Mono.Cecil;
 
-namespace Core.Build
+namespace xServer.Core.Build
 {
     public class Renamer
     {

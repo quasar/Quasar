@@ -1,11 +1,4 @@
-﻿using Client;
-using Core.Encryption;
-using Core.Packets;
-using Core.Packets.ClientPackets;
-using Core.Packets.ServerPackets;
-using ProtoBuf;
-using ProtoBuf.Meta;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
@@ -13,8 +6,16 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
+using ProtoBuf;
+using ProtoBuf.Meta;
+using xClient.Config;
+using xClient.Core.Compression;
+using xClient.Core.Encryption;
+using xClient.Core.Packets;
+using xClient.Core.Packets.ClientPackets;
+using xClient.Core.Packets.ServerPackets;
 
-namespace Core
+namespace xClient.Core
 {
     public class Client
     {
@@ -53,7 +54,7 @@ namespace Core
                 try
                 {
                     if (compressionEnabled)
-                        e = new LZ4.LZ4Decompressor32().Decompress(e);
+                        e = new LZ4Decompressor32().Decompress(e);
 
                     if (encryptionEnabled)
                         e = AES.Decrypt(e, Encoding.UTF8.GetBytes(Settings.PASSWORD));
@@ -379,7 +380,7 @@ namespace Core
                 data = AES.Encrypt(data, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
             if (compressionEnabled)
-                data = new LZ4.LZ4Compressor32().Compress(data);
+                data = new LZ4Compressor32().Compress(data);
 
             _sendQueue.Enqueue(data);
 

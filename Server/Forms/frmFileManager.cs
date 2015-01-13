@@ -2,10 +2,11 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Core;
 using System.Threading;
+using xServer.Core;
+using xServer.Core.Misc;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmFileManager : Form
     {

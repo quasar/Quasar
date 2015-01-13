@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace Core
+namespace xServer.Core.Misc
 {
     public class ListViewExtensions
     {

@@ -1,4 +1,4 @@
-﻿namespace xRAT_2.Forms
+﻿namespace xServer.Forms
 {
     partial class frmRemoteDesktop
     {
@@ -97,7 +97,7 @@
             // 
             // btnMouse
             // 
-            this.btnMouse.Image = global::xRAT_2.Properties.Resources.mouse_delete;
+            this.btnMouse.Image = global::xServer.Properties.Resources.mouse_delete;
             this.btnMouse.Location = new System.Drawing.Point(340, 10);
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);

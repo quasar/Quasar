@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using xRAT_2.Settings;
+using xServer.Settings;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmTermsOfUse : Form
     {

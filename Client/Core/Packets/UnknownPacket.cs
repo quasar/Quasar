@@ -1,10 +1,6 @@
-﻿using Core.Packets;
-using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using ProtoBuf;
 
-namespace Core.Packets.ClientPackets
+namespace xClient.Core.Packets
 {
     [ProtoContract]
     public class UnknownPacket : IPacket

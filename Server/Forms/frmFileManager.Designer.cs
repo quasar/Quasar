@@ -1,4 +1,6 @@
-﻿namespace xRAT_2.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class frmFileManager
     {
@@ -47,11 +49,11 @@
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.tabTransfers = new System.Windows.Forms.TabPage();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
-            this.lstDirectory = new xRAT_2.Controls.ListViewEx();
+            this.lstDirectory = new ListViewEx();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.lstTransfers = new xRAT_2.Controls.ListViewEx();
+            this.lstTransfers = new ListViewEx();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -95,7 +97,7 @@
             // 
             // ctxtDownload
             // 
-            this.ctxtDownload.Image = global::xRAT_2.Properties.Resources.download;
+            this.ctxtDownload.Image = global::xServer.Properties.Resources.download;
             this.ctxtDownload.Name = "ctxtDownload";
             this.ctxtDownload.Size = new System.Drawing.Size(152, 22);
             this.ctxtDownload.Text = "Download";
@@ -108,7 +110,7 @@
             // 
             // ctxtExecute
             // 
-            this.ctxtExecute.Image = global::xRAT_2.Properties.Resources.run;
+            this.ctxtExecute.Image = global::xServer.Properties.Resources.run;
             this.ctxtExecute.Name = "ctxtExecute";
             this.ctxtExecute.Size = new System.Drawing.Size(152, 22);
             this.ctxtExecute.Text = "Execute";
@@ -116,7 +118,7 @@
             // 
             // ctxtRename
             // 
-            this.ctxtRename.Image = global::xRAT_2.Properties.Resources.textfield_rename;
+            this.ctxtRename.Image = global::xServer.Properties.Resources.textfield_rename;
             this.ctxtRename.Name = "ctxtRename";
             this.ctxtRename.Size = new System.Drawing.Size(152, 22);
             this.ctxtRename.Text = "Rename";
@@ -124,7 +126,7 @@
             // 
             // ctxtDelete
             // 
-            this.ctxtDelete.Image = global::xRAT_2.Properties.Resources.delete;
+            this.ctxtDelete.Image = global::xServer.Properties.Resources.delete;
             this.ctxtDelete.Name = "ctxtDelete";
             this.ctxtDelete.Size = new System.Drawing.Size(152, 22);
             this.ctxtDelete.Text = "Delete";
@@ -137,7 +139,7 @@
             // 
             // ctxtRefresh
             // 
-            this.ctxtRefresh.Image = global::xRAT_2.Properties.Resources.refresh;
+            this.ctxtRefresh.Image = global::xServer.Properties.Resources.refresh;
             this.ctxtRefresh.Name = "ctxtRefresh";
             this.ctxtRefresh.Size = new System.Drawing.Size(152, 22);
             this.ctxtRefresh.Text = "Refresh";

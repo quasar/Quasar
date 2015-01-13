@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Core.Elevation
+namespace xClient.Core.Elevation
 {
     public class CommandButton : Button
     {

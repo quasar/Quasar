@@ -1,12 +1,14 @@
-﻿using Core;
-using Core.Commands;
-using Core.Packets;
-using System;
+﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using xRAT_2.Settings;
+using xServer.Core;
+using xServer.Core.Commands;
+using xServer.Core.Helper;
+using xServer.Core.Misc;
+using xServer.Core.Packets;
+using xServer.Settings;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmMain : Form
     {

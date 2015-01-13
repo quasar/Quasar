@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace Core.Encryption
+namespace xServer.Core.Encryption
 {
     class AES
     {

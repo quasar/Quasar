@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Core
+namespace xServer.Core.Misc
 {
     class InputBox
     {

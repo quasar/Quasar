@@ -1,13 +1,13 @@
-﻿using Core.Packets;
-using Core.Packets.ClientPackets;
-using Core.Packets.ServerPackets;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using xServer.Core.Packets;
+using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Packets.ServerPackets;
 
-namespace Core
+namespace xServer.Core
 {
     public class Server
     {

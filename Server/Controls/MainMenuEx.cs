@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace xRAT_2.Controls
+namespace xServer.Controls
 {
     public partial class MainMenuEx : MainMenu
     {

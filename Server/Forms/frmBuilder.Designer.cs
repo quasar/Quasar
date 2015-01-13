@@ -1,4 +1,4 @@
-﻿namespace xRAT_2.Forms
+﻿namespace xServer.Forms
 {
     partial class frmBuilder
     {
@@ -257,7 +257,7 @@
             // 
             // picUAC2
             // 
-            this.picUAC2.Image = global::xRAT_2.Properties.Resources.uac_shield;
+            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
             this.picUAC2.Location = new System.Drawing.Point(240, 138);
             this.picUAC2.Name = "picUAC2";
             this.picUAC2.Size = new System.Drawing.Size(16, 20);
@@ -268,7 +268,7 @@
             // 
             // picUAC1
             // 
-            this.picUAC1.Image = global::xRAT_2.Properties.Resources.uac_shield;
+            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
             this.picUAC1.Location = new System.Drawing.Point(240, 118);
             this.picUAC1.Name = "picUAC1";
             this.picUAC1.Size = new System.Drawing.Size(16, 20);

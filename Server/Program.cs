@@ -1,13 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Forms;
 
-static class Program
+namespace xServer
 {
-    [STAThread]
-    static void Main()
+    static class Program
     {
-        Application.EnableVisualStyles();
-        Application.SetCompatibleTextRenderingDefault(false);
-        Application.Run(new xRAT_2.Forms.frmMain());
+        [STAThread]
+        static void Main()
+        {
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new frmMain());
+        }
     }
 }

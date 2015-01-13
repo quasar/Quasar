@@ -1,4 +1,4 @@
-﻿namespace Core.Packets
+﻿namespace xClient.Core.Packets
 {
     public interface IPacket 
     {

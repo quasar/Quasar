@@ -1,4 +1,6 @@
-﻿namespace xRAT_2.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class frmTaskManager
     {
@@ -34,7 +36,7 @@
             this.ctxtKillProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtStartProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstTasks = new xRAT_2.Controls.ListViewEx();
+            this.lstTasks = new ListViewEx();
             this.hProcessname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -54,7 +56,7 @@
             // 
             // ctxtKillProcess
             // 
-            this.ctxtKillProcess.Image = global::xRAT_2.Properties.Resources.cancel;
+            this.ctxtKillProcess.Image = global::xServer.Properties.Resources.cancel;
             this.ctxtKillProcess.Name = "ctxtKillProcess";
             this.ctxtKillProcess.Size = new System.Drawing.Size(152, 22);
             this.ctxtKillProcess.Text = "Kill Process";
@@ -62,7 +64,7 @@
             // 
             // ctxtStartProcess
             // 
-            this.ctxtStartProcess.Image = global::xRAT_2.Properties.Resources.run;
+            this.ctxtStartProcess.Image = global::xServer.Properties.Resources.run;
             this.ctxtStartProcess.Name = "ctxtStartProcess";
             this.ctxtStartProcess.Size = new System.Drawing.Size(152, 22);
             this.ctxtStartProcess.Text = "Start Process";
@@ -70,7 +72,7 @@
             // 
             // ctxtRefresh
             // 
-            this.ctxtRefresh.Image = global::xRAT_2.Properties.Resources.refresh;
+            this.ctxtRefresh.Image = global::xServer.Properties.Resources.refresh;
             this.ctxtRefresh.Name = "ctxtRefresh";
             this.ctxtRefresh.Size = new System.Drawing.Size(152, 22);
             this.ctxtRefresh.Text = "Refresh";

@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Core.Elevation
+namespace xClient.Core.Elevation
 {
     public partial class frmElevation : Form
     {

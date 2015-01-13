@@ -1,7 +1,6 @@
 ﻿using System;
-using Core.Encryption;
 
-namespace Client
+namespace xClient.Config
 {
     public class Settings
     {

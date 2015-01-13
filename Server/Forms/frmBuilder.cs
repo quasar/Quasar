@@ -1,11 +1,11 @@
-﻿using Core;
-using Core.Build;
-using System;
+﻿using System;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using xRAT_2.Settings;
+using xServer.Core.Build;
+using xServer.Core.Helper;
+using xServer.Settings;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmBuilder : Form
     {

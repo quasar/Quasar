@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using xRAT_2.Settings;
+using xServer.Settings;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmSettings : Form
     {
@@ -36,7 +36,7 @@ namespace xRAT_2.Forms
             if (btnListen.Text == "Start listening" && !listenServer.Listening)
             {
                 if (chkUseUpnp.Checked)
-                    Core.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
+                    Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
 
                 listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
                 btnListen.Text = "Stop listening";

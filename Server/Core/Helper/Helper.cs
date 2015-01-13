@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.IO;
 
-namespace Core
+namespace xServer.Core.Helper
 {
     class Helper
     {

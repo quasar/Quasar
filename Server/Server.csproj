@@ -8,7 +8,7 @@
     <ProjectGuid>{14CA405B-8BAC-48AB-9FBA-8FB5DF88FD0D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xRAT_2</RootNamespace>
+    <RootNamespace>xServer</RootNamespace>
     <AssemblyName>xRAT 2</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -37,7 +37,7 @@
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>Program</StartupObject>
+    <StartupObject>xServer.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
     <NoWin32Manifest>true</NoWin32Manifest>
@@ -65,51 +65,51 @@
     <Compile Include="Core\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
-    <Compile Include="Core\Compression\LZ4\LZ4Compressor32.cs" />
-    <Compile Include="Core\Compression\LZ4\LZ4Decompressor32.cs" />
-    <Compile Include="Core\Compression\LZ4\LZ4Util.cs" />
+    <Compile Include="Core\Compression\LZ4Compressor32.cs" />
+    <Compile Include="Core\Compression\LZ4Decompressor32.cs" />
+    <Compile Include="Core\Compression\LZ4Util.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Helper\UPnP.cs" />
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
     <Compile Include="Core\Misc\ListViewExtensions.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\DesktopResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\DirectoryResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\DownloadFileResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\DrivesResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\GetProcessesResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\GetSystemInfoResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\MonitorsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\ShellCommandResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\UserStatus.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Connection\Initialize.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
+    <Compile Include="Core\Packets\ClientPackets\KeepAliveResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Action.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Disconnect.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\DownloadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\DownloadFile.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Drives.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\GetProcesses.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\GetSystemInfo.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\KillProcess.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Monitors.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\MouseClick.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Rename.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\ShellCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\ShowMessageBox.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\StartProcess.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Uninstall.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Update.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\UploadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\VisitWebsite.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Connection\InitializeCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Connection\KeepAlive.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Commands\Reconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Action.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Delete.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Desktop.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Directory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Disconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DownloadAndExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
+    <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
+    <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
+    <Compile Include="Core\Packets\ServerPackets\ShowMessageBox.cs" />
+    <Compile Include="Core\Packets\ServerPackets\StartProcess.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Uninstall.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Update.cs" />
+    <Compile Include="Core\Packets\ServerPackets\UploadAndExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\VisitWebsite.cs" />
+    <Compile Include="Core\Packets\ServerPackets\InitializeCommand.cs" />
+    <Compile Include="Core\Packets\ServerPackets\KeepAlive.cs" />
+    <Compile Include="Core\Packets\ServerPackets\Reconnect.cs" />
     <Compile Include="Core\Packets\UnknownPacket.cs" />
     <Compile Include="Core\ProtoBuf\BclHelpers.cs" />
     <Compile Include="Core\ProtoBuf\BufferExtension.cs" />

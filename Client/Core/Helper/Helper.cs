@@ -3,7 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Core
+namespace xClient.Core.Helper
 {
     class Helper
     {

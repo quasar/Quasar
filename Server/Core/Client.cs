@@ -1,19 +1,20 @@
-﻿using Core.Encryption;
-using Core.Packets;
-using Core.Packets.ClientPackets;
-using Core.Packets.ServerPackets;
-using ProtoBuf;
-using ProtoBuf.Meta;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using xRAT_2.Settings;
+using ProtoBuf;
+using ProtoBuf.Meta;
+using xServer.Core.Compression;
+using xServer.Core.Encryption;
+using xServer.Core.Packets;
+using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Packets.ServerPackets;
+using xServer.Settings;
 
-namespace Core
+namespace xServer.Core
 {
     public class Client
     {
@@ -55,7 +56,7 @@ namespace Core
                     _parentServer.BytesReceived += e.LongLength;
 
                     if (compressionEnabled)
-                        e = new LZ4.LZ4Decompressor32().Decompress(e);
+                        e = new LZ4Decompressor32().Decompress(e);
                     
                     if (encryptionEnabled)
                         e = AES.Decrypt(e, Encoding.UTF8.GetBytes(XMLSettings.Password));
@@ -373,7 +374,7 @@ namespace Core
                 data = AES.Encrypt(data, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
             if (compressionEnabled)
-                data = new LZ4.LZ4Compressor32().Compress(data);
+                data = new LZ4Compressor32().Compress(data);
 
             _parentServer.BytesSent += data.LongLength;
 

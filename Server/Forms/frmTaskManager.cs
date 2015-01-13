@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
-using Core;
+using xServer.Core;
+using xServer.Core.Misc;
 
-namespace xRAT_2.Forms
+namespace xServer.Forms
 {
     public partial class frmTaskManager : Form
     {
