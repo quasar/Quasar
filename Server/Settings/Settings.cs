@@ -9,6 +9,7 @@ namespace xRAT_2.Settings
     {
         public const string VERSION = "RELEASE3";
         public static ushort ListenPort { get; set; }
+        public static bool ShowToU { get; set; }
         public static bool AutoListen { get; set; }
         public static bool ShowPopup { get; set; }
         public static bool UseUPnP { get; set; }

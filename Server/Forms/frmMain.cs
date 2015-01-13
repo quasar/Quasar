@@ -13,18 +13,22 @@ namespace xRAT_2.Forms
         public Server listenServer;
         private ListViewColumnSorter lvwColumnSorter;
 
-        public frmMain()
+        private void ReadSettings(bool WriteIfNotExist = true)
         {
-            XMLSettings.WriteDefaultSettings();
+            if (WriteIfNotExist)
+                XMLSettings.WriteDefaultSettings();
 
             XMLSettings.ListenPort = ushort.Parse(XMLSettings.ReadValue("ListenPort"));
+            XMLSettings.ShowToU = bool.Parse(XMLSettings.ReadValue("ShowToU"));
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
+            XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
             XMLSettings.Password = XMLSettings.ReadValue("Password");
-            // fallback for old settings
-            XMLSettings.UseUPnP = bool.Parse((!string.IsNullOrEmpty(XMLSettings.ReadValue("UseUPnP"))) ? XMLSettings.ReadValue("UseUPnP") : "False");
+        }
 
-            if (bool.Parse(XMLSettings.ReadValue("ShowToU")))
+        private void ShowTermsOfService(bool Show)
+        {
+            if (Show)
             {
                 using (var frm = new frmTermsOfUse())
                 {
@@ -32,6 +36,12 @@ namespace xRAT_2.Forms
                 }
                 Thread.Sleep(300);
             }
+        }
+
+        public frmMain()
+        {
+            ReadSettings();
+            ShowTermsOfService(XMLSettings.ShowToU);
 
             InitializeComponent();
 
