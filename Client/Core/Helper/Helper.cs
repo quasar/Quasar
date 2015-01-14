@@ -8,7 +8,7 @@ namespace xClient.Core.Helper
     public static class Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private static Random _rnd = new Random(Environment.TickCount);
+        private static readonly Random _rnd = new Random(Environment.TickCount);
 
         public static string GetRandomFilename(int length, string extension)
         {
@@ -37,20 +37,21 @@ namespace xClient.Core.Helper
             }
         }
 
-        public static Bitmap GetDesktop(int Mode, int Number)
+        public static Bitmap GetDesktop(int mode, int number)
         {
-            Rectangle bounds;
-            Bitmap screenshot;
-            Graphics graph;
+            var bounds = Screen.AllScreens[number].Bounds;
+            var screenshot = new Bitmap(bounds.Width, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+            var graph = Graphics.FromImage(screenshot);
 
-            bounds = Screen.AllScreens[Number].Bounds;
-            screenshot = new Bitmap(bounds.Width, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            graph = Graphics.FromImage(screenshot);
-
-            if (Mode == 1)
-                graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-            else if (Mode == 2)
-                graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+            switch (mode)
+            {
+                case 1:
+                    graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+                    break;
+                case 2:
+                    graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                    break;
+            }
 
             graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
 
@@ -164,8 +165,8 @@ namespace xClient.Core.Helper
 
         public static bool IsWindowsXP()
         {
-            var OsVersion = Environment.OSVersion.Version;
-            return OsVersion.Major == 5 && OsVersion.Minor >= 1;
+            var osVersion = Environment.OSVersion.Version;
+            return osVersion.Major == 5 && osVersion.Minor >= 1;
         }
     }
 }

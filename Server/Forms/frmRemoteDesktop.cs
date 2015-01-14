@@ -119,13 +119,13 @@ namespace xServer.Forms
             if (enableMouseInput)
             {
                 this.picDesktop.Cursor = Cursors.Default;
-                btnMouse.Image = global::xServer.Properties.Resources.mouse_delete;
+                btnMouse.Image = Properties.Resources.mouse_delete;
                 enableMouseInput = false;
             }
             else
             {
                 this.picDesktop.Cursor = Cursors.Hand;
-                btnMouse.Image = global::xServer.Properties.Resources.mouse_add;
+                btnMouse.Image = Properties.Resources.mouse_add;
                 enableMouseInput = true;
             }
         }

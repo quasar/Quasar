@@ -7,7 +7,7 @@ namespace xServer.Core.Helper
     public static class Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private static Random _rnd = new Random(Environment.TickCount);
+        private static readonly Random _rnd = new Random(Environment.TickCount);
 
         public static string GetRandomFilename(int length, string extension)
         {
@@ -47,53 +47,51 @@ namespace xServer.Core.Helper
             return string.Format("{0:0.##} {1}", len, sizes[order]);
         }
 
-        public static int GetFileIcon(string Extension)
+        public static int GetFileIcon(string extension)
         {
-            if (!string.IsNullOrEmpty(Extension))
-            {
-                switch (Extension.ToLower())
-                {
-                    default:
-                        return 2;
-                    case ".exe":
-                        return 3;
-                    case ".txt":
-                        return 4;
-                    case ".rar":
-                    case ".zip":
-                    case ".zipx":
-                    case ".tar":
-                    case ".tgz":
-                    case ".s7z":
-                    case ".7z":
-                    case ".bz2":
-                    case ".cab":
-                    case ".zz":
-                        return 5;
-                    case ".doc":
-                    case ".docx":
-                    case ".odt":
-                        return 6;
-                    case ".pdf":
-                        return 7;
-                    case ".jpg":
-                    case ".jpeg":
-                    case ".png":
-                    case ".bmp":
-                    case ".gif":
-                        return 8;
-                    case ".mp4":
-                    case ".mov":
-                    case ".avi":
-                    case ".wmv":
-                        return 9;
-                    case ".mp3":
-                    case ".wav":
-                        return 10;
-                }
-            }
-            else
+            if (string.IsNullOrEmpty(extension))
                 return 2;
+
+            switch (extension.ToLower())
+            {
+                default:
+                    return 2;
+                case ".exe":
+                    return 3;
+                case ".txt":
+                    return 4;
+                case ".rar":
+                case ".zip":
+                case ".zipx":
+                case ".tar":
+                case ".tgz":
+                case ".s7z":
+                case ".7z":
+                case ".bz2":
+                case ".cab":
+                case ".zz":
+                    return 5;
+                case ".doc":
+                case ".docx":
+                case ".odt":
+                    return 6;
+                case ".pdf":
+                    return 7;
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                    return 8;
+                case ".mp4":
+                case ".mov":
+                case ".avi":
+                case ".wmv":
+                    return 9;
+                case ".mp3":
+                case ".wav":
+                    return 10;
+            }
         }
     }
 }
