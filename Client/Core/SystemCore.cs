@@ -270,7 +270,7 @@ namespace xClient.Core
                     if (lastStatus != "Idle")
                     {
                         lastStatus = "Idle";
-                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program.ConnectClient);
                     }
                 }
                 else
@@ -278,7 +278,7 @@ namespace xClient.Core
                     if (lastStatus != "Active")
                     {
                         lastStatus = "Active";
-                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program._Client);
+                        new Packets.ClientPackets.UserStatus(lastStatus).Execute(Program.ConnectClient);
                     }
                 }
             }

