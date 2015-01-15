@@ -50,7 +50,7 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.Contains("My") || typeDef.Namespace.Contains("Core.Packets") || typeDef.Namespace == "Core" || typeDef.Namespace == "Core.Elevation" || typeDef.Namespace.Contains("LZ4") || typeDef.Namespace.Contains("ProtoBuf"))
+            if (typeDef.Namespace.StartsWith("My") || typeDef.Namespace.StartsWith("xClient.Core.Packets") || typeDef.Namespace == "xClient.Core" || typeDef.Namespace == "xClient.Core.Elevation" || typeDef.Namespace == "xClient.Core.Compression" || typeDef.Namespace.StartsWith("ProtoBuf"))
                 return;
 
             TypeOverloader.GiveName(typeDef);

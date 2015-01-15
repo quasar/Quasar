@@ -16,7 +16,7 @@ namespace xServer.Core.Build
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
-                if (typeDef.FullName == "Client.Settings")
+                if (typeDef.FullName == "xClient.Config.Settings")
                 {
                     foreach (var methodDef in typeDef.Methods)
                     {
