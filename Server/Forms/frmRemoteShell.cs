@@ -49,6 +49,10 @@ namespace xServer.Forms
                     case "cls":
                         txtConsoleOutput.Text = string.Empty;
                         break;
+                    case "exit":
+                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(cClient);
+                        this.Close();
+                        break;
                     default:
                         new Core.Packets.ServerPackets.ShellCommand(input).Execute(cClient);
                         break;
