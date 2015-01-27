@@ -4,14 +4,19 @@ using System.Windows.Forms;
 
 namespace xClient.Core.Elevation
 {
-    public partial class frmElevation : Form
+    public partial class FrmElevation : Form
     {
-        public frmElevation()
+        public FrmElevation()
         {
             InitializeComponent();
 
             picError.Image = SystemIcons.Error.ToBitmap();
             SetLanguage();
+        }
+
+        private void FrmElevation_Paint(object sender, PaintEventArgs e)
+        {
+            e.Graphics.DrawLine(Pens.Gray, new Point(0, panelBot.Location.Y - 1), new Point(this.Width, panelBot.Location.Y - 1));
         }
 
         private void SetLanguage()
@@ -101,11 +106,6 @@ namespace xClient.Core.Elevation
                     linkError.Text = "More details about this error";
                     break;
             }
-        }
-
-        private void frmElevation_Paint(object sender, PaintEventArgs e)
-        {
-            e.Graphics.DrawLine(Pens.Gray, new Point(0, panelBot.Location.Y - 1), new Point(this.Width, panelBot.Location.Y - 1));
         }
 
         private void btnRestore_Click(object sender, EventArgs e)

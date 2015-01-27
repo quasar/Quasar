@@ -230,7 +230,7 @@ namespace xClient.Core
 
             Thread.Sleep(3000);
 
-            Application.Run(new Elevation.frmElevation());
+            Application.Run(new Elevation.FrmElevation());
 
             Thread.Sleep(200);
 

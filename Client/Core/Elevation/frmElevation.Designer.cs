@@ -1,6 +1,6 @@
 ﻿namespace xClient.Core.Elevation
 {
-    partial class frmElevation
+    partial class FrmElevation
     {
         /// <summary>
         /// Required designer variable.
@@ -147,7 +147,7 @@
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "%TITLE%";
             this.TopMost = true;
-            this.Paint += new System.Windows.Forms.PaintEventHandler(this.frmElevation_Paint);
+            this.Paint += new System.Windows.Forms.PaintEventHandler(this.FrmElevation_Paint);
             ((System.ComponentModel.ISupportInitialize)(this.picError)).EndInit();
             this.panelBot.ResumeLayout(false);
             this.panelBot.PerformLayout();
