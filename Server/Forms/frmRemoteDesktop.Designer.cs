@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmRemoteDesktop
+    partial class FrmRemoteDesktop
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRemoteDesktop));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteDesktop));
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.barQuality = new System.Windows.Forms.TrackBar();
@@ -182,9 +182,9 @@
             this.Name = "frmRemoteDesktop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Desktop []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmRemoteDesktop_FormClosing);
-            this.Load += new System.EventHandler(this.frmRemoteDesktop_Load);
-            this.Resize += new System.EventHandler(this.frmRemoteDesktop_Resize);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteDesktop_FormClosing);
+            this.Load += new System.EventHandler(this.FrmRemoteDesktop_Load);
+            this.Resize += new System.EventHandler(this.FrmRemoteDesktop_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).EndInit();
             this.panelTop.ResumeLayout(false);

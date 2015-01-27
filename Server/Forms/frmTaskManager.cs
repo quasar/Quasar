@@ -5,44 +5,44 @@ using xServer.Core.Misc;
 
 namespace xServer.Forms
 {
-    public partial class frmTaskManager : Form
+    public partial class FrmTaskManager : Form
     {
-        private Client cClient;
-        private ListViewColumnSorter lvwColumnSorter;
+        private readonly Client _connectClient;
+        private readonly ListViewColumnSorter _lvwColumnSorter;
 
-        public frmTaskManager(Client c)
+        public FrmTaskManager(Client c)
         {
-            cClient = c;
-            cClient.Value.frmTM = this;
+            _connectClient = c;
+            _connectClient.Value.FrmTm = this;
 
             InitializeComponent();
             
-            lvwColumnSorter = new ListViewColumnSorter();
-            lstTasks.ListViewItemSorter = lvwColumnSorter;
+            _lvwColumnSorter = new ListViewColumnSorter();
+            lstTasks.ListViewItemSorter = _lvwColumnSorter;
         }
 
-        private void frmTaskManager_Load(object sender, EventArgs e)
+        private void FrmTaskManager_Load(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.GetProcesses().Execute(cClient);
+                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
             }
         }
 
-        private void frmTaskManager_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmTaskManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (cClient.Value != null)
-                cClient.Value.frmTM = null;
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmTm = null;
         }
 
         private void ctxtKillProcess_Click(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
                 foreach (ListViewItem lvi in lstTasks.SelectedItems)
                 {
-                    new Core.Packets.ServerPackets.KillProcess(int.Parse(lvi.SubItems[1].Text)).Execute(cClient);
+                    new Core.Packets.ServerPackets.KillProcess(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
                 }
             }
         }
@@ -50,37 +50,37 @@ namespace xServer.Forms
         private void ctxtStartProcess_Click(object sender, EventArgs e)
         {
             string processname = string.Empty;
-            if (InputBox.Show("Processname", "Enter Processname:", ref processname) == System.Windows.Forms.DialogResult.OK)
+            if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
             {
-                if (cClient != null)
-                    new Core.Packets.ServerPackets.StartProcess(processname).Execute(cClient);
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.StartProcess(processname).Execute(_connectClient);
             }
         }
 
         private void ctxtRefresh_Click(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                new Core.Packets.ServerPackets.GetProcesses().Execute(cClient);
+                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
             }
         }
 
         private void lstTasks_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
+            if (e.Column == _lvwColumnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
-                    lvwColumnSorter.Order = SortOrder.Descending;
+                if (_lvwColumnSorter.Order == SortOrder.Ascending)
+                    _lvwColumnSorter.Order = SortOrder.Descending;
                 else
-                    lvwColumnSorter.Order = SortOrder.Ascending;
+                    _lvwColumnSorter.Order = SortOrder.Ascending;
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                _lvwColumnSorter.SortColumn = e.Column;
+                _lvwColumnSorter.Order = SortOrder.Ascending;
             }
 
             // Perform the sort with these new sort options.

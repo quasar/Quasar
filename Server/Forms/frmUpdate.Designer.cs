@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmUpdate
+    partial class FrmUpdate
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUpdate));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmUpdate));
             this.btnUpdate = new System.Windows.Forms.Button();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.lblURL = new System.Windows.Forms.Label();
@@ -88,7 +88,7 @@
             this.Name = "frmUpdate";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Update []";
-            this.Load += new System.EventHandler(this.frmUpdate_Load);
+            this.Load += new System.EventHandler(this.FrmUpdate_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

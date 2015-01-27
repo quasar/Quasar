@@ -2,7 +2,7 @@
 
 namespace xServer.Forms
 {
-    partial class frmSystemInformation
+    partial class FrmSystemInformation
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace xServer.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSystemInformation));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSystemInformation));
             this.lstSystem = new ListViewEx();
             this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -94,8 +94,8 @@ namespace xServer.Forms
             this.Name = "frmSystemInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - System Information []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmSystemInformation_FormClosing);
-            this.Load += new System.EventHandler(this.frmSystemInformation_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmSystemInformation_FormClosing);
+            this.Load += new System.EventHandler(this.FrmSystemInformation_Load);
             this.ctxtMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 

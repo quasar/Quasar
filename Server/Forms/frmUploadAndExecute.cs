@@ -4,26 +4,20 @@ using System.Windows.Forms;
 
 namespace xServer.Forms
 {
-    public partial class frmUploadAndExecute : Form
+    public partial class FrmUploadAndExecute : Form
     {
-        private int selectedClients;
+        private readonly int _selectedClients;
 
-        public frmUploadAndExecute(int selected)
+        public FrmUploadAndExecute(int selected)
         {
-            selectedClients = selected;
+            _selectedClients = selected;
             InitializeComponent();
         }
 
-        private void frmUploadAndExecute_Load(object sender, EventArgs e)
+        private void FrmUploadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Upload & Execute [Selected: {0}]", selectedClients);
-            chkRunHidden.Checked = UploadAndExecute.RunHidden;
-        }
-
-        private void btnUploadAndExecute_Click(object sender, EventArgs e)
-        {
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            this.Text = string.Format("xRAT 2.0 - Upload & Execute [Selected: {0}]", _selectedClients);
+            chkRunHidden.Checked = Core.Misc.UploadAndExecute.RunHidden;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -37,18 +31,17 @@ namespace xServer.Forms
                     var filePath = Path.Combine(ofd.InitialDirectory, ofd.FileName);
                     txtPath.Text = filePath;
 
-                    UploadAndExecute.File = (File.Exists(filePath) ? File.ReadAllBytes(filePath) : new byte[0]);
-                    UploadAndExecute.FileName = ofd.SafeFileName;
-                    UploadAndExecute.RunHidden = chkRunHidden.Checked;
+                    Core.Misc.UploadAndExecute.File = (File.Exists(filePath) ? File.ReadAllBytes(filePath) : new byte[0]);
+                    Core.Misc.UploadAndExecute.FileName = ofd.SafeFileName;
+                    Core.Misc.UploadAndExecute.RunHidden = chkRunHidden.Checked;
                 }
             }
         }
-    }
 
-    public class UploadAndExecute
-    {
-        public static byte[] File { get; set; }
-        public static string FileName { get; set; }
-        public static bool RunHidden { get; set; }
+        private void btnUploadAndExecute_Click(object sender, EventArgs e)
+        {
+            this.DialogResult = DialogResult.OK;
+            this.Close();
+        }
     }
 }

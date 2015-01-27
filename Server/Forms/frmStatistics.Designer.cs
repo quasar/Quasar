@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmStatistics
+    partial class FrmStatistics
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmStatistics));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStatistics));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabTraffic = new System.Windows.Forms.TabPage();
             this.tabClients = new System.Windows.Forms.TabPage();
@@ -108,7 +108,7 @@
             this.Name = "frmStatistics";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Statistics";
-            this.Load += new System.EventHandler(this.frmStatistics_Load);
+            this.Load += new System.EventHandler(this.FrmStatistics_Load);
             this.tabControl.ResumeLayout(false);
             this.tabTraffic.ResumeLayout(false);
             this.tabTraffic.PerformLayout();

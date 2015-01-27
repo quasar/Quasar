@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmTermsOfUse
+    partial class FrmTermsOfUse
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTermsOfUse));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTermsOfUse));
             this.rtxtContent = new System.Windows.Forms.RichTextBox();
             this.lblToU = new System.Windows.Forms.Label();
             this.btnAccept = new System.Windows.Forms.Button();
@@ -105,8 +105,8 @@
             this.Name = "frmTermsOfUse";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Terms of Use";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTermsOfUse_FormClosing);
-            this.Load += new System.EventHandler(this.frmTermsOfUse_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTermsOfUse_FormClosing);
+            this.Load += new System.EventHandler(this.FrmTermsOfUse_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

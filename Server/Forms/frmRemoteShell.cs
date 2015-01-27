@@ -4,31 +4,31 @@ using xServer.Core;
 
 namespace xServer.Forms
 {
-    public partial class frmRemoteShell : Form
+    public partial class FrmRemoteShell : Form
     {
-        private Client cClient;
+        private readonly Client _connectClient;
 
-        public frmRemoteShell(Client c)
+        public FrmRemoteShell(Client c)
         {
-            cClient = c;
-            cClient.Value.frmRS = this;
+            _connectClient = c;
+            _connectClient.Value.FrmRs = this;
 
             InitializeComponent();
 
             txtConsoleOutput.Text = ">> Type 'exit' to close this session" + Environment.NewLine;
         }
 
-        private void frmRemoteShell_Load(object sender, EventArgs e)
+        private void FrmRemoteShell_Load(object sender, EventArgs e)
         {
-            if (cClient != null)
-                this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+            if (_connectClient != null)
+                this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
         }
 
-        private void frmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Core.Packets.ServerPackets.ShellCommand("exit").Execute(cClient);
-            if (cClient.Value != null)
-                cClient.Value.frmRS = null;
+            new Core.Packets.ServerPackets.ShellCommand("exit").Execute(_connectClient);
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmRs = null;
         }
 
         private void txtConsoleOutput_TextChanged(object sender, EventArgs e)
@@ -50,11 +50,11 @@ namespace xServer.Forms
                         txtConsoleOutput.Text = string.Empty;
                         break;
                     case "exit":
-                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(cClient);
+                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
                         this.Close();
                         break;
                     default:
-                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(cClient);
+                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
                         break;
                 }
 

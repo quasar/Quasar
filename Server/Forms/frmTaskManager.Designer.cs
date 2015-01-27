@@ -2,7 +2,7 @@
 
 namespace xServer.Forms
 {
-    partial class frmTaskManager
+    partial class FrmTaskManager
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace xServer.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmTaskManager));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmTaskManager));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtKillProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtStartProcess = new System.Windows.Forms.ToolStripMenuItem();
@@ -128,8 +128,8 @@ namespace xServer.Forms
             this.Name = "frmTaskManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Task Manager []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmTaskManager_FormClosing);
-            this.Load += new System.EventHandler(this.frmTaskManager_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTaskManager_FormClosing);
+            this.Load += new System.EventHandler(this.FrmTaskManager_Load);
             this.ctxtMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 

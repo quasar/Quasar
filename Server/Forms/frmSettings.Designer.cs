@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmSettings
+    partial class FrmSettings
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmSettings));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSettings));
             this.btnSave = new System.Windows.Forms.Button();
             this.lblPort = new System.Windows.Forms.Label();
             this.ncPort = new System.Windows.Forms.NumericUpDown();
@@ -172,7 +172,7 @@
             this.Name = "frmSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Settings";
-            this.Load += new System.EventHandler(this.frmSettings_Load);
+            this.Load += new System.EventHandler(this.FrmSettings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

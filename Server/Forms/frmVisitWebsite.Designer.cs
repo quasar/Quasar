@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmVisitWebsite
+    partial class FrmVisitWebsite
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmVisitWebsite));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmVisitWebsite));
             this.chkVisitHidden = new System.Windows.Forms.CheckBox();
             this.lblURL = new System.Windows.Forms.Label();
             this.txtURL = new System.Windows.Forms.TextBox();
@@ -91,7 +91,7 @@
             this.Name = "frmVisitWebsite";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Visit Website []";
-            this.Load += new System.EventHandler(this.frmVisitWebsite_Load);
+            this.Load += new System.EventHandler(this.FrmVisitWebsite_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

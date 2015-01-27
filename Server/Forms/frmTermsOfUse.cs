@@ -5,35 +5,46 @@ using xServer.Settings;
 
 namespace xServer.Forms
 {
-    public partial class frmTermsOfUse : Form
+    public partial class FrmTermsOfUse : Form
     {
-        public frmTermsOfUse()
+        private static bool _exit = true;
+
+        public FrmTermsOfUse()
         {
             InitializeComponent();
             rtxtContent.Text = Properties.Resources.TermsOfUse;
         }
 
-        private static bool exit = true;
-
-        private void btnAccept_Click(object sender, EventArgs e)
-        {
-            XMLSettings.WriteValue("ShowToU", (!chkDontShowAgain.Checked).ToString());
-            exit = false;
-            this.Close();
-        }
-
-        private void frmTermsOfUse_Load(object sender, EventArgs e)
+        private void FrmTermsOfUse_Load(object sender, EventArgs e)
         {
             lblToU.Left = (this.Width / 2) - (lblToU.Width / 2);
             Thread t = new Thread(Wait20Sec);
             t.Start();
         }
 
+        private void FrmTermsOfUse_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if (e.CloseReason == CloseReason.UserClosing && _exit)
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
+        private void btnAccept_Click(object sender, EventArgs e)
+        {
+            XMLSettings.WriteValue("ShowToU", (!chkDontShowAgain.Checked).ToString());
+            _exit = false;
+            this.Close();
+        }
+
+        private void btnDecline_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
         private void Wait20Sec()
         {
             for (int i = 19; i >= 0; i--)
             {
-                System.Threading.Thread.Sleep(1000);
+                Thread.Sleep(1000);
                 try
                 {
                     this.Invoke((MethodInvoker)delegate
@@ -50,17 +61,6 @@ namespace xServer.Forms
                 btnAccept.Text = "Accept";
                 btnAccept.Enabled = true;
             });
-        }
-
-        private void btnDecline_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
-        }
-
-        private void frmTermsOfUse_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (e.CloseReason == CloseReason.UserClosing && exit)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
     }
 }

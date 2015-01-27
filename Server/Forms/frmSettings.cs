@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Core;
 using xServer.Settings;
 
 namespace xServer.Forms
 {
-    public partial class frmSettings : Form
+    public partial class FrmSettings : Form
     {
-        Core.Server listenServer;
+        private readonly Server _listenServer;
 
-        public frmSettings(Core.Server listenServer)
+        public FrmSettings(Server listenServer)
         {
-            this.listenServer = listenServer;
+            this._listenServer = listenServer;
             
             InitializeComponent();
 
@@ -22,7 +23,7 @@ namespace xServer.Forms
             }
         }
 
-        private void frmSettings_Load(object sender, EventArgs e)
+        private void FrmSettings_Load(object sender, EventArgs e)
         {
             ncPort.Value = XMLSettings.ListenPort;
             chkAutoListen.Checked = XMLSettings.AutoListen;
@@ -33,19 +34,19 @@ namespace xServer.Forms
 
         private void btnListen_Click(object sender, EventArgs e)
         {
-            if (btnListen.Text == "Start listening" && !listenServer.Listening)
+            if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
                 if (chkUseUpnp.Checked)
                     Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
 
-                listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
+                _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
                 btnListen.Text = "Stop listening";
                 ncPort.Enabled = false;
                 txtPassword.Enabled = false;
             }
-            else if (btnListen.Text == "Stop listening" && listenServer.Listening)
+            else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
             {
-                listenServer.Disconnect();
+                _listenServer.Disconnect();
                 btnListen.Text = "Start listening";
                 ncPort.Enabled = true;
                 txtPassword.Enabled = true;

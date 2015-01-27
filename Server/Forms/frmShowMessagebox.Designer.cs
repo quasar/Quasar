@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmShowMessagebox
+    partial class FrmShowMessagebox
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmShowMessagebox));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmShowMessagebox));
             this.groupMsgSettings = new System.Windows.Forms.GroupBox();
             this.lblCaption = new System.Windows.Forms.Label();
             this.lblText = new System.Windows.Forms.Label();
@@ -166,8 +166,8 @@
             this.Name = "frmShowMessagebox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Show Messagebox []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmShowMessagebox_FormClosing);
-            this.Load += new System.EventHandler(this.frmShowMessagebox_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmShowMessagebox_FormClosing);
+            this.Load += new System.EventHandler(this.FrmShowMessagebox_Load);
             this.groupMsgSettings.ResumeLayout(false);
             this.groupMsgSettings.PerformLayout();
             this.ResumeLayout(false);

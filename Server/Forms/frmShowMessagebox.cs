@@ -4,22 +4,22 @@ using xServer.Core;
 
 namespace xServer.Forms
 {
-    public partial class frmShowMessagebox : Form
+    public partial class FrmShowMessagebox : Form
     {
-        private Client cClient;
+        private readonly Client _connectClient;
 
-        public frmShowMessagebox(Client c)
+        public FrmShowMessagebox(Client c)
         {
-            cClient = c;
-            cClient.Value.frmSM = this;
+            _connectClient = c;
+            _connectClient.Value.FrmSm = this;
 
             InitializeComponent();
         }
 
-        private void frmShowMessagebox_Load(object sender, EventArgs e)
+        private void FrmShowMessagebox_Load(object sender, EventArgs e)
         {
-            if (cClient != null)
-                this.Text = string.Format("xRAT 2.0 - Show Messagebox [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
+            if (_connectClient != null)
+                this.Text = string.Format("xRAT 2.0 - Show Messagebox [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
 
             cmbMsgButtons.Items.AddRange(new string[] { "AbortRetryIgnore", "OK", "OKCancel" , "RetryCancel", "YesNo", "YesNoCancel" });
             cmbMsgButtons.SelectedIndex = 0;
@@ -27,24 +27,24 @@ namespace xServer.Forms
             cmbMsgIcon.SelectedIndex = 0;
         }
 
-        private void frmShowMessagebox_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmShowMessagebox_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (cClient.Value != null)
-                cClient.Value.frmSM = null;
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmSm = null;
         }
 
         private void btnTest_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(null, txtText.Text, txtCaption.Text, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), getMessageBoxButton(cmbMsgButtons.SelectedIndex)), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), getMessageBoxIcon(cmbMsgIcon.SelectedIndex)));
+            MessageBox.Show(null, txtText.Text, txtCaption.Text, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), GetMessageBoxButton(cmbMsgButtons.SelectedIndex)), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), GetMessageBoxIcon(cmbMsgIcon.SelectedIndex)));
         }
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            new Core.Packets.ServerPackets.ShowMessageBox(txtCaption.Text, txtText.Text, getMessageBoxButton(cmbMsgButtons.SelectedIndex), getMessageBoxIcon(cmbMsgIcon.SelectedIndex)).Execute(cClient);
+            new Core.Packets.ServerPackets.ShowMessageBox(txtCaption.Text, txtText.Text, GetMessageBoxButton(cmbMsgButtons.SelectedIndex), GetMessageBoxIcon(cmbMsgIcon.SelectedIndex)).Execute(_connectClient);
             this.Close();
         }
 
-        private string getMessageBoxButton(int selectedIndex)
+        private string GetMessageBoxButton(int selectedIndex)
         {
             switch(selectedIndex)
             {
@@ -58,7 +58,7 @@ namespace xServer.Forms
             }
         }
 
-        private string getMessageBoxIcon(int selectedIndex)
+        private string GetMessageBoxIcon(int selectedIndex)
         {
             switch (selectedIndex)
             {

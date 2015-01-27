@@ -2,7 +2,7 @@
 
 namespace xServer.Forms
 {
-    partial class frmMain
+    partial class FrmMain
     {
         /// <summary>
         /// Erforderliche Designervariable.
@@ -31,7 +31,7 @@ namespace xServer.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmMain));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtConnection = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtUpdate = new System.Windows.Forms.ToolStripMenuItem();
@@ -691,8 +691,8 @@ namespace xServer.Forms
             this.Name = "frmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Connected: 0";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmMain_FormClosing);
-            this.Load += new System.EventHandler(this.frmMain_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
+            this.Load += new System.EventHandler(this.FrmMain_Load);
             this.ctxtMenu.ResumeLayout(false);
             this.botStrip.ResumeLayout(false);
             this.botStrip.PerformLayout();

@@ -73,6 +73,7 @@
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
     <Compile Include="Core\Misc\ListViewExtensions.cs" />
+    <Compile Include="Core\Misc\SavedVariables.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
@@ -199,156 +200,156 @@
     <Compile Include="Core\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\UserState.cs" />
-    <Compile Include="Forms\frmAbout.cs">
+    <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmAbout.Designer.cs">
-      <DependentUpon>frmAbout.cs</DependentUpon>
+    <Compile Include="Forms\FrmAbout.Designer.cs">
+      <DependentUpon>FrmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmBuilder.cs">
+    <Compile Include="Forms\FrmBuilder.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmBuilder.Designer.cs">
-      <DependentUpon>frmBuilder.cs</DependentUpon>
+    <Compile Include="Forms\FrmBuilder.Designer.cs">
+      <DependentUpon>FrmBuilder.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmDownloadAndExecute.cs">
+    <Compile Include="Forms\FrmDownloadAndExecute.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmDownloadAndExecute.Designer.cs">
-      <DependentUpon>frmDownloadAndExecute.cs</DependentUpon>
+    <Compile Include="Forms\FrmDownloadAndExecute.Designer.cs">
+      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmFileManager.cs">
+    <Compile Include="Forms\FrmFileManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmFileManager.Designer.cs">
-      <DependentUpon>frmFileManager.cs</DependentUpon>
+    <Compile Include="Forms\FrmFileManager.Designer.cs">
+      <DependentUpon>FrmFileManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmMain.cs">
+    <Compile Include="Forms\FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmMain.Designer.cs">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <Compile Include="Forms\FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Forms\frmRemoteDesktop.cs">
+    <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmRemoteDesktop.Designer.cs">
-      <DependentUpon>frmRemoteDesktop.cs</DependentUpon>
+    <Compile Include="Forms\FrmRemoteDesktop.Designer.cs">
+      <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmRemoteShell.cs">
+    <Compile Include="Forms\FrmRemoteShell.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmRemoteShell.Designer.cs">
-      <DependentUpon>frmRemoteShell.cs</DependentUpon>
+    <Compile Include="Forms\FrmRemoteShell.Designer.cs">
+      <DependentUpon>FrmRemoteShell.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmSettings.cs">
+    <Compile Include="Forms\FrmSettings.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmSettings.Designer.cs">
-      <DependentUpon>frmSettings.cs</DependentUpon>
+    <Compile Include="Forms\FrmSettings.Designer.cs">
+      <DependentUpon>FrmSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmShowMessagebox.cs">
+    <Compile Include="Forms\FrmShowMessagebox.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmShowMessagebox.Designer.cs">
-      <DependentUpon>frmShowMessagebox.cs</DependentUpon>
+    <Compile Include="Forms\FrmShowMessagebox.Designer.cs">
+      <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmStatistics.cs">
+    <Compile Include="Forms\FrmStatistics.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmStatistics.Designer.cs">
-      <DependentUpon>frmStatistics.cs</DependentUpon>
+    <Compile Include="Forms\FrmStatistics.Designer.cs">
+      <DependentUpon>FrmStatistics.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmSystemInformation.cs">
+    <Compile Include="Forms\FrmSystemInformation.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmSystemInformation.Designer.cs">
-      <DependentUpon>frmSystemInformation.cs</DependentUpon>
+    <Compile Include="Forms\FrmSystemInformation.Designer.cs">
+      <DependentUpon>FrmSystemInformation.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmTaskManager.cs">
+    <Compile Include="Forms\FrmTaskManager.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmTaskManager.Designer.cs">
-      <DependentUpon>frmTaskManager.cs</DependentUpon>
+    <Compile Include="Forms\FrmTaskManager.Designer.cs">
+      <DependentUpon>FrmTaskManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmTermsOfUse.cs">
+    <Compile Include="Forms\FrmTermsOfUse.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmTermsOfUse.Designer.cs">
-      <DependentUpon>frmTermsOfUse.cs</DependentUpon>
+    <Compile Include="Forms\FrmTermsOfUse.Designer.cs">
+      <DependentUpon>FrmTermsOfUse.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmUploadAndExecute.cs">
+    <Compile Include="Forms\FrmUploadAndExecute.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmUploadAndExecute.Designer.cs">
-      <DependentUpon>frmUploadAndExecute.cs</DependentUpon>
+    <Compile Include="Forms\FrmUploadAndExecute.Designer.cs">
+      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmVisitWebsite.cs">
+    <Compile Include="Forms\FrmVisitWebsite.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmVisitWebsite.Designer.cs">
-      <DependentUpon>frmVisitWebsite.cs</DependentUpon>
+    <Compile Include="Forms\FrmVisitWebsite.Designer.cs">
+      <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmUpdate.cs">
+    <Compile Include="Forms\FrmUpdate.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmUpdate.Designer.cs">
-      <DependentUpon>frmUpdate.cs</DependentUpon>
+    <Compile Include="Forms\FrmUpdate.Designer.cs">
+      <DependentUpon>FrmUpdate.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ProfileManager.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <EmbeddedResource Include="Forms\frmAbout.resx">
-      <DependentUpon>frmAbout.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmAbout.resx">
+      <DependentUpon>FrmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmBuilder.resx">
-      <DependentUpon>frmBuilder.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmBuilder.resx">
+      <DependentUpon>FrmBuilder.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmDownloadAndExecute.resx">
-      <DependentUpon>frmDownloadAndExecute.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmDownloadAndExecute.resx">
+      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmFileManager.resx">
-      <DependentUpon>frmFileManager.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmFileManager.resx">
+      <DependentUpon>FrmFileManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmMain.resx">
-      <DependentUpon>frmMain.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmRemoteDesktop.resx">
-      <DependentUpon>frmRemoteDesktop.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
+      <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmRemoteShell.resx">
-      <DependentUpon>frmRemoteShell.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmRemoteShell.resx">
+      <DependentUpon>FrmRemoteShell.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmSettings.resx">
-      <DependentUpon>frmSettings.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmSettings.resx">
+      <DependentUpon>FrmSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmShowMessagebox.resx">
-      <DependentUpon>frmShowMessagebox.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmShowMessagebox.resx">
+      <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmStatistics.resx">
-      <DependentUpon>frmStatistics.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmStatistics.resx">
+      <DependentUpon>FrmStatistics.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmSystemInformation.resx">
-      <DependentUpon>frmSystemInformation.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmSystemInformation.resx">
+      <DependentUpon>FrmSystemInformation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmTaskManager.resx">
-      <DependentUpon>frmTaskManager.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmTaskManager.resx">
+      <DependentUpon>FrmTaskManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmTermsOfUse.resx">
-      <DependentUpon>frmTermsOfUse.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmTermsOfUse.resx">
+      <DependentUpon>FrmTermsOfUse.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmUploadAndExecute.resx">
-      <DependentUpon>frmUploadAndExecute.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmUploadAndExecute.resx">
+      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmVisitWebsite.resx">
-      <DependentUpon>frmVisitWebsite.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmVisitWebsite.resx">
+      <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmUpdate.resx">
-      <DependentUpon>frmUpdate.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmUpdate.resx">
+      <DependentUpon>FrmUpdate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

@@ -2,7 +2,7 @@
 
 namespace xServer.Forms
 {
-    partial class frmFileManager
+    partial class FrmFileManager
     {
         /// <summary>
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace xServer.Forms
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmFileManager));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFileManager));
             this.cmbDrives = new System.Windows.Forms.ComboBox();
             this.lblDrive = new System.Windows.Forms.Label();
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -307,8 +307,8 @@ namespace xServer.Forms
             this.Name = "frmFileManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - File Manager []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmFileManager_FormClosing);
-            this.Load += new System.EventHandler(this.frmFileManager_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmFileManager_FormClosing);
+            this.Load += new System.EventHandler(this.FrmFileManager_Load);
             this.ctxtMenu.ResumeLayout(false);
             this.TabControlFileManager.ResumeLayout(false);
             this.tabFileExplorer.ResumeLayout(false);

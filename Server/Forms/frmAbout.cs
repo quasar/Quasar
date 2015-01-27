@@ -3,9 +3,9 @@ using System.Windows.Forms;
 
 namespace xServer.Forms
 {
-    public partial class frmAbout : Form
+    public partial class FrmAbout : Form
     {
-        public frmAbout()
+        public FrmAbout()
         {
             InitializeComponent();
 

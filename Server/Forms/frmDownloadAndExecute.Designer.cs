@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmDownloadAndExecute
+    partial class FrmDownloadAndExecute
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmDownloadAndExecute));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmDownloadAndExecute));
             this.btnDownloadAndExecute = new System.Windows.Forms.Button();
             this.txtURL = new System.Windows.Forms.TextBox();
             this.lblURL = new System.Windows.Forms.Label();
@@ -89,7 +89,7 @@
             this.Name = "frmDownloadAndExecute";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Download & Execute []";
-            this.Load += new System.EventHandler(this.frmDownloadAndExecute_Load);
+            this.Load += new System.EventHandler(this.FrmDownloadAndExecute_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

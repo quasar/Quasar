@@ -7,9 +7,9 @@ using xServer.Settings;
 
 namespace xServer.Forms
 {
-    public partial class frmBuilder : Form
+    public partial class FrmBuilder : Form
     {
-        public frmBuilder()
+        public FrmBuilder()
         {
             InitializeComponent();
         }
@@ -24,7 +24,7 @@ namespace xServer.Forms
             txtMutex.Text = pm.ReadValue("Mutex");
             chkInstall.Checked = bool.Parse(pm.ReadValue("InstallClient"));
             txtInstallname.Text = pm.ReadValue("InstallName");
-            GetInstallpath(int.Parse(pm.ReadValue("InstallPath"))).Checked = true;
+            GetInstallPath(int.Parse(pm.ReadValue("InstallPath"))).Checked = true;
             txtInstallsub.Text = pm.ReadValue("InstallSub");
             chkHide.Checked = bool.Parse(pm.ReadValue("HideFile"));
             chkStartup.Checked = bool.Parse(pm.ReadValue("AddStartup"));
@@ -52,7 +52,7 @@ namespace xServer.Forms
             pm.WriteValue("Mutex", txtMutex.Text);
             pm.WriteValue("InstallClient", chkInstall.Checked.ToString());
             pm.WriteValue("InstallName", txtInstallname.Text);
-            pm.WriteValue("InstallPath", GetInstallpath().ToString());
+            pm.WriteValue("InstallPath", GetInstallPath().ToString());
             pm.WriteValue("InstallSub", txtInstallsub.Text);
             pm.WriteValue("HideFile", chkHide.Checked.ToString());
             pm.WriteValue("AddStartup", chkStartup.Checked.ToString());
@@ -70,7 +70,7 @@ namespace xServer.Forms
             pm.WriteValue("FileVersion", txtFileVersion.Text);
         }
 
-        private void frmBuilder_Load(object sender, EventArgs e)
+        private void FrmBuilder_Load(object sender, EventArgs e)
         {
             LoadProfile("Default");
             if (string.IsNullOrEmpty(txtMutex.Text))
@@ -93,7 +93,7 @@ namespace xServer.Forms
             ToggleAsmInfoControls();
         }
 
-        private void frmBuilder_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (MessageBox.Show("Do you want to save your current settings?", "Save your settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
@@ -253,7 +253,7 @@ namespace xServer.Forms
                                     asmInfo[6] = txtProductVersion.Text;
                                     asmInfo[7] = txtFileVersion.Text;
                                 }
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallpath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
+                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
                                 MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                             }
                             catch (Exception ex)
@@ -272,21 +272,17 @@ namespace xServer.Forms
                 MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
-        private int GetInstallpath()
+        private int GetInstallPath()
         {
-            if (rbAppdata.Checked)
-                return 1;
-            else if (rbProgramFiles.Checked)
-                return 2;
-            else if (rbSystem.Checked)
-                return 3;
-            else
-                return 1;
+            if (rbAppdata.Checked) return 1;
+            if (rbProgramFiles.Checked) return 2;
+            if (rbSystem.Checked) return 3;
+            return 1;
         }
 
-        private RadioButton GetInstallpath(int installpath)
+        private RadioButton GetInstallPath(int installPath)
         {
-            switch (installpath)
+            switch (installPath)
             {
                 case 1:
                     return rbAppdata;

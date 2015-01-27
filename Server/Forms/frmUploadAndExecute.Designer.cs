@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmUploadAndExecute
+    partial class FrmUploadAndExecute
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmUploadAndExecute));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmUploadAndExecute));
             this.btnUploadAndExecute = new System.Windows.Forms.Button();
             this.chkRunHidden = new System.Windows.Forms.CheckBox();
             this.lblPath = new System.Windows.Forms.Label();
@@ -102,7 +102,7 @@
             this.Name = "frmUploadAndExecute";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Upload & Execute []";
-            this.Load += new System.EventHandler(this.frmUploadAndExecute_Load);
+            this.Load += new System.EventHandler(this.FrmUploadAndExecute_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

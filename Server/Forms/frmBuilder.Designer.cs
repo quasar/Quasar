@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmBuilder
+    partial class FrmBuilder
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmBuilder));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.groupConnection = new System.Windows.Forms.GroupBox();
             this.lblMS = new System.Windows.Forms.Label();
             this.txtDelay = new System.Windows.Forms.TextBox();
@@ -656,8 +656,8 @@
             this.Name = "frmBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Builder";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmBuilder_FormClosing);
-            this.Load += new System.EventHandler(this.frmBuilder_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
+            this.Load += new System.EventHandler(this.FrmBuilder_Load);
             this.groupConnection.ResumeLayout(false);
             this.groupConnection.PerformLayout();
             this.groupInstall.ResumeLayout(false);

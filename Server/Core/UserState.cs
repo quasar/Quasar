@@ -13,24 +13,24 @@ namespace xServer.Core
         public string Region { get; set; }
         public string City { get; set; }
 
-        public frmRemoteDesktop frmRDP { get; set; }
-        public frmTaskManager frmTM { get; set; }
-        public frmFileManager frmFM { get; set; }
-        public frmSystemInformation frmSI { get; set; }
-        public frmShowMessagebox frmSM { get; set; }
-        public frmRemoteShell frmRS { get; set; }
+        public FrmRemoteDesktop FrmRdp { get; set; }
+        public FrmTaskManager FrmTm { get; set; }
+        public FrmFileManager FrmFm { get; set; }
+        public FrmSystemInformation FrmSi { get; set; }
+        public FrmShowMessagebox FrmSm { get; set; }
+        public FrmRemoteShell FrmRs { get; set; }
 
-        public bool isAuthenticated { get; set; }
-        public bool lastDesktopSeen { get; set; }
-        public bool lastDirectorySeen { get; set; }
+        public bool IsAuthenticated { get; set; }
+        public bool LastDesktopSeen { get; set; }
+        public bool LastDirectorySeen { get; set; }
 
-        public Bitmap lastDesktop { get; set; }
+        public Bitmap LastDesktop { get; set; }
 
         public UserState()
         {
-            isAuthenticated = false;
-            lastDesktopSeen = true;
-            lastDirectorySeen = true;
+            IsAuthenticated = false;
+            LastDesktopSeen = true;
+            LastDirectorySeen = true;
         }
     }
 }

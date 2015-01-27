@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmRemoteShell
+    partial class FrmRemoteShell
     {
         /// <summary>
         /// Required designer variable.
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(frmRemoteShell));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteShell));
             this.txtConsoleOutput = new System.Windows.Forms.TextBox();
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
@@ -79,8 +79,8 @@
             this.Name = "frmRemoteShell";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Shell []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.frmRemoteShell_FormClosing);
-            this.Load += new System.EventHandler(this.frmRemoteShell_Load);
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteShell_FormClosing);
+            this.Load += new System.EventHandler(this.FrmRemoteShell_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 
