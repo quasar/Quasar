@@ -2,7 +2,7 @@
 using System.Net;
 using System.Xml;
 
-namespace xClient.Core
+namespace xClient.Core.Information
 {
     class GeoIP
     {
