@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -391,6 +392,27 @@ namespace xServer.Core.Commands
 				client.Value.FrmRs.Invoke((MethodInvoker)delegate
 				{
 					client.Value.FrmRs.txtConsoleOutput.Text += packet.Output;
+				});
+			}
+			catch
+			{ }
+		}
+
+		public static void HandleGetStartupItemsResponse(Client client, GetStartupItemsResponse packet)
+		{
+			if (client.Value.FrmStm == null)
+				return;
+
+			try
+			{
+				client.Value.FrmStm.Invoke((MethodInvoker)delegate
+				{
+					foreach (var pair in packet.StartupItems)
+					{
+						var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
+						var l = new ListViewItem(temp) {Group = client.Value.FrmStm.lstStartupItems.Groups[pair.Value], Tag = pair.Value};
+					    client.Value.FrmStm.lstStartupItems.Items.Add(l);
+					}
 				});
 			}
 			catch

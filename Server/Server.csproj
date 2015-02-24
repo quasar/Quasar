@@ -50,6 +50,7 @@
       <HintPath>lib\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -79,6 +80,7 @@
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
@@ -96,6 +98,7 @@
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
@@ -257,6 +260,12 @@
     <Compile Include="Forms\FrmShowMessagebox.Designer.cs">
       <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmStartupManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmStartupManager.Designer.cs">
+      <DependentUpon>FrmStartupManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmStatistics.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -329,6 +338,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmShowMessagebox.resx">
       <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmStartupManager.resx">
+      <DependentUpon>FrmStartupManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmStatistics.resx">
       <DependentUpon>FrmStatistics.cs</DependentUpon>

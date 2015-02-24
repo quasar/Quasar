@@ -19,6 +19,7 @@ namespace xServer.Core
         public FrmSystemInformation FrmSi { get; set; }
         public FrmShowMessagebox FrmSm { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
+        public FrmStartupManager FrmStm { get; set; }
 
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }

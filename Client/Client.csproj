@@ -65,6 +65,7 @@
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />

