@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Net;
-using System.Text.RegularExpressions;
+using System.Xml;
 
 namespace xClient.Core
 {
-    public class GeoIP
+    class GeoIP
     {
         public string WANIP { get; private set; }
         public string Country { get; private set; }
@@ -12,29 +12,11 @@ namespace xClient.Core
         public string Region { get; private set; }
         public string City { get; private set; }
 
-        private string GetWANIP()
-        {
-            HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://checkip.dyndns.org");
-            request.Proxy = null;
-            request.Timeout = 5000;
-            HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-            Stream dataStream = response.GetResponseStream();
-            StreamReader reader = new StreamReader(dataStream);
-            string responseString = reader.ReadToEnd();
-            reader.Close();
-            dataStream.Close();
-            response.Close();
-
-            responseString = (new Regex(@"\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b")).Match(responseString).Value;
-            return responseString;
-        }
-
         public GeoIP()
         {
             try
             {
-                WANIP = GetWANIP();
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(string.Format("http://api.hackertarget.com/geoip/?q={0}", WANIP));
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://freegeoip.net/xml/");
                 request.Proxy = null;
                 request.Timeout = 5000;
                 HttpWebResponse response = (HttpWebResponse)request.GetResponse();
@@ -45,24 +27,14 @@ namespace xClient.Core
                 dataStream.Close();
                 response.Close();
 
-                string[] resp = responseString.Split('\n');
+                XmlDocument doc = new XmlDocument();
+                doc.LoadXml(responseString);
 
-                foreach (string line in resp)
-                {
-                    if (line.StartsWith("Country: "))
-                    {
-                        Country = line.Replace("Country: ", string.Empty);
-                        CountryCode = Country;
-                    }
-                    else if (line.StartsWith("State: "))
-                    {
-                        Region = line.Replace("State: ", string.Empty);
-                    }
-                    else if (line.StartsWith("City: "))
-                    {
-                        City = line.Replace("City: ", string.Empty);
-                    }
-                }
+                WANIP = doc.SelectSingleNode("Response//IP").InnerXml;
+                Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml)) ? doc.SelectSingleNode("Response//CountryName").InnerXml : "Unknown";
+                CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml)) ? doc.SelectSingleNode("Response//CountryCode").InnerXml : "-";
+                Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml)) ? doc.SelectSingleNode("Response//RegionName").InnerXml : "Unknown";
+                City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml)) ? doc.SelectSingleNode("Response//City").InnerXml : "Unknown";
             }
             catch
             {
