@@ -25,7 +25,7 @@ Features
 
 ToDo
 ---
-* Startup Manager
+* ~~Startup Manager~~
 * Socks5 Proxy
 * Password Stealer (Browsers, FTP-Clients)
 * Keylogger
