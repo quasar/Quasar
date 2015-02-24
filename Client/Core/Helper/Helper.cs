@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 namespace xClient.Core.Helper
@@ -167,6 +168,11 @@ namespace xClient.Core.Helper
         {
             var osVersion = Environment.OSVersion.Version;
             return osVersion.Major == 5 && osVersion.Minor >= 1;
+        }
+
+        public static string FormatMacAddress(string macAddress)
+        {
+            return (macAddress.Length != 12) ? "00:00:00:00:00:00" : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
         }
     }
 }

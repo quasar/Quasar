@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 using System.Management;
-using System.Net;
+using System.Net.NetworkInformation;
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
@@ -181,19 +181,46 @@ namespace xClient.Core
 
         public static string GetLanIp()
         {
-            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
-            IPAddress[] hosts = host.AddressList;
-            string localIP = (host.AddressList.Length > 0) ? "" : "-";
-
-            for (int i = host.AddressList.Length - 1; i >= 0; i--)
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (hosts[i].AddressFamily == AddressFamily.InterNetwork)
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.OperationalStatus == OperationalStatus.Up)
                 {
-                    localIP += hosts[i] + ", ";
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily != AddressFamily.InterNetwork ||
+                            ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
+                            continue;
+
+                        return ip.Address.ToString();
+                    }
                 }
             }
 
-            return (localIP == "-") ? localIP : localIP.Remove(localIP.Length - 2); ;
+            return "-";
+        }
+
+        public static string GetMacAddress()
+        {
+            foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.OperationalStatus == OperationalStatus.Up)
+                {
+                    bool foundCorrect = false;
+                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    {
+                        if (ip.Address.AddressFamily != AddressFamily.InterNetwork ||
+                            ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
+                            continue;
+
+                        foundCorrect = (ip.Address.ToString() == GetLanIp());
+                    }
+
+                    if (foundCorrect)
+                        return Helper.Helper.FormatMacAddress(ni.GetPhysicalAddress().ToString());
+                }
+            }
+
+            return "-";
         }
 
         public static void InitializeGeoIp()

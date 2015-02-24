@@ -373,6 +373,8 @@ namespace xClient.Core.Commands
 					SystemCore.GetPcName(),
 					"Uptime",
 					SystemCore.GetUptime(),
+					"MAC Address",
+					SystemCore.GetMacAddress(),
 					"LAN IP Address",
 					SystemCore.GetLanIp(),
 					"WAN IP Address",
