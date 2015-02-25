@@ -10,7 +10,7 @@ using xServer.Settings;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("xRAT 2")]
-[assembly: AssemblyCopyright("Copyright © MaxX0r 2014")]
+[assembly: AssemblyCopyright("Copyright © MaxX0r 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
