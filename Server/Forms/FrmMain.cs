@@ -109,6 +109,7 @@ namespace xServer.Forms
                 typeof(Core.Packets.ServerPackets.Delete),
                 typeof(Core.Packets.ServerPackets.Action),
                 typeof(Core.Packets.ServerPackets.GetStartupItems),
+                typeof(Core.Packets.ServerPackets.AddStartupItem),
                 typeof(Core.Packets.ClientPackets.Initialize),
                 typeof(Core.Packets.ClientPackets.Status),
                 typeof(Core.Packets.ClientPackets.UserStatus),

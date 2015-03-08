@@ -89,6 +89,7 @@
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
+    <Compile Include="Core\Packets\ServerPackets\AddStartupItem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Delete.cs" />
     <Compile Include="Core\Packets\ServerPackets\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Directory.cs" />
@@ -208,6 +209,12 @@
     <Compile Include="Forms\FrmAbout.Designer.cs">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmAddToAutostart.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmAddToAutostart.Designer.cs">
+      <DependentUpon>FrmAddToAutostart.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmBuilder.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -313,6 +320,9 @@
     <Compile Include="Settings\Settings.cs" />
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmAddToAutostart.resx">
+      <DependentUpon>FrmAddToAutostart.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmBuilder.resx">
       <DependentUpon>FrmBuilder.cs</DependentUpon>

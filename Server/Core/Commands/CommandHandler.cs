@@ -5,8 +5,10 @@ using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Misc;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Packets.ServerPackets;
 using xServer.Forms;
 using xServer.Settings;
+using Directory = System.IO.Directory;
 
 namespace xServer.Core.Commands
 {

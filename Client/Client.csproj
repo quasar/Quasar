@@ -72,6 +72,7 @@
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
+    <Compile Include="Core\Packets\ServerPackets\AddStartupItem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Delete.cs" />
     <Compile Include="Core\Packets\ServerPackets\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Directory.cs" />
