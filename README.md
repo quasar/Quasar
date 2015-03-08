@@ -16,6 +16,7 @@ Features
 * Show Messagebox
 * Task Manager
 * File Manager
+* Startup Manager
 * Remote Desktop
 * Remote Shell
 * Download & Execute
