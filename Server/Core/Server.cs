@@ -207,10 +207,13 @@ namespace xServer.Core
         {
             KeepAlive keepAlive = (KeepAlive)state;
 
-            if (_keepAlives.Contains(keepAlive))
+            if (_keepAlives != null)
             {
-                keepAlive.Client.Disconnect();
-                _keepAlives.Remove(keepAlive);
+                if (_keepAlives.Contains(keepAlive))
+                {
+                    keepAlive.Client.Disconnect();
+                    _keepAlives.Remove(keepAlive);
+                }
             }
         }
 
