@@ -29,9 +29,11 @@ namespace xServer.Core.Helper
 
         public static Image CByteToImg(byte[] img)
         {
-            MemoryStream ms = new MemoryStream(img, 0, img.Length);
-            ms.Write(img, 0, img.Length);
-            return Image.FromStream(ms, true);
+            using (MemoryStream ms = new MemoryStream(img, 0, img.Length))
+            {
+                ms.Write(img, 0, img.Length);
+                return Image.FromStream(ms, true);
+            }
         }
 
         public static string GetFileSize(long size)
