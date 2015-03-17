@@ -5,6 +5,7 @@ using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using xServer.Core.Compression;
@@ -359,9 +360,7 @@ namespace xServer.Core
                     }
                 }
                 catch
-                {
-                    return;
-                }
+                { }
             }
         }
 
@@ -389,31 +388,33 @@ namespace xServer.Core
 
         private void HandleSendQueue()
         {
-            for (int i = 0; i < 5; i++)
+            new Thread(() =>
             {
-                try
+                for (int i = 0; i < 5; i++)
                 {
-                    if (_sendIndex >= _sendBuffer.Length)
+                    try
                     {
-                        _sendIndex = 0;
-                        _sendBuffer = Header(_sendQueue.Dequeue());
+                        if (_sendIndex >= _sendBuffer.Length)
+                        {
+                            _sendIndex = 0;
+                            _sendBuffer = Header(_sendQueue.Dequeue());
+                        }
+
+                        int write = Math.Min(_sendBuffer.Length - _sendIndex, BufferSize);
+
+                        _item[1].SetBuffer(_sendBuffer, _sendIndex, write);
+
+                        if (!_handle.SendAsync(_item[1]))
+                            Process(null, _item[1]);
+
+                        return;
                     }
-
-                    int write = Math.Min(_sendBuffer.Length - _sendIndex, BufferSize);
-
-                    _item[1].SetBuffer(_sendBuffer, _sendIndex, write);
-
-                    if (!_handle.SendAsync(_item[1]))
-                        Process(null, _item[1]);
-
-                    return;
+                    catch
+                    {
+                    }
                 }
-                catch
-                {
-                    continue;
-                }
-            }
-            Disconnect();
+                Disconnect();
+            }).Start();
         }
 
         private byte[] Header(byte[] data)
