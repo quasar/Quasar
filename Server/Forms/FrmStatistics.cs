@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Drawing2D;
 using System.Windows.Forms;
 
 namespace xServer.Forms
@@ -66,30 +67,32 @@ namespace xServer.Forms
             e.Graphics.DrawString(_offlineClients + " Offline Clients (" + _offlineClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 183));
         }
 
-        private void DrawPieChartTraffic(float [] values)
+        private void DrawPieChartTraffic(float[] values)
         {
             tabTraffic.Invoke((MethodInvoker)delegate
             {
-                var p = new Pen(Color.Black, 1);
-                var g = tabTraffic.CreateGraphics();
-                var rec = new Rectangle(25, 50, 150, 150);
-                float total = 0;
+                using (var g = tabTraffic.CreateGraphics())
+                using (var p = new Pen(Color.Black, 1))
+                {
+                    var rec = new Rectangle(25, 50, 150, 150);
+                    float total = 0;
 
-                foreach (var value in values)
-                    total += value;
-                for (int i = 0; i < values.Length; i++)
-                    values[i] = (values[i] / total) * 360;
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
 
-                var b1 = new SolidBrush(Color.Green);
-                var b2 = new SolidBrush(Color.Blue);
+                    foreach (var value in values)
+                        total += value;
+                    for (int i = 0; i < values.Length; i++)
+                        values[i] = (values[i] / total) * 360;
 
-                g.DrawPie(p, rec, 0, values[0]);
-                g.FillPie(b1, rec, 0, values[0]);
-                g.DrawPie(p, rec, values[0], values[1]);
-                g.FillPie(b2, rec, values[0], values[1]);
-
-                b1.Dispose();
-                b2.Dispose();
+                    using (SolidBrush b1 = new SolidBrush(Color.Green), b2 = new SolidBrush(Color.Blue))
+                    {
+                        g.DrawPie(p, rec, 0, values[0]);
+                        g.FillPie(b1, rec, 0, values[0]);
+                        g.DrawPie(p, rec, values[0], values[1]);
+                        g.FillPie(b2, rec, values[0], values[1]);
+                    }
+                }
             });
         }
 
@@ -97,30 +100,30 @@ namespace xServer.Forms
         {
             tabClients.Invoke((MethodInvoker)delegate
             {
-                var p = new Pen(Color.Black, 1);
-                var g = tabClients.CreateGraphics();
-                var rec = new Rectangle(25, 50, 150, 150);
-                float total = 0;
+                using (var g = tabClients.CreateGraphics())
+                using (var p = new Pen(Color.Black, 1))
+                {
+                    var rec = new Rectangle(25, 50, 150, 150);
+                    float total = 0;
 
-                foreach (var value in values)
-                    total += value;
-                for (int i = 0; i < values.Length; i++)
-                    values[i] = (values[i] / total) * 360;
+                    g.SmoothingMode = SmoothingMode.AntiAlias;
+                    g.CompositingQuality = CompositingQuality.HighQuality;
 
-                var b1 = new SolidBrush(Color.Green);
-                var b2 = new SolidBrush(Color.Blue);
-                var b3 = new SolidBrush(Color.Red);
+                    foreach (var value in values)
+                        total += value;
+                    for (int i = 0; i < values.Length; i++)
+                        values[i] = (values[i] / total) * 360;
 
-                g.DrawPie(p, rec, 0, values[0]);
-                g.FillPie(b1, rec, 0, values[0]);
-                g.DrawPie(p, rec, values[0], values[1]);
-                g.FillPie(b2, rec, values[0], values[1]);
-                g.DrawPie(p, rec, values[1] + values[0], values[2]);
-                g.FillPie(b3, rec, values[1] + values[0], values[2]);
-
-                b1.Dispose();
-                b2.Dispose();
-                b3.Dispose();
+                    using (SolidBrush b1 = new SolidBrush(Color.Green), b2 = new SolidBrush(Color.Blue), b3 = new SolidBrush(Color.Red))
+                    {
+                        g.DrawPie(p, rec, 0, values[0]);
+                        g.FillPie(b1, rec, 0, values[0]);
+                        g.DrawPie(p, rec, values[0], values[1]);
+                        g.FillPie(b2, rec, values[0], values[1]);
+                        g.DrawPie(p, rec, values[1] + values[0], values[2]);
+                        g.FillPie(b3, rec, values[1] + values[0], values[2]);
+                    }
+                }
             });
         }
 
