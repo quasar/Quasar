@@ -476,6 +476,7 @@ namespace ProtoBuf
             if (dest != null)
             {
                 Flush(this);
+                dest.Dispose();
                 dest = null;
             }
             model = null;
