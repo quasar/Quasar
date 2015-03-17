@@ -27,18 +27,18 @@ namespace ProtoBuf
                 int len;
                 if (commit && (len = (int)stream.Length) > 0)
                 {
-                    MemoryStream ms = (MemoryStream)stream;
-
-                    if (buffer == null)
-                    {   // allocate new buffer
-                        buffer = ms.ToArray();
-                    }
-                    else
-                    {   // resize and copy the data
-                        // note: Array.Resize not available on CF
-                        int offset = buffer.Length;
-                        byte[] tmp = new byte[offset + len];
-                        Helpers.BlockCopy(buffer, 0, tmp, 0, offset);
+                    using (MemoryStream ms = (MemoryStream)stream)
+                    {
+                        if (buffer == null)
+                        {   // allocate new buffer
+                            buffer = ms.ToArray();
+                        }
+                        else
+                        {   // resize and copy the data
+                            // note: Array.Resize not available on CF
+                            int offset = buffer.Length;
+                            byte[] tmp = new byte[offset + len];
+                            Helpers.BlockCopy(buffer, 0, tmp, 0, offset);
 
 #if PORTABLE || WINRT // no GetBuffer() - fine, we'll use Read instead
                         int bytesRead;
@@ -52,9 +52,10 @@ namespace ProtoBuf
                         if(len != 0) throw new EndOfStreamException();
                         ms.Position = oldPos;
 #else
-                        Helpers.BlockCopy(ms.GetBuffer(), 0, tmp, offset, len);
+                            Helpers.BlockCopy(ms.GetBuffer(), 0, tmp, offset, len);
 #endif
-                        buffer = tmp;
+                            buffer = tmp;
+                        }
                     }
                 }
             }
@@ -67,7 +68,11 @@ namespace ProtoBuf
 
         void IExtension.EndQuery(Stream stream)
         {
-            using (stream) { } // just clean up
+            // Clean up
+            if (stream != null)
+            {
+                stream.Dispose();
+            }
         }
     }
 }
