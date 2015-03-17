@@ -23,7 +23,6 @@ namespace ProtoBuf
     {
         private Stream dest;
         TypeModel model;
-        private bool disposed = false;
 
         /// <summary>
         /// Write an encapsulated sub-object, using the supplied unique key (reprasenting a type).
