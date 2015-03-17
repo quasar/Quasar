@@ -21,11 +21,9 @@ namespace ProtoBuf
     /// </summary>
     public sealed class ProtoWriter : IDisposable
     {
-        // Indicates whether the object has been disposed of.
-        bool disposed = false;
-
         private Stream dest;
         TypeModel model;
+        
         /// <summary>
         /// Write an encapsulated sub-object, using the supplied unique key (reprasenting a type).
         /// </summary>
@@ -253,7 +251,6 @@ namespace ProtoBuf
             // at this point the stream still has data, but buffer is full; 
             if (writer.flushLock == 0)
             {
-                // flush the buffer and write to the underlying stream instead
                 Flush(writer);
                 while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
                 {
@@ -476,61 +473,22 @@ namespace ProtoBuf
         /// </summary>
         void IDisposable.Dispose()
         {
-            // Dispose of it all.
-            Dispose(true);
-
-            // Don't waste time finalizing because we have already disposed of the object ourselves.
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Release some resources of the ProtoWriter, but NOT the underlying stream.
-        /// </summary>
-        public void Dispose()
-        {
-            // ProtoWriter's own definition of dispose. Will release some resources, but not the underlying stream.
-            Dispose(false);
+            Dispose();
         }
 
         /// <summary>
         /// Releases some resources of the ProtoWriter. Optionally dispose of it all, including the underlying stream.
         /// </summary>
-        /// <param name="disposing">Determines whether to dispose of everything, including the underlying stream.</param>
-        public void Dispose(bool disposing)
+        public void Dispose()
         {
-            if (!disposed)
+            if (dest != null)
             {
-                model = null;
-                BufferPool.ReleaseBufferToPool(ref ioBuffer);
-
-                if (disposing)
-                {
-                    // Flush, then terminate the underlying stream.
-                    if (dest != null)
-                    {
-                        try
-                        {
-                            // Flush can throw a few exceptions, so make sure that, even if it messes up, dispose of the underlying stream.
-                            Flush(this);
-                        }
-                        finally
-                        {
-                            dest.Dispose();
-                            dest = null;
-                        }
-                    }
-
-                    disposed = true;
-                }
+                Flush(this);
+                dest.Dispose();
+                dest = null;
             }
-        }
-
-        ~ProtoWriter()
-        {
-            // The object has been destroyed. Make sure everything is cleaned up.
-            // If the object has already been fully disposed, this finalizer would
-            //   be suppressed.
-            Dispose(true);
+            model = null;
+            BufferPool.ReleaseBufferToPool(ref ioBuffer);
         }
 
         private byte[] ioBuffer;
@@ -558,12 +516,8 @@ namespace ProtoBuf
         /// </summary>
         public void Close()
         {
-            if (depth != 0 || flushLock != 0)
-            {
-                throw new InvalidOperationException("Unable to close stream in an incomplete state");
-            }
-
-            Dispose(false);
+            if (depth != 0 || flushLock != 0) throw new InvalidOperationException("Unable to close stream in an incomplete state");
+            Dispose();
         }
 
         internal void CheckDepthFlushlock()
