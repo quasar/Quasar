@@ -19,10 +19,19 @@ namespace xServer.Core.Helper
                 {
                     try
                     {
-                        TcpClient c = new TcpClient();
-                        c.Connect("www.google.com", 80);
-                        endPoint = c.Client.LocalEndPoint;
-                        c.Close();
+                        TcpClient c = null;
+                        try
+                        {
+                            c = new TcpClient();
+                            c.Connect("www.google.com", 80);
+                            endPoint = c.Client.LocalEndPoint;
+
+                        }
+                        finally
+                        {
+                            // Placed in here to make sure that a failed TcpClient will never linger!
+                            c.Close();
+                        }
 
                         if (endPoint != null)
                         {
@@ -30,7 +39,7 @@ namespace xServer.Core.Helper
                             int index = ipAddr.IndexOf(":");
                             ipAddr = ipAddr.Remove(index);
                         }
-                        // We got through. We may exit the loop.
+                        // We got through successfully. We may exit the loop.
                         break;
                     }
                     catch
@@ -39,6 +48,8 @@ namespace xServer.Core.Helper
                     }
                 } while (retry < 5);
 
+                // As by the original UPnP, if we can't successfully connect (above),
+                //   shouldn't we just "return;"?
                 try
                 {
                     IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
