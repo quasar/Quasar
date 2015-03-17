@@ -19,22 +19,30 @@ namespace xClient.Core.Information
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://freegeoip.net/xml/");
                 request.Proxy = null;
                 request.Timeout = 5000;
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                Stream dataStream = response.GetResponseStream();
-                StreamReader reader = new StreamReader(dataStream);
-                string responseString = reader.ReadToEnd();
-                reader.Close();
-                dataStream.Close();
-                response.Close();
 
-                XmlDocument doc = new XmlDocument();
-                doc.LoadXml(responseString);
+                // Be sure that response, dataStream, and reader will be disposed of, even if an error is thrown.
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    using (Stream dataStream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(dataStream))
+                        {
+                            string responseString = reader.ReadToEnd();
+                            reader.Close();
+                            dataStream.Close();
+                            response.Close();
 
-                WANIP = doc.SelectSingleNode("Response//IP").InnerXml;
-                Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml)) ? doc.SelectSingleNode("Response//CountryName").InnerXml : "Unknown";
-                CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml)) ? doc.SelectSingleNode("Response//CountryCode").InnerXml : "-";
-                Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml)) ? doc.SelectSingleNode("Response//RegionName").InnerXml : "Unknown";
-                City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml)) ? doc.SelectSingleNode("Response//City").InnerXml : "Unknown";
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(responseString);
+
+                            WANIP = doc.SelectSingleNode("Response//IP").InnerXml;
+                            Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml)) ? doc.SelectSingleNode("Response//CountryName").InnerXml : "Unknown";
+                            CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml)) ? doc.SelectSingleNode("Response//CountryCode").InnerXml : "-";
+                            Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml)) ? doc.SelectSingleNode("Response//RegionName").InnerXml : "Unknown";
+                            City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml)) ? doc.SelectSingleNode("Response//City").InnerXml : "Unknown";
+                        }
+                    }
+                }
             }
             catch
             {

