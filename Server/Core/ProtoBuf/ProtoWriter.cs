@@ -24,7 +24,7 @@ namespace ProtoBuf
         private Stream dest;
         TypeModel model;
         private bool disposed = false;
-
+        
         /// <summary>
         /// Write an encapsulated sub-object, using the supplied unique key (reprasenting a type).
         /// </summary>
@@ -252,7 +252,6 @@ namespace ProtoBuf
             // at this point the stream still has data, but buffer is full; 
             if (writer.flushLock == 0)
             {
-                // flush the buffer and write to the underlying stream instead
                 Flush(writer);
                 while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
                 {

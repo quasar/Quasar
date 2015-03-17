@@ -21,11 +21,10 @@ namespace ProtoBuf
     /// </summary>
     public sealed class ProtoWriter : IDisposable
     {
-        // Indicates whether the object has been disposed of.
-        bool disposed = false;
-
         private Stream dest;
         TypeModel model;
+        private bool disposed = false;
+        
         /// <summary>
         /// Write an encapsulated sub-object, using the supplied unique key (reprasenting a type).
         /// </summary>
@@ -253,7 +252,6 @@ namespace ProtoBuf
             // at this point the stream still has data, but buffer is full; 
             if (writer.flushLock == 0)
             {
-                // flush the buffer and write to the underlying stream instead
                 Flush(writer);
                 while ((bytesRead = source.Read(buffer, 0, buffer.Length)) > 0)
                 {
@@ -505,7 +503,6 @@ namespace ProtoBuf
 
                 if (disposing)
                 {
-                    // Flush, then terminate the underlying stream.
                     if (dest != null)
                     {
                         try
@@ -558,12 +555,8 @@ namespace ProtoBuf
         /// </summary>
         public void Close()
         {
-            if (depth != 0 || flushLock != 0)
-            {
-                throw new InvalidOperationException("Unable to close stream in an incomplete state");
-            }
-
-            Dispose(false);
+            if (depth != 0 || flushLock != 0) throw new InvalidOperationException("Unable to close stream in an incomplete state");
+            Dispose();
         }
 
         internal void CheckDepthFlushlock()
