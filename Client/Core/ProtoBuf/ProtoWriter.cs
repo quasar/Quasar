@@ -21,6 +21,9 @@ namespace ProtoBuf
     /// </summary>
     public sealed class ProtoWriter : IDisposable
     {
+        // Indicates whether the object has been disposed of.
+        bool disposed = false;
+
         private Stream dest;
         TypeModel model;
         /// <summary>
@@ -467,20 +470,46 @@ namespace ProtoBuf
         /// Addition information about this serialization operation.
         /// </summary>
         public SerializationContext Context { get { return context; } }
+
         void IDisposable.Dispose()
         {
-            Dispose();
+            Dispose(false);
         }
-        private void Dispose()
+
+        void Dispose()
         {
-            if (dest != null)
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        public void Dispose(bool disposing)
+        {
+            if (!disposed)
             {
-                Flush(this);
-                dest.Dispose();
-                dest = null;
+                model = null;
+                BufferPool.ReleaseBufferToPool(ref ioBuffer);
+
+                if (disposing)
+                {
+                    // Flush, then terminate the underlying stream.
+                    if (dest != null)
+                    {
+                        try
+                        {
+                            // Flush can throw a few exceptions, so make sure that, even if it messes up, dispose of the underlying stream.
+                            Flush(this);
+                        }
+                        finally
+                        {
+                            dest.Dispose();
+                            dest = null;
+                        }
+                    }
+
+                    disposed = true;
+                }
             }
-            model = null;
-            BufferPool.ReleaseBufferToPool(ref ioBuffer);
         }
 
         private byte[] ioBuffer;
@@ -508,8 +537,12 @@ namespace ProtoBuf
         /// </summary>
         public void Close()
         {
-            if (depth != 0 || flushLock != 0) throw new InvalidOperationException("Unable to close stream in an incomplete state");
-            Dispose();
+            if (depth != 0 || flushLock != 0)
+            {
+                throw new InvalidOperationException("Unable to close stream in an incomplete state");
+            }
+
+            Dispose(false);
         }
 
         internal void CheckDepthFlushlock()
