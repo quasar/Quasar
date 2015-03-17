@@ -21,12 +21,17 @@ namespace xClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
             Settings.Initialize();
             Initialize();
             if (!SystemCore.Disconnect)
                 Connect();
 
-            //close here
+            Cleanup();
+        }
+
+        private static void Cleanup()
+        {
             CommandHandler.CloseShell();
             if (_appMutex != null)
                 _appMutex.Close();
