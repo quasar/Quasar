@@ -471,18 +471,31 @@ namespace ProtoBuf
         /// </summary>
         public SerializationContext Context { get { return context; } }
 
+        /// <summary>
+        /// Disposes and cleans up all unused resources that is used by the object.
+        /// </summary>
         void IDisposable.Dispose()
         {
-            Dispose(false);
-        }
-
-        void Dispose()
-        {
+            // Dispose of it all.
             Dispose(true);
 
+            // Don't waste time finalizing because we have already disposed of the object ourselves.
             GC.SuppressFinalize(this);
         }
 
+        /// <summary>
+        /// Release some resources of the ProtoWriter, but NOT the underlying stream.
+        /// </summary>
+        public void Dispose()
+        {
+            // ProtoWriter's own definition of dispose. Will release some resources, but not the underlying stream.
+            Dispose(false);
+        }
+
+        /// <summary>
+        /// Releases some resources of the ProtoWriter. Optionally dispose of it all, including the underlying stream.
+        /// </summary>
+        /// <param name="disposing">Determines whether to dispose of everything, including the underlying stream.</param>
         public void Dispose(bool disposing)
         {
             if (!disposed)
@@ -510,6 +523,14 @@ namespace ProtoBuf
                     disposed = true;
                 }
             }
+        }
+
+        ~ProtoWriter()
+        {
+            // The object has been destroyed. Make sure everything is cleaned up.
+            // If the object has already been fully disposed, this finalizer would
+            //   be suppressed.
+            Dispose(true);
         }
 
         private byte[] ioBuffer;
