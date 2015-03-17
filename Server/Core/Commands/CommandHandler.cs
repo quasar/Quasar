@@ -107,33 +107,34 @@ namespace xServer.Core.Commands
 
 			if (client.Value.LastDesktop == null)
 			{
-				Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
-				client.Value.LastDesktop = newScreen;
-				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-				{
-					client.Value.FrmRdp.picDesktop.Image = newScreen;
-				});
-				newScreen = null;
+                using (Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
+                {
+                    client.Value.LastDesktop = newScreen;
+                    client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+                    {
+                        client.Value.FrmRdp.picDesktop.Image = newScreen;
+                    });
+                }
 			}
 			else
 			{
-				Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
+                using (Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
+                {
+                    using (Bitmap newScreen = new Bitmap(screen.Width, screen.Height))
+                    {
+                        using (Graphics g = Graphics.FromImage(newScreen))
+                        {
+                            g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
+                            g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
+                        }
 
-				Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
-
-				using (Graphics g = Graphics.FromImage(newScreen))
-				{
-					g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
-					g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
-				}
-
-				client.Value.LastDesktop = newScreen;
-				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-				{
-					client.Value.FrmRdp.picDesktop.Image = newScreen;
-				});
-				screen = null;
-				newScreen = null;
+                        client.Value.LastDesktop = newScreen;
+                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+                        {
+                            client.Value.FrmRdp.picDesktop.Image = newScreen;
+                        });
+                    }
+                }
 			}
 
 			packet.Image = null;
