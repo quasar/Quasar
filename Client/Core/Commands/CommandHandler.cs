@@ -205,7 +205,6 @@ namespace xClient.Core.Commands
 			}
 			finally
 			{
-				CloseShell();
 				SystemCore.Disconnect = true;
 				client.Disconnect();
 			}
