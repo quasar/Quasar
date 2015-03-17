@@ -13,24 +13,31 @@ namespace xServer.Core.Helper
             {
                 EndPoint endPoint;
                 string ipAddr = "";
-                int i = 0;
+                int retry = 0;
 
-            Retry:
-                try
+                do
                 {
-                    TcpClient c = new TcpClient();
-                    c.Connect("www.google.com", 80);
-                    endPoint = c.Client.LocalEndPoint;
-                    c.Close();
-
-                    if (endPoint != null)
+                    try
                     {
-                        ipAddr = endPoint.ToString();
-                        int index = ipAddr.IndexOf(":");
-                        ipAddr = ipAddr.Remove(index);
+                        TcpClient c = new TcpClient();
+                        c.Connect("www.google.com", 80);
+                        endPoint = c.Client.LocalEndPoint;
+                        c.Close();
+
+                        if (endPoint != null)
+                        {
+                            ipAddr = endPoint.ToString();
+                            int index = ipAddr.IndexOf(":");
+                            ipAddr = ipAddr.Remove(index);
+                        }
+                        // We got through. We may exit the loop.
+                        break;
                     }
-                }
-                catch { i++; if (i < 5) goto Retry; }
+                    catch
+                    {
+                        retry++;
+                    }
+                } while (retry < 5);
 
                 try
                 {
