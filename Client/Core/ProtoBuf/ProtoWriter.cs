@@ -472,10 +472,11 @@ namespace ProtoBuf
             Dispose();
         }
         private void Dispose()
-        {   // importantly, this does **not** own the stream, and does not dispose it
+        {
             if (dest != null)
             {
                 Flush(this);
+                dest.Dispose();
                 dest = null;
             }
             model = null;

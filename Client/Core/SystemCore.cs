@@ -73,12 +73,11 @@ namespace xClient.Core
         {
             try
             {
+                string cpuName = string.Empty;
                 string query = "SELECT * FROM Win32_Processor";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", query))
                 {
-                    string cpuName = string.Empty;
-
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         cpuName = mObject["Name"].ToString();

