@@ -107,34 +107,34 @@ namespace xServer.Core.Commands
 
 			if (client.Value.LastDesktop == null)
 			{
-                using (Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
-                {
-                    client.Value.LastDesktop = newScreen;
-                    client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmRdp.picDesktop.Image = newScreen;
-                    });
-                }
+				using (Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
+				{
+					client.Value.LastDesktop = newScreen;
+					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+					{
+						client.Value.FrmRdp.picDesktop.Image = newScreen;
+					});
+				}
 			}
 			else
 			{
-                using (Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
-                {
-                    using (Bitmap newScreen = new Bitmap(screen.Width, screen.Height))
-                    {
-                        using (Graphics g = Graphics.FromImage(newScreen))
-                        {
-                            g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
-                            g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
-                        }
+				using (Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
+				{
+					using (Bitmap newScreen = new Bitmap(screen.Width, screen.Height))
+					{
+						using (Graphics g = Graphics.FromImage(newScreen))
+						{
+							g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
+							g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
+						}
 
-                        client.Value.LastDesktop = newScreen;
-                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                        {
-                            client.Value.FrmRdp.picDesktop.Image = newScreen;
-                        });
-                    }
-                }
+						client.Value.LastDesktop = newScreen;
+						client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+						{
+							client.Value.FrmRdp.picDesktop.Image = newScreen;
+						});
+					}
+				}
 			}
 
 			packet.Image = null;
@@ -412,7 +412,7 @@ namespace xServer.Core.Commands
 					{
 						var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
 						var l = new ListViewItem(temp) {Group = client.Value.FrmStm.lstStartupItems.Groups[pair.Value], Tag = pair.Value};
-					    client.Value.FrmStm.lstStartupItems.Items.Add(l);
+						client.Value.FrmStm.lstStartupItems.Items.Add(l);
 					}
 				});
 			}

