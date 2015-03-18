@@ -106,7 +106,7 @@ namespace xServer.Forms
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
-                    new Thread(new ThreadStart(() =>
+                    new Thread(() =>
                     {
                         foreach (ListViewItem files in lstDirectory.SelectedItems)
                         {
@@ -122,9 +122,11 @@ namespace xServer.Forms
 
                                 new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
 
-                                ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
-                                
-                                this.Invoke((MethodInvoker)delegate
+                                ListViewItem lvi =
+                                    new ListViewItem(new string[]
+                                    {ID.ToString(), "Downloading...", files.SubItems[0].Text});
+
+                                this.Invoke((MethodInvoker) delegate
                                 {
                                     lstTransfers.Items.Add(lvi);
                                 });
@@ -132,7 +134,7 @@ namespace xServer.Forms
                                 Thread.Sleep(50);
                             }
                         }
-                    })).Start();
+                    }).Start();
                 }
             }
         }
