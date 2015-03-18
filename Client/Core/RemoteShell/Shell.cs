@@ -101,7 +101,7 @@ namespace xClient.Core.RemoteShell
                 }
 
                 // The session has already been closed, so there is no reason to make
-                //   the garbage collector waste lots of time finalizing it.
+                // the garbage collector waste lots of time finalizing it.
                 GC.SuppressFinalize(this);
             }
             catch
