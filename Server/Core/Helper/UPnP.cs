@@ -30,7 +30,10 @@ namespace xServer.Core.Helper
                         finally
                         {
                             // Placed in here to make sure that a failed TcpClient will never linger!
-                            c.Close();
+                            if (c != null)
+                            {
+                                c.Close();
+                            }
                         }
 
                         if (endPoint != null)
@@ -48,8 +51,9 @@ namespace xServer.Core.Helper
                     }
                 } while (retry < 5);
 
-                // As by the original UPnP, if we can't successfully connect (above),
-                //   shouldn't we just "return;"?
+                if (string.IsNullOrEmpty(ipAddr)) // If we can't successfully connect
+                    return;
+
                 try
                 {
                     IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
