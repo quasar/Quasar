@@ -54,12 +54,14 @@ namespace xServer.Forms
                         if (_connectClient.Value.LastDesktopSeen)
                         {
                             int Quality = 1;
+                            int SelectedMonitorIndex = 0;
                             this.Invoke((MethodInvoker)delegate
                             {
                                 Quality = barQuality.Value;
+                                SelectedMonitorIndex = cbMonitors.SelectedIndex;
                             });
 
-                            new Core.Packets.ServerPackets.Desktop(Quality, cbMonitors.SelectedIndex).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.Desktop(Quality, SelectedMonitorIndex).Execute(_connectClient);
                             _connectClient.Value.LastDesktopSeen = false;
                         }
                     }
