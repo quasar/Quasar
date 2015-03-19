@@ -62,7 +62,6 @@ namespace xServer.Forms
                             });
 
                             new Core.Packets.ServerPackets.Desktop(Quality, SelectedMonitorIndex).Execute(_connectClient);
-                            _connectClient.Value.LastDesktopSeen = false;
                         }
                     }
                     Thread.Sleep(100);
@@ -89,7 +88,7 @@ namespace xServer.Forms
         {
             _keepRunning = false;
             if (_connectClient.Value != null)
-                _connectClient.Value.FrmRdp = null;
+                _connectClient.Value.FrmRdp.Dispose();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
