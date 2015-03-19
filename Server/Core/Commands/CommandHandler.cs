@@ -108,33 +108,32 @@ namespace xServer.Core.Commands
 			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
-                using (Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image))
-                {
-                    client.Value.LastDesktop = newScreen;
-                    client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmRdp.picDesktop.Image = newScreen;
-                    });
-                }
+				Bitmap newScreen = (Bitmap)Helper.Helper.CByteToImg(packet.Image);
+				client.Value.LastDesktop = newScreen;
+				client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+				{
+					client.Value.FrmRdp.picDesktop.Image = newScreen;
+				});
+				newScreen = null;
 			}
 			else
 			{
 				using (Bitmap screen = (Bitmap) Helper.Helper.CByteToImg(packet.Image))
 				{
-                    using (Bitmap newScreen = new Bitmap(screen.Width, screen.Height))
-                    {
-                        using (Graphics g = Graphics.FromImage(newScreen))
-                        {
-                            g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
-                            g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
-                        }
+					Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
 
-                        client.Value.LastDesktop = newScreen;
-                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                        {
-                            client.Value.FrmRdp.picDesktop.Image = newScreen;
-                        });
-                    }
+					using (Graphics g = Graphics.FromImage(newScreen))
+					{
+						g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
+						g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
+					}
+
+					client.Value.LastDesktop = newScreen;
+					client.Value.FrmRdp.Invoke((MethodInvoker) delegate
+					{
+						client.Value.FrmRdp.picDesktop.Image = newScreen;
+					});
+					newScreen = null;
 				}
 			}
 
