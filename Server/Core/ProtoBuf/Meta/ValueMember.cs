@@ -132,10 +132,9 @@ namespace ProtoBuf.Meta
         }
         private static object ParseDefaultValue(Type type, object value)
         {
-            {
-                Type tmp = Helpers.GetUnderlyingType(type);
-                if (tmp != null) type = tmp;
-            }
+            Type tmp = Helpers.GetUnderlyingType(type);
+            if (tmp != null) type = tmp;
+            
             if (value is string)
             {
                 string s = (string)value;
