@@ -117,13 +117,15 @@ namespace xClient.Core.Helper
                         pRes += 4;
                     }
                 }
-
+            }
+            catch
+            { }
+            finally
+            {
                 bmp.UnlockBits(bmData);
                 bmp2.UnlockBits(bmData2);
                 bmpRes.UnlockBits(bmDataRes);
-            }
-            catch
-            {
+
                 if (bmData != null)
                 {
                     try
