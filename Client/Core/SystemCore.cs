@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.Information;
+using xClient.Core.Encryption;
 
 namespace xClient.Core
 {
@@ -36,7 +37,7 @@ namespace xClient.Core
         public static string MyPath = string.Empty;
         public static string InstallPath = string.Empty;
         public static string AccountType = string.Empty;
-        public static string WANIP = string.Empty;
+        public static string WanIp = string.Empty;
         public static string Country = string.Empty;
         public static string CountryCode = string.Empty;
         public static string Region = string.Empty;
@@ -67,6 +68,11 @@ namespace xClient.Core
             }
 
             return "Unknown";
+        }
+
+        public static string GetId()
+        {
+            return SHA256.ComputeHash(GetMacAddress());
         }
 
         public static string GetCpu()
@@ -254,13 +260,13 @@ namespace xClient.Core
 
         public static void InitializeGeoIp()
         {
-            GeoIP gIP = new GeoIP();
+            GeoIP gIp = new GeoIP();
 
-            Country = gIP.Country;
-            CountryCode = gIP.CountryCode;
-            Region = gIP.Region;
-            City = gIP.City;
-            WANIP = gIP.WANIP;
+            Country = gIp.Country;
+            CountryCode = gIp.CountryCode;
+            Region = gIp.Region;
+            City = gIp.City;
+            WanIp = gIp.WanIp;
 
             if (CountryCode == "-" || Country == "Unknown")
             {

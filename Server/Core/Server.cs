@@ -79,13 +79,14 @@ namespace xServer.Core
         }
 
         public int ConnectedClients { get; set; }
-        public int AllTimeConnectedClients { get; set; }
+        public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
 
         private List<Type> PacketTypes { get; set; }
 
         public Server(int bufferSize)
         {
             PacketTypes = new List<Type>();
+            AllTimeConnectedClients = new Dictionary<string, DateTime>();
             BufferSize = bufferSize;
         }
 

@@ -60,6 +60,7 @@
       <DependentUpon>FrmElevation.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Encryption\SHA256.cs" />
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
