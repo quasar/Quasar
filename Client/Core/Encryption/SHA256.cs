@@ -7,7 +7,6 @@ namespace xClient.Core.Encryption
     {
         public static string ComputeHash(string input)
         {
-            string hash = string.Empty;
             byte[] data = Encoding.UTF8.GetBytes(input);
 
             using (SHA256Managed sha = new SHA256Managed())
@@ -15,10 +14,12 @@ namespace xClient.Core.Encryption
                 data = sha.ComputeHash(data, 0, data.Length);
             }
 
-            foreach (byte _byte in data)
-                hash += _byte.ToString("X2");
+            StringBuilder hash = new StringBuilder();
 
-            return hash.ToUpper();
+            foreach (byte _byte in data)
+                hash.Append(_byte.ToString("X2"));
+
+            return hash.ToString().ToUpper();
         }
     }
 }
