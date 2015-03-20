@@ -247,7 +247,7 @@ namespace xServer.Core.Commands
 							ListViewItem lvi = new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File" });
 							lvi.Tag = "file";
 
-							lvi.ImageIndex = Helper.Helper.GetFileIcon(System.IO.Path.GetExtension(packet.Files[i]));
+							lvi.ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]));
 
 							try
 							{
