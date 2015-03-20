@@ -6,7 +6,7 @@ namespace xClient.Core.Information
 {
     class GeoIP
     {
-        public string WANIP { get; private set; }
+        public string WanIp { get; private set; }
         public string Country { get; private set; }
         public string CountryCode { get; private set; }
         public string Region { get; private set; }
@@ -35,7 +35,7 @@ namespace xClient.Core.Information
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(responseString);
 
-                            WANIP = doc.SelectSingleNode("Response//IP").InnerXml;
+                            WanIp = doc.SelectSingleNode("Response//IP").InnerXml;
                             Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml)) ? doc.SelectSingleNode("Response//CountryName").InnerXml : "Unknown";
                             CountryCode = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml)) ? doc.SelectSingleNode("Response//CountryCode").InnerXml : "-";
                             Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml)) ? doc.SelectSingleNode("Response//RegionName").InnerXml : "Unknown";
@@ -46,7 +46,7 @@ namespace xClient.Core.Information
             }
             catch
             {
-                WANIP = "-";
+                WanIp = "-";
                 Country = "Unknown";
                 CountryCode = "-";
                 Region = "Unknown";

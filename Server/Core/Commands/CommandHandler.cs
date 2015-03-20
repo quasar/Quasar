@@ -19,10 +19,6 @@ namespace xServer.Core.Commands
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
 				return;
 
-			mainForm.ListenServer.ConnectedClients++;
-			mainForm.ListenServer.AllTimeConnectedClients++;
-			mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
-
 			new Thread(() =>
 			{
 				try
@@ -34,19 +30,26 @@ namespace xServer.Core.Commands
 					client.Value.CountryCode = packet.CountryCode;
 					client.Value.Region = packet.Region;
 					client.Value.City = packet.City;
+					client.Value.Id = packet.Id;
+
+					if (!mainForm.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
+						mainForm.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
+
+					mainForm.ListenServer.ConnectedClients++;
+					mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
 
 					string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
 					// this " " leaves some space between the flag-icon and the IP
-				    ListViewItem lvi =
-				        new ListViewItem(new string[]
-				        {
-				            " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
-				            "Connected",
-				            "Active", country, client.Value.OperatingSystem, client.Value.AccountType
-				        }) {Tag = client, ImageIndex = packet.ImageIndex};
+					ListViewItem lvi =
+						new ListViewItem(new string[]
+						{
+							" " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
+							"Connected",
+							"Active", country, client.Value.OperatingSystem, client.Value.AccountType
+						}) {Tag = client, ImageIndex = packet.ImageIndex};
 
-				    mainForm.Invoke((MethodInvoker)delegate
+					mainForm.Invoke((MethodInvoker)delegate
 					{
 						mainForm.lstClients.Items.Add(lvi);
 					});

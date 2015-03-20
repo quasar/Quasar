@@ -29,8 +29,11 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(8)]
         public int ImageIndex { get; set; }
 
+        [ProtoMember(9)]
+        public string Id { get; set; }
+
         public Initialize() { }
-        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode, string region, string city, int imageindex)
+        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode, string region, string city, int imageindex, string id)
         {
             Version = version;
             OperatingSystem = operatingsystem;
@@ -40,6 +43,7 @@ namespace xServer.Core.Packets.ClientPackets
             Region = region;
             City = city;
             ImageIndex = imageindex;
+            Id = id;
         }
 
         public void Execute(Client client)

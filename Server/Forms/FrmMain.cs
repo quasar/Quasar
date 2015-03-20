@@ -560,7 +560,7 @@ namespace xServer.Forms
                 MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK, MessageBoxIcon.Information);
             else
             {
-                using (var frm = new FrmStatistics(ListenServer.BytesReceived, ListenServer.BytesSent, ListenServer.ConnectedClients, ListenServer.AllTimeConnectedClients))
+                using (var frm = new FrmStatistics(ListenServer.BytesReceived, ListenServer.BytesSent, ListenServer.ConnectedClients, ListenServer.AllTimeConnectedClients.Count))
                 {
                     frm.ShowDialog();
                 }

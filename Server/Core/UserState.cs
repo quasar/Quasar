@@ -12,6 +12,7 @@ namespace xServer.Core
         public string CountryCode { get; set; }
         public string Region { get; set; }
         public string City { get; set; }
+        public string Id { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }
