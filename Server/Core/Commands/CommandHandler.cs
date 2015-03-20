@@ -12,6 +12,8 @@ namespace xServer.Core.Commands
 {
 	public static class CommandHandler
 	{
+		private const string DELIMITER = "$E$";
+
 		public static void HandleInitialize(Client client, Initialize packet, FrmMain mainForm)
 		{
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
@@ -36,11 +38,15 @@ namespace xServer.Core.Commands
 					string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
 					// this " " leaves some space between the flag-icon and the IP
-					ListViewItem lvi = new ListViewItem(new string[] { " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version, "Connected", "Active", country, client.Value.OperatingSystem, client.Value.AccountType });
-					lvi.Tag = client;
-					lvi.ImageIndex = packet.ImageIndex;
+				    ListViewItem lvi =
+				        new ListViewItem(new string[]
+				        {
+				            " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
+				            "Connected",
+				            "Active", country, client.Value.OperatingSystem, client.Value.AccountType
+				        }) {Tag = client, ImageIndex = packet.ImageIndex};
 
-					mainForm.Invoke((MethodInvoker)delegate
+				    mainForm.Invoke((MethodInvoker)delegate
 					{
 						mainForm.lstClients.Items.Add(lvi);
 					});
@@ -209,7 +215,7 @@ namespace xServer.Core.Commands
 				{
 					for (int i = 0; i < packet.Folders.Length; i++)
 					{
-						if (packet.Folders[i] != "$$$EMPTY$$$$")
+						if (packet.Folders[i] != DELIMITER)
 						{
 							ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", "Directory" });
 							lvi.Tag = "dir";
@@ -233,7 +239,7 @@ namespace xServer.Core.Commands
 				{
 					for (int i = 0; i < packet.Files.Length; i++)
 					{
-						if (packet.Files[i] != "$$$EMPTY$$$$")
+						if (packet.Files[i] != DELIMITER)
 						{
 							ListViewItem lvi = new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File" });
 							lvi.Tag = "file";
