@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
@@ -13,20 +14,20 @@ namespace xClient.Core.Helper
 
         public static string GetRandomFilename(int length, string extension)
         {
-            char[] tempChars = new char[length];
+            StringBuilder randomName = new StringBuilder(length);
             for (int i = 0; i < length; i++)
-                tempChars[i] = CHARS[_rnd.Next(CHARS.Length)];
+                randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
-            return new string(tempChars) + extension;
+            return string.Concat(randomName.ToString(), extension);
         }
 
         public static string GetRandomName(int length)
         {
-            char[] tempChars = new char[length];
+            StringBuilder randomName = new StringBuilder(length);
             for (int i = 0; i < length; i++)
-                tempChars[i] = CHARS[_rnd.Next(CHARS.Length)];
+                randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
-            return new string(tempChars);
+            return randomName.ToString();
         }
 
         public static byte[] CImgToByte(Image image, System.Drawing.Imaging.ImageFormat format)
