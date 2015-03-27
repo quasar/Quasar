@@ -11,7 +11,7 @@ namespace xServer.Core.Encryption
 
         public static string Encrypt(string input, string keyy)
         {
-            byte[] key, data = System.Text.Encoding.UTF8.GetBytes(input), encdata;
+            byte[] key, data = Encoding.UTF8.GetBytes(input), encdata;
 
             try
             {
@@ -132,7 +132,7 @@ namespace xServer.Core.Encryption
                     }
                 }
 
-                return System.Text.Encoding.UTF8.GetString(data, 0, i);
+                return Encoding.UTF8.GetString(data, 0, i);
             }
             catch
             {
@@ -148,7 +148,6 @@ namespace xServer.Core.Encryption
         public static byte[] Decrypt(byte[] input, byte[] keyy)
         {
             byte[] key, data;
-            int i;
 
             try
             {
@@ -169,7 +168,7 @@ namespace xServer.Core.Encryption
                         using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
                         {
                             data = new byte[ms.Length - IVLENGTH + 1];
-                            i = cs.Read(data, 0, data.Length);
+                            cs.Read(data, 0, data.Length);
                         }
 
                         iv = null;

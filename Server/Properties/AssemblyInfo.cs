@@ -5,11 +5,11 @@ using xServer.Settings;
 // Allgemeine Informationen über eine Assembly werden über die folgenden 
 // Attribute gesteuert. Ändern Sie diese Attributwerte, um die Informationen zu ändern,
 // die mit einer Assembly verknüpft sind.
-[assembly: AssemblyTitle("xRAT 2")]
+[assembly: AssemblyTitle("xRAT 2.0")]
 [assembly: AssemblyDescription("Remote Administration Tool")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
-[assembly: AssemblyProduct("xRAT 2")]
+[assembly: AssemblyProduct("xRAT 2.0")]
 [assembly: AssemblyCopyright("Copyright © MaxX0r 2015")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
