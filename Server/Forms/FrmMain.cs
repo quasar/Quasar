@@ -14,6 +14,8 @@ namespace xServer.Forms
     {
         public Server ListenServer;
         private readonly ListViewColumnSorter _lvwColumnSorter;
+        private static FrmMain Instance;
+
 
         private void ReadSettings(bool writeIfNotExist = true)
         {
@@ -42,6 +44,8 @@ namespace xServer.Forms
 
         public FrmMain()
         {
+            Instance = this;
+
             ReadSettings();
             ShowTermsOfService(XMLSettings.ShowToU);
 
