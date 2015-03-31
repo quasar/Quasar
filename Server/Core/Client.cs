@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using xServer.Core.Compression;
@@ -19,26 +16,14 @@ namespace xServer.Core
 {
     public class Client
     {
-        //TODO: Lock objects where needed.
-        //TODO: Raise Client_Fail with exception.
-        //TODO: Create and handle ReadQueue.
-
-        public event ClientFailEventHandler ClientFail;
-        public delegate void ClientFailEventHandler(Client s);
-
-        private void OnClientFail()
-        {
-            if (ClientFail != null)
-            {
-                ClientFail(this);
-            }
-        }
-
         public event ClientStateEventHandler ClientState;
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
         private void OnClientState(bool connected)
         {
+            if (Connected == connected) return;
+
+            Connected = connected;
             if (ClientState != null)
             {
                 ClientState(this, connected);
@@ -48,36 +33,11 @@ namespace xServer.Core
         public event ClientReadEventHandler ClientRead;
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
-        private void OnClientRead(byte[] e)
+        private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
             {
-                try
-                {
-                    _parentServer.BytesReceived += e.LongLength;
-
-                    if (compressionEnabled)
-                        e = new LZ4Decompressor32().Decompress(e);
-                    
-                    if (encryptionEnabled)
-                        e = AES.Decrypt(e, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                    using (MemoryStream deserialized = new MemoryStream(e))
-                    {
-                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
-
-                        if (packet.GetType() == typeof(KeepAliveResponse))
-                            _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this);
-                        else if (packet.GetType() == typeof(KeepAlive))
-                            new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
-                        else
-                            ClientRead(this, packet);
-                    }
-                }
-                catch
-                {
-                    new UnknownPacket().Execute(this);
-                }
+                ClientRead(this, packet);
             }
         }
 
@@ -92,60 +52,45 @@ namespace xServer.Core
             }
         }
 
-        private readonly AsyncOperation _asyncOperation;
-        private Socket _handle;
-
-        private int _sendIndex;
-        private byte[] _sendBuffer;
-
-        private int _readIndex;
-        private byte[] _readBuffer;
-
-        private Queue<byte[]> _sendQueue;
-
-        private SocketAsyncEventArgs[] _item = new SocketAsyncEventArgs[2];
-
-        private bool[] _processing = new bool[2];
-
-        public int BufferSize { get; set; }
-        public UserState Value { get; set; }
-
-        private IPEndPoint _endPoint;
-        public IPEndPoint EndPoint
+        public enum ReceiveType
         {
-            get
-            {
-                return _endPoint ?? new IPEndPoint(IPAddress.None, 0);
-            }
+            Header,
+            Payload
         }
+
+        public const int HEADER_SIZE = 4;
+        public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
+        private Socket _handle;
+        private int _typeIndex;
+
+        private byte[] _buffer = new byte[MAX_PACKET_SIZE];
+
+        //receive info
+        private int _readOffset;
+        private int _writeOffset;
+        private int _readableDataLen;
+        private int _payloadLen;
+        private ReceiveType _receiveState = ReceiveType.Header;
+
+        //Connection info
+        public bool Connected { get; private set; }
+        public UserState Value { get; set; }
+        public IPEndPoint EndPoint { get; private set; }
+        private Server _parentServer;
 
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        private Server _parentServer;
+        public Client()
+        { }
 
-        public bool Connected { get; private set; }
-
-        private int _typeIndex = 0;
-
-        public Client(int bufferSize)
-        {
-            _asyncOperation = AsyncOperationManager.CreateOperation(null);
-            BufferSize = bufferSize;
-        }
-
-        internal Client(Server server, Socket sock, int size, Type[] packets)
+        internal Client(Server server, Socket sock, Type[] packets)
         {
             try
             {
                 AddTypesToSerializer(typeof(IPacket), packets);
-
                 _parentServer = server;
-
-                _asyncOperation = AsyncOperationManager.CreateOperation(null);
-
                 Initialize();
-                _item[0].SetBuffer(new byte[size], 0, size);
 
                 _handle = sock;
 
@@ -153,12 +98,9 @@ namespace xServer.Core
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
-                BufferSize = size;
-                _endPoint = (IPEndPoint)_handle.RemoteEndPoint;
-                Connected = true;
-
-                if (!_handle.ReceiveAsync(_item[0]))
-                    Process(null, _item[0]);
+                _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
+                EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                OnClientState(true);
             }
             catch
             {
@@ -166,66 +108,186 @@ namespace xServer.Core
             }
         }
 
-        public void Connect(string host, ushort port)
-        {
-            try
-            {
-                Disconnect();
-                Initialize();
-
-                _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                _handle.NoDelay = true;
-
-                _item[0].RemoteEndPoint = new IPEndPoint(GetAddress(host), port);
-                if (!_handle.ConnectAsync(_item[0]))
-                    Process(null, _item[0]);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                OnClientFail();
-                Disconnect();
-            }
-        }
-
-        private IPAddress GetAddress(string host)
-        {
-            IPAddress[] hosts = Dns.GetHostAddresses(host);
-
-            foreach (IPAddress h in hosts)
-                if (h.AddressFamily == AddressFamily.InterNetwork)
-                    return h;
-
-            return null;
-        }
-
         private void Initialize()
         {
-
             AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(UnknownPacket),
                 typeof(KeepAlive),
                 typeof(KeepAliveResponse)
             });
+        }
 
-            _processing = new bool[2];
+        private void AsyncReceive(IAsyncResult result)
+        {
+            int bytesTransferred = -1;
+            try
+            {
+                bytesTransferred = _handle.EndReceive(result);
 
-            _sendIndex = 0;
-            _readIndex = 0;
+                if (bytesTransferred <= 0)
+                {
+                    OnClientState(false);
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                OnClientState(false);
+                return;
+            }
 
-            _sendBuffer = new byte[0];
-            _readBuffer = new byte[0];
+            _parentServer.BytesReceived += bytesTransferred;
 
-            _sendQueue = new Queue<byte[]>();
+            _readableDataLen += bytesTransferred;
+            bool process = true;
 
-            _item[0] = new SocketAsyncEventArgs();
-            _item[0].Completed += Process;
-            _item[1] = new SocketAsyncEventArgs();
-            _item[1].Completed += Process;
+            while (process)
+            {
+                if (_receiveState == ReceiveType.Header)
+                {
+                    process = _readableDataLen >= HEADER_SIZE;
+                    if (_readableDataLen >= HEADER_SIZE)
+                    {
+                        _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
+
+                        _readableDataLen -= HEADER_SIZE;
+                        _readOffset += HEADER_SIZE;
+                        _receiveState = ReceiveType.Payload;
+                    }
+                }
+                else if (_receiveState == ReceiveType.Payload)
+                {
+                    process = _readableDataLen >= _payloadLen;
+                    if (_readableDataLen >= _payloadLen)
+                    {
+                        byte[] payload = new byte[_payloadLen];
+                        Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
+
+                        if (encryptionEnabled)
+                            payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+                        if (compressionEnabled)
+                            payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+
+                        using (MemoryStream deserialized = new MemoryStream(payload))
+                        {
+                            IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
+
+                            if (packet.GetType() == typeof(KeepAlive))
+                                new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
+                            else if (packet.GetType() == typeof(KeepAliveResponse))
+                                _parentServer.HandleKeepAlivePacket((KeepAliveResponse)packet, this); // HERE
+                            else
+                                OnClientRead(packet);
+                        }
+
+                        _readOffset += _payloadLen;
+                        _readableDataLen -= _payloadLen;
+                        _receiveState = ReceiveType.Header;
+                    }
+                }
+            }
+
+            int len = _receiveState == ReceiveType.Header ? HEADER_SIZE : _payloadLen;
+            if (_readOffset + len >= this._buffer.Length)
+            {
+                //copy the buffer to the beginning
+                Array.Copy(this._buffer, _readOffset, this._buffer, 0, _readableDataLen);
+                _writeOffset = _readableDataLen;
+                _readOffset = 0;
+            }
+            else
+            {
+                //payload fits in the buffer from the current offset
+                //use BytesTransferred to write at the end of the payload
+                //so that the data is not split
+                _writeOffset += bytesTransferred;
+            }
+
+            try
+            {
+                if (_buffer.Length - _writeOffset > 0)
+                {
+                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None, AsyncReceive, null);
+                }
+                else
+                {
+                    //Shoudln't be even possible... very strange
+                    Disconnect();
+                }
+            }
+            catch
+            {
+                Disconnect();
+            }
+        }
+
+        public void Send<T>(IPacket packet) where T : IPacket
+        {
+            lock (_handle)
+            {
+                if (!Connected)
+                    return;
+
+                try
+                {
+                    using (MemoryStream ms = new MemoryStream())
+                    {
+                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
+
+                        byte[] data = ms.ToArray();
+
+                        Send(data);
+                        OnClientWrite(packet, data.LongLength, data);
+                    }
+                }
+                catch
+                { }
+            }
+        }
+
+        private void Send(byte[] data)
+        {
+            if (!Connected)
+                return;
+
+            if (compressionEnabled)
+                data = new SafeQuickLZ().Compress(data, 0, data.Length, 3);
+
+            if (encryptionEnabled)
+                data = AES.Encrypt(data, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+            byte[] temp = BitConverter.GetBytes(data.Length);
+
+            byte[] payload = new byte[data.Length + 4];
+            Array.Copy(temp, payload, temp.Length);
+            Array.Copy(data, 0, payload, 4, data.Length);
+
+            _parentServer.BytesSent += payload.Length;
+
+            try
+            {
+                _handle.Send(payload);
+            }
+            catch
+            {
+                Disconnect();
+            }
+        }
+
+        public void Disconnect()
+        {
+            OnClientState(false);
+
+            if (_handle != null)
+            {
+                _handle.Close();
+                _readOffset = 0;
+                _writeOffset = 0;
+                _readableDataLen = 0;
+                _payloadLen = 0;
+            }
         }
 
         /// <summary>
@@ -251,210 +313,6 @@ namespace xServer.Core
         {
             foreach (Type type in types)
                 AddTypeToSerializer(parent, type);
-        }
-
-        private void Process(object s, SocketAsyncEventArgs e)
-        {
-            try
-            {
-                if (e.SocketError == SocketError.Success)
-                {
-                    switch (e.LastOperation)
-                    {
-                        case SocketAsyncOperation.Connect:
-                            _endPoint = (IPEndPoint)_handle.RemoteEndPoint;
-                            Connected = true;
-                            _item[0].SetBuffer(new byte[BufferSize], 0, BufferSize);
-
-                            _asyncOperation.Post(x => OnClientState((bool)x), true);
-                            if (!_handle.ReceiveAsync(e))
-                                Process(null, e);
-                            break;
-                        case SocketAsyncOperation.Receive:
-                            if (!Connected)
-                                return;
-
-                            if (e.BytesTransferred != 0)
-                            {
-                                HandleRead(e.Buffer, 0, e.BytesTransferred);
-
-                                e.SetBuffer(new byte[BufferSize], 0, BufferSize);
-
-                                if (!_handle.ReceiveAsync(e))
-                                    Process(null, e);
-                            }
-                            else
-                            {
-                                Disconnect();
-                            }
-                            break;
-                        case SocketAsyncOperation.Send:
-                            if (!Connected)
-                                return;
-
-                            _sendIndex += e.BytesTransferred;
-
-                            bool eos = (_sendIndex >= _sendBuffer.Length);
-
-                            if (_sendQueue.Count == 0 && eos)
-                                _processing[1] = false;
-                            else
-                                HandleSendQueue();
-                            break;
-                    }
-                }
-                else
-                {
-                    if (e.LastOperation == SocketAsyncOperation.Connect)
-                        _asyncOperation.Post(x => OnClientFail(), null);
-                    Disconnect();
-                }
-            }
-            catch
-            {
-                Disconnect();
-            }
-        }
-
-        public void Disconnect()
-        {
-            if (_processing[0])
-                return;
-
-            _processing[0] = true;
-
-            bool raise = Connected;
-            Connected = false;
-
-            if (_handle != null)
-                _handle.Close();
-            if (_sendQueue != null)
-                _sendQueue.Clear();
-
-            _sendBuffer = new byte[0];
-            _readBuffer = new byte[0];
-
-            if (raise)
-                _asyncOperation.Post(x => OnClientState(false), null);
-
-            Value = null;
-            _endPoint = null;
-        }
-
-        public void Send<T>(IPacket packet) where T : IPacket
-        {
-            lock (_sendQueue)
-            {
-                if (!Connected) return;
-
-                try
-                {
-                    using (MemoryStream ms = new MemoryStream())
-                    {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
-
-                        byte[] data = ms.ToArray();
-
-                        Send(data);
-                        OnClientWrite(packet, data.LongLength, data);
-                    }
-                }
-                catch
-                { }
-            }
-        }
-
-        private void Send(byte[] data)
-        {
-            if (!Connected)
-                return;
-
-            if (encryptionEnabled)
-                data = AES.Encrypt(data, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-            if (compressionEnabled)
-                data = new LZ4Compressor32().Compress(data);
-
-            _parentServer.BytesSent += data.LongLength;
-
-            _sendQueue.Enqueue(data);
-
-            if (!_processing[1])
-            {
-                _processing[1] = true;
-                HandleSendQueue();
-            }
-        }
-
-        private void HandleSendQueue()
-        {
-            new Thread(() =>
-            {
-                for (int i = 0; i < 5; i++)
-                {
-                    try
-                    {
-                        if (_sendIndex >= _sendBuffer.Length)
-                        {
-                            _sendIndex = 0;
-                            _sendBuffer = Header(_sendQueue.Dequeue());
-                        }
-
-                        int write = Math.Min(_sendBuffer.Length - _sendIndex, BufferSize);
-
-                        _item[1].SetBuffer(_sendBuffer, _sendIndex, write);
-
-                        if (!_handle.SendAsync(_item[1]))
-                            Process(null, _item[1]);
-
-                        return;
-                    }
-                    catch
-                    {
-                    }
-                }
-                Disconnect();
-            }).Start();
-        }
-
-        private byte[] Header(byte[] data)
-        {
-            byte[] T = new byte[data.Length + 4];
-            Buffer.BlockCopy(BitConverter.GetBytes(data.Length), 0, T, 0, 4);
-            Buffer.BlockCopy(data, 0, T, 4, data.Length);
-            return T;
-        }
-
-        private void HandleRead(byte[] data, int index, int length)
-        {
-            try
-            {
-                if (_readIndex >= _readBuffer.Length)
-                {
-                    _readIndex = 0;
-                    int len = BitConverter.ToInt32(data, index);
-                    Array.Resize(ref _readBuffer, (len < 0) ? _readBuffer.Length : len);
-                    index += 4;
-                }
-
-                int read = Math.Min(_readBuffer.Length - _readIndex, length - index);
-                Buffer.BlockCopy(data, index, _readBuffer, _readIndex, read);
-                _readIndex += read;
-
-                if (_readIndex >= _readBuffer.Length)
-                {
-                    _asyncOperation.Post(x => OnClientRead((byte[])x), _readBuffer);
-                }
-
-                if (read < (length - index))
-                {
-                    HandleRead(data, index + read, length);
-                }
-            }
-            catch
-            {
-                Disconnect();
-            }
         }
     }
 }

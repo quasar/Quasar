@@ -85,7 +85,7 @@ namespace xServer.Forms
 
         private void InitializeServer()
         {
-            ListenServer = new Server(8192);
+            ListenServer = new Server();
 
             ListenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
             {
