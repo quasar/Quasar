@@ -43,21 +43,21 @@ namespace xClient.Core.Helper
         {
             var bounds = Screen.AllScreens[number].Bounds;
             var screenshot = new Bitmap(bounds.Width, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            var graph = Graphics.FromImage(screenshot);
-
-            switch (mode)
+            using (Graphics graph = Graphics.FromImage(screenshot))
             {
-                case 1:
-                    graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-                    break;
-                case 2:
-                    graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                    break;
+                switch (mode)
+                {
+                    case 1:
+                        graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
+                        break;
+                    case 2:
+                        graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
+                        break;
+                }
+
+                graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+                return screenshot;
             }
-
-            graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
-
-            return screenshot;
         }
 
         public static unsafe Bitmap GetDiffDesktop(Bitmap bmp, Bitmap bmp2)
