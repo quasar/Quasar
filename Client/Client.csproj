@@ -50,6 +50,7 @@
     <Compile Include="Core\Compression\LZ4Compressor32.cs" />
     <Compile Include="Core\Compression\LZ4Decompressor32.cs" />
     <Compile Include="Core\Compression\LZ4Util.cs" />
+    <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Elevation\CommandButton.cs">
       <SubType>Component</SubType>
     </Compile>
