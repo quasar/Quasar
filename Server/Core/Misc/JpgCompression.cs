@@ -1,38 +1,35 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Text;
 
 namespace xServer.Core.Misc
 {
     public class JpgCompression
     {
-        private EncoderParameter parameter;
-        private ImageCodecInfo encoderInfo;
-        private EncoderParameters encoderParams;
+        private EncoderParameter _parameter;
+        private ImageCodecInfo _encoderInfo;
+        private EncoderParameters _encoderParams;
 
-        public JpgCompression(int Quality)
+        public JpgCompression(int quality)
         {
-            this.parameter = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, (long)Quality);
-            this.encoderInfo = GetEncoderInfo("image/jpeg");
-            this.encoderParams = new EncoderParameters(2);
-            this.encoderParams.Param[0] = parameter;
-            this.encoderParams.Param[1] = new EncoderParameter(System.Drawing.Imaging.Encoder.Compression, (long)EncoderValue.CompressionRle);
+            this._parameter = new EncoderParameter(Encoder.Quality, (long)quality);
+            this._encoderInfo = GetEncoderInfo("image/jpeg");
+            this._encoderParams = new EncoderParameters(2);
+            this._encoderParams.Param[0] = _parameter;
+            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionRle);
         }
 
         public byte[] Compress(Bitmap bmp)
         {
             using (MemoryStream stream = new MemoryStream())
             {
-                bmp.Save(stream, encoderInfo, encoderParams);
+                bmp.Save(stream, _encoderInfo, _encoderParams);
                 return stream.ToArray();
             }
         }
-        public void Compress(Bitmap bmp, ref Stream TargetStream)
+        public void Compress(Bitmap bmp, ref Stream targetStream)
         {
-            bmp.Save(TargetStream, encoderInfo, encoderParams);
+            bmp.Save(targetStream, _encoderInfo, _encoderParams);
         }
 
         private ImageCodecInfo GetEncoderInfo(string mimeType)

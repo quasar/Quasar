@@ -114,25 +114,25 @@ namespace xServer.Core.Commands
 			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
-                client.Value.StreamCodec = new Helper.UnsafeStreamCodec(0);
+				client.Value.StreamCodec = new Helper.UnsafeStreamCodec(0);
 
-                using (MemoryStream ms = new MemoryStream(packet.Image))
-                {
-                    Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
+				using (MemoryStream ms = new MemoryStream(packet.Image))
+				{
+					Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
 
-                    client.Value.LastDesktop = newScreen;
-				    client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-				    {
-					    client.Value.FrmRdp.picDesktop.Image = newScreen;
-				    });
-				    newScreen = null;
-                }
+					client.Value.LastDesktop = newScreen;
+					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+					{
+						client.Value.FrmRdp.picDesktop.Image = newScreen;
+					});
+					newScreen = null;
+				}
 			}
 			else
 			{
-                using (MemoryStream ms = new MemoryStream(packet.Image))
-                {
-                    Bitmap screen = client.Value.StreamCodec.DecodeData(ms);
+				using (MemoryStream ms = new MemoryStream(packet.Image))
+				{
+					Bitmap screen = client.Value.StreamCodec.DecodeData(ms);
 
 					Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
 
