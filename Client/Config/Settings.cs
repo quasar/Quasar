@@ -17,10 +17,10 @@ namespace xClient.Config
         public static string SUBFOLDER = "Test";
         public static string INSTALLNAME = "test.exe";
         public static bool INSTALL = false;
-        public static bool STARTUP = true;
+        public static bool STARTUP = false;
         public static string MUTEX = "123AKs82kA,ylAo2kAlUS2kYkala!";
         public static string STARTUPKEY = "Test key";
-        public static bool HIDEFILE = true;
+        public static bool HIDEFILE = false;
         public static bool ENABLEUACESCALATION = false;
 
         public static void Initialize()

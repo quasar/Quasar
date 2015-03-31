@@ -19,49 +19,46 @@ namespace xServer.Core.Commands
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
 				return;
 
-			new Thread(() =>
-			{
-				try
-				{
-					client.Value.Version = packet.Version;
-					client.Value.OperatingSystem = packet.OperatingSystem;
-					client.Value.AccountType = packet.AccountType;
-					client.Value.Country = packet.Country;
-					client.Value.CountryCode = packet.CountryCode;
-					client.Value.Region = packet.Region;
-					client.Value.City = packet.City;
-					client.Value.Id = packet.Id;
+            mainForm.Invoke((MethodInvoker)delegate
+            {
+                try
+                {
+                    client.Value.Version = packet.Version;
+                    client.Value.OperatingSystem = packet.OperatingSystem;
+                    client.Value.AccountType = packet.AccountType;
+                    client.Value.Country = packet.Country;
+                    client.Value.CountryCode = packet.CountryCode;
+                    client.Value.Region = packet.Region;
+                    client.Value.City = packet.City;
+                    client.Value.Id = packet.Id;
 
-					if (!mainForm.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
-						mainForm.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
+                    if (!mainForm.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
+                        mainForm.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
 
-					mainForm.ListenServer.ConnectedClients++;
-					mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
+                    mainForm.ListenServer.ConnectedClients++;
+                    mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
 
-					string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
+                    string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
-					// this " " leaves some space between the flag-icon and the IP
-					ListViewItem lvi =
-						new ListViewItem(new string[]
+                    // this " " leaves some space between the flag-icon and the IP
+                    ListViewItem lvi = new ListViewItem(new string[]
 						{
 							" " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
 							"Connected",
 							"Active", country, client.Value.OperatingSystem, client.Value.AccountType
-						}) {Tag = client, ImageIndex = packet.ImageIndex};
+						}) { Tag = client, ImageIndex = packet.ImageIndex };
 
-					mainForm.Invoke((MethodInvoker)delegate
-					{
-						mainForm.lstClients.Items.Add(lvi);
-					});
 
-					if (XMLSettings.ShowPopup)
-						ShowPopup(client, mainForm);
+                    mainForm.lstClients.Items.Add(lvi);
 
-					client.Value.IsAuthenticated = true;
-				}
-				catch
-				{ }
-			}).Start();
+                    if (XMLSettings.ShowPopup)
+                        ShowPopup(client, mainForm);
+
+                    client.Value.IsAuthenticated = true;
+                }
+                catch
+                { }
+            });
 		}
 
 		private static void ShowPopup(Client c, FrmMain mainForm)
