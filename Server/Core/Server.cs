@@ -63,7 +63,6 @@ namespace xServer.Core
         private SocketAsyncEventArgs _item;
 
         private bool Processing { get; set; }
-        public int BufferSize { get; set; }
 
         public bool Listening { get; private set; }
 
@@ -83,11 +82,10 @@ namespace xServer.Core
 
         private List<Type> PacketTypes { get; set; }
 
-        public Server(int bufferSize)
+        public Server()
         {
             PacketTypes = new List<Type>();
             AllTimeConnectedClients = new Dictionary<string, DateTime>();
-            BufferSize = bufferSize;
         }
 
         public void Listen(ushort port)
@@ -150,7 +148,7 @@ namespace xServer.Core
             {
                 if (e.SocketError == SocketError.Success)
                 {
-                    Client T = new Client(this, e.AcceptSocket, BufferSize, PacketTypes.ToArray());
+                    Client T = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
 
                     lock (_clients)
                     {
@@ -245,7 +243,7 @@ namespace xServer.Core
                 while (_clients.Count != 0)
                 {
                     _clients[0].Disconnect();
-                    _clients.RemoveAt(0);
+                    //_clients.RemoveAt(0);
                 }
             }
 

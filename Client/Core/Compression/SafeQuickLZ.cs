@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace xClient.Core.Compression
 {
@@ -40,38 +38,38 @@ namespace xClient.Core.Compression
         private const int QLZ_POINTERS_1 = 1;
         private const int QLZ_POINTERS_3 = 16;
 
-        private int headerLen(byte[] source, int offset)
+        private int HeaderLen(byte[] source, int offset)
         {
             return ((source[offset] & 2) == 2) ? 9 : 3;
         }
 
-        public int sizeDecompressed(byte[] source, int offset)
+        public int SizeDecompressed(byte[] source, int offset)
         {
-            if (headerLen(source, offset) == 9)
+            if (HeaderLen(source, offset) == 9)
                 return source[offset + 5] | (source[offset + 6] << 8) | (source[offset + 7] << 16) | (source[offset + 8] << 24);
             else
                 return source[offset + 2];
         }
 
-        public int sizeCompressed(byte[] source, int offset)
+        public int SizeCompressed(byte[] source, int offset)
         {
-            if (headerLen(source, offset) == 9)
+            if (HeaderLen(source, offset) == 9)
                 return source[offset + 1] | (source[offset + 2] << 8) | (source[offset + 3] << 16) | (source[offset + 4] << 24);
             else
                 return source[offset + 1];
         }
 
-        private void write_header(byte[] dst, int level, bool compressible, int size_compressed, int size_decompressed)
+        private void WriteHeader(byte[] dst, int level, bool compressible, int size_compressed, int size_decompressed)
         {
             dst[0] = (byte)(2 | (compressible ? 1 : 0));
             dst[0] |= (byte)(level << 2);
             dst[0] |= (1 << 6);
             dst[0] |= (0 << 4);
-            fast_write(dst, 1, size_decompressed, 4);
-            fast_write(dst, 5, size_compressed, 4);
+            FastWrite(dst, 1, size_decompressed, 4);
+            FastWrite(dst, 5, size_compressed, 4);
         }
 
-        public byte[] compress(byte[] source, int Offset, int Length, int level)
+        public byte[] Compress(byte[] source, int Offset, int Length, int level)
         {
             int src = Offset;
             int dst = DEFAULT_HEADERLEN + CWORD_LEN;
@@ -107,12 +105,12 @@ namespace xClient.Core.Compression
                     if (src > Length >> 1 && dst > src - (src >> 5))
                     {
                         d2 = new byte[Length + DEFAULT_HEADERLEN];
-                        write_header(d2, level, false, Length, Length + DEFAULT_HEADERLEN);
+                        WriteHeader(d2, level, false, Length, Length + DEFAULT_HEADERLEN);
                         System.Array.Copy(source, 0, d2, DEFAULT_HEADERLEN, Length);
                         return d2;
                     }
 
-                    fast_write(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
+                    FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
                     cword_ptr = dst;
                     dst += CWORD_LEN;
                     cword_val = 0x80000000;
@@ -168,7 +166,7 @@ namespace xClient.Core.Compression
                             }
                             else
                             {
-                                fast_write(destination, dst, hash | (matchlen << 16), 3);
+                                FastWrite(destination, dst, hash | (matchlen << 16), 3);
                                 dst += 3;
                             }
                         }
@@ -238,27 +236,27 @@ namespace xClient.Core.Compression
 
                         if (matchlen == 3 && offset <= 63)
                         {
-                            fast_write(destination, dst, offset << 2, 1);
+                            FastWrite(destination, dst, offset << 2, 1);
                             dst++;
                         }
                         else if (matchlen == 3 && offset <= 16383)
                         {
-                            fast_write(destination, dst, (offset << 2) | 1, 2);
+                            FastWrite(destination, dst, (offset << 2) | 1, 2);
                             dst += 2;
                         }
                         else if (matchlen <= 18 && offset <= 1023)
                         {
-                            fast_write(destination, dst, ((matchlen - 3) << 2) | (offset << 6) | 2, 2);
+                            FastWrite(destination, dst, ((matchlen - 3) << 2) | (offset << 6) | 2, 2);
                             dst += 2;
                         }
                         else if (matchlen <= 33)
                         {
-                            fast_write(destination, dst, ((matchlen - 2) << 2) | (offset << 7) | 3, 3);
+                            FastWrite(destination, dst, ((matchlen - 2) << 2) | (offset << 7) | 3, 3);
                             dst += 3;
                         }
                         else
                         {
-                            fast_write(destination, dst, ((matchlen - 3) << 7) | (offset << 15) | 3, 4);
+                            FastWrite(destination, dst, ((matchlen - 3) << 7) | (offset << 15) | 3, 4);
                             dst += 4;
                         }
                         lits = 0;
@@ -276,7 +274,7 @@ namespace xClient.Core.Compression
             {
                 if ((cword_val & 1) == 1)
                 {
-                    fast_write(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
+                    FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
                     cword_ptr = dst;
                     dst += CWORD_LEN;
                     cword_val = 0x80000000;
@@ -292,25 +290,25 @@ namespace xClient.Core.Compression
                 cword_val = (cword_val >> 1);
             }
 
-            fast_write(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), CWORD_LEN);
-            write_header(destination, level, true, Length, dst);
+            FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), CWORD_LEN);
+            WriteHeader(destination, level, true, Length, dst);
             d2 = new byte[dst];
             System.Array.Copy(destination, d2, dst);
             return d2;
         }
 
 
-        private void fast_write(byte[] a, int i, int value, int numbytes)
+        private void FastWrite(byte[] a, int i, int value, int numbytes)
         {
             for (int j = 0; j < numbytes; j++)
                 a[i + j] = (byte)(value >> (j * 8));
         }
 
-        public byte[] decompress(byte[] source, int Offset, int Length)
+        public byte[] Decompress(byte[] source, int Offset, int Length)
         {
             int level;
-            int size = sizeDecompressed(source, Offset);
-            int src = headerLen(source, Offset) + Offset;
+            int size = SizeDecompressed(source, Offset);
+            int src = HeaderLen(source, Offset) + Offset;
             int dst = 0;
             uint cword_val = 1;
             byte[] destination = new byte[size];
@@ -329,7 +327,7 @@ namespace xClient.Core.Compression
             if ((source[Offset] & 1) != 1)
             {
                 byte[] d2 = new byte[size];
-                System.Array.Copy(source, headerLen(source, Offset), d2, Offset, size);
+                System.Array.Copy(source, HeaderLen(source, Offset), d2, Offset, size);
                 return d2;
             }
 

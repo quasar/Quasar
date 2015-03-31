@@ -65,9 +65,6 @@
     <Compile Include="Core\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
-    <Compile Include="Core\Compression\LZ4Compressor32.cs" />
-    <Compile Include="Core\Compression\LZ4Decompressor32.cs" />
-    <Compile Include="Core\Compression\LZ4Util.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Helper\UPnP.cs" />
