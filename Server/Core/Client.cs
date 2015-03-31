@@ -32,6 +32,8 @@ namespace xServer.Core
 
         private void OnClientState(bool connected)
         {
+            if (Connected == connected) return;
+
             Connected = connected;
             if (ClientState != null)
             {
@@ -117,35 +119,6 @@ namespace xServer.Core
             }
         }
 
-        public void Connect(string host, ushort port)
-        {
-            try
-            {
-                Disconnect();
-                Initialize();
-
-                _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
-                _handle.NoDelay = true;
-
-                _handle.Connect(host, port);
-
-                if (_handle.Connected)
-                {
-                    _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
-
-                    OnClientState(true);
-                }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex.ToString());
-                OnClientFail(ex);
-                Disconnect();
-            }
-        }
-
         private void Initialize()
         {
             AddTypesToSerializer(typeof(IPacket), new Type[]
@@ -197,7 +170,7 @@ namespace xServer.Core
                 else if (_receiveState == ReceiveType.Payload)
                 {
                     process = _readableDataLen >= _payloadLen;
-                    if (_readableDataLen >= _payloadLen && _payloadLen != 0)
+                    if (_readableDataLen >= _payloadLen)
                     {
                         byte[] payload = new byte[_payloadLen];
                         Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
@@ -321,6 +294,8 @@ namespace xServer.Core
             if (_handle != null)
             {
                 _handle.Close();
+                _readOffset = 0;
+                _writeOffset = 0;
             }
         }
 

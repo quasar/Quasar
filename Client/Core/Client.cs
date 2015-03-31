@@ -33,6 +33,8 @@ namespace xClient.Core
 
         private void OnClientState(bool connected)
         {
+            if (Connected == connected) return;
+
             Connected = connected;
             if (ClientState != null)
             {
@@ -173,7 +175,7 @@ namespace xClient.Core
                 else if (_receiveState == ReceiveType.Payload)
                 {
                     process = _readableDataLen >= _payloadLen;
-                    if (_readableDataLen >= _payloadLen && _payloadLen != 0)
+                    if (_readableDataLen >= _payloadLen)
                     {
                         byte[] payload = new byte[_payloadLen];
                         Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
@@ -300,6 +302,8 @@ namespace xClient.Core
             if (_handle != null)
             {
                 _handle.Close();
+                _readOffset = 0;
+                _writeOffset = 0;
             }
         }
 
