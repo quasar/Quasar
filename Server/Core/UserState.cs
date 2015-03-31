@@ -1,4 +1,5 @@
 ﻿using System.Drawing;
+using xServer.Core.Helper;
 using xServer.Forms;
 
 namespace xServer.Core
@@ -27,6 +28,8 @@ namespace xServer.Core
         public bool LastDirectorySeen { get; set; }
 
         public Bitmap LastDesktop { get; set; }
+
+        public UnsafeStreamCodec StreamCodec { get; set; }
 
         public UserState()
         {

