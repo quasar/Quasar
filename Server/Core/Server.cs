@@ -243,7 +243,12 @@ namespace xServer.Core
                 while (_clients.Count != 0)
                 {
                     _clients[0].Disconnect();
-                    //_clients.RemoveAt(0);
+                    try
+                    {
+                        _clients.RemoveAt(0);
+                    }
+                    catch
+                    { }
                 }
             }
 

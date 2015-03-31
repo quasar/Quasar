@@ -16,17 +16,6 @@ namespace xServer.Core
 {
     public class Client
     {
-        public event ClientFailEventHandler ClientFail;
-        public delegate void ClientFailEventHandler(Client s, Exception ex);
-
-        private void OnClientFail(Exception ex)
-        {
-            if (ClientFail != null)
-            {
-                ClientFail(this, ex);
-            }
-        }
-
         public event ClientStateEventHandler ClientState;
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
@@ -296,6 +285,8 @@ namespace xServer.Core
                 _handle.Close();
                 _readOffset = 0;
                 _writeOffset = 0;
+                _readableDataLen = 0;
+                _payloadLen = 0;
             }
         }
 

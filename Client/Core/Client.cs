@@ -118,7 +118,6 @@ namespace xClient.Core
             }
             catch (Exception ex)
             {
-                Console.WriteLine(ex.ToString());
                 OnClientFail(ex);
                 Disconnect();
             }
@@ -304,6 +303,8 @@ namespace xClient.Core
                 _handle.Close();
                 _readOffset = 0;
                 _writeOffset = 0;
+                _readableDataLen = 0;
+                _payloadLen = 0;
             }
         }
 
