@@ -267,13 +267,8 @@ namespace xClient.Core
             if (!Connected)
                 return;
 
-            try
-            {
-                if (compressionEnabled)
-                    data = new SafeQuickLZ().Compress(data, 0, data.Length, 3);
-            }
-            catch
-            { }
+            if (compressionEnabled)
+                data = new SafeQuickLZ().Compress(data, 0, data.Length, 3);
 
             if (encryptionEnabled)
                 data = AES.Encrypt(data, Encoding.UTF8.GetBytes(Settings.PASSWORD));
