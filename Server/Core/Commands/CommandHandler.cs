@@ -123,7 +123,7 @@ namespace xServer.Core.Commands
 					client.Value.LastDesktop = newScreen;
 					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
 					{
-						client.Value.FrmRdp.picDesktop.Image = newScreen;
+						client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
 					});
 					newScreen = null;
 				}
@@ -132,21 +132,14 @@ namespace xServer.Core.Commands
 			{
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
-					Bitmap screen = client.Value.StreamCodec.DecodeData(ms);
-
-					Bitmap newScreen = new Bitmap(screen.Width, screen.Height);
-
-					using (Graphics g = Graphics.FromImage(newScreen))
-					{
-						g.DrawImage(client.Value.LastDesktop, 0, 0, newScreen.Width, newScreen.Height);
-						g.DrawImage(screen, 0, 0, newScreen.Width, newScreen.Height);
-					}
+					Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
 
 					client.Value.LastDesktop = newScreen;
 					client.Value.FrmRdp.Invoke((MethodInvoker) delegate
 					{
-						client.Value.FrmRdp.picDesktop.Image = newScreen;
+						client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
 					});
+
 					newScreen = null;
 				}
 			}
