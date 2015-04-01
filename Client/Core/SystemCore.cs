@@ -43,11 +43,11 @@ namespace xClient.Core
         public static string Region = string.Empty;
         public static string City = string.Empty;
         public static string LastStatus = "Active";
-        public static int ImageIndex = 0;
+        public static int ImageIndex;
 
         public static string GetOperatingSystem()
         {
-            return string.Format("{0} {1} {2} Bit", OSInfo.Name, OSInfo.Edition, OSInfo.Bits);
+            return string.Format("{0} {1} Bit", OSInfo.Name, OSInfo.Bits);
         }
 
         public static string GetAccountType()
