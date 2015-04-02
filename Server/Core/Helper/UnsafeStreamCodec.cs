@@ -24,7 +24,6 @@ namespace xServer.Core.Helper
             }
         }
 
-
         public Size CheckBlock { get; private set; }
         private byte[] _encodeBuffer;
         private Bitmap _decodedBitmap;
@@ -50,7 +49,7 @@ namespace xServer.Core.Helper
         /// Initialize a new object of UnsafeStreamCodec
         /// </summary>
         /// <param name="imageQuality">The quality to use between 0-100</param>
-        public UnsafeStreamCodec(int imageQuality = 100, bool useJpeg = true)
+        public UnsafeStreamCodec(int imageQuality = 100)
         {
             this.CheckBlock = new Size(50, 1);
         }
@@ -154,10 +153,10 @@ namespace xServer.Core.Helper
                         y += s.Height;
                     }
 
-                    for (int i = 0, x = scanArea.X; i < blocks.Count; i++)
+                    for (int i = 0; i < blocks.Count; i++)
                     {
                         s = new Size(CheckBlock.Width, blocks[i].Height);
-                        x = scanArea.X;
+                        int x = scanArea.X;
                         while (x != scanArea.Width)
                         {
                             if (x == lastx)

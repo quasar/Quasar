@@ -6,15 +6,15 @@ namespace xServer.Core.Packets.ServerPackets
     public class Desktop : IPacket
     {
         [ProtoMember(1)]
-        public int Mode { get; set; }
+        public int Quality { get; set; }
 
         [ProtoMember(2)]
         public int Number { get; set; }
 
         public Desktop() { }
-        public Desktop(int mode, int number)
+        public Desktop(int quality, int number)
         {
-            this.Mode = mode;
+            this.Quality = quality;
             this.Number = number;
         }
 

@@ -8,10 +8,14 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public byte[] Image { get; set; }
 
+        [ProtoMember(2)]
+        public int Quality { get; set; }
+
         public DesktopResponse() { }
-        public DesktopResponse(byte[] image)
+        public DesktopResponse(byte[] image, int quality)
         {
             this.Image = image;
+            this.Quality = quality;
         }
 
         public void Execute(Client client)

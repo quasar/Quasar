@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -47,21 +48,22 @@ namespace xServer.Forms
                     {
                         btnStart.Enabled = false;
                         btnStop.Enabled = true;
+                        barQuality.Enabled = false;
                     });
 
                     if (_connectClient.Value != null)
                     {
                         if (_connectClient.Value.LastDesktopSeen)
                         {
-                            int Quality = 1;
-                            int SelectedMonitorIndex = 0;
+                            int quality = 1;
+                            int selectedMonitorIndex = 0;
                             this.Invoke((MethodInvoker)delegate
                             {
-                                Quality = barQuality.Value;
-                                SelectedMonitorIndex = cbMonitors.SelectedIndex;
+                                quality = barQuality.Value;
+                                selectedMonitorIndex = cbMonitors.SelectedIndex;
                             });
 
-                            new Core.Packets.ServerPackets.Desktop(Quality, SelectedMonitorIndex).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.Desktop(quality, selectedMonitorIndex).Execute(_connectClient);
                             _connectClient.Value.LastDesktopSeen = false;
                         }
                     }
@@ -77,6 +79,7 @@ namespace xServer.Forms
                 {
                     btnStart.Enabled = true;
                     btnStop.Enabled = false;
+                    barQuality.Enabled = true;
                 });
             }
             catch
@@ -111,15 +114,17 @@ namespace xServer.Forms
 
         private void barQuality_Scroll(object sender, EventArgs e)
         {
-            switch (barQuality.Value)
-            {
-                case 1:
-                    lblQualityShow.Text = "Speed";
-                    break;
-                case 2:
-                    lblQualityShow.Text = "Quality";
-                    break;
-            }
+            int value = barQuality.Value;
+            lblQualityShow.Text = value.ToString();
+
+            if (value < 25)
+                lblQualityShow.Text += " (low)";
+            else if (value >= 85)
+                lblQualityShow.Text += " (best)";
+            else if (value >= 75)
+                lblQualityShow.Text += " (high)";
+            else if (value >= 25)
+                lblQualityShow.Text += " (mid)";
         }
 
         private void btnMouse_Click(object sender, EventArgs e)

@@ -28,15 +28,6 @@ namespace xServer.Core.Helper
             return randomName.ToString();
         }
 
-        public static Image CByteToImg(byte[] img)
-        {
-            using (MemoryStream ms = new MemoryStream(img, 0, img.Length))
-            {
-                ms.Write(img, 0, img.Length);
-                return Image.FromStream(ms, true);
-            }
-        }
-
         public static string GetFileSize(long size)
         {
             string[] sizes = { "B", "KB", "MB", "GB" };

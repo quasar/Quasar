@@ -14,8 +14,7 @@ namespace xServer.Forms
     {
         public Server ListenServer;
         private readonly ListViewColumnSorter _lvwColumnSorter;
-        private static FrmMain Instance;
-
+        public static volatile FrmMain Instance;
 
         private void ReadSettings(bool writeIfNotExist = true)
         {
@@ -184,12 +183,17 @@ namespace xServer.Forms
             }
             else
             {
-                foreach (ListViewItem lvi in lstClients.Items)
-                    if ((Client)lvi.Tag == client)
+                this.Invoke((MethodInvoker) delegate
+                {
+                    foreach (ListViewItem lvi in lstClients.Items)
                     {
-                        lvi.Remove();
-                        server.ConnectedClients--;
+                        if ((Client) lvi.Tag == client)
+                        {
+                            lvi.Remove();
+                            server.ConnectedClients--;
+                        }
                     }
+                });
                 UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
             }
         }
@@ -201,18 +205,18 @@ namespace xServer.Forms
             if (!client.Value.IsAuthenticated)
             {
                 if (type == typeof(Core.Packets.ClientPackets.Initialize))
-                    CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize)packet, this);
+                    CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize)packet);
                 else
                     return;
             }
 
             if (type == typeof(Core.Packets.ClientPackets.Status))
             {
-                CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status)packet, this);
+                CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.UserStatus))
             {
-                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus)packet, this);
+                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.DesktopResponse))
             {
@@ -476,7 +480,7 @@ namespace xServer.Forms
                             {
                                 Client c = (Client)lvi.Tag;
                                 new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
-                                CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."), this);
+                                CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."));
                             }
                         }
                     }

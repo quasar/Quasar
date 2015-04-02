@@ -37,9 +37,9 @@
             this.btnMouse = new System.Windows.Forms.Button();
             this.picDesktop = new System.Windows.Forms.PictureBox();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnShow = new System.Windows.Forms.Button();
-            this.cbMonitors = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
             this.panelTop.SuspendLayout();
@@ -69,12 +69,12 @@
             // barQuality
             // 
             this.barQuality.Location = new System.Drawing.Point(230, 3);
-            this.barQuality.Maximum = 2;
+            this.barQuality.Maximum = 100;
             this.barQuality.Minimum = 1;
             this.barQuality.Name = "barQuality";
             this.barQuality.Size = new System.Drawing.Size(104, 45);
             this.barQuality.TabIndex = 3;
-            this.barQuality.Value = 1;
+            this.barQuality.Value = 75;
             this.barQuality.Scroll += new System.EventHandler(this.barQuality_Scroll);
             // 
             // lblQuality
@@ -82,18 +82,18 @@
             this.lblQuality.AutoSize = true;
             this.lblQuality.Location = new System.Drawing.Point(184, 18);
             this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(40, 13);
+            this.lblQuality.Size = new System.Drawing.Size(47, 13);
             this.lblQuality.TabIndex = 4;
-            this.lblQuality.Text = "Mode:";
+            this.lblQuality.Text = "Quality:";
             // 
             // lblQualityShow
             // 
             this.lblQualityShow.AutoSize = true;
-            this.lblQualityShow.Location = new System.Drawing.Point(262, 38);
+            this.lblQualityShow.Location = new System.Drawing.Point(254, 38);
             this.lblQualityShow.Name = "lblQualityShow";
-            this.lblQualityShow.Size = new System.Drawing.Size(39, 13);
+            this.lblQualityShow.Size = new System.Drawing.Size(52, 13);
             this.lblQualityShow.TabIndex = 5;
-            this.lblQualityShow.Text = "Speed";
+            this.lblQualityShow.Text = "75 (high)";
             // 
             // btnMouse
             // 
@@ -136,6 +136,15 @@
             this.panelTop.Size = new System.Drawing.Size(384, 57);
             this.panelTop.TabIndex = 7;
             // 
+            // cbMonitors
+            // 
+            this.cbMonitors.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbMonitors.FormattingEnabled = true;
+            this.cbMonitors.Location = new System.Drawing.Point(15, 30);
+            this.cbMonitors.Name = "cbMonitors";
+            this.cbMonitors.Size = new System.Drawing.Size(149, 21);
+            this.cbMonitors.TabIndex = 8;
+            // 
             // btnHide
             // 
             this.btnHide.Location = new System.Drawing.Point(170, 37);
@@ -157,16 +166,7 @@
             this.btnShow.Visible = false;
             this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
             // 
-            // cbMonitors
-            // 
-            this.cbMonitors.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbMonitors.FormattingEnabled = true;
-            this.cbMonitors.Location = new System.Drawing.Point(15, 30);
-            this.cbMonitors.Name = "cbMonitors";
-            this.cbMonitors.Size = new System.Drawing.Size(149, 21);
-            this.cbMonitors.TabIndex = 8;
-            // 
-            // frmRemoteDesktop
+            // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -179,7 +179,7 @@
             this.KeyPreview = true;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(570, 421);
-            this.Name = "frmRemoteDesktop";
+            this.Name = "FrmRemoteDesktop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Desktop []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteDesktop_FormClosing);

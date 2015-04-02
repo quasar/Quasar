@@ -30,31 +30,12 @@ namespace xClient.Core.Helper
             return randomName.ToString();
         }
 
-        public static byte[] CImgToByte(Image image, System.Drawing.Imaging.ImageFormat format)
+        public static Bitmap GetDesktop(int screenNumber)
         {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                image.Save(ms, format);
-                return ms.ToArray();
-            }
-        }
-
-        public static Bitmap GetDesktop(int mode, int number)
-        {
-            var bounds = Screen.AllScreens[number].Bounds;
+            var bounds = Screen.AllScreens[screenNumber].Bounds;
             var screenshot = new Bitmap(bounds.Width, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
             using (Graphics graph = Graphics.FromImage(screenshot))
             {
-                switch (mode)
-                {
-                    case 1:
-                        graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighSpeed;
-                        break;
-                    case 2:
-                        graph.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
-                        break;
-                }
-
                 graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
                 return screenshot;
             }

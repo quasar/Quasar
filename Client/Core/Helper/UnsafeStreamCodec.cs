@@ -24,7 +24,6 @@ namespace xClient.Core.Helper
             }
         }
 
-
         public Size CheckBlock { get; private set; }
         private byte[] _encodeBuffer;
         private Bitmap _decodedBitmap;
@@ -50,7 +49,7 @@ namespace xClient.Core.Helper
         /// Initialize a new object of UnsafeStreamCodec
         /// </summary>
         /// <param name="imageQuality">The quality to use between 0-100</param>
-        public UnsafeStreamCodec(int imageQuality = 100, bool useJpeg = true)
+        public UnsafeStreamCodec(int imageQuality = 100)
         {
             this.CheckBlock = new Size(50, 1);
             this.ImageQuality = imageQuality;

