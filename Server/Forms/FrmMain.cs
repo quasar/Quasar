@@ -183,8 +183,10 @@ namespace xServer.Forms
             }
             else
             {
+                int selectedClients = 0;
                 this.Invoke((MethodInvoker) delegate
                 {
+                    selectedClients = lstClients.SelectedItems.Count;
                     foreach (ListViewItem lvi in lstClients.Items)
                     {
                         if ((Client) lvi.Tag == client)
@@ -194,7 +196,7 @@ namespace xServer.Forms
                         }
                     }
                 });
-                UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
+                UpdateWindowTitle(ListenServer.ConnectedClients, selectedClients);
             }
         }
 
