@@ -26,7 +26,7 @@ namespace xServer.Core.Encryption
                     {
                         rd.Key = key;
                         rd.GenerateIV();
-                        byte[] iv = rd.IV;
+                        var iv = rd.IV;
 
                         using (var cs = new CryptoStream(ms, rd.CreateEncryptor(), CryptoStreamMode.Write))
                         {
@@ -72,7 +72,7 @@ namespace xServer.Core.Encryption
                     {
                         rd.Key = key;
                         rd.GenerateIV();
-                        byte[] iv = rd.IV;
+                        var iv = rd.IV;
 
                         using (var cs = new CryptoStream(ms, rd.CreateEncryptor(), CryptoStreamMode.Write))
                         {
@@ -117,7 +117,7 @@ namespace xServer.Core.Encryption
                 {
                     using (var rd = new RijndaelManaged())
                     {
-                        byte[] iv = new byte[IVLENGTH];
+                        var iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
                         rd.IV = iv;
                         rd.Key = key;
@@ -160,7 +160,7 @@ namespace xServer.Core.Encryption
                 {
                     using (var rd = new RijndaelManaged())
                     {
-                        byte[] iv = new byte[IVLENGTH];
+                        var iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
                         rd.IV = iv;
                         rd.Key = key;

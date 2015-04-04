@@ -1,10 +1,12 @@
 ﻿#if !NO_RUNTIME
+
 using System;
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
 namespace ProtoBuf.Meta
@@ -12,15 +14,24 @@ namespace ProtoBuf.Meta
     internal abstract class AttributeMap
     {
 #if DEBUG
+
         [Obsolete("Please use AttributeType instead")]
-        new public Type GetType() { return AttributeType; }
+        public new Type GetType()
+        {
+            return AttributeType;
+        }
+
 #endif
+
         public abstract bool TryGet(string key, bool publicOnly, out object value);
+
         public bool TryGet(string key, out object value)
         {
             return TryGet(key, true, out value);
         }
+
         public abstract Type AttributeType { get; }
+
         public static AttributeMap[] Create(TypeModel model, Type type, bool inherit)
         {
 #if FEAT_IKVM
@@ -37,12 +48,12 @@ namespace ProtoBuf.Meta
 #if WINRT
             Attribute[] all = System.Linq.Enumerable.ToArray(type.GetTypeInfo().GetCustomAttributes(inherit));
 #else
-            object[] all = type.GetCustomAttributes(inherit);
+            var all = type.GetCustomAttributes(inherit);
 #endif
-            AttributeMap[] result = new AttributeMap[all.Length];
-            for(int i = 0 ; i < all.Length ; i++)
+            var result = new AttributeMap[all.Length];
+            for (var i = 0; i < all.Length; i++)
             {
-                result[i] = new ReflectionAttributeMap((Attribute)all[i]);
+                result[i] = new ReflectionAttributeMap((Attribute) all[i]);
             }
             return result;
 #endif
@@ -63,19 +74,19 @@ namespace ProtoBuf.Meta
 #if WINRT
             Attribute[] all = System.Linq.Enumerable.ToArray(member.GetCustomAttributes(inherit));
 #else
-            object[] all = member.GetCustomAttributes(inherit);
+            var all = member.GetCustomAttributes(inherit);
 #endif
-            AttributeMap[] result = new AttributeMap[all.Length];
-            for(int i = 0 ; i < all.Length ; i++)
+            var result = new AttributeMap[all.Length];
+            for (var i = 0; i < all.Length; i++)
             {
-                result[i] = new ReflectionAttributeMap((Attribute)all[i]);
+                result[i] = new ReflectionAttributeMap((Attribute) all[i]);
             }
             return result;
 #endif
         }
+
         public static AttributeMap[] Create(TypeModel model, Assembly assembly)
         {
-            
 #if FEAT_IKVM
             const bool inherit = false;
             System.Collections.Generic.IList<CustomAttributeData> all = assembly.__GetCustomAttributes(model.MapType(typeof(Attribute)), inherit);
@@ -91,16 +102,17 @@ namespace ProtoBuf.Meta
             Attribute[] all = System.Linq.Enumerable.ToArray(assembly.GetCustomAttributes());
 #else
             const bool inherit = false;
-            object[] all = assembly.GetCustomAttributes(inherit);
+            var all = assembly.GetCustomAttributes(inherit);
 #endif
-            AttributeMap[] result = new AttributeMap[all.Length];
-            for(int i = 0 ; i < all.Length ; i++)
+            var result = new AttributeMap[all.Length];
+            for (var i = 0; i < all.Length; i++)
             {
-                result[i] = new ReflectionAttributeMap((Attribute)all[i]);
+                result[i] = new ReflectionAttributeMap((Attribute) all[i]);
             }
             return result;
 #endif
         }
+
 #if FEAT_IKVM
         private sealed class AttributeDataMap : AttributeMap
         {
@@ -124,7 +136,6 @@ namespace ProtoBuf.Meta
                     }
                 }
 
-                    
                 int index = 0;
                 ParameterInfo[] parameters = attribute.Constructor.GetParameters();
                 foreach (CustomAttributeTypedArgument arg in attribute.ConstructorArguments)
@@ -140,21 +151,32 @@ namespace ProtoBuf.Meta
             }
         }
 #else
+
         public abstract object Target { get; }
+
         private sealed class ReflectionAttributeMap : AttributeMap
         {
+            private readonly Attribute attribute;
+
+            public ReflectionAttributeMap(Attribute attribute)
+            {
+                this.attribute = attribute;
+            }
+
             public override object Target
             {
                 get { return attribute; }
             }
+
             public override Type AttributeType
             {
                 get { return attribute.GetType(); }
             }
+
             public override bool TryGet(string key, bool publicOnly, out object value)
             {
-                MemberInfo[] members = Helpers.GetInstanceFieldsAndProperties(attribute.GetType(), publicOnly);
-                foreach (MemberInfo member in members)
+                var members = Helpers.GetInstanceFieldsAndProperties(attribute.GetType(), publicOnly);
+                foreach (var member in members)
                 {
 #if FX11
                     if (member.Name.ToUpper() == key.ToUpper())
@@ -162,13 +184,15 @@ namespace ProtoBuf.Meta
                     if (string.Equals(member.Name, key, StringComparison.OrdinalIgnoreCase))
 #endif
                     {
-                        PropertyInfo prop = member as PropertyInfo;
-                        if (prop != null) {
+                        var prop = member as PropertyInfo;
+                        if (prop != null)
+                        {
                             value = prop.GetValue(attribute, null);
                             return true;
                         }
-                        FieldInfo field = member as FieldInfo;
-                        if (field != null) {
+                        var field = member as FieldInfo;
+                        if (field != null)
+                        {
                             value = field.GetValue(attribute);
                             return true;
                         }
@@ -179,13 +203,10 @@ namespace ProtoBuf.Meta
                 value = null;
                 return false;
             }
-            private readonly Attribute attribute;
-            public ReflectionAttributeMap(Attribute attribute)
-            {
-                this.attribute = attribute;
-            }
         }
+
 #endif
     }
 }
+
 #endif

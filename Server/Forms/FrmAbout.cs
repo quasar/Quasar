@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Properties;
+using xServer.Settings;
 
 namespace xServer.Forms
 {
@@ -9,8 +11,8 @@ namespace xServer.Forms
         {
             InitializeComponent();
 
-            lblVersion.Text = Settings.XMLSettings.VERSION;
-            rtxtContent.Text = Properties.Resources.TermsOfUse;
+            lblVersion.Text = XMLSettings.VERSION;
+            rtxtContent.Text = Resources.TermsOfUse;
 
             lblCredits.Text =
                 "Credits: Banksy\n" +
@@ -22,7 +24,7 @@ namespace xServer.Forms
 
         private void btnOkay_Click(object sender, EventArgs e)
         {
-            this.Close();
+            Close();
         }
     }
 }

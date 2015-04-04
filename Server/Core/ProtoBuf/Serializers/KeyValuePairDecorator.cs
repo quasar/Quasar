@@ -1,5 +1,4 @@
-﻿
-namespace ProtoBuf.Serializers
+﻿namespace ProtoBuf.Serializers
 {
     /*
     sealed class KeyValuePairDecorator : IProtoSerializer
@@ -21,11 +20,9 @@ namespace ProtoBuf.Serializers
         public bool RequiresOldValue { get { return true; } }
         public abstract void Write(object value, ProtoWriter dest)
         {
-
         }
         public abstract object Read(object value, ProtoReader source)
         {
-
         }
 #if FEAT_COMPILER
         void IProtoSerializer.EmitWrite(Compiler.CompilerContext ctx, Compiler.Local valueFrom)

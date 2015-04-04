@@ -7,14 +7,14 @@ namespace xClient.Core.Elevation
     {
         public CommandButton()
         {
-            this.FlatStyle = FlatStyle.System;
+            FlatStyle = FlatStyle.System;
         }
 
         protected override CreateParams CreateParams
         {
             get
             {
-                CreateParams cParams = base.CreateParams;
+                var cParams = base.CreateParams;
                 if (Environment.OSVersion.Version.Major >= 6)
                     cParams.Style |= 14;
                 return cParams;

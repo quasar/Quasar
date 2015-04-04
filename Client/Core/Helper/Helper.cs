@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
+using System.Drawing.Imaging;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
@@ -14,8 +14,8 @@ namespace xClient.Core.Helper
 
         public static string GetRandomFilename(int length, string extension)
         {
-            StringBuilder randomName = new StringBuilder(length);
-            for (int i = 0; i < length; i++)
+            var randomName = new StringBuilder(length);
+            for (var i = 0; i < length; i++)
                 randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
             return string.Concat(randomName.ToString(), extension);
@@ -23,8 +23,8 @@ namespace xClient.Core.Helper
 
         public static string GetRandomName(int length)
         {
-            StringBuilder randomName = new StringBuilder(length);
-            for (int i = 0; i < length; i++)
+            var randomName = new StringBuilder(length);
+            for (var i = 0; i < length; i++)
                 randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
             return randomName.ToString();
@@ -33,8 +33,8 @@ namespace xClient.Core.Helper
         public static Bitmap GetDesktop(int screenNumber)
         {
             var bounds = Screen.AllScreens[screenNumber].Bounds;
-            var screenshot = new Bitmap(bounds.Width, bounds.Height, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-            using (Graphics graph = Graphics.FromImage(screenshot))
+            var screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
+            using (var graph = Graphics.FromImage(screenshot))
             {
                 graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
                 return screenshot;
@@ -48,40 +48,43 @@ namespace xClient.Core.Helper
 
             Bitmap bmpRes = null;
 
-            System.Drawing.Imaging.BitmapData bmData = null;
-            System.Drawing.Imaging.BitmapData bmData2 = null;
-            System.Drawing.Imaging.BitmapData bmDataRes = null;
+            BitmapData bmData = null;
+            BitmapData bmData2 = null;
+            BitmapData bmDataRes = null;
 
             try
             {
                 bmpRes = new Bitmap(bmp.Width, bmp.Height);
 
-                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), ImageLockMode.ReadOnly,
+                    PixelFormat.Format32bppArgb);
+                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), ImageLockMode.ReadOnly,
+                    PixelFormat.Format32bppArgb);
+                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height), ImageLockMode.ReadWrite,
+                    PixelFormat.Format32bppArgb);
 
-                IntPtr scan0 = bmData.Scan0;
-                IntPtr scan02 = bmData2.Scan0;
-                IntPtr scan0Res = bmDataRes.Scan0;
+                var scan0 = bmData.Scan0;
+                var scan02 = bmData2.Scan0;
+                var scan0Res = bmDataRes.Scan0;
 
-                int stride = bmData.Stride;
-                int stride2 = bmData2.Stride;
-                int strideRes = bmDataRes.Stride;
+                var stride = bmData.Stride;
+                var stride2 = bmData2.Stride;
+                var strideRes = bmDataRes.Stride;
 
-                int nWidth = bmp.Width;
-                int nHeight = bmp.Height;
+                var nWidth = bmp.Width;
+                var nHeight = bmp.Height;
 
-                for (int y = 0; y < nHeight; y++)
+                for (var y = 0; y < nHeight; y++)
                 {
                     //define the pointers inside the first loop for parallelizing
-                    byte* p = (byte*)scan0.ToPointer();
-                    p += y * stride;
-                    byte* p2 = (byte*)scan02.ToPointer();
-                    p2 += y * stride2;
-                    byte* pRes = (byte*)scan0Res.ToPointer();
-                    pRes += y * strideRes;
+                    var p = (byte*) scan0.ToPointer();
+                    p += y*stride;
+                    var p2 = (byte*) scan02.ToPointer();
+                    p2 += y*stride2;
+                    var pRes = (byte*) scan0Res.ToPointer();
+                    pRes += y*strideRes;
 
-                    for (int x = 0; x < nWidth; x++)
+                    for (var x = 0; x < nWidth; x++)
                     {
                         //always get the complete pixel when differences are found
                         if (p[0] != p2[0] || p[1] != p2[1] || p[2] != p2[2])
@@ -113,7 +116,8 @@ namespace xClient.Core.Helper
                         bmp.UnlockBits(bmData);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmData2 != null)
@@ -123,7 +127,8 @@ namespace xClient.Core.Helper
                         bmp2.UnlockBits(bmData2);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmDataRes != null)
@@ -133,7 +138,8 @@ namespace xClient.Core.Helper
                         bmpRes.UnlockBits(bmDataRes);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmpRes != null)
@@ -154,7 +160,9 @@ namespace xClient.Core.Helper
 
         public static string FormatMacAddress(string macAddress)
         {
-            return (macAddress.Length != 12) ? "00:00:00:00:00:00" : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
+            return (macAddress.Length != 12)
+                ? "00:00:00:00:00:00"
+                : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
         }
     }
 }

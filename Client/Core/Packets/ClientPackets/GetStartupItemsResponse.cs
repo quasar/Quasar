@@ -6,14 +6,17 @@ namespace xClient.Core.Packets.ClientPackets
     [ProtoContract]
     public class GetStartupItemsResponse : IPacket
     {
-        [ProtoMember(1)]
-        public Dictionary<string, int> StartupItems { get; set; }
+        public GetStartupItemsResponse()
+        {
+        }
 
-        public GetStartupItemsResponse() { }
         public GetStartupItemsResponse(Dictionary<string, int> startupitems)
         {
-            this.StartupItems = startupitems;
+            StartupItems = startupitems;
         }
+
+        [ProtoMember(1)]
+        public Dictionary<string, int> StartupItems { get; set; }
 
         public void Execute(Client client)
         {

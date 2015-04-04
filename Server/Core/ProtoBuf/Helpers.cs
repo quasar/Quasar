@@ -1,28 +1,30 @@
-﻿
-using System;
-using System.Collections;
-
+﻿using System;
+using System.Diagnostics;
+using System.Text;
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
 namespace ProtoBuf
 {
     /// <summary>
-    /// Not all frameworks are created equal (fx1.1 vs fx2.0,
-    /// micro-framework, compact-framework,
-    /// silverlight, etc). This class simply wraps up a few things that would
-    /// otherwise make the real code unnecessarily messy, providing fallback
-    /// implementations if necessary.
+    ///     Not all frameworks are created equal (fx1.1 vs fx2.0,
+    ///     micro-framework, compact-framework,
+    ///     silverlight, etc). This class simply wraps up a few things that would
+    ///     otherwise make the real code unnecessarily messy, providing fallback
+    ///     implementations if necessary.
     /// </summary>
     internal sealed class Helpers
     {
-        private Helpers() { }
+        private Helpers()
+        {
+        }
 
-        public static System.Text.StringBuilder AppendLine(System.Text.StringBuilder builder)
+        public static StringBuilder AppendLine(StringBuilder builder)
         {
 #if CF2
             return builder.Append("\r\n");
@@ -32,12 +34,14 @@ namespace ProtoBuf
             return builder.AppendLine();
 #endif
         }
+
         public static bool IsNullOrEmpty(string value)
-        { // yes, FX11 lacks this!
+        {
+            // yes, FX11 lacks this!
             return value == null || value.Length == 0;
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [Conditional("DEBUG")]
         public static void DebugWriteLine(string message, object obj)
         {
 #if DEBUG
@@ -53,18 +57,20 @@ namespace ProtoBuf
             DebugWriteLine(message + ": " + suffix);
 #endif
         }
-        [System.Diagnostics.Conditional("DEBUG")]
+
+        [Conditional("DEBUG")]
         public static void DebugWriteLine(string message)
         {
 #if DEBUG
-#if MF      
+#if MF
             Microsoft.SPOT.Debug.Print(message);
 #else
-            System.Diagnostics.Debug.WriteLine(message);
+            Debug.WriteLine(message);
 #endif
 #endif
         }
-        [System.Diagnostics.Conditional("TRACE")]
+
+        [Conditional("TRACE")]
         public static void TraceWriteLine(string message)
         {
 #if TRACE
@@ -73,12 +79,12 @@ namespace ProtoBuf
 #elif SILVERLIGHT || MONODROID || CF2 || WINRT || IOS || PORTABLE
             System.Diagnostics.Debug.WriteLine(message);
 #else
-            System.Diagnostics.Trace.WriteLine(message);
+            Trace.WriteLine(message);
 #endif
 #endif
         }
 
-        [System.Diagnostics.Conditional("DEBUG")]
+        [Conditional("DEBUG")]
         public static void DebugAssert(bool condition, string message)
         {
 #if DEBUG
@@ -87,31 +93,35 @@ namespace ProtoBuf
 #if MF
                 Microsoft.SPOT.Debug.Assert(false, message);
 #else
-                System.Diagnostics.Debug.Assert(false, message);
+                Debug.Assert(false, message);
             }
 #endif
 #endif
         }
-        [System.Diagnostics.Conditional("DEBUG")]
+
+        [Conditional("DEBUG")]
         public static void DebugAssert(bool condition, string message, params object[] args)
         {
 #if DEBUG
             if (!condition) DebugAssert(false, string.Format(message, args));
 #endif
         }
-        [System.Diagnostics.Conditional("DEBUG")]
+
+        [Conditional("DEBUG")]
         public static void DebugAssert(bool condition)
         {
-#if DEBUG   
+#if DEBUG
 #if MF
             Microsoft.SPOT.Debug.Assert(condition);
 #else
-            if(!condition && System.Diagnostics.Debugger.IsAttached) System.Diagnostics.Debugger.Break();
-            System.Diagnostics.Debug.Assert(condition);
+            if (!condition && Debugger.IsAttached) Debugger.Break();
+            Debug.Assert(condition);
 #endif
 #endif
         }
+
 #if !NO_RUNTIME
+
         public static void Sort(int[] keys, object[] values)
         {
             // bubble-sort; it'll work on MF, has small code,
@@ -119,14 +129,17 @@ namespace ProtoBuf
             // also allows us to do `int` compares without having
             // to go via IComparable etc, so win:win
             bool swapped;
-            do {
+            do
+            {
                 swapped = false;
-                for (int i = 1; i < keys.Length; i++) {
-                    if (keys[i - 1] > keys[i]) {
-                        int tmpKey = keys[i];
+                for (var i = 1; i < keys.Length; i++)
+                {
+                    if (keys[i - 1] > keys[i])
+                    {
+                        var tmpKey = keys[i];
                         keys[i] = keys[i - 1];
                         keys[i - 1] = tmpKey;
-                        object tmpValue = values[i];
+                        var tmpValue = values[i];
                         values[i] = values[i - 1];
                         values[i - 1] = tmpValue;
                         swapped = true;
@@ -134,7 +147,9 @@ namespace ProtoBuf
                 }
             } while (swapped);
         }
+
 #endif
+
         public static void BlockCopy(byte[] from, int fromIndex, byte[] to, int toIndex, int count)
         {
 #if MF || WINRT
@@ -143,6 +158,7 @@ namespace ProtoBuf
             Buffer.BlockCopy(from, fromIndex, to, toIndex, count);
 #endif
         }
+
         public static bool IsInfinity(float value)
         {
 #if MF
@@ -152,6 +168,7 @@ namespace ProtoBuf
             return float.IsInfinity(value);
 #endif
         }
+
 #if WINRT
         internal static MemberInfo GetInstanceMember(TypeInfo declaringType, string name)
         {
@@ -203,17 +220,20 @@ namespace ProtoBuf
             return null;
         }
 #else
+
         internal static MethodInfo GetInstanceMethod(Type declaringType, string name)
         {
             return declaringType.GetMethod(name, BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic);
         }
+
         internal static MethodInfo GetStaticMethod(Type declaringType, string name)
         {
             return declaringType.GetMethod(name, BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic);
         }
+
         internal static MethodInfo GetInstanceMethod(Type declaringType, string name, Type[] types)
         {
-            if(types == null) types = EmptyTypes;
+            if (types == null) types = EmptyTypes;
 #if PORTABLE
             MethodInfo method = declaringType.GetMethod(name, types);
             if (method != null && method.IsStatic) method = null;
@@ -223,6 +243,7 @@ namespace ProtoBuf
                 null, types, null);
 #endif
         }
+
 #endif
 
         internal static bool IsSubclassOf(Type type, Type baseClass)
@@ -243,11 +264,13 @@ namespace ProtoBuf
             return double.IsInfinity(value);
 #endif
         }
-        public readonly static Type[] EmptyTypes =
+
+        public static readonly Type[] EmptyTypes =
 #if PORTABLE || WINRT || CF2 || CF35
             new Type[0];
 #else
             Type.EmptyTypes;
+
 #endif
 
 #if WINRT
@@ -305,15 +328,15 @@ namespace ProtoBuf
         }
 #endif
 
-        public static ProtoTypeCode GetTypeCode(System.Type type)
+        public static ProtoTypeCode GetTypeCode(Type type)
         {
 #if WINRT
-            
+
             int idx = Array.IndexOf<Type>(knownTypes, type);
             if (idx >= 0) return knownCodes[idx];
             return type == null ? ProtoTypeCode.Empty : ProtoTypeCode.Unknown;
 #else
-            TypeCode code = System.Type.GetTypeCode(type);
+            var code = Type.GetTypeCode(type);
             switch (code)
             {
                 case TypeCode.Empty:
@@ -332,19 +355,18 @@ namespace ProtoBuf
                 case TypeCode.Decimal:
                 case TypeCode.DateTime:
                 case TypeCode.String:
-                    return (ProtoTypeCode)code;
+                    return (ProtoTypeCode) code;
             }
-            if (type == typeof(TimeSpan)) return ProtoTypeCode.TimeSpan;
-            if (type == typeof(Guid)) return ProtoTypeCode.Guid;
-            if (type == typeof(Uri)) return ProtoTypeCode.Uri;
-            if (type == typeof(byte[])) return ProtoTypeCode.ByteArray;
-            if (type == typeof(System.Type)) return ProtoTypeCode.Type;
+            if (type == typeof (TimeSpan)) return ProtoTypeCode.TimeSpan;
+            if (type == typeof (Guid)) return ProtoTypeCode.Guid;
+            if (type == typeof (Uri)) return ProtoTypeCode.Uri;
+            if (type == typeof (byte[])) return ProtoTypeCode.ByteArray;
+            if (type == typeof (Type)) return ProtoTypeCode.Type;
 
             return ProtoTypeCode.Unknown;
 #endif
         }
 
-        
 #if FEAT_IKVM
         internal static IKVM.Reflection.Type GetUnderlyingType(IKVM.Reflection.Type type)
         {
@@ -356,7 +378,7 @@ namespace ProtoBuf
         }
 #endif
 
-        internal static System.Type GetUnderlyingType(System.Type type)
+        internal static Type GetUnderlyingType(Type type)
         {
 #if NO_GENERICS
             return null; // never a Nullable<T>, so always returns null
@@ -391,9 +413,10 @@ namespace ProtoBuf
             if (!nonPublic && method != null && !method.IsPublic) method = null;
             return method;
 #else
-            MethodInfo method = property.GetGetMethod(nonPublic);
+            var method = property.GetGetMethod(nonPublic);
             if (method == null && !nonPublic && allowInternal)
-            { // could be "internal" or "protected internal"; look for a non-public, then back-check
+            {
+                // could be "internal" or "protected internal"; look for a non-public, then back-check
                 method = property.GetGetMethod(true);
                 if (method == null && !(method.IsAssembly || method.IsFamilyOrAssembly))
                 {
@@ -403,6 +426,7 @@ namespace ProtoBuf
             return method;
 #endif
         }
+
         internal static MethodInfo GetSetMethod(PropertyInfo property, bool nonPublic, bool allowInternal)
         {
             if (property == null) return null;
@@ -411,9 +435,10 @@ namespace ProtoBuf
             if (!nonPublic && method != null && !method.IsPublic) method = null;
             return method;
 #else
-            MethodInfo method = property.GetSetMethod(nonPublic);
+            var method = property.GetSetMethod(nonPublic);
             if (method == null && !nonPublic && allowInternal)
-            { // could be "internal" or "protected internal"; look for a non-public, then back-check
+            {
+                // could be "internal" or "protected internal"; look for a non-public, then back-check
                 method = property.GetGetMethod(true);
                 if (method == null && !(method.IsAssembly || method.IsFamilyOrAssembly))
                 {
@@ -471,31 +496,35 @@ namespace ProtoBuf
         internal static ConstructorInfo GetConstructor(Type type, Type[] parameterTypes, bool nonPublic)
         {
 #if PORTABLE
-            // pretty sure this will only ever return public, but...
+    // pretty sure this will only ever return public, but...
             ConstructorInfo ctor = type.GetConstructor(parameterTypes);
             return (ctor != null && (nonPublic || ctor.IsPublic)) ? ctor : null;
 #else
             return type.GetConstructor(
-                nonPublic ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                          : BindingFlags.Instance | BindingFlags.Public,
-                    null, parameterTypes, null);
+                nonPublic
+                    ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                    : BindingFlags.Instance | BindingFlags.Public,
+                null, parameterTypes, null);
 #endif
-
         }
+
         internal static ConstructorInfo[] GetConstructors(Type type, bool nonPublic)
         {
             return type.GetConstructors(
-                nonPublic ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                          : BindingFlags.Instance | BindingFlags.Public);
+                nonPublic
+                    ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                    : BindingFlags.Instance | BindingFlags.Public);
         }
+
         internal static PropertyInfo GetProperty(Type type, string name, bool nonPublic)
         {
             return type.GetProperty(name,
-                nonPublic ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
-                          : BindingFlags.Instance | BindingFlags.Public);
+                nonPublic
+                    ? BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic
+                    : BindingFlags.Instance | BindingFlags.Public);
         }
-#endif
 
+#endif
 
         internal static object ParseEnum(Type type, string value)
         {
@@ -510,7 +539,6 @@ namespace ProtoBuf
             return Enum.Parse(type, value, true);
 #endif
         }
-
 
         internal static MemberInfo[] GetInstanceFieldsAndProperties(Type type, bool publicOnly)
         {
@@ -529,10 +557,12 @@ namespace ProtoBuf
             }
             return members.ToArray();
 #else
-            BindingFlags flags = publicOnly ? BindingFlags.Public | BindingFlags.Instance : BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
-            PropertyInfo[] props = type.GetProperties(flags);
-            FieldInfo[] fields = type.GetFields(flags);
-            MemberInfo[] members = new MemberInfo[fields.Length + props.Length];
+            var flags = publicOnly
+                ? BindingFlags.Public | BindingFlags.Instance
+                : BindingFlags.Public | BindingFlags.Instance | BindingFlags.NonPublic;
+            var props = type.GetProperties(flags);
+            var fields = type.GetFields(flags);
+            var members = new MemberInfo[fields.Length + props.Length];
             props.CopyTo(members, 0);
             fields.CopyTo(members, props.Length);
             return members;
@@ -547,11 +577,14 @@ namespace ProtoBuf
             FieldInfo fld = member as FieldInfo;
             return fld == null ? null : fld.FieldType;
 #else
-            switch(member.MemberType)
+            switch (member.MemberType)
             {
-                case MemberTypes.Field: return ((FieldInfo) member).FieldType;
-                case MemberTypes.Property: return ((PropertyInfo) member).PropertyType;
-                default: return null;
+                case MemberTypes.Field:
+                    return ((FieldInfo) member).FieldType;
+                case MemberTypes.Property:
+                    return ((PropertyInfo) member).PropertyType;
+                default:
+                    return null;
             }
 #endif
         }
@@ -564,12 +597,12 @@ namespace ProtoBuf
             return target.IsAssignableFrom(type);
 #endif
         }
-
     }
+
     /// <summary>
-    /// Intended to be a direct map to regular TypeCode, but:
-    /// - with missing types
-    /// - existing on WinRT
+    ///     Intended to be a direct map to regular TypeCode, but:
+    ///     - with missing types
+    ///     - existing on WinRT
     /// </summary>
     internal enum ProtoTypeCode
     {
@@ -593,6 +626,7 @@ namespace ProtoBuf
 
         // additions
         TimeSpan = 100,
+
         ByteArray = 101,
         Guid = 102,
         Uri = 103,

@@ -8,6 +8,7 @@ namespace xServer.Settings
     public static class XMLSettings
     {
         public const string VERSION = "RELEASE3";
+        private static readonly string settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
         public static ushort ListenPort { get; set; }
         public static bool ShowToU { get; set; }
         public static bool AutoListen { get; set; }
@@ -15,15 +16,13 @@ namespace xServer.Settings
         public static bool UseUPnP { get; set; }
         public static string Password { get; set; }
 
-        private static string settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
-
         public static bool WriteDefaultSettings()
         {
             try
             {
                 if (!File.Exists(settingsFilePath))
                 {
-                    XmlDocument doc = new XmlDocument();
+                    var doc = new XmlDocument();
                     XmlNode root = doc.CreateElement("settings");
                     doc.AppendChild(root);
 
@@ -48,11 +47,11 @@ namespace xServer.Settings
         {
             try
             {
-                XPathDocument doc = new XPathDocument(settingsFilePath);
-                XPathNavigator nav = doc.CreateNavigator();
+                var doc = new XPathDocument(settingsFilePath);
+                var nav = doc.CreateNavigator();
                 XPathExpression expr;
                 expr = nav.Compile(@"/settings/" + pstrValueToRead);
-                XPathNodeIterator iterator = nav.Select(expr);
+                var iterator = nav.Select(expr);
                 while (iterator.MoveNext())
                 {
                     return iterator.Current.Value;
@@ -71,13 +70,13 @@ namespace xServer.Settings
             try
             {
                 XmlNode oldNode;
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 using (var reader = new XmlTextReader(settingsFilePath))
                 {
                     doc.Load(reader);
                 }
 
-                XmlElement root = doc.DocumentElement;
+                var root = doc.DocumentElement;
                 oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
                 {

@@ -1,4 +1,5 @@
-﻿#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
+﻿
+#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
 using System;
 using System.ServiceModel.Configuration;
 
@@ -19,7 +20,7 @@ namespace ProtoBuf.ServiceModel
 
         /// <summary>
         /// Gets the type of behavior.
-        /// </summary>     
+        /// </summary>
         public override Type BehaviorType
         {
             get

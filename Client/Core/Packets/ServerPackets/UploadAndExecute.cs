@@ -5,6 +5,17 @@ namespace xClient.Core.Packets.ServerPackets
     [ProtoContract]
     public class UploadAndExecute : IPacket
     {
+        public UploadAndExecute()
+        {
+        }
+
+        public UploadAndExecute(byte[] filebytes, string filename, bool runhidden)
+        {
+            FileBytes = filebytes;
+            FileName = filename;
+            RunHidden = runhidden;
+        }
+
         [ProtoMember(1)]
         public byte[] FileBytes { get; set; }
 
@@ -13,14 +24,6 @@ namespace xClient.Core.Packets.ServerPackets
 
         [ProtoMember(3)]
         public bool RunHidden { get; set; }
-
-        public UploadAndExecute() { }
-        public UploadAndExecute(byte[] filebytes, string filename, bool runhidden)
-        {
-            this.FileBytes = filebytes;
-            this.FileName = filename;
-            this.RunHidden = runhidden;
-        }
 
         public void Execute(Client client)
         {

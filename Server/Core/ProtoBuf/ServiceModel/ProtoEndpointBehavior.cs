@@ -1,4 +1,5 @@
-﻿#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
+﻿
+#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER
 using System.ServiceModel.Description;
 
 namespace ProtoBuf.ServiceModel
@@ -19,9 +20,9 @@ namespace ProtoBuf.ServiceModel
     ///      <add name="ProtoBufSerialization" type="ProtoBuf.ServiceModel.ProtoBehaviorExtension, protobuf-net, Version=1.0.0.255, Culture=neutral, PublicKeyToken=257b51d87d2e4d67"/>
     ///    </behaviorExtensions>
     ///  </extensions>
-    /// 
+    ///
     /// Configure your endpoints to have a behaviorConfiguration as follows:
-    /// 
+    ///
     ///  <service name="TK.Framework.Samples.ServiceModel.Contract.SampleService">
     ///    <endpoint address="http://myhost:9003/SampleService" binding="basicHttpBinding" behaviorConfiguration="ProtoBufBehaviorConfig"
     ///     bindingConfiguration="basicHttpBindingConfig" name="basicHttpProtoBuf" contract="ISampleServiceContract" />
@@ -63,7 +64,6 @@ namespace ProtoBuf.ServiceModel
             }
         }
 
-
         private static void ReplaceDataContractSerializerOperationBehavior(OperationDescription description)
         {
             DataContractSerializerOperationBehavior dcsOperationBehavior = description.Behaviors.Find<DataContractSerializerOperationBehavior>();
@@ -77,9 +77,7 @@ namespace ProtoBuf.ServiceModel
             }
         }
 
-
-        #endregion
+#endregion IEndpointBehavior Members
     }
-
 }
 #endif

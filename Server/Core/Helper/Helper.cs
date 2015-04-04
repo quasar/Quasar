@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Text;
 
 namespace xServer.Core.Helper
@@ -12,8 +10,8 @@ namespace xServer.Core.Helper
 
         public static string GetRandomFilename(int length, string extension)
         {
-            StringBuilder randomName = new StringBuilder(length);
-            for (int i = 0; i < length; i++)
+            var randomName = new StringBuilder(length);
+            for (var i = 0; i < length; i++)
                 randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
             return string.Concat(randomName.ToString(), extension);
@@ -21,8 +19,8 @@ namespace xServer.Core.Helper
 
         public static string GetRandomName(int length)
         {
-            StringBuilder randomName = new StringBuilder(length);
-            for (int i = 0; i < length; i++)
+            var randomName = new StringBuilder(length);
+            for (var i = 0; i < length; i++)
                 randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
             return randomName.ToString();
@@ -30,13 +28,13 @@ namespace xServer.Core.Helper
 
         public static string GetFileSize(long size)
         {
-            string[] sizes = { "B", "KB", "MB", "GB" };
+            string[] sizes = {"B", "KB", "MB", "GB"};
             double len = size;
-            int order = 0;
+            var order = 0;
             while (len >= 1024 && order + 1 < sizes.Length)
             {
                 order++;
-                len = len / 1024;
+                len = len/1024;
             }
             return string.Format("{0:0.##} {1}", len, sizes[order]);
         }

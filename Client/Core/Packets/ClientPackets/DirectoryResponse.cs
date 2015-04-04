@@ -5,6 +5,17 @@ namespace xClient.Core.Packets.ClientPackets
     [ProtoContract]
     public class DirectoryResponse : IPacket
     {
+        public DirectoryResponse()
+        {
+        }
+
+        public DirectoryResponse(string[] files, string[] folders, long[] filessize)
+        {
+            Files = files;
+            Folders = folders;
+            FilesSize = filessize;
+        }
+
         [ProtoMember(1)]
         public string[] Files { get; set; }
 
@@ -13,14 +24,6 @@ namespace xClient.Core.Packets.ClientPackets
 
         [ProtoMember(3)]
         public long[] FilesSize { get; set; }
-
-        public DirectoryResponse() { }
-        public DirectoryResponse(string[] files, string[] folders, long[] filessize)
-        {
-            this.Files = files;
-            this.Folders = folders;
-            this.FilesSize = filessize;
-        }
 
         public void Execute(Client client)
         {

@@ -1,42 +1,57 @@
 ﻿#if !NO_RUNTIME
+
 using System;
+using ProtoBuf.Meta;
 
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 #endif
 
-
 namespace ProtoBuf.Serializers
 {
-    sealed class GuidSerializer : IProtoSerializer
+    internal sealed class GuidSerializer : IProtoSerializer
     {
 #if FEAT_IKVM
         readonly Type expectedType;
 #else
-        static readonly Type expectedType = typeof(Guid);
+        private static readonly Type expectedType = typeof (Guid);
 #endif
-        public GuidSerializer(ProtoBuf.Meta.TypeModel model)
+
+        public GuidSerializer(TypeModel model)
         {
 #if FEAT_IKVM
             expectedType = model.MapType(typeof(Guid));
 #endif
         }
 
-        public Type ExpectedType { get { return expectedType; } }
+        public Type ExpectedType
+        {
+            get { return expectedType; }
+        }
 
-        bool IProtoSerializer.RequiresOldValue { get { return false; } }
-        bool IProtoSerializer.ReturnsValue { get { return true; } }
+        bool IProtoSerializer.RequiresOldValue
+        {
+            get { return false; }
+        }
+
+        bool IProtoSerializer.ReturnsValue
+        {
+            get { return true; }
+        }
 
 #if !FEAT_IKVM
+
         public void Write(object value, ProtoWriter dest)
         {
-            BclHelpers.WriteGuid((Guid)value, dest);
+            BclHelpers.WriteGuid((Guid) value, dest);
         }
+
         public object Read(object value, ProtoReader source)
         {
             Helpers.DebugAssert(value == null); // since replaces
             return BclHelpers.ReadGuid(source);
         }
+
 #endif
 
 #if FEAT_COMPILER
@@ -49,7 +64,7 @@ namespace ProtoBuf.Serializers
             ctx.EmitBasicRead(ctx.MapType(typeof(BclHelpers)), "ReadGuid", ExpectedType);
         }
 #endif
-
     }
 }
+
 #endif

