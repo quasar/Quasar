@@ -264,6 +264,8 @@ namespace xServer.Core
             {
                 _clients.Remove(s);
                 OnClientState(s, false);
+
+                s.Value.DisposeForms();
             }
         }
     }
