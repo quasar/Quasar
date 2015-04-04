@@ -39,26 +39,26 @@ namespace xServer.Forms
             AutostartItem.Path = txtPath.Text;
             AutostartItem.Type = cmbType.SelectedIndex;
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            this.DialogResult = DialogResult.Cancel;
-            this.Close();
+            DialogResult = DialogResult.Cancel;
+            Close();
         }
 
         private void txtName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
+            var illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }
 
         private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
+            var illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }

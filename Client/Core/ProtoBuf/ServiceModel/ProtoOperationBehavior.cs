@@ -1,4 +1,5 @@
-﻿#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER && !NO_GENERICS
+﻿
+#if FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER && !NO_GENERICS
 using System;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
@@ -24,7 +25,6 @@ namespace ProtoBuf.ServiceModel
                 if (value == null) throw new ArgumentNullException("Model");
                 model = value;
             }
-
         }
         /// <summary>
         /// Create a new ProtoOperationBehavior instance

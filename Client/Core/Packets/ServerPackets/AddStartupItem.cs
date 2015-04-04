@@ -5,6 +5,17 @@ namespace xClient.Core.Packets.ServerPackets
     [ProtoContract]
     public class AddStartupItem : IPacket
     {
+        public AddStartupItem()
+        {
+        }
+
+        public AddStartupItem(string name, string path, int type)
+        {
+            Name = name;
+            Path = path;
+            Type = type;
+        }
+
         [ProtoMember(1)]
         public string Name { get; set; }
 
@@ -13,14 +24,6 @@ namespace xClient.Core.Packets.ServerPackets
 
         [ProtoMember(3)]
         public int Type { get; set; }
-
-        public AddStartupItem() { }
-        public AddStartupItem(string name, string path, int type)
-        {
-            this.Name = name;
-            this.Path = path;
-            this.Type = type;
-        }
 
         public void Execute(Client client)
         {

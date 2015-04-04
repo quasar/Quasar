@@ -102,6 +102,7 @@
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
+    <Compile Include="Core\Misc\KeepAlive.cs" />
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />

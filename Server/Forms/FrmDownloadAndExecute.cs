@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Core.Misc;
 
 namespace xServer.Forms
 {
@@ -15,18 +16,18 @@ namespace xServer.Forms
 
         private void btnDownloadAndExecute_Click(object sender, EventArgs e)
         {
-            Core.Misc.DownloadAndExecute.URL = txtURL.Text;
-            Core.Misc.DownloadAndExecute.RunHidden = chkRunHidden.Checked;
+            DownloadAndExecute.URL = txtURL.Text;
+            DownloadAndExecute.RunHidden = chkRunHidden.Checked;
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
 
         private void FrmDownloadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Download & Execute [Selected: {0}]", _selectedClients);
-            txtURL.Text = Core.Misc.DownloadAndExecute.URL;
-            chkRunHidden.Checked = Core.Misc.DownloadAndExecute.RunHidden;
+            Text = string.Format("xRAT 2.0 - Download & Execute [Selected: {0}]", _selectedClients);
+            txtURL.Text = DownloadAndExecute.URL;
+            chkRunHidden.Checked = DownloadAndExecute.RunHidden;
         }
     }
 }

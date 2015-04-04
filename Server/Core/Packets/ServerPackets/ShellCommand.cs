@@ -5,14 +5,17 @@ namespace xServer.Core.Packets.ServerPackets
     [ProtoContract]
     public class ShellCommand : IPacket
     {
-        [ProtoMember(1)]
-        public string Command { get; set; }
+        public ShellCommand()
+        {
+        }
 
-        public ShellCommand() { }
         public ShellCommand(string command)
         {
-            this.Command = command;
+            Command = command;
         }
+
+        [ProtoMember(1)]
+        public string Command { get; set; }
 
         public void Execute(Client client)
         {

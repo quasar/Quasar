@@ -1,26 +1,37 @@
 ﻿#if !NO_RUNTIME
+
 using System;
-using ProtoBuf.Meta;
 
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
-using System.Reflection;
+
 #endif
 
 namespace ProtoBuf.Serializers
 {
-    abstract class ProtoDecoratorBase : IProtoSerializer
+    internal abstract class ProtoDecoratorBase : IProtoSerializer
     {
         public abstract Type ExpectedType { get; }
+
         protected readonly IProtoSerializer Tail;
-        protected ProtoDecoratorBase(IProtoSerializer tail) { this.Tail = tail; }
+
+        protected ProtoDecoratorBase(IProtoSerializer tail)
+        {
+            Tail = tail;
+        }
+
         public abstract bool ReturnsValue { get; }
+
         public abstract bool RequiresOldValue { get; }
+
 #if !FEAT_IKVM
+
         public abstract void Write(object value, ProtoWriter dest);
+
         public abstract object Read(object value, ProtoReader source);
+
 #endif
 
 #if FEAT_COMPILER
@@ -31,4 +42,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

@@ -5,6 +5,24 @@ namespace xClient.Core.Packets.ClientPackets
     [ProtoContract]
     public class Initialize : IPacket
     {
+        public Initialize()
+        {
+        }
+
+        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode,
+            string region, string city, int imageindex, string id)
+        {
+            Version = version;
+            OperatingSystem = operatingsystem;
+            AccountType = accounttype;
+            Country = country;
+            CountryCode = countrycode;
+            Region = region;
+            City = city;
+            ImageIndex = imageindex;
+            Id = id;
+        }
+
         [ProtoMember(1)]
         public string Version { get; set; }
 
@@ -31,20 +49,6 @@ namespace xClient.Core.Packets.ClientPackets
 
         [ProtoMember(9)]
         public string Id { get; set; }
-
-        public Initialize() { }
-        public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode, string region, string city, int imageindex, string id)
-        {
-            Version = version;
-            OperatingSystem = operatingsystem;
-            AccountType = accounttype;
-            Country = country;
-            CountryCode = countrycode;
-            Region = region;
-            City = city;
-            ImageIndex = imageindex;
-            Id = id;
-        }
 
         public void Execute(Client client)
         {

@@ -5,14 +5,17 @@ namespace xClient.Core.Packets.ClientPackets
     [ProtoContract]
     public class DrivesResponse : IPacket
     {
-        [ProtoMember(1)]
-        public string[] Drives { get; set; }
+        public DrivesResponse()
+        {
+        }
 
-        public DrivesResponse() { }
         public DrivesResponse(string[] drives)
         {
-            this.Drives = drives;
+            Drives = drives;
         }
+
+        [ProtoMember(1)]
+        public string[] Drives { get; set; }
 
         public void Execute(Client client)
         {

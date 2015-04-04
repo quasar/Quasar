@@ -5,9 +5,14 @@ namespace xServer.Core.Helper
 {
     public class FileSplit
     {
+        private const int MAX_PACKET_SIZE = (1024*512);
         private int _maxBlocks;
 
-        private const int MAX_PACKET_SIZE = (1024 * 512);
+        public FileSplit(string path)
+        {
+            Path = path;
+        }
+
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
@@ -15,61 +20,56 @@ namespace xServer.Core.Helper
         {
             get
             {
-                if (this._maxBlocks > 0 || this._maxBlocks == -1)
-                    return this._maxBlocks;
+                if (_maxBlocks > 0 || _maxBlocks == -1)
+                    return _maxBlocks;
                 try
                 {
-                    FileInfo fInfo = new FileInfo(this.Path);
+                    var fInfo = new FileInfo(Path);
 
                     if (!fInfo.Exists)
                         throw new FileNotFoundException();
 
-                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_PACKET_SIZE);
+                    _maxBlocks = (int) Math.Ceiling(fInfo.Length/(double) MAX_PACKET_SIZE);
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    this._maxBlocks = -1;
-                    this.LastError = "Access denied";
-                    return this._maxBlocks;
+                    _maxBlocks = -1;
+                    LastError = "Access denied";
+                    return _maxBlocks;
                 }
                 catch (IOException)
                 {
-                    this._maxBlocks = -1;
-                    this.LastError = "File not found";
-                    return this._maxBlocks;
+                    _maxBlocks = -1;
+                    LastError = "File not found";
+                    return _maxBlocks;
                 }
-                return this._maxBlocks;
+                return _maxBlocks;
             }
-        }
-
-        public FileSplit(string path)
-        {
-            this.Path = path;
         }
 
         private int GetSize(long length)
         {
-            return (length < MAX_PACKET_SIZE) ? (int)length : MAX_PACKET_SIZE;
+            return (length < MAX_PACKET_SIZE) ? (int) length : MAX_PACKET_SIZE;
         }
 
         public bool ReadBlock(int blockNumber, out byte[] readBytes)
         {
             try
             {
-                if (blockNumber > this.MaxBlocks) throw new ArgumentOutOfRangeException();
+                if (blockNumber > MaxBlocks) throw new ArgumentOutOfRangeException();
 
-                using (FileStream fStream = File.OpenRead(this.Path))
+                using (var fStream = File.OpenRead(Path))
                 {
                     if (blockNumber == 0)
                     {
                         fStream.Seek(0, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                        readBytes = new byte[GetSize(fStream.Length - fStream.Position)];
                         fStream.Read(readBytes, 0, readBytes.Length);
                     }
                     else
                     {
-                        fStream.Seek(blockNumber * MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                        fStream.Seek(blockNumber*MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
+                        readBytes = new byte[GetSize(fStream.Length - fStream.Position)];
                         fStream.Read(readBytes, 0, readBytes.Length);
                     }
                 }
@@ -79,19 +79,19 @@ namespace xServer.Core.Helper
             catch (ArgumentOutOfRangeException)
             {
                 readBytes = new byte[0];
-                this.LastError = "BlockNumber bigger than MaxBlocks";
+                LastError = "BlockNumber bigger than MaxBlocks";
                 return false;
             }
             catch (UnauthorizedAccessException)
             {
                 readBytes = new byte[0];
-                this.LastError = "Access denied";
+                LastError = "Access denied";
                 return false;
             }
             catch (IOException)
             {
                 readBytes = new byte[0];
-                this.LastError = "File not found";
+                LastError = "File not found";
                 return false;
             }
         }
@@ -100,12 +100,12 @@ namespace xServer.Core.Helper
         {
             try
             {
-                if (!File.Exists(this.Path) && blockNumber > 0)
+                if (!File.Exists(Path) && blockNumber > 0)
                     throw new FileNotFoundException(); // previous file got deleted somehow, error
 
                 if (blockNumber == 0)
                 {
-                    using (FileStream fStream = File.Open(this.Path, FileMode.Create, FileAccess.Write))
+                    using (var fStream = File.Open(Path, FileMode.Create, FileAccess.Write))
                     {
                         fStream.Seek(0, SeekOrigin.Begin);
                         fStream.Write(block, 0, block.Length);
@@ -114,9 +114,9 @@ namespace xServer.Core.Helper
                     return true;
                 }
 
-                using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
+                using (var fStream = File.Open(Path, FileMode.Append, FileAccess.Write))
                 {
-                    fStream.Seek(blockNumber * MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
+                    fStream.Seek(blockNumber*MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
                     fStream.Write(block, 0, block.Length);
                 }
 
@@ -124,12 +124,12 @@ namespace xServer.Core.Helper
             }
             catch (UnauthorizedAccessException)
             {
-                this.LastError = "Access denied";
+                LastError = "Access denied";
                 return false;
             }
             catch (IOException)
             {
-                this.LastError = "File not found";
+                LastError = "File not found";
                 return false;
             }
         }

@@ -17,8 +17,41 @@ namespace xClient.Core
 {
     public class Client
     {
-        public event ClientFailEventHandler ClientFail;
         public delegate void ClientFailEventHandler(Client s, Exception ex);
+
+        public delegate void ClientReadEventHandler(Client s, IPacket packet);
+
+        public delegate void ClientStateEventHandler(Client s, bool connected);
+
+        public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
+
+        public enum ReceiveType
+        {
+            Header,
+            Payload
+        }
+
+        
+        private const uint KEEP_ALIVE_TIME = 5000;
+        private const uint KEEP_ALIVE_INTERVAL = 5000;
+
+        public const int HEADER_SIZE = 4;
+        public const int MAX_PACKET_SIZE = (1024*1024)*1; //1MB
+        private const bool encryptionEnabled = true;
+        private const bool compressionEnabled = true;
+        private readonly byte[] _buffer = new byte[MAX_PACKET_SIZE];
+        private Socket _handle;
+        private List<KeepAlive> _keepAlives;
+        private int _payloadLen;
+        private int _readableDataLen;
+        //receive info
+        private int _readOffset;
+        private ReceiveType _receiveState = ReceiveType.Header;
+        private int _typeIndex;
+        private int _writeOffset;
+        //Connection info
+        public bool Connected { get; private set; }
+        public event ClientFailEventHandler ClientFail;
 
         private void OnClientFail(Exception ex)
         {
@@ -29,7 +62,6 @@ namespace xClient.Core
         }
 
         public event ClientStateEventHandler ClientState;
-        public delegate void ClientStateEventHandler(Client s, bool connected);
 
         private void OnClientState(bool connected)
         {
@@ -43,7 +75,6 @@ namespace xClient.Core
         }
 
         public event ClientReadEventHandler ClientRead;
-        public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         private void OnClientRead(IPacket packet)
         {
@@ -54,7 +85,6 @@ namespace xClient.Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
-        public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
@@ -64,36 +94,6 @@ namespace xClient.Core
             }
         }
 
-        public enum ReceiveType
-        {
-            Header,
-            Payload
-        }
-
-        public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
-        private Socket _handle;
-        private int _typeIndex;
-
-        private byte[] _buffer = new byte[MAX_PACKET_SIZE];
-
-        //receive info
-        private int _readOffset;
-        private int _writeOffset;
-        private int _readableDataLen;
-        private int _payloadLen;
-        private ReceiveType _receiveState = ReceiveType.Header;
-
-        //Connection info
-        public bool Connected { get; private set; }
-        private List<KeepAlive> _keepAlives;
-
-        private const bool encryptionEnabled = true;
-        private const bool compressionEnabled = true;
-
-        public Client()
-        { }
-
         public void Connect(string host, ushort port)
         {
             try
@@ -102,7 +102,8 @@ namespace xClient.Core
                 Initialize();
 
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+               // _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                Misc.KeepAliveEx.SetKeepAliveEx(_handle,KEEP_ALIVE_INTERVAL,KEEP_ALIVE_TIME);
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
@@ -110,7 +111,7 @@ namespace xClient.Core
 
                 if (_handle.Connected)
                 {
-                    _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
+                    _handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
 
                     SendKeepAlives();
                     OnClientState(true);
@@ -127,17 +128,13 @@ namespace xClient.Core
         {
             _keepAlives = new List<KeepAlive>();
 
-            AddTypesToSerializer(typeof(IPacket), new Type[]
-            {
-                typeof(UnknownPacket),
-                typeof(KeepAlive),
-                typeof(KeepAliveResponse)
-            });
+            AddTypesToSerializer(typeof (IPacket), typeof (UnknownPacket), typeof (KeepAlive),
+                typeof (KeepAliveResponse));
         }
 
         private void AsyncReceive(IAsyncResult result)
         {
-            int bytesTransferred = -1;
+            int bytesTransferred;
             try
             {
                 bytesTransferred = _handle.EndReceive(result);
@@ -148,14 +145,14 @@ namespace xClient.Core
                     return;
                 }
             }
-            catch (Exception ex)
+            catch 
             {
                 OnClientState(false);
                 return;
             }
 
             _readableDataLen += bytesTransferred;
-            bool process = true;
+            var process = true;
 
             while (process)
             {
@@ -176,8 +173,8 @@ namespace xClient.Core
                     process = _readableDataLen >= _payloadLen;
                     if (process)
                     {
-                        byte[] payload = new byte[_payloadLen];
-                        Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
+                        var payload = new byte[_payloadLen];
+                        Array.Copy(_buffer, _readOffset, payload, 0, payload.Length);
 
                         if (encryptionEnabled)
                             payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
@@ -187,13 +184,13 @@ namespace xClient.Core
                             if (compressionEnabled)
                                 payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
 
-                            using (MemoryStream deserialized = new MemoryStream(payload))
+                            using (var deserialized = new MemoryStream(payload))
                             {
-                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                var packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
                                     PrefixStyle.Fixed32);
 
                                 if (packet.GetType() == typeof (KeepAlive))
-                                    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
+                                    new KeepAliveResponse {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
                                 else if (packet.GetType() == typeof (KeepAliveResponse))
                                     HandleKeepAlivePacket((KeepAliveResponse) packet, this);
                                 else
@@ -208,11 +205,11 @@ namespace xClient.Core
                 }
             }
 
-            int len = _receiveState == ReceiveType.Header ? HEADER_SIZE : _payloadLen;
-            if (_readOffset + len >= this._buffer.Length)
+            var len = _receiveState == ReceiveType.Header ? HEADER_SIZE : _payloadLen;
+            if (_readOffset + len >= _buffer.Length)
             {
                 //copy the buffer to the beginning
-                Array.Copy(this._buffer, _readOffset, this._buffer, 0, _readableDataLen);
+                Array.Copy(_buffer, _readOffset, _buffer, 0, _readableDataLen);
                 _writeOffset = _readableDataLen;
                 _readOffset = 0;
             }
@@ -228,7 +225,8 @@ namespace xClient.Core
             {
                 if (_buffer.Length - _writeOffset > 0)
                 {
-                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None, AsyncReceive, null);
+                    _handle.BeginReceive(_buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
+                        AsyncReceive, null);
                 }
                 else
                 {
@@ -251,18 +249,19 @@ namespace xClient.Core
 
                 try
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    using (var ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix(ms, (T) packet, PrefixStyle.Fixed32);
 
-                        byte[] data = ms.ToArray();
+                        var data = ms.ToArray();
 
                         Send(data);
                         OnClientWrite(packet, data.LongLength, data);
                     }
                 }
                 catch
-                { }
+                {
+                }
             }
         }
 
@@ -277,9 +276,9 @@ namespace xClient.Core
             if (encryptionEnabled)
                 data = AES.Encrypt(data, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
-            byte[] temp = BitConverter.GetBytes(data.Length);
+            var temp = BitConverter.GetBytes(data.Length);
 
-            byte[] payload = new byte[data.Length + 4];
+            var payload = new byte[data.Length + 4];
             Array.Copy(temp, payload, temp.Length);
             Array.Copy(data, 0, payload, 4, data.Length);
 
@@ -308,7 +307,7 @@ namespace xClient.Core
         }
 
         /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
+        ///     Adds a Type to the serializer so a message can be properly serialized.
         /// </summary>
         /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="type">Type to be added</param>
@@ -317,8 +316,8 @@ namespace xClient.Core
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
-            bool isAdded = false;
-            foreach (SubType subType in RuntimeTypeModel.Default[parent].GetSubtypes())
+            var isAdded = false;
+            foreach (var subType in RuntimeTypeModel.Default[parent].GetSubtypes())
                 if (subType.DerivedType.Type == type)
                     isAdded = true;
 
@@ -328,13 +327,13 @@ namespace xClient.Core
 
         public void AddTypesToSerializer(Type parent, params Type[] types)
         {
-            foreach (Type type in types)
+            foreach (var type in types)
                 AddTypeToSerializer(parent, type);
         }
 
         private void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
         {
-            foreach (KeepAlive keepAlive in _keepAlives)
+            foreach (var keepAlive in _keepAlives)
             {
                 if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
                 {
@@ -346,7 +345,7 @@ namespace xClient.Core
 
         private void KeepAliveCallback(object state)
         {
-            KeepAlive keepAlive = (KeepAlive)state;
+            var keepAlive = (KeepAlive) state;
 
             if (_keepAlives.Contains(keepAlive))
             {
@@ -362,22 +361,20 @@ namespace xClient.Core
                 {
                     try
                     {
-                        KeepAlive keepAlive = new KeepAlive();
+                        var keepAlive = new KeepAlive();
                         lock (_keepAlives)
                         {
                             _keepAlives.Add(keepAlive);
                         }
                         keepAlive.Execute(this);
-                        Timer timer = new Timer(KeepAliveCallback, keepAlive, 25000, Timeout.Infinite);
+                        var timer = new Timer(KeepAliveCallback, keepAlive, 25000, Timeout.Infinite);
                     }
                     catch
                     {
-
                     }
                     Thread.Sleep(15000);
                 }
-
-            }) { IsBackground = true }.Start();
+            }) {IsBackground = true}.Start();
         }
     }
 }

@@ -8,13 +8,13 @@ namespace xServer.Core.Misc
     {
         public static DialogResult Show(string title, string promptText, ref string value)
         {
-            DialogResult dialogResult = DialogResult.Cancel;
+            var dialogResult = DialogResult.Cancel;
             using (var form = new Form())
             {
-                Label label = new Label();
-                TextBox textBox = new TextBox();
-                Button buttonOk = new Button();
-                Button buttonCancel = new Button();
+                var label = new Label();
+                var textBox = new TextBox();
+                var buttonOk = new Button();
+                var buttonCancel = new Button();
 
                 form.Text = title;
                 label.Text = promptText;
@@ -36,7 +36,7 @@ namespace xServer.Core.Misc
                 buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
                 form.ClientSize = new Size(396, 107);
-                form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
+                form.Controls.AddRange(new Control[] {label, textBox, buttonOk, buttonCancel});
                 form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
                 form.FormBorderStyle = FormBorderStyle.FixedDialog;
                 form.StartPosition = FormStartPosition.CenterScreen;

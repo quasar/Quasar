@@ -3,35 +3,36 @@ using System.Management;
 
 namespace xClient.Core.Information
 {
-    static public class OSInfo
+    public static class OSInfo
     {
         #region BITS
+
         /// <summary>
-        /// Determines if the current application is 32 or 64-bit.
+        ///     Determines if the current application is 32 or 64-bit.
         /// </summary>
-        static public int Bits
+        public static int Bits
         {
-            get
-            {
-                return IntPtr.Size * 8;
-            }
+            get { return IntPtr.Size*8; }
         }
+
         #endregion BITS
 
         #region NAME
-        static private string _osName;
+
+        private static string _osName;
+
         /// <summary>
-        /// Gets the name of the operating system running on this computer (including the edition).
+        ///     Gets the name of the operating system running on this computer (including the edition).
         /// </summary>
-        static public string Name
+        public static string Name
         {
             get
             {
                 if (_osName != null)
                     return _osName;
 
-                string name = "Uknown OS";
-                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
+                var name = "Uknown OS";
+                using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
                 {
                     foreach (ManagementObject os in searcher.Get())
                     {
@@ -47,7 +48,7 @@ namespace xClient.Core.Information
                 return _osName;
             }
         }
-        #endregion NAME
 
+        #endregion NAME
     }
 }

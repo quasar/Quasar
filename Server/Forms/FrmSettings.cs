@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Helper;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -11,8 +12,8 @@ namespace xServer.Forms
 
         public FrmSettings(Server listenServer)
         {
-            this._listenServer = listenServer;
-            
+            _listenServer = listenServer;
+
             InitializeComponent();
 
             if (listenServer.Listening)
@@ -37,7 +38,7 @@ namespace xServer.Forms
             if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
                 if (chkUseUpnp.Checked)
-                    Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
+                    UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
 
                 _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
                 btnListen.Text = "Stop listening";
@@ -70,13 +71,14 @@ namespace xServer.Forms
             XMLSettings.WriteValue("UseUPnP", chkUseUpnp.Checked.ToString());
             XMLSettings.UseUPnP = chkUseUpnp.Checked;
 
-            this.Close();
+            Close();
         }
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
-                this.Close();
+            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                DialogResult.Yes)
+                Close();
         }
     }
 }

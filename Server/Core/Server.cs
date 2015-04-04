@@ -11,11 +11,39 @@ namespace xServer.Core
 {
     public class Server
     {
+        public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
+
+        public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
+
+        public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length);
+
+        public delegate void ServerStateEventHandler(Server s, bool listening);
+
+        private List<Client> _clients;
+        private Socket _handle;
+        private SocketAsyncEventArgs _item;
+        private List<KeepAlive> _keepAlives;
+
+        public Server()
+        {
+            PacketTypes = new List<Type>();
+            AllTimeConnectedClients = new Dictionary<string, DateTime>();
+        }
+
         public long BytesReceived { get; set; }
         public long BytesSent { get; set; }
+        private bool Processing { get; set; }
+        public bool Listening { get; private set; }
 
+        public Client[] Clients
+        {
+            get { return Listening ? _clients.ToArray() : new Client[0]; }
+        }
+
+        public int ConnectedClients { get; set; }
+        public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
+        private List<Type> PacketTypes { get; set; }
         public event ServerStateEventHandler ServerState;
-        public delegate void ServerStateEventHandler(Server s, bool listening);
 
         private void OnServerState(bool listening)
         {
@@ -26,7 +54,6 @@ namespace xServer.Core
         }
 
         public event ClientStateEventHandler ClientState;
-        public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         private void OnClientState(Client c, bool connected)
         {
@@ -37,7 +64,6 @@ namespace xServer.Core
         }
 
         public event ClientReadEventHandler ClientRead;
-        public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
         private void OnClientRead(Client c, IPacket packet)
         {
@@ -48,7 +74,6 @@ namespace xServer.Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
-        public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length);
 
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
         {
@@ -56,36 +81,6 @@ namespace xServer.Core
             {
                 ClientWrite(this, c, packet, length);
             }
-        }
-
-
-        private Socket _handle;
-        private SocketAsyncEventArgs _item;
-
-        private bool Processing { get; set; }
-
-        public bool Listening { get; private set; }
-
-        private List<KeepAlive> _keepAlives;
-
-        private List<Client> _clients;
-        public Client[] Clients
-        {
-            get
-            {
-                return Listening ? _clients.ToArray() : new Client[0];
-            }
-        }
-
-        public int ConnectedClients { get; set; }
-        public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
-
-        private List<Type> PacketTypes { get; set; }
-
-        public Server()
-        {
-            PacketTypes = new List<Type>();
-            AllTimeConnectedClients = new Dictionary<string, DateTime>();
         }
 
         public void Listen(ushort port)
@@ -124,7 +119,7 @@ namespace xServer.Core
         }
 
         /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
+        ///     Adds a Type to the serializer so a message can be properly serialized.
         /// </summary>
         /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="type">Type to be added</param>
@@ -138,7 +133,7 @@ namespace xServer.Core
 
         public void AddTypesToSerializer(Type parent, params Type[] types)
         {
-            foreach (Type type in types)
+            foreach (var type in types)
                 AddTypeToSerializer(parent, type);
         }
 
@@ -148,7 +143,7 @@ namespace xServer.Core
             {
                 if (e.SocketError == SocketError.Success)
                 {
-                    Client T = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
+                    var T = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
 
                     lock (_clients)
                     {
@@ -181,30 +176,28 @@ namespace xServer.Core
                 {
                     try
                     {
-                        foreach (Client client in Clients)
+                        foreach (var client in Clients)
                         {
-                            KeepAlive keepAlive = new KeepAlive();
+                            var keepAlive = new KeepAlive();
                             lock (_keepAlives)
                             {
                                 _keepAlives.Add(keepAlive);
                             }
                             keepAlive.Execute(client);
-                            Timer timer = new Timer(KeepAliveCallback, keepAlive, 15000, Timeout.Infinite);
+                            var timer = new Timer(KeepAliveCallback, keepAlive, 15000, Timeout.Infinite);
                         }
                     }
                     catch
                     {
-
                     }
                     Thread.Sleep(10000);
                 }
-
-            }) { IsBackground = true }.Start();
+            }) {IsBackground = true}.Start();
         }
 
         private void KeepAliveCallback(object state)
         {
-            KeepAlive keepAlive = (KeepAlive)state;
+            var keepAlive = (KeepAlive) state;
 
             if (_keepAlives != null)
             {
@@ -218,7 +211,7 @@ namespace xServer.Core
 
         internal void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
         {
-            foreach (KeepAlive keepAlive in _keepAlives)
+            foreach (var keepAlive in _keepAlives)
             {
                 if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
                 {
@@ -248,7 +241,8 @@ namespace xServer.Core
                         _clients.RemoveAt(0);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
             }
 

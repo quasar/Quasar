@@ -6,13 +6,13 @@ namespace xServer.Core.Compression
     // Copyright (C) 2006-2011 Lasse Mikkel Reinhold
     // lar@quicklz.com
     //
-    // QuickLZ can be used for free under the GPL 1, 2 or 3 license (where anything 
-    // released into public must be open source) or under a commercial license if such 
-    // has been acquired (see http://www.quicklz.com/order.html). The commercial license 
+    // QuickLZ can be used for free under the GPL 1, 2 or 3 license (where anything
+    // released into public must be open source) or under a commercial license if such
+    // has been acquired (see http://www.quicklz.com/order.html). The commercial license
     // does not cover derived or ported versions created by third parties under GPL.
     //
-    // Only a subset of the C library has been ported, namely level 1 and 3 not in 
-    // streaming mode. 
+    // Only a subset of the C library has been ported, namely level 1 and 3 not in
+    // streaming mode.
     //
     // Version: 1.5.0 final
 
@@ -21,13 +21,10 @@ namespace xServer.Core.Compression
         public const int QLZ_VERSION_MAJOR = 1;
         public const int QLZ_VERSION_MINOR = 5;
         public const int QLZ_VERSION_REVISION = 0;
-
         // Streaming mode not supported
         public const int QLZ_STREAMING_BUFFER = 0;
-
         // Bounds checking not supported  Use try...catch instead
         public const int QLZ_MEMORY_SAFE = 0;
-
         // Decrease QLZ_POINTERS_3 to increase level 3 compression speed. Do not edit any other values!
         private const int HASH_VALUES = 4096;
         private const int MINOFFSET = 2;
@@ -46,23 +43,23 @@ namespace xServer.Core.Compression
         public int SizeDecompressed(byte[] source, int offset)
         {
             if (HeaderLen(source, offset) == 9)
-                return source[offset + 5] | (source[offset + 6] << 8) | (source[offset + 7] << 16) | (source[offset + 8] << 24);
-            else
-                return source[offset + 2];
+                return source[offset + 5] | (source[offset + 6] << 8) | (source[offset + 7] << 16) |
+                       (source[offset + 8] << 24);
+            return source[offset + 2];
         }
 
         public int SizeCompressed(byte[] source, int offset)
         {
             if (HeaderLen(source, offset) == 9)
-                return source[offset + 1] | (source[offset + 2] << 8) | (source[offset + 3] << 16) | (source[offset + 4] << 24);
-            else
-                return source[offset + 1];
+                return source[offset + 1] | (source[offset + 2] << 8) | (source[offset + 3] << 16) |
+                       (source[offset + 4] << 24);
+            return source[offset + 1];
         }
 
         private void WriteHeader(byte[] dst, int level, bool compressible, int size_compressed, int size_decompressed)
         {
-            dst[0] = (byte)(2 | (compressible ? 1 : 0));
-            dst[0] |= (byte)(level << 2);
+            dst[0] = (byte) (2 | (compressible ? 1 : 0));
+            dst[0] |= (byte) (level << 2);
             dst[0] |= (1 << 6);
             dst[0] |= (0 << 4);
             FastWrite(dst, 1, size_decompressed, 4);
@@ -71,18 +68,18 @@ namespace xServer.Core.Compression
 
         public byte[] Compress(byte[] source, int Offset, int Length, int level)
         {
-            int src = Offset;
-            int dst = DEFAULT_HEADERLEN + CWORD_LEN;
-            uint cword_val = 0x80000000;
-            int cword_ptr = DEFAULT_HEADERLEN;
-            byte[] destination = new byte[Length + 400];
+            var src = Offset;
+            var dst = DEFAULT_HEADERLEN + CWORD_LEN;
+            var cword_val = 0x80000000;
+            var cword_ptr = DEFAULT_HEADERLEN;
+            var destination = new byte[Length + 400];
             int[,] hashtable;
-            int[] cachetable = new int[HASH_VALUES];
-            byte[] hash_counter = new byte[HASH_VALUES];
+            var cachetable = new int[HASH_VALUES];
+            var hash_counter = new byte[HASH_VALUES];
             byte[] d2;
-            int fetch = 0;
-            int last_matchstart = (Length - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1);
-            int lits = 0;
+            var fetch = 0;
+            var last_matchstart = (Length - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1);
+            var lits = 0;
 
             if (level != 1 && level != 3)
                 throw new ArgumentException("C# version only supports level 1 and 3");
@@ -106,11 +103,11 @@ namespace xServer.Core.Compression
                     {
                         d2 = new byte[Length + DEFAULT_HEADERLEN];
                         WriteHeader(d2, level, false, Length, Length + DEFAULT_HEADERLEN);
-                        System.Array.Copy(source, 0, d2, DEFAULT_HEADERLEN, Length);
+                        Array.Copy(source, 0, d2, DEFAULT_HEADERLEN, Length);
                         return d2;
                     }
 
-                    FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
+                    FastWrite(destination, cword_ptr, (int) ((cword_val >> 1) | 0x80000000), 4);
                     cword_ptr = dst;
                     dst += CWORD_LEN;
                     cword_val = 0x80000000;
@@ -118,29 +115,33 @@ namespace xServer.Core.Compression
 
                 if (level == 1)
                 {
-                    int hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
-                    int o = hashtable[hash, 0];
-                    int cache = cachetable[hash] ^ fetch;
+                    var hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
+                    var o = hashtable[hash, 0];
+                    var cache = cachetable[hash] ^ fetch;
                     cachetable[hash] = fetch;
                     hashtable[hash, 0] = src;
 
-                    if (cache == 0 && hash_counter[hash] != 0 && (src - o > MINOFFSET || (src == o + 1 && lits >= 3 && src > 3 && source[src] == source[src - 3] &&
-                                                                                          source[src] == source[src - 2] && source[src] == source[src - 1] &&
-                                                                                          source[src] == source[src + 1] && source[src] == source[src + 2])))
+                    if (cache == 0 && hash_counter[hash] != 0 &&
+                        (src - o > MINOFFSET ||
+                         (src == o + 1 && lits >= 3 && src > 3 && source[src] == source[src - 3] &&
+                          source[src] == source[src - 2] && source[src] == source[src - 1] &&
+                          source[src] == source[src + 1] && source[src] == source[src + 2])))
                     {
                         cword_val = ((cword_val >> 1) | 0x80000000);
                         if (source[o + 3] != source[src + 3])
                         {
-                            int f = 3 - 2 | (hash << 4);
-                            destination[dst + 0] = (byte)(f >> 0 * 8);
-                            destination[dst + 1] = (byte)(f >> 1 * 8);
+                            var f = 3 - 2 | (hash << 4);
+                            destination[dst + 0] = (byte) (f >> 0*8);
+                            destination[dst + 1] = (byte) (f >> 1*8);
                             src += 3;
                             dst += 2;
                         }
                         else
                         {
-                            int old_src = src;
-                            int remaining = ((Length - UNCOMPRESSED_END - src + 1 - 1) > 255 ? 255 : (Length - UNCOMPRESSED_END - src + 1 - 1));
+                            var old_src = src;
+                            var remaining = ((Length - UNCOMPRESSED_END - src + 1 - 1) > 255
+                                ? 255
+                                : (Length - UNCOMPRESSED_END - src + 1 - 1));
 
                             src += 4;
                             if (source[o + src - old_src] == source[src])
@@ -154,14 +155,14 @@ namespace xServer.Core.Compression
                                 }
                             }
 
-                            int matchlen = src - old_src;
+                            var matchlen = src - old_src;
 
                             hash <<= 4;
                             if (matchlen < 18)
                             {
-                                int f = (hash | (matchlen - 2));
-                                destination[dst + 0] = (byte)(f >> 0 * 8);
-                                destination[dst + 1] = (byte)(f >> 1 * 8);
+                                var f = (hash | (matchlen - 2));
+                                destination[dst + 0] = (byte) (f >> 0*8);
+                                destination[dst + 1] = (byte) (f >> 1*8);
                                 dst += 2;
                             }
                             else
@@ -183,7 +184,6 @@ namespace xServer.Core.Compression
                         dst++;
                         fetch = ((fetch >> 8) & 0xffff) | (source[src + 2] << 16);
                     }
-
                 }
                 else
                 {
@@ -192,8 +192,10 @@ namespace xServer.Core.Compression
                     int o, offset2;
                     int matchlen, k, m, best_k = 0;
                     byte c;
-                    int remaining = ((Length - UNCOMPRESSED_END - src + 1 - 1) > 255 ? 255 : (Length - UNCOMPRESSED_END - src + 1 - 1));
-                    int hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
+                    var remaining = ((Length - UNCOMPRESSED_END - src + 1 - 1) > 255
+                        ? 255
+                        : (Length - UNCOMPRESSED_END - src + 1 - 1));
+                    var hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
 
                     c = hash_counter[hash];
                     matchlen = 0;
@@ -201,7 +203,8 @@ namespace xServer.Core.Compression
                     for (k = 0; k < QLZ_POINTERS_3 && c > k; k++)
                     {
                         o = hashtable[hash, k];
-                        if ((byte)fetch == source[o] && (byte)(fetch >> 8) == source[o + 1] && (byte)(fetch >> 16) == source[o + 2] && o < src - MINOFFSET)
+                        if ((byte) fetch == source[o] && (byte) (fetch >> 8) == source[o + 1] &&
+                            (byte) (fetch >> 16) == source[o + 2] && o < src - MINOFFSET)
                         {
                             m = 3;
                             while (source[o + m] == source[src + m] && m < remaining)
@@ -221,9 +224,9 @@ namespace xServer.Core.Compression
 
                     if (matchlen >= 3 && src - o < 131071)
                     {
-                        int offset = src - o;
+                        var offset = src - o;
 
-                        for (int u = 1; u < matchlen; u++)
+                        for (var u = 1; u < matchlen; u++)
                         {
                             fetch = source[src + u] | (source[src + u + 1] << 8) | (source[src + u + 2] << 16);
                             hash = ((fetch >> 12) ^ fetch) & (HASH_VALUES - 1);
@@ -274,7 +277,7 @@ namespace xServer.Core.Compression
             {
                 if ((cword_val & 1) == 1)
                 {
-                    FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), 4);
+                    FastWrite(destination, cword_ptr, (int) ((cword_val >> 1) | 0x80000000), 4);
                     cword_ptr = dst;
                     dst += CWORD_LEN;
                     cword_val = 0x80000000;
@@ -290,33 +293,31 @@ namespace xServer.Core.Compression
                 cword_val = (cword_val >> 1);
             }
 
-            FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), CWORD_LEN);
+            FastWrite(destination, cword_ptr, (int) ((cword_val >> 1) | 0x80000000), CWORD_LEN);
             WriteHeader(destination, level, true, Length, dst);
             d2 = new byte[dst];
-            System.Array.Copy(destination, d2, dst);
+            Array.Copy(destination, d2, dst);
             return d2;
         }
 
-
         private void FastWrite(byte[] a, int i, int value, int numbytes)
         {
-            for (int j = 0; j < numbytes; j++)
-                a[i + j] = (byte)(value >> (j * 8));
+            for (var j = 0; j < numbytes; j++)
+                a[i + j] = (byte) (value >> (j*8));
         }
 
         public byte[] Decompress(byte[] source, int Offset, int Length)
         {
             int level;
-            int size = SizeDecompressed(source, Offset);
-            int src = HeaderLen(source, Offset) + Offset;
-            int dst = 0;
+            var size = SizeDecompressed(source, Offset);
+            var src = HeaderLen(source, Offset) + Offset;
+            var dst = 0;
             uint cword_val = 1;
-            byte[] destination = new byte[size];
-            int[] hashtable = new int[4096];
-            byte[] hash_counter = new byte[4096];
-            int last_matchstart = size - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1;
-            int last_hashed = -1;
-            int hash;
+            var destination = new byte[size];
+            var hashtable = new int[4096];
+            var hash_counter = new byte[4096];
+            var last_matchstart = size - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1;
+            var last_hashed = -1;
             uint fetch = 0;
 
             level = (source[Offset] >> 2) & 0x3;
@@ -326,26 +327,32 @@ namespace xServer.Core.Compression
 
             if ((source[Offset] & 1) != 1)
             {
-                byte[] d2 = new byte[size];
-                System.Array.Copy(source, HeaderLen(source, Offset), d2, Offset, size);
+                var d2 = new byte[size];
+                Array.Copy(source, HeaderLen(source, Offset), d2, Offset, size);
                 return d2;
             }
 
-            for (; ; )
+            for (;;)
             {
                 if (cword_val == 1)
                 {
-                    cword_val = (uint)(source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) | (source[src + 3] << 24));
+                    cword_val =
+                        (uint)
+                            (source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) | (source[src + 3] << 24));
                     src += 4;
                     if (dst <= last_matchstart)
                     {
                         if (level == 1)
-                            fetch = (uint)(source[src] | (source[src + 1] << 8) | (source[src + 2] << 16));
+                            fetch = (uint) (source[src] | (source[src + 1] << 8) | (source[src + 2] << 16));
                         else
-                            fetch = (uint)(source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) | (source[src + 3] << 24));
+                            fetch =
+                                (uint)
+                                    (source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) |
+                                     (source[src + 3] << 24));
                     }
                 }
 
+                int hash;
                 if ((cword_val & 1) == 1)
                 {
                     uint matchlen;
@@ -355,8 +362,8 @@ namespace xServer.Core.Compression
 
                     if (level == 1)
                     {
-                        hash = ((int)fetch >> 4) & 0xfff;
-                        offset2 = (uint)hashtable[hash];
+                        hash = ((int) fetch >> 4) & 0xfff;
+                        offset2 = (uint) hashtable[hash];
 
                         if ((fetch & 0xf) != 0)
                         {
@@ -402,36 +409,42 @@ namespace xServer.Core.Compression
                             matchlen = ((fetch >> 7) & 255) + 3;
                             src += 4;
                         }
-                        offset2 = (uint)(dst - offset);
+                        offset2 = (uint) (dst - offset);
                     }
 
                     destination[dst + 0] = destination[offset2 + 0];
                     destination[dst + 1] = destination[offset2 + 1];
                     destination[dst + 2] = destination[offset2 + 2];
 
-                    for (int i = 3; i < matchlen; i += 1)
+                    for (var i = 3; i < matchlen; i += 1)
                     {
                         destination[dst + i] = destination[offset2 + i];
                     }
 
-                    dst += (int)matchlen;
+                    dst += (int) matchlen;
 
                     if (level == 1)
                     {
-                        fetch = (uint)(destination[last_hashed + 1] | (destination[last_hashed + 2] << 8) | (destination[last_hashed + 3] << 16));
+                        fetch =
+                            (uint)
+                                (destination[last_hashed + 1] | (destination[last_hashed + 2] << 8) |
+                                 (destination[last_hashed + 3] << 16));
                         while (last_hashed < dst - matchlen)
                         {
                             last_hashed++;
-                            hash = (int)(((fetch >> 12) ^ fetch) & (HASH_VALUES - 1));
+                            hash = (int)(((fetch >> 12) ^ fetch) & ((uint)HASH_VALUES - 1));
                             hashtable[hash] = last_hashed;
                             hash_counter[hash] = 1;
-                            fetch = (uint)(fetch >> 8 & 0xffff | destination[last_hashed + 3] << 16);
+                            fetch = (fetch >> 8 & 0xffff | (uint)destination[last_hashed + 3] << 16);
                         }
-                        fetch = (uint)(source[src] | (source[src + 1] << 8) | (source[src + 2] << 16));
+                        fetch = (uint) (source[src] | (source[src + 1] << 8) | (source[src + 2] << 16));
                     }
                     else
                     {
-                        fetch = (uint)(source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) | (source[src + 3] << 24));
+                        fetch =
+                            (uint)
+                                (source[src] | (source[src + 1] << 8) | (source[src + 2] << 16) |
+                                 (source[src + 3] << 24));
                     }
                     last_hashed = dst - 1;
                 }
@@ -449,16 +462,17 @@ namespace xServer.Core.Compression
                             while (last_hashed < dst - 3)
                             {
                                 last_hashed++;
-                                int fetch2 = destination[last_hashed] | (destination[last_hashed + 1] << 8) | (destination[last_hashed + 2] << 16);
+                                var fetch2 = destination[last_hashed] | (destination[last_hashed + 1] << 8) |
+                                             (destination[last_hashed + 2] << 16);
                                 hash = ((fetch2 >> 12) ^ fetch2) & (HASH_VALUES - 1);
                                 hashtable[hash] = last_hashed;
                                 hash_counter[hash] = 1;
                             }
-                            fetch = (uint)(fetch >> 8 & 0xffff | source[src + 2] << 16);
+                            fetch =(fetch >> 8 & 0xffff | (uint)source[src + 2] << 16);
                         }
                         else
                         {
-                            fetch = (uint)(fetch >> 8 & 0xffff | source[src + 2] << 16 | source[src + 3] << 24);
+                            fetch = (fetch >> 8 & 0xffff | (uint)source[src + 2] << 16 | (uint)source[src + 3] << 24);
                         }
                     }
                     else

@@ -6,6 +6,13 @@ namespace xServer.Core
 {
     public class UserState
     {
+        public UserState()
+        {
+            IsAuthenticated = false;
+            LastDesktopSeen = true;
+            LastDirectorySeen = true;
+        }
+
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
         public string AccountType { get; set; }
@@ -14,7 +21,6 @@ namespace xServer.Core
         public string Region { get; set; }
         public string City { get; set; }
         public string Id { get; set; }
-
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
@@ -22,20 +28,10 @@ namespace xServer.Core
         public FrmShowMessagebox FrmSm { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmStartupManager FrmStm { get; set; }
-
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }
         public bool LastDirectorySeen { get; set; }
-
         public Bitmap LastDesktop { get; set; }
-
         public UnsafeStreamCodec StreamCodec { get; set; }
-
-        public UserState()
-        {
-            IsAuthenticated = false;
-            LastDesktopSeen = true;
-            LastDirectorySeen = true;
-        }
     }
 }

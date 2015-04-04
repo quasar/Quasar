@@ -3,35 +3,41 @@
 namespace ProtoBuf
 {
     /// <summary>
-    /// Used to define protocol-buffer specific behavior for
-    /// enumerated values.
+    ///     Used to define protocol-buffer specific behavior for
+    ///     enumerated values.
     /// </summary>
-    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field)]
     public sealed class ProtoEnumAttribute : Attribute
     {
+        private int enumValue;
+        private bool hasValue;
+
         /// <summary>
-        /// Gets or sets the specific value to use for this enum during serialization.
+        ///     Gets or sets the specific value to use for this enum during serialization.
         /// </summary>
         public int Value
         {
             get { return enumValue; }
-            set { this.enumValue = value; hasValue = true; }
+            set
+            {
+                enumValue = value;
+                hasValue = true;
+            }
         }
 
         /// <summary>
-        /// Indicates whether this instance has a customised value mapping
+        ///     Gets or sets the defined name of the enum, as used in .proto
+        ///     (this name is not used during serialization).
         /// </summary>
-        /// <returns>true if a specific value is set</returns>
-        public bool HasValue() { return hasValue; }
-
-        private bool hasValue;
-        private int enumValue;
+        public string Name { get; set; }
 
         /// <summary>
-        /// Gets or sets the defined name of the enum, as used in .proto
-        /// (this name is not used during serialization).
+        ///     Indicates whether this instance has a customised value mapping
         /// </summary>
-        public string Name { get { return name; } set { name = value; } }
-        private string name;
+        /// <returns>true if a specific value is set</returns>
+        public bool HasValue()
+        {
+            return hasValue;
+        }
     }
 }

@@ -7,8 +7,6 @@ namespace xServer.Settings
 {
     public class ProfileManager
     {
-        private string settingsFilePath { get; set; }
-
         public ProfileManager(string settingsFile)
         {
             settingsFilePath = Path.Combine(Application.StartupPath, "Profiles\\" + settingsFile);
@@ -20,7 +18,7 @@ namespace xServer.Settings
                     if (!Directory.Exists(Path.GetDirectoryName(settingsFilePath)))
                         Directory.CreateDirectory(Path.GetDirectoryName(settingsFilePath));
 
-                    XmlDocument doc = new XmlDocument();
+                    var doc = new XmlDocument();
                     XmlNode root = doc.CreateElement("settings");
                     doc.AppendChild(root);
 
@@ -52,18 +50,21 @@ namespace xServer.Settings
                 }
             }
             catch
-            { }
+            {
+            }
         }
+
+        private string settingsFilePath { get; set; }
 
         public string ReadValue(string pstrValueToRead)
         {
             try
             {
-                XPathDocument doc = new XPathDocument(settingsFilePath);
-                XPathNavigator nav = doc.CreateNavigator();
+                var doc = new XPathDocument(settingsFilePath);
+                var nav = doc.CreateNavigator();
                 XPathExpression expr;
                 expr = nav.Compile(@"/settings/" + pstrValueToRead);
-                XPathNodeIterator iterator = nav.Select(expr);
+                var iterator = nav.Select(expr);
                 while (iterator.MoveNext())
                 {
                     return iterator.Current.Value;
@@ -82,13 +83,13 @@ namespace xServer.Settings
             try
             {
                 XmlNode oldNode;
-                XmlDocument doc = new XmlDocument();
+                var doc = new XmlDocument();
                 using (var reader = new XmlTextReader(settingsFilePath))
                 {
                     doc.Load(reader);
                 }
 
-                XmlElement root = doc.DocumentElement;
+                var root = doc.DocumentElement;
                 oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
                 {

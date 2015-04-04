@@ -1,23 +1,29 @@
 ﻿#if !NO_RUNTIME
+
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using ProtoBuf.Meta;
-
 #if FEAT_IKVM
 using Type = IKVM.Reflection.Type;
 using IKVM.Reflection;
 #else
 using System.Reflection;
+
 #endif
 
 namespace ProtoBuf.Serializers
 {
-    sealed class ImmutableCollectionDecorator : ListDecorator
+    internal sealed class ImmutableCollectionDecorator : ListDecorator
     {
-        protected override bool RequireAdd { get { return false; } }
+        protected override bool RequireAdd
+        {
+            get { return false; }
+        }
+
 #if !NO_GENERICS
 
-        static Type ResolveIReadOnlyCollection(Type declaredType, Type t)
+        private static Type ResolveIReadOnlyCollection(Type declaredType, Type t)
         {
 #if WINRT
             foreach (Type intImplBasic in declaredType.GetTypeInfo().ImplementedInterfaces)
@@ -34,13 +40,13 @@ namespace ProtoBuf.Serializers
                 }
             }
 #else
-            foreach (Type intImpl in declaredType.GetInterfaces())
+            foreach (var intImpl in declaredType.GetInterfaces())
             {
                 if (intImpl.IsGenericType && intImpl.Name.StartsWith("IReadOnlyCollection`"))
                 {
-                    if(t != null)
+                    if (t != null)
                     {
-                        Type[] typeArgs = intImpl.GetGenericArguments();
+                        var typeArgs = intImpl.GetGenericArguments();
                         if (typeArgs.Length != 1 && typeArgs[0] != t) continue;
                     }
                     return intImpl;
@@ -49,18 +55,20 @@ namespace ProtoBuf.Serializers
 #endif
             return null;
         }
-        internal static bool IdentifyImmutable(TypeModel model, Type declaredType, out MethodInfo builderFactory, out MethodInfo add, out MethodInfo addRange, out MethodInfo finish)
+
+        internal static bool IdentifyImmutable(TypeModel model, Type declaredType, out MethodInfo builderFactory,
+            out MethodInfo add, out MethodInfo addRange, out MethodInfo finish)
         {
             builderFactory = add = addRange = finish = null;
             if (model == null || declaredType == null) return false;
 #if WINRT
             TypeInfo declaredTypeInfo = declaredType.GetTypeInfo();
 #else
-            Type declaredTypeInfo = declaredType;
+            var declaredTypeInfo = declaredType;
 #endif
 
             // try to detect immutable collections; firstly, they are all generic, and all implement IReadOnlyCollection<T> for some T
-            if(!declaredTypeInfo.IsGenericType) return false;
+            if (!declaredTypeInfo.IsGenericType) return false;
 
 #if WINRT
             Type[] typeArgs = declaredTypeInfo.GenericTypeArguments, effectiveType;
@@ -73,11 +81,12 @@ namespace ProtoBuf.Serializers
                     effectiveType = typeArgs;
                     break; // fine
                 case 2:
-                    Type kvp = model.MapType(typeof(System.Collections.Generic.KeyValuePair<,>));
+                    var kvp = model.MapType(typeof (KeyValuePair<,>));
                     if (kvp == null) return false;
                     kvp = kvp.MakeGenericType(typeArgs);
-                    effectiveType = new Type[] { kvp };
+                    effectiveType = new[] {kvp};
                     break;
+
                 default:
                     return false; // no clue!
             }
@@ -85,12 +94,12 @@ namespace ProtoBuf.Serializers
             if (ResolveIReadOnlyCollection(declaredType, null) == null) return false; // no IReadOnlyCollection<T> found
 
             // and we want to use the builder API, so for generic Foo<T> or IFoo<T> we want to use Foo.CreateBuilder<T>
-            string name = declaredType.Name;
-            int i = name.IndexOf('`');
+            var name = declaredType.Name;
+            var i = name.IndexOf('`');
             if (i <= 0) return false;
             name = declaredTypeInfo.IsInterface ? name.Substring(1, i - 1) : name.Substring(0, i);
 
-            Type outerType = model.GetType(declaredType.Namespace + "." + name, declaredTypeInfo.Assembly);
+            var outerType = model.GetType(declaredType.Namespace + "." + name, declaredTypeInfo.Assembly);
             // I hate special-cases...
             if (outerType == null && name == "ImmutableSet")
             {
@@ -101,18 +110,19 @@ namespace ProtoBuf.Serializers
 #if WINRT
             foreach (MethodInfo method in outerType.GetTypeInfo().DeclaredMethods)
 #else
-            foreach (MethodInfo method in outerType.GetMethods())
+            foreach (var method in outerType.GetMethods())
 #endif
             {
-                if (!method.IsStatic || method.Name != "CreateBuilder" || !method.IsGenericMethodDefinition || method.GetParameters().Length != 0
+                if (!method.IsStatic || method.Name != "CreateBuilder" || !method.IsGenericMethodDefinition ||
+                    method.GetParameters().Length != 0
                     || method.GetGenericArguments().Length != typeArgs.Length) continue;
 
                 builderFactory = method.MakeGenericMethod(typeArgs);
                 break;
             }
-            Type voidType = model.MapType(typeof(void));
-            if (builderFactory == null || builderFactory.ReturnType == null || builderFactory.ReturnType == voidType) return false;
-
+            var voidType = model.MapType(typeof (void));
+            if (builderFactory == null || builderFactory.ReturnType == null || builderFactory.ReturnType == voidType)
+                return false;
 
             add = Helpers.GetInstanceMethod(builderFactory.ReturnType, "Add", effectiveType);
             if (add == null) return false;
@@ -120,47 +130,57 @@ namespace ProtoBuf.Serializers
             finish = Helpers.GetInstanceMethod(builderFactory.ReturnType, "ToImmutable", Helpers.EmptyTypes);
             if (finish == null || finish.ReturnType == null || finish.ReturnType == voidType) return false;
 
-            if (!(finish.ReturnType == declaredType || Helpers.IsAssignableFrom(declaredType, finish.ReturnType))) return false;
+            if (!(finish.ReturnType == declaredType || Helpers.IsAssignableFrom(declaredType, finish.ReturnType)))
+                return false;
 
-            addRange = Helpers.GetInstanceMethod(builderFactory.ReturnType, "AddRange", new Type[] { declaredType });
+            addRange = Helpers.GetInstanceMethod(builderFactory.ReturnType, "AddRange", new[] {declaredType});
             if (addRange == null)
             {
-                Type enumerable = model.MapType(typeof(System.Collections.Generic.IEnumerable<>), false);
+                var enumerable = model.MapType(typeof (IEnumerable<>), false);
                 if (enumerable != null)
                 {
-                    addRange = Helpers.GetInstanceMethod(builderFactory.ReturnType, "AddRange", new Type[] { enumerable.MakeGenericType(effectiveType) });
+                    addRange = Helpers.GetInstanceMethod(builderFactory.ReturnType, "AddRange",
+                        new[] {enumerable.MakeGenericType(effectiveType)});
                 }
             }
 
             return true;
         }
+
 #endif
         private readonly MethodInfo builderFactory, add, addRange, finish;
-        internal ImmutableCollectionDecorator(TypeModel model, Type declaredType, Type concreteType, IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, bool returnList, bool overwriteList, bool supportNull,
+
+        internal ImmutableCollectionDecorator(TypeModel model, Type declaredType, Type concreteType,
+            IProtoSerializer tail, int fieldNumber, bool writePacked, WireType packedWireType, bool returnList,
+            bool overwriteList, bool supportNull,
             MethodInfo builderFactory, MethodInfo add, MethodInfo addRange, MethodInfo finish)
-            : base(model, declaredType, concreteType, tail, fieldNumber, writePacked, packedWireType, returnList, overwriteList, supportNull)
+            : base(
+                model, declaredType, concreteType, tail, fieldNumber, writePacked, packedWireType, returnList,
+                overwriteList, supportNull)
         {
             this.builderFactory = builderFactory;
             this.add = add;
             this.addRange = addRange;
             this.finish = finish;
         }
+
 #if !FEAT_IKVM
+
         public override object Read(object value, ProtoReader source)
         {
-            object builderInstance = builderFactory.Invoke(null, null);
-            int field = source.FieldNumber;
-            object[] args = new object[1];
-            if (AppendToCollection && value != null && ((IList)value).Count != 0)
-            {   
-                if(addRange !=null)
+            var builderInstance = builderFactory.Invoke(null, null);
+            var field = source.FieldNumber;
+            var args = new object[1];
+            if (AppendToCollection && value != null && ((IList) value).Count != 0)
+            {
+                if (addRange != null)
                 {
                     args[0] = value;
                     addRange.Invoke(builderInstance, args);
                 }
                 else
                 {
-                    foreach(object item in (IList)value)
+                    foreach (var item in (IList) value)
                     {
                         args[0] = item;
                         add.Invoke(builderInstance, args);
@@ -170,7 +190,7 @@ namespace ProtoBuf.Serializers
 
             if (packedWireType != WireType.None && source.WireType == WireType.String)
             {
-                SubItemToken token = ProtoReader.StartSubItem(source);
+                var token = ProtoReader.StartSubItem(source);
                 while (ProtoReader.HasSubValue(packedWireType, source))
                 {
                     args[0] = Tail.Read(null, source);
@@ -189,6 +209,7 @@ namespace ProtoBuf.Serializers
 
             return finish.Invoke(builderInstance, null);
         }
+
 #endif
 
 #if FEAT_COMPILER
@@ -246,7 +267,7 @@ namespace ProtoBuf.Serializers
 
                                 ctx.MarkLabel(body);
                                 ctx.LoadAddress(builder, builder.Type);
-                                ctx.LoadAddress(iter, enumeratorType);                                
+                                ctx.LoadAddress(iter, enumeratorType);
                                 ctx.EmitCall(current);
                                 ctx.EmitCall(add);
                                 if (add.ReturnType != null && add.ReturnType != voidType) ctx.DiscardValue();
@@ -258,7 +279,6 @@ namespace ProtoBuf.Serializers
                             }
                         }
                     }
-
 
                     ctx.MarkLabel(done);
                 }
@@ -276,4 +296,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

@@ -1,5 +1,8 @@
 ﻿#if !NO_RUNTIME
+
 using System;
+using ProtoBuf.Meta;
+
 #if FEAT_COMPILER
 using System.Reflection.Emit;
 #endif
@@ -8,38 +11,54 @@ using System.Reflection.Emit;
 using Type = IKVM.Reflection.Type;
 #endif
 
-
 namespace ProtoBuf.Serializers
 {
-    sealed class BlobSerializer : IProtoSerializer
+    internal sealed class BlobSerializer : IProtoSerializer
     {
-        public Type ExpectedType { get { return expectedType; } }
+        public Type ExpectedType
+        {
+            get { return expectedType; }
+        }
 
 #if FEAT_IKVM
         readonly Type expectedType;
 #else
-        static readonly Type expectedType = typeof(byte[]);
+        private static readonly Type expectedType = typeof (byte[]);
 #endif
-        public BlobSerializer(ProtoBuf.Meta.TypeModel model, bool overwriteList)
+
+        public BlobSerializer(TypeModel model, bool overwriteList)
         {
 #if FEAT_IKVM
             expectedType = model.MapType(typeof(byte[]));
 #endif
             this.overwriteList = overwriteList;
         }
+
         private readonly bool overwriteList;
 #if !FEAT_IKVM
+
         public object Read(object value, ProtoReader source)
         {
-            return ProtoReader.AppendBytes(overwriteList ? null : (byte[])value, source);
+            return ProtoReader.AppendBytes(overwriteList ? null : (byte[]) value, source);
         }
+
         public void Write(object value, ProtoWriter dest)
         {
-            ProtoWriter.WriteBytes((byte[])value, dest);
+            ProtoWriter.WriteBytes((byte[]) value, dest);
         }
+
 #endif
-        bool IProtoSerializer.RequiresOldValue { get { return !overwriteList; } }
-        bool IProtoSerializer.ReturnsValue { get { return true; } }
+
+        bool IProtoSerializer.RequiresOldValue
+        {
+            get { return !overwriteList; }
+        }
+
+        bool IProtoSerializer.ReturnsValue
+        {
+            get { return true; }
+        }
+
 #if FEAT_COMPILER
         void IProtoSerializer.EmitWrite(Compiler.CompilerContext ctx, Compiler.Local valueFrom)
         {
@@ -61,4 +80,5 @@ namespace ProtoBuf.Serializers
 #endif
     }
 }
+
 #endif

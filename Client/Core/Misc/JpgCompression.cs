@@ -6,27 +6,28 @@ namespace xClient.Core.Misc
 {
     public class JpgCompression
     {
-        private EncoderParameter _parameter;
-        private ImageCodecInfo _encoderInfo;
-        private EncoderParameters _encoderParams;
+        private readonly ImageCodecInfo _encoderInfo;
+        private readonly EncoderParameters _encoderParams;
+        private readonly EncoderParameter _parameter;
 
         public JpgCompression(int quality)
         {
-            this._parameter = new EncoderParameter(Encoder.Quality, (long)quality);
-            this._encoderInfo = GetEncoderInfo("image/jpeg");
-            this._encoderParams = new EncoderParameters(2);
-            this._encoderParams.Param[0] = _parameter;
-            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionRle);
+            _parameter = new EncoderParameter(Encoder.Quality, quality);
+            _encoderInfo = GetEncoderInfo("image/jpeg");
+            _encoderParams = new EncoderParameters(2);
+            _encoderParams.Param[0] = _parameter;
+            _encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long) EncoderValue.CompressionRle);
         }
 
         public byte[] Compress(Bitmap bmp)
         {
-            using (MemoryStream stream = new MemoryStream())
+            using (var stream = new MemoryStream())
             {
                 bmp.Save(stream, _encoderInfo, _encoderParams);
                 return stream.ToArray();
             }
         }
+
         public void Compress(Bitmap bmp, ref Stream targetStream)
         {
             bmp.Save(targetStream, _encoderInfo, _encoderParams);
@@ -34,9 +35,9 @@ namespace xClient.Core.Misc
 
         private ImageCodecInfo GetEncoderInfo(string mimeType)
         {
-            ImageCodecInfo[] imageEncoders = ImageCodecInfo.GetImageEncoders();
-            int num2 = imageEncoders.Length - 1;
-            for (int i = 0; i <= num2; i++)
+            var imageEncoders = ImageCodecInfo.GetImageEncoders();
+            var num2 = imageEncoders.Length - 1;
+            for (var i = 0; i <= num2; i++)
             {
                 if (imageEncoders[i].MimeType == mimeType)
                 {

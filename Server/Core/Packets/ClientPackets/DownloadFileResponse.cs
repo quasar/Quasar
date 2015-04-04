@@ -5,6 +5,21 @@ namespace xServer.Core.Packets.ClientPackets
     [ProtoContract]
     public class DownloadFileResponse : IPacket
     {
+        public DownloadFileResponse()
+        {
+        }
+
+        public DownloadFileResponse(int id, string filename, byte[] block, int maxblocks, int currentblock,
+            string custommessage)
+        {
+            ID = id;
+            Filename = filename;
+            Block = block;
+            MaxBlocks = maxblocks;
+            CurrentBlock = currentblock;
+            CustomMessage = custommessage;
+        }
+
         [ProtoMember(1)]
         public int ID { get; set; }
 
@@ -22,17 +37,6 @@ namespace xServer.Core.Packets.ClientPackets
 
         [ProtoMember(6)]
         public string CustomMessage { get; set; }
-
-        public DownloadFileResponse() { }
-        public DownloadFileResponse(int id, string filename, byte[] block, int maxblocks, int currentblock, string custommessage)
-        {
-            this.ID = id;
-            this.Filename = filename;
-            this.Block = block;
-            this.MaxBlocks = maxblocks;
-            this.CurrentBlock = currentblock;
-            this.CustomMessage = custommessage;
-        }
 
         public void Execute(Client client)
         {

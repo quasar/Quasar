@@ -1,4 +1,5 @@
-﻿#if (FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER) || (SILVERLIGHT && !PHONE7)
+﻿
+#if (FEAT_SERVICEMODEL && PLAT_XMLSERIALIZER) || (SILVERLIGHT && !PHONE7)
 using System.IO;
 using System.Runtime.Serialization;
 using System.Xml;
@@ -82,7 +83,6 @@ namespace ProtoBuf.ServiceModel
 
             isList = false;
             return -1;
-            
         }
         /// <summary>
         /// Ends an object in the output

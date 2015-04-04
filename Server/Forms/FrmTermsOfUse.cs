@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Properties;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -12,51 +14,49 @@ namespace xServer.Forms
         public FrmTermsOfUse()
         {
             InitializeComponent();
-            rtxtContent.Text = Properties.Resources.TermsOfUse;
+            rtxtContent.Text = Resources.TermsOfUse;
         }
 
         private void FrmTermsOfUse_Load(object sender, EventArgs e)
         {
-            lblToU.Left = (this.Width / 2) - (lblToU.Width / 2);
-            Thread t = new Thread(Wait20Sec);
+            lblToU.Left = (Width/2) - (lblToU.Width/2);
+            var t = new Thread(Wait20Sec);
             t.Start();
         }
 
         private void FrmTermsOfUse_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && _exit)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
+                Process.GetCurrentProcess().Kill();
         }
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
             XMLSettings.WriteValue("ShowToU", (!chkDontShowAgain.Checked).ToString());
             _exit = false;
-            this.Close();
+            Close();
         }
 
         private void btnDecline_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
+            Process.GetCurrentProcess().Kill();
         }
 
         private void Wait20Sec()
         {
-            for (int i = 19; i >= 0; i--)
+            for (var i = 19; i >= 0; i--)
             {
                 Thread.Sleep(1000);
                 try
                 {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        btnAccept.Text = "Accept (" + i + ")";
-                    });
+                    Invoke((MethodInvoker) delegate { btnAccept.Text = "Accept (" + i + ")"; });
                 }
                 catch
-                { }
+                {
+                }
             }
 
-            this.Invoke((MethodInvoker)delegate
+            Invoke((MethodInvoker) delegate
             {
                 btnAccept.Text = "Accept";
                 btnAccept.Enabled = true;
