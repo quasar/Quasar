@@ -6,20 +6,32 @@ namespace xClient.Core.Packets.ClientPackets
     public class DownloadFileResponse : IPacket
     {
         [ProtoMember(1)]
-        public string Filename { get; set; }
-
-        [ProtoMember(2)]
-        public byte[] FileByte { get; set; }
-
-        [ProtoMember(3)]
         public int ID { get; set; }
 
+        [ProtoMember(2)]
+        public string Filename { get; set; }
+
+        [ProtoMember(3)]
+        public byte[] Block { get; set; }
+
+        [ProtoMember(4)]
+        public int MaxBlocks { get; set; }
+
+        [ProtoMember(5)]
+        public int CurrentBlock { get; set; }
+
+        [ProtoMember(6)]
+        public string CustomMessage { get; set; }
+
         public DownloadFileResponse() { }
-        public DownloadFileResponse(string filename, byte[] filebyte, int id)
+        public DownloadFileResponse(int id, string filename, byte[] block, int maxblocks, int currentblock, string custommessage)
         {
-            this.Filename = filename;
-            this.FileByte = filebyte;
             this.ID = id;
+            this.Filename = filename;
+            this.Block = block;
+            this.MaxBlocks = maxblocks;
+            this.CurrentBlock = currentblock;
+            this.CustomMessage = custommessage;
         }
 
         public void Execute(Client client)

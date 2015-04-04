@@ -59,6 +59,7 @@
     </Compile>
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Encryption\SHA256.cs" />
+    <Compile Include="Core\Helper\FileSplit.cs" />
     <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Misc\JpgCompression.cs" />
@@ -78,6 +79,7 @@
     <Compile Include="Core\Packets\ServerPackets\Desktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\Directory.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />

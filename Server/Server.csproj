@@ -67,6 +67,7 @@
     <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Helper\FileSplit.cs" />
     <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Helper\UPnP.cs" />
     <Compile Include="Core\Misc\InputBox.cs" />
@@ -96,6 +97,7 @@
     <Compile Include="Core\Packets\ServerPackets\Disconnect.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />

