@@ -2,6 +2,7 @@
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -47,10 +48,12 @@ namespace xServer.Forms
             DrawPieChartTraffic(new float[] { _bytesReceived, _bytesSent });
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-            e.Graphics.DrawString(_bytesReceived + " Bytes received (" + _receivedPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
+            e.Graphics.DrawString(string.Format("{0} received ({1}%)", Helper.GetFileSize(_bytesReceived), _receivedPercent),
+                this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-            e.Graphics.DrawString(_bytesSent + " Bytes sent (" + _sentPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
+            e.Graphics.DrawString(string.Format("{0} sent ({1}%)", Helper.GetFileSize(_bytesSent), _sentPercent),
+                this.Font, new SolidBrush(Color.Black), new Point(260, 153));
         }
 
         private void tabClients_Paint(object sender, PaintEventArgs e)
@@ -58,13 +61,16 @@ namespace xServer.Forms
             DrawPieChartClients(new float[] { _connectedClients, _allTimeConnectedClients, _offlineClients });
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-            e.Graphics.DrawString(_connectedClients + " Connected Clients (" + _connectedClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 123));
+            e.Graphics.DrawString(string.Format("{0} Connected Clients ({1}%)", _connectedClients, _connectedClientsPercent),
+                this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-            e.Graphics.DrawString(_allTimeConnectedClients + " All Time Connected Clients (" + _allTimePercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 153));
+            e.Graphics.DrawString(string.Format("{0} All Time Connected Clients ({1}%)", _allTimeConnectedClients, _allTimePercent),
+                this.Font, new SolidBrush(Color.Black), new Point(260, 153));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red), 5), new Point(220, 190), new Point(250, 190));
-            e.Graphics.DrawString(_offlineClients + " Offline Clients (" + _offlineClientsPercent + "%)", this.Font, new SolidBrush(Color.Black), new Point(260, 183));
+            e.Graphics.DrawString(string.Format("{0} Offline Clients ({1}%)", _offlineClients, _offlineClientsPercent),
+                this.Font, new SolidBrush(Color.Black), new Point(260, 183));
         }
 
         private void DrawPieChartTraffic(float[] values)
