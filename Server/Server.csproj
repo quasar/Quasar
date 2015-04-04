@@ -72,6 +72,7 @@
     <Compile Include="Core\Helper\UPnP.cs" />
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Misc\JpgCompression.cs" />
+    <Compile Include="Core\Misc\KeepAlive.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
     <Compile Include="Core\Misc\ListViewExtensions.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />

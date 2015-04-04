@@ -74,8 +74,8 @@ namespace xClient.Core
             {
                 if (identity != null)
                 {
-                    var principal = new WindowsPrincipal(identity);
 
+                    var principal = new WindowsPrincipal(identity);
                     if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                         return "Admin";
                     if (principal.IsInRole(WindowsBuiltInRole.User))
