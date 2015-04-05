@@ -304,6 +304,8 @@ namespace xClient.Core
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
+
+                Core.Commands.CommandHandler.StreamCodec = null;
             }
         }
 
