@@ -58,6 +58,9 @@ namespace xServer.Core
             Payload
         }
 
+        public const uint KEEP_ALIVE_TIME = 5000;
+        public const uint KEEP_ALIVE_INTERVAL = 5000;
+
         public const int HEADER_SIZE = 4;
         public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
         private Socket _handle;
@@ -94,7 +97,10 @@ namespace xServer.Core
 
                 _handle = sock;
 
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                //_handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                Misc.KeepAliveEx.SetKeepAliveEx(_handle,KEEP_ALIVE_INTERVAL,KEEP_ALIVE_TIME);
+
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
