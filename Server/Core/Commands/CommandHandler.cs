@@ -117,7 +117,7 @@ namespace xServer.Core.Commands
 			{
 				client.Value.StreamCodec = new UnsafeStreamCodec();
 				if (client.Value.LastQuality < 0)
-                    client.Value.LastQuality = packet.Quality;
+					client.Value.LastQuality = packet.Quality;
 
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
@@ -143,10 +143,10 @@ namespace xServer.Core.Commands
 				{
 					lock (client.Value.StreamCodec)
 					{
-                        if (client.Value.LastQuality != packet.Quality)
+						if (client.Value.LastQuality != packet.Quality)
 						{
 							client.Value.StreamCodec = new UnsafeStreamCodec();
-                            client.Value.LastQuality = packet.Quality;
+							client.Value.LastQuality = packet.Quality;
 						}
 
 						Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
