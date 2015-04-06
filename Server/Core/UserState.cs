@@ -37,5 +37,23 @@ namespace xServer.Core
             LastDesktopSeen = true;
             LastDirectorySeen = true;
         }
+
+        public void DisposeForms()
+        {
+            if (FrmRdp != null)
+                FrmRdp.Close();
+            if (FrmTm != null)
+                FrmTm.Close();
+            if (FrmFm != null)
+                FrmFm.Close();
+            if (FrmSi != null)
+                FrmSi.Close();
+            if (FrmSm != null)
+                FrmSm.Close();
+            if (FrmRs != null)
+                FrmRs.Close();
+            if (FrmStm != null)
+                FrmStm.Close();
+        }
     }
 }
