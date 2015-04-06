@@ -125,10 +125,16 @@ namespace xServer.Core.Commands
 					Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
 
 					client.Value.LastDesktop = newScreen;
-					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-					{
-						client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
-					});
+
+                    try
+                    {
+                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+                        {
+                            client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
+                        });
+                    }
+                    catch
+                    { }
 					newScreen = null;
 				}
 			}
@@ -147,10 +153,16 @@ namespace xServer.Core.Commands
 						Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
 
 						client.Value.LastDesktop = newScreen;
-						client.Value.FrmRdp.Invoke((MethodInvoker) delegate
-						{
-							client.Value.FrmRdp.picDesktop.Image = (Bitmap) newScreen.Clone();
-						});
+
+                        try
+                        {
+                            client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+                            {
+                                client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
+                            });
+                        }
+                        catch
+                        { }
 
 						newScreen = null;
 					}
