@@ -14,7 +14,6 @@ namespace xServer.Core.Commands
 	public static class CommandHandler
 	{
 		private const string DELIMITER = "$E$";
-		private static int lastQuality = -1;
 
 		public static void HandleInitialize(Client client, Initialize packet)
 		{
@@ -117,8 +116,8 @@ namespace xServer.Core.Commands
 			if (client.Value.LastDesktop == null)
 			{
 				client.Value.StreamCodec = new UnsafeStreamCodec();
-				if (lastQuality < 0)
-					lastQuality = packet.Quality;
+				if (client.Value.LastQuality < 0)
+                    client.Value.LastQuality = packet.Quality;
 
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
@@ -144,10 +143,10 @@ namespace xServer.Core.Commands
 				{
 					lock (client.Value.StreamCodec)
 					{
-						if (lastQuality != packet.Quality)
+                        if (client.Value.LastQuality != packet.Quality)
 						{
 							client.Value.StreamCodec = new UnsafeStreamCodec();
-							lastQuality = packet.Quality;
+                            client.Value.LastQuality = packet.Quality;
 						}
 
 						Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
