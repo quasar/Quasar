@@ -116,7 +116,7 @@ namespace xServer.Core.Commands
 			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
-				client.Value.StreamCodec = new Helper.UnsafeStreamCodec();
+				client.Value.StreamCodec = new UnsafeStreamCodec();
 				if (lastQuality < 0)
 					lastQuality = packet.Quality;
 
@@ -126,15 +126,15 @@ namespace xServer.Core.Commands
 
 					client.Value.LastDesktop = newScreen;
 
-                    try
-                    {
-                        client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                        {
-                            client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
-                        });
-                    }
-                    catch
-                    { }
+					try
+					{
+						client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+						{
+							client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
+						});
+					}
+					catch
+					{ }
 					newScreen = null;
 				}
 			}
@@ -146,7 +146,7 @@ namespace xServer.Core.Commands
 					{
 						if (lastQuality != packet.Quality)
 						{
-							client.Value.StreamCodec = new Helper.UnsafeStreamCodec();
+							client.Value.StreamCodec = new UnsafeStreamCodec();
 							lastQuality = packet.Quality;
 						}
 
@@ -154,15 +154,15 @@ namespace xServer.Core.Commands
 
 						client.Value.LastDesktop = newScreen;
 
-                        try
-                        {
-                            client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                            {
-                                client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
-                            });
-                        }
-                        catch
-                        { }
+						try
+						{
+							client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+							{
+								client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone();
+							});
+						}
+						catch
+						{ }
 
 						newScreen = null;
 					}
@@ -229,9 +229,12 @@ namespace xServer.Core.Commands
 
 			new Thread(() =>
 			{
-				ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "Directory" });
-				lviBack.Tag = "dir";
-				lviBack.ImageIndex = 0;
+				ListViewItem lviBack = new ListViewItem(new string[] {"..", "", "Directory"})
+				{
+					Tag = "dir",
+					ImageIndex = 0
+				};
+
 				client.Value.FrmFm.Invoke((MethodInvoker)delegate
 				{
 					client.Value.FrmFm.lstDirectory.Items.Add(lviBack);
@@ -243,10 +246,11 @@ namespace xServer.Core.Commands
 					{
 						if (packet.Folders[i] != DELIMITER)
 						{
-							ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", "Directory" });
-							lvi.Tag = "dir";
-
-							lvi.ImageIndex = 1;
+							ListViewItem lvi = new ListViewItem(new string[] {packet.Folders[i], "", "Directory"})
+							{
+								Tag = "dir",
+								ImageIndex = 1
+							};
 
 							try
 							{
@@ -267,10 +271,11 @@ namespace xServer.Core.Commands
 					{
 						if (packet.Files[i] != DELIMITER)
 						{
-							ListViewItem lvi = new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File" });
-							lvi.Tag = "file";
-
-							lvi.ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]));
+							ListViewItem lvi = new ListViewItem(new string[] {packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File"})
+							{
+								Tag = "file",
+								ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
+							};
 
 							try
 							{
