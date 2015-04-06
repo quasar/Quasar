@@ -7,9 +7,8 @@ using ProtoBuf;
 using ProtoBuf.Meta;
 using xServer.Core.Compression;
 using xServer.Core.Encryption;
+using xServer.Core.Extensions;
 using xServer.Core.Packets;
-using xServer.Core.Packets.ClientPackets;
-using xServer.Core.Packets.ServerPackets;
 using xServer.Settings;
 
 namespace xServer.Core
@@ -97,9 +96,7 @@ namespace xServer.Core
 
                 _handle = sock;
 
-                //_handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
-
-                Misc.KeepAliveEx.SetKeepAliveEx(_handle,KEEP_ALIVE_INTERVAL,KEEP_ALIVE_TIME);
+                SocketExtensions.SetKeepAliveEx(_handle, KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
 
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
@@ -119,8 +116,6 @@ namespace xServer.Core
             AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(UnknownPacket),
-                //typeof(KeepAlive),
-                //typeof(KeepAliveResponse)
             });
         }
 
@@ -183,12 +178,7 @@ namespace xServer.Core
                                 IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
                                     PrefixStyle.Fixed32);
 
-                                //if (packet.GetType() == typeof (KeepAlive))
-                                //    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
-                                //else if (packet.GetType() == typeof (KeepAliveResponse))
-                                //    _parentServer.HandleKeepAlivePacket((KeepAliveResponse) packet, this); // HERE
-                                //else
-                                    OnClientRead(packet);
+                                OnClientRead(packet);
                             }
                         }
 

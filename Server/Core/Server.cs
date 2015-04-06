@@ -2,10 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Threading;
 using xServer.Core.Packets;
-using xServer.Core.Packets.ClientPackets;
-using xServer.Core.Packets.ServerPackets;
 
 namespace xServer.Core
 {
@@ -66,8 +63,6 @@ namespace xServer.Core
 
         public bool Listening { get; private set; }
 
-       // private List<KeepAlive> _keepAlives;
-
         private List<Client> _clients;
         public Client[] Clients
         {
@@ -94,8 +89,6 @@ namespace xServer.Core
             {
                 if (!Listening)
                 {
-                   // _keepAlives = new List<KeepAlive>();
-
                     _clients = new List<Client>();
 
                     _item = new SocketAsyncEventArgs();
@@ -110,8 +103,6 @@ namespace xServer.Core
                     Listening = true;
 
                     OnServerState(true);
-
-                   // SendKeepAlives();
 
                     if (!_handle.AcceptAsync(_item))
                         Process(null, _item);
@@ -173,61 +164,6 @@ namespace xServer.Core
             }
         }
 
-        //private void SendKeepAlives()
-        //{
-        //    new Thread(() =>
-        //    {
-        //        while (true)
-        //        {
-        //            try
-        //            {
-        //                foreach (Client client in Clients)
-        //                {
-        //                    KeepAlive keepAlive = new KeepAlive();
-        //                    lock (_keepAlives)
-        //                    {
-        //                        _keepAlives.Add(keepAlive);
-        //                    }
-        //                    keepAlive.Execute(client);
-        //                    Timer timer = new Timer(KeepAliveCallback, keepAlive, 15000, Timeout.Infinite);
-        //                }
-        //            }
-        //            catch
-        //            {
-
-        //            }
-        //            Thread.Sleep(10000);
-        //        }
-
-        //    }) { IsBackground = true }.Start();
-        //}
-
-        //private void KeepAliveCallback(object state)
-        //{
-        //    KeepAlive keepAlive = (KeepAlive)state;
-
-        //    if (_keepAlives != null)
-        //    {
-        //        if (_keepAlives.Contains(keepAlive))
-        //        {
-        //            keepAlive.Client.Disconnect();
-        //            _keepAlives.Remove(keepAlive);
-        //        }
-        //    }
-        //}
-
-        //internal void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
-        //{
-        //    foreach (KeepAlive keepAlive in _keepAlives)
-        //    {
-        //        if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
-        //        {
-        //            _keepAlives.Remove(keepAlive);
-        //            break;
-        //        }
-        //    }
-        //}
-
         public void Disconnect()
         {
             if (Processing)
@@ -251,8 +187,6 @@ namespace xServer.Core
                     { }
                 }
             }
-
-           // _keepAlives = null;
 
             Listening = false;
             OnServerState(false);

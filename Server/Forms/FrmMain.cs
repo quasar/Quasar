@@ -4,6 +4,7 @@ using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Commands;
+using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Packets;
@@ -56,8 +57,8 @@ namespace xServer.Forms
             _lvwColumnSorter = new ListViewColumnSorter();
             lstClients.ListViewItemSorter = _lvwColumnSorter;
 
-            ListViewExtensions.removeDots(lstClients);
-            ListViewExtensions.changeTheme(lstClients);
+            ListViewExtensions.RemoveDots(lstClients);
+            ListViewExtensions.ChangeTheme(lstClients);
         }
 
         public void UpdateWindowTitle(int count, int selected)

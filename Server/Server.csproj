@@ -73,7 +73,7 @@
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Misc\JpgCompression.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
-    <Compile Include="Core\Misc\ListViewExtensions.cs" />
+    <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
@@ -86,7 +86,6 @@
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
-    <Compile Include="Core\Packets\ClientPackets\KeepAliveResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
@@ -114,7 +113,6 @@
     <Compile Include="Core\Packets\ServerPackets\UploadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\VisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\InitializeCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\KeepAlive.cs" />
     <Compile Include="Core\Packets\ServerPackets\Reconnect.cs" />
     <Compile Include="Core\Packets\UnknownPacket.cs" />
     <Compile Include="Core\ProtoBuf\BclHelpers.cs" />
@@ -384,7 +382,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <Compile Include="Core\Misc\KeepAlive.cs" />
+    <Compile Include="Core\Extensions\SocketExtensions.cs" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
