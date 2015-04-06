@@ -63,7 +63,7 @@
     <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Misc\JpgCompression.cs" />
-    <Compile Include="Core\Misc\KeepAlive.cs" />
+    <Compile Include="Core\Extensions\SocketExtensions.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
@@ -106,13 +106,11 @@
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
-    <Compile Include="Core\Packets\ClientPackets\KeepAliveResponse.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
     <Compile Include="Core\Packets\ServerPackets\Disconnect.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\Uninstall.cs" />
     <Compile Include="Core\Packets\ServerPackets\InitializeCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\KeepAlive.cs" />
     <Compile Include="Core\Packets\ServerPackets\Reconnect.cs" />
     <Compile Include="Core\Packets\UnknownPacket.cs" />
     <Compile Include="Core\ProtoBuf\BclHelpers.cs" />

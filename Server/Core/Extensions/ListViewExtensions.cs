@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace xServer.Core.Misc
+namespace xServer.Core.Extensions
 {
     public static class ListViewExtensions
     {
@@ -15,23 +15,21 @@ namespace xServer.Core.Misc
         private const uint SET_COLUMN_WIDTH = 4126;
         private const int AUTOSIZE_USEHEADER = -2;
 
-        public static void removeDots(ListView TargetListView)
+        public static void RemoveDots(ListView targetListView)
         {
-            SendMessage(TargetListView.Handle, WM_CHANGEUISTATE, 65537, 0);
+            SendMessage(targetListView.Handle, WM_CHANGEUISTATE, 65537, 0);
         }
 
-        public static void changeTheme(ListView TargetListView)
+        public static void ChangeTheme(ListView targetListView)
         {
-            SetWindowTheme(TargetListView.Handle, "Explorer", 0);
+            SetWindowTheme(targetListView.Handle, "Explorer", 0);
         }
 
-        public static void autosizeColumns(ListView TargetListView)
+        public static void AutosizeColumns(ListView targetListView)
         {
-            int lngColumn = 0;
-
-            for (lngColumn = 0; lngColumn <= (TargetListView.Columns.Count - 1); lngColumn++)
+            for (int lngColumn = 0; lngColumn <= (targetListView.Columns.Count - 1); lngColumn++)
             {
-                SendMessage(TargetListView.Handle, SET_COLUMN_WIDTH, lngColumn, AUTOSIZE_USEHEADER);
+                SendMessage(targetListView.Handle, SET_COLUMN_WIDTH, lngColumn, AUTOSIZE_USEHEADER);
             }
         }
     }
