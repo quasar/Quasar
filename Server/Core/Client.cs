@@ -57,8 +57,8 @@ namespace xServer.Core
             Payload
         }
 
-        public const uint KEEP_ALIVE_TIME = 1000;
-        public const uint KEEP_ALIVE_INTERVAL = 1000;
+        public const uint KEEP_ALIVE_TIME = 25000;
+        public const uint KEEP_ALIVE_INTERVAL = 25000;
 
         public const int HEADER_SIZE = 4;
         public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
@@ -113,10 +113,7 @@ namespace xServer.Core
 
         private void Initialize()
         {
-            AddTypesToSerializer(typeof(IPacket), new Type[]
-            {
-                typeof(UnknownPacket),
-            });
+            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
         }
 
         private void AsyncReceive(IAsyncResult result)
