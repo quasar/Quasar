@@ -9,7 +9,7 @@ namespace xClient.Config
     {
 #if DEBUG
         public static string VERSION = "1.0.0.0d";
-        public static string HOST = "localhost";
+        public static string HOST = "192.168.1.11";
         public static ushort PORT = 4782;
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";

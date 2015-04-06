@@ -116,7 +116,7 @@ namespace xClient.Core
                 {
                     _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
 
-                    SendKeepAlives();
+                    //SendKeepAlives();
                     OnClientState(true);
                 }
             }
@@ -129,13 +129,13 @@ namespace xClient.Core
 
         private void Initialize()
         {
-            _keepAlives = new List<KeepAlive>();
+            //_keepAlives = new List<KeepAlive>();
 
             AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(UnknownPacket),
-                typeof(KeepAlive),
-                typeof(KeepAliveResponse)
+                //typeof(KeepAlive),
+                //typeof(KeepAliveResponse)
             });
         }
 
@@ -196,11 +196,11 @@ namespace xClient.Core
                                 IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
                                     PrefixStyle.Fixed32);
 
-                                if (packet.GetType() == typeof (KeepAlive))
-                                    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
-                                else if (packet.GetType() == typeof (KeepAliveResponse))
-                                    HandleKeepAlivePacket((KeepAliveResponse) packet, this);
-                                else
+                                //if (packet.GetType() == typeof (KeepAlive))
+                                //    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
+                                //else if (packet.GetType() == typeof (KeepAliveResponse))
+                                //    HandleKeepAlivePacket((KeepAliveResponse) packet, this);
+                                //else
                                     OnClientRead(packet);
                             }
                         }
@@ -336,52 +336,52 @@ namespace xClient.Core
                 AddTypeToSerializer(parent, type);
         }
 
-        private void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
-        {
-            foreach (KeepAlive keepAlive in _keepAlives)
-            {
-                if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
-                {
-                    _keepAlives.Remove(keepAlive);
-                    break;
-                }
-            }
-        }
+        //private void HandleKeepAlivePacket(KeepAliveResponse packet, Client client)
+        //{
+        //    foreach (KeepAlive keepAlive in _keepAlives)
+        //    {
+        //        if (keepAlive.TimeSent == packet.TimeSent && keepAlive.Client == client)
+        //        {
+        //            _keepAlives.Remove(keepAlive);
+        //            break;
+        //        }
+        //    }
+        //}
 
-        private void KeepAliveCallback(object state)
-        {
-            KeepAlive keepAlive = (KeepAlive)state;
+        //private void KeepAliveCallback(object state)
+        //{
+        //    KeepAlive keepAlive = (KeepAlive)state;
 
-            if (_keepAlives.Contains(keepAlive))
-            {
-                Disconnect();
-            }
-        }
+        //    if (_keepAlives.Contains(keepAlive))
+        //    {
+        //        Disconnect();
+        //    }
+        //}
 
-        private void SendKeepAlives()
-        {
-            new Thread(() =>
-            {
-                while (Connected)
-                {
-                    try
-                    {
-                        KeepAlive keepAlive = new KeepAlive();
-                        lock (_keepAlives)
-                        {
-                            _keepAlives.Add(keepAlive);
-                        }
-                        keepAlive.Execute(this);
-                        Timer timer = new Timer(KeepAliveCallback, keepAlive, 25000, Timeout.Infinite);
-                    }
-                    catch
-                    {
+        //private void SendKeepAlives()
+        //{
+        //    new Thread(() =>
+        //    {
+        //        while (Connected)
+        //        {
+        //            try
+        //            {
+        //                KeepAlive keepAlive = new KeepAlive();
+        //                lock (_keepAlives)
+        //                {
+        //                    _keepAlives.Add(keepAlive);
+        //                }
+        //                keepAlive.Execute(this);
+        //                Timer timer = new Timer(KeepAliveCallback, keepAlive, 25000, Timeout.Infinite);
+        //            }
+        //            catch
+        //            {
 
-                    }
-                    Thread.Sleep(15000);
-                }
+        //            }
+        //            Thread.Sleep(15000);
+        //        }
 
-            }) { IsBackground = true }.Start();
-        }
+        //    }) { IsBackground = true }.Start();
+        //}
     }
 }
