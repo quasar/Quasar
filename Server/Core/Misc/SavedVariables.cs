@@ -19,8 +19,7 @@
 
     public class UploadAndExecute
     {
-        public static byte[] File { get; set; }
-        public static string FileName { get; set; }
+        public static string FilePath { get; set; }
         public static bool RunHidden { get; set; }
     }
 
