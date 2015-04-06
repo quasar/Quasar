@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Extensions;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
 using xServer.Settings;
@@ -68,43 +67,42 @@ namespace xServer.Core.Commands
 			FrmMain.Instance.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country), string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(), c.Value.OperatingSystem), ToolTipIcon.Info);
 		}
 
-	    public static void HandleStatus(Client client, Status packet)
-	    {
-	        new Thread(() =>
-	        {
-	            FrmMain.Instance.Invoke((MethodInvoker) delegate
-	            {
-	                foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
-	                {
-	                    Client c = (Client) lvi.Tag;
-	                    if (client == c)
-	                    {
-	                        lvi.SubItems[3].Text = packet.Message;
-	                        break;
-	                    }
-	                }
-	            });
-
-	        }).Start();
-	    }
-
-	    public static void HandleUserStatus(Client client, UserStatus packet)
+		public static void HandleStatus(Client client, Status packet)
 		{
 			new Thread(() =>
 			{
-				foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
+				FrmMain.Instance.Invoke((MethodInvoker) delegate
 				{
-					Client c = (Client)lvi.Tag;
-					if (client == c)
+					foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
 					{
-						FrmMain.Instance.Invoke((MethodInvoker)delegate
+						Client c = (Client) lvi.Tag;
+						if (client == c)
+						{
+							lvi.SubItems[3].Text = packet.Message;
+							break;
+						}
+					}
+				});
+
+			}).Start();
+		}
+
+		public static void HandleUserStatus(Client client, UserStatus packet)
+		{
+			new Thread(() =>
+			{
+				FrmMain.Instance.Invoke((MethodInvoker)delegate
+				{
+					foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
+					{
+						Client c = (Client)lvi.Tag;
+						if (client == c)
 						{
 							lvi.SubItems[4].Text = packet.Message;
-						});
-						break;
+							break;
+						}
 					}
-				}
-
+				});
 			}).Start();
 		}
 
@@ -414,7 +412,7 @@ namespace xServer.Core.Commands
 					}
 				});
 
-				ListViewExtensions.autosizeColumns(client.Value.FrmSi.lstSystem);
+				ListViewExtensions.AutosizeColumns(client.Value.FrmSi.lstSystem);
 			}
 			catch
 			{ }
