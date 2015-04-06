@@ -58,6 +58,9 @@ namespace xServer.Core
             Payload
         }
 
+        public const uint KEEP_ALIVE_TIME = 1000;
+        public const uint KEEP_ALIVE_INTERVAL = 1000;
+
         public const int HEADER_SIZE = 4;
         public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
         private Socket _handle;
@@ -94,7 +97,10 @@ namespace xServer.Core
 
                 _handle = sock;
 
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+                //_handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.KeepAlive, true);
+
+                Misc.KeepAliveEx.SetKeepAliveEx(_handle,KEEP_ALIVE_INTERVAL,KEEP_ALIVE_TIME);
+
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
@@ -113,8 +119,8 @@ namespace xServer.Core
             AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof(UnknownPacket),
-                typeof(KeepAlive),
-                typeof(KeepAliveResponse)
+                //typeof(KeepAlive),
+                //typeof(KeepAliveResponse)
             });
         }
 
@@ -177,11 +183,11 @@ namespace xServer.Core
                                 IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
                                     PrefixStyle.Fixed32);
 
-                                if (packet.GetType() == typeof (KeepAlive))
-                                    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
-                                else if (packet.GetType() == typeof (KeepAliveResponse))
-                                    _parentServer.HandleKeepAlivePacket((KeepAliveResponse) packet, this); // HERE
-                                else
+                                //if (packet.GetType() == typeof (KeepAlive))
+                                //    new KeepAliveResponse() {TimeSent = ((KeepAlive) packet).TimeSent}.Execute(this);
+                                //else if (packet.GetType() == typeof (KeepAliveResponse))
+                                //    _parentServer.HandleKeepAlivePacket((KeepAliveResponse) packet, this); // HERE
+                                //else
                                     OnClientRead(packet);
                             }
                         }
