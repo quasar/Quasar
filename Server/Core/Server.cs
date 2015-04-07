@@ -94,6 +94,16 @@ namespace xServer.Core
                     _item = new SocketAsyncEventArgs();
                     _item.Completed += Process;
 
+                    if (_handle != null)
+                    {
+                        try
+                        {
+                            _handle.Close();
+                        }
+                        catch
+                        { }
+                    }
+
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));
