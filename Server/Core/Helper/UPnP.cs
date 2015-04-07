@@ -12,7 +12,7 @@ namespace xServer.Core.Helper
             new Thread(() =>
             {
                 EndPoint endPoint;
-                string ipAddr = "";
+                string ipAddr = string.Empty;
                 int retry = 0;
 
                 do
@@ -25,7 +25,6 @@ namespace xServer.Core.Helper
                             c = new TcpClient();
                             c.Connect("www.google.com", 80);
                             endPoint = c.Client.LocalEndPoint;
-
                         }
                         finally
                         {
