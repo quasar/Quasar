@@ -371,31 +371,31 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
-		{
-			if (command.LeftClick)
-			{
-				SetCursorPos(command.X, command.Y);
-				mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-				mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
-				if (command.DoubleClick)
-				{
-					mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-					mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
-				}
-			}
-			else
-			{
-				SetCursorPos(command.X, command.Y);
-				mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-				mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
-				if (command.DoubleClick)
-				{
-					mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-					mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
-				}
-			}
-		}
+        public static void HandleMouseClick(Packets.ServerPackets.MouseData command, Client client)
+        {
+            if (command.MouseButton == MouseButtons.Left)
+            {
+                if (command.MouseDown)
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, command.PosX, command.PosY, 0, 0);
+                else
+                    mouse_event(MOUSEEVENTF_LEFTUP, command.PosX, command.PosY, 0, 0);
+
+                SetCursorPos(command.PosX, command.PosY);
+            }
+            else if (command.MouseButton == MouseButtons.Right)
+            {
+                if (command.MouseDown)
+                    mouse_event(MOUSEEVENTF_RIGHTDOWN, command.PosX, command.PosY, 0, 0);
+                else
+                    mouse_event(MOUSEEVENTF_RIGHTUP, command.PosX, command.PosY, 0, 0);
+
+                SetCursorPos(command.PosX, command.PosY);
+            }
+            else if (command.MouseButton == MouseButtons.None)
+            {
+                SetCursorPos(command.PosX, command.PosY);
+            }
+        }
 
 		public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
 		{
