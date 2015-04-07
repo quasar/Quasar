@@ -41,9 +41,14 @@ namespace xServer.Core.Helper
                             ipAddr = endPoint.ToString();
                             int index = ipAddr.IndexOf(":");
                             ipAddr = ipAddr.Remove(index);
+
+                            // We got through successfully and with an endpoint and a parsed IP address. We may exit the loop.
+                            break;
                         }
-                        // We got through successfully. We may exit the loop.
-                        break;
+                        else
+                        {
+                            retry++;
+                        }
                     }
                     catch
                     {
