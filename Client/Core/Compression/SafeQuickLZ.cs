@@ -71,6 +71,9 @@ namespace xClient.Core.Compression
 
         public byte[] Compress(byte[] source, int Offset, int Length, int level)
         {
+            if (Length == 0)
+                return new byte[0];
+
             int src = Offset;
             int dst = DEFAULT_HEADERLEN + CWORD_LEN;
             uint cword_val = 0x80000000;
@@ -84,16 +87,17 @@ namespace xClient.Core.Compression
             int last_matchstart = (Length - UNCONDITIONAL_MATCHLEN - UNCOMPRESSED_END - 1);
             int lits = 0;
 
-            if (level != 1 && level != 3)
-                throw new ArgumentException("C# version only supports level 1 and 3");
-
-            if (level == 1)
-                hashtable = new int[HASH_VALUES, QLZ_POINTERS_1];
-            else
-                hashtable = new int[HASH_VALUES, QLZ_POINTERS_3];
-
-            if (Length == 0)
-                return new byte[0];
+            switch (level)
+            {
+                case 1:
+                    hashtable = new int[HASH_VALUES, QLZ_POINTERS_1];
+                    break;
+                case 3:
+                    hashtable = new int[HASH_VALUES, QLZ_POINTERS_3];
+                    break;
+                default:
+                    throw new ArgumentException("C# version only supports level 1 and 3");
+            }
 
             if (src <= last_matchstart)
                 fetch = source[src] | (source[src + 1] << 8) | (source[src + 2] << 16);
@@ -106,7 +110,7 @@ namespace xClient.Core.Compression
                     {
                         d2 = new byte[Length + DEFAULT_HEADERLEN];
                         WriteHeader(d2, level, false, Length, Length + DEFAULT_HEADERLEN);
-                        System.Array.Copy(source, 0, d2, DEFAULT_HEADERLEN, Length);
+                        Array.Copy(source, 0, d2, DEFAULT_HEADERLEN, Length);
                         return d2;
                     }
 
@@ -293,7 +297,7 @@ namespace xClient.Core.Compression
             FastWrite(destination, cword_ptr, (int)((cword_val >> 1) | 0x80000000), CWORD_LEN);
             WriteHeader(destination, level, true, Length, dst);
             d2 = new byte[dst];
-            System.Array.Copy(destination, d2, dst);
+            Array.Copy(destination, d2, dst);
             return d2;
         }
 
@@ -306,7 +310,11 @@ namespace xClient.Core.Compression
 
         public byte[] Decompress(byte[] source, int Offset, int Length)
         {
-            int level;
+            int level = (source[Offset] >> 2) & 0x3;
+
+            if (level != 1 && level != 3)
+                throw new ArgumentException("C# version only supports level 1 and 3");
+
             int size = SizeDecompressed(source, Offset);
             int src = HeaderLen(source, Offset) + Offset;
             int dst = 0;
@@ -319,15 +327,10 @@ namespace xClient.Core.Compression
             int hash;
             uint fetch = 0;
 
-            level = (source[Offset] >> 2) & 0x3;
-
-            if (level != 1 && level != 3)
-                throw new ArgumentException("C# version only supports level 1 and 3");
-
             if ((source[Offset] & 1) != 1)
             {
                 byte[] d2 = new byte[size];
-                System.Array.Copy(source, HeaderLen(source, Offset), d2, Offset, size);
+                Array.Copy(source, HeaderLen(source, Offset), d2, Offset, size);
                 return d2;
             }
 
