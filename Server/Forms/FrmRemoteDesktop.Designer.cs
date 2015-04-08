@@ -72,7 +72,7 @@
             this.barQuality.Maximum = 100;
             this.barQuality.Minimum = 1;
             this.barQuality.Name = "barQuality";
-            this.barQuality.Size = new System.Drawing.Size(104, 45);
+            this.barQuality.Size = new System.Drawing.Size(104, 42);
             this.barQuality.TabIndex = 3;
             this.barQuality.Value = 75;
             this.barQuality.Scroll += new System.EventHandler(this.barQuality_Scroll);
@@ -117,8 +117,9 @@
             this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
-            this.picDesktop.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseClick);
-            this.picDesktop.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDoubleClick);
+            this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
+            this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
+            this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
             // panelTop
             // 

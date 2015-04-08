@@ -11,6 +11,7 @@ namespace xServer.Forms
         private readonly Client _connectClient;
         private bool _keepRunning;
         private bool _enableMouseInput;
+        private bool mouseDown;
 
         public FrmRemoteDesktop(Client c)
         {
@@ -18,6 +19,7 @@ namespace xServer.Forms
             _connectClient.Value.FrmRdp = this;
             _keepRunning = false;
             _enableMouseInput = false;
+            mouseDown = false;
             InitializeComponent();
         }
 
@@ -48,7 +50,7 @@ namespace xServer.Forms
                     {
                         btnStart.Enabled = false;
                         btnStop.Enabled = true;
-                        barQuality.Enabled = false;
+                        //barQuality.Enabled = false;
                     });
 
                     if (_connectClient.Value != null)
@@ -143,7 +145,7 @@ namespace xServer.Forms
             }
         }
 
-        private void picDesktop_MouseClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
@@ -153,16 +155,14 @@ namespace xServer.Forms
                 int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
                 int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
 
-                bool left = true;
-                if (e.Button == MouseButtons.Right)
-                    left = false;
+                mouseDown = true;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.MouseData(e.Button, remote_x, remote_y, mouseDown).Execute(_connectClient);
             }
         }
 
-        private void picDesktop_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
@@ -172,12 +172,27 @@ namespace xServer.Forms
                 int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
                 int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
 
-                bool left = true;
-                if (e.Button == MouseButtons.Right)
-                    left = false;
+                mouseDown = false;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.MouseData(e.Button, remote_x, remote_y, mouseDown).Execute(_connectClient);
+            }
+        }
+
+        private void picDesktop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput)
+            {
+                int local_x = e.X;
+                int local_y = e.Y;
+
+                int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
+                int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
+
+                if (_connectClient != null)
+                {
+                    new Core.Packets.ServerPackets.MouseData(MouseButtons.None, remote_x, remote_y, mouseDown).Execute(_connectClient);
+                }
             }
         }
 

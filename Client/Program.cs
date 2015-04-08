@@ -60,7 +60,7 @@ namespace xClient
                 typeof(Core.Packets.ServerPackets.Drives),
                 typeof(Core.Packets.ServerPackets.Directory),
                 typeof(Core.Packets.ServerPackets.DownloadFile),
-                typeof(Core.Packets.ServerPackets.MouseClick),
+                typeof(Core.Packets.ServerPackets.MouseData),
                 typeof(Core.Packets.ServerPackets.GetSystemInfo),
                 typeof(Core.Packets.ServerPackets.VisitWebsite),
                 typeof(Core.Packets.ServerPackets.ShowMessageBox),
@@ -238,9 +238,9 @@ namespace xClient
             {
                 CommandHandler.HandleDownloadFile((Core.Packets.ServerPackets.DownloadFile)packet, client);
             }
-            else if (type == typeof(Core.Packets.ServerPackets.MouseClick))
+            else if (type == typeof(Core.Packets.ServerPackets.MouseData))
             {
-                CommandHandler.HandleMouseClick((Core.Packets.ServerPackets.MouseClick)packet, client);
+                CommandHandler.HandleMouseClick((Core.Packets.ServerPackets.MouseData)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.GetSystemInfo))
             {

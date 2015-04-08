@@ -371,29 +371,29 @@ namespace xClient.Core.Commands
 			}
 		}
 
-		public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
+		public static void HandleMouseClick(Packets.ServerPackets.MouseData command, Client client)
 		{
-			if (command.LeftClick)
+			if (command.MouseButton == MouseButtons.Left)
 			{
-				SetCursorPos(command.X, command.Y);
-				mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-				mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
-				if (command.DoubleClick)
-				{
-					mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-					mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
-				}
+				if (command.MouseDown)
+					mouse_event(MOUSEEVENTF_LEFTDOWN, command.PosX, command.PosY, 0, 0);
+				else
+					mouse_event(MOUSEEVENTF_LEFTUP, command.PosX, command.PosY, 0, 0);
+		
+			SetCursorPos(command.PosX, command.PosY);
 			}
-			else
+			else if (command.MouseButton == MouseButtons.Right)
 			{
-				SetCursorPos(command.X, command.Y);
-				mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-				mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
-				if (command.DoubleClick)
-				{
-					mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-					mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
-				}
+				if (command.MouseDown)
+					mouse_event(MOUSEEVENTF_RIGHTDOWN, command.PosX, command.PosY, 0, 0);
+				else
+					mouse_event(MOUSEEVENTF_RIGHTUP, command.PosX, command.PosY, 0, 0);
+		
+			SetCursorPos(command.PosX, command.PosY);
+			}
+			else if (command.MouseButton == MouseButtons.None)
+			{
+				SetCursorPos(command.PosX, command.PosY);
 			}
 		}
 

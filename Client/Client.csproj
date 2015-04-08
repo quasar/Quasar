@@ -87,13 +87,13 @@
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\MouseData.cs" />
     <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShowMessageBox.cs" />
     <Compile Include="Core\Packets\ServerPackets\Update.cs" />
     <Compile Include="Core\Packets\ServerPackets\UploadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\VisitWebsite.cs" />
-    <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
     <Compile Include="Core\Packets\ServerPackets\StartProcess.cs" />
     <Compile Include="Core\ProtoBuf\CallbackAttributes.cs" />
     <Compile Include="Core\ProtoBuf\Extensible.cs" />
