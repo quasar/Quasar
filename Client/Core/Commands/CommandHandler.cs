@@ -457,10 +457,6 @@ namespace xClient.Core.Commands
 						{
 							using (Stream dataStream = response.GetResponseStream())
 							{
-								using (StreamReader reader = new StreamReader(dataStream))
-								{
-
-								}
 							}
 						}
 					}
