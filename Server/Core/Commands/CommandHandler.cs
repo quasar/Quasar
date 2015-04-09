@@ -397,9 +397,6 @@ namespace xServer.Core.Commands
 				}
 			}
 
-			if (client.Value.FrmSi == null)
-				return;
-
 			try
 			{
 				client.Value.FrmSi.Invoke((MethodInvoker)delegate
