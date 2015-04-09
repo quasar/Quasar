@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using xServer.Core.Build;
@@ -242,6 +243,7 @@ namespace xServer.Forms
                                 MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 return;
                             }
+
                             asmInfo = new string[8];
                             asmInfo[0] = txtProductName.Text;
                             asmInfo[1] = txtDescription.Text;
@@ -252,8 +254,17 @@ namespace xServer.Forms
                             asmInfo[6] = txtProductVersion.Text;
                             asmInfo[7] = txtFileVersion.Text;
                         }
-                        ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
+
+                        ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text,
+                            txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked,
+                            chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text),
+                            GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
+
                         MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (FileLoadException)
+                    {
+                        MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.", "Error loading Client", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (Exception ex)
                     {
