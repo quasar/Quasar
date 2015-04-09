@@ -30,14 +30,13 @@ namespace xServer.Core.Helper
                 {
                     this._maxBlocks = -1;
                     this.LastError = "Access denied";
-                    return this._maxBlocks;
                 }
                 catch (IOException)
                 {
                     this._maxBlocks = -1;
                     this.LastError = "File not found";
-                    return this._maxBlocks;
                 }
+
                 return this._maxBlocks;
             }
         }
@@ -56,7 +55,8 @@ namespace xServer.Core.Helper
         {
             try
             {
-                if (blockNumber > this.MaxBlocks) throw new ArgumentOutOfRangeException();
+                if (blockNumber > this.MaxBlocks)
+                    throw new ArgumentOutOfRangeException();
 
                 using (FileStream fStream = File.OpenRead(this.Path))
                 {
@@ -80,20 +80,19 @@ namespace xServer.Core.Helper
             {
                 readBytes = new byte[0];
                 this.LastError = "BlockNumber bigger than MaxBlocks";
-                return false;
             }
             catch (UnauthorizedAccessException)
             {
                 readBytes = new byte[0];
                 this.LastError = "Access denied";
-                return false;
             }
             catch (IOException)
             {
                 readBytes = new byte[0];
                 this.LastError = "File not found";
-                return false;
             }
+
+            return false;
         }
 
         public bool AppendBlock(byte[] block, int blockNumber)
@@ -125,13 +124,13 @@ namespace xServer.Core.Helper
             catch (UnauthorizedAccessException)
             {
                 this.LastError = "Access denied";
-                return false;
             }
             catch (IOException)
             {
                 this.LastError = "File not found";
-                return false;
             }
+
+            return false;
         }
     }
 }
