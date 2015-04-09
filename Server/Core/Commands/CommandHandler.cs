@@ -407,9 +407,9 @@ namespace xServer.Core.Commands
 						if (lviItem != null)
 							client.Value.FrmSi.lstSystem.Items.Add(lviItem);
 					}
+					
+					ListViewExtensions.AutosizeColumns(client.Value.FrmSi.lstSystem);
 				});
-
-				ListViewExtensions.AutosizeColumns(client.Value.FrmSi.lstSystem);
 			}
 			catch
 			{ }
