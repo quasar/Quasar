@@ -68,23 +68,23 @@
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
             this.groupAsmInfo = new System.Windows.Forms.GroupBox();
-            this.lblProductName = new System.Windows.Forms.Label();
-            this.txtProductName = new System.Windows.Forms.TextBox();
-            this.txtDescription = new System.Windows.Forms.TextBox();
-            this.lblDescription = new System.Windows.Forms.Label();
-            this.txtCompanyName = new System.Windows.Forms.TextBox();
-            this.lblCompanyName = new System.Windows.Forms.Label();
-            this.txtCopyright = new System.Windows.Forms.TextBox();
-            this.lblCopyright = new System.Windows.Forms.Label();
-            this.txtTrademarks = new System.Windows.Forms.TextBox();
-            this.lblTrademarks = new System.Windows.Forms.Label();
-            this.txtOriginalFilename = new System.Windows.Forms.TextBox();
-            this.lblOriginalFilename = new System.Windows.Forms.Label();
-            this.txtProductVersion = new System.Windows.Forms.TextBox();
-            this.lblProductVersion = new System.Windows.Forms.Label();
+            this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
             this.txtFileVersion = new System.Windows.Forms.TextBox();
             this.lblFileVersion = new System.Windows.Forms.Label();
-            this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
+            this.txtProductVersion = new System.Windows.Forms.TextBox();
+            this.lblProductVersion = new System.Windows.Forms.Label();
+            this.txtOriginalFilename = new System.Windows.Forms.TextBox();
+            this.lblOriginalFilename = new System.Windows.Forms.Label();
+            this.txtTrademarks = new System.Windows.Forms.TextBox();
+            this.lblTrademarks = new System.Windows.Forms.Label();
+            this.txtCopyright = new System.Windows.Forms.TextBox();
+            this.lblCopyright = new System.Windows.Forms.Label();
+            this.txtCompanyName = new System.Windows.Forms.TextBox();
+            this.lblCompanyName = new System.Windows.Forms.Label();
+            this.txtDescription = new System.Windows.Forms.TextBox();
+            this.lblDescription = new System.Windows.Forms.Label();
+            this.txtProductName = new System.Windows.Forms.TextBox();
+            this.lblProductName = new System.Windows.Forms.Label();
             this.groupConnection.SuspendLayout();
             this.groupInstall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
@@ -157,6 +157,7 @@
             this.txtPassword.PasswordChar = '•';
             this.txtPassword.Size = new System.Drawing.Size(201, 22);
             this.txtPassword.TabIndex = 5;
+            this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
             // 
             // lblPassword
             // 
@@ -174,6 +175,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(66, 22);
             this.txtPort.TabIndex = 3;
+            this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
             this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // lblPort
@@ -191,6 +193,7 @@
             this.txtHost.Name = "txtHost";
             this.txtHost.Size = new System.Drawing.Size(201, 22);
             this.txtHost.TabIndex = 1;
+            this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
             // 
             // lblHost
             // 
@@ -243,6 +246,7 @@
             this.chkIconChange.Text = "Change Icon";
             this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkIconChange.UseVisualStyleBackColor = true;
+            this.chkIconChange.CheckedChanged += new System.EventHandler(this.chkIconChange_CheckedChanged);
             // 
             // chkElevation
             // 
@@ -254,6 +258,7 @@
             this.chkElevation.Text = "Enable Admin Elevation";
             this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkElevation.UseVisualStyleBackColor = true;
+            this.chkElevation.CheckedChanged += new System.EventHandler(this.chkElevation_CheckedChanged);
             // 
             // picUAC2
             // 
@@ -309,6 +314,7 @@
             this.txtRegistryKeyName.Name = "txtRegistryKeyName";
             this.txtRegistryKeyName.Size = new System.Drawing.Size(201, 22);
             this.txtRegistryKeyName.TabIndex = 18;
+            this.txtRegistryKeyName.TextChanged += new System.EventHandler(this.txtRegistryKeyName_TextChanged);
             // 
             // lblRegistryKeyName
             // 
@@ -339,6 +345,7 @@
             this.chkHide.TabIndex = 15;
             this.chkHide.Text = "Hide File";
             this.chkHide.UseVisualStyleBackColor = true;
+            this.chkHide.CheckedChanged += new System.EventHandler(this.chkHide_CheckedChanged);
             // 
             // btnMutex
             // 
@@ -415,6 +422,7 @@
             this.txtMutex.Name = "txtMutex";
             this.txtMutex.Size = new System.Drawing.Size(201, 22);
             this.txtMutex.TabIndex = 1;
+            this.txtMutex.TextChanged += new System.EventHandler(this.txtMutex_TextChanged);
             // 
             // lblMutex
             // 
@@ -499,134 +507,6 @@
             this.groupAsmInfo.TabStop = false;
             this.groupAsmInfo.Text = "Assembly Information";
             // 
-            // lblProductName
-            // 
-            this.lblProductName.AutoSize = true;
-            this.lblProductName.Location = new System.Drawing.Point(22, 43);
-            this.lblProductName.Name = "lblProductName";
-            this.lblProductName.Size = new System.Drawing.Size(82, 13);
-            this.lblProductName.TabIndex = 1;
-            this.lblProductName.Text = "Product Name:";
-            // 
-            // txtProductName
-            // 
-            this.txtProductName.Location = new System.Drawing.Point(110, 40);
-            this.txtProductName.Name = "txtProductName";
-            this.txtProductName.Size = new System.Drawing.Size(201, 22);
-            this.txtProductName.TabIndex = 2;
-            // 
-            // txtDescription
-            // 
-            this.txtDescription.Location = new System.Drawing.Point(110, 68);
-            this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(201, 22);
-            this.txtDescription.TabIndex = 4;
-            // 
-            // lblDescription
-            // 
-            this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(35, 71);
-            this.lblDescription.Name = "lblDescription";
-            this.lblDescription.Size = new System.Drawing.Size(69, 13);
-            this.lblDescription.TabIndex = 3;
-            this.lblDescription.Text = "Description:";
-            // 
-            // txtCompanyName
-            // 
-            this.txtCompanyName.Location = new System.Drawing.Point(110, 96);
-            this.txtCompanyName.Name = "txtCompanyName";
-            this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
-            this.txtCompanyName.TabIndex = 6;
-            // 
-            // lblCompanyName
-            // 
-            this.lblCompanyName.AutoSize = true;
-            this.lblCompanyName.Location = new System.Drawing.Point(14, 99);
-            this.lblCompanyName.Name = "lblCompanyName";
-            this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
-            this.lblCompanyName.TabIndex = 5;
-            this.lblCompanyName.Text = "Company Name:";
-            // 
-            // txtCopyright
-            // 
-            this.txtCopyright.Location = new System.Drawing.Point(110, 124);
-            this.txtCopyright.Name = "txtCopyright";
-            this.txtCopyright.Size = new System.Drawing.Size(201, 22);
-            this.txtCopyright.TabIndex = 8;
-            // 
-            // lblCopyright
-            // 
-            this.lblCopyright.AutoSize = true;
-            this.lblCopyright.Location = new System.Drawing.Point(43, 127);
-            this.lblCopyright.Name = "lblCopyright";
-            this.lblCopyright.Size = new System.Drawing.Size(61, 13);
-            this.lblCopyright.TabIndex = 7;
-            this.lblCopyright.Text = "Copyright:";
-            // 
-            // txtTrademarks
-            // 
-            this.txtTrademarks.Location = new System.Drawing.Point(110, 152);
-            this.txtTrademarks.Name = "txtTrademarks";
-            this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
-            this.txtTrademarks.TabIndex = 10;
-            // 
-            // lblTrademarks
-            // 
-            this.lblTrademarks.AutoSize = true;
-            this.lblTrademarks.Location = new System.Drawing.Point(36, 155);
-            this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
-            this.lblTrademarks.TabIndex = 9;
-            this.lblTrademarks.Text = "Trademarks:";
-            // 
-            // txtOriginalFilename
-            // 
-            this.txtOriginalFilename.Location = new System.Drawing.Point(110, 180);
-            this.txtOriginalFilename.Name = "txtOriginalFilename";
-            this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
-            this.txtOriginalFilename.TabIndex = 12;
-            // 
-            // lblOriginalFilename
-            // 
-            this.lblOriginalFilename.AutoSize = true;
-            this.lblOriginalFilename.Location = new System.Drawing.Point(3, 183);
-            this.lblOriginalFilename.Name = "lblOriginalFilename";
-            this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
-            this.lblOriginalFilename.TabIndex = 11;
-            this.lblOriginalFilename.Text = "Original Filename:";
-            // 
-            // txtProductVersion
-            // 
-            this.txtProductVersion.Location = new System.Drawing.Point(110, 208);
-            this.txtProductVersion.Name = "txtProductVersion";
-            this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
-            this.txtProductVersion.TabIndex = 14;
-            // 
-            // lblProductVersion
-            // 
-            this.lblProductVersion.AutoSize = true;
-            this.lblProductVersion.Location = new System.Drawing.Point(12, 211);
-            this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
-            this.lblProductVersion.TabIndex = 13;
-            this.lblProductVersion.Text = "Product Version:";
-            // 
-            // txtFileVersion
-            // 
-            this.txtFileVersion.Location = new System.Drawing.Point(110, 236);
-            this.txtFileVersion.Name = "txtFileVersion";
-            this.txtFileVersion.Size = new System.Drawing.Size(201, 22);
-            this.txtFileVersion.TabIndex = 16;
-            // 
-            // lblFileVersion
-            // 
-            this.lblFileVersion.AutoSize = true;
-            this.lblFileVersion.Location = new System.Drawing.Point(34, 239);
-            this.lblFileVersion.Name = "lblFileVersion";
-            this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
-            this.lblFileVersion.TabIndex = 15;
-            this.lblFileVersion.Text = "File Version:";
-            // 
             // chkChangeAsmInfo
             // 
             this.chkChangeAsmInfo.AutoSize = true;
@@ -638,7 +518,143 @@
             this.chkChangeAsmInfo.UseVisualStyleBackColor = true;
             this.chkChangeAsmInfo.CheckedChanged += new System.EventHandler(this.chkChangeAsmInfo_CheckedChanged);
             // 
-            // frmBuilder
+            // txtFileVersion
+            // 
+            this.txtFileVersion.Location = new System.Drawing.Point(110, 236);
+            this.txtFileVersion.Name = "txtFileVersion";
+            this.txtFileVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtFileVersion.TabIndex = 16;
+            this.txtFileVersion.TextChanged += new System.EventHandler(this.txtFileVersion_TextChanged);
+            // 
+            // lblFileVersion
+            // 
+            this.lblFileVersion.AutoSize = true;
+            this.lblFileVersion.Location = new System.Drawing.Point(34, 239);
+            this.lblFileVersion.Name = "lblFileVersion";
+            this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
+            this.lblFileVersion.TabIndex = 15;
+            this.lblFileVersion.Text = "File Version:";
+            // 
+            // txtProductVersion
+            // 
+            this.txtProductVersion.Location = new System.Drawing.Point(110, 208);
+            this.txtProductVersion.Name = "txtProductVersion";
+            this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtProductVersion.TabIndex = 14;
+            this.txtProductVersion.TextChanged += new System.EventHandler(this.txtProductVersion_TextChanged);
+            // 
+            // lblProductVersion
+            // 
+            this.lblProductVersion.AutoSize = true;
+            this.lblProductVersion.Location = new System.Drawing.Point(12, 211);
+            this.lblProductVersion.Name = "lblProductVersion";
+            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
+            this.lblProductVersion.TabIndex = 13;
+            this.lblProductVersion.Text = "Product Version:";
+            // 
+            // txtOriginalFilename
+            // 
+            this.txtOriginalFilename.Location = new System.Drawing.Point(110, 180);
+            this.txtOriginalFilename.Name = "txtOriginalFilename";
+            this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
+            this.txtOriginalFilename.TabIndex = 12;
+            this.txtOriginalFilename.TextChanged += new System.EventHandler(this.txtOriginalFilename_TextChanged);
+            // 
+            // lblOriginalFilename
+            // 
+            this.lblOriginalFilename.AutoSize = true;
+            this.lblOriginalFilename.Location = new System.Drawing.Point(3, 183);
+            this.lblOriginalFilename.Name = "lblOriginalFilename";
+            this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
+            this.lblOriginalFilename.TabIndex = 11;
+            this.lblOriginalFilename.Text = "Original Filename:";
+            // 
+            // txtTrademarks
+            // 
+            this.txtTrademarks.Location = new System.Drawing.Point(110, 152);
+            this.txtTrademarks.Name = "txtTrademarks";
+            this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
+            this.txtTrademarks.TabIndex = 10;
+            this.txtTrademarks.TextChanged += new System.EventHandler(this.txtTrademarks_TextChanged);
+            // 
+            // lblTrademarks
+            // 
+            this.lblTrademarks.AutoSize = true;
+            this.lblTrademarks.Location = new System.Drawing.Point(36, 155);
+            this.lblTrademarks.Name = "lblTrademarks";
+            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.TabIndex = 9;
+            this.lblTrademarks.Text = "Trademarks:";
+            // 
+            // txtCopyright
+            // 
+            this.txtCopyright.Location = new System.Drawing.Point(110, 124);
+            this.txtCopyright.Name = "txtCopyright";
+            this.txtCopyright.Size = new System.Drawing.Size(201, 22);
+            this.txtCopyright.TabIndex = 8;
+            this.txtCopyright.TextChanged += new System.EventHandler(this.txtCopyright_TextChanged);
+            // 
+            // lblCopyright
+            // 
+            this.lblCopyright.AutoSize = true;
+            this.lblCopyright.Location = new System.Drawing.Point(43, 127);
+            this.lblCopyright.Name = "lblCopyright";
+            this.lblCopyright.Size = new System.Drawing.Size(61, 13);
+            this.lblCopyright.TabIndex = 7;
+            this.lblCopyright.Text = "Copyright:";
+            // 
+            // txtCompanyName
+            // 
+            this.txtCompanyName.Location = new System.Drawing.Point(110, 96);
+            this.txtCompanyName.Name = "txtCompanyName";
+            this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
+            this.txtCompanyName.TabIndex = 6;
+            this.txtCompanyName.TextChanged += new System.EventHandler(this.txtCompanyName_TextChanged);
+            // 
+            // lblCompanyName
+            // 
+            this.lblCompanyName.AutoSize = true;
+            this.lblCompanyName.Location = new System.Drawing.Point(14, 99);
+            this.lblCompanyName.Name = "lblCompanyName";
+            this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
+            this.lblCompanyName.TabIndex = 5;
+            this.lblCompanyName.Text = "Company Name:";
+            // 
+            // txtDescription
+            // 
+            this.txtDescription.Location = new System.Drawing.Point(110, 68);
+            this.txtDescription.Name = "txtDescription";
+            this.txtDescription.Size = new System.Drawing.Size(201, 22);
+            this.txtDescription.TabIndex = 4;
+            this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
+            // 
+            // lblDescription
+            // 
+            this.lblDescription.AutoSize = true;
+            this.lblDescription.Location = new System.Drawing.Point(35, 71);
+            this.lblDescription.Name = "lblDescription";
+            this.lblDescription.Size = new System.Drawing.Size(69, 13);
+            this.lblDescription.TabIndex = 3;
+            this.lblDescription.Text = "Description:";
+            // 
+            // txtProductName
+            // 
+            this.txtProductName.Location = new System.Drawing.Point(110, 40);
+            this.txtProductName.Name = "txtProductName";
+            this.txtProductName.Size = new System.Drawing.Size(201, 22);
+            this.txtProductName.TabIndex = 2;
+            this.txtProductName.TextChanged += new System.EventHandler(this.txtProductName_TextChanged);
+            // 
+            // lblProductName
+            // 
+            this.lblProductName.AutoSize = true;
+            this.lblProductName.Location = new System.Drawing.Point(22, 43);
+            this.lblProductName.Name = "lblProductName";
+            this.lblProductName.Size = new System.Drawing.Size(82, 13);
+            this.lblProductName.TabIndex = 1;
+            this.lblProductName.Text = "Product Name:";
+            // 
+            // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -653,7 +669,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmBuilder";
+            this.Name = "FrmBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
