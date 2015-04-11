@@ -10,9 +10,18 @@ namespace xServer.Forms
 {
     public partial class FrmBuilder : Form
     {
+        private bool _loadedProfile;
+        private bool _changed;
+
         public FrmBuilder()
         {
             InitializeComponent();
+        }
+
+        private void HasChanged()
+        {
+            if (_loadedProfile && !_changed)
+                _changed = true;
         }
 
         private void LoadProfile(string profilename)
@@ -41,6 +50,7 @@ namespace xServer.Forms
             txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
             txtProductVersion.Text = pm.ReadValue("ProductVersion");
             txtFileVersion.Text = pm.ReadValue("FileVersion");
+            _loadedProfile = true;
         }
 
         private void SaveProfile(string profilename)
@@ -96,7 +106,7 @@ namespace xServer.Forms
 
         private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (MessageBox.Show("Do you want to save your current settings?", "Save your settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (_changed && MessageBox.Show("Do you want to save your current settings?", "Save your settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 SaveProfile("Default");
             }
@@ -121,50 +131,64 @@ namespace xServer.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(System.IO.Path.GetInvalidPathChars()) + new string(System.IO.Path.GetInvalidFileNameChars());
+            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(System.IO.Path.GetInvalidPathChars()) + new string(System.IO.Path.GetInvalidFileNameChars());
+            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
             if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
                 e.Handled = true;
         }
 
         private void txtInstallname_TextChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             RefreshExamplePath();
         }
 
         private void rbAppdata_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             RefreshExamplePath();
         }
 
         private void rbProgramFiles_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             RefreshExamplePath();
         }
 
         private void rbSystem_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             RefreshExamplePath();
         }
 
         private void txtInstallsub_TextChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             RefreshExamplePath();
         }
 
         private void btnMutex_Click(object sender, EventArgs e)
         {
+            HasChanged();
+
             txtMutex.Text = Helper.GetRandomName(32);
         }
 
         private void chkInstall_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             txtInstallname.Enabled = chkInstall.Checked;
             rbAppdata.Enabled = chkInstall.Checked;
             rbProgramFiles.Enabled = chkInstall.Checked;
@@ -177,11 +201,15 @@ namespace xServer.Forms
 
         private void chkStartup_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             txtRegistryKeyName.Enabled = chkStartup.Checked;
         }
 
         private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e)
         {
+            HasChanged();
+
             ToggleAsmInfoControls();
         }
 
@@ -189,11 +217,11 @@ namespace xServer.Forms
         {
             string path = string.Empty;
             if (rbAppdata.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), txtInstallsub.Text), txtInstallname.Text);
+                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), txtInstallsub.Text), txtInstallname.Text);
             else if (rbProgramFiles.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), txtInstallsub.Text), txtInstallname.Text);
+                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), txtInstallsub.Text), txtInstallname.Text);
             else if (rbSystem.Checked)
-                path = System.IO.Path.Combine(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
+                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
 
             this.Invoke((MethodInvoker)delegate
             {
@@ -317,6 +345,86 @@ namespace xServer.Forms
         {
             Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
             return match.Success;
+        }
+
+        private void txtHost_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtPort_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtMutex_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void chkHide_CheckedChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtRegistryKeyName_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void chkElevation_CheckedChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void chkIconChange_CheckedChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtProductName_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtDescription_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtCompanyName_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtCopyright_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtTrademarks_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtOriginalFilename_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtProductVersion_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtFileVersion_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
         }
     }
 }
