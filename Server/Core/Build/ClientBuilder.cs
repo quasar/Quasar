@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Vestris.ResourceLib;
@@ -12,7 +13,15 @@ namespace xServer.Core.Build
         {
             // PHASE 1 - Settings
             string encKey = Helper.Helper.GetRandomName(20);
-            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+            AssemblyDefinition asmDef;
+            try
+            {
+                asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+            }
+            catch (Exception ex)
+            {
+                throw new FileLoadException(ex.Message);
+            }
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {

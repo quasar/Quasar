@@ -11,11 +11,15 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(2)]
         public int Quality { get; set; }
 
+        [ProtoMember(3)]
+        public int Monitor { get; set; }
+
         public DesktopResponse() { }
-        public DesktopResponse(byte[] image, int quality)
+        public DesktopResponse(byte[] image, int quality, int monitor)
         {
             this.Image = image;
             this.Quality = quality;
+            this.Monitor = monitor;
         }
 
         public void Execute(Client client)
