@@ -186,6 +186,7 @@ namespace xServer.Forms
             }
             else
             {
+                int selectedClients = 0;
                 this.Invoke((MethodInvoker) delegate
                 {
                     foreach (ListViewItem lvi in lstClients.Items)
@@ -196,8 +197,9 @@ namespace xServer.Forms
                             server.ConnectedClients--;
                         }
                     }
+                    selectedClients = lstClients.SelectedItems.Count;
                 });
-                UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
+                UpdateWindowTitle(ListenServer.ConnectedClients, selectedClients);
             }
         }
 
