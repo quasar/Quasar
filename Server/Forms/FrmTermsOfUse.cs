@@ -25,7 +25,7 @@ namespace xServer.Forms
         private void FrmTermsOfUse_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (e.CloseReason == CloseReason.UserClosing && _exit)
-                System.Diagnostics.Process.GetCurrentProcess().Kill();
+                Application.Exit();
         }
 
         private void btnAccept_Click(object sender, EventArgs e)
@@ -37,7 +37,7 @@ namespace xServer.Forms
 
         private void btnDecline_Click(object sender, EventArgs e)
         {
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
+            Application.Exit();
         }
 
         private void Wait20Sec()
