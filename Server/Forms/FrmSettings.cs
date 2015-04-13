@@ -36,20 +36,32 @@ namespace xServer.Forms
         {
             if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
-                if (chkUseUpnp.Checked)
-                    Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
+                try
+                {
+                    if (chkUseUpnp.Checked)
+                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
+                    _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
+                }
+                finally
+                {
 
-                _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
-                btnListen.Text = "Stop listening";
-                ncPort.Enabled = false;
-                txtPassword.Enabled = false;
+                    btnListen.Text = "Stop listening";
+                    ncPort.Enabled = false;
+                    txtPassword.Enabled = false;
+                }
             }
             else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
             {
-                _listenServer.Disconnect();
-                btnListen.Text = "Start listening";
-                ncPort.Enabled = true;
-                txtPassword.Enabled = true;
+                try
+                {
+                    _listenServer.Disconnect();
+                }
+                finally
+                {
+                    btnListen.Text = "Start listening";
+                    ncPort.Enabled = true;
+                    txtPassword.Enabled = true;
+                }
             }
         }
 

