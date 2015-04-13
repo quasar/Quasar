@@ -9,13 +9,13 @@ namespace xClient.Core.Packets.ServerPackets
         public int Quality { get; set; }
 
         [ProtoMember(2)]
-        public int Number { get; set; }
+        public int Monitor { get; set; }
 
         public Desktop() { }
-        public Desktop(int quality, int number)
+        public Desktop(int quality, int monitor)
         {
             this.Quality = quality;
-            this.Number = number;
+            this.Monitor = monitor;
         }
 
         public void Execute(Client client)
