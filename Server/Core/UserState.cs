@@ -26,11 +26,9 @@ namespace xServer.Core
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }
         public bool LastDirectorySeen { get; set; }
-
         public int LastQuality { get; set; }
-
+        public int LastMonitor { get; set; }
         public Bitmap LastDesktop { get; set; }
-
         public UnsafeStreamCodec StreamCodec { get; set; }
 
         public UserState()
@@ -39,6 +37,7 @@ namespace xServer.Core
             LastDesktopSeen = true;
             LastDirectorySeen = true;
             LastQuality = -1;
+            LastMonitor = -1;
         }
 
         public void DisposeForms()

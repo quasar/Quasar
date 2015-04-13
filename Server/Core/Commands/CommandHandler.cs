@@ -115,8 +115,11 @@ namespace xServer.Core.Commands
 			if (client.Value.LastDesktop == null)
 			{
 				client.Value.StreamCodec = new UnsafeStreamCodec();
-				if (client.Value.LastQuality < 0)
+				if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
+				{
 					client.Value.LastQuality = packet.Quality;
+					client.Value.LastMonitor = packet.Monitor;
+				}
 
 				using (MemoryStream ms = new MemoryStream(packet.Image))
 				{
@@ -133,6 +136,7 @@ namespace xServer.Core.Commands
 					}
 					catch
 					{ }
+
 					newScreen = null;
 				}
 			}
@@ -142,10 +146,11 @@ namespace xServer.Core.Commands
 				{
 					lock (client.Value.StreamCodec)
 					{
-						if (client.Value.LastQuality != packet.Quality)
+						if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
 						{
 							client.Value.StreamCodec = new UnsafeStreamCodec();
 							client.Value.LastQuality = packet.Quality;
+							client.Value.LastMonitor = packet.Monitor;
 						}
 
 						Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
