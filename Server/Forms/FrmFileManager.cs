@@ -65,12 +65,10 @@ namespace xServer.Forms
                         if (lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                         {
                             if (_currentDir.EndsWith(@"\"))
-                            {
                                 _currentDir = _currentDir.Remove(_currentDir.Length - 1);
-                            }
 
                             if (_currentDir.Length > 2)
-                                _currentDir = _currentDir.Remove(_currentDir.LastIndexOf(@"\"));
+                                _currentDir = _currentDir.Remove(_currentDir.LastIndexOf(@"\", StringComparison.Ordinal));
 
                             if (!_currentDir.EndsWith(@"\"))
                                 _currentDir = _currentDir + @"\";

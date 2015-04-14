@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Settings;
@@ -39,8 +40,8 @@ namespace xServer.Forms
                 try
                 {
                     if (chkUseUpnp.Checked)
-                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
-                    _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
+                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                 }
                 finally
                 {
@@ -67,8 +68,8 @@ namespace xServer.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("ListenPort", ncPort.Value.ToString());
-            XMLSettings.ListenPort = ushort.Parse(ncPort.Value.ToString());
+            XMLSettings.WriteValue("ListenPort", ncPort.Value.ToString(CultureInfo.InvariantCulture));
+            XMLSettings.ListenPort = ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture));
 
             XMLSettings.WriteValue("AutoListen", chkAutoListen.Checked.ToString());
             XMLSettings.AutoListen = chkAutoListen.Checked;
@@ -87,7 +88,7 @@ namespace xServer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 this.Close();
         }
     }
