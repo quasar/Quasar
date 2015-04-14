@@ -2,20 +2,19 @@
 using System.Drawing.Imaging;
 using System.IO;
 
-namespace xClient.Core.Misc
+namespace xServer.Core.Compression
 {
     public class JpgCompression
     {
-        private EncoderParameter _parameter;
-        private ImageCodecInfo _encoderInfo;
-        private EncoderParameters _encoderParams;
+        private readonly ImageCodecInfo _encoderInfo;
+        private readonly EncoderParameters _encoderParams;
 
-        public JpgCompression(int quality)
+        public JpgCompression(long quality)
         {
-            this._parameter = new EncoderParameter(Encoder.Quality, (long)quality);
+            EncoderParameter parameter = new EncoderParameter(Encoder.Quality, quality);
             this._encoderInfo = GetEncoderInfo("image/jpeg");
             this._encoderParams = new EncoderParameters(2);
-            this._encoderParams.Param[0] = _parameter;
+            this._encoderParams.Param[0] = parameter;
             this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionRle);
         }
 
