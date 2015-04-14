@@ -111,6 +111,24 @@ namespace xServer.Core.Commands
 			if (client.Value.FrmRdp == null)
 				return;
 
+			if (packet.Image == null)
+			{
+				try
+				{
+					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
+					{
+						client.Value.FrmRdp.picDesktop.Image = (Bitmap)client.Value.LastDesktop;
+					});
+				}
+				catch
+				{ }
+
+				client.Value.LastDesktop = null;
+				client.Value.LastDesktopSeen = true;
+
+				return;
+			}
+
 			// we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
 			if (client.Value.LastDesktop == null)
 			{
