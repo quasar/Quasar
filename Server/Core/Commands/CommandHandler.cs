@@ -117,7 +117,7 @@ namespace xServer.Core.Commands
 				{
 					client.Value.FrmRdp.Invoke((MethodInvoker)delegate
 					{
-						client.Value.FrmRdp.picDesktop.Image = (Bitmap)client.Value.LastDesktop;
+						client.Value.FrmRdp.picDesktop.Image = client.Value.LastDesktop;
 					});
 				}
 				catch
