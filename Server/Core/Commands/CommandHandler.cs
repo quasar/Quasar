@@ -341,7 +341,7 @@ namespace xServer.Core.Commands
 					lvi.Text = packet.Filename;
 					client.Value.FrmKl.lstLogs.Items.Add(lvi);
 
-					if (packet.Index == packet.FileCount)
+					if (packet.Index == packet.FileCount || packet.FileCount == 0)
 						client.Value.FrmKl.btnGetLogs.Enabled = true;
 				});
 			}
