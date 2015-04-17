@@ -77,7 +77,7 @@ namespace xClient.Core
                8,
                9,
                13,
-			   20,
+               20,
                32,
                46,
             };
