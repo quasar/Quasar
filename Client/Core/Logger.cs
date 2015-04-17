@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace xClient.Core
 {
@@ -249,4 +248,3 @@ namespace xClient.Core
         }
     }
 }
-
