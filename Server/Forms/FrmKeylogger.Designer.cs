@@ -28,97 +28,94 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.lstLogs = new System.Windows.Forms.ListView();
-            this.hLogs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.rtbLogView = new System.Windows.Forms.RichTextBox();
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
-            this.btnGetLogs = new System.Windows.Forms.Button();
-            this.SuspendLayout();
-            // 
-            // lstLogs
-            // 
-            this.lstLogs.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.lstLogs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+			this.lstLogs = new System.Windows.Forms.ListView();
+			this.hLogs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+			this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+			this.btnGetLogs = new System.Windows.Forms.Button();
+			this.wLogViewer = new System.Windows.Forms.WebBrowser();
+			this.SuspendLayout();
+			// 
+			// lstLogs
+			// 
+			this.lstLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)));
+			this.lstLogs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hLogs});
-            this.lstLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.lstLogs.FullRowSelect = true;
-            this.lstLogs.GridLines = true;
-            this.lstLogs.Location = new System.Drawing.Point(0, 31);
-            this.lstLogs.Name = "lstLogs";
-            this.lstLogs.Size = new System.Drawing.Size(153, 387);
-            this.lstLogs.TabIndex = 0;
-            this.lstLogs.UseCompatibleStateImageBehavior = false;
-            this.lstLogs.View = System.Windows.Forms.View.Details;
-            this.lstLogs.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstLogs_ColumnClick);
-            this.lstLogs.ItemActivate += new System.EventHandler(this.lstLogs_ItemActivate);
-            // 
-            // hLogs
-            // 
-            this.hLogs.Text = "Logs";
-            this.hLogs.Width = 148;
-            // 
-            // rtbLogView
-            // 
-            this.rtbLogView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
-            this.rtbLogView.BackColor = System.Drawing.SystemColors.Window;
-            this.rtbLogView.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.rtbLogView.Location = new System.Drawing.Point(151, 31);
-            this.rtbLogView.Name = "rtbLogView";
-            this.rtbLogView.ReadOnly = true;
-            this.rtbLogView.Size = new System.Drawing.Size(471, 387);
-            this.rtbLogView.TabIndex = 5;
-            this.rtbLogView.Text = "";
-            // 
-            // statusStrip1
-            // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 416);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(622, 22);
-            this.statusStrip1.TabIndex = 6;
-            this.statusStrip1.Text = "statusStrip1";
-            // 
-            // btnGetLogs
-            // 
-            this.btnGetLogs.Location = new System.Drawing.Point(2, 3);
-            this.btnGetLogs.Name = "btnGetLogs";
-            this.btnGetLogs.Size = new System.Drawing.Size(151, 23);
-            this.btnGetLogs.TabIndex = 7;
-            this.btnGetLogs.Text = "Get Logs";
-            this.btnGetLogs.UseVisualStyleBackColor = true;
-            this.btnGetLogs.Click += new System.EventHandler(this.btnGetLogs_Click);
-            // 
-            // FrmKeylogger
-            // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 438);
-            this.Controls.Add(this.btnGetLogs);
-            this.Controls.Add(this.statusStrip1);
-            this.Controls.Add(this.rtbLogView);
-            this.Controls.Add(this.lstLogs);
-            this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
-            this.MinimumSize = new System.Drawing.Size(630, 465);
-            this.Name = "FrmKeylogger";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Keylogger []";
-            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKeylogger_FormClosing);
-            this.Load += new System.EventHandler(this.FrmKeylogger_Load);
-            this.ResumeLayout(false);
-            this.PerformLayout();
+			this.lstLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+			this.lstLogs.FullRowSelect = true;
+			this.lstLogs.GridLines = true;
+			this.lstLogs.Location = new System.Drawing.Point(0, 31);
+			this.lstLogs.Name = "lstLogs";
+			this.lstLogs.Size = new System.Drawing.Size(153, 387);
+			this.lstLogs.TabIndex = 0;
+			this.lstLogs.UseCompatibleStateImageBehavior = false;
+			this.lstLogs.View = System.Windows.Forms.View.Details;
+			this.lstLogs.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstLogs_ColumnClick);
+			this.lstLogs.ItemActivate += new System.EventHandler(this.lstLogs_ItemActivate);
+			// 
+			// hLogs
+			// 
+			this.hLogs.Text = "Logs";
+			this.hLogs.Width = 148;
+			// 
+			// statusStrip1
+			// 
+			this.statusStrip1.Location = new System.Drawing.Point(0, 416);
+			this.statusStrip1.Name = "statusStrip1";
+			this.statusStrip1.Size = new System.Drawing.Size(622, 22);
+			this.statusStrip1.TabIndex = 6;
+			this.statusStrip1.Text = "statusStrip1";
+			// 
+			// btnGetLogs
+			// 
+			this.btnGetLogs.Location = new System.Drawing.Point(2, 3);
+			this.btnGetLogs.Name = "btnGetLogs";
+			this.btnGetLogs.Size = new System.Drawing.Size(151, 23);
+			this.btnGetLogs.TabIndex = 7;
+			this.btnGetLogs.Text = "Get Logs";
+			this.btnGetLogs.UseVisualStyleBackColor = true;
+			this.btnGetLogs.Click += new System.EventHandler(this.btnGetLogs_Click);
+			// 
+			// wLogViewer
+			// 
+			this.wLogViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+						| System.Windows.Forms.AnchorStyles.Left)
+						| System.Windows.Forms.AnchorStyles.Right)));
+			this.wLogViewer.Location = new System.Drawing.Point(155, 31);
+			this.wLogViewer.MinimumSize = new System.Drawing.Size(20, 20);
+			this.wLogViewer.Name = "wLogViewer";
+			this.wLogViewer.ScriptErrorsSuppressed = true;
+			this.wLogViewer.Size = new System.Drawing.Size(467, 384);
+			this.wLogViewer.TabIndex = 8;
+			// 
+			// FrmKeylogger
+			// 
+			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
+			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+			this.ClientSize = new System.Drawing.Size(622, 438);
+			this.Controls.Add(this.wLogViewer);
+			this.Controls.Add(this.btnGetLogs);
+			this.Controls.Add(this.statusStrip1);
+			this.Controls.Add(this.lstLogs);
+			this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+			this.MinimumSize = new System.Drawing.Size(630, 465);
+			this.Name = "FrmKeylogger";
+			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+			this.Text = "xRAT 2.0 - Keylogger []";
+			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKeylogger_FormClosing);
+			this.Load += new System.EventHandler(this.FrmKeylogger_Load);
+			this.ResumeLayout(false);
+			this.PerformLayout();
 
         }
 
         #endregion
 
         private System.Windows.Forms.ColumnHeader hLogs;
-        public System.Windows.Forms.ListView lstLogs;
-        private System.Windows.Forms.RichTextBox rtbLogView;
+		public System.Windows.Forms.ListView lstLogs;
         private System.Windows.Forms.StatusStrip statusStrip1;
         public System.Windows.Forms.Button btnGetLogs;
+		private System.Windows.Forms.WebBrowser wLogViewer;
 
 
 

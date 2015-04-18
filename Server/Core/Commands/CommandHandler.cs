@@ -322,7 +322,7 @@ namespace xServer.Core.Commands
 			if (!Directory.Exists(downloadPath))
 				Directory.CreateDirectory(downloadPath);
 
-			downloadPath = Path.Combine(downloadPath, packet.Filename);
+			downloadPath = Path.Combine(downloadPath, packet.Filename + ".html");
 
 			if (client.Value.FrmKl == null)
 			{
@@ -337,10 +337,6 @@ namespace xServer.Core.Commands
 			{
 				client.Value.FrmKl.Invoke((MethodInvoker)delegate
 				{
-					ListViewItem lvi = new ListViewItem();
-					lvi.Text = packet.Filename;
-					client.Value.FrmKl.lstLogs.Items.Add(lvi);
-
 					if (packet.Index == packet.FileCount || packet.FileCount == 0)
 						client.Value.FrmKl.btnGetLogs.Enabled = true;
 				});
