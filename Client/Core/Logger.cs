@@ -222,7 +222,7 @@ namespace xClient.Core
                         {
                             if (writeHeader)
                             {
-                                sw.Write("Log created on " + DateTime.Now.ToString("MM-dd-yyyy") + "\n\n\n");
+								sw.Write("Log created on " + DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "\n\n\n");
 
                                 if (keyBuffer != "")
                                     sw.Write(keyBuffer);
