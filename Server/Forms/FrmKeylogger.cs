@@ -74,30 +74,30 @@ namespace xServer.Forms
 
             new Core.Packets.ServerPackets.GetLogs().Execute(_connectClient);
 
-			new Thread(() =>
-			{
-				while (!btnGetLogs.Enabled)
-				{
-					Thread.Sleep(15);
-				}
+            new Thread(() =>
+            {
+                while (!btnGetLogs.Enabled)
+                {
+                    Thread.Sleep(15);
+                }
 
-				DirectoryInfo dicInfo = new DirectoryInfo(path);
+                DirectoryInfo dicInfo = new DirectoryInfo(path);
 
-				FileInfo[] iFiles = dicInfo.GetFiles();
+                FileInfo[] iFiles = dicInfo.GetFiles();
 
-				if (iFiles.Length == 0)
-					return;
+                if (iFiles.Length == 0)
+                    return;
 
-				foreach (FileInfo file in iFiles)
-				{
-					lstLogs.Invoke((MethodInvoker)delegate
-					{
-						ListViewItem lvi = new ListViewItem();
-						lvi.Text = file.Name;
-						lstLogs.Items.Add(lvi);
-					});
-				}
-			}).Start();
+                foreach (FileInfo file in iFiles)
+                {
+                    lstLogs.Invoke((MethodInvoker)delegate
+                    {
+                        ListViewItem lvi = new ListViewItem();
+                        lvi.Text = file.Name;
+                        lstLogs.Items.Add(lvi);
+                    });
+                }
+            }).Start();
         }
 
         private void FrmKeylogger_FormClosing(object sender, FormClosingEventArgs e)
