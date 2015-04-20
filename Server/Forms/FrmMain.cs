@@ -23,12 +23,20 @@ namespace xServer.Forms
             if (writeIfNotExist)
                 XMLSettings.WriteDefaultSettings();
 
-            XMLSettings.ListenPort = ushort.Parse(XMLSettings.ReadValue("ListenPort"));
-            XMLSettings.ShowToU = bool.Parse(XMLSettings.ReadValue("ShowToU"));
-            XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
-            XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
-            XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.Password = XMLSettings.ReadValue("Password");
+            try
+            {
+                XMLSettings.ListenPort = ushort.Parse(XMLSettings.ReadValue("ListenPort"));
+                XMLSettings.ShowToU = bool.Parse(XMLSettings.ReadValue("ShowToU"));
+                XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
+                XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
+                XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
+                XMLSettings.Password = XMLSettings.ReadValue("Password");
+            }
+            catch
+            {
+                // If an invalid type is in the Xml file, it will throw an exception because it can't be parsed.
+                // Perhaps surround each parse with a try-catch or an extension method...
+            }
         }
 
         private void ShowTermsOfService(bool show)
@@ -142,7 +150,17 @@ namespace xServer.Forms
             if (XMLSettings.AutoListen)
             {
                 if (XMLSettings.UseUPnP)
-                    UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                {
+                    try
+                    {
+                        UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                    }
+                    catch
+                    {
+                        // It is possible that an invalid type was attempted to be parsed.
+                    }
+                }
+
                 ListenServer.Listen(XMLSettings.ListenPort);
             }
         }
@@ -153,7 +171,16 @@ namespace xServer.Forms
                 ListenServer.Disconnect();
 
             if (XMLSettings.UseUPnP)
-                UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+            {
+                try
+                {
+                    UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                }
+                catch
+                {
+                    // It is possible that an invalid type was attempted to be parsed.
+                }
+            }
 
             nIcon.Visible = false;
         }
@@ -180,21 +207,36 @@ namespace xServer.Forms
         {
             if (connected)
             {
-                client.Value = new UserState(); // Initialize the UserState so we can store values in there if we need to.
+                // Initialize the UserState so we can store values in there if we need to.
+                // Check if it was already initialized so we can dispose of old user state resources if necessary.
+                if (client.Value == null)
+                {
+                    client.Value.Dispose();
+                }
+
+                client.Value = new UserState();
 
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else
             {
                 int selectedClients = 0;
-                this.Invoke((MethodInvoker) delegate
+                this.Invoke((MethodInvoker)delegate
                 {
                     foreach (ListViewItem lvi in lstClients.Items)
                     {
-                        if ((Client) lvi.Tag == client)
+                        Client selectedClient = (lvi.Tag as Client);
+                        if ((selectedClient != null) && (selectedClient == client))
                         {
-                            lvi.Remove();
-                            server.ConnectedClients--;
+                            try
+                            {
+                                selectedClient.Disconnect();
+                                lvi.Remove();
+                            }
+                            finally
+                            {
+                                server.ConnectedClients--;
+                            }
                         }
                     }
                     selectedClients = lstClients.SelectedItems.Count;
@@ -267,10 +309,16 @@ namespace xServer.Forms
             if (e.Column == _lvwColumnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
+                switch (_lvwColumnSorter.Order)
+                {
+                    case SortOrder.Ascending:
+                        _lvwColumnSorter.Order = SortOrder.Descending;
+                        break;
+                    case SortOrder.Descending:
+                    case SortOrder.None:
+                        _lvwColumnSorter.Order = SortOrder.Ascending;
+                        break;
+                }
             }
             else
             {

@@ -129,7 +129,7 @@ namespace xServer.Core
                     return;
                 }
             }
-            catch (Exception ex)
+            catch
             {
                 OnClientState(false);
                 return;

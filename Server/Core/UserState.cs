@@ -1,10 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using xServer.Core.Helper;
 using xServer.Forms;
 
 namespace xServer.Core
 {
-    public class UserState
+    public class UserState : IDisposable
     {
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
@@ -38,6 +39,31 @@ namespace xServer.Core
             LastDirectorySeen = true;
             LastQuality = -1;
             LastMonitor = -1;
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                try
+                {
+                    DisposeForms();
+                }
+                catch
+                { }
+
+                if (LastDesktop != null)
+                {
+                    LastDesktop.Dispose();
+                }
+            }
         }
 
         public void DisposeForms()

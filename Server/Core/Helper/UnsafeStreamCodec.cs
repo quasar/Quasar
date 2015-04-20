@@ -60,7 +60,7 @@ namespace xServer.Core.Helper
             {
                 byte* pScan0 = (byte*)scan0.ToInt32();
                 if (!outStream.CanWrite)
-                    throw new Exception("Must have access to Write in the Stream");
+                    throw new ArgumentException("Must have access to Write in the Stream");
 
                 int stride = 0;
                 int rawLength = 0;
@@ -109,10 +109,10 @@ namespace xServer.Core.Helper
                 int totalDataLength = 0;
 
                 if (this._encodedFormat != format)
-                    throw new Exception("PixelFormat is not equal to previous Bitmap");
+                    throw new ArgumentException("PixelFormat is not equal to previous Bitmap");
 
                 if (this._encodedWidth != imageSize.Width || this._encodedHeight != imageSize.Height)
-                    throw new Exception("Bitmap width/height are not equal to previous bitmap");
+                    throw new ArgumentException("Bitmap width/height are not equal to previous bitmap");
 
                 List<Rectangle> blocks = new List<Rectangle>();
 
@@ -194,74 +194,52 @@ namespace xServer.Core.Helper
                     }
                 }
 
-                /*int maxHeight = 0;
-                int maxWidth = 0;
-
-                for (int i = 0; i < finalUpdates.Count; i++)
-                {
-                    if (finalUpdates[i].Height > maxHeight)
-                        maxHeight = finalUpdates[i].Height;
-                    maxWidth += finalUpdates[i].Width;
-                }
-
-                Bitmap bmp = new Bitmap(maxWidth+1, maxHeight+1);
-                int XOffset = 0;*/
-
                 for (int i = 0; i < finalUpdates.Count; i++)
                 {
                     Rectangle rect = finalUpdates[i];
                     int blockStride = pixelSize * rect.Width;
 
-                    Bitmap tmpBmp = new Bitmap(rect.Width, rect.Height, format);
-                    BitmapData tmpData = tmpBmp.LockBits(new Rectangle(0, 0, tmpBmp.Width, tmpBmp.Height), ImageLockMode.ReadWrite, tmpBmp.PixelFormat);
-                    for (int j = 0, offset = 0; j < rect.Height; j++)
+                    using (Bitmap tmpBmp = new Bitmap(rect.Width, rect.Height, format))
                     {
-                        int blockOffset = (stride * (rect.Y + j)) + (pixelSize * rect.X);
-                        memcpy((byte*)tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint)blockStride); //copy-changes
-                        offset += blockStride;
+                        BitmapData tmpData = null;
+                        try
+                        {
+                            tmpData = tmpBmp.LockBits(new Rectangle(0, 0, tmpBmp.Width, tmpBmp.Height), ImageLockMode.ReadWrite, tmpBmp.PixelFormat);
+
+                            for (int j = 0, offset = 0; j < rect.Height; j++)
+                            {
+                                int blockOffset = (stride * (rect.Y + j)) + (pixelSize * rect.X);
+                                memcpy((byte*)tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint)blockStride); //copy-changes
+                                offset += blockStride;
+                            }
+                        }
+                        finally
+                        {
+                            tmpBmp.UnlockBits(tmpData);
+                        }
+
+                        outStream.Write(BitConverter.GetBytes(rect.X), 0, 4);
+                        outStream.Write(BitConverter.GetBytes(rect.Y), 0, 4);
+                        outStream.Write(BitConverter.GetBytes(rect.Width), 0, 4);
+                        outStream.Write(BitConverter.GetBytes(rect.Height), 0, 4);
+                        outStream.Write(new byte[4], 0, 4);
+
+                        long length = outStream.Length;
+                        long OldPos = outStream.Position;
+
+                        _jpgCompression.Compress(tmpBmp, ref outStream);
+
+                        length = outStream.Position - length;
+
+                        outStream.Position = OldPos - 4;
+                        outStream.Write(BitConverter.GetBytes((int)length), 0, 4);
+                        outStream.Position += length;
+                        totalDataLength += (int)length + (4 * 5);
                     }
-                    tmpBmp.UnlockBits(tmpData);
-
-                    /*using (Graphics g = Graphics.FromImage(bmp))
-                    {
-                        g.DrawImage(TmpBmp, new Point(XOffset, 0));
-                    }
-                    XOffset += TmpBmp.Width;*/
-
-                    outStream.Write(BitConverter.GetBytes(rect.X), 0, 4);
-                    outStream.Write(BitConverter.GetBytes(rect.Y), 0, 4);
-                    outStream.Write(BitConverter.GetBytes(rect.Width), 0, 4);
-                    outStream.Write(BitConverter.GetBytes(rect.Height), 0, 4);
-                    outStream.Write(new byte[4], 0, 4);
-
-                    long length = outStream.Length;
-                    long OldPos = outStream.Position;
-
-                    _jpgCompression.Compress(tmpBmp, ref outStream);
-
-                    length = outStream.Position - length;
-
-                    outStream.Position = OldPos - 4;
-                    outStream.Write(BitConverter.GetBytes((int)length), 0, 4);
-                    outStream.Position += length;
-                    tmpBmp.Dispose();
-                    totalDataLength += (int)length + (4 * 5);
                 }
-
-                /*if (finalUpdates.Count > 0)
-                {
-                    byte[] lele = base.jpgCompression.Compress(bmp);
-                    byte[] compressed = new SafeQuickLZ().compress(lele, 0, lele.Length, 1);
-                    bool Won = lele.Length < outStream.Length;
-                    bool CompressWon = compressed.Length < outStream.Length;
-                    Console.WriteLine(Won + ", " + CompressWon);
-                }
-                bmp.Dispose();*/
 
                 outStream.Position = oldPos;
                 outStream.Write(BitConverter.GetBytes(totalDataLength), 0, 4);
-                blocks.Clear();
-                finalUpdates.Clear();
             }
         }
 
