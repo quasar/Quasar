@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Settings;
@@ -36,27 +37,39 @@ namespace xServer.Forms
         {
             if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
-                if (chkUseUpnp.Checked)
-                    Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString()));
+                try
+                {
+                    if (chkUseUpnp.Checked)
+                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                }
+                finally
+                {
 
-                _listenServer.Listen(ushort.Parse(ncPort.Value.ToString()));
-                btnListen.Text = "Stop listening";
-                ncPort.Enabled = false;
-                txtPassword.Enabled = false;
+                    btnListen.Text = "Stop listening";
+                    ncPort.Enabled = false;
+                    txtPassword.Enabled = false;
+                }
             }
             else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
             {
-                _listenServer.Disconnect();
-                btnListen.Text = "Start listening";
-                ncPort.Enabled = true;
-                txtPassword.Enabled = true;
+                try
+                {
+                    _listenServer.Disconnect();
+                }
+                finally
+                {
+                    btnListen.Text = "Start listening";
+                    ncPort.Enabled = true;
+                    txtPassword.Enabled = true;
+                }
             }
         }
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("ListenPort", ncPort.Value.ToString());
-            XMLSettings.ListenPort = ushort.Parse(ncPort.Value.ToString());
+            XMLSettings.WriteValue("ListenPort", ncPort.Value.ToString(CultureInfo.InvariantCulture));
+            XMLSettings.ListenPort = ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture));
 
             XMLSettings.WriteValue("AutoListen", chkAutoListen.Checked.ToString());
             XMLSettings.AutoListen = chkAutoListen.Checked;
@@ -75,7 +88,7 @@ namespace xServer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == System.Windows.Forms.DialogResult.Yes)
+            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 this.Close();
         }
     }

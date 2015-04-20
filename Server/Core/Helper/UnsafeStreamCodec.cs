@@ -4,7 +4,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Runtime.InteropServices;
-using xServer.Core.Misc;
+using xServer.Core.Compression;
 
 namespace xServer.Core.Helper
 {
