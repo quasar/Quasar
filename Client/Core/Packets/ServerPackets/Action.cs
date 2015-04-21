@@ -8,7 +8,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(1)]
         public int Mode { get; set; }
 
-        public Action() { }
+        public Action()
+        {
+        }
+
         public Action(int mode)
         {
             this.Mode = mode;

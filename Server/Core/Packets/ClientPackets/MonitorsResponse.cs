@@ -8,7 +8,10 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public int Number { get; set; }
 
-        public MonitorsResponse() { }
+        public MonitorsResponse()
+        {
+        }
+
         public MonitorsResponse(int number)
         {
             this.Number = number;

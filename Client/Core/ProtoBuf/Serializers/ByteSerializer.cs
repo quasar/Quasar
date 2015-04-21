@@ -5,32 +5,44 @@ using System;
 using Type = IKVM.Reflection.Type;
 #endif
 
-
-
 namespace ProtoBuf.Serializers
 {
-    sealed class ByteSerializer : IProtoSerializer
+    internal sealed class ByteSerializer : IProtoSerializer
     {
-        public Type ExpectedType { get { return expectedType; } }
+        public Type ExpectedType
+        {
+            get { return expectedType; }
+        }
 
 #if FEAT_IKVM
         readonly Type expectedType;
 #else
-        static readonly Type expectedType = typeof(byte);
+        private static readonly Type expectedType = typeof (byte);
 #endif
+
         public ByteSerializer(ProtoBuf.Meta.TypeModel model)
         {
 #if FEAT_IKVM
             expectedType = model.MapType(typeof(byte));
 #endif
         }
-        bool IProtoSerializer.RequiresOldValue { get { return false; } }
-        bool IProtoSerializer.ReturnsValue { get { return true; } }
+
+        bool IProtoSerializer.RequiresOldValue
+        {
+            get { return false; }
+        }
+
+        bool IProtoSerializer.ReturnsValue
+        {
+            get { return true; }
+        }
+
 #if !FEAT_IKVM
         public void Write(object value, ProtoWriter dest)
         {
-            ProtoWriter.WriteByte((byte)value, dest);
+            ProtoWriter.WriteByte((byte) value, dest);
         }
+
         public object Read(object value, ProtoReader source)
         {
             Helpers.DebugAssert(value == null); // since replaces
@@ -48,7 +60,7 @@ namespace ProtoBuf.Serializers
             ctx.EmitBasicRead("ReadByte", ExpectedType);
         }
 #endif
-
     }
 }
+
 #endif

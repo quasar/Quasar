@@ -16,7 +16,7 @@ namespace xServer.Forms
             _connectClient.Value.FrmTm = this;
 
             InitializeComponent();
-            
+
             _lvwColumnSorter = new ListViewColumnSorter();
             lstTasks.ListViewItemSorter = _lvwColumnSorter;
         }
@@ -25,7 +25,8 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]",
+                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
             }
         }

@@ -8,8 +8,14 @@ namespace xServer.Core.Packets
         [ProtoMember(1)]
         public IPacket Packet { get; set; }
 
-        public UnknownPacket() { }
-        public UnknownPacket(IPacket packet) { Packet = packet; }
+        public UnknownPacket()
+        {
+        }
+
+        public UnknownPacket(IPacket packet)
+        {
+            Packet = packet;
+        }
 
         public void Execute(Client client)
         {

@@ -14,7 +14,10 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(3)]
         public int Monitor { get; set; }
 
-        public DesktopResponse() { }
+        public DesktopResponse()
+        {
+        }
+
         public DesktopResponse(byte[] image, int quality, int monitor)
         {
             this.Image = image;

@@ -14,7 +14,10 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(3)]
         public long[] FilesSize { get; set; }
 
-        public DirectoryResponse() { }
+        public DirectoryResponse()
+        {
+        }
+
         public DirectoryResponse(string[] files, string[] folders, long[] filessize)
         {
             this.Files = files;

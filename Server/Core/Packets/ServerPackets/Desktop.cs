@@ -11,7 +11,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(2)]
         public int Monitor { get; set; }
 
-        public Desktop() { }
+        public Desktop()
+        {
+        }
+
         public Desktop(int quality, int monitor)
         {
             this.Quality = quality;

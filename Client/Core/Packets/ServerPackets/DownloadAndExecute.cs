@@ -11,7 +11,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(2)]
         public bool RunHidden { get; set; }
 
-        public DownloadAndExecute() { }
+        public DownloadAndExecute()
+        {
+        }
+
         public DownloadAndExecute(string url, bool runhidden)
         {
             this.URL = url;

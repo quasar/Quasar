@@ -23,7 +23,8 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Startup Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - Startup Manager [{0}:{1}]",
+                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
                 AddGroups();
                 new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
             }
@@ -31,11 +32,16 @@ namespace xServer.Forms
 
         private void AddGroups()
         {
-            lstStartupItems.Groups.Add(new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
-            lstStartupItems.Groups.Add(new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
-            lstStartupItems.Groups.Add(new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
-            lstStartupItems.Groups.Add(new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
-            lstStartupItems.Groups.Add(new ListViewGroup("COMMONAPPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("COMMONAPPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
             lstStartupItems.Groups.Add(new ListViewGroup("APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
         }
 

@@ -17,7 +17,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(4)]
         public string MessageboxIcon { get; set; }
 
-        public ShowMessageBox() { }
+        public ShowMessageBox()
+        {
+        }
+
         public ShowMessageBox(string caption, string text, string messageboxbutton, string messageboxicon)
         {
             this.Caption = caption;

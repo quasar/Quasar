@@ -28,6 +28,7 @@ namespace ProtoBuf
         {
             return GetExtensionObject(createIfMissing);
         }
+
         /// <summary>
         /// Retrieves the <see cref="IExtension">extension</see> object for the current
         /// instance, optionally creating it if it does not already exist.
@@ -99,6 +100,7 @@ namespace ProtoBuf
         {
             ExtensibleUtil.AppendExtendValue(RuntimeTypeModel.Default, instance, tag, format, value);
         }
+
         /// <summary>
         /// Queries an extensible object for an additional (unexpected) data-field for the instance.
         /// The value returned is the composed value after merging any duplicated content; if the
@@ -173,11 +175,13 @@ namespace ProtoBuf
         /// <param name="format">The data-format to use when decoding the value.</param>
         /// <param name="allowDefinedTag">Allow tags that are present as part of the definition; for example, to query unknown enum values.</param>
         /// <returns>True if data for the field was present, false otherwise.</returns>
-        public static bool TryGetValue<TValue>(IExtensible instance, int tag, DataFormat format, bool allowDefinedTag, out TValue value)
+        public static bool TryGetValue<TValue>(IExtensible instance, int tag, DataFormat format, bool allowDefinedTag,
+            out TValue value)
         {
             value = default(TValue);
             bool set = false;
-            foreach (TValue val in ExtensibleUtil.GetExtendedValues<TValue>(instance, tag, format, true, allowDefinedTag))
+            foreach (
+                TValue val in ExtensibleUtil.GetExtendedValues<TValue>(instance, tag, format, true, allowDefinedTag))
             {
                 // expecting at most one yield...
                 // but don't break; need to read entire stream
@@ -233,11 +237,14 @@ namespace ProtoBuf
         /// <param name="format">The data-format to use when decoding the value.</param>
         /// <param name="allowDefinedTag">Allow tags that are present as part of the definition; for example, to query unknown enum values.</param>
         /// <returns>True if data for the field was present, false otherwise.</returns>
-        public static bool TryGetValue(TypeModel model, System.Type type, IExtensible instance, int tag, DataFormat format, bool allowDefinedTag, out object value)
+        public static bool TryGetValue(TypeModel model, System.Type type, IExtensible instance, int tag,
+            DataFormat format, bool allowDefinedTag, out object value)
         {
             value = null;
             bool set = false;
-            foreach (object val in ExtensibleUtil.GetExtendedValues(model, type, instance, tag, format, true, allowDefinedTag))
+            foreach (
+                object val in
+                    ExtensibleUtil.GetExtendedValues(model, type, instance, tag, format, true, allowDefinedTag))
             {
                 // expecting at most one yield...
                 // but don't break; need to read entire stream
@@ -247,6 +254,7 @@ namespace ProtoBuf
 
             return set;
         }
+
         /// <summary>
         /// Queries an extensible object for an additional (unexpected) data-field for the instance.
         /// Each occurrence of the field is yielded separately, making this usage suitable for "repeated"
@@ -259,7 +267,8 @@ namespace ProtoBuf
         /// <param name="tag">The field identifier; the tag should not be defined as a known data-field for the instance.</param>
         /// <param name="format">The data-format to use when decoding the value.</param>
         /// <returns>An enumerator that yields each occurrence of the field.</returns>
-        public static IEnumerable GetValues(TypeModel model, System.Type type, IExtensible instance, int tag, DataFormat format)
+        public static IEnumerable GetValues(TypeModel model, System.Type type, IExtensible instance, int tag,
+            DataFormat format)
         {
             return ExtensibleUtil.GetExtendedValues(model, type, instance, tag, format, false, false);
         }
@@ -281,6 +290,5 @@ namespace ProtoBuf
         {
             ExtensibleUtil.AppendExtendValue(model, instance, tag, format, value);
         }
-        
-    }   
+    }
 }

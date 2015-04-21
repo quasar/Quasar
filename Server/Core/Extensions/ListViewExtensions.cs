@@ -8,6 +8,7 @@ namespace xServer.Core.Extensions
     {
         [DllImport("user32.dll")]
         private static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
         private static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, int pszSubIdList);
 

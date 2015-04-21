@@ -15,6 +15,7 @@ namespace xClient.Core
     public class Client
     {
         public event ClientFailEventHandler ClientFail;
+
         public delegate void ClientFailEventHandler(Client s, Exception ex);
 
         private void OnClientFail(Exception ex)
@@ -26,6 +27,7 @@ namespace xClient.Core
         }
 
         public event ClientStateEventHandler ClientState;
+
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
         private void OnClientState(bool connected)
@@ -40,6 +42,7 @@ namespace xClient.Core
         }
 
         public event ClientReadEventHandler ClientRead;
+
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         private void OnClientRead(IPacket packet)
@@ -51,6 +54,7 @@ namespace xClient.Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
+
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
@@ -71,7 +75,7 @@ namespace xClient.Core
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
         public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
+        public const int MAX_PACKET_SIZE = (1024*1024)*1; //1MB
         private Socket _handle;
         private int _typeIndex;
 
@@ -91,7 +95,8 @@ namespace xClient.Core
         private const bool compressionEnabled = true;
 
         public Client()
-        { }
+        {
+        }
 
         public void Connect(string host, ushort port)
         {
@@ -122,7 +127,7 @@ namespace xClient.Core
 
         private void Initialize()
         {
-            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
+            AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -213,7 +218,8 @@ namespace xClient.Core
             {
                 if (_buffer.Length - _writeOffset > 0)
                 {
-                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None, AsyncReceive, null);
+                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
+                        AsyncReceive, null);
                 }
                 else
                 {
@@ -238,7 +244,7 @@ namespace xClient.Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 
@@ -247,7 +253,8 @@ namespace xClient.Core
                     }
                 }
                 catch
-                { }
+                {
+                }
             }
         }
 

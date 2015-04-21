@@ -56,9 +56,12 @@ namespace xClient.Core.Helper
             {
                 bmpRes = new Bitmap(bmp.Width, bmp.Height);
 
-                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height), System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
-                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height), System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmData = bmp.LockBits(new Rectangle(0, 0, bmp.Width, bmp.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmData2 = bmp2.LockBits(new Rectangle(0, 0, bmp2.Width, bmp2.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadOnly, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
+                bmDataRes = bmpRes.LockBits(new Rectangle(0, 0, bmpRes.Width, bmpRes.Height),
+                    System.Drawing.Imaging.ImageLockMode.ReadWrite, System.Drawing.Imaging.PixelFormat.Format32bppArgb);
 
                 IntPtr scan0 = bmData.Scan0;
                 IntPtr scan02 = bmData2.Scan0;
@@ -74,12 +77,12 @@ namespace xClient.Core.Helper
                 for (int y = 0; y < nHeight; y++)
                 {
                     //define the pointers inside the first loop for parallelizing
-                    byte* p = (byte*)scan0.ToPointer();
-                    p += y * stride;
-                    byte* p2 = (byte*)scan02.ToPointer();
-                    p2 += y * stride2;
-                    byte* pRes = (byte*)scan0Res.ToPointer();
-                    pRes += y * strideRes;
+                    byte* p = (byte*) scan0.ToPointer();
+                    p += y*stride;
+                    byte* p2 = (byte*) scan02.ToPointer();
+                    p2 += y*stride2;
+                    byte* pRes = (byte*) scan0Res.ToPointer();
+                    pRes += y*strideRes;
 
                     for (int x = 0; x < nWidth; x++)
                     {
@@ -113,7 +116,8 @@ namespace xClient.Core.Helper
                         bmp.UnlockBits(bmData);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmData2 != null)
@@ -123,7 +127,8 @@ namespace xClient.Core.Helper
                         bmp2.UnlockBits(bmData2);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmDataRes != null)
@@ -133,7 +138,8 @@ namespace xClient.Core.Helper
                         bmpRes.UnlockBits(bmDataRes);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 if (bmpRes != null)
@@ -154,7 +160,9 @@ namespace xClient.Core.Helper
 
         public static string FormatMacAddress(string macAddress)
         {
-            return (macAddress.Length != 12) ? "00:00:00:00:00:00" : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
+            return (macAddress.Length != 12)
+                ? "00:00:00:00:00:00"
+                : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
         }
     }
 }

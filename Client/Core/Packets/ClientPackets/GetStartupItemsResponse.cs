@@ -9,7 +9,10 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public Dictionary<string, int> StartupItems { get; set; }
 
-        public GetStartupItemsResponse() { }
+        public GetStartupItemsResponse()
+        {
+        }
+
         public GetStartupItemsResponse(Dictionary<string, int> startupitems)
         {
             this.StartupItems = startupitems;

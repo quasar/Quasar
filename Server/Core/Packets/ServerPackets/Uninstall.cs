@@ -5,7 +5,9 @@ namespace xServer.Core.Packets.ServerPackets
     [ProtoContract]
     public class Uninstall : IPacket
     {
-        public Uninstall() { }
+        public Uninstall()
+        {
+        }
 
         public void Execute(Client client)
         {

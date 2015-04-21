@@ -11,6 +11,7 @@ namespace ProtoBuf.Meta
         private Type type;
         private string formattedName;
         private readonly bool typeFixed;
+
         /// <summary>
         /// The type involved in this map; if this is initially null, a Type is expected to be provided for the string in FormattedName.
         /// </summary>
@@ -19,13 +20,14 @@ namespace ProtoBuf.Meta
             get { return type; }
             set
             {
-                if(type != value)
+                if (type != value)
                 {
                     if (typeFixed) throw new InvalidOperationException("The type is fixed and cannot be changed");
                     type = value;
                 }
             }
         }
+
         /// <summary>
         /// The formatted-name involved in this map; if this is initially null, a formatted-name is expected from the type in Type.
         /// </summary>
@@ -36,25 +38,28 @@ namespace ProtoBuf.Meta
             {
                 if (formattedName != value)
                 {
-                    if (!typeFixed) throw new InvalidOperationException("The formatted-name is fixed and cannot be changed");
+                    if (!typeFixed)
+                        throw new InvalidOperationException("The formatted-name is fixed and cannot be changed");
                     formattedName = value;
                 }
             }
         }
+
         internal TypeFormatEventArgs(string formattedName)
         {
             if (Helpers.IsNullOrEmpty(formattedName)) throw new ArgumentNullException("formattedName");
             this.formattedName = formattedName;
             // typeFixed = false; <== implicit
         }
+
         internal TypeFormatEventArgs(System.Type type)
         {
             if (type == null) throw new ArgumentNullException("type");
             this.type = type;
             typeFixed = true;
         }
-
     }
+
     /// <summary>
     /// Delegate type used to perform type-formatting functions; the sender originates as the type-model.
     /// </summary>

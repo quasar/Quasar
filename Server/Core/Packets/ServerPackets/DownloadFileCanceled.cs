@@ -8,7 +8,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(1)]
         public int ID { get; set; }
 
-        public DownloadFileCanceled() { }
+        public DownloadFileCanceled()
+        {
+        }
+
         public DownloadFileCanceled(int id)
         {
             this.ID = id;

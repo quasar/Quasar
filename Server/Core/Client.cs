@@ -16,6 +16,7 @@ namespace xServer.Core
     public class Client
     {
         public event ClientStateEventHandler ClientState;
+
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
         private void OnClientState(bool connected)
@@ -30,6 +31,7 @@ namespace xServer.Core
         }
 
         public event ClientReadEventHandler ClientRead;
+
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         private void OnClientRead(IPacket packet)
@@ -41,6 +43,7 @@ namespace xServer.Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
+
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
@@ -61,7 +64,7 @@ namespace xServer.Core
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
         public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024 * 1024) * 1; //1MB
+        public const int MAX_PACKET_SIZE = (1024*1024)*1; //1MB
         private Socket _handle;
         private int _typeIndex;
 
@@ -84,13 +87,14 @@ namespace xServer.Core
         private const bool compressionEnabled = true;
 
         public Client()
-        { }
+        {
+        }
 
         internal Client(Server server, Socket sock, Type[] packets)
         {
             try
             {
-                AddTypesToSerializer(typeof(IPacket), packets);
+                AddTypesToSerializer(typeof (IPacket), packets);
                 _parentServer = server;
                 Initialize();
 
@@ -102,7 +106,7 @@ namespace xServer.Core
                 _handle.NoDelay = true;
 
                 _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
-                EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                EndPoint = (IPEndPoint) _handle.RemoteEndPoint;
                 OnClientState(true);
             }
             catch
@@ -113,7 +117,7 @@ namespace xServer.Core
 
         private void Initialize()
         {
-            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
+            AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -206,7 +210,8 @@ namespace xServer.Core
             {
                 if (_buffer.Length - _writeOffset > 0)
                 {
-                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None, AsyncReceive, null);
+                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
+                        AsyncReceive, null);
                 }
                 else
                 {
@@ -231,7 +236,7 @@ namespace xServer.Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T)packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 
@@ -240,7 +245,8 @@ namespace xServer.Core
                     }
                 }
                 catch
-                { }
+                {
+                }
             }
         }
 

@@ -8,7 +8,10 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public string[] SystemInfos { get; set; }
 
-        public GetSystemInfoResponse() { }
+        public GetSystemInfoResponse()
+        {
+        }
+
         public GetSystemInfoResponse(string[] systeminfos)
         {
             this.SystemInfos = systeminfos;

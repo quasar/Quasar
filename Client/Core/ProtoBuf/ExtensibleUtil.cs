@@ -18,7 +18,7 @@ namespace ProtoBuf
 #if FX11
     sealed
 #else
-    static
+        static
 #endif
         class ExtensibleUtil
     {
@@ -32,20 +32,26 @@ namespace ProtoBuf
         /// this ensures that we don't get issues with subclasses declaring conflicting types -
         /// the caller must respect the fields defined for the type they pass in.
         /// </summary>
-        internal static IEnumerable<TValue> GetExtendedValues<TValue>(IExtensible instance, int tag, DataFormat format, bool singleton, bool allowDefinedTag)
+        internal static IEnumerable<TValue> GetExtendedValues<TValue>(IExtensible instance, int tag, DataFormat format,
+            bool singleton, bool allowDefinedTag)
         {
-            foreach (TValue value in GetExtendedValues(RuntimeTypeModel.Default, typeof(TValue), instance, tag, format, singleton, allowDefinedTag))
+            foreach (
+                TValue value in
+                    GetExtendedValues(RuntimeTypeModel.Default, typeof (TValue), instance, tag, format, singleton,
+                        allowDefinedTag))
             {
                 yield return value;
             }
         }
 #endif
+
         /// <summary>
         /// All this does is call GetExtendedValuesTyped with the correct type for "instance";
         /// this ensures that we don't get issues with subclasses declaring conflicting types -
         /// the caller must respect the fields defined for the type they pass in.
         /// </summary>
-        internal static IEnumerable GetExtendedValues(TypeModel model, Type type, IExtensible instance, int tag, DataFormat format, bool singleton, bool allowDefinedTag)
+        internal static IEnumerable GetExtendedValues(TypeModel model, Type type, IExtensible instance, int tag,
+            DataFormat format, bool singleton, bool allowDefinedTag)
         {
 #if FEAT_IKVM
             throw new NotSupportedException();
@@ -70,10 +76,13 @@ namespace ProtoBuf
             Stream stream = extn.BeginQuery();
             object value = null;
             ProtoReader reader = null;
-            try {
+            try
+            {
                 SerializationContext ctx = new SerializationContext();
                 reader = ProtoReader.Create(stream, model, ctx, ProtoReader.TO_EOF);
-                while (model.TryDeserializeAuxiliaryType(reader, format, tag, type, ref value, true, false, false, false) && value != null)
+                while (
+                    model.TryDeserializeAuxiliaryType(reader, format, tag, type, ref value, true, false, false, false) &&
+                    value != null)
                 {
                     if (!singleton)
                     {
@@ -98,41 +107,49 @@ namespace ProtoBuf
                 result.CopyTo(resultArr, 0);
                 return resultArr;
 #endif
-            } finally {
+            }
+            finally
+            {
                 ProtoReader.Recycle(reader);
                 extn.EndQuery(stream);
             }
-#endif       
+#endif
         }
 
-        internal static void AppendExtendValue(TypeModel model, IExtensible instance, int tag, DataFormat format, object value)
+        internal static void AppendExtendValue(TypeModel model, IExtensible instance, int tag, DataFormat format,
+            object value)
         {
 #if FEAT_IKVM
             throw new NotSupportedException();
 #else
-            if(instance == null) throw new ArgumentNullException("instance");
-            if(value == null) throw new ArgumentNullException("value");
+            if (instance == null) throw new ArgumentNullException("instance");
+            if (value == null) throw new ArgumentNullException("value");
 
             // TODO
             //model.CheckTagNotInUse(tag);
 
             // obtain the extension object and prepare to write
             IExtension extn = instance.GetExtensionObject(true);
-            if (extn == null) throw new InvalidOperationException("No extension object available; appended data would be lost.");
+            if (extn == null)
+                throw new InvalidOperationException("No extension object available; appended data would be lost.");
             bool commit = false;
             Stream stream = extn.BeginAppend();
-            try {
-                using(ProtoWriter writer = new ProtoWriter(stream, model, null)) {
+            try
+            {
+                using (ProtoWriter writer = new ProtoWriter(stream, model, null))
+                {
                     model.TrySerializeAuxiliaryType(writer, null, format, tag, value, false);
                     writer.Close();
                 }
                 commit = true;
             }
-            finally {
+            finally
+            {
                 extn.EndAppend(stream, commit);
             }
 #endif
         }
+
 //#if !NO_GENERICS
 //        /// <summary>
 //        /// Stores the given value into the instance's stream; the serializer
@@ -147,5 +164,4 @@ namespace ProtoBuf
 //        }
 //#endif
     }
-
 }

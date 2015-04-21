@@ -5,7 +5,7 @@ using NATUPNPLib;
 
 namespace xServer.Core.Helper
 {
-    static class UPnP
+    internal static class UPnP
     {
         public static void ForwardPort(ushort port)
         {
@@ -65,7 +65,8 @@ namespace xServer.Core.Helper
                         portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
                 }
                 catch
-                { }
+                {
+                }
             }).Start();
         }
 
@@ -78,7 +79,8 @@ namespace xServer.Core.Helper
                     portMap.Remove(port, "TCP");
             }
             catch
-            { }
+            {
+            }
         }
     }
 }

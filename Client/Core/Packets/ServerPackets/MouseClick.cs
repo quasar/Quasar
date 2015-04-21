@@ -17,7 +17,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(4)]
         public int Y { get; set; }
 
-        public MouseClick() { }
+        public MouseClick()
+        {
+        }
+
         public MouseClick(bool leftclick, bool doubleclick, int x, int y)
         {
             this.LeftClick = leftclick;

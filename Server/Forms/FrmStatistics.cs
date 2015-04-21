@@ -8,17 +8,17 @@ namespace xServer.Forms
 {
     public partial class FrmStatistics : Form
     {
-        readonly long _bytesReceived;
-        readonly long _bytesSent;
-        int _receivedPercent;
-        int _sentPercent;
+        private readonly long _bytesReceived;
+        private readonly long _bytesSent;
+        private int _receivedPercent;
+        private int _sentPercent;
 
-        readonly int _connectedClients;
-        readonly int _allTimeConnectedClients;
-        int _offlineClients;
-        int _connectedClientsPercent;
-        int _allTimePercent;
-        int _offlineClientsPercent;
+        private readonly int _connectedClients;
+        private readonly int _allTimeConnectedClients;
+        private int _offlineClients;
+        private int _connectedClientsPercent;
+        private int _allTimePercent;
+        private int _offlineClientsPercent;
 
         public FrmStatistics(long received, long sent, int connected, int alltimeconnectedclients)
         {
@@ -45,10 +45,11 @@ namespace xServer.Forms
 
         private void tabTraffic_Paint(object sender, PaintEventArgs e)
         {
-            DrawPieChartTraffic(new float[] { _bytesReceived, _bytesSent });
+            DrawPieChartTraffic(new float[] {_bytesReceived, _bytesSent});
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-            e.Graphics.DrawString(string.Format("{0} received ({1}%)", Helper.GetFileSize(_bytesReceived), _receivedPercent),
+            e.Graphics.DrawString(
+                string.Format("{0} received ({1}%)", Helper.GetFileSize(_bytesReceived), _receivedPercent),
                 this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
@@ -58,14 +59,16 @@ namespace xServer.Forms
 
         private void tabClients_Paint(object sender, PaintEventArgs e)
         {
-            DrawPieChartClients(new float[] { _connectedClients, _allTimeConnectedClients, _offlineClients });
+            DrawPieChartClients(new float[] {_connectedClients, _allTimeConnectedClients, _offlineClients});
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
-            e.Graphics.DrawString(string.Format("{0} Connected Clients ({1}%)", _connectedClients, _connectedClientsPercent),
+            e.Graphics.DrawString(
+                string.Format("{0} Connected Clients ({1}%)", _connectedClients, _connectedClientsPercent),
                 this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-            e.Graphics.DrawString(string.Format("{0} All Time Connected Clients ({1}%)", _allTimeConnectedClients, _allTimePercent),
+            e.Graphics.DrawString(
+                string.Format("{0} All Time Connected Clients ({1}%)", _allTimeConnectedClients, _allTimePercent),
                 this.Font, new SolidBrush(Color.Black), new Point(260, 153));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Red), 5), new Point(220, 190), new Point(250, 190));
@@ -75,7 +78,7 @@ namespace xServer.Forms
 
         private void DrawPieChartTraffic(float[] values)
         {
-            tabTraffic.Invoke((MethodInvoker)delegate
+            tabTraffic.Invoke((MethodInvoker) delegate
             {
                 using (var g = tabTraffic.CreateGraphics())
                 using (var p = new Pen(Color.Black, 1))
@@ -89,7 +92,7 @@ namespace xServer.Forms
                     foreach (var value in values)
                         total += value;
                     for (int i = 0; i < values.Length; i++)
-                        values[i] = (values[i] / total) * 360;
+                        values[i] = (values[i]/total)*360;
 
                     using (SolidBrush b1 = new SolidBrush(Color.Green), b2 = new SolidBrush(Color.Blue))
                     {
@@ -104,7 +107,7 @@ namespace xServer.Forms
 
         private void DrawPieChartClients(float[] values)
         {
-            tabClients.Invoke((MethodInvoker)delegate
+            tabClients.Invoke((MethodInvoker) delegate
             {
                 using (var g = tabClients.CreateGraphics())
                 using (var p = new Pen(Color.Black, 1))
@@ -118,9 +121,12 @@ namespace xServer.Forms
                     foreach (var value in values)
                         total += value;
                     for (int i = 0; i < values.Length; i++)
-                        values[i] = (values[i] / total) * 360;
+                        values[i] = (values[i]/total)*360;
 
-                    using (SolidBrush b1 = new SolidBrush(Color.Green), b2 = new SolidBrush(Color.Blue), b3 = new SolidBrush(Color.Red))
+                    using (
+                        SolidBrush b1 = new SolidBrush(Color.Green),
+                            b2 = new SolidBrush(Color.Blue),
+                            b3 = new SolidBrush(Color.Red))
                     {
                         g.DrawPie(p, rec, 0, values[0]);
                         g.FillPie(b1, rec, 0, values[0]);
@@ -135,7 +141,7 @@ namespace xServer.Forms
 
         private int CalculatePercentage(float value, float sum)
         {
-            return (sum != 0) ? (int)((value / sum) * 100) : 0;
+            return (sum != 0) ? (int) ((value/sum)*100) : 0;
         }
     }
 }

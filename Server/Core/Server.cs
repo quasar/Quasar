@@ -12,6 +12,7 @@ namespace xServer.Core
         public long BytesSent { get; set; }
 
         public event ServerStateEventHandler ServerState;
+
         public delegate void ServerStateEventHandler(Server s, bool listening);
 
         private void OnServerState(bool listening)
@@ -23,6 +24,7 @@ namespace xServer.Core
         }
 
         public event ClientStateEventHandler ClientState;
+
         public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         private void OnClientState(Client c, bool connected)
@@ -34,6 +36,7 @@ namespace xServer.Core
         }
 
         public event ClientReadEventHandler ClientRead;
+
         public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
         private void OnClientRead(Client c, IPacket packet)
@@ -45,6 +48,7 @@ namespace xServer.Core
         }
 
         public event ClientWriteEventHandler ClientWrite;
+
         public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length);
 
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
@@ -64,12 +68,10 @@ namespace xServer.Core
         public bool Listening { get; private set; }
 
         private List<Client> _clients;
+
         public Client[] Clients
         {
-            get
-            {
-                return Listening ? _clients.ToArray() : new Client[0];
-            }
+            get { return Listening ? _clients.ToArray() : new Client[0]; }
         }
 
         public int ConnectedClients { get; set; }
@@ -101,7 +103,8 @@ namespace xServer.Core
                             _handle.Close();
                         }
                         catch
-                        { }
+                        {
+                        }
                     }
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -194,7 +197,8 @@ namespace xServer.Core
                         _clients.RemoveAt(0);
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
             }
 

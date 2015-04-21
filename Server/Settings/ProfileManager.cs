@@ -52,7 +52,8 @@ namespace xServer.Settings
                 }
             }
             catch
-            { }
+            {
+            }
         }
 
         public string ReadValue(string pstrValueToRead)

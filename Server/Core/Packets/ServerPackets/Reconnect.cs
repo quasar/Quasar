@@ -5,7 +5,9 @@ namespace xServer.Core.Packets.ServerPackets
     [ProtoContract]
     public class Reconnect : IPacket
     {
-        public Reconnect() { }
+        public Reconnect()
+        {
+        }
 
         public void Execute(Client client)
         {

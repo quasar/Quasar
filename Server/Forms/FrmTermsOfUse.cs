@@ -17,7 +17,7 @@ namespace xServer.Forms
 
         private void FrmTermsOfUse_Load(object sender, EventArgs e)
         {
-            lblToU.Left = (this.Width / 2) - (lblToU.Width / 2);
+            lblToU.Left = (this.Width/2) - (lblToU.Width/2);
             Thread t = new Thread(Wait20Sec);
             t.Start();
         }
@@ -47,16 +47,14 @@ namespace xServer.Forms
                 Thread.Sleep(1000);
                 try
                 {
-                    this.Invoke((MethodInvoker)delegate
-                    {
-                        btnAccept.Text = "Accept (" + i + ")";
-                    });
+                    this.Invoke((MethodInvoker) delegate { btnAccept.Text = "Accept (" + i + ")"; });
                 }
                 catch
-                { }
+                {
+                }
             }
 
-            this.Invoke((MethodInvoker)delegate
+            this.Invoke((MethodInvoker) delegate
             {
                 btnAccept.Text = "Accept";
                 btnAccept.Enabled = true;

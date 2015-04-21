@@ -15,14 +15,21 @@ namespace ProtoBuf
         public int Value
         {
             get { return enumValue; }
-            set { this.enumValue = value; hasValue = true; }
+            set
+            {
+                this.enumValue = value;
+                hasValue = true;
+            }
         }
 
         /// <summary>
         /// Indicates whether this instance has a customised value mapping
         /// </summary>
         /// <returns>true if a specific value is set</returns>
-        public bool HasValue() { return hasValue; }
+        public bool HasValue()
+        {
+            return hasValue;
+        }
 
         private bool hasValue;
         private int enumValue;
@@ -31,7 +38,12 @@ namespace ProtoBuf
         /// Gets or sets the defined name of the enum, as used in .proto
         /// (this name is not used during serialization).
         /// </summary>
-        public string Name { get { return name; } set { name = value; } }
+        public string Name
+        {
+            get { return name; }
+            set { name = value; }
+        }
+
         private string name;
     }
 }

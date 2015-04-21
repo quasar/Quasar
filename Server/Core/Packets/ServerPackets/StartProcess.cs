@@ -8,7 +8,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(1)]
         public string Processname { get; set; }
 
-        public StartProcess() { }
+        public StartProcess()
+        {
+        }
+
         public StartProcess(string processname)
         {
             this.Processname = processname;

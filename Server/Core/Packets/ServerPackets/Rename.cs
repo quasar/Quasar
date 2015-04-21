@@ -14,7 +14,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(3)]
         public bool IsDir { get; set; }
 
-        public Rename() { }
+        public Rename()
+        {
+        }
+
         public Rename(string path, string newpath, bool isdir)
         {
             this.Path = path;

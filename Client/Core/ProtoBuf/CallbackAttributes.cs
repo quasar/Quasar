@@ -8,26 +8,34 @@ namespace ProtoBuf
 #if !CF && !SILVERLIGHT && !MONODROID && !WINRT && !IOS && !PORTABLE
     [ImmutableObject(true)]
 #endif
-    public sealed class ProtoBeforeSerializationAttribute : Attribute { }
+    public sealed class ProtoBeforeSerializationAttribute : Attribute
+    {
+    }
 
     /// <summary>Specifies a method on the root-contract in an hierarchy to be invoked after serialization.</summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 #if !CF && !SILVERLIGHT && !MONODROID && !WINRT && !IOS && !PORTABLE
     [ImmutableObject(true)]
 #endif
-    public sealed class ProtoAfterSerializationAttribute : Attribute { }
+    public sealed class ProtoAfterSerializationAttribute : Attribute
+    {
+    }
 
     /// <summary>Specifies a method on the root-contract in an hierarchy to be invoked before deserialization.</summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 #if !CF && !SILVERLIGHT && !MONODROID && !WINRT && !IOS && !PORTABLE
     [ImmutableObject(true)]
 #endif
-    public sealed class ProtoBeforeDeserializationAttribute : Attribute { }
+    public sealed class ProtoBeforeDeserializationAttribute : Attribute
+    {
+    }
 
     /// <summary>Specifies a method on the root-contract in an hierarchy to be invoked after deserialization.</summary>
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
 #if !CF && !SILVERLIGHT && !MONODROID && !WINRT && !IOS && !PORTABLE
     [ImmutableObject(true)]
 #endif
-    public sealed class ProtoAfterDeserializationAttribute : Attribute { }
+    public sealed class ProtoAfterDeserializationAttribute : Attribute
+    {
+    }
 }

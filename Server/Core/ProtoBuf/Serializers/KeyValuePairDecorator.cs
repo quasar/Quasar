@@ -1,5 +1,4 @@
-﻿
-namespace ProtoBuf.Serializers
+﻿namespace ProtoBuf.Serializers
 {
     /*
     sealed class KeyValuePairDecorator : IProtoSerializer

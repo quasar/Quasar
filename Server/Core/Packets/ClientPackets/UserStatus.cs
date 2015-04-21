@@ -8,7 +8,10 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public string Message { get; set; }
 
-        public UserStatus() { }
+        public UserStatus()
+        {
+        }
+
         public UserStatus(string message)
         {
             Message = message;

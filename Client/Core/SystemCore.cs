@@ -18,20 +18,45 @@ namespace xClient.Core
     public static class SystemCore
     {
         [DllImport("user32.dll")]
-        static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
+        private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
         [StructLayout(LayoutKind.Sequential)]
-        struct LASTINPUTINFO
+        private struct LASTINPUTINFO
         {
-            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+            public static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
 
-            [MarshalAs(UnmanagedType.U4)]
-            public UInt32 cbSize;
-            [MarshalAs(UnmanagedType.U4)]
-            public UInt32 dwTime;
+            [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
         }
 
-        public static readonly string[] ImageList = { "ad.png", "ae.png", "af.png", "ag.png", "ai.png", "al.png", "am.png", "an.png", "ao.png", "ar.png", "as.png", "at.png", "au.png", "aw.png", "ax.png", "az.png", "ba.png", "bb.png", "bd.png", "be.png", "bf.png", "bg.png", "bh.png", "bi.png", "bj.png", "bm.png", "bn.png", "bo.png", "br.png", "bs.png", "bt.png", "bv.png", "bw.png", "by.png", "bz.png", "ca.png", "catalonia.png", "cc.png", "cd.png", "cf.png", "cg.png", "ch.png", "ci.png", "ck.png", "cl.png", "cm.png", "cn.png", "co.png", "cr.png", "cs.png", "cu.png", "cv.png", "cx.png", "cy.png", "cz.png", "de.png", "dj.png", "dk.png", "dm.png", "do.png", "dz.png", "ec.png", "ee.png", "eg.png", "eh.png", "england.png", "er.png", "es.png", "et.png", "europeanunion.png", "fam.png", "fi.png", "fj.png", "fk.png", "fm.png", "fo.png", "fr.png", "ga.png", "gb.png", "gd.png", "ge.png", "gf.png", "gh.png", "gi.png", "gl.png", "gm.png", "gn.png", "gp.png", "gq.png", "gr.png", "gs.png", "gt.png", "gu.png", "gw.png", "gy.png", "hk.png", "hm.png", "hn.png", "hr.png", "ht.png", "hu.png", "id.png", "ie.png", "il.png", "in.png", "io.png", "iq.png", "ir.png", "is.png", "it.png", "jm.png", "jo.png", "jp.png", "ke.png", "kg.png", "kh.png", "ki.png", "km.png", "kn.png", "kp.png", "kr.png", "kw.png", "ky.png", "kz.png", "la.png", "lb.png", "lc.png", "li.png", "lk.png", "lr.png", "ls.png", "lt.png", "lu.png", "lv.png", "ly.png", "ma.png", "mc.png", "md.png", "me.png", "mg.png", "mh.png", "mk.png", "ml.png", "mm.png", "mn.png", "mo.png", "mp.png", "mq.png", "mr.png", "ms.png", "mt.png", "mu.png", "mv.png", "mw.png", "mx.png", "my.png", "mz.png", "na.png", "nc.png", "ne.png", "nf.png", "ng.png", "ni.png", "nl.png", "no.png", "np.png", "nr.png", "nu.png", "nz.png", "om.png", "pa.png", "pe.png", "pf.png", "pg.png", "ph.png", "pk.png", "pl.png", "pm.png", "pn.png", "pr.png", "ps.png", "pt.png", "pw.png", "py.png", "qa.png", "re.png", "ro.png", "rs.png", "ru.png", "rw.png", "sa.png", "sb.png", "sc.png", "scotland.png", "sd.png", "se.png", "sg.png", "sh.png", "si.png", "sj.png", "sk.png", "sl.png", "sm.png", "sn.png", "so.png", "sr.png", "st.png", "sv.png", "sy.png", "sz.png", "tc.png", "td.png", "tf.png", "tg.png", "th.png", "tj.png", "tk.png", "tl.png", "tm.png", "tn.png", "to.png", "tr.png", "tt.png", "tv.png", "tw.png", "tz.png", "ua.png", "ug.png", "um.png", "us.png", "uy.png", "uz.png", "va.png", "vc.png", "ve.png", "vg.png", "vi.png", "vn.png", "vu.png", "wales.png", "wf.png", "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png" };
+        public static readonly string[] ImageList =
+        {
+            "ad.png", "ae.png", "af.png", "ag.png", "ai.png", "al.png",
+            "am.png", "an.png", "ao.png", "ar.png", "as.png", "at.png", "au.png", "aw.png", "ax.png", "az.png", "ba.png",
+            "bb.png", "bd.png", "be.png", "bf.png", "bg.png", "bh.png", "bi.png", "bj.png", "bm.png", "bn.png", "bo.png",
+            "br.png", "bs.png", "bt.png", "bv.png", "bw.png", "by.png", "bz.png", "ca.png", "catalonia.png", "cc.png",
+            "cd.png", "cf.png", "cg.png", "ch.png", "ci.png", "ck.png", "cl.png", "cm.png", "cn.png", "co.png", "cr.png",
+            "cs.png", "cu.png", "cv.png", "cx.png", "cy.png", "cz.png", "de.png", "dj.png", "dk.png", "dm.png", "do.png",
+            "dz.png", "ec.png", "ee.png", "eg.png", "eh.png", "england.png", "er.png", "es.png", "et.png",
+            "europeanunion.png", "fam.png", "fi.png", "fj.png", "fk.png", "fm.png", "fo.png", "fr.png", "ga.png",
+            "gb.png", "gd.png", "ge.png", "gf.png", "gh.png", "gi.png", "gl.png", "gm.png", "gn.png", "gp.png", "gq.png",
+            "gr.png", "gs.png", "gt.png", "gu.png", "gw.png", "gy.png", "hk.png", "hm.png", "hn.png", "hr.png", "ht.png",
+            "hu.png", "id.png", "ie.png", "il.png", "in.png", "io.png", "iq.png", "ir.png", "is.png", "it.png", "jm.png",
+            "jo.png", "jp.png", "ke.png", "kg.png", "kh.png", "ki.png", "km.png", "kn.png", "kp.png", "kr.png", "kw.png",
+            "ky.png", "kz.png", "la.png", "lb.png", "lc.png", "li.png", "lk.png", "lr.png", "ls.png", "lt.png", "lu.png",
+            "lv.png", "ly.png", "ma.png", "mc.png", "md.png", "me.png", "mg.png", "mh.png", "mk.png", "ml.png", "mm.png",
+            "mn.png", "mo.png", "mp.png", "mq.png", "mr.png", "ms.png", "mt.png", "mu.png", "mv.png", "mw.png", "mx.png",
+            "my.png", "mz.png", "na.png", "nc.png", "ne.png", "nf.png", "ng.png", "ni.png", "nl.png", "no.png", "np.png",
+            "nr.png", "nu.png", "nz.png", "om.png", "pa.png", "pe.png", "pf.png", "pg.png", "ph.png", "pk.png", "pl.png",
+            "pm.png", "pn.png", "pr.png", "ps.png", "pt.png", "pw.png", "py.png", "qa.png", "re.png", "ro.png", "rs.png",
+            "ru.png", "rw.png", "sa.png", "sb.png", "sc.png", "scotland.png", "sd.png", "se.png", "sg.png", "sh.png",
+            "si.png", "sj.png", "sk.png", "sl.png", "sm.png", "sn.png", "so.png", "sr.png", "st.png", "sv.png", "sy.png",
+            "sz.png", "tc.png", "td.png", "tf.png", "tg.png", "th.png", "tj.png", "tk.png", "tl.png", "tm.png", "tn.png",
+            "to.png", "tr.png", "tt.png", "tv.png", "tw.png", "tz.png", "ua.png", "ug.png", "um.png", "us.png", "uy.png",
+            "uz.png", "va.png", "vc.png", "ve.png", "vg.png", "vi.png", "vn.png", "vu.png", "wales.png", "wf.png",
+            "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png"
+        };
+
         public static bool Disconnect = false;
         public static string OperatingSystem = string.Empty;
         public static string MyPath = string.Empty;
@@ -97,7 +122,8 @@ namespace xClient.Core
                 }
             }
             catch
-            { }
+            {
+            }
 
             return "Unknown";
         }
@@ -114,7 +140,7 @@ namespace xClient.Core
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
-                        installedRAM = (int)(bytes / 1048576);
+                        installedRAM = (int) (bytes/1048576);
                     }
                 }
 
@@ -199,7 +225,7 @@ namespace xClient.Core
 
         public static string GetUptime()
         {
-            int uptimeSec = Environment.TickCount / 1000;
+            int uptimeSec = Environment.TickCount/1000;
             TimeSpan result = TimeSpan.FromSeconds(uptimeSec);
             return string.Format("{0}d : {1}h : {2}m : {3}s", result.Days, result.Hours, result.Minutes, result.Seconds);
         }
@@ -218,7 +244,9 @@ namespace xClient.Core
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.OperationalStatus == OperationalStatus.Up)
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                    ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet &&
+                    ni.OperationalStatus == OperationalStatus.Up)
                 {
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                     {
@@ -238,7 +266,9 @@ namespace xClient.Core
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 || ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet && ni.OperationalStatus == OperationalStatus.Up)
+                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                    ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet &&
+                    ni.OperationalStatus == OperationalStatus.Up)
                 {
                     bool foundCorrect = false;
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
@@ -354,10 +384,10 @@ namespace xClient.Core
         {
             uint idleTime = 0;
             LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
-            lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
+            lastInputInfo.cbSize = (uint) Marshal.SizeOf(lastInputInfo);
             lastInputInfo.dwTime = 0;
 
-            uint envTicks = (uint)Environment.TickCount;
+            uint envTicks = (uint) Environment.TickCount;
 
             if (GetLastInputInfo(ref lastInputInfo))
             {
@@ -365,7 +395,7 @@ namespace xClient.Core
                 idleTime = envTicks - lastInputTick;
             }
 
-            idleTime = ((idleTime > 0) ? (idleTime / 1000) : 0);
+            idleTime = ((idleTime > 0) ? (idleTime/1000) : 0);
 
             return (idleTime > 600); // idle for 10 minutes
         }
@@ -390,7 +420,8 @@ namespace xClient.Core
                     if (ex is IOException || ex is UnauthorizedAccessException)
                     {
                         // kill old process if new mutex
-                        Process[] foundProcesses = Process.GetProcessesByName(Path.GetFileNameWithoutExtension(InstallPath));
+                        Process[] foundProcesses =
+                            Process.GetProcessesByName(Path.GetFileNameWithoutExtension(InstallPath));
                         int myPid = Process.GetCurrentProcess().Id;
                         foreach (var prc in foundProcesses)
                         {
@@ -414,7 +445,10 @@ namespace xClient.Core
                 {
                     try // try LocalMachine
                     {
-                        using (RegistryKey key = Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        using (
+                            RegistryKey key =
+                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -425,7 +459,10 @@ namespace xClient.Core
                     {
                         try
                         {
-                            using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                            using (
+                                RegistryKey key =
+                                    Registry.CurrentUser.OpenSubKey(
+                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
                             {
                                 if (key == null) throw new Exception();
                                 key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -433,14 +470,18 @@ namespace xClient.Core
                             }
                         }
                         catch
-                        { }
+                        {
+                        }
                     }
                 }
                 else
                 {
                     try
                     {
-                        using (RegistryKey key = Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -448,7 +489,8 @@ namespace xClient.Core
                         }
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
             }
 
@@ -459,7 +501,8 @@ namespace xClient.Core
                     File.SetAttributes(InstallPath, FileAttributes.Hidden);
                 }
                 catch
-                { }
+                {
+                }
             }
 
             //start file

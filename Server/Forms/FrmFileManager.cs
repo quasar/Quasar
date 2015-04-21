@@ -27,7 +27,8 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]",
+                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
                 new Core.Packets.ServerPackets.Drives().Execute(_connectClient);
             }
         }
@@ -114,7 +115,8 @@ namespace xServer.Forms
 
                         this.Invoke((MethodInvoker) delegate
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { ID.ToString(), "Downloading...", files.SubItems[0].Text });
+                            ListViewItem lvi =
+                                new ListViewItem(new string[] {ID.ToString(), "Downloading...", files.SubItems[0].Text});
                             lstTransfers.Items.Add(lvi);
                         });
                     }
@@ -177,14 +179,16 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     bool isDir = files.Tag.ToString() == "dir";
-                    string text = string.Format("Are you sure you want to delete this {0}", (isDir) ? "directory?" : "file?");
+                    string text = string.Format("Are you sure you want to delete this {0}",
+                        (isDir) ? "directory?" : "file?");
 
                     if (path.EndsWith(@"\"))
                         path = path + files.SubItems[0].Text;
                     else
                         path = path + @"\" + files.SubItems[0].Text;
 
-                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                        DialogResult.Yes)
                     {
                         if (_connectClient != null)
                             new Core.Packets.ServerPackets.Delete(path, isDir).Execute(_connectClient);
@@ -210,7 +214,8 @@ namespace xServer.Forms
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
                             if (_connectClient != null)
-                                new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path, AutostartItem.Type).Execute(_connectClient);
+                                new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path,
+                                    AutostartItem.Type).Execute(_connectClient);
                         }
                     }
                 }
@@ -228,12 +233,14 @@ namespace xServer.Forms
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + _connectClient.EndPoint.Address.ToString());
+            string downloadPath = Path.Combine(Application.StartupPath,
+                "Clients\\" + _connectClient.EndPoint.Address.ToString());
 
             if (Directory.Exists(downloadPath))
                 Process.Start(downloadPath);
             else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private void ctxtCancel_Click(object sender, EventArgs e)

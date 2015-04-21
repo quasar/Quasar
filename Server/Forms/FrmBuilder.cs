@@ -106,7 +106,9 @@ namespace xServer.Forms
 
         private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_changed && MessageBox.Show("Do you want to save your current settings?", "Save your settings?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (_changed &&
+                MessageBox.Show("Do you want to save your current settings?", "Save your settings?",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 SaveProfile("Default");
             }
@@ -217,24 +219,34 @@ namespace xServer.Forms
         {
             string path = string.Empty;
             if (rbAppdata.Checked)
-                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                            txtInstallsub.Text), txtInstallname.Text);
             else if (rbProgramFiles.Checked)
-                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                            txtInstallsub.Text), txtInstallname.Text);
             else if (rbSystem.Checked)
-                path = Path.Combine(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text),
+                        txtInstallname.Text);
 
-            this.Invoke((MethodInvoker)delegate
-            {
-                txtExamplePath.Text = path + ".exe";
-            });
+            this.Invoke((MethodInvoker) delegate { txtExamplePath.Text = path + ".exe"; });
         }
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) && !string.IsNullOrEmpty(txtDelay.Text) &&                      // Connection Information
-                !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) &&                                                         // Client Options
-                !chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) && !string.IsNullOrEmpty(txtInstallsub.Text)) &&  // Installation Options
-                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))                                             // Persistence and Registry Features
+            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) &&
+                !string.IsNullOrEmpty(txtDelay.Text) && // Connection Information
+                !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // Client Options
+                !chkInstall.Checked ||
+                (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) &&
+                 !string.IsNullOrEmpty(txtInstallsub.Text)) && // Installation Options
+                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))
+                // Persistence and Registry Features
             {
                 string output = string.Empty;
                 string icon = string.Empty;
@@ -266,9 +278,11 @@ namespace xServer.Forms
                         string[] asmInfo = null;
                         if (chkChangeAsmInfo.Checked)
                         {
-                            if (!IsValidVersionNumber(txtProductVersion.Text) || !IsValidVersionNumber(txtFileVersion.Text))
+                            if (!IsValidVersionNumber(txtProductVersion.Text) ||
+                                !IsValidVersionNumber(txtFileVersion.Text))
                             {
-                                MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                                MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder",
+                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
                                 return;
                             }
 
@@ -288,20 +302,25 @@ namespace xServer.Forms
                             chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text),
                             GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
 
-                        MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,
+                            MessageBoxIcon.Information);
                     }
                     catch (FileLoadException)
                     {
-                        MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.", "Error loading Client", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
+                            "Error loading Client", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message, ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        MessageBox.Show(
+                            string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
+                                ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                     }
                 }
             }
             else
-                MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
         }
 
         private int GetInstallPath()
@@ -329,14 +348,14 @@ namespace xServer.Forms
 
         private void ToggleAsmInfoControls()
         {
-            this.Invoke((MethodInvoker)delegate
+            this.Invoke((MethodInvoker) delegate
             {
                 foreach (Control ctrl in groupAsmInfo.Controls)
                 {
                     if (ctrl is Label)
-                        ((Label)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                        ((Label) ctrl).Enabled = chkChangeAsmInfo.Checked;
                     else if (ctrl is TextBox)
-                        ((TextBox)ctrl).Enabled = chkChangeAsmInfo.Checked;
+                        ((TextBox) ctrl).Enabled = chkChangeAsmInfo.Checked;
                 }
             });
         }

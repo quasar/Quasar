@@ -8,7 +8,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(1)]
         public string DownloadURL { get; set; }
 
-        public Update() { }
+        public Update()
+        {
+        }
+
         public Update(string downloadurl)
         {
             this.DownloadURL = downloadurl;

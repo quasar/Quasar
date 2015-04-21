@@ -23,8 +23,12 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(6)]
         public string CustomMessage { get; set; }
 
-        public DownloadFileResponse() { }
-        public DownloadFileResponse(int id, string filename, byte[] block, int maxblocks, int currentblock, string custommessage)
+        public DownloadFileResponse()
+        {
+        }
+
+        public DownloadFileResponse(int id, string filename, byte[] block, int maxblocks, int currentblock,
+            string custommessage)
         {
             this.ID = id;
             this.Filename = filename;

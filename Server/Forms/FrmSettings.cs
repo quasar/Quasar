@@ -13,7 +13,7 @@ namespace xServer.Forms
         public FrmSettings(Server listenServer)
         {
             this._listenServer = listenServer;
-            
+
             InitializeComponent();
 
             if (listenServer.Listening)
@@ -45,7 +45,6 @@ namespace xServer.Forms
                 }
                 finally
                 {
-
                     btnListen.Text = "Stop listening";
                     ncPort.Enabled = false;
                     txtPassword.Enabled = false;
@@ -88,7 +87,8 @@ namespace xServer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
+            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                DialogResult.Yes)
                 this.Close();
         }
     }

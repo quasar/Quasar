@@ -6,7 +6,6 @@ namespace xServer.Controls
     {
         public MainMenuEx()
         {
-
         }
     }
 }

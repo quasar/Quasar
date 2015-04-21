@@ -15,7 +15,7 @@ namespace xClient.Core.Compression
             this._encoderInfo = GetEncoderInfo("image/jpeg");
             this._encoderParams = new EncoderParameters(2);
             this._encoderParams.Param[0] = parameter;
-            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionRle);
+            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long) EncoderValue.CompressionRle);
         }
 
         public byte[] Compress(Bitmap bmp)
@@ -26,6 +26,7 @@ namespace xClient.Core.Compression
                 return stream.ToArray();
             }
         }
+
         public void Compress(Bitmap bmp, ref Stream targetStream)
         {
             bmp.Save(targetStream, _encoderInfo, _encoderParams);

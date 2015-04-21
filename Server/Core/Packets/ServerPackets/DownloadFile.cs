@@ -11,7 +11,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(2)]
         public int ID { get; set; }
 
-        public DownloadFile() { }
+        public DownloadFile()
+        {
+        }
+
         public DownloadFile(string remotepath, int id)
         {
             this.RemotePath = remotepath;

@@ -11,13 +11,14 @@ namespace xServer.Core.Build
 
         private int length { get; set; }
         private MemberOverloader TypeOverloader;
-        Dictionary<TypeDefinition, MemberOverloader> methodOverloaders;
-        Dictionary<TypeDefinition, MemberOverloader> fieldOverloaders;
-        Dictionary<TypeDefinition, MemberOverloader> eventOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> methodOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> fieldOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> eventOverloaders;
 
         public Renamer(AssemblyDefinition asmDef)
             : this(asmDef, 20)
-        { }
+        {
+        }
 
         public Renamer(AssemblyDefinition asmDef, int length)
         {
@@ -50,7 +51,9 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.StartsWith("My") || typeDef.Namespace.StartsWith("xClient.Core.Packets") || typeDef.Namespace == "xClient.Core" || typeDef.Namespace == "xClient.Core.Elevation" || typeDef.Namespace == "xClient.Core.Compression" || typeDef.Namespace.StartsWith("ProtoBuf"))
+            if (typeDef.Namespace.StartsWith("My") || typeDef.Namespace.StartsWith("xClient.Core.Packets") ||
+                typeDef.Namespace == "xClient.Core" || typeDef.Namespace == "xClient.Core.Elevation" ||
+                typeDef.Namespace == "xClient.Core.Compression" || typeDef.Namespace.StartsWith("ProtoBuf"))
                 return;
 
             TypeOverloader.GiveName(typeDef);
@@ -97,7 +100,8 @@ namespace xServer.Core.Build
             return GetOverloader(this.eventOverloaders, typeDef);
         }
 
-        private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary, TypeDefinition targetTypeDef)
+        private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary,
+            TypeDefinition targetTypeDef)
         {
             MemberOverloader overloader;
             if (!overloaderDictionary.TryGetValue(targetTypeDef, out overloader))
@@ -155,7 +159,7 @@ namespace xServer.Core.Build
 
                 for (int i = 0; i < StartingLength; i++)
                 {
-                    builder.Append((char)new Random(Guid.NewGuid().GetHashCode()).Next(int.MinValue, int.MaxValue));
+                    builder.Append((char) new Random(Guid.NewGuid().GetHashCode()).Next(int.MinValue, int.MaxValue));
                 }
 
                 return builder.ToString();

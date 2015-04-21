@@ -16,15 +16,17 @@ namespace xServer.Core.Build
         private class NativeMethods
         {
             [DllImport("kernel32")]
-            public static extern IntPtr BeginUpdateResource(string fileName, [MarshalAs(UnmanagedType.Bool)]bool deleteExistingResources);
+            public static extern IntPtr BeginUpdateResource(string fileName,
+                [MarshalAs(UnmanagedType.Bool)] bool deleteExistingResources);
 
             [DllImport("kernel32")]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool UpdateResource(IntPtr hUpdate, IntPtr type, IntPtr name, short language, [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)]byte[] data, int dataSize);
+            public static extern bool UpdateResource(IntPtr hUpdate, IntPtr type, IntPtr name, short language,
+                [MarshalAs(UnmanagedType.LPArray, SizeParamIndex = 5)] byte[] data, int dataSize);
 
             [DllImport("kernel32")]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool EndUpdateResource(IntPtr hUpdate, [MarshalAs(UnmanagedType.Bool)]bool discard);
+            public static extern bool EndUpdateResource(IntPtr hUpdate, [MarshalAs(UnmanagedType.Bool)] bool discard);
         }
 
         // The first structure in an ICO file lets us know how many images are in the file.
@@ -116,28 +118,30 @@ namespace xServer.Core.Build
             IconFile iconFile = IconFile.FromFile(iconFileName);
             var hUpdate = NativeMethods.BeginUpdateResource(exeFileName, false);
             var data = iconFile.CreateIconGroupData(iconBaseID);
-            NativeMethods.UpdateResource(hUpdate, new IntPtr(RT_GROUP_ICON), new IntPtr(iconGroupID), 0, data, data.Length);
+            NativeMethods.UpdateResource(hUpdate, new IntPtr(RT_GROUP_ICON), new IntPtr(iconGroupID), 0, data,
+                data.Length);
             for (int i = 0; i <= iconFile.ImageCount - 1; i++)
             {
                 var image = iconFile.ImageData(i);
-                NativeMethods.UpdateResource(hUpdate, new IntPtr(RT_ICON), new IntPtr(iconBaseID + i), 0, image, image.Length);
+                NativeMethods.UpdateResource(hUpdate, new IntPtr(RT_ICON), new IntPtr(iconBaseID + i), 0, image,
+                    image.Length);
             }
             NativeMethods.EndUpdateResource(hUpdate, false);
         }
 
         private class IconFile
         {
-
             private ICONDIR iconDir = new ICONDIR();
             private ICONDIRENTRY[] iconEntry;
 
             private byte[][] iconImage;
+
             public int ImageCount
             {
                 get { return iconDir.Count; }
             }
 
-            public byte[] ImageData (int index)
+            public byte[] ImageData(int index)
             {
                 return iconImage[index];
             }
@@ -153,19 +157,22 @@ namespace xServer.Core.Build
                 // garbage collector compacts the heap)
                 GCHandle pinnedBytes = GCHandle.Alloc(fileBytes, GCHandleType.Pinned);
                 // Read the ICONDIR
-                instance.iconDir = (ICONDIR)Marshal.PtrToStructure(pinnedBytes.AddrOfPinnedObject(), typeof(ICONDIR));
+                instance.iconDir = (ICONDIR) Marshal.PtrToStructure(pinnedBytes.AddrOfPinnedObject(), typeof (ICONDIR));
                 // which tells us how many images are in the ico file. For each image, there's a ICONDIRENTRY, and associated pixel data.
                 instance.iconEntry = new ICONDIRENTRY[instance.iconDir.Count];
                 instance.iconImage = new byte[instance.iconDir.Count][];
                 // The first ICONDIRENTRY will be immediately after the ICONDIR, so the offset to it is the size of ICONDIR
                 int offset = Marshal.SizeOf(instance.iconDir);
                 // After reading an ICONDIRENTRY we step forward by the size of an ICONDIRENTRY            
-                var iconDirEntryType = typeof(ICONDIRENTRY);
+                var iconDirEntryType = typeof (ICONDIRENTRY);
                 var size = Marshal.SizeOf(iconDirEntryType);
                 for (int i = 0; i <= instance.iconDir.Count - 1; i++)
                 {
                     // Grab the structure.
-                    var entry = (ICONDIRENTRY)Marshal.PtrToStructure(new IntPtr(pinnedBytes.AddrOfPinnedObject().ToInt64() + offset), iconDirEntryType);
+                    var entry =
+                        (ICONDIRENTRY)
+                            Marshal.PtrToStructure(new IntPtr(pinnedBytes.AddrOfPinnedObject().ToInt64() + offset),
+                                iconDirEntryType);
                     instance.iconEntry[i] = entry;
                     // Grab the associated pixel data.
                     instance.iconImage[i] = new byte[entry.BytesInRes];
@@ -179,7 +186,8 @@ namespace xServer.Core.Build
             public byte[] CreateIconGroupData(uint iconBaseID)
             {
                 // This will store the memory version of the icon.
-                int sizeOfIconGroupData = Marshal.SizeOf(typeof(ICONDIR)) + Marshal.SizeOf(typeof(GRPICONDIRENTRY)) * ImageCount;
+                int sizeOfIconGroupData = Marshal.SizeOf(typeof (ICONDIR)) +
+                                          Marshal.SizeOf(typeof (GRPICONDIRENTRY))*ImageCount;
                 byte[] data = new byte[sizeOfIconGroupData];
                 var pinnedData = GCHandle.Alloc(data, GCHandleType.Pinned);
                 Marshal.StructureToPtr(iconDir, pinnedData.AddrOfPinnedObject(), false);
@@ -189,7 +197,8 @@ namespace xServer.Core.Build
                     GRPICONDIRENTRY grpEntry = new GRPICONDIRENTRY();
                     BITMAPINFOHEADER bitmapheader = new BITMAPINFOHEADER();
                     var pinnedBitmapInfoHeader = GCHandle.Alloc(bitmapheader, GCHandleType.Pinned);
-                    Marshal.Copy(ImageData(i), 0, pinnedBitmapInfoHeader.AddrOfPinnedObject(), Marshal.SizeOf(typeof(BITMAPINFOHEADER)));
+                    Marshal.Copy(ImageData(i), 0, pinnedBitmapInfoHeader.AddrOfPinnedObject(),
+                        Marshal.SizeOf(typeof (BITMAPINFOHEADER)));
                     pinnedBitmapInfoHeader.Free();
                     grpEntry.Width = iconEntry[i].Width;
                     grpEntry.Height = iconEntry[i].Height;
@@ -199,13 +208,13 @@ namespace xServer.Core.Build
                     grpEntry.BitCount = bitmapheader.BitCount;
                     grpEntry.BytesInRes = iconEntry[i].BytesInRes;
                     grpEntry.ID = Convert.ToUInt16(iconBaseID + i);
-                    Marshal.StructureToPtr(grpEntry, new IntPtr(pinnedData.AddrOfPinnedObject().ToInt64() + offset), false);
-                    offset += Marshal.SizeOf(typeof(GRPICONDIRENTRY));
+                    Marshal.StructureToPtr(grpEntry, new IntPtr(pinnedData.AddrOfPinnedObject().ToInt64() + offset),
+                        false);
+                    offset += Marshal.SizeOf(typeof (GRPICONDIRENTRY));
                 }
                 pinnedData.Free();
                 return data;
             }
-
         }
     }
 }

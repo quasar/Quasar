@@ -11,7 +11,10 @@ namespace xServer.Core.Packets.ServerPackets
         [ProtoMember(2)]
         public bool IsDir { get; set; }
 
-        public Delete() { }
+        public Delete()
+        {
+        }
+
         public Delete(string path, bool isdir)
         {
             this.Path = path;

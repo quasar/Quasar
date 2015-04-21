@@ -14,7 +14,10 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(3)]
         public int Type { get; set; }
 
-        public AddStartupItem() { }
+        public AddStartupItem()
+        {
+        }
+
         public AddStartupItem(string name, string path, int type)
         {
             this.Name = name;
