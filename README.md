@@ -8,7 +8,7 @@ Features
 ---
 * Buffered TCP/IP stream
 * Protocol Buffers
-* Compressed (LZ4) & Encrypted (AES-128) communication
+* Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
