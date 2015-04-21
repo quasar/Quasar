@@ -340,6 +340,7 @@ namespace xServer.Forms
                 if (lstClients.SelectedItems.Count != 0)
                 {
                     Client c = (Client)lstClients.SelectedItems[0].Tag;
+                    
                     if (c.Value.FrmSi != null)
                     {
                         c.Value.FrmSi.Focus();
