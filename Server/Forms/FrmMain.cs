@@ -28,6 +28,7 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
+            XMLSettings.ShowToolTip = bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip")) ? XMLSettings.ReadValue("ShowToolTip") : "False"); //fallback
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
 
@@ -48,7 +49,8 @@ namespace xServer.Forms
             Instance = this;
 
             ReadSettings();
-#if(!DEBUG)
+
+#if !DEBUG
             ShowTermsOfService(XMLSettings.ShowToU);
 #endif
 

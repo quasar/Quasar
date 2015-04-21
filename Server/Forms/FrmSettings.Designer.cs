@@ -39,6 +39,7 @@
             this.lblPassword = new System.Windows.Forms.Label();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkUseUpnp = new System.Windows.Forms.CheckBox();
+            this.chkShowTooltip = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
@@ -47,7 +48,7 @@
             this.btnSave.Location = new System.Drawing.Point(227, 210);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 9;
+            this.btnSave.TabIndex = 10;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -88,9 +89,9 @@
             this.chkAutoListen.AutoSize = true;
             this.chkAutoListen.Location = new System.Drawing.Point(15, 63);
             this.chkAutoListen.Name = "chkAutoListen";
-            this.chkAutoListen.Size = new System.Drawing.Size(136, 17);
+            this.chkAutoListen.Size = new System.Drawing.Size(249, 17);
             this.chkAutoListen.TabIndex = 5;
-            this.chkAutoListen.Text = "Enable auto listening";
+            this.chkAutoListen.Text = "Listen for new connections on xRAT startup";
             this.chkAutoListen.UseVisualStyleBackColor = true;
             // 
             // chkPopup
@@ -98,9 +99,9 @@
             this.chkPopup.AutoSize = true;
             this.chkPopup.Location = new System.Drawing.Point(15, 86);
             this.chkPopup.Name = "chkPopup";
-            this.chkPopup.Size = new System.Drawing.Size(267, 17);
+            this.chkPopup.Size = new System.Drawing.Size(259, 17);
             this.chkPopup.TabIndex = 6;
-            this.chkPopup.Text = "Show popup notification on server connection";
+            this.chkPopup.Text = "Show popup notification on new connection";
             this.chkPopup.UseVisualStyleBackColor = true;
             // 
             // btnListen
@@ -118,7 +119,7 @@
             this.btnCancel.Location = new System.Drawing.Point(146, 210);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 8;
+            this.btnCancel.TabIndex = 9;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -149,11 +150,22 @@
             this.chkUseUpnp.Text = "Try to automatically port forward (UPnP)";
             this.chkUseUpnp.UseVisualStyleBackColor = true;
             // 
-            // frmSettings
+            // chkShowTooltip
+            // 
+            this.chkShowTooltip.AutoSize = true;
+            this.chkShowTooltip.Location = new System.Drawing.Point(15, 132);
+            this.chkShowTooltip.Name = "chkShowTooltip";
+            this.chkShowTooltip.Size = new System.Drawing.Size(268, 17);
+            this.chkShowTooltip.TabIndex = 8;
+            this.chkShowTooltip.Text = "Show tooltip on client with system information";
+            this.chkShowTooltip.UseVisualStyleBackColor = true;
+            // 
+            // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(314, 245);
+            this.Controls.Add(this.chkShowTooltip);
             this.Controls.Add(this.chkUseUpnp);
             this.Controls.Add(this.txtPassword);
             this.Controls.Add(this.lblPassword);
@@ -169,7 +181,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmSettings";
+            this.Name = "FrmSettings";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Settings";
             this.Load += new System.EventHandler(this.FrmSettings_Load);
@@ -191,5 +203,6 @@
         private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckBox chkUseUpnp;
+        private System.Windows.Forms.CheckBox chkShowTooltip;
     }
 }

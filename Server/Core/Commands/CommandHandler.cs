@@ -58,7 +58,7 @@ namespace xServer.Core.Commands
                         ShowPopup(client);
 
                     client.Value.IsAuthenticated = true;
-                    new Core.Packets.ServerPackets.GetSystemInfo().Execute(client);
+                    new Packets.ServerPackets.GetSystemInfo().Execute(client);
                 }
                 catch
                 {
@@ -413,41 +413,43 @@ namespace xServer.Core.Commands
 
         public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
         {
-            try
+            if (XMLSettings.ShowToolTip)
             {
-                FrmMain.Instance.lstClients.Invoke((MethodInvoker)delegate
+                try
                 {
-                    foreach (ListViewItem item in FrmMain.Instance.lstClients.Items)
+                    FrmMain.Instance.lstClients.Invoke((MethodInvoker)delegate
                     {
-                        if (item.Tag == client)
+                        foreach (ListViewItem item in FrmMain.Instance.lstClients.Items)
                         {
-                            var builder = new StringBuilder();
-                            for (int i = 0; i < packet.SystemInfos.Length; i += 2)
+                            if (item.Tag == client)
                             {
-                                if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
+                                var builder = new StringBuilder();
+                                for (int i = 0; i < packet.SystemInfos.Length; i += 2)
                                 {
-                                    builder.AppendFormat("{0}: {1}\r\n", packet.SystemInfos[i], packet.SystemInfos[i + 1]);
+                                    if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
+                                    {
+                                        builder.AppendFormat("{0}: {1}\r\n", packet.SystemInfos[i], packet.SystemInfos[i + 1]);
+                                    }
                                 }
+                                item.ToolTipText = builder.ToString();
                             }
-                            item.ToolTipText = builder.ToString();
                         }
-                    }
-                });
+                    });
+                }
+                catch
+                {
+                }
             }
-            catch (Exception)
-            { }
 
             if (client.Value.FrmSi == null)
                 return;
 
             ListViewItem[] lviCollection = new ListViewItem[packet.SystemInfos.Length/2];
-            int j = 0;
-            for (int i = 0; i < packet.SystemInfos.Length; i += 2)
+            for (int i = 0, j = 0; i < packet.SystemInfos.Length; i += 2, j++)
             {
                 if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
                 {
                     lviCollection[j] = new ListViewItem(new string[] {packet.SystemInfos[i], packet.SystemInfos[i + 1]});
-                    j++;
                 }
             }
 

@@ -31,6 +31,7 @@ namespace xServer.Forms
             chkPopup.Checked = XMLSettings.ShowPopup;
             txtPassword.Text = XMLSettings.Password;
             chkUseUpnp.Checked = XMLSettings.UseUPnP;
+            chkShowTooltip.Checked = XMLSettings.ShowToolTip;
         }
 
         private void btnListen_Click(object sender, EventArgs e)
@@ -81,6 +82,9 @@ namespace xServer.Forms
 
             XMLSettings.WriteValue("UseUPnP", chkUseUpnp.Checked.ToString());
             XMLSettings.UseUPnP = chkUseUpnp.Checked;
+
+            XMLSettings.WriteValue("ShowToolTip", chkShowTooltip.Checked.ToString());
+            XMLSettings.ShowToolTip = chkShowTooltip.Checked;
 
             this.Close();
         }
