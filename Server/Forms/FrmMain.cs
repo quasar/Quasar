@@ -48,7 +48,9 @@ namespace xServer.Forms
             Instance = this;
 
             ReadSettings();
+#if(!DEBUG)
             ShowTermsOfService(XMLSettings.ShowToU);
+#endif
 
             InitializeComponent();
 

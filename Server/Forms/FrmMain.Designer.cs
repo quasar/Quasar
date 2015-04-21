@@ -90,7 +90,7 @@ namespace xServer.Forms
             this.ctxtSurveillance,
             this.ctxtMiscellaneous});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 114);
+            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
             // 
             // ctxtConnection
             // 
@@ -101,7 +101,7 @@ namespace xServer.Forms
             this.ctxtUninstall});
             this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
             this.ctxtConnection.Name = "ctxtConnection";
-            this.ctxtConnection.Size = new System.Drawing.Size(152, 22);
+            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
             this.ctxtConnection.Text = "Connection";
             // 
             // ctxtUpdate
@@ -148,7 +148,7 @@ namespace xServer.Forms
             this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
             this.ctxtSystem.Name = "ctxtSystem";
-            this.ctxtSystem.Size = new System.Drawing.Size(152, 22);
+            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
             this.ctxtSystem.Text = "System";
             // 
             // ctxtSystemInformation
@@ -238,7 +238,7 @@ namespace xServer.Forms
             this.ctxtPasswordRecovery});
             this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
             this.ctxtSurveillance.Name = "ctxtSurveillance";
-            this.ctxtSurveillance.Size = new System.Drawing.Size(152, 22);
+            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
             this.ctxtSurveillance.Text = "Surveillance";
             // 
             // ctxtRemoteDesktop
@@ -266,7 +266,7 @@ namespace xServer.Forms
             this.ctxtShowMessagebox});
             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(152, 22);
+            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
             this.ctxtMiscellaneous.Text = "Miscellaneous";
             // 
             // ctxtRemoteExecute
@@ -283,7 +283,7 @@ namespace xServer.Forms
             // 
             this.ctxtLocalFile.Image = global::xServer.Properties.Resources.drive_go;
             this.ctxtLocalFile.Name = "ctxtLocalFile";
-            this.ctxtLocalFile.Size = new System.Drawing.Size(152, 22);
+            this.ctxtLocalFile.Size = new System.Drawing.Size(132, 22);
             this.ctxtLocalFile.Text = "Local File...";
             this.ctxtLocalFile.Click += new System.EventHandler(this.ctxtLocalFile_Click);
             // 
@@ -291,7 +291,7 @@ namespace xServer.Forms
             // 
             this.ctxtWebFile.Image = global::xServer.Properties.Resources.world_go;
             this.ctxtWebFile.Name = "ctxtWebFile";
-            this.ctxtWebFile.Size = new System.Drawing.Size(152, 22);
+            this.ctxtWebFile.Size = new System.Drawing.Size(132, 22);
             this.ctxtWebFile.Text = "Web File...";
             this.ctxtWebFile.Click += new System.EventHandler(this.ctxtWebFile_Click);
             // 
@@ -604,6 +604,7 @@ namespace xServer.Forms
             this.lstClients.GridLines = true;
             this.lstClients.Location = new System.Drawing.Point(0, 0);
             this.lstClients.Name = "lstClients";
+            this.lstClients.ShowItemToolTips = true;
             this.lstClients.Size = new System.Drawing.Size(770, 388);
             this.lstClients.SmallImageList = this.imgFlags;
             this.lstClients.TabIndex = 1;
