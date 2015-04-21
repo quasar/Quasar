@@ -60,7 +60,7 @@ Credits
 ---
 Protocol Buffers - Google's data interchange format  
 Copyright 2008 Google Inc.  
-https://code.google.com/apis/protocolbuffers/
+https://developers.google.com/protocol-buffers/
 
 ResourceLib  
 Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
