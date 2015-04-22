@@ -103,9 +103,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
 
@@ -132,9 +132,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (_connectClient != null)
                         new Core.Packets.ServerPackets.StartProcess(path).Execute(_connectClient);
@@ -153,9 +153,9 @@ namespace xServer.Forms
                     bool isDir = files.Tag.ToString() == "dir";
 
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                     {
@@ -183,9 +183,9 @@ namespace xServer.Forms
                         (isDir) ? "directory?" : "file?");
 
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                         DialogResult.Yes)
@@ -205,9 +205,9 @@ namespace xServer.Forms
                 {
                     string path = _currentDir;
                     if (path.EndsWith(@"\"))
-                        path = path + files.SubItems[0].Text;
+                        path += files.SubItems[0].Text;
                     else
-                        path = path + @"\" + files.SubItems[0].Text;
+                        path += @"\" + files.SubItems[0].Text;
 
                     using (var frm = new FrmAddToAutostart(path))
                     {
