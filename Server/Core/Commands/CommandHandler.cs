@@ -75,40 +75,34 @@ namespace xServer.Core.Commands
 
         public static void HandleStatus(Client client, Status packet)
         {
-            new Thread(() =>
+            FrmMain.Instance.Invoke((MethodInvoker) delegate
             {
-                FrmMain.Instance.Invoke((MethodInvoker) delegate
+                foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
                 {
-                    foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
+                    Client c = (Client) lvi.Tag;
+                    if (client == c)
                     {
-                        Client c = (Client) lvi.Tag;
-                        if (client == c)
-                        {
-                            lvi.SubItems[3].Text = packet.Message;
-                            break;
-                        }
+                        lvi.SubItems[3].Text = packet.Message;
+                        break;
                     }
-                });
-            }).Start();
+                }
+            });
         }
 
         public static void HandleUserStatus(Client client, UserStatus packet)
         {
-            new Thread(() =>
+            FrmMain.Instance.Invoke((MethodInvoker) delegate
             {
-                FrmMain.Instance.Invoke((MethodInvoker) delegate
+                foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
                 {
-                    foreach (ListViewItem lvi in FrmMain.Instance.lstClients.Items)
+                    Client c = (Client) lvi.Tag;
+                    if (client == c)
                     {
-                        Client c = (Client) lvi.Tag;
-                        if (client == c)
-                        {
-                            lvi.SubItems[4].Text = packet.Message;
-                            break;
-                        }
+                        lvi.SubItems[4].Text = packet.Message;
+                        break;
                     }
-                });
-            }).Start();
+                }
+            });
         }
 
         public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
@@ -513,9 +507,9 @@ namespace xServer.Core.Commands
 
             try
             {
-                client.Value.FrmStm.Invoke((MethodInvoker) delegate
+                foreach (var pair in packet.StartupItems)
                 {
-                    foreach (var pair in packet.StartupItems)
+                    client.Value.FrmStm.Invoke((MethodInvoker) delegate
                     {
                         var temp = pair.Key.Split(new string[] {"||"}, StringSplitOptions.None);
                         var l = new ListViewItem(temp)
@@ -524,8 +518,8 @@ namespace xServer.Core.Commands
                             Tag = pair.Value
                         };
                         client.Value.FrmStm.lstStartupItems.Items.Add(l);
-                    }
-                });
+                    });
+                }
             }
             catch
             {
