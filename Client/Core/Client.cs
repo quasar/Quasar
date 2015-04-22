@@ -143,7 +143,7 @@ namespace xClient.Core
                     return;
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 OnClientState(false);
                 return;
