@@ -79,6 +79,9 @@ namespace xServer.Forms
             {
                 while (!btnGetLogs.Enabled)
                 {
+                    if (FrmMain.Instance == null) //Provide an escape from thread in the case of client-server disconnection, a possibly rare occurence
+                        return;
+
                     Thread.Sleep(15);
                 }
 
@@ -89,13 +92,13 @@ namespace xServer.Forms
                 if (iFiles.Length == 0)
                     return;
 
-                foreach (FileInfo file in iFiles)
+                lstLogs.Invoke((MethodInvoker)delegate
                 {
-                    lstLogs.Invoke((MethodInvoker)delegate
+                    foreach (FileInfo file in iFiles)
                     {
                         lstLogs.Items.Add(new ListViewItem().Text = file.Name);
-                    });
-                }
+                    }
+                });
             }).Start();
         }
 

@@ -169,6 +169,7 @@ namespace xServer.Forms
                 UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
 
             nIcon.Visible = false;
+            FrmMain.Instance = null;
         }
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
