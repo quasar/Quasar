@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using System.Management;
 
 namespace xClient.Core.Information
@@ -48,6 +49,26 @@ namespace xClient.Core.Information
 
                 _osName = name;
                 return _osName;
+            }
+        }
+        public static string LocalName
+        {
+            get{
+                return Dns.GetHostName().ToString();
+            }
+        }
+        public static string Localip
+        {
+            get
+            {
+                string hostinfo = "";
+                string hostName = Dns.GetHostName();
+                System.Net.IPAddress[] addressList = Dns.GetHostAddresses(hostName);
+                foreach (IPAddress ip in addressList)
+                {
+                   hostinfo+=ip.ToString();
+                }
+                return hostinfo;
             }
         }
 

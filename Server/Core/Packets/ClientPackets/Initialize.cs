@@ -31,13 +31,18 @@ namespace xServer.Core.Packets.ClientPackets
 
         [ProtoMember(9)]
         public string Id { get; set; }
+        [ProtoMember(10)]
+        public string Lanip { get; set; }
+
+        [ProtoMember(11)]
+        public string HostName { get; set; }
 
         public Initialize()
         {
         }
 
         public Initialize(string version, string operatingsystem, string accounttype, string country, string countrycode,
-            string region, string city, int imageindex, string id)
+            string region, string city, int imageindex, string id, string lanip, string hostname)
         {
             Version = version;
             OperatingSystem = operatingsystem;
@@ -48,6 +53,9 @@ namespace xServer.Core.Packets.ClientPackets
             City = city;
             ImageIndex = imageindex;
             Id = id;
+            Lanip = lanip;
+            HostName = hostname;
+
         }
 
         public void Execute(Client client)

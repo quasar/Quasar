@@ -14,6 +14,8 @@ namespace xServer.Core
         public string Region { get; set; }
         public string City { get; set; }
         public string Id { get; set; }
+        public string Lanip { get; set; }
+        public string HostName { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }

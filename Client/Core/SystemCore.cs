@@ -67,6 +67,8 @@ namespace xClient.Core
         public static string CountryCode = string.Empty;
         public static string Region = string.Empty;
         public static string City = string.Empty;
+        public static string HostName = string.Empty;
+        public static string Lanip = string.Empty;
         public static string LastStatus = "Active";
         public static int ImageIndex;
 
@@ -296,6 +298,7 @@ namespace xClient.Core
             CountryCode = gIp.CountryCode;
             Region = gIp.Region;
             City = gIp.City;
+          
             WanIp = gIp.WanIp;
 
             if (CountryCode == "-" || Country == "Unknown")

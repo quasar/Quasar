@@ -33,6 +33,8 @@ namespace xServer.Core.Commands
                     client.Value.Region = packet.Region;
                     client.Value.City = packet.City;
                     client.Value.Id = packet.Id;
+                    client.Value.HostName = packet.HostName;
+                    client.Value.Lanip = packet.Lanip;
 
                     if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
                         FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
@@ -48,7 +50,7 @@ namespace xServer.Core.Commands
                     {
                         " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
                         "Connected",
-                        "Active", country, client.Value.OperatingSystem, client.Value.AccountType
+                        "Active", country, client.Value.OperatingSystem, client.Value.AccountType,client.Value.Lanip,client.Value.HostName
                     }) {Tag = client, ImageIndex = packet.ImageIndex};
 
 
