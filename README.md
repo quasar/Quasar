@@ -23,7 +23,7 @@ Features
 * Upload & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
-
+* lanip PC name
 Compiling
 ---
 Open the project in Visual Studio and click build, or use one of the batch files included in the root directory.
