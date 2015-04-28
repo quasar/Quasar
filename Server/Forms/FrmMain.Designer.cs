@@ -625,44 +625,47 @@ namespace xServer.Forms
             // hSocket
             // 
             this.hSocket.Text = "Socket";
+            this.hSocket.Width = 50;
             // 
             // hVersion
             // 
             this.hVersion.Text = "Version";
-            this.hVersion.Width = 66;
+            this.hVersion.Width = 50;
             // 
             // hStatus
             // 
             this.hStatus.Text = "Status";
-            this.hStatus.Width = 78;
+            this.hStatus.Width = 30;
             // 
             // hUserStatus
             // 
             this.hUserStatus.Text = "User Status";
-            this.hUserStatus.Width = 72;
+            this.hUserStatus.Width = 50;
             // 
             // hCountry
             // 
             this.hCountry.Text = "Country";
-            this.hCountry.Width = 93;
+            this.hCountry.Width = 50;
             // 
             // hOS
             // 
             this.hOS.Text = "Operating System";
-            this.hOS.Width = 157;
+            this.hOS.Width = 115;
             // 
             // hAccountType
             // 
             this.hAccountType.Text = "Account Type";
-            this.hAccountType.Width = 100;
+            this.hAccountType.Width = 80;
             // 
             // hLanip
             // 
             this.hLanip.Text = "lanIP";
+            this.hLanip.Width = 112;
             // 
             // hHostName
             // 
             this.hHostName.Text = "PC name";
+            this.hHostName.Width = 100;
             // 
             // mainMenu
             // 

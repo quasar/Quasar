@@ -252,8 +252,9 @@ namespace xClient.Core
                 {
                     foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
                     {
-                        if (ip.Address.AddressFamily != AddressFamily.InterNetwork ||
-                            ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
+                        if (ip.Address.AddressFamily != AddressFamily.InterNetwork)// ||
+                            //ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
+                            //fix did not return IP
                             continue;
 
                         return ip.Address.ToString();
