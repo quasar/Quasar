@@ -30,7 +30,7 @@ namespace xClient.Core.Commands
         public static UnsafeStreamCodec StreamCodec;
         public static Bitmap LastDesktopScreenshot;
         private static Shell _shell;
-        private static Dictionary<int, string> _cancledDownloads = new Dictionary<int, string>();
+        private static Dictionary<int, string> _canceledDownloads = new Dictionary<int, string>();
 
         private const int MOUSEEVENTF_LEFTDOWN = 0x02;
         private const int MOUSEEVENTF_LEFTUP = 0x04;
@@ -376,7 +376,7 @@ namespace xClient.Core.Commands
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
-                        if (_cancledDownloads.ContainsKey(command.ID)) return;
+                        if (_canceledDownloads.ContainsKey(command.ID)) return;
 
                         byte[] block;
                         if (srcFile.ReadBlock(currentBlock, out block))
@@ -401,9 +401,9 @@ namespace xClient.Core.Commands
 
         public static void HandleDownloadFileCanceled(Packets.ServerPackets.DownloadFileCanceled command, Client client)
         {
-            if (!_cancledDownloads.ContainsKey(command.ID))
+            if (!_canceledDownloads.ContainsKey(command.ID))
             {
-                _cancledDownloads.Add(command.ID, "canceled");
+                _canceledDownloads.Add(command.ID, "canceled");
                 new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(
                     client);
             }
