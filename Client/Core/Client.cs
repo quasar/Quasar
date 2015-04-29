@@ -75,7 +75,7 @@ namespace xClient.Core
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
         public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024*1024)*1; //1MB
+        public const int MAX_PACKET_SIZE = (1024*1024)*2; //2MB
         private Socket _handle;
         private int _typeIndex;
 
