@@ -156,9 +156,7 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = true;
-                if (e.Button == MouseButtons.Right)
-                    left = false;
+                bool left = (e.Button == MouseButtons.Left);
 
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y).Execute(_connectClient);
@@ -175,9 +173,7 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = true;
-                if (e.Button == MouseButtons.Right)
-                    left = false;
+                bool left = (e.Button == MouseButtons.Left);
 
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y).Execute(_connectClient);

