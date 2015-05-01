@@ -49,33 +49,9 @@ namespace xServer.Forms
         private void btnGetLogs_Click(object sender, EventArgs e)
         {
             btnGetLogs.Enabled = false;
-
             lstLogs.Items.Clear();
 
             new Core.Packets.ServerPackets.GetLogs().Execute(_connectClient);
-
-            new Thread(() =>
-            {
-                while (!btnGetLogs.Enabled)
-                {
-                    if (FrmMain.Instance == null)
-                        //Provide an escape from thread in the case of client-server disconnection, a possibly rare occurence
-                        return;
-
-                    Thread.Sleep(15);
-                }
-
-                FileInfo[] iFiles = new DirectoryInfo(_path).GetFiles();
-
-                if (iFiles.Length == 0)
-                    return;
-
-                foreach (FileInfo file in iFiles)
-                {
-                    var file1 = file;
-                    lstLogs.Invoke((MethodInvoker) delegate { lstLogs.Items.Add(new ListViewItem().Text = file1.Name); });
-                }
-            }).Start();
         }
 
         private void lstLogs_ItemActivate(object sender, EventArgs e)

