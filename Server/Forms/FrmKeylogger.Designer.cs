@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmKeylogger));
             this.lstLogs = new System.Windows.Forms.ListView();
             this.hLogs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
@@ -37,8 +38,8 @@
             // 
             // lstLogs
             // 
-            this.lstLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)));
+            this.lstLogs.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left)));
             this.lstLogs.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hLogs});
             this.lstLogs.Font = new System.Drawing.Font("Segoe UI", 8.25F);
@@ -46,10 +47,11 @@
             this.lstLogs.GridLines = true;
             this.lstLogs.Location = new System.Drawing.Point(0, 31);
             this.lstLogs.Name = "lstLogs";
-            this.lstLogs.Size = new System.Drawing.Size(153, 387);
+            this.lstLogs.Size = new System.Drawing.Size(153, 431);
             this.lstLogs.TabIndex = 0;
             this.lstLogs.UseCompatibleStateImageBehavior = false;
             this.lstLogs.View = System.Windows.Forms.View.Details;
+            this.lstLogs.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstLogs_ColumnClick);
             this.lstLogs.ItemActivate += new System.EventHandler(this.lstLogs_ItemActivate);
             // 
             // hLogs
@@ -59,9 +61,9 @@
             // 
             // statusStrip1
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 416);
+            this.statusStrip1.Location = new System.Drawing.Point(0, 460);
             this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(622, 22);
+            this.statusStrip1.Size = new System.Drawing.Size(862, 22);
             this.statusStrip1.TabIndex = 6;
             this.statusStrip1.Text = "statusStrip1";
             // 
@@ -77,26 +79,27 @@
             // 
             // wLogViewer
             // 
-            this.wLogViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-                        | System.Windows.Forms.AnchorStyles.Left)
-                        | System.Windows.Forms.AnchorStyles.Right)));
+            this.wLogViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.wLogViewer.Location = new System.Drawing.Point(154, 50);
             this.wLogViewer.MinimumSize = new System.Drawing.Size(20, 20);
             this.wLogViewer.Name = "wLogViewer";
             this.wLogViewer.ScriptErrorsSuppressed = true;
-            this.wLogViewer.Size = new System.Drawing.Size(468, 365);
+            this.wLogViewer.Size = new System.Drawing.Size(708, 409);
             this.wLogViewer.TabIndex = 8;
             // 
             // FrmKeylogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(622, 438);
+            this.ClientSize = new System.Drawing.Size(862, 482);
             this.Controls.Add(this.wLogViewer);
             this.Controls.Add(this.btnGetLogs);
             this.Controls.Add(this.statusStrip1);
             this.Controls.Add(this.lstLogs);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(630, 465);
             this.Name = "FrmKeylogger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;

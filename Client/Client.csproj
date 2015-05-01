@@ -194,7 +194,7 @@
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\Information\GeoIP.cs" />
-    <Compile Include="Core\Logger.cs" />
+    <Compile Include="Core\Keylogger\Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Settings.cs" />
