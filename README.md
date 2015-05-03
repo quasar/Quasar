@@ -45,7 +45,7 @@ ToDo
 * ~~Startup Manager~~
 * Socks5 Proxy
 * Password Stealer (Browsers, FTP-Clients)
-* Keylogger
+* ~~Keylogger~~
 * Startup Persistence
 
 License
