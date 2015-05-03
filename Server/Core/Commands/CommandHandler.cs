@@ -347,8 +347,7 @@ namespace xServer.Core.Commands
                     var file1 = file;
                     client.Value.FrmKl.Invoke((MethodInvoker)delegate
                     {
-                        client.Value.FrmKl.lstLogs.Items.Add(new ListViewItem().Text = file1.Name);
-
+                        client.Value.FrmKl.lstLogs.Items.Add(new ListViewItem() { Text = file1.Name });
                     });
                 }
 
