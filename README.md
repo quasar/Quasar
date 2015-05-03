@@ -23,6 +23,7 @@ Features
 * Upload & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
+* Keylogger
 
 Compiling
 ---
