@@ -4,6 +4,10 @@ xRAT 2.0
 
 xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (using .NET Framework 2.0).
 
+Requirements
+---
+* .NET Framework 2.0
+
 Features
 ---
 * Buffered TCP/IP stream
@@ -43,11 +47,17 @@ Building a client
 
 ToDo
 ---
-* ~~Startup Manager~~
 * Socks5 Proxy
-* Password Stealer (Browsers, FTP-Clients)
-* ~~Keylogger~~
+* Password Recovery (Browsers, FTP-Clients)
 * Startup Persistence
+
+Contributing
+---
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
 
 License
 ---
@@ -66,3 +76,7 @@ https://developers.google.com/protocol-buffers/
 ResourceLib  
 Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
 https://github.com/dblock/resourcelib
+
+Thank you!
+---
+I really appreciate all kinds of feedback and contributions. Thanks for using and supporting xRAT 2.0!
