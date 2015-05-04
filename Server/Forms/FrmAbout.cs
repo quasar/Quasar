@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Windows.Forms;
 
 namespace xServer.Forms
@@ -12,12 +13,20 @@ namespace xServer.Forms
             lblVersion.Text = Settings.XMLSettings.VERSION;
             rtxtContent.Text = Properties.Resources.TermsOfUse;
 
-            lblCredits.Text =
-                "Credits: Banksy\n" +
-                "              ResourceLib (Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013)\n" +
-                "              protobuf (Copyright 2008 Google Inc.)\n\n" +
-                "Elevation Form Translators: Xenocode, Increment, DeadLine, Perfectionist,\n" +
-                "                                               Qmz_, GameFire, navaro21";
+            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT" });
+            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT#credits" });
+        }
+
+        private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            lnkGithubPage.LinkVisited = true;
+            Process.Start(e.Link.LinkData.ToString());
+        }
+
+        private void lnkCredits_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            lnkCredits.LinkVisited = true;
+            Process.Start(e.Link.LinkData.ToString());
         }
 
         private void btnOkay_Click(object sender, EventArgs e)

@@ -33,10 +33,10 @@
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.btnOkay = new System.Windows.Forms.Button();
-            this.lblCoder = new System.Windows.Forms.Label();
-            this.lblCredits = new System.Windows.Forms.Label();
             this.rtxtContent = new System.Windows.Forms.RichTextBox();
             this.lblLicense = new System.Windows.Forms.Label();
+            this.lnkCredits = new System.Windows.Forms.LinkLabel();
+            this.lnkGithubPage = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.picXRAT)).BeginInit();
             this.SuspendLayout();
             // 
@@ -56,24 +56,24 @@
             this.lblTitle.Font = new System.Drawing.Font("Segoe UI", 15.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblTitle.Location = new System.Drawing.Point(82, 26);
             this.lblTitle.Name = "lblTitle";
-            this.lblTitle.Size = new System.Drawing.Size(277, 30);
+            this.lblTitle.Size = new System.Drawing.Size(94, 30);
             this.lblTitle.TabIndex = 0;
-            this.lblTitle.Text = "xRAT 2.0 - complete re-code";
+            this.lblTitle.Text = "xRAT 2.0";
             // 
             // lblVersion
             // 
             this.lblVersion.AutoSize = true;
             this.lblVersion.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersion.Location = new System.Drawing.Point(322, 55);
+            this.lblVersion.Location = new System.Drawing.Point(364, 43);
             this.lblVersion.Name = "lblVersion";
-            this.lblVersion.Size = new System.Drawing.Size(67, 13);
+            this.lblVersion.Size = new System.Drawing.Size(52, 13);
             this.lblVersion.TabIndex = 1;
-            this.lblVersion.Text = "%VERSION%";
+            this.lblVersion.Text = "RELEASEX";
             // 
             // btnOkay
             // 
             this.btnOkay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnOkay.Location = new System.Drawing.Point(341, 406);
+            this.btnOkay.Location = new System.Drawing.Point(341, 319);
             this.btnOkay.Name = "btnOkay";
             this.btnOkay.Size = new System.Drawing.Size(75, 23);
             this.btnOkay.TabIndex = 6;
@@ -81,28 +81,9 @@
             this.btnOkay.UseVisualStyleBackColor = true;
             this.btnOkay.Click += new System.EventHandler(this.btnOkay_Click);
             // 
-            // lblCoder
-            // 
-            this.lblCoder.AutoSize = true;
-            this.lblCoder.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblCoder.Location = new System.Drawing.Point(84, 59);
-            this.lblCoder.Name = "lblCoder";
-            this.lblCoder.Size = new System.Drawing.Size(138, 17);
-            this.lblCoder.TabIndex = 2;
-            this.lblCoder.Text = "Developed by MaxX0r";
-            // 
-            // lblCredits
-            // 
-            this.lblCredits.AutoSize = true;
-            this.lblCredits.Location = new System.Drawing.Point(12, 90);
-            this.lblCredits.Name = "lblCredits";
-            this.lblCredits.Size = new System.Drawing.Size(67, 13);
-            this.lblCredits.TabIndex = 3;
-            this.lblCredits.Text = "%CREDITS%";
-            // 
             // rtxtContent
             // 
-            this.rtxtContent.Location = new System.Drawing.Point(15, 199);
+            this.rtxtContent.Location = new System.Drawing.Point(15, 112);
             this.rtxtContent.Name = "rtxtContent";
             this.rtxtContent.ReadOnly = true;
             this.rtxtContent.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
@@ -114,23 +95,45 @@
             // 
             this.lblLicense.AutoSize = true;
             this.lblLicense.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblLicense.Location = new System.Drawing.Point(12, 181);
+            this.lblLicense.Location = new System.Drawing.Point(12, 94);
             this.lblLicense.Name = "lblLicense";
             this.lblLicense.Size = new System.Drawing.Size(46, 15);
             this.lblLicense.TabIndex = 4;
             this.lblLicense.Text = "License";
             // 
-            // frmAbout
+            // lnkCredits
+            // 
+            this.lnkCredits.AutoSize = true;
+            this.lnkCredits.Location = new System.Drawing.Point(373, 63);
+            this.lnkCredits.Name = "lnkCredits";
+            this.lnkCredits.Size = new System.Drawing.Size(43, 13);
+            this.lnkCredits.TabIndex = 7;
+            this.lnkCredits.TabStop = true;
+            this.lnkCredits.Text = "Credits";
+            this.lnkCredits.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCredits_LinkClicked);
+            // 
+            // lnkGithubPage
+            // 
+            this.lnkGithubPage.AutoSize = true;
+            this.lnkGithubPage.Location = new System.Drawing.Point(92, 63);
+            this.lnkGithubPage.Name = "lnkGithubPage";
+            this.lnkGithubPage.Size = new System.Drawing.Size(72, 13);
+            this.lnkGithubPage.TabIndex = 8;
+            this.lnkGithubPage.TabStop = true;
+            this.lnkGithubPage.Text = "GitHub Page";
+            this.lnkGithubPage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGithubPage_LinkClicked);
+            // 
+            // FrmAbout
             // 
             this.AcceptButton = this.btnOkay;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnOkay;
-            this.ClientSize = new System.Drawing.Size(428, 441);
+            this.ClientSize = new System.Drawing.Size(428, 354);
+            this.Controls.Add(this.lnkGithubPage);
+            this.Controls.Add(this.lnkCredits);
             this.Controls.Add(this.lblLicense);
             this.Controls.Add(this.rtxtContent);
-            this.Controls.Add(this.lblCredits);
-            this.Controls.Add(this.lblCoder);
             this.Controls.Add(this.btnOkay);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.lblTitle);
@@ -140,7 +143,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmAbout";
+            this.Name = "FrmAbout";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - About";
             ((System.ComponentModel.ISupportInitialize)(this.picXRAT)).EndInit();
@@ -155,9 +158,9 @@
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Button btnOkay;
-        private System.Windows.Forms.Label lblCoder;
-        private System.Windows.Forms.Label lblCredits;
         private System.Windows.Forms.RichTextBox rtxtContent;
         private System.Windows.Forms.Label lblLicense;
+        private System.Windows.Forms.LinkLabel lnkCredits;
+        private System.Windows.Forms.LinkLabel lnkGithubPage;
     }
 }
