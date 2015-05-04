@@ -79,6 +79,7 @@
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
@@ -98,6 +99,7 @@
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetLogs.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
@@ -233,6 +235,12 @@
     <Compile Include="Forms\FrmFileManager.Designer.cs">
       <DependentUpon>FrmFileManager.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmKeylogger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmKeylogger.Designer.cs">
+      <DependentUpon>FrmKeylogger.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmMain.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -332,6 +340,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmFileManager.resx">
       <DependentUpon>FrmFileManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmKeylogger.resx">
+      <DependentUpon>FrmKeylogger.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>

