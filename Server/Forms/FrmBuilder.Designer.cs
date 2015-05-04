@@ -85,11 +85,14 @@
             this.lblDescription = new System.Windows.Forms.Label();
             this.txtProductName = new System.Windows.Forms.TextBox();
             this.lblProductName = new System.Windows.Forms.Label();
+            this.groupAdditional = new System.Windows.Forms.GroupBox();
+            this.chkKeylogger = new System.Windows.Forms.CheckBox();
             this.groupConnection.SuspendLayout();
             this.groupInstall.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.groupAsmInfo.SuspendLayout();
+            this.groupAdditional.SuspendLayout();
             this.SuspendLayout();
             // 
             // groupConnection
@@ -206,8 +209,6 @@
             // 
             // groupInstall
             // 
-            this.groupInstall.Controls.Add(this.chkIconChange);
-            this.groupInstall.Controls.Add(this.chkElevation);
             this.groupInstall.Controls.Add(this.picUAC2);
             this.groupInstall.Controls.Add(this.picUAC1);
             this.groupInstall.Controls.Add(this.rbSystem);
@@ -231,7 +232,7 @@
             this.groupInstall.Controls.Add(this.chkInstall);
             this.groupInstall.Location = new System.Drawing.Point(12, 171);
             this.groupInstall.Name = "groupInstall";
-            this.groupInstall.Size = new System.Drawing.Size(325, 348);
+            this.groupInstall.Size = new System.Drawing.Size(325, 310);
             this.groupInstall.TabIndex = 1;
             this.groupInstall.TabStop = false;
             this.groupInstall.Text = "Install";
@@ -239,10 +240,10 @@
             // chkIconChange
             // 
             this.chkIconChange.AutoSize = true;
-            this.chkIconChange.Location = new System.Drawing.Point(118, 326);
+            this.chkIconChange.Location = new System.Drawing.Point(6, 44);
             this.chkIconChange.Name = "chkIconChange";
             this.chkIconChange.Size = new System.Drawing.Size(91, 17);
-            this.chkIconChange.TabIndex = 20;
+            this.chkIconChange.TabIndex = 1;
             this.chkIconChange.Text = "Change Icon";
             this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkIconChange.UseVisualStyleBackColor = true;
@@ -251,10 +252,10 @@
             // chkElevation
             // 
             this.chkElevation.AutoSize = true;
-            this.chkElevation.Location = new System.Drawing.Point(118, 303);
+            this.chkElevation.Location = new System.Drawing.Point(6, 21);
             this.chkElevation.Name = "chkElevation";
             this.chkElevation.Size = new System.Drawing.Size(147, 17);
-            this.chkElevation.TabIndex = 19;
+            this.chkElevation.TabIndex = 0;
             this.chkElevation.Text = "Enable Admin Elevation";
             this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkElevation.UseVisualStyleBackColor = true;
@@ -473,10 +474,10 @@
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(217, 525);
+            this.btnBuild.Location = new System.Drawing.Point(540, 458);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(121, 23);
-            this.btnBuild.TabIndex = 3;
+            this.btnBuild.TabIndex = 4;
             this.btnBuild.Text = "Build client!";
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
@@ -654,12 +655,36 @@
             this.lblProductName.TabIndex = 1;
             this.lblProductName.Text = "Product Name:";
             // 
+            // groupAdditional
+            // 
+            this.groupAdditional.Controls.Add(this.chkKeylogger);
+            this.groupAdditional.Controls.Add(this.chkIconChange);
+            this.groupAdditional.Controls.Add(this.chkElevation);
+            this.groupAdditional.Location = new System.Drawing.Point(343, 287);
+            this.groupAdditional.Name = "groupAdditional";
+            this.groupAdditional.Size = new System.Drawing.Size(318, 153);
+            this.groupAdditional.TabIndex = 3;
+            this.groupAdditional.TabStop = false;
+            this.groupAdditional.Text = "Additional Settings";
+            // 
+            // chkKeylogger
+            // 
+            this.chkKeylogger.AutoSize = true;
+            this.chkKeylogger.Location = new System.Drawing.Point(6, 67);
+            this.chkKeylogger.Name = "chkKeylogger";
+            this.chkKeylogger.Size = new System.Drawing.Size(115, 17);
+            this.chkKeylogger.TabIndex = 2;
+            this.chkKeylogger.Text = "Enable Keylogger";
+            this.chkKeylogger.UseVisualStyleBackColor = true;
+            this.chkKeylogger.CheckedChanged += new System.EventHandler(this.chkKeylogger_CheckedChanged);
+            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(673, 560);
+            this.ClientSize = new System.Drawing.Size(673, 499);
+            this.Controls.Add(this.groupAdditional);
             this.Controls.Add(this.groupAsmInfo);
             this.Controls.Add(this.btnBuild);
             this.Controls.Add(this.groupInstall);
@@ -682,6 +707,8 @@
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.groupAsmInfo.ResumeLayout(false);
             this.groupAsmInfo.PerformLayout();
+            this.groupAdditional.ResumeLayout(false);
+            this.groupAdditional.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -743,5 +770,7 @@
         private System.Windows.Forms.TextBox txtProductVersion;
         private System.Windows.Forms.Label lblProductVersion;
         private System.Windows.Forms.CheckBox chkChangeAsmInfo;
+        private System.Windows.Forms.GroupBox groupAdditional;
+        private System.Windows.Forms.CheckBox chkKeylogger;
     }
 }

