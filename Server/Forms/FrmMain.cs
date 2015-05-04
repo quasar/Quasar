@@ -347,6 +347,7 @@ namespace xServer.Forms
 
         private void ctxtUninstall_Click(object sender, EventArgs e)
         {
+            if (lstClients.SelectedItems.Count == 0) return;
             if (
                 MessageBox.Show(
                     string.Format(
