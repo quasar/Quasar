@@ -7,6 +7,9 @@ namespace xServer.Core.Build
 {
     public class Renamer
     {
+        /// <summary>
+        /// Contains the assembly definition.
+        /// </summary>
         public AssemblyDefinition AsmDef { get; set; }
 
         private int length { get; set; }
@@ -30,6 +33,10 @@ namespace xServer.Core.Build
             eventOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
         }
 
+        /// <summary>
+        /// Attempts to modify the assembly definition data.
+        /// </summary>
+        /// <returns>True if the operation succeeded; False if the operation failed.</returns>
         public bool Perform()
         {
             try
