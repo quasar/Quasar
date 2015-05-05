@@ -48,21 +48,37 @@ namespace xServer.Core.Build
         [StructLayout(LayoutKind.Sequential)]
         private struct ICONDIRENTRY
         {
-            // Width, in pixels, of the image
+            /// <summary>
+            /// The width, in pixels, of the image.
+            /// </summary>
             public byte Width;
-            // Height, in pixels, of the image
+            /// <summary>
+            /// The height, in pixels, of the image.
+            /// </summary>
             public byte Height;
-            // Number of colors in image (0 if >=8bpp)
+            /// <summary>
+            /// The number of colors in the image; (0 if >= 8bpp)
+            /// </summary>
             public byte ColorCount;
-            // Reserved ( must be 0)
+            /// <summary>
+            /// Reserved (must be 0).
+            /// </summary>
             public byte Reserved;
-            // Color Planes
+            /// <summary>
+            /// Color planes.
+            /// </summary>
             public ushort Planes;
-            // Bits per pixel
+            /// <summary>
+            /// Bits per pixel.
+            /// </summary>
             public ushort BitCount;
-            // Length in bytes of the pixel data
+            /// <summary>
+            /// The length, in bytes, of the pixel data.
+            /// </summary>
             public int BytesInRes;
-            // Offset in the file where the pixel data starts.
+            /// <summary>
+            /// The offset in the file where the pixel data starts.
+            /// </summary>
             public int ImageOffset;
         }
 

