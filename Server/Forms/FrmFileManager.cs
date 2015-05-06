@@ -231,6 +231,37 @@ namespace xServer.Forms
             }
         }
 
+        private void ctxtOpenDirectory_Click(object sender, EventArgs e)
+        {
+            if (_connectClient != null)
+            {
+                string path = _currentDir;
+                if (lstDirectory.SelectedItems.Count == 1)
+                {
+                    var item = lstDirectory.SelectedItems[0];
+                    if (item.SubItems[0].Text != ".." && item.Tag.ToString() == "dir")
+                    {
+                        if (path.EndsWith(@"\"))
+                            path += item.SubItems[0].Text;
+                        else
+                            path += @"\" + item.SubItems[0].Text;
+                    }
+                }
+
+                if (_connectClient.Value.FrmRs != null)
+                {
+                    new Core.Packets.ServerPackets.ShellCommand(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    _connectClient.Value.FrmRs.Focus();
+                }
+                else
+                {
+                    FrmRemoteShell frmRS = new FrmRemoteShell(_connectClient);
+                    frmRS.Show();
+                    new Core.Packets.ServerPackets.ShellCommand(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                }
+            }
+        }
+
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
             string downloadPath = Path.Combine(Application.StartupPath,
