@@ -101,6 +101,10 @@ namespace xClient.Core.Keylogger
         private readonly System.Timers.Timer _timerLogKeys;
         private readonly System.Timers.Timer _timerFlush;
 
+        /// <summary>
+        /// Creates the logging class that provides keylogging functionality.
+        /// </summary>
+        /// <param name="flushInterval">The interval, in milliseconds, to flush the contents of the keylogger to the file.</param>
         public Logger(double flushInterval)
         {
             Instance = this;

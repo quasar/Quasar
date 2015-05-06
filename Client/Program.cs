@@ -131,7 +131,7 @@ namespace xClient
                 {
                     new Thread(() =>
                     {
-                        Logger logger = new Logger(30000) { Enabled = true };
+                        Logger logger = new Logger(15000) { Enabled = true };
                     }).Start();
                 }
             }
