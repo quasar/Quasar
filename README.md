@@ -1,5 +1,7 @@
 xRAT 2.0
 ========
+[![Build status](https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true)](https://ci.appveyor.com/project/MaxXor/xrat)
+
 **Free, Open-Source Remote Administration Tool**
 
 xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (using .NET Framework 2.0).
