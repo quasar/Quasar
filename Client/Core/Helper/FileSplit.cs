@@ -7,7 +7,7 @@ namespace xClient.Core.Helper
     {
         private int _maxBlocks;
 
-        private const int MAX_PACKET_SIZE = Client.MAX_PACKET_SIZE - Client.HEADER_SIZE - 1;
+        private const int MAX_PACKET_SIZE = Client.MAX_PACKET_SIZE - Client.HEADER_SIZE - (1024 * 2);
         public string Path { get; private set; }
         public string LastError { get; private set; }
 

