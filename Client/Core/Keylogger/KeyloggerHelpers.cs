@@ -49,7 +49,7 @@ namespace xClient.Core.Keylogger
         /// </summary>
         /// <param name="sender">The keylogger key to obtain the name from.</param>
         /// <returns>Returns the name of the key that was explicitly provided.</returns>
-        public static string KeyloggerKeyName(this KeyloggerKeys sender)
+        public static string GetKeyloggerKeyName(this KeyloggerKeys sender)
         {
             try
             {

