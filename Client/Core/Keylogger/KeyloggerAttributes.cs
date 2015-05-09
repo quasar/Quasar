@@ -4,6 +4,11 @@ using System.Text;
 
 namespace xClient.Core.Keylogger
 {
+    /// <summary>
+    /// An attribute that defines a field to be that of a basic Keylogger
+    /// key. This attribute is used to represent the key in a better way
+    /// by holding specific data of the key it defines.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class KeyloggerKey : Attribute
     {

