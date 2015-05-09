@@ -163,7 +163,7 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// PAGE UP key.
         /// </summary>
-        [KeyloggerKey("[PAGE_UP", true)]
+        [KeyloggerKey("PAGE_UP", true)]
         VK_PRIOR = 0x21,
 
         /// <summary>
@@ -357,101 +357,121 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// 'G' key.
         /// </summary>
+        [KeyloggerKey("g")]
         K_G = 0x47,
 
         /// <summary>
         /// 'H' key.
         /// </summary>
+        [KeyloggerKey("h")]
         K_H = 0x48,
 
         /// <summary>
         /// 'I' key.
         /// </summary>
+        [KeyloggerKey("i")]
         K_I = 0x49,
 
         /// <summary>
         /// 'J' key.
         /// </summary>
+        [KeyloggerKey("j")]
         K_J = 0x4A,
 
         /// <summary>
         /// 'K' key.
         /// </summary>
+        [KeyloggerKey("k")]
         K_K = 0x4B,
 
         /// <summary>
         /// 'L' key.
         /// </summary>
+        [KeyloggerKey("l")]
         K_L = 0x4C,
 
         /// <summary>
         /// 'M' key.
         /// </summary>
+        [KeyloggerKey("m")]
         K_M = 0x4D,
 
         /// <summary>
         /// 'N' key.
         /// </summary>
+        [KeyloggerKey("n")]
         K_N = 0x4E,
 
         /// <summary>
         /// 'O' key.
         /// </summary>
+        [KeyloggerKey("o")]
         K_O = 0x4F,
 
         /// <summary>
         /// 'P' key.
         /// </summary>
+        [KeyloggerKey("p")]
         K_P = 0x50,
 
         /// <summary>
         /// 'Q' key.
         /// </summary>
+        [KeyloggerKey("q")]
         K_Q = 0x51,
 
         /// <summary>
         /// 'R' key.
         /// </summary>
+        [KeyloggerKey("r")]
         K_R = 0x52,
 
         /// <summary>
         /// 'S' key.
         /// </summary>
+        [KeyloggerKey("s")]
         K_S = 0x53,
 
         /// <summary>
         /// 'T' key.
         /// </summary>
+        [KeyloggerKey("t")]
         K_T = 0x54,
 
         /// <summary>
         /// 'U' key.
         /// </summary>
+        [KeyloggerKey("u")]
         K_U = 0x55,
 
         /// <summary>
         /// 'V' key.
         /// </summary>
+        [KeyloggerKey("v")]
         K_V = 0x56,
 
         /// <summary>
         /// 'W' key.
         /// </summary>
+        [KeyloggerKey("w")]
         K_W = 0x57,
 
         /// <summary>
         /// 'X' key.
         /// </summary>
+        [KeyloggerKey("x")]
         K_X = 0x58,
 
         /// <summary>
         /// 'Y' key.
         /// </summary>
+        [KeyloggerKey("y")]
         K_Y = 0x59,
 
         /// <summary>
         /// 'Z' key.
         /// </summary>
+        [KeyloggerKey("z")]
         K_Z = 0x5A,
 
         #endregion
@@ -461,21 +481,25 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Left Windows key (Natural keyboard).
         /// </summary>
+        [KeyloggerKey("LWIN")]
         VK_LWIN = 0x5B,
 
         /// <summary>
         /// Right Windows key (Natural keyboard).
         /// </summary>
+        [KeyloggerKey("RWIN")]
         VK_RWIN = 0x5C,
 
         /// <summary>
         /// Applications key (natural keyboard).
         /// </summary>
+        [KeyloggerKey("APPS")]
         VK_APPS = 0x5D,
 
         /// <summary>
         /// Computer Sleep key.
         /// </summary>
+        [KeyloggerKey("SLEEP")]
         VK_SLEEP = 0x5F,
 
         #endregion
@@ -485,51 +509,61 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Numeric keypad 0 key.
         /// </summary>
+        [KeyloggerKey("0")]
         VK_NUMPAD0 = 0x60,
 
         /// <summary>
         /// Numeric keypad 1 key.
         /// </summary>
+        [KeyloggerKey("1")]
         VK_NUMPAD1 = 0x61,
 
         /// <summary>
         /// Numeric keypad 2 key.
         /// </summary>
+        [KeyloggerKey("2")]
         VK_NUMPAD2 = 0x62,
 
         /// <summary>
         /// Numeric keypad 3 key.
         /// </summary>
+        [KeyloggerKey("3")]
         VK_NUMPAD3 = 0x63,
 
         /// <summary>
         /// Numeric keypad 4 key.
         /// </summary>
+        [KeyloggerKey("4")]
         VK_NUMPAD4 = 0x64,
 
         /// <summary>
         /// Numeric keypad 5 key.
         /// </summary>
+        [KeyloggerKey("5")]
         VK_NUMPAD5 = 0x65,
 
         /// <summary>
         /// Numeric keypad 6 key.
         /// </summary>
+        [KeyloggerKey("6")]
         VK_NUMPAD6 = 0x66,
 
         /// <summary>
         /// Numeric keypad 7 key.
         /// </summary>
+        [KeyloggerKey("7")]
         VK_NUMPAD7 = 0x67,
 
         /// <summary>
         /// Numeric keypad 8 key.
         /// </summary>
+        [KeyloggerKey("8")]
         VK_NUMPAD8 = 0x68,
 
         /// <summary>
-        /// Numeric keypad 0 key.
-        /// </summary>9
+        /// Numeric keypad 9 key.
+        /// </summary>
+        [KeyloggerKey("9")]
         VK_NUMPAD9 = 0x69,
 
         #endregion
@@ -539,11 +573,13 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Multiply key.
         /// </summary>
+        [KeyloggerKey("*")]
         VK_MULTIPLY = 0x6A,
 
         /// <summary>
         /// Add key.
         /// </summary>
+        [KeyloggerKey("+")]
         VK_ADD = 0x6B,
 
         /// <summary>
@@ -554,16 +590,19 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Subtract (-) key.
         /// </summary>
+        [KeyloggerKey("-")]
         VK_SUBTRACT = 0x6D,
 
         /// <summary>
         /// Decimal (.) key.
         /// </summary>
+        [KeyloggerKey(".")]
         VK_DECIMAL = 0x6E,
 
         /// <summary>
         /// Divide (/) key.
         /// </summary>
+        [KeyloggerKey("/")]
         VK_DIVIDE = 0x6F,
 
         #endregion
@@ -573,121 +612,145 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// F1 key.
         /// </summary>
+        [KeyloggerKey("F1")]
         VK_F1 = 0x70,
 
         /// <summary>
         /// F2 key.
         /// </summary>
+        [KeyloggerKey("F2")]
         VK_F2 = 0x71,
 
         /// <summary>
         /// F3 key.
         /// </summary>
+        [KeyloggerKey("F3")]
         VK_F3 = 0x72,
 
         /// <summary>
         /// F4 key.
         /// </summary>
+        [KeyloggerKey("F4")]
         VK_F4 = 0x73,
 
         /// <summary>
         /// F5 key.
         /// </summary>
+        [KeyloggerKey("F5")]
         VK_F5 = 0x74,
 
         /// <summary>
         /// F6 key.
         /// </summary>
+        [KeyloggerKey("F6")]
         VK_F6 = 0x75,
 
         /// <summary>
         /// F7 key.
         /// </summary>
+        [KeyloggerKey("F7")]
         VK_F7 = 0x76,
 
         /// <summary>
         /// F8 key.
         /// </summary>
+        [KeyloggerKey("F8")]
         VK_F8 = 0x77,
 
         /// <summary>
         /// F9 key.
         /// </summary>
+        [KeyloggerKey("F9")]
         VK_F9 = 0x78,
 
         /// <summary>
         /// F10 key.
         /// </summary>
+        [KeyloggerKey("F10")]
         VK_F10 = 0x79,
 
         /// <summary>
         /// F11 key.
         /// </summary>
+        [KeyloggerKey("F11")]
         VK_F11 = 0x7A,
 
         /// <summary>
         /// F12 key.
         /// </summary>
+        [KeyloggerKey("F12")]
         VK_F12 = 0x7B,
 
         /// <summary>
         /// F13 key.
         /// </summary>
+        [KeyloggerKey("F13")]
         VK_F13 = 0x7C,
 
         /// <summary>
         /// F14 key.
         /// </summary>
+        [KeyloggerKey("F14")]
         VK_F14 = 0x7D,
 
         /// <summary>
         /// F15 key.
         /// </summary>
+        [KeyloggerKey("F15")]
         VK_F15 = 0x7E,
 
         /// <summary>
         /// F16 key.
         /// </summary>
+        [KeyloggerKey("F16")]
         VK_F16 = 0x7F,
 
         /// <summary>
         /// F17 key.
         /// </summary>
+        [KeyloggerKey("F17")]
         VK_F17 = 0x80,
 
         /// <summary>
         /// F18 key.
         /// </summary>
+        [KeyloggerKey("F18")]
         VK_F18 = 0x81,
 
         /// <summary>
         /// F19 key.
         /// </summary>
+        [KeyloggerKey("F19")]
         VK_F19 = 0x82,
 
         /// <summary>
         /// F20 key.
         /// </summary>
+        [KeyloggerKey("F20")]
         VK_F20 = 0x83,
 
         /// <summary>
         /// F21 key.
         /// </summary>
+        [KeyloggerKey("F21")]
         VK_F21 = 0x84,
 
         /// <summary>
         /// F22 key.
         /// </summary>
+        [KeyloggerKey("F22")]
         VK_F22 = 0x85,
 
         /// <summary>
         /// F23 key.
         /// </summary>
+        [KeyloggerKey("F23")]
         VK_F23 = 0x86,
 
         /// <summary>
         /// F24 key.
         /// </summary>
+        [KeyloggerKey("F24")]
         VK_F24 = 0x87,
 
         #endregion
@@ -697,41 +760,49 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// NUM LOCK key.
         /// </summary>
+        [KeyloggerKey("NUM_LOCK")]
         VK_NUMLOCK = 0x90,
 
         /// <summary>
         /// SCROLL LOCK key.
         /// </summary>
+        [KeyloggerKey("SCROLL_LOCK")]
         VK_SCROLL = 0x91,
 
         /// <summary>
         /// Left SHIFT key.
         /// </summary>
+        [KeyloggerKey("LSHIFT")]
         VK_LSHIFT = 0xA0,
 
         /// <summary>
         /// Right SHIFT key.
         /// </summary>
+        [KeyloggerKey("RSHIFT")]
         VK_RSHIFT = 0xA1,
 
         /// <summary>
         /// Left CONTROL (CTRL) key.
         /// </summary>
+        [KeyloggerKey("LCTRL")]
         VK_LCONTROL = 0xA2,
 
         /// <summary>
         /// Right CONTROL (CTRL) key.
         /// </summary>
+        [KeyloggerKey("RCTRL")]
         VK_RCONTROL = 0xA3,
 
         /// <summary>
         /// Left MENU key.
         /// </summary>
+        [KeyloggerKey("LALT")]
         VK_LMENU = 0xA4,
 
         /// <summary>
         /// Right MENU key.
         /// </summary>
+        [KeyloggerKey("RALT")]
         VK_RMENU = 0xA5,
 
         /// <summary>
