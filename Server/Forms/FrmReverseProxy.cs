@@ -51,11 +51,14 @@ namespace xServer.Forms
                 {
                     lock (LvConnections)
                     {
-                        ProxyClient.ListItem.SubItems[0].Text = ProxyClient.TargetServer;
-                        ProxyClient.ListItem.SubItems[1].Text = ProxyClient.TargetPort.ToString();
-                        ProxyClient.ListItem.SubItems[2].Text = ProxyClient.LengthReceived / 1024 + "KB";
-                        ProxyClient.ListItem.SubItems[3].Text = ProxyClient.LengthSended / 1024 + "KB";
-                        ProxyClient.ListItem.SubItems[4].Text = ProxyClient.Type.ToString();
+                        string TotalReceivedStr = GetSizeStr(ProxyClient.LengthReceived);
+                        string TotalSendStr = GetSizeStr(ProxyClient.LengthSended);
+
+                        if (ProxyClient.ListItem.SubItems[2].Text != TotalReceivedStr)
+                            ProxyClient.ListItem.SubItems[2].Text = TotalReceivedStr;
+
+                        if (ProxyClient.ListItem.SubItems[3].Text != TotalSendStr)
+                            ProxyClient.ListItem.SubItems[3].Text = TotalSendStr;
 
                         if (!ProxyClient.IsConnected)
                         {
@@ -64,6 +67,20 @@ namespace xServer.Forms
                     }
                 }));
             }
+        }
+
+        private string GetSizeStr(long Size)
+        {
+            if (Size > (1024 * 1024 * 1024))
+                return (Size / (1024 * 1024 * 1024)) + "GB";
+
+            if (Size > (1024 * 1024))
+                return (Size / (1024 * 1024)) + "MB";
+
+            if (Size > 1024)
+                return (Size / 1024) + "KB";
+
+            return Size + "B";
         }
 
         void socksServer_onConnectionEstablished(ReverseProxyClient ProxyClient)

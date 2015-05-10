@@ -21,7 +21,10 @@ namespace xServer.Core.ReverseProxy
         {
             get
             {
-                return _clients.ToArray();
+                lock (_clients)
+                {
+                    return _clients.ToArray();
+                }
             }
         }
 
@@ -72,9 +75,8 @@ namespace xServer.Core.ReverseProxy
             {
                 foreach (ReverseProxyClient client in _clients)
                     client.Disconnect();
+                _clients.Clear();
             }
-
-            _clients.Clear();
         }
 
         public ReverseProxyClient GetClientByConnectionId(int ConnectionId)
@@ -101,6 +103,26 @@ namespace xServer.Core.ReverseProxy
         }
         internal void CallonUpdateConnection(ReverseProxyClient ProxyClient)
         {
+            //remove a client that has been disconnected
+            try
+            {
+                if (!ProxyClient.IsConnected)
+                {
+                    lock (_clients)
+                    {
+                        for (int i = 0; i < _clients.Count; i++)
+                        {
+                            if (_clients[i].ConnectionId == ProxyClient.ConnectionId)
+                            {
+                                _clients.RemoveAt(i);
+                                break;
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
+
             try
             {
                 if (onUpdateConnection != null)

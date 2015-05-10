@@ -365,5 +365,24 @@ namespace xClient.Core
                 return null;
             }
         }
+
+        public void RemoveProxyClient(int ConnectionId)
+        {
+            try
+            {
+                lock (_proxyClients)
+                {
+                    for (int i = 0; i < _proxyClients.Count; i++)
+                    {
+                        if (_proxyClients[i].ConnectionId == ConnectionId)
+                        {
+                            _proxyClients.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch { }
+        }
     }
 }

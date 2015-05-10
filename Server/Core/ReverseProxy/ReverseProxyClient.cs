@@ -90,7 +90,11 @@ namespace xServer.Core.ReverseProxy
             this.Type = ProxyType.Unknown;
             this.Server = Server;
 
-            socket.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+            try
+            {
+                socket.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+            }
+            catch { Disconnect(); }
         }
 
         private void socket_Receive(IAsyncResult ar)
@@ -242,7 +246,11 @@ namespace xServer.Core.ReverseProxy
                 }
             }
 
-            Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+            try
+            {
+                Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+            }
+            catch { Disconnect(); }
         }
 
         public void Disconnect()
@@ -432,7 +440,11 @@ namespace xServer.Core.ReverseProxy
 
             Server.CallonUpdateConnection(this);
 
-            Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+            try
+            {
+                Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+            }
+            catch { }
         }
     }
 }
