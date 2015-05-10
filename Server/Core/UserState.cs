@@ -26,7 +26,6 @@ namespace xServer.Core
         public FrmKeylogger FrmKl { get; set; }
         public FrmReverseProxy FrmProxy { get; set; }
         
-
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }
         public bool LastDirectorySeen { get; set; }
