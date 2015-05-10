@@ -73,7 +73,7 @@ namespace xServer.Core.ReverseProxy
 
             lock (_clients)
             {
-                foreach (ReverseProxyClient client in _clients)
+                foreach (ReverseProxyClient client in new List<ReverseProxyClient>(_clients))
                     client.Disconnect();
                 _clients.Clear();
             }
