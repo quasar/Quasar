@@ -481,25 +481,25 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Left Windows key (Natural keyboard).
         /// </summary>
-        [KeyloggerKey("LWIN")]
+        [KeyloggerKey("LWIN", true)]
         VK_LWIN = 0x5B,
 
         /// <summary>
         /// Right Windows key (Natural keyboard).
         /// </summary>
-        [KeyloggerKey("RWIN")]
+        [KeyloggerKey("RWIN", true)]
         VK_RWIN = 0x5C,
 
         /// <summary>
         /// Applications key (natural keyboard).
         /// </summary>
-        [KeyloggerKey("APPS")]
+        [KeyloggerKey("APPS", true)]
         VK_APPS = 0x5D,
 
         /// <summary>
         /// Computer Sleep key.
         /// </summary>
-        [KeyloggerKey("SLEEP")]
+        [KeyloggerKey("SLEEP", true)]
         VK_SLEEP = 0x5F,
 
         #endregion
@@ -612,145 +612,145 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// F1 key.
         /// </summary>
-        [KeyloggerKey("F1")]
+        [KeyloggerKey("F1", true)]
         VK_F1 = 0x70,
 
         /// <summary>
         /// F2 key.
         /// </summary>
-        [KeyloggerKey("F2")]
+        [KeyloggerKey("F2", true)]
         VK_F2 = 0x71,
 
         /// <summary>
         /// F3 key.
         /// </summary>
-        [KeyloggerKey("F3")]
+        [KeyloggerKey("F3", true)]
         VK_F3 = 0x72,
 
         /// <summary>
         /// F4 key.
         /// </summary>
-        [KeyloggerKey("F4")]
+        [KeyloggerKey("F4", true)]
         VK_F4 = 0x73,
 
         /// <summary>
         /// F5 key.
         /// </summary>
-        [KeyloggerKey("F5")]
+        [KeyloggerKey("F5", true)]
         VK_F5 = 0x74,
 
         /// <summary>
         /// F6 key.
         /// </summary>
-        [KeyloggerKey("F6")]
+        [KeyloggerKey("F6", true)]
         VK_F6 = 0x75,
 
         /// <summary>
         /// F7 key.
         /// </summary>
-        [KeyloggerKey("F7")]
+        [KeyloggerKey("F7", true)]
         VK_F7 = 0x76,
 
         /// <summary>
         /// F8 key.
         /// </summary>
-        [KeyloggerKey("F8")]
+        [KeyloggerKey("F8", true)]
         VK_F8 = 0x77,
 
         /// <summary>
         /// F9 key.
         /// </summary>
-        [KeyloggerKey("F9")]
+        [KeyloggerKey("F9", true)]
         VK_F9 = 0x78,
 
         /// <summary>
         /// F10 key.
         /// </summary>
-        [KeyloggerKey("F10")]
+        [KeyloggerKey("F10", true)]
         VK_F10 = 0x79,
 
         /// <summary>
         /// F11 key.
         /// </summary>
-        [KeyloggerKey("F11")]
+        [KeyloggerKey("F11", true)]
         VK_F11 = 0x7A,
 
         /// <summary>
         /// F12 key.
         /// </summary>
-        [KeyloggerKey("F12")]
+        [KeyloggerKey("F12", true)]
         VK_F12 = 0x7B,
 
         /// <summary>
         /// F13 key.
         /// </summary>
-        [KeyloggerKey("F13")]
+        [KeyloggerKey("F13", true)]
         VK_F13 = 0x7C,
 
         /// <summary>
         /// F14 key.
         /// </summary>
-        [KeyloggerKey("F14")]
+        [KeyloggerKey("F14", true)]
         VK_F14 = 0x7D,
 
         /// <summary>
         /// F15 key.
         /// </summary>
-        [KeyloggerKey("F15")]
+        [KeyloggerKey("F15", true)]
         VK_F15 = 0x7E,
 
         /// <summary>
         /// F16 key.
         /// </summary>
-        [KeyloggerKey("F16")]
+        [KeyloggerKey("F16", true)]
         VK_F16 = 0x7F,
 
         /// <summary>
         /// F17 key.
         /// </summary>
-        [KeyloggerKey("F17")]
+        [KeyloggerKey("F17", true)]
         VK_F17 = 0x80,
 
         /// <summary>
         /// F18 key.
         /// </summary>
-        [KeyloggerKey("F18")]
+        [KeyloggerKey("F18", true)]
         VK_F18 = 0x81,
 
         /// <summary>
         /// F19 key.
         /// </summary>
-        [KeyloggerKey("F19")]
+        [KeyloggerKey("F19", true)]
         VK_F19 = 0x82,
 
         /// <summary>
         /// F20 key.
         /// </summary>
-        [KeyloggerKey("F20")]
+        [KeyloggerKey("F20", true)]
         VK_F20 = 0x83,
 
         /// <summary>
         /// F21 key.
         /// </summary>
-        [KeyloggerKey("F21")]
+        [KeyloggerKey("F21", true)]
         VK_F21 = 0x84,
 
         /// <summary>
         /// F22 key.
         /// </summary>
-        [KeyloggerKey("F22")]
+        [KeyloggerKey("F22", true)]
         VK_F22 = 0x85,
 
         /// <summary>
         /// F23 key.
         /// </summary>
-        [KeyloggerKey("F23")]
+        [KeyloggerKey("F23", true)]
         VK_F23 = 0x86,
 
         /// <summary>
         /// F24 key.
         /// </summary>
-        [KeyloggerKey("F24")]
+        [KeyloggerKey("F24", true)]
         VK_F24 = 0x87,
 
         #endregion
@@ -760,49 +760,49 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// NUM LOCK key.
         /// </summary>
-        [KeyloggerKey("NUM_LOCK")]
+        [KeyloggerKey("NUM_LOCK", true)]
         VK_NUMLOCK = 0x90,
 
         /// <summary>
         /// SCROLL LOCK key.
         /// </summary>
-        [KeyloggerKey("SCROLL_LOCK")]
+        [KeyloggerKey("SCROLL_LOCK", true)]
         VK_SCROLL = 0x91,
 
         /// <summary>
         /// Left SHIFT key.
         /// </summary>
-        [KeyloggerKey("LSHIFT")]
+        [KeyloggerKey("LSHIFT", true)]
         VK_LSHIFT = 0xA0,
 
         /// <summary>
         /// Right SHIFT key.
         /// </summary>
-        [KeyloggerKey("RSHIFT")]
+        [KeyloggerKey("RSHIFT", true)]
         VK_RSHIFT = 0xA1,
 
         /// <summary>
         /// Left CONTROL (CTRL) key.
         /// </summary>
-        [KeyloggerKey("LCTRL")]
+        [KeyloggerKey("LCTRL", true)]
         VK_LCONTROL = 0xA2,
 
         /// <summary>
         /// Right CONTROL (CTRL) key.
         /// </summary>
-        [KeyloggerKey("RCTRL")]
+        [KeyloggerKey("RCTRL", true)]
         VK_RCONTROL = 0xA3,
 
         /// <summary>
         /// Left MENU key.
         /// </summary>
-        [KeyloggerKey("LALT")]
+        [KeyloggerKey("LALT", true)]
         VK_LMENU = 0xA4,
 
         /// <summary>
         /// Right MENU key.
         /// </summary>
-        [KeyloggerKey("RALT")]
+        [KeyloggerKey("RALT", true)]
         VK_RMENU = 0xA5,
 
         /// <summary>
