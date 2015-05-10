@@ -14,7 +14,8 @@ namespace xServer.Forms
         public FrmReverseProxy(Client client)
         {
             InitializeComponent();
-            this._connectClient = client;
+            _connectClient = client;
+            _connectClient.Value.FrmProxy = this;
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
@@ -126,6 +127,9 @@ namespace xServer.Forms
         {
             //Stop the proxy server if still active
             btnStop_Click(sender, null);
+
+            if (_connectClient.Value != null)
+                _connectClient.Value.FrmProxy = null;
         }
 
         private void nudServerPort_ValueChanged(object sender, EventArgs e)
