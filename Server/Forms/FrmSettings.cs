@@ -32,6 +32,10 @@ namespace xServer.Forms
             txtPassword.Text = XMLSettings.Password;
             chkUseUpnp.Checked = XMLSettings.UseUPnP;
             chkShowTooltip.Checked = XMLSettings.ShowToolTip;
+            chkNoIPIntegration.Checked = XMLSettings.IntegrateNoIP;
+            txtNoIPHost.Text = XMLSettings.NoIPHost;
+            txtNoIPUser.Text = XMLSettings.NoIPUsername;
+            txtNoIPPass.Text = XMLSettings.NoIPPassword;
         }
 
         private void btnListen_Click(object sender, EventArgs e)
@@ -42,6 +46,8 @@ namespace xServer.Forms
                 {
                     if (chkUseUpnp.Checked)
                         Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    if(chkNoIPIntegration.Checked)
+                        FrmMain.Instance.StartNoIpItegrator();
                     _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                 }
                 finally
@@ -86,6 +92,21 @@ namespace xServer.Forms
             XMLSettings.WriteValue("ShowToolTip", chkShowTooltip.Checked.ToString());
             XMLSettings.ShowToolTip = chkShowTooltip.Checked;
 
+            XMLSettings.WriteValue("IntegrateNoIP", chkNoIPIntegration.Checked.ToString());
+            XMLSettings.IntegrateNoIP = chkNoIPIntegration.Checked;
+
+            if (chkNoIPIntegration.Checked)
+            {
+                XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
+                XMLSettings.NoIPHost = txtNoIPHost.Text;
+
+                XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
+                XMLSettings.NoIPHost = txtNoIPUser.Text;
+
+                XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
+                XMLSettings.NoIPHost = txtNoIPPass.Text;
+            }
+
             this.Close();
         }
 
@@ -94,6 +115,21 @@ namespace xServer.Forms
             if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                 DialogResult.Yes)
                 this.Close();
+        }
+
+        private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e)
+        {
+            NoIPControlHandler(chkNoIPIntegration.Checked);
+        }
+
+        private void NoIPControlHandler(bool enable)
+        {
+            lblHost.Enabled = enable;
+            lblUser.Enabled = enable;
+            lblPass.Enabled = enable;
+            txtNoIPHost.Enabled = enable;
+            txtNoIPUser.Enabled = enable;
+            txtNoIPPass.Enabled = enable;
         }
     }
 }

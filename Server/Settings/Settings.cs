@@ -15,6 +15,11 @@ namespace xServer.Settings
         public static bool UseUPnP { get; set; }
         public static bool ShowToolTip { get; set; }
         public static string Password { get; set; }
+        public static bool IntegrateNoIP { get; set; }
+        public static string NoIPHost { get; set; }
+        public static string NoIPUsername { get; set; }
+        public static string NoIPPassword { get; set; }
+
 
         private static string _settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
 
@@ -35,6 +40,11 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("ShowToU")).InnerText = "True";
                     root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ShowToolTip")).InnerText = "False";
+
+                    root.AppendChild(doc.CreateElement("IntegrateNoIP")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("NoIPHost")).InnerText = "";
+                    root.AppendChild(doc.CreateElement("NoIPUsername")).InnerText = "";
+                    root.AppendChild(doc.CreateElement("NoIPPassword")).InnerText = "";
 
                     doc.Save(_settingsFilePath);
                 }
@@ -65,6 +75,12 @@ namespace xServer.Settings
             {
                 return string.Empty;
             }
+        }
+
+        public static string ReadOrDefault(string nodeName, string defaultValue="")
+        {
+            string value = ReadValue(nodeName);
+            return !string.IsNullOrEmpty(value)? value: defaultValue;
         }
 
         public static bool WriteValue(string pstrValueToRead, string pstrValueToWrite)
