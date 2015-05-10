@@ -54,11 +54,16 @@ namespace xServer.Forms
                         string TotalReceivedStr = GetSizeStr(ProxyClient.LengthReceived);
                         string TotalSendStr = GetSizeStr(ProxyClient.LengthSended);
 
+                        ProxyClient.ListItem.SubItems[0].Text = ProxyClient.TargetServer;
+                        ProxyClient.ListItem.SubItems[1].Text = ProxyClient.TargetPort.ToString();
+
                         if (ProxyClient.ListItem.SubItems[2].Text != TotalReceivedStr)
                             ProxyClient.ListItem.SubItems[2].Text = TotalReceivedStr;
 
                         if (ProxyClient.ListItem.SubItems[3].Text != TotalSendStr)
                             ProxyClient.ListItem.SubItems[3].Text = TotalSendStr;
+
+
 
                         if (!ProxyClient.IsConnected)
                         {
