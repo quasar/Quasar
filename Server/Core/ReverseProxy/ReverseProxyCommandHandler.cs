@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
 using xServer.Core.Packets;
@@ -8,38 +9,42 @@ namespace xServer.Core.ReverseProxy
 {
     public class ReverseProxyCommandHandler
     {
-        public static void HandleCommand(Client client, IPacket Packet)
+        public static void HandleCommand(Client client, IPacket packet)
         {
-            if (Packet as ReverseProxy_ConnectResponse != null)
+            var type = packet.GetType();
+            if (type == typeof (ReverseProxyConnectResponse))
             {
-                ReverseProxy_ConnectResponse Response = Packet as ReverseProxy_ConnectResponse;
+                ReverseProxyConnectResponse response = (ReverseProxyConnectResponse) packet;
                 if (client.Value.ProxyServer != null)
                 {
-                    ReverseProxyClient SocksClient = client.Value.ProxyServer.GetClientByConnectionId(Response.ConnectionId);
-                    if (SocksClient != null)
+                    ReverseProxyClient socksClient =
+                        client.Value.ProxyServer.GetClientByConnectionId(response.ConnectionId);
+                    if (socksClient != null)
                     {
-                        SocksClient.CommandResponse(Response);
+                        socksClient.CommandResponse(response);
                     }
                 }
             }
-            else if (Packet as ReverseProxy_Data != null)
+            else if (type == typeof (ReverseProxyData))
             {
-                ReverseProxy_Data DataCommand = Packet as ReverseProxy_Data;
-                ReverseProxyClient SocksClient = client.Value.ProxyServer.GetClientByConnectionId(DataCommand.ConnectionId);
+                ReverseProxyData dataCommand = (ReverseProxyData) packet;
+                ReverseProxyClient socksClient =
+                    client.Value.ProxyServer.GetClientByConnectionId(dataCommand.ConnectionId);
 
-                if (SocksClient != null)
+                if (socksClient != null)
                 {
-                    SocksClient.SendToClient(DataCommand.Data);
+                    socksClient.SendToClient(dataCommand.Data);
                 }
             }
-            else if (Packet as ReverseProxy_Disconnect != null)
+            else if (type == typeof (ReverseProxyDisconnect))
             {
-                ReverseProxy_Disconnect DisconnectCommand = Packet as ReverseProxy_Disconnect;
-                ReverseProxyClient SocksClient = client.Value.ProxyServer.GetClientByConnectionId(DisconnectCommand.ConnectionId);
+                ReverseProxyDisconnect disconnectCommand = (ReverseProxyDisconnect) packet;
+                ReverseProxyClient socksClient =
+                    client.Value.ProxyServer.GetClientByConnectionId(disconnectCommand.ConnectionId);
 
-                if (SocksClient != null)
+                if (socksClient != null)
                 {
-                    SocksClient.Disconnect();
+                    socksClient.Disconnect();
                 }
             }
         }

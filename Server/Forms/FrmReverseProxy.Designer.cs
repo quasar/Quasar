@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class FrmReverseProxy
     {
@@ -28,20 +30,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmReverseProxy));
             this.btnStart = new System.Windows.Forms.Button();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblLocalServerPort = new System.Windows.Forms.Label();
             this.nudServerPort = new System.Windows.Forms.NumericUpDown();
-            this.tabControl1 = new System.Windows.Forms.TabControl();
+            this.tabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.LvConnections = new System.Windows.Forms.ListView();
+            this.LvConnections = new xServer.Controls.ListViewEx();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.btnStop = new System.Windows.Forms.Button();
+            this.lblProxyInfo = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).BeginInit();
-            this.tabControl1.SuspendLayout();
+            this.tabCtrl.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -55,14 +59,14 @@
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
             // 
-            // label1
+            // lblLocalServerPort
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(22, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(89, 13);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "Local Server Port";
+            this.lblLocalServerPort.AutoSize = true;
+            this.lblLocalServerPort.Location = new System.Drawing.Point(22, 17);
+            this.lblLocalServerPort.Name = "lblLocalServerPort";
+            this.lblLocalServerPort.Size = new System.Drawing.Size(91, 13);
+            this.lblLocalServerPort.TabIndex = 1;
+            this.lblLocalServerPort.Text = "Local Server Port";
             // 
             // nudServerPort
             // 
@@ -78,25 +82,26 @@
             0,
             0});
             this.nudServerPort.Name = "nudServerPort";
-            this.nudServerPort.Size = new System.Drawing.Size(120, 20);
+            this.nudServerPort.Size = new System.Drawing.Size(120, 22);
             this.nudServerPort.TabIndex = 2;
             this.nudServerPort.Value = new decimal(new int[] {
             3128,
             0,
             0,
             0});
+            this.nudServerPort.ValueChanged += new System.EventHandler(this.nudServerPort_ValueChanged);
             // 
-            // tabControl1
+            // tabCtrl
             // 
-            this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.tabCtrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Location = new System.Drawing.Point(26, 52);
-            this.tabControl1.Name = "tabControl1";
-            this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(533, 253);
-            this.tabControl1.TabIndex = 3;
+            this.tabCtrl.Controls.Add(this.tabPage1);
+            this.tabCtrl.Location = new System.Drawing.Point(26, 82);
+            this.tabCtrl.Name = "tabCtrl";
+            this.tabCtrl.SelectedIndex = 0;
+            this.tabCtrl.Size = new System.Drawing.Size(533, 261);
+            this.tabCtrl.TabIndex = 3;
             // 
             // tabPage1
             // 
@@ -104,7 +109,7 @@
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(525, 227);
+            this.tabPage1.Size = new System.Drawing.Size(525, 235);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Open Connections";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -122,7 +127,7 @@
             this.LvConnections.GridLines = true;
             this.LvConnections.Location = new System.Drawing.Point(3, 3);
             this.LvConnections.Name = "LvConnections";
-            this.LvConnections.Size = new System.Drawing.Size(519, 221);
+            this.LvConnections.Size = new System.Drawing.Size(519, 229);
             this.LvConnections.TabIndex = 0;
             this.LvConnections.UseCompatibleStateImageBehavior = false;
             this.LvConnections.View = System.Windows.Forms.View.Details;
@@ -154,6 +159,7 @@
             // 
             // btnStop
             // 
+            this.btnStop.Enabled = false;
             this.btnStop.Location = new System.Drawing.Point(363, 12);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(114, 23);
@@ -162,23 +168,36 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
+            // lblProxyInfo
+            // 
+            this.lblProxyInfo.AutoSize = true;
+            this.lblProxyInfo.Location = new System.Drawing.Point(23, 51);
+            this.lblProxyInfo.Name = "lblProxyInfo";
+            this.lblProxyInfo.Size = new System.Drawing.Size(307, 13);
+            this.lblProxyInfo.TabIndex = 5;
+            this.lblProxyInfo.Text = "Connect to this Socks5 Proxy: 127.0.0.1:3128 (no user/pass)";
+            // 
             // FrmReverseProxy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 318);
+            this.ClientSize = new System.Drawing.Size(574, 356);
+            this.Controls.Add(this.lblProxyInfo);
             this.Controls.Add(this.btnStop);
-            this.Controls.Add(this.tabControl1);
+            this.Controls.Add(this.tabCtrl);
             this.Controls.Add(this.nudServerPort);
-            this.Controls.Add(this.label1);
+            this.Controls.Add(this.lblLocalServerPort);
             this.Controls.Add(this.btnStart);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MaximizeBox = false;
             this.Name = "FrmReverseProxy";
-            this.ShowIcon = false;
-            this.Text = "Reverse Proxy";
+            this.Text = "xRAT 2.0 - Reverse Proxy []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmReverseProxy_FormClosing);
             this.Load += new System.EventHandler(this.FrmReverseProxy_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).EndInit();
-            this.tabControl1.ResumeLayout(false);
+            this.tabCtrl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -188,16 +207,17 @@
         #endregion
 
         private System.Windows.Forms.Button btnStart;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblLocalServerPort;
         private System.Windows.Forms.NumericUpDown nudServerPort;
-        private System.Windows.Forms.TabControl tabControl1;
+        private System.Windows.Forms.TabControl tabCtrl;
         private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.ListView LvConnections;
+        private ListViewEx LvConnections;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ColumnHeader columnHeader4;
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.Label lblProxyInfo;
     }
 }

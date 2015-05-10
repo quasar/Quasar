@@ -1,13 +1,10 @@
 ﻿using ProtoBuf;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using xServer.Core.Packets;
 
 namespace xServer.Core.ReverseProxy.Packets
 {
     [ProtoContract]
-    public class ReverseProxy_Data : IPacket
+    public class ReverseProxyData : IPacket
     {
         [ProtoMember(1)]
         public int ConnectionId { get; set; }
@@ -15,20 +12,19 @@ namespace xServer.Core.ReverseProxy.Packets
         [ProtoMember(2)]
         public byte[] Data { get; set; }
 
-        public ReverseProxy_Data()
+        public ReverseProxyData()
         {
-
         }
 
-        public ReverseProxy_Data(int ConnectionId, byte[] Data)
+        public ReverseProxyData(int connectionId, byte[] data)
         {
-            this.ConnectionId = ConnectionId;
-            this.Data = Data;
+            this.ConnectionId = connectionId;
+            this.Data = data;
         }
 
         public void Execute(Client client)
         {
-            client.Send<ReverseProxy_Data>(this);
+            client.Send<ReverseProxyData>(this);
         }
     }
 }

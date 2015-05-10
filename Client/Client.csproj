@@ -105,10 +105,10 @@
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Connect.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_ConnectResponse.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Data.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Disconnect.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyDisconnect.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
     <Compile Include="Core\SystemCore.cs" />

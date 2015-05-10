@@ -345,7 +345,7 @@ namespace xClient.Core
                 AddTypeToSerializer(parent, type);
         }
 
-        public void ConnectReverseProxy(ReverseProxy_Connect Command)
+        public void ConnectReverseProxy(ReverseProxyConnect Command)
         {
             lock (_proxyClients)
             {

