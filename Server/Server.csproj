@@ -50,6 +50,7 @@
       <HintPath>lib\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
@@ -203,6 +204,13 @@
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Build\Renamer.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyDisconnect.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\UserState.cs" />
@@ -262,6 +270,12 @@
     </Compile>
     <Compile Include="Forms\FrmRemoteShell.Designer.cs">
       <DependentUpon>FrmRemoteShell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmReverseProxy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmReverseProxy.Designer.cs">
+      <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmSettings.cs">
       <SubType>Form</SubType>
@@ -353,6 +367,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteShell.resx">
       <DependentUpon>FrmRemoteShell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmReverseProxy.resx">
+      <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>

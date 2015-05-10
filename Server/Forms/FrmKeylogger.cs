@@ -3,7 +3,6 @@ using System.IO;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
-using System.Threading;
 
 namespace xServer.Forms
 {

@@ -145,6 +145,7 @@ namespace xServer.Core.Build
 
             // PHASE 2 - Renaming
             Renamer r = new Renamer(asmDef);
+
             if (!r.Perform())
                 throw new Exception("renaming failed");
 
