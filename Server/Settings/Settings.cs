@@ -41,7 +41,7 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ShowToolTip")).InnerText = "False";
 
-                    root.AppendChild(doc.CreateElement("IntegrateNoIP")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("EnableNoIPUpdater")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("NoIPHost")).InnerText = "";
                     root.AppendChild(doc.CreateElement("NoIPUsername")).InnerText = "";
                     root.AppendChild(doc.CreateElement("NoIPPassword")).InnerText = "";
@@ -77,10 +77,10 @@ namespace xServer.Settings
             }
         }
 
-        public static string ReadOrDefault(string nodeName, string defaultValue="")
+        public static string ReadValueSafe(string pstrValueToRead, string defaultValue = "")
         {
-            string value = ReadValue(nodeName);
-            return !string.IsNullOrEmpty(value)? value: defaultValue;
+            string value = ReadValue(pstrValueToRead);
+            return (!string.IsNullOrEmpty(value)) ? value: defaultValue;
         }
 
         public static bool WriteValue(string pstrValueToRead, string pstrValueToWrite)

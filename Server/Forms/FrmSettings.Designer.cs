@@ -55,7 +55,7 @@
             this.btnSave.Location = new System.Drawing.Point(227, 253);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 10;
+            this.btnSave.TabIndex = 17;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -126,7 +126,7 @@
             this.btnCancel.Location = new System.Drawing.Point(146, 253);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 9;
+            this.btnCancel.TabIndex = 16;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -172,9 +172,9 @@
             this.chkNoIPIntegration.AutoSize = true;
             this.chkNoIPIntegration.Location = new System.Drawing.Point(15, 155);
             this.chkNoIPIntegration.Name = "chkNoIPIntegration";
-            this.chkNoIPIntegration.Size = new System.Drawing.Size(191, 17);
-            this.chkNoIPIntegration.TabIndex = 11;
-            this.chkNoIPIntegration.Text = "Integrate NoIP.org DNS Updater";
+            this.chkNoIPIntegration.Size = new System.Drawing.Size(184, 17);
+            this.chkNoIPIntegration.TabIndex = 9;
+            this.chkNoIPIntegration.Text = "Activate NoIP.org DNS Updater";
             this.chkNoIPIntegration.UseVisualStyleBackColor = true;
             this.chkNoIPIntegration.CheckedChanged += new System.EventHandler(this.chkNoIPIntegration_CheckedChanged);
             // 
@@ -185,7 +185,7 @@
             this.lblHost.Location = new System.Drawing.Point(33, 181);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(34, 13);
-            this.lblHost.TabIndex = 12;
+            this.lblHost.TabIndex = 10;
             this.lblHost.Text = "Host:";
             // 
             // lblPass
@@ -195,7 +195,7 @@
             this.lblPass.Location = new System.Drawing.Point(170, 209);
             this.lblPass.Name = "lblPass";
             this.lblPass.Size = new System.Drawing.Size(32, 13);
-            this.lblPass.TabIndex = 13;
+            this.lblPass.TabIndex = 14;
             this.lblPass.Text = "Pass:";
             // 
             // lblUser
@@ -205,7 +205,7 @@
             this.lblUser.Location = new System.Drawing.Point(33, 209);
             this.lblUser.Name = "lblUser";
             this.lblUser.Size = new System.Drawing.Size(33, 13);
-            this.lblUser.TabIndex = 14;
+            this.lblUser.TabIndex = 12;
             this.lblUser.Text = "User:";
             // 
             // txtNoIPPass
@@ -222,7 +222,7 @@
             this.txtNoIPUser.Location = new System.Drawing.Point(73, 206);
             this.txtNoIPUser.Name = "txtNoIPUser";
             this.txtNoIPUser.Size = new System.Drawing.Size(91, 22);
-            this.txtNoIPUser.TabIndex = 16;
+            this.txtNoIPUser.TabIndex = 13;
             // 
             // txtNoIPHost
             // 
@@ -230,7 +230,7 @@
             this.txtNoIPHost.Location = new System.Drawing.Point(73, 178);
             this.txtNoIPHost.Name = "txtNoIPHost";
             this.txtNoIPHost.Size = new System.Drawing.Size(229, 22);
-            this.txtNoIPHost.TabIndex = 17;
+            this.txtNoIPHost.TabIndex = 11;
             // 
             // FrmSettings
             // 

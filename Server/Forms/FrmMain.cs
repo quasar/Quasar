@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Net;
-using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
@@ -31,15 +29,12 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.ShowToolTip =
-                bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip"))
-                    ? XMLSettings.ReadValue("ShowToolTip")
-                    : "False"); //fallback
 
-            XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadOrDefault("IntegrateNoIP","False"));
-            XMLSettings.NoIPHost = XMLSettings.ReadOrDefault("NoIPHost");
-            XMLSettings.NoIPUsername = XMLSettings.ReadOrDefault("NoIPUsername");
-            XMLSettings.NoIPPassword =XMLSettings.ReadOrDefault("NoIPPassword");
+            XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
+            XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
+            XMLSettings.NoIPHost = XMLSettings.ReadValueSafe("NoIPHost");
+            XMLSettings.NoIPUsername = XMLSettings.ReadValueSafe("NoIPUsername");
+            XMLSettings.NoIPPassword = XMLSettings.ReadValueSafe("NoIPPassword");
 
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
@@ -169,7 +164,7 @@ namespace xServer.Forms
 
             if (XMLSettings.IntegrateNoIP)
             {
-                StartNoIpItegrator();
+                NoIpUpdater.Start();
             }
         }
 
@@ -293,47 +288,6 @@ namespace xServer.Forms
             else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
             {
                 CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
-            }
-        }
-
-        public void StartNoIpItegrator()
-        {
-            Thread updateThread=new Thread(NoIpUdater);
-            updateThread.IsBackground = true;
-            updateThread.Start();
-        }
-
-        public void NoIpUdater()
-        {
-            while (XMLSettings.IntegrateNoIP)
-            {
-                try
-                {
-                    string myIp = "";
-                    using (WebClient wc = new WebClient())
-                    {
-                        myIp = wc.DownloadString("http://icanhazip.com/");
-                    }
-
-                    if (!string.IsNullOrEmpty(myIp))
-                    {
-                        string link = string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}&myip={1}", XMLSettings.NoIPHost, myIp);
-                        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(link);
-                        request.Method = "GET";
-                        request.UserAgent = string.Format("X IP Automation Tool/3 {0}", XMLSettings.NoIPUsername);
-                        request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", XMLSettings.NoIPUsername, XMLSettings.NoIPPassword)))));
-
-                        HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                        response.Close();
-                    }
-
-                }
-                catch (Exception)
-                {
-                    //Ignore
-                }
-
-                Thread.Sleep(TimeSpan.FromMinutes(5));
             }
         }
 

@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Misc;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -47,7 +48,7 @@ namespace xServer.Forms
                     if (chkUseUpnp.Checked)
                         Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                     if(chkNoIPIntegration.Checked)
-                        FrmMain.Instance.StartNoIpItegrator();
+                        NoIpUpdater.Start();
                     _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                 }
                 finally
@@ -92,7 +93,7 @@ namespace xServer.Forms
             XMLSettings.WriteValue("ShowToolTip", chkShowTooltip.Checked.ToString());
             XMLSettings.ShowToolTip = chkShowTooltip.Checked;
 
-            XMLSettings.WriteValue("IntegrateNoIP", chkNoIPIntegration.Checked.ToString());
+            XMLSettings.WriteValue("EnableNoIPUpdater", chkNoIPIntegration.Checked.ToString());
             XMLSettings.IntegrateNoIP = chkNoIPIntegration.Checked;
 
             if (chkNoIPIntegration.Checked)
