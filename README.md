@@ -17,6 +17,7 @@ Features
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
+* No-IP.org Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
