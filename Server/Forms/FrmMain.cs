@@ -29,10 +29,13 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.ShowToolTip =
-                bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip"))
-                    ? XMLSettings.ReadValue("ShowToolTip")
-                    : "False"); //fallback
+
+            XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
+            XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
+            XMLSettings.NoIPHost = XMLSettings.ReadValueSafe("NoIPHost");
+            XMLSettings.NoIPUsername = XMLSettings.ReadValueSafe("NoIPUsername");
+            XMLSettings.NoIPPassword = XMLSettings.ReadValueSafe("NoIPPassword");
+
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
 
@@ -157,6 +160,11 @@ namespace xServer.Forms
                 if (XMLSettings.UseUPnP)
                     UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
                 ListenServer.Listen(XMLSettings.ListenPort);
+            }
+
+            if (XMLSettings.IntegrateNoIP)
+            {
+                NoIpUpdater.Start();
             }
         }
 

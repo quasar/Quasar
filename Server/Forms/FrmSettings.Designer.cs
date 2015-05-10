@@ -40,15 +40,22 @@
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.chkUseUpnp = new System.Windows.Forms.CheckBox();
             this.chkShowTooltip = new System.Windows.Forms.CheckBox();
+            this.chkNoIPIntegration = new System.Windows.Forms.CheckBox();
+            this.lblHost = new System.Windows.Forms.Label();
+            this.lblPass = new System.Windows.Forms.Label();
+            this.lblUser = new System.Windows.Forms.Label();
+            this.txtNoIPPass = new System.Windows.Forms.TextBox();
+            this.txtNoIPUser = new System.Windows.Forms.TextBox();
+            this.txtNoIPHost = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(227, 210);
+            this.btnSave.Location = new System.Drawing.Point(227, 253);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 10;
+            this.btnSave.TabIndex = 17;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -116,10 +123,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(146, 210);
+            this.btnCancel.Location = new System.Drawing.Point(146, 253);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 9;
+            this.btnCancel.TabIndex = 16;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -160,11 +167,83 @@
             this.chkShowTooltip.Text = "Show tooltip on client with system information";
             this.chkShowTooltip.UseVisualStyleBackColor = true;
             // 
+            // chkNoIPIntegration
+            // 
+            this.chkNoIPIntegration.AutoSize = true;
+            this.chkNoIPIntegration.Location = new System.Drawing.Point(15, 155);
+            this.chkNoIPIntegration.Name = "chkNoIPIntegration";
+            this.chkNoIPIntegration.Size = new System.Drawing.Size(184, 17);
+            this.chkNoIPIntegration.TabIndex = 9;
+            this.chkNoIPIntegration.Text = "Activate NoIP.org DNS Updater";
+            this.chkNoIPIntegration.UseVisualStyleBackColor = true;
+            this.chkNoIPIntegration.CheckedChanged += new System.EventHandler(this.chkNoIPIntegration_CheckedChanged);
+            // 
+            // lblHost
+            // 
+            this.lblHost.AutoSize = true;
+            this.lblHost.Enabled = false;
+            this.lblHost.Location = new System.Drawing.Point(33, 181);
+            this.lblHost.Name = "lblHost";
+            this.lblHost.Size = new System.Drawing.Size(34, 13);
+            this.lblHost.TabIndex = 10;
+            this.lblHost.Text = "Host:";
+            // 
+            // lblPass
+            // 
+            this.lblPass.AutoSize = true;
+            this.lblPass.Enabled = false;
+            this.lblPass.Location = new System.Drawing.Point(170, 209);
+            this.lblPass.Name = "lblPass";
+            this.lblPass.Size = new System.Drawing.Size(32, 13);
+            this.lblPass.TabIndex = 14;
+            this.lblPass.Text = "Pass:";
+            // 
+            // lblUser
+            // 
+            this.lblUser.AutoSize = true;
+            this.lblUser.Enabled = false;
+            this.lblUser.Location = new System.Drawing.Point(33, 209);
+            this.lblUser.Name = "lblUser";
+            this.lblUser.Size = new System.Drawing.Size(33, 13);
+            this.lblUser.TabIndex = 12;
+            this.lblUser.Text = "User:";
+            // 
+            // txtNoIPPass
+            // 
+            this.txtNoIPPass.Enabled = false;
+            this.txtNoIPPass.Location = new System.Drawing.Point(202, 206);
+            this.txtNoIPPass.Name = "txtNoIPPass";
+            this.txtNoIPPass.Size = new System.Drawing.Size(100, 22);
+            this.txtNoIPPass.TabIndex = 15;
+            // 
+            // txtNoIPUser
+            // 
+            this.txtNoIPUser.Enabled = false;
+            this.txtNoIPUser.Location = new System.Drawing.Point(73, 206);
+            this.txtNoIPUser.Name = "txtNoIPUser";
+            this.txtNoIPUser.Size = new System.Drawing.Size(91, 22);
+            this.txtNoIPUser.TabIndex = 13;
+            // 
+            // txtNoIPHost
+            // 
+            this.txtNoIPHost.Enabled = false;
+            this.txtNoIPHost.Location = new System.Drawing.Point(73, 178);
+            this.txtNoIPHost.Name = "txtNoIPHost";
+            this.txtNoIPHost.Size = new System.Drawing.Size(229, 22);
+            this.txtNoIPHost.TabIndex = 11;
+            // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 245);
+            this.ClientSize = new System.Drawing.Size(314, 288);
+            this.Controls.Add(this.txtNoIPHost);
+            this.Controls.Add(this.txtNoIPUser);
+            this.Controls.Add(this.txtNoIPPass);
+            this.Controls.Add(this.lblUser);
+            this.Controls.Add(this.lblPass);
+            this.Controls.Add(this.lblHost);
+            this.Controls.Add(this.chkNoIPIntegration);
             this.Controls.Add(this.chkShowTooltip);
             this.Controls.Add(this.chkUseUpnp);
             this.Controls.Add(this.txtPassword);
@@ -204,5 +283,12 @@
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.CheckBox chkUseUpnp;
         private System.Windows.Forms.CheckBox chkShowTooltip;
+        private System.Windows.Forms.CheckBox chkNoIPIntegration;
+        private System.Windows.Forms.Label lblHost;
+        private System.Windows.Forms.Label lblPass;
+        private System.Windows.Forms.Label lblUser;
+        private System.Windows.Forms.TextBox txtNoIPPass;
+        private System.Windows.Forms.TextBox txtNoIPUser;
+        private System.Windows.Forms.TextBox txtNoIPHost;
     }
 }

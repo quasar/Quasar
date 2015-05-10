@@ -582,9 +582,6 @@ namespace xClient.Core.Commands
 
                         using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
                         {
-                            using (Stream dataStream = response.GetResponseStream())
-                            {
-                            }
                         }
                     }
                     catch
