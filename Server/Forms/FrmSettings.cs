@@ -101,10 +101,10 @@ namespace xServer.Forms
                 XMLSettings.NoIPHost = txtNoIPHost.Text;
 
                 XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
-                XMLSettings.NoIPHost = txtNoIPUser.Text;
+                XMLSettings.NoIPUsername = txtNoIPUser.Text;
 
                 XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
-                XMLSettings.NoIPHost = txtNoIPPass.Text;
+                XMLSettings.NoIPPassword = txtNoIPPass.Text;
             }
 
             this.Close();

@@ -303,9 +303,9 @@ namespace xServer.Forms
             updateThread.Start();
         }
 
-        private void NoIpUdater()
+        public void NoIpUdater()
         {
-            while (true)
+            while (XMLSettings.IntegrateNoIP)
             {
                 try
                 {
