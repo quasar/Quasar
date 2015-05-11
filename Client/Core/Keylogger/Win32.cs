@@ -39,7 +39,7 @@ namespace xClient.Core.Keylogger
 
         [DllImport("user32.dll", CharSet = CharSet.Unicode, ExactSpelling = true)]
         internal static extern int ToUnicodeEx(int wVirtKey, uint wScanCode, byte[] lpKeyState, StringBuilder pwszBuff,
-                                              int cchBuff, uint wFlags, IntPtr dwhkl);
+                                               int cchBuff, uint wFlags, IntPtr dwhkl);
 
         [DllImport("user32.dll")]
         internal static extern IntPtr GetForegroundWindow();
