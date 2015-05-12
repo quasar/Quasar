@@ -31,7 +31,7 @@ Features
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
 * Keylogger
-* Reverse Socks5 Proxy
+* Reverse SOCKS5/HTTPS Proxy
 
 Compiling
 ---
@@ -51,7 +51,7 @@ Building a client
 
 ToDo
 ---
-* ~~Reverse Socks5 Proxy~~
+* ~~Reverse SOCKS5/HTTPS Proxy~~
 * Password Recovery (Browsers, FTP-Clients)
 * Startup Persistence
 
