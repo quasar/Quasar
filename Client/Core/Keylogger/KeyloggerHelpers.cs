@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using xClient.Core.Keylogger;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
@@ -92,17 +93,34 @@ namespace xClient.Core.Keylogger
         /// <returns>True if key is pressed; False if the key is not.</returns>
         public static bool IsKeyPressed(this short sender)
         {
-            return (sender & 0x8000) == 0x8000;
+            return (sender & 0x8000) != 0;
         }
 
         /// <summary>
-        /// Determines if the key code provided is in a toggled state.
+        /// Determines if the number lock key code provided is in a toggled state.
         /// </summary>
-        /// <param name="sender">The code for the key.</param>
         /// <returns>True if toggled on; False if toggled off.</returns>
-        public static bool IsKeyToggled(this short sender)
+        public static bool NumLockToggled()
         {
-            return (sender & 0xffff) == 0xffff;
+            return Control.IsKeyLocked(Keys.NumLock);
+        }
+
+        /// <summary>
+        /// Determines if the scroll lock key code provided is in a toggled state.
+        /// </summary>
+        /// <returns>True if toggled on; False if toggled off.</returns>
+        public static bool ScrollLockToggled()
+        {
+            return Control.IsKeyLocked(Keys.Scroll);
+        }
+
+        /// <summary>
+        /// Determines if the caps lock key code provided is in a toggled state.
+        /// </summary>
+        /// <returns>True if toggled on; False if toggled off.</returns>
+        public static bool CapsLockToggled()
+        {
+            return Control.IsKeyLocked(Keys.CapsLock);
         }
 
         public static string BuildString(this KeyloggerModifierKeys sender)

