@@ -291,6 +291,8 @@ namespace xServer.Core
                 _readableDataLen = 0;
                 _payloadLen = 0;
             }
+
+            Value.DisposeForms();
         }
 
         /// <summary>
