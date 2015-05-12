@@ -106,7 +106,7 @@ namespace xClient.Core
                 Initialize();
 
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                SocketExtensions.SetKeepAliveEx(_handle, KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
+                _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 

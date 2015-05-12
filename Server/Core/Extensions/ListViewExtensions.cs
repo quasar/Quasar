@@ -16,17 +16,17 @@ namespace xServer.Core.Extensions
         private const uint SET_COLUMN_WIDTH = 4126;
         private const int AUTOSIZE_USEHEADER = -2;
 
-        public static void RemoveDots(ListView targetListView)
+        public static void RemoveDots(this ListView targetListView)
         {
             SendMessage(targetListView.Handle, WM_CHANGEUISTATE, 65537, 0);
         }
 
-        public static void ChangeTheme(ListView targetListView)
+        public static void ChangeTheme(this ListView targetListView)
         {
             SetWindowTheme(targetListView.Handle, "Explorer", 0);
         }
 
-        public static void AutosizeColumns(ListView targetListView)
+        public static void AutosizeColumns(this ListView targetListView)
         {
             for (int lngColumn = 0; lngColumn <= (targetListView.Columns.Count - 1); lngColumn++)
             {
