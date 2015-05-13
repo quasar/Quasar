@@ -63,7 +63,6 @@ namespace Client.Tests.Core
         {
             var virus = SystemCore.GetAntivirus();
             Assert.That(virus, Is.Not.Null);
-            Assert.That(virus, Is.Not.EqualTo("Unknown"));
         }
 
         [Test]
@@ -71,7 +70,6 @@ namespace Client.Tests.Core
         {
             var firewall = SystemCore.GetFirewall();
             Assert.That(firewall, Is.Not.Null);
-            Assert.That(firewall, Is.Not.EqualTo("Unknown"));
         }
 
         [Test]
@@ -91,7 +89,6 @@ namespace Client.Tests.Core
         {
             var ip = SystemCore.GetLanIp();
             Assert.That(ip, Is.Not.Null);
-            Assert.That(ip, Is.Not.EqualTo("-"));
             Assert.That(ip, Is.Not.EqualTo(UInt32.MaxValue));
         }
 
@@ -100,7 +97,6 @@ namespace Client.Tests.Core
         {
             var mac = SystemCore.GetMacAddress();
             Assert.That(mac, Is.Not.Null);
-            Assert.That(mac, Is.Not.EqualTo("-"));
             Assert.That(mac, Is.Not.EqualTo(UInt32.MaxValue));
         }
 
