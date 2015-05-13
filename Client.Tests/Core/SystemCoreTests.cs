@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using NUnit.Framework;
 using xClient.Core;
 
-namespace Client.Tests
+namespace Client.Tests.Core
 {
     [TestFixture]
     public class SystemCoreTests
