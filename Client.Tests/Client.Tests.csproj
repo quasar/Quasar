@@ -6,8 +6,8 @@
     <ProjectGuid>{7223F9B2-17A2-432B-ADAC-51B1E35681DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xClientTests</RootNamespace>
-    <AssemblyName>ClientTests</AssemblyName>
+    <RootNamespace>xClient.Tests</RootNamespace>
+    <AssemblyName>Client.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>

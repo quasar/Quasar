@@ -2,7 +2,7 @@
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
 
-namespace xClientTests.Core.Encryption
+namespace xClient.Tests.Core.Encryption
 {
     [TestClass]
     public class SHA256Tests
