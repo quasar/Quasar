@@ -68,6 +68,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Core\Sha265Tests.cs" />
     <Compile Include="Core\AESTests.cs" />
     <Compile Include="Core\SystemCoreTests.cs" />
     <Compile Include="LocalAddin.cs" />
