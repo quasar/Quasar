@@ -1,4 +1,5 @@
 ﻿using System.Linq;
+using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
@@ -27,10 +28,10 @@ namespace xClient.Tests.Core.Encryption
         public void EncryptAndDecryptByteArrayTest()
         {
             var input = Helper.GetRandomName(100);
-            var inputByte = GetBytes(input);
+            var inputByte = Encoding.UTF8.GetBytes(input);
 
             var password = Helper.GetRandomName(50);
-            var passwordByte = GetBytes(password);
+            var passwordByte = Encoding.UTF8.GetBytes(password);
             var encrypted = AES.Encrypt(inputByte, passwordByte);
 
             Assert.IsNotNull(encrypted);
@@ -38,19 +39,10 @@ namespace xClient.Tests.Core.Encryption
 
             var decrypted = AES.Decrypt(encrypted, passwordByte);
 
-            //The decryption method is adding on 9 blank bytes.
-            var realDecrypted = decrypted.Take(200).ToArray();
+            //The decryption method is adding on blank bytes.
+            var realDecrypted = decrypted.Take(100).ToArray();
 
             CollectionAssert.AreEqual(inputByte,realDecrypted);
         }
-
-
-        private static byte[] GetBytes(string str)
-        {
-            byte[] bytes = new byte[str.Length * sizeof(char)];
-            System.Buffer.BlockCopy(str.ToCharArray(), 0, bytes, 0, bytes.Length);
-            return bytes;
-        }
-
     }
 }

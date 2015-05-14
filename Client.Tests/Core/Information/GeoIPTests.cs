@@ -1,6 +1,4 @@
-﻿using System;
-using System.Runtime.CompilerServices;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xClient.Core.Information;
 
 
@@ -10,7 +8,7 @@ namespace xClient.Tests.Core.Information
     public class GeoIPTests
     {
         [TestMethod]
-        public void EncryptAndDecryptStringTest()
+        public void GetGeoIPTest()
         {
             var ipInformation = new GeoIP();
             Assert.IsNotNull(ipInformation.City);

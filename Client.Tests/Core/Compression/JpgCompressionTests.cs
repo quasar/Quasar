@@ -1,10 +1,7 @@
 ﻿using System;
 using System.Drawing;
-using System.Drawing.Imaging;
-using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xClient.Core.Compression;
-using xClient.Core.Helper;
 
 namespace xClient.Tests.Core.Compression
 {
@@ -12,7 +9,7 @@ namespace xClient.Tests.Core.Compression
     public class JpgCompressionTests
     {
         [TestMethod]
-        public void EncryptAndDecryptStringTest()
+        public void CompressionTest()
         {
             var quality = Int64.MaxValue;
             var jpg = new JpgCompression(quality);
