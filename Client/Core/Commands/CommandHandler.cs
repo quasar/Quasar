@@ -689,10 +689,10 @@ namespace xClient.Core.Commands
 
         public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
         {
-            if (_shell == null)
-                _shell = new Shell();
-
             string input = command.Command;
+
+            if (_shell == null && input == "exit") return;
+            if (_shell == null) _shell = new Shell();
 
             if (input == "exit")
                 CloseShell();

