@@ -14,6 +14,12 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(3)]
         public string[] Titles { get; set; }
 
+        [ProtoMember(4)]
+        public decimal[] CpuUsage { get; set; }
+
+        [ProtoMember(5)]
+        public long[] MemoryUsage { get; set; }
+
         public GetProcessesResponse()
         {
         }
