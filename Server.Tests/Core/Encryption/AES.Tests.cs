@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.Text;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xServer.Core.Encryption;
 using xServer.Core.Helper;
 
@@ -8,7 +9,7 @@ namespace xServer.Tests.Core.Encryption
     public class AESTests
     {
         [TestMethod]
-        public void EncryptAndDecryptTest()
+        public void EncryptAndDecryptStringTest()
         {
             var input = Helper.GetRandomName(100);
             var password = Helper.GetRandomName(50);
@@ -19,7 +20,25 @@ namespace xServer.Tests.Core.Encryption
 
             var decrypted = AES.Decrypt(encrypted, password);
 
-            Assert.IsTrue(input == decrypted);
+            Assert.AreEqual(input, decrypted);
+        }
+
+        [TestMethod]
+        public void EncryptAndDecryptByteArrayTest()
+        {
+            var input = Helper.GetRandomName(100);
+            var inputByte = Encoding.UTF8.GetBytes(input);
+
+            var passwordByte = Encoding.UTF8.GetBytes(Helper.GetRandomName(50));
+            var encryptedByte = AES.Encrypt(inputByte, passwordByte);
+
+            Assert.IsNotNull(encryptedByte);
+            CollectionAssert.AllItemsAreNotNull(encryptedByte);
+            CollectionAssert.AreNotEqual(encryptedByte, inputByte);
+
+            var decryptedByte = AES.Decrypt(encryptedByte, passwordByte);
+
+            CollectionAssert.AreEqual(inputByte, decryptedByte);
         }
     }
 }

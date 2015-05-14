@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using System.Text;
+﻿using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
@@ -21,7 +20,7 @@ namespace xClient.Tests.Core.Encryption
 
             var decrypted = AES.Decrypt(encrypted, password);
 
-            Assert.IsTrue(input == decrypted);
+            Assert.AreEqual(input, decrypted);
         }
 
         [TestMethod]
@@ -30,19 +29,16 @@ namespace xClient.Tests.Core.Encryption
             var input = Helper.GetRandomName(100);
             var inputByte = Encoding.UTF8.GetBytes(input);
 
-            var password = Helper.GetRandomName(50);
-            var passwordByte = Encoding.UTF8.GetBytes(password);
-            var encrypted = AES.Encrypt(inputByte, passwordByte);
+            var passwordByte = Encoding.UTF8.GetBytes(Helper.GetRandomName(50));
+            var encryptedByte = AES.Encrypt(inputByte, passwordByte);
 
-            Assert.IsNotNull(encrypted);
-            Assert.AreNotEqual(encrypted, input);
+            Assert.IsNotNull(encryptedByte);
+            CollectionAssert.AllItemsAreNotNull(encryptedByte);
+            CollectionAssert.AreNotEqual(encryptedByte, inputByte);
 
-            var decrypted = AES.Decrypt(encrypted, passwordByte);
+            var decryptedByte = AES.Decrypt(encryptedByte, passwordByte);
 
-            //The decryption method is adding on blank bytes.
-            var realDecrypted = decrypted.Take(100).ToArray();
-
-            CollectionAssert.AreEqual(inputByte,realDecrypted);
+            CollectionAssert.AreEqual(inputByte, decryptedByte);
         }
     }
 }

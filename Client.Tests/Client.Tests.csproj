@@ -54,10 +54,10 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Core\Compression\JpgCompressionTests.cs" />
+    <Compile Include="Core\Compression\JpgCompression.Tests.cs" />
     <Compile Include="Core\Encryption\AES.Tests.cs" />
     <Compile Include="Core\Encryption\SHA256.Tests.cs" />
-    <Compile Include="Core\Information\GeoIPTests.cs" />
+    <Compile Include="Core\Information\GeoIP.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
