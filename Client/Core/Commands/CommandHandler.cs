@@ -292,10 +292,6 @@ namespace xClient.Core.Commands
             string[] processes = new string[pList.Length];
             int[] ids = new int[pList.Length];
             string[] titles = new string[pList.Length];
-            decimal[] cpuUsage = new decimal[pList.Length];
-            long[] memoryUsage = new long[pList.Length];
-
-            decimal TotalCpuUsage = GetTotalCpuUsage();
 
             int i = 0;
             foreach (Process p in pList)
@@ -303,75 +299,10 @@ namespace xClient.Core.Commands
                 processes[i] = p.ProcessName + ".exe";
                 ids[i] = p.Id;
                 titles[i] = p.MainWindowTitle;
-                cpuUsage[i] = ((GetCpuUsage(p) / TotalCpuUsage) * 100);
                 i++;
             }
 
             new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
-        }
-
-        private static decimal GetTotalCpuUsage()
-        {
-            try
-            {
-                PerformanceCounter CpuCounter = new PerformanceCounter()
-                {
-                    CategoryName = "Processor",
-                    CounterName = "% Processor Time",
-                    InstanceName = "_Total"
-                };
-
-                CpuCounter.NextValue();
-                Thread.Sleep(200);
-
-                return (decimal)CpuCounter.NextValue();
-            }
-            catch
-            {
-                return (decimal)100;
-            }
-        }
-
-        private static decimal GetCpuUsage(Process proc)
-        {
-            try
-            {
-                PerformanceCounter CpuCounter = new PerformanceCounter()
-                {
-                    CategoryName = "Processor",
-                    CounterName = "% Processor Time",
-                    InstanceName = proc.ProcessName
-                };
-
-                CpuCounter.NextValue();
-
-                return (decimal)CpuCounter.NextValue();
-            }
-            catch
-            {
-                return (decimal)0;
-            }
-        }
-
-        private static long GetMemoryUsage(Process proc)
-        {
-            try
-            {
-                PerformanceCounter CpuCounter = new PerformanceCounter()
-                {
-                    CategoryName = "Memory",
-                    CounterName = "Available MBytes",
-                    InstanceName = proc.ProcessName
-                };
-
-                CpuCounter.NextValue();
-
-                return (long)CpuCounter.NextValue();
-            }
-            catch
-            {
-                return (long)0;
-            }
         }
 
         public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)
