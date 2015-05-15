@@ -149,57 +149,56 @@ namespace xServer.Core
                 switch (_receiveState)
                 {
                     case ReceiveType.Header:
+                    {
+                        process = _readableDataLen >= HEADER_SIZE;
+                        if (process)
                         {
-                            process = _readableDataLen >= HEADER_SIZE;
-                            if (process)
-                            {
-                                _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
+                            _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
 
-                                _readableDataLen -= HEADER_SIZE;
-                                _readOffset += HEADER_SIZE;
-                                _receiveState = ReceiveType.Payload;
-                            }
-                            break;
+                            _readableDataLen -= HEADER_SIZE;
+                            _readOffset += HEADER_SIZE;
+                            _receiveState = ReceiveType.Payload;
                         }
-
+                        break;
+                    }
                     case ReceiveType.Payload:
+                    {
+                        process = _readableDataLen >= _payloadLen;
+                        if (process)
                         {
-                            process = _readableDataLen >= _payloadLen;
-                            if (process)
+                            byte[] payload = new byte[_payloadLen];
+                            try
                             {
-                                byte[] payload = new byte[_payloadLen];
-                                try
-                                {
-                                    Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
-                                }
-                                catch
-                                {
-                                    Disconnect();
-                                }
-
-                                if (encryptionEnabled)
-                                    payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                                if (payload.Length > 0)
-                                {
-                                    if (compressionEnabled)
-                                        payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
-
-                                    using (MemoryStream deserialized = new MemoryStream(payload))
-                                    {
-                                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                            PrefixStyle.Fixed32);
-
-                                        OnClientRead(packet);
-                                    }
-                                }
-
-                                _readOffset += _payloadLen;
-                                _readableDataLen -= _payloadLen;
-                                _receiveState = ReceiveType.Header;
+                                Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
                             }
-                            break;
+                            catch
+                            {
+                                Disconnect();
+                            }
+
+                            if (encryptionEnabled)
+                                payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+                            if (payload.Length > 0)
+                            {
+                                if (compressionEnabled)
+                                    payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+
+                                using (MemoryStream deserialized = new MemoryStream(payload))
+                                {
+                                    IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                        PrefixStyle.Fixed32);
+
+                                    OnClientRead(packet);
+                                }
+                            }
+
+                            _readOffset += _payloadLen;
+                            _readableDataLen -= _payloadLen;
+                            _receiveState = ReceiveType.Header;
                         }
+                        break;
+                    }
                 }
             }
 
