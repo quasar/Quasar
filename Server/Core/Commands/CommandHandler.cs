@@ -207,7 +207,8 @@ namespace xServer.Core.Commands
                     {
                         ListViewItem lvi =
                             new ListViewItem(new string[]
-                            {packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i]});
+                            {packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i],
+                             string.Format("{0:0%}", packet.CpuUsage[i]), string.Format("{0:0%}", packet.MemoryUsage[i])});
                         try
                         {
                             client.Value.FrmTm.Invoke(
