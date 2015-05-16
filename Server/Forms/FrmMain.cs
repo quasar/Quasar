@@ -727,9 +727,22 @@ namespace xServer.Forms
                     c.Value.FrmProxy.Focus();
                     return;
                 }
-                FrmReverseProxy frmRS = new FrmReverseProxy(c);
+
+                FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
                 frmRS.Show();
             }
+        }
+
+        private Client[] GetSelectedClients()
+        {
+            List<Client> clients = new List<Client>();
+
+            for (int i = 0; i < lstClients.SelectedItems.Count; i++)
+            {
+                if (lstClients.SelectedItems[i].Tag as Client != null)
+                    clients.Add(lstClients.SelectedItems[i].Tag as Client);
+            }
+            return clients.ToArray();
         }
     }
 }

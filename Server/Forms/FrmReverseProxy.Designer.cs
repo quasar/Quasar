@@ -37,16 +37,20 @@ namespace xServer.Forms
             this.nudServerPort = new System.Windows.Forms.NumericUpDown();
             this.tabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.lblProxyInfo = new System.Windows.Forms.Label();
             this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.killConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.lblProxyInfo = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.LvConnections = new xServer.Controls.ListViewEx();
+            this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lblLoadBalance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).BeginInit();
             this.tabCtrl.SuspendLayout();
             this.tabPage1.SuspendLayout();
@@ -88,6 +92,7 @@ namespace xServer.Forms
             this.nudServerPort.Name = "nudServerPort";
             this.nudServerPort.Size = new System.Drawing.Size(120, 22);
             this.nudServerPort.TabIndex = 2;
+            this.nudServerPort.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.nudServerPort.Value = new decimal(new int[] {
             3128,
             0,
@@ -101,10 +106,10 @@ namespace xServer.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabCtrl.Controls.Add(this.tabPage1);
-            this.tabCtrl.Location = new System.Drawing.Point(26, 82);
+            this.tabCtrl.Location = new System.Drawing.Point(26, 115);
             this.tabCtrl.Name = "tabCtrl";
             this.tabCtrl.SelectedIndex = 0;
-            this.tabCtrl.Size = new System.Drawing.Size(533, 261);
+            this.tabCtrl.Size = new System.Drawing.Size(736, 274);
             this.tabCtrl.TabIndex = 3;
             // 
             // tabPage1
@@ -113,10 +118,24 @@ namespace xServer.Forms
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(525, 235);
+            this.tabPage1.Size = new System.Drawing.Size(728, 248);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "Open Connections";
             this.tabPage1.UseVisualStyleBackColor = true;
+            // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.killConnectionToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 26);
+            // 
+            // killConnectionToolStripMenuItem
+            // 
+            this.killConnectionToolStripMenuItem.Name = "killConnectionToolStripMenuItem";
+            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
+            this.killConnectionToolStripMenuItem.Text = "Kill Connection";
+            this.killConnectionToolStripMenuItem.Click += new System.EventHandler(this.killConnectionToolStripMenuItem_Click);
             // 
             // btnStop
             // 
@@ -138,23 +157,20 @@ namespace xServer.Forms
             this.lblProxyInfo.TabIndex = 5;
             this.lblProxyInfo.Text = "Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:3128 (no user/pass)";
             // 
-            // contextMenuStrip1
+            // label1
             // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.killConnectionToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 26);
-            // 
-            // killConnectionToolStripMenuItem
-            // 
-            this.killConnectionToolStripMenuItem.Name = "killConnectionToolStripMenuItem";
-            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.killConnectionToolStripMenuItem.Text = "Kill Connection";
-            this.killConnectionToolStripMenuItem.Click += new System.EventHandler(this.killConnectionToolStripMenuItem_Click);
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(23, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(404, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "All the DNS Queries will be executed at the remote client to reduce DNS Leaks";
             // 
             // LvConnections
             // 
             this.LvConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader6,
+            this.columnHeader7,
             this.columnHeader1,
             this.columnHeader2,
             this.columnHeader3,
@@ -166,12 +182,22 @@ namespace xServer.Forms
             this.LvConnections.GridLines = true;
             this.LvConnections.Location = new System.Drawing.Point(3, 3);
             this.LvConnections.Name = "LvConnections";
-            this.LvConnections.Size = new System.Drawing.Size(519, 229);
+            this.LvConnections.Size = new System.Drawing.Size(722, 242);
             this.LvConnections.TabIndex = 0;
             this.LvConnections.UseCompatibleStateImageBehavior = false;
             this.LvConnections.View = System.Windows.Forms.View.Details;
             this.LvConnections.VirtualMode = true;
             this.LvConnections.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.LvConnections_RetrieveVirtualItem);
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Client IP";
+            this.columnHeader6.Width = 106;
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Client Country";
+            this.columnHeader7.Width = 106;
             // 
             // columnHeader1
             // 
@@ -198,11 +224,22 @@ namespace xServer.Forms
             this.columnHeader5.Text = "Proxy Type";
             this.columnHeader5.Width = 90;
             // 
+            // lblLoadBalance
+            // 
+            this.lblLoadBalance.AutoSize = true;
+            this.lblLoadBalance.Location = new System.Drawing.Point(23, 84);
+            this.lblLoadBalance.Name = "lblLoadBalance";
+            this.lblLoadBalance.Size = new System.Drawing.Size(105, 13);
+            this.lblLoadBalance.TabIndex = 7;
+            this.lblLoadBalance.Text = "[Load Balance Info]";
+            // 
             // FrmReverseProxy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(574, 356);
+            this.ClientSize = new System.Drawing.Size(777, 402);
+            this.Controls.Add(this.lblLoadBalance);
+            this.Controls.Add(this.label1);
             this.Controls.Add(this.lblProxyInfo);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.tabCtrl);
@@ -210,7 +247,6 @@ namespace xServer.Forms
             this.Controls.Add(this.lblLocalServerPort);
             this.Controls.Add(this.btnStart);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmReverseProxy";
@@ -243,5 +279,9 @@ namespace xServer.Forms
         private System.Windows.Forms.Label lblProxyInfo;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
         private System.Windows.Forms.ToolStripMenuItem killConnectionToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader columnHeader6;
+        private System.Windows.Forms.ColumnHeader columnHeader7;
+        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblLoadBalance;
     }
 }
