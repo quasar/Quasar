@@ -81,6 +81,8 @@ namespace xServer.Core.ReverseProxy
         private ReverseProxyServer Server;
         public ListViewItem ListItem { get; set; }
 
+        public bool ProxySuccessful { get; private set; }
+
         public ReverseProxyClient(Client client, Socket socket, ReverseProxyServer server)
         {
             this.Handle = socket;
@@ -171,8 +173,7 @@ namespace xServer.Core.ReverseProxy
                                         this._isDomainNameType = true;
 
                                         //Send Command to client and wait for response from CommandHandler
-                                        new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort)
-                                            .Execute(Client);
+                                        new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
                                         Server.CallonConnectionEstablished(this);
 
                                         return; //Quit receiving and wait for client's response
@@ -349,7 +350,6 @@ namespace xServer.Core.ReverseProxy
                 if (response.IsConnected)
                 {
                     //tell the Proxy Client that we've established a connection
-
                     if (Type == ProxyType.HTTPS)
                     {
                         SendToClient(Encoding.ASCII.GetBytes("HTTP/1.0 200 Connection established\r\n\r\n"));
@@ -390,6 +390,8 @@ namespace xServer.Core.ReverseProxy
                     }
 
                     _handshakeStream.Close();
+
+                    ProxySuccessful = true;
 
                     try
                     {
