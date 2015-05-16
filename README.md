@@ -54,6 +54,7 @@ ToDo
 * ~~Reverse SOCKS5/HTTPS Proxy~~
 * Password Recovery (Browsers, FTP-Clients)
 * Startup Persistence
+* [Issues](https://github.com/MaxXor/xRAT/issues)
 
 Contributing
 ---
