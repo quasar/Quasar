@@ -14,15 +14,19 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(3)]
         public string[] Titles { get; set; }
 
+        [ProtoMember(4)]
+        public long[] MemoryUsed { get; set; }
+
         public GetProcessesResponse()
         {
         }
 
-        public GetProcessesResponse(string[] processes, int[] ids, string[] titles)
+        public GetProcessesResponse(string[] processes, int[] ids, string[] titles, long[] memoryUsed)
         {
             this.Processes = processes;
             this.IDs = ids;
             this.Titles = titles;
+            this.MemoryUsed = memoryUsed;
         }
 
         public void Execute(Client client)
