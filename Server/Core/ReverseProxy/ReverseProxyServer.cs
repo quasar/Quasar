@@ -28,6 +28,27 @@ namespace xServer.Core.ReverseProxy
             }
         }
 
+        public ReverseProxyClient[] OpenConnections
+        {
+            get
+            {
+                lock (_clients)
+                {
+                    List<ReverseProxyClient> temp = new List<ReverseProxyClient>();
+
+                    for (int i = 0; i < _clients.Count; i++)
+                    {
+                        if (_clients[i].ProxySuccessful)
+                        {
+                            temp.Add(_clients[i]);
+                        }
+                    }
+                    return temp.ToArray();
+                }
+            }
+        }
+
+
         public Client Client { get; private set; }
 
         public ReverseProxyServer()
