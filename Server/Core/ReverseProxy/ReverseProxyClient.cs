@@ -79,7 +79,7 @@ namespace xServer.Core.ReverseProxy
 
         public ProxyType Type { get; private set; }
         private ReverseProxyServer Server;
-        public ListViewItem ListItem { get; set; }
+        public string HostName { get; private set; }
 
         public bool ProxySuccessful { get; private set; }
 
@@ -349,6 +349,8 @@ namespace xServer.Core.ReverseProxy
 
                 if (response.IsConnected)
                 {
+                    this.HostName = response.HostName;
+
                     //tell the Proxy Client that we've established a connection
                     if (Type == ProxyType.HTTPS)
                     {
