@@ -292,6 +292,7 @@ namespace xClient.Core.Commands
             string[] processes = new string[pList.Length];
             int[] ids = new int[pList.Length];
             string[] titles = new string[pList.Length];
+            long[] memoryUsed = new long[pList.Length];
 
             int i = 0;
             foreach (Process p in pList)
@@ -299,10 +300,26 @@ namespace xClient.Core.Commands
                 processes[i] = p.ProcessName + ".exe";
                 ids[i] = p.Id;
                 titles[i] = p.MainWindowTitle;
+                memoryUsed[i] = GetMemoryUsage(p);
                 i++;
             }
 
-            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles, memoryUsed).Execute(client);
+        }
+
+        private static long GetMemoryUsage(Process proc)
+        {
+            try
+            {
+                using (PerformanceCounter MemoryCounter = new PerformanceCounter("Process", "Working Set", proc.ProcessName))
+                {
+                    return (long)MemoryCounter.NextValue();
+                }
+            }
+            catch
+            {
+                return (long)0;
+            }
         }
 
         public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)

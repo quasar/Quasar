@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Text;
@@ -205,13 +206,12 @@ namespace xServer.Core.Commands
                 {
                     if (packet.IDs[i] != 0 && packet.Processes[i] != "System.exe")
                     {
-                        ListViewItem lvi =
-                            new ListViewItem(new string[]
-                            {packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i]});
                         try
                         {
-                            client.Value.FrmTm.Invoke(
-                                (MethodInvoker) delegate { client.Value.FrmTm.lstTasks.Items.Add(lvi); });
+                            ListViewItem lvi = new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(),
+                                                                packet.Titles[i], string.Format("{0:n0}", packet.MemoryUsed[i]) });
+
+                            client.Value.FrmTm.Invoke((MethodInvoker)delegate { client.Value.FrmTm.lstTasks.Items.Add(lvi); });
                         }
                         catch
                         {
