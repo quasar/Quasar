@@ -103,7 +103,8 @@ namespace xServer.Forms
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            RefreshTimer.Stop();
+            if (RefreshTimer != null)
+                RefreshTimer.Stop();
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             if (SocksServer != null)
