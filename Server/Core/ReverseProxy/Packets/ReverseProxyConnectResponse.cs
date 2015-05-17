@@ -18,6 +18,9 @@ namespace xServer.Core.ReverseProxy.Packets
         [ProtoMember(4)]
         public int LocalPort { get; set; }
 
+        [ProtoMember(5)]
+        public string HostName { get; set; }
+
         public ReverseProxyConnectResponse()
         {
         }

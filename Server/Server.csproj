@@ -66,6 +66,10 @@
     <Compile Include="Core\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Commands\ConnectionHandler.cs" />
+    <Compile Include="Core\Commands\MiscHandler.cs" />
+    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
+    <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Helper\FileSplit.cs" />

