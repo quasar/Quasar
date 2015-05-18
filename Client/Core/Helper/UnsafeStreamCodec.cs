@@ -33,7 +33,7 @@ namespace xClient.Core.Helper
         private PixelFormat _encodedFormat;
         private int _encodedWidth;
         private int _encodedHeight;
-        private object _imageProcessLock = new object();
+        private readonly object _imageProcessLock = new object();
         private JpgCompression _jpgCompression;
 
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
