@@ -238,8 +238,6 @@ namespace xServer.Core.Helper
 
                 outStream.Position = oldPos;
                 outStream.Write(BitConverter.GetBytes(totalDataLength), 0, 4);
-                blocks.Clear();
-                finalUpdates.Clear();
             }
         }
 
@@ -287,7 +285,6 @@ namespace xServer.Core.Helper
                     Rectangle rect = new Rectangle(BitConverter.ToInt32(tempData, 0), BitConverter.ToInt32(tempData, 4),
                         BitConverter.ToInt32(tempData, 8), BitConverter.ToInt32(tempData, 12));
                     int updateLen = BitConverter.ToInt32(tempData, 16);
-                    tempData = null;
 
                     byte[] buffer = new byte[updateLen];
                     inStream.Read(buffer, 0, buffer.Length);
@@ -297,7 +294,6 @@ namespace xServer.Core.Helper
                     {
                         g.DrawImage(tmp, rect.Location);
                     }
-                    buffer = null;
                     dataSize -= updateLen + (4*5);
                 }
             }
