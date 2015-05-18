@@ -86,11 +86,12 @@ namespace xServer.Core.Helper
             }
         }
 
-        public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format, Stream outStream)
+        public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format,
+            Stream outStream)
         {
             lock (_imageProcessLock)
             {
-                byte* pScan0 = (byte*)scan0.ToInt32();
+                byte* pScan0 = (byte*) scan0.ToInt32();
 
                 if (!outStream.CanWrite)
                 {
@@ -115,8 +116,8 @@ namespace xServer.Core.Helper
                         throw new NotSupportedException(format.ToString());
                 }
 
-                stride = imageSize.Width * pixelSize;
-                rawLength = stride * imageSize.Height;
+                stride = imageSize.Width*pixelSize;
+                rawLength = stride*imageSize.Height;
 
                 if (_encodeBuffer == null)
                 {
@@ -135,11 +136,11 @@ namespace xServer.Core.Helper
 
                         outStream.Write(BitConverter.GetBytes(temp.Length), 0, 4);
                         outStream.Write(temp, 0, temp.Length);
-                        memcpy(new IntPtr(ptr), scan0, (uint)rawLength);
+                        memcpy(new IntPtr(ptr), scan0, (uint) rawLength);
                     }
                     return;
                 }
-                
+
                 if (this._encodedFormat != format)
                 {
                     throw new Exception("PixelFormat is not equal to previous Bitmap");
@@ -156,7 +157,7 @@ namespace xServer.Core.Helper
                 List<Rectangle> blocks = new List<Rectangle>();
 
                 Size s = new Size(scanArea.Width, CheckBlock.Height);
-                Size lastSize = new Size(scanArea.Width % CheckBlock.Width, scanArea.Height % CheckBlock.Height);
+                Size lastSize = new Size(scanArea.Width%CheckBlock.Width, scanArea.Height%CheckBlock.Height);
 
                 int lasty = scanArea.Height - lastSize.Height;
                 int lastx = scanArea.Width - lastSize.Width;
@@ -179,16 +180,16 @@ namespace xServer.Core.Helper
 
                         cBlock = new Rectangle(scanArea.X, y, scanArea.Width, s.Height);
 
-                        int offset = (y * stride) + (scanArea.X * pixelSize);
+                        int offset = (y*stride) + (scanArea.X*pixelSize);
 
-                        if (memcmp(encBuffer + offset, pScan0 + offset, (uint)stride) != 0)
+                        if (memcmp(encBuffer + offset, pScan0 + offset, (uint) stride) != 0)
                         {
                             index = blocks.Count - 1;
 
                             if (blocks.Count != 0 && (blocks[index].Y + blocks[index].Height) == cBlock.Y)
                             {
                                 cBlock = new Rectangle(blocks[index].X, blocks[index].Y, blocks[index].Width,
-                                                       blocks[index].Height + cBlock.Height);
+                                    blocks[index].Height + cBlock.Height);
                                 blocks[index] = cBlock;
                             }
                             else
@@ -211,11 +212,11 @@ namespace xServer.Core.Helper
 
                             cBlock = new Rectangle(x, blocks[i].Y, s.Width, blocks[i].Height);
                             bool foundChanges = false;
-                            uint blockStride = (uint)(pixelSize * cBlock.Width);
+                            uint blockStride = (uint) (pixelSize*cBlock.Width);
 
                             for (int j = 0; j < cBlock.Height; j++)
                             {
-                                int blockOffset = (stride * (cBlock.Y + j)) + (pixelSize * cBlock.X);
+                                int blockOffset = (stride*(cBlock.Y + j)) + (pixelSize*cBlock.X);
 
                                 if (memcmp(encBuffer + blockOffset, pScan0 + blockOffset, blockStride) != 0)
                                 {
@@ -230,7 +231,8 @@ namespace xServer.Core.Helper
                             {
                                 index = finalUpdates.Count - 1;
 
-                                if (finalUpdates.Count > 0 && (finalUpdates[index].X + finalUpdates[index].Width) == cBlock.X)
+                                if (finalUpdates.Count > 0 &&
+                                    (finalUpdates[index].X + finalUpdates[index].Width) == cBlock.X)
                                 {
                                     Rectangle rect = finalUpdates[index];
                                     int newWidth = cBlock.Width + rect.Width;
@@ -249,7 +251,7 @@ namespace xServer.Core.Helper
                 for (int i = 0; i < finalUpdates.Count; i++)
                 {
                     Rectangle rect = finalUpdates[i];
-                    int blockStride = pixelSize * rect.Width;
+                    int blockStride = pixelSize*rect.Width;
 
                     Bitmap tmpBmp = null;
                     BitmapData tmpData = null;
@@ -259,12 +261,12 @@ namespace xServer.Core.Helper
                     {
                         tmpBmp = new Bitmap(rect.Width, rect.Height, format);
                         tmpData = tmpBmp.LockBits(new Rectangle(0, 0, tmpBmp.Width, tmpBmp.Height),
-                                                  ImageLockMode.ReadWrite, tmpBmp.PixelFormat);
+                            ImageLockMode.ReadWrite, tmpBmp.PixelFormat);
 
                         for (int j = 0, offset = 0; j < rect.Height; j++)
                         {
-                            int blockOffset = (stride * (rect.Y + j)) + (pixelSize * rect.X);
-                            memcpy((byte*)tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint)blockStride);
+                            int blockOffset = (stride*(rect.Y + j)) + (pixelSize*rect.X);
+                            memcpy((byte*) tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint) blockStride);
                             //copy-changes
                             offset += blockStride;
                         }
@@ -276,13 +278,13 @@ namespace xServer.Core.Helper
                         outStream.Write(new byte[4], 0, 4);
 
                         length = outStream.Length;
-                        long OldPos = outStream.Position;
+                        long old = outStream.Position;
 
                         _jpgCompression.Compress(tmpBmp, ref outStream);
 
                         length = outStream.Position - length;
 
-                        outStream.Position = OldPos - 4;
+                        outStream.Position = old - 4;
                         outStream.Write(BitConverter.GetBytes(length), 0, 4);
                         outStream.Position += length;
                     }
@@ -292,7 +294,7 @@ namespace xServer.Core.Helper
                         tmpBmp.Dispose();
                     }
 
-                    totalDataLength += length + (4 * 5);
+                    totalDataLength += length + (4*5);
                 }
 
                 outStream.Position = oldPos;
@@ -307,7 +309,7 @@ namespace xServer.Core.Helper
                 return _decodedBitmap;
             }
 
-            int dataSize = *(int*)(codecBuffer);
+            int dataSize = *(int*) (codecBuffer);
 
             if (_decodedBitmap == null)
             {
@@ -315,10 +317,10 @@ namespace xServer.Core.Helper
 
                 fixed (byte* tempPtr = temp)
                 {
-                    memcpy(new IntPtr(tempPtr), new IntPtr(codecBuffer.ToInt32() + 4), (uint)dataSize);
+                    memcpy(new IntPtr(tempPtr), new IntPtr(codecBuffer.ToInt32() + 4), (uint) dataSize);
                 }
 
-                this._decodedBitmap = (Bitmap)Bitmap.FromStream(new MemoryStream(temp));
+                this._decodedBitmap = (Bitmap) Bitmap.FromStream(new MemoryStream(temp));
 
                 return _decodedBitmap;
             }
@@ -338,7 +340,7 @@ namespace xServer.Core.Helper
             {
                 temp = new byte[dataSize];
                 inStream.Read(temp, 0, temp.Length);
-                this._decodedBitmap = (Bitmap)Bitmap.FromStream(new MemoryStream(temp));
+                this._decodedBitmap = (Bitmap) Bitmap.FromStream(new MemoryStream(temp));
 
                 return _decodedBitmap;
             }
@@ -347,11 +349,11 @@ namespace xServer.Core.Helper
             {
                 while (dataSize > 0)
                 {
-                    byte[] tempData = new byte[4 * 5];
+                    byte[] tempData = new byte[4*5];
                     inStream.Read(tempData, 0, tempData.Length);
 
                     Rectangle rect = new Rectangle(BitConverter.ToInt32(tempData, 0), BitConverter.ToInt32(tempData, 4),
-                                                   BitConverter.ToInt32(tempData, 8), BitConverter.ToInt32(tempData, 12));
+                        BitConverter.ToInt32(tempData, 8), BitConverter.ToInt32(tempData, 12));
                     int updateLen = BitConverter.ToInt32(tempData, 16);
 
                     byte[] buffer = new byte[updateLen];
@@ -359,13 +361,13 @@ namespace xServer.Core.Helper
 
                     using (MemoryStream m = new MemoryStream(buffer))
                     {
-                        using (Bitmap tmp = (Bitmap)Image.FromStream(m))
+                        using (Bitmap tmp = (Bitmap) Image.FromStream(m))
                         {
                             g.DrawImage(tmp, rect.Location);
                         }
                     }
 
-                    dataSize -= updateLen + (4 * 5);
+                    dataSize -= updateLen + (4*5);
                 }
             }
 
