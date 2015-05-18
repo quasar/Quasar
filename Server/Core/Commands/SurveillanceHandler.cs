@@ -35,6 +35,11 @@ namespace xServer.Core.Commands
             // we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
             if (client.Value.LastDesktop == null)
             {
+                if (client.Value.StreamCodec != null)
+                {
+                    client.Value.StreamCodec.Dispose();
+                }
+
                 client.Value.StreamCodec = new UnsafeStreamCodec();
                 if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
                 {
@@ -69,6 +74,11 @@ namespace xServer.Core.Commands
                     {
                         if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
                         {
+                            if (client.Value.StreamCodec != null)
+                            {
+                                client.Value.StreamCodec.Dispose();
+                            }
+
                             client.Value.StreamCodec = new UnsafeStreamCodec();
                             client.Value.LastQuality = packet.Quality;
                             client.Value.LastMonitor = packet.Monitor;
