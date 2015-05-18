@@ -8,7 +8,7 @@ using xServer.Core.Compression;
 
 namespace xServer.Core.Helper
 {
-    public class UnsafeStreamCodec
+    public class UnsafeStreamCodec : IDisposable
     {
         private int _imageQuality;
 
@@ -20,6 +20,12 @@ namespace xServer.Core.Helper
                 lock (_imageProcessLock)
                 {
                     _imageQuality = value;
+
+                    if (_jpgCompression != null)
+                    {
+                        _jpgCompression.Dispose();
+                    }
+
                     _jpgCompression = new JpgCompression(_imageQuality);
                 }
             }
@@ -53,6 +59,31 @@ namespace xServer.Core.Helper
         public UnsafeStreamCodec(int imageQuality = 100)
         {
             this.CheckBlock = new Size(50, 1);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Tell the Garbage Collector to not waste time finalizing this object
+            // since we took care of it.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_decodedBitmap != null)
+                {
+                    _decodedBitmap.Dispose();
+                }
+
+                if (_jpgCompression != null)
+                {
+                    _jpgCompression.Dispose();
+                }
+            }
         }
 
         public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format, Stream outStream)
