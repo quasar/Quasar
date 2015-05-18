@@ -203,19 +203,6 @@ namespace xClient.Core.Helper
                     }
                 }
 
-                /*int maxHeight = 0;
-                int maxWidth = 0;
-
-                for (int i = 0; i < finalUpdates.Count; i++)
-                {
-                    if (finalUpdates[i].Height > maxHeight)
-                        maxHeight = finalUpdates[i].Height;
-                    maxWidth += finalUpdates[i].Width;
-                }
-
-                Bitmap bmp = new Bitmap(maxWidth+1, maxHeight+1);
-                int XOffset = 0;*/
-
                 for (int i = 0; i < finalUpdates.Count; i++)
                 {
                     Rectangle rect = finalUpdates[i];
@@ -232,12 +219,6 @@ namespace xClient.Core.Helper
                         offset += blockStride;
                     }
                     tmpBmp.UnlockBits(tmpData);
-
-                    /*using (Graphics g = Graphics.FromImage(bmp))
-                    {
-                        g.DrawImage(TmpBmp, new Point(XOffset, 0));
-                    }
-                    XOffset += TmpBmp.Width;*/
 
                     outStream.Write(BitConverter.GetBytes(rect.X), 0, 4);
                     outStream.Write(BitConverter.GetBytes(rect.Y), 0, 4);
@@ -258,16 +239,6 @@ namespace xClient.Core.Helper
                     tmpBmp.Dispose();
                     totalDataLength += (int) length + (4*5);
                 }
-
-                /*if (finalUpdates.Count > 0)
-                {
-                    byte[] lele = base.jpgCompression.Compress(bmp);
-                    byte[] compressed = new SafeQuickLZ().compress(lele, 0, lele.Length, 1);
-                    bool Won = lele.Length < outStream.Length;
-                    bool CompressWon = compressed.Length < outStream.Length;
-                    Console.WriteLine(Won + ", " + CompressWon);
-                }
-                bmp.Dispose();*/
 
                 outStream.Position = oldPos;
                 outStream.Write(BitConverter.GetBytes(totalDataLength), 0, 4);
