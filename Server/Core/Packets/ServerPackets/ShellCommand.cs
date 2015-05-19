@@ -19,7 +19,7 @@ namespace xServer.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<ShellCommand>(this);
+            client.Send(this);
         }
     }
 }
