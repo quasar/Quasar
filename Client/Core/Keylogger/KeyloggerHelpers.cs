@@ -26,7 +26,7 @@ namespace xClient.Core.Keylogger
 
         /// <summary>
         /// Determines if the key provided is one that is considered to be
-        /// special and should be handled differently by the keylogger.
+        /// special (non-character) and should be handled differently by the keylogger.
         /// </summary>
         /// <param name="sender">The keylogger key to decide upon.</param>
         /// <returns>True if the key is special; False if the key is not special.</returns>
@@ -87,68 +87,23 @@ namespace xClient.Core.Keylogger
         }
 
         /// <summary>
-        /// Determines if the key code provided is in the pressed state.
+        /// Determines if the highest bit is set.
         /// </summary>
         /// <param name="sender">The code for the key.</param>
-        /// <returns>True if key is pressed; False if the key is not.</returns>
-        public static bool IsKeyPressed(this short sender)
+        /// <returns>True if the highest bit is set; False if the highest bit is not set.</returns>
+        public static bool GetHighestBit(this short sender)
         {
-            return (sender & 0x8000) != 0;
+            return (sender >> 7) != 0;
         }
 
         /// <summary>
-        /// Determines if the key code provided is in a toggled state.
+        /// Determines if the lowest bit is set.
         /// </summary>
         /// <param name="sender">The code for the key.</param>
-        /// <returns>True if toggled on; False if toggled off.</returns>
-        public static bool IsKeyToggled(this short sender)
+        /// <returns>True if the lowest bit is set; False if the lowest bit is not set.</returns>
+        public static bool GetLowestBit(this short sender)
         {
-            return (sender & 0x0001) != 0;
-        }
-
-        public static string BuildString(this KeyloggerModifierKeys sender)
-        {
-            // Add to this method for more combinations that should be supported!
-
-            try
-            {
-                StringBuilder BuiltModifierKeys = new StringBuilder();
-
-                if (sender.CtrlKeyPressed)
-                {
-                    string CtrlName = KeyloggerKeys.VK_CONTROL.GetKeyloggerKeyName();
-
-                    if (!string.IsNullOrEmpty(CtrlName))
-                        BuiltModifierKeys.Append(CtrlName + " + ");
-                }
-                if (sender.AltKeyPressed)
-                {
-                    string AltName = KeyloggerKeys.VK_MENU.GetKeyloggerKeyName();
-
-                    if (!string.IsNullOrEmpty(AltName))
-                        BuiltModifierKeys.Append(AltName + " + ");
-                }
-                if (sender.ShiftKeyPressed)
-                {
-                    string ShiftName = KeyloggerKeys.VK_SHIFT.GetKeyloggerKeyName();
-
-                    if (!string.IsNullOrEmpty(ShiftName))
-                        BuiltModifierKeys.Append(ShiftName + " + ");
-                }
-                if (sender.WindowsKeyPressed)
-                {
-                    string WinName = KeyloggerKeys.VK_LWIN.GetKeyloggerKeyName();
-
-                    if (!string.IsNullOrEmpty(WinName))
-                        BuiltModifierKeys.Append(WinName + " + ");
-                }
-
-                return BuiltModifierKeys.ToString();
-            }
-            catch
-            {
-                return string.Empty;
-            }
+            return (sender & 1) != 0;
         }
     }
 }

