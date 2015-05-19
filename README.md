@@ -17,6 +17,7 @@ Features
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
+* No-IP.org Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
@@ -30,6 +31,7 @@ Features
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
 * Keylogger
+* Reverse SOCKS5/HTTPS Proxy
 
 Compiling
 ---
@@ -49,9 +51,10 @@ Building a client
 
 ToDo
 ---
-* Socks5 Proxy
+* ~~Reverse SOCKS5/HTTPS Proxy~~
 * Password Recovery (Browsers, FTP-Clients)
 * Startup Persistence
+* [Issues](https://github.com/MaxXor/xRAT/issues)
 
 Contributing
 ---

@@ -11,7 +11,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<GetStartupItems>(this);
+            client.Send(this);
         }
     }
 }

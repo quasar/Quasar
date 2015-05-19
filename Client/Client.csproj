@@ -47,6 +47,11 @@
   <ItemGroup>
     <Compile Include="Core\Client.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Commands\ConnectionHandler.cs" />
+    <Compile Include="Core\Commands\FileHandler.cs" />
+    <Compile Include="Core\Commands\MiscHandler.cs" />
+    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
+    <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Elevation\CommandButton.cs">
       <SubType>Component</SubType>
@@ -109,6 +114,12 @@
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
+    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyDisconnect.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
     <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
@@ -225,6 +236,7 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>

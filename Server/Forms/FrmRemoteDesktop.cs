@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
-using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -106,6 +105,13 @@ namespace xServer.Forms
 
         private void btnStart_Click(object sender, EventArgs e)
         {
+            if (cbMonitors.Items.Count == 0)
+            {
+                MessageBox.Show("No monitor detected.\nPlease wait till the client sends a list with available monitors.",
+                    "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
             if (!_keepRunning)
                 new Thread(GetDesktop).Start();
         }

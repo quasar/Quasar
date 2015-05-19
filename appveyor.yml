@@ -1,0 +1,14 @@
+version: BUILD{build}
+skip_tags: true
+configuration:
+- Debug
+- Release
+before_build:
+- nuget restore
+build:
+  project: xRAT 2.sln
+  parallel: true
+  verbosity: minimal
+artifacts:
+- path: Bin
+  name: binaries

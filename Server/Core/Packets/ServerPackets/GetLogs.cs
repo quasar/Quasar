@@ -9,7 +9,7 @@ namespace xServer.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<GetLogs>(this);
+            client.Send(this);
         }
     }
 }

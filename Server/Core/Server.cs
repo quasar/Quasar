@@ -157,7 +157,7 @@ namespace xServer.Core
                     lock (_clients)
                     {
                         _clients.Add(T);
-                        T.ClientState += HandleState;
+                        T.ClientState += OnClientState;
                         T.ClientRead += OnClientRead;
                         T.ClientWrite += OnClientWrite;
 
@@ -204,17 +204,6 @@ namespace xServer.Core
 
             Listening = false;
             OnServerState(false);
-        }
-
-        private void HandleState(Client s, bool open)
-        {
-            lock (_clients)
-            {
-                _clients.Remove(s);
-                OnClientState(s, false);
-
-                s.Value.DisposeForms();
-            }
         }
     }
 }

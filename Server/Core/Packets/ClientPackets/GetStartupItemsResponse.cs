@@ -20,7 +20,7 @@ namespace xServer.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send<GetStartupItemsResponse>(this);
+            client.Send(this);
         }
     }
 }

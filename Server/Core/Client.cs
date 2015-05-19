@@ -144,46 +144,58 @@ namespace xServer.Core
 
             while (process)
             {
-                if (_receiveState == ReceiveType.Header)
+                switch (_receiveState)
                 {
-                    process = _readableDataLen >= HEADER_SIZE;
-                    if (process)
+                    case ReceiveType.Header:
                     {
-                        _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
-
-                        _readableDataLen -= HEADER_SIZE;
-                        _readOffset += HEADER_SIZE;
-                        _receiveState = ReceiveType.Payload;
-                    }
-                }
-                else if (_receiveState == ReceiveType.Payload)
-                {
-                    process = _readableDataLen >= _payloadLen;
-                    if (process)
-                    {
-                        byte[] payload = new byte[_payloadLen];
-                        Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
-
-                        if (encryptionEnabled)
-                            payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                        if (payload.Length > 0)
+                        process = _readableDataLen >= HEADER_SIZE;
+                        if (process)
                         {
-                            if (compressionEnabled)
-                                payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+                            _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
 
-                            using (MemoryStream deserialized = new MemoryStream(payload))
-                            {
-                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                    PrefixStyle.Fixed32);
-
-                                OnClientRead(packet);
-                            }
+                            _readableDataLen -= HEADER_SIZE;
+                            _readOffset += HEADER_SIZE;
+                            _receiveState = ReceiveType.Payload;
                         }
+                        break;
+                    }
+                    case ReceiveType.Payload:
+                    {
+                        process = _readableDataLen >= _payloadLen;
+                        if (process)
+                        {
+                            byte[] payload = new byte[_payloadLen];
+                            try
+                            {
+                                Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
+                            }
+                            catch
+                            {
+                                Disconnect();
+                            }
 
-                        _readOffset += _payloadLen;
-                        _readableDataLen -= _payloadLen;
-                        _receiveState = ReceiveType.Header;
+                            if (encryptionEnabled)
+                                payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+                            if (payload.Length > 0)
+                            {
+                                if (compressionEnabled)
+                                    payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+
+                                using (MemoryStream deserialized = new MemoryStream(payload))
+                                {
+                                    IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                        PrefixStyle.Fixed32);
+
+                                    OnClientRead(packet);
+                                }
+                            }
+
+                            _readOffset += _payloadLen;
+                            _readableDataLen -= _payloadLen;
+                            _receiveState = ReceiveType.Header;
+                        }
+                        break;
                     }
                 }
             }
@@ -223,7 +235,7 @@ namespace xServer.Core
             }
         }
 
-        public void Send<T>(IPacket packet) where T : IPacket
+        public void Send<T>(T packet) where T : IPacket
         {
             lock (_handle)
             {
@@ -234,7 +246,7 @@ namespace xServer.Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 
@@ -289,6 +301,8 @@ namespace xServer.Core
                 _readableDataLen = 0;
                 _payloadLen = 0;
             }
+
+            Value.DisposeForms();
         }
 
         /// <summary>
