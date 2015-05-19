@@ -2,6 +2,12 @@
 using System.Windows.Forms;
 using xServer.Forms;
 
+namespace System.Runtime.CompilerServices
+{
+    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
+    public sealed class ExtensionAttribute : Attribute { }
+}
+
 namespace xServer
 {
     internal static class Program

