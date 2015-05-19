@@ -969,6 +969,11 @@ namespace xClient.Core.Keylogger
         #region Random
 
         /// <summary>
+        /// Indeterminite state.
+        /// </summary>
+        VK_NONE = 0X00,
+
+        /// <summary>
         /// Used to pass Unicode characters as if they were keystrokes.
         /// The VK_PACKET key is the low word of a 32-bit Virtual Key
         /// value used for non-keyboard input methods. For more
