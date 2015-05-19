@@ -237,7 +237,7 @@ namespace xServer.Core
             }
         }
 
-        public void Send<T>(IPacket packet) where T : IPacket
+        public void Send<T>(T packet) where T : IPacket
         {
             lock (_handle)
             {
@@ -248,7 +248,7 @@ namespace xServer.Core
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, (T) packet, PrefixStyle.Fixed32);
+                        Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);
 
                         byte[] data = ms.ToArray();
 

@@ -52,7 +52,7 @@ namespace xClient.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send<Initialize>(this);
+            client.Send(this);
         }
     }
 }

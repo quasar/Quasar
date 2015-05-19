@@ -19,7 +19,7 @@ namespace xServer.Core.Packets
 
         public void Execute(Client client)
         {
-            client.Send<UnknownPacket>(this);
+            client.Send(this);
         }
     }
 }

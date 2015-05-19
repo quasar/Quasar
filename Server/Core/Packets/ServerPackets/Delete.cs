@@ -23,7 +23,7 @@ namespace xServer.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<Delete>(this);
+            client.Send(this);
         }
     }
 }

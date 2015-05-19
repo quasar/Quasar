@@ -31,7 +31,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<MouseClick>(this);
+            client.Send(this);
         }
     }
 }
