@@ -320,7 +320,10 @@ namespace xServer.Core
             bool isAdded = false;
             foreach (SubType subType in RuntimeTypeModel.Default[parent].GetSubtypes())
                 if (subType.DerivedType.Type == type)
+                {
                     isAdded = true;
+                    break;
+                }
 
             if (!isAdded)
                 RuntimeTypeModel.Default[parent].AddSubType(_typeIndex += 1, type);
