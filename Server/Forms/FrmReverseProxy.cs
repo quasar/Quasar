@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -87,20 +88,6 @@ namespace xServer.Forms
 
         }
 
-        private string GetSizeStr(long size)
-        {
-            if (size > (1024 * 1024 * 1024))
-                return (size / (1024 * 1024 * 1024)) + "GB";
-
-            if (size > (1024 * 1024))
-                return (size / (1024 * 1024)) + "MB";
-
-            if (size > 1024)
-                return (size / 1024) + "KB";
-
-            return size + "B";
-        }
-
         private void btnStop_Click(object sender, EventArgs e)
         {
             if (RefreshTimer != null)
@@ -149,8 +136,8 @@ namespace xServer.Forms
                         Connection.Client.Value.Country,
                         Connection.TargetServer + (Connection.HostName.Length > 0 ? "    (" + Connection.HostName + ")" : ""),
                         Connection.TargetPort.ToString(),
-                        GetSizeStr(Connection.LengthReceived),
-                        GetSizeStr(Connection.LengthSended),
+                        Helper.GetDataSize(Connection.LengthReceived),
+                        Helper.GetDataSize(Connection.LengthSended),
                         Connection.Type.ToString()
                     }) { Tag = Connection };
                 }
