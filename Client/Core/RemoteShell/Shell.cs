@@ -98,7 +98,14 @@ namespace xClient.Core.RemoteShell
                     if (_prc != null)
                     {
                         if (!_prc.HasExited)
-                            _prc.Kill();
+                        {
+                            try
+                            {
+                                _prc.Kill();
+                            }
+                            catch
+                            { }
+                        }
                         _prc.Dispose();
                         _prc = null;
                     }
