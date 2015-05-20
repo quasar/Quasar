@@ -69,7 +69,8 @@ namespace xClient.Core.Commands
 
         public static void CloseShell()
         {
-            _shell.Dispose();
+            if (_shell != null)
+                _shell.Dispose();
         }
 
         public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command,

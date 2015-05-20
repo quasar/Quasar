@@ -28,7 +28,7 @@ namespace xServer.Core.Helper
             return randomName.ToString();
         }
 
-        public static string GetFileSize(long size)
+        public static string GetDataSize(long size)
         {
             string[] sizes = {"B", "KB", "MB", "GB"};
             double len = size;

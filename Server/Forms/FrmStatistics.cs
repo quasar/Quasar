@@ -49,11 +49,11 @@ namespace xServer.Forms
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Green), 5), new Point(220, 130), new Point(250, 130));
             e.Graphics.DrawString(
-                string.Format("{0} received ({1}%)", Helper.GetFileSize(_bytesReceived), _receivedPercent),
+                string.Format("{0} received ({1}%)", Helper.GetDataSize(_bytesReceived), _receivedPercent),
                 this.Font, new SolidBrush(Color.Black), new Point(260, 123));
 
             e.Graphics.DrawLine(new Pen(new SolidBrush(Color.Blue), 5), new Point(220, 160), new Point(250, 160));
-            e.Graphics.DrawString(string.Format("{0} sent ({1}%)", Helper.GetFileSize(_bytesSent), _sentPercent),
+            e.Graphics.DrawString(string.Format("{0} sent ({1}%)", Helper.GetDataSize(_bytesSent), _sentPercent),
                 this.Font, new SolidBrush(Color.Black), new Point(260, 153));
         }
 
