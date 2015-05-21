@@ -66,26 +66,31 @@ namespace xClient.Core.Commands
 
         public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
         {
+            Screen[] allScreens = Screen.AllScreens;
+            int offsetX = allScreens[command.MonitorIndex].Bounds.X;
+            int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
+            Point p = new Point(command.X + offsetX, command.Y + offsetY);
+
             if (command.LeftClick)
             {
-                SetCursorPos(command.X, command.Y);
-                mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
+                SetCursorPos(p.X, p.Y);
+                mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
                 if (command.DoubleClick)
                 {
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
                 }
             }
             else
             {
-                SetCursorPos(command.X, command.Y);
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
+                SetCursorPos(p.X, p.Y);
+                mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
                 if (command.DoubleClick)
                 {
-                    mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
                 }
             }
         }
