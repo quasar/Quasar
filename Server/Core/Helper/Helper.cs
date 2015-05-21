@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Drawing;
-using System.IO;
 using System.Text;
 
 namespace xServer.Core.Helper
@@ -9,6 +7,7 @@ namespace xServer.Core.Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static readonly Random _rnd = new Random(Environment.TickCount);
+        private static readonly string[] _sizes = {"B", "KB", "MB", "GB"};
 
         public static string GetRandomFilename(int length, string extension)
         {
@@ -30,15 +29,14 @@ namespace xServer.Core.Helper
 
         public static string GetDataSize(long size)
         {
-            string[] sizes = {"B", "KB", "MB", "GB"};
             double len = size;
             int order = 0;
-            while (len >= 1024 && order + 1 < sizes.Length)
+            while (len >= 1024 && order + 1 < _sizes.Length)
             {
                 order++;
                 len = len/1024;
             }
-            return string.Format("{0:0.##} {1}", len, sizes[order]);
+            return string.Format("{0:0.##} {1}", len, _sizes[order]);
         }
 
         public static int GetFileIcon(string extension)
