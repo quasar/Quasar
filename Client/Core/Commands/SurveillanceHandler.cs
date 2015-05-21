@@ -66,31 +66,31 @@ namespace xClient.Core.Commands
 
         public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
         {
-            int offsetX = 0;
             Screen[] allScreens = Screen.AllScreens;
-            for (int i = 0; i < command.MonitorIndex; i++)
-                offsetX += allScreens[i].Bounds.Width;
+            int offsetX = allScreens[command.MonitorIndex].Bounds.X;
+            int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
+            Point p = new Point(command.X + offsetX, command.Y + offsetY);
 
             if (command.LeftClick)
             {
-                SetCursorPos(command.X + offsetX, command.Y);
-                mouse_event(MOUSEEVENTF_LEFTDOWN, command.X + offsetX, command.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, command.X + offsetX, command.Y, 0, 0);
+                SetCursorPos(p.X, p.Y);
+                mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
                 if (command.DoubleClick)
                 {
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, command.X + offsetX, command.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_LEFTUP, command.X + offsetX, command.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
                 }
             }
             else
             {
-                SetCursorPos(command.X + offsetX, command.Y);
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X + offsetX, command.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_RIGHTUP, command.X + offsetX, command.Y, 0, 0);
+                SetCursorPos(p.X, p.Y);
+                mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
+                mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
                 if (command.DoubleClick)
                 {
-                    mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X + offsetX, command.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_RIGHTUP, command.X + offsetX, command.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
+                    mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
                 }
             }
         }
