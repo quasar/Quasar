@@ -4,6 +4,7 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using System.Drawing.Imaging;
 
 namespace xClient.Core.Helper
 {
@@ -48,9 +49,9 @@ namespace xClient.Core.Helper
 
             Bitmap bmpRes = null;
 
-            System.Drawing.Imaging.BitmapData bmData = null;
-            System.Drawing.Imaging.BitmapData bmData2 = null;
-            System.Drawing.Imaging.BitmapData bmDataRes = null;
+            BitmapData bmData = null;
+            BitmapData bmData2 = null;
+            BitmapData bmDataRes = null;
 
             try
             {
@@ -77,12 +78,12 @@ namespace xClient.Core.Helper
                 for (int y = 0; y < nHeight; y++)
                 {
                     //define the pointers inside the first loop for parallelizing
-                    byte* p = (byte*) scan0.ToPointer();
-                    p += y*stride;
-                    byte* p2 = (byte*) scan02.ToPointer();
-                    p2 += y*stride2;
-                    byte* pRes = (byte*) scan0Res.ToPointer();
-                    pRes += y*strideRes;
+                    byte* p = (byte*)scan0.ToPointer();
+                    p += y * stride;
+                    byte* p2 = (byte*)scan02.ToPointer();
+                    p2 += y * stride2;
+                    byte* pRes = (byte*)scan0Res.ToPointer();
+                    pRes += y * strideRes;
 
                     for (int x = 0; x < nWidth; x++)
                     {
@@ -102,46 +103,21 @@ namespace xClient.Core.Helper
                         pRes += 4;
                     }
                 }
-
-                bmp.UnlockBits(bmData);
-                bmp2.UnlockBits(bmData2);
-                bmpRes.UnlockBits(bmDataRes);
             }
             catch
+            { }
+            finally
             {
-                if (bmData != null)
+                if (bmp != null)
                 {
-                    try
-                    {
-                        bmp.UnlockBits(bmData);
-                    }
-                    catch
-                    {
-                    }
+                    bmp.UnlockBits(bmData);
+                    bmp.Dispose();
                 }
-
-                if (bmData2 != null)
+                if (bmp2 != null)
                 {
-                    try
-                    {
-                        bmp2.UnlockBits(bmData2);
-                    }
-                    catch
-                    {
-                    }
+                    bmp2.UnlockBits(bmData2);
+                    bmp2.Dispose();
                 }
-
-                if (bmDataRes != null)
-                {
-                    try
-                    {
-                        bmpRes.UnlockBits(bmDataRes);
-                    }
-                    catch
-                    {
-                    }
-                }
-
                 if (bmpRes != null)
                 {
                     bmpRes.Dispose();
