@@ -44,7 +44,7 @@ namespace xClient.Core.Helper
         public static unsafe Bitmap GetDiffDesktop(Bitmap bmp, Bitmap bmp2)
         {
             if (bmp.Width != bmp2.Width || bmp.Height != bmp2.Height)
-                throw new Exception("Sizes must be equal.");
+                throw new InvalidOperationException("Sizes must be equal.");
 
             Bitmap bmpRes = null;
 
