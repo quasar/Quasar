@@ -55,7 +55,7 @@ namespace xServer.Forms
 
         private void lstLogs_ItemActivate(object sender, EventArgs e)
         {
-            if (lstLogs.SelectedItems != null && lstLogs.SelectedItems.Count > 0)
+            if (lstLogs.SelectedItems.Count > 0)
             {
                 wLogViewer.Navigate(Path.Combine(_path, lstLogs.SelectedItems[0].Text));
             }
