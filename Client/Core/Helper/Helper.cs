@@ -120,8 +120,7 @@ namespace xClient.Core.Helper
                 }
                 if (bmpRes != null)
                 {
-                    bmpRes.Dispose();
-                    bmpRes = null;
+                    bmpRes.UnlockBits(bmDataRes);
                 }
             }
 
