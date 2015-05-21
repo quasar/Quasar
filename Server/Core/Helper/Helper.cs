@@ -9,6 +9,7 @@ namespace xServer.Core.Helper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static readonly Random _rnd = new Random(Environment.TickCount);
+        private const string[] sizes = { "B", "KB", "MB", "GB" };
 
         public static string GetRandomFilename(int length, string extension)
         {
@@ -30,7 +31,6 @@ namespace xServer.Core.Helper
 
         public static string GetFileSize(long size)
         {
-            string[] sizes = {"B", "KB", "MB", "GB"};
             double len = size;
             int order = 0;
             while (len >= 1024 && order + 1 < sizes.Length)
