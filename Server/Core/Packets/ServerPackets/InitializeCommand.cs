@@ -11,7 +11,7 @@ namespace xServer.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send<InitializeCommand>(this);
+            client.Send(this);
         }
     }
 }

@@ -40,7 +40,7 @@ namespace xServer.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send<GetLogsResponse>(this);
+            client.Send(this);
         }
     }
 }

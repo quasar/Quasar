@@ -76,7 +76,7 @@ namespace xServer.Core.Commands
                         if (packet.Files[i] != DELIMITER)
                         {
                             ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetFileSize(packet.FilesSize[i]), "File" })
+                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetDataSize(packet.FilesSize[i]), "File" })
                                 {
                                     Tag = "file",
                                     ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
