@@ -47,7 +47,8 @@
     <ApplicationIcon>xRAT-64x64.ico</ApplicationIcon>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil">
+    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Mono.Cecil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -55,7 +56,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vestris.ResourceLib">
+    <Reference Include="Vestris.ResourceLib, Version=1.4.724.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Vestris.ResourceLib.dll</HintPath>
     </Reference>
   </ItemGroup>
