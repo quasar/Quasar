@@ -152,7 +152,7 @@ namespace xServer.Core.Commands
                             client.Value.FrmSi.lstSystem.Items.Add(lviItem);
                     }
 
-                    ListViewExtensions.AutosizeColumns(client.Value.FrmSi.lstSystem);
+                    client.Value.FrmSi.lstSystem.AutosizeColumns();
                 });
             }
             catch
