@@ -28,8 +28,7 @@ namespace xClient.Core.Extensions
         /// <param name="socket">Current socket instance</param>
         /// <param name="keepAliveInterval">Specifies how often TCP repeats keep-alive transmissions when no response is received. TCP sends keep-alive transmissions to verify that idle connections are still active. This prevents TCP from inadvertently disconnecting active lines.</param>
         /// <param name="keepAliveTime">Specifies how often TCP sends keep-alive transmissions. TCP sends keep-alive transmissions to verify that an idle connection is still active. This entry is used when the remote system is responding to TCP. Otherwise, the interval between transmissions is determined by the value of the keepAliveInterval entry.</param>
-        public static void SetKeepAliveEx(Socket socket, uint keepAliveInterval, uint keepAliveTime)
-            //extension removed, Missing System.Core.dll which requires .NET FW 3.5
+        public static void SetKeepAliveEx(this Socket socket, uint keepAliveInterval, uint keepAliveTime)
         {
             var keepAlive = new TcpKeepAlive
             {

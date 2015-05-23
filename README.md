@@ -4,11 +4,11 @@ xRAT 2.0
 
 **Free, Open-Source Remote Administration Tool**
 
-xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (using .NET Framework 2.0).
+xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (using [.NET Framework 3.5 Client Profile](https://www.microsoft.com/en-US/download/details.aspx?id=14037)).
 
 Requirements
 ---
-* .NET Framework 2.0
+* .NET Framework 3.5 Client Profile
 
 Features
 ---
