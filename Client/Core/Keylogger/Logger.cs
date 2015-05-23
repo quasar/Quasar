@@ -96,7 +96,7 @@ namespace xClient.Core.Keylogger
             if (!string.IsNullOrEmpty(activeWindowTitle) && activeWindowTitle != _lastWindowTitle)
             {
                 _lastWindowTitle = activeWindowTitle;
-                _logFileBuffer.Append(@"<p class=""h""><br><br>[<i><b>" + activeWindowTitle + "</b></i>]</p><br>");
+                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
             }
 
             if (_pressedKeys.Contains(Keys.LControlKey)
