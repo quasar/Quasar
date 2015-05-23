@@ -26,7 +26,7 @@ namespace xClient.Core.Keylogger.WinApi
         [DllImport("user32.dll", CharSet = CharSet.Auto)]
         internal static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32", CharSet = CharSet.Unicode, SetLastError = true)]
+        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
         internal static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         /// <summary>
