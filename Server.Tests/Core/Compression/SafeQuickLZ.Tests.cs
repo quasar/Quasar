@@ -7,9 +7,6 @@ namespace xServer.Tests.Core.Compression
     [TestClass]
     public class SafeQuickLZTests
     {
-        // Tests using pseudo-randomly generated data.
-        #region Random Data
-
         /*
          * Purpose: To validate a small amount of data after compression/decompression
          *          using SafeQuickLZ with level 1 compression.
@@ -19,24 +16,24 @@ namespace xServer.Tests.Core.Compression
         public void SmallDataTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
-            byte[] SmallData = new byte[100];
+            byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
-            new Random().NextBytes(SmallData);
+            new Random().NextBytes(smallData);
 
             // Store the compressed data.
-            byte[] SmallDataCompressed = safeQuickLZtest.Compress(SmallData, 0, SmallData.Length, 1);
+            byte[] smallDataCompressed = safeQuickLZtest.Compress(smallData, 0, smallData.Length, 1);
 
             // The original should not equal the compressed data.
-            Assert.AreNotEqual(SmallData, SmallDataCompressed, "Original data is equal to the compressed data!");
+            Assert.AreNotEqual(smallData, smallDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] SmallDataDecompressed = safeQuickLZtest.Decompress(SmallDataCompressed, 0, SmallDataCompressed.Length);
+            byte[] smallDataDecompressed = safeQuickLZtest.Decompress(smallDataCompressed, 0, smallDataCompressed.Length);
 
             // The compressed data should not equal the decompressed data.
-            Assert.AreNotEqual(SmallDataCompressed, SmallDataDecompressed, "Compressed data is equal to the decompressed data!");
+            Assert.AreNotEqual(smallDataCompressed, smallDataDecompressed, "Compressed data is equal to the decompressed data!");
             // The original data must equal the decompressed data; must be able to make a round-trip.
-            CollectionAssert.AreEqual(SmallData, SmallDataDecompressed, "Original data does not match the decompressed data!");
+            CollectionAssert.AreEqual(smallData, smallDataDecompressed, "Original data does not match the decompressed data!");
         }
 
         /*
@@ -48,24 +45,24 @@ namespace xServer.Tests.Core.Compression
         public void SmallDataTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
-            byte[] SmallData = new byte[100];
+            byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
-            new Random().NextBytes(SmallData);
+            new Random().NextBytes(smallData);
 
             // Store the compressed data.
-            byte[] SmallDataCompressed = safeQuickLZtest.Compress(SmallData, 0, SmallData.Length, 3);
+            byte[] smallDataCompressed = safeQuickLZtest.Compress(smallData, 0, smallData.Length, 3);
 
             // The original should not equal the compressed data.
-            Assert.AreNotEqual(SmallData, SmallDataCompressed, "Original data is equal to the compressed data!");
+            Assert.AreNotEqual(smallData, smallDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] SmallDataDecompressed = safeQuickLZtest.Decompress(SmallDataCompressed, 0, SmallDataCompressed.Length);
+            byte[] smallDataDecompressed = safeQuickLZtest.Decompress(smallDataCompressed, 0, smallDataCompressed.Length);
 
             // The compressed data should not equal the decompressed data.
-            Assert.AreNotEqual(SmallDataCompressed, SmallDataDecompressed, "Compressed data is equal to the decompressed data!");
+            Assert.AreNotEqual(smallDataCompressed, smallDataDecompressed, "Compressed data is equal to the decompressed data!");
             // The original data must equal the decompressed data; must be able to make a round-trip.
-            CollectionAssert.AreEqual(SmallData, SmallDataDecompressed, "Original data does not match the decompressed data!");
+            CollectionAssert.AreEqual(smallData, smallDataDecompressed, "Original data does not match the decompressed data!");
         }
 
         /*
@@ -77,24 +74,24 @@ namespace xServer.Tests.Core.Compression
         public void BigDataTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
-            byte[] BigData = new byte[100000];
+            byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.
-            new Random().NextBytes(BigData);
+            new Random().NextBytes(bigData);
 
             // Store the compressed data.
-            byte[] BigDataCompressed = safeQuickLZtest.Compress(BigData, 0, BigData.Length, 1);
+            byte[] bigDataCompressed = safeQuickLZtest.Compress(bigData, 0, bigData.Length, 1);
 
             // The original should not equal the compressed data.
-            Assert.AreNotEqual(BigData, BigDataCompressed, "Original data is equal to the compressed data!");
+            Assert.AreNotEqual(bigData, bigDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] BigDataDecompressed = safeQuickLZtest.Decompress(BigDataCompressed, 0, BigDataCompressed.Length);
+            byte[] bigDataDecompressed = safeQuickLZtest.Decompress(bigDataCompressed, 0, bigDataCompressed.Length);
 
             // The compressed data should not equal the decompressed data.
-            Assert.AreNotEqual(BigDataCompressed, BigDataDecompressed, "Compressed data is equal to the decompressed data!");
+            Assert.AreNotEqual(bigDataCompressed, bigDataDecompressed, "Compressed data is equal to the decompressed data!");
             // The original data must equal the decompressed data; must be able to make a round-trip.
-            CollectionAssert.AreEqual(BigData, BigDataDecompressed, "Original data does not match the decompressed data!");
+            CollectionAssert.AreEqual(bigData, bigDataDecompressed, "Original data does not match the decompressed data!");
         }
 
         /*
@@ -106,26 +103,24 @@ namespace xServer.Tests.Core.Compression
         public void BigDataTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
-            byte[] BigData = new byte[100000];
+            byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.
-            new Random().NextBytes(BigData);
+            new Random().NextBytes(bigData);
 
             // Store the compressed data.
-            byte[] BigDataCompressed = safeQuickLZtest.Compress(BigData, 0, BigData.Length, 3);
+            byte[] bigDataCompressed = safeQuickLZtest.Compress(bigData, 0, bigData.Length, 3);
 
             // The original should not equal the compressed data.
-            Assert.AreNotEqual(BigData, BigDataCompressed, "Original data is equal to the compressed data!");
+            Assert.AreNotEqual(bigData, bigDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] BigDataDecompressed = safeQuickLZtest.Decompress(BigDataCompressed, 0, BigDataCompressed.Length);
+            byte[] bigDataDecompressed = safeQuickLZtest.Decompress(bigDataCompressed, 0, bigDataCompressed.Length);
 
             // The compressed data should not equal the decompressed data.
-            Assert.AreNotEqual(BigDataCompressed, BigDataDecompressed, "Compressed data is equal to the decompressed data!");
+            Assert.AreNotEqual(bigDataCompressed, bigDataDecompressed, "Compressed data is equal to the decompressed data!");
             // The original data must equal the decompressed data; must be able to make a round-trip.
-            CollectionAssert.AreEqual(BigData, BigDataDecompressed, "Original data does not match the decompressed data!");
+            CollectionAssert.AreEqual(bigData, bigDataDecompressed, "Original data does not match the decompressed data!");
         }
-
-        #endregion
     }
 }
