@@ -326,8 +326,7 @@ namespace xClient.Core.Keylogger
                             if (writeHeader)
                             {
                                 sw.WriteLine(
-                                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" +
-                                    "<meta http-equiv='X-UA-Compatible' content='IE=edge'/>Log created on " +
+                                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                                     DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br><br>");
 
                                 // Write out our coloring scheme that will be used by the elements
