@@ -13,7 +13,7 @@ namespace xServer.Tests.Core.Compression
          */
         [TestMethod]
         [TestCategory("Compression")]
-        public void SmallDataTestLevel1()
+        public void SmallDataCompressionTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] smallData = new byte[100];
@@ -42,7 +42,7 @@ namespace xServer.Tests.Core.Compression
          */
         [TestMethod]
         [TestCategory("Compression")]
-        public void SmallDataTestLevel3()
+        public void SmallDataCompressionTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] smallData = new byte[100];
@@ -71,7 +71,7 @@ namespace xServer.Tests.Core.Compression
          */
         [TestMethod]
         [TestCategory("Compression")]
-        public void BigDataTestLevel1()
+        public void BigDataCompressionTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] bigData = new byte[100000];
@@ -100,7 +100,7 @@ namespace xServer.Tests.Core.Compression
          */
         [TestMethod]
         [TestCategory("Compression")]
-        public void BigDataTestLevel3()
+        public void BigDataCompressionTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] bigData = new byte[100000];
