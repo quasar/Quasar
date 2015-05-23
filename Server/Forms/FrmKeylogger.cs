@@ -40,7 +40,7 @@ namespace xServer.Forms
 
                 foreach (FileInfo file in iFiles)
                 {
-                    lstLogs.Items.Add(new ListViewItem().Text = file.Name);
+                    lstLogs.Items.Add(new ListViewItem() { Text = file.Name });
                 }
             }
         }
