@@ -94,6 +94,7 @@
     <Compile Include="Core\Keylogger\Implementation\Subscribe.cs" />
     <Compile Include="Core\Keylogger\KeyEventArgsExt.cs" />
     <Compile Include="Core\Keylogger\KeyPressEventArgsExt.cs" />
+    <Compile Include="Core\Keylogger\LoggerHelper.cs" />
     <Compile Include="Core\Keylogger\MouseEventExtArgs.cs" />
     <Compile Include="Core\Keylogger\WinApi\AppMouseStruct.cs" />
     <Compile Include="Core\Keylogger\WinApi\CallbackData.cs" />

