@@ -113,10 +113,9 @@ namespace xClient.Core.Keylogger.WinApi
 
             if (lastVirtualKeyCode != 0 && lastIsDead)
             {
-                StringBuilder sbTemp = new StringBuilder(5);
-
                 if (chars != null)
                 {
+                    StringBuilder sbTemp = new StringBuilder(5);
                     ToUnicodeEx(lastVirtualKeyCode, lastScanCode, lastKeyState, sbTemp, sbTemp.Capacity, 0, dwhkl);
                     lastIsDead = false;
                     lastVirtualKeyCode = 0;
