@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using xServer.Core.Build;
@@ -20,8 +21,7 @@ namespace xServer.Forms
 
         private void HasChanged()
         {
-            if (_loadedProfile && !_changed)
-                _changed = true;
+            _changed = (_loadedProfile && !_changed);
         }
 
         private void UpdateControlStates()
@@ -137,22 +137,21 @@ namespace xServer.Forms
 
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
+            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
         }
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
+
+            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
+
+            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallname_TextChanged(object sender, EventArgs e)
