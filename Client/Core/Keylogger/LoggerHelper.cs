@@ -1,9 +1,15 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Text;
 
 namespace xClient.Core.Keylogger
 {
     public class LoggerHelper
     {
+        public static bool DetectKeyHolding(List<char> list, char search)
+        {
+            return list.FindAll(s => s.Equals(search)).Count > 1;
+        }
+
         public static string Filter(char key)
         {
             if ((int)key < 32) return string.Empty;
