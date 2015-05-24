@@ -14,7 +14,7 @@ namespace xClient.Core.Keylogger.WinApi
         ///     Retrieves the unmanaged thread identifier of the calling thread.
         /// </summary>
         /// <returns></returns>
-        [DllImport("kernel32")]
+        [DllImport("kernel32.dll")]
         internal static extern int GetCurrentThreadId();
 
         /// <summary>
@@ -23,10 +23,10 @@ namespace xClient.Core.Keylogger.WinApi
         ///     other threads.
         /// </summary>
         /// <returns></returns>
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll")]
         internal static extern IntPtr GetForegroundWindow();
 
-        [DllImport("user32", CharSet = CharSet.Auto, SetLastError = true)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern int GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 
         /// <summary>

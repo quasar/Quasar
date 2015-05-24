@@ -24,17 +24,21 @@ namespace xServer.Core.Helper
                     if (!fInfo.Exists)
                         throw new FileNotFoundException();
 
-                    this._maxBlocks = (int) Math.Ceiling(fInfo.Length/(double) MAX_PACKET_SIZE);
+                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_PACKET_SIZE);
                 }
                 catch (UnauthorizedAccessException)
                 {
                     this._maxBlocks = -1;
                     this.LastError = "Access denied";
                 }
-                catch (IOException)
+                catch (IOException ex)
                 {
                     this._maxBlocks = -1;
-                    this.LastError = "File not found";
+
+                    if (ex is FileNotFoundException)
+                        this.LastError = "File not found";
+                    if (ex is PathTooLongException)
+                        this.LastError = "Path is too long";
                 }
 
                 return this._maxBlocks;
@@ -86,10 +90,18 @@ namespace xServer.Core.Helper
                 readBytes = new byte[0];
                 this.LastError = "Access denied";
             }
-            catch (IOException)
+            catch (IOException ex)
             {
                 readBytes = new byte[0];
-                this.LastError = "File not found";
+
+                if (ex is FileNotFoundException)
+                    this.LastError = "File not found";
+                else if (ex is DirectoryNotFoundException)
+                    this.LastError = "Directory not found";
+                else if (ex is PathTooLongException)
+                    this.LastError = "Path is too long";
+                else
+                    this.LastError = "Unable to read from File Stream";
             }
 
             return false;
@@ -125,9 +137,16 @@ namespace xServer.Core.Helper
             {
                 this.LastError = "Access denied";
             }
-            catch (IOException)
+            catch (IOException ex)
             {
-                this.LastError = "File not found";
+                if (ex is FileNotFoundException)
+                    this.LastError = "File not found";
+                else if (ex is DirectoryNotFoundException)
+                    this.LastError = "Directory not found";
+                else if (ex is PathTooLongException)
+                    this.LastError = "Path is too long";
+                else
+                    this.LastError = "Unable to write to File Stream";
             }
 
             return false;

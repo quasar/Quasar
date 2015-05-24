@@ -40,7 +40,7 @@ namespace xServer.Forms
 
                 foreach (FileInfo file in iFiles)
                 {
-                    lstLogs.Items.Add(new ListViewItem().Text = file.Name);
+                    lstLogs.Items.Add(new ListViewItem() { Text = file.Name });
                 }
             }
         }
@@ -55,7 +55,10 @@ namespace xServer.Forms
 
         private void lstLogs_ItemActivate(object sender, EventArgs e)
         {
-            wLogViewer.Navigate(Path.Combine(_path, lstLogs.SelectedItems[0].Text));
+            if (lstLogs.SelectedItems.Count > 0)
+            {
+                wLogViewer.Navigate(Path.Combine(_path, lstLogs.SelectedItems[0].Text));
+            }
         }
 
         private void FrmKeylogger_FormClosing(object sender, FormClosingEventArgs e)

