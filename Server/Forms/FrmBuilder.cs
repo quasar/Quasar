@@ -24,6 +24,18 @@ namespace xServer.Forms
                 _changed = true;
         }
 
+        private void UpdateControlStates()
+        {
+            txtInstallname.Enabled = chkInstall.Checked;
+            rbAppdata.Enabled = chkInstall.Checked;
+            rbProgramFiles.Enabled = chkInstall.Checked;
+            rbSystem.Enabled = chkInstall.Checked;
+            txtInstallsub.Enabled = chkInstall.Checked;
+            chkHide.Enabled = chkInstall.Checked;
+            chkStartup.Enabled = chkInstall.Checked;
+            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+        }
+
         private void LoadProfile(string profilename)
         {
             ProfileManager pm = new ProfileManager(profilename + ".xml");
@@ -95,13 +107,7 @@ namespace xServer.Forms
                 txtMutex.Text = Helper.GetRandomName(32);
             }
 
-            txtInstallname.Enabled = chkInstall.Checked;
-            rbAppdata.Enabled = chkInstall.Checked;
-            rbProgramFiles.Enabled = chkInstall.Checked;
-            rbSystem.Enabled = chkInstall.Checked;
-            txtInstallsub.Enabled = chkInstall.Checked;
-            chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
+            UpdateControlStates();
 
             txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
 
@@ -195,14 +201,7 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            txtInstallname.Enabled = chkInstall.Checked;
-            rbAppdata.Enabled = chkInstall.Checked;
-            rbProgramFiles.Enabled = chkInstall.Checked;
-            rbSystem.Enabled = chkInstall.Checked;
-            txtInstallsub.Enabled = chkInstall.Checked;
-            chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+            UpdateControlStates();
         }
 
         private void chkStartup_CheckedChanged(object sender, EventArgs e)
