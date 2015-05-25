@@ -4,8 +4,34 @@ using System.Windows.Forms;
 
 namespace xClient.Core.Keylogger
 {
-    public class LoggerHelper
+    public static class LoggerHelper
     {
+        #region "Extension Methods"
+        public static bool IsModifierKeysSet(this List<Keys> pressedKeys)
+        {
+            return pressedKeys != null &&
+                (pressedKeys.Contains(Keys.LControlKey)
+                || pressedKeys.Contains(Keys.RControlKey)
+                || pressedKeys.Contains(Keys.LMenu)
+                || pressedKeys.Contains(Keys.RMenu)
+                || pressedKeys.Contains(Keys.LWin)
+                || pressedKeys.Contains(Keys.RWin)
+                || pressedKeys.Contains(Keys.Control)
+                || pressedKeys.Contains(Keys.Alt));
+        }
+
+        public static bool IsExcludedKey(this Keys k)
+        {
+            return (!(k >= Keys.A && k <= Keys.Z
+                      || k >= Keys.NumPad0 && k <= Keys.Divide
+                      || k >= Keys.D0 && k <= Keys.D9
+                      || k >= Keys.Oem1 && k <= Keys.OemClear
+                      || k >= Keys.LShiftKey && k <= Keys.RShiftKey
+                      || k == Keys.CapsLock
+                      || k == Keys.Space));
+        }
+        #endregion
+
         public static bool DetectKeyHolding(List<char> list, char search)
         {
             return list.FindAll(s => s.Equals(search)).Count > 1;
@@ -33,30 +59,6 @@ namespace xClient.Core.Keylogger
                     return "&nbsp;";
             }
             return key.ToString();
-        }
-
-        public static bool IsExcludedKey(Keys k)
-        {
-            return (!(k >= Keys.A && k <= Keys.Z
-                      || k >= Keys.NumPad0 && k <= Keys.Divide
-                      || k >= Keys.D0 && k <= Keys.D9
-                      || k >= Keys.Oem1 && k <= Keys.OemClear
-                      || k >= Keys.LShiftKey && k <= Keys.RShiftKey
-                      || k == Keys.CapsLock
-                      || k == Keys.Space));
-        }
-
-        public static bool IsModifierKeysSet(List<Keys> pressedKeys)
-        {
-            return pressedKeys != null &&
-                (pressedKeys.Contains(Keys.LControlKey)
-                || pressedKeys.Contains(Keys.RControlKey)
-                || pressedKeys.Contains(Keys.LMenu)
-                || pressedKeys.Contains(Keys.RMenu)
-                || pressedKeys.Contains(Keys.LWin)
-                || pressedKeys.Contains(Keys.RWin)
-                || pressedKeys.Contains(Keys.Control)
-                || pressedKeys.Contains(Keys.Alt));
         }
 
         public static string GetDisplayName(Keys key, bool altGr = false)
