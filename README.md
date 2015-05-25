@@ -82,6 +82,10 @@ ResourceLib
 Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
 https://github.com/dblock/resourcelib
 
+globalmousekeyhook  
+Copyright (c) 2004-2015, George Mamaladze  
+https://github.com/gmamaladze/globalmousekeyhook
+
 Thank you!
 ---
 I really appreciate all kinds of feedback and contributions. Thanks for using and supporting xRAT 2.0!
