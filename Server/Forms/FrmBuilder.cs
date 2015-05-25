@@ -386,6 +386,11 @@ namespace xServer.Forms
             HasChanged();
         }
 
+        private void txtDelay_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
         private void txtMutex_TextChanged(object sender, EventArgs e)
         {
             HasChanged();
