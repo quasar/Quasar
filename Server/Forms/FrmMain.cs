@@ -179,11 +179,11 @@ namespace xServer.Forms
             if (ListenServer.Listening)
                 ListenServer.Disconnect();
 
-            if (XMLSettings.UseUPnP)
-                UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+            if (UPnP.IsPortForwarded)
+                UPnP.RemovePort();
 
             nIcon.Visible = false;
-            FrmMain.Instance = null;
+            Instance = null;
         }
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
