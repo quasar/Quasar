@@ -227,6 +227,7 @@ namespace xServer.Forms
                     selectedClients = lstClients.SelectedItems.Count;
                 });
                 UpdateWindowTitle(ListenServer.ConnectedClients, selectedClients);
+                client.Value.DisposeForms();
             }
         }
 
