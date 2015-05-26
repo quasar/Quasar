@@ -45,7 +45,7 @@ namespace xServer.Forms
             {
                 try
                 {
-                    if (chkUseUpnp.Checked)
+                    if (chkUseUpnp.Checked && !Core.Helper.UPnP.IsPortForwarded)
                         Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
@@ -63,6 +63,8 @@ namespace xServer.Forms
                 try
                 {
                     _listenServer.Disconnect();
+                    if (Core.Helper.UPnP.IsPortForwarded)
+                        Core.Helper.UPnP.RemovePort();
                 }
                 finally
                 {
