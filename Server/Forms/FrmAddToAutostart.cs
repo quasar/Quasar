@@ -13,13 +13,13 @@ namespace xServer.Forms
             AddTypes();
         }
 
-        public FrmAddToAutostart(string StartupPath)
+        public FrmAddToAutostart(string startupPath)
         {
             InitializeComponent();
             AddTypes();
 
-            txtName.Text = Path.GetFileNameWithoutExtension(StartupPath);
-            txtPath.Text = StartupPath;
+            txtName.Text = Path.GetFileNameWithoutExtension(startupPath);
+            txtPath.Text = startupPath;
         }
 
         private void AddTypes()
@@ -28,8 +28,9 @@ namespace xServer.Forms
             cmbType.Items.Add("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
             cmbType.Items.Add("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
             cmbType.Items.Add("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
-            cmbType.Items.Add("COMMONAPPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
-            cmbType.Items.Add("APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
+            cmbType.Items.Add("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run");
+            cmbType.Items.Add("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
+            cmbType.Items.Add("%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup");
             cmbType.SelectedIndex = 0;
         }
 

