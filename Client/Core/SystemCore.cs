@@ -563,6 +563,62 @@ namespace xClient.Core
                 };
                 Process.Start(startInfo);
 
+                //delete from startup
+                if (Settings.STARTUP)
+                {
+                    if (AccountType == "Admin")
+                    {
+                        try // try LocalMachine
+                        {
+                            using (
+                                RegistryKey key =
+                                    Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                        true))
+                            {
+                                if (key == null) throw new Exception();
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                        catch // if fails use CurrentUser
+                        {
+                            try
+                            {
+                                using (
+                                    RegistryKey key =
+                                        Registry.CurrentUser.OpenSubKey(
+                                            "Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                                {
+                                    if (key == null) throw new Exception();
+                                    key.DeleteValue(Settings.STARTUPKEY, true);
+                                    key.Close();
+                                }
+                            }
+                            catch
+                            {
+                            }
+                        }
+                    }
+                    else
+                    {
+                        try
+                        {
+                            using (
+                                RegistryKey key =
+                                    Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                        true))
+                            {
+                                if (key == null) throw new Exception();
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                        catch
+                        {
+                        }
+                    }
+                }
+
                 Disconnect = true;
                 c.Disconnect();
                 RemoveTraces();
