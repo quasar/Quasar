@@ -11,7 +11,6 @@ namespace xServer.Forms
 {
     public partial class FrmBuilder : Form
     {
-        private bool _loadedProfile;
         private bool _changed;
 
         public FrmBuilder()
@@ -21,7 +20,8 @@ namespace xServer.Forms
 
         private void HasChanged()
         {
-            _changed = (_loadedProfile && !_changed);
+            if (!_changed)
+                _changed = true;
         }
 
         private void UpdateControlStates()
@@ -44,19 +44,17 @@ namespace xServer.Forms
             txtPassword.Text = pm.ReadValue("Password");
             txtDelay.Text = pm.ReadValue("Delay");
             txtMutex.Text = pm.ReadValue("Mutex");
-            chkInstall.Checked = bool.Parse(pm.ReadValue("InstallClient"));
+            chkInstall.Checked = bool.Parse(pm.ReadValueSafe("InstallClient", "False"));
             txtInstallname.Text = pm.ReadValue("InstallName");
             GetInstallPath(int.Parse(pm.ReadValue("InstallPath"))).Checked = true;
             txtInstallsub.Text = pm.ReadValue("InstallSub");
-            chkHide.Checked = bool.Parse(pm.ReadValue("HideFile"));
-            chkStartup.Checked = bool.Parse(pm.ReadValue("AddStartup"));
+            chkHide.Checked = bool.Parse(pm.ReadValueSafe("HideFile", "False"));
+            chkStartup.Checked = bool.Parse(pm.ReadValueSafe("AddStartup", "False"));
             txtRegistryKeyName.Text = pm.ReadValue("RegistryName");
-            chkElevation.Checked = bool.Parse(pm.ReadValue("AdminElevation"));
-            chkIconChange.Checked = bool.Parse(pm.ReadValue("ChangeIcon"));
-            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValue("ChangeAsmInfo"));
-            chkKeylogger.Checked =
-                bool.Parse(!string.IsNullOrEmpty(pm.ReadValue("Keylogger")) ? pm.ReadValue("Keylogger") : "False");
-                //fallback
+            chkElevation.Checked = bool.Parse(pm.ReadValueSafe("AdminElevation", "False"));
+            chkIconChange.Checked = bool.Parse(pm.ReadValueSafe("ChangeIcon", "False"));
+            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValueSafe("ChangeAsmInfo", "False"));
+            chkKeylogger.Checked = bool.Parse(pm.ReadValueSafe("Keylogger", "False"));
             txtProductName.Text = pm.ReadValue("ProductName");
             txtDescription.Text = pm.ReadValue("Description");
             txtCompanyName.Text = pm.ReadValue("CompanyName");
@@ -65,7 +63,6 @@ namespace xServer.Forms
             txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
             txtProductVersion.Text = pm.ReadValue("ProductVersion");
             txtFileVersion.Text = pm.ReadValue("FileVersion");
-            _loadedProfile = true;
         }
 
         private void SaveProfile(string profilename)
