@@ -303,6 +303,16 @@ namespace xServer.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap server_link {
+            get {
+                object obj = ResourceManager.GetObject("server_link", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap server_reconnect {
             get {
                 object obj = ResourceManager.GetObject("server_reconnect", resourceCulture);
