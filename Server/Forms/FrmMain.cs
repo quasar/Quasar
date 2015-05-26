@@ -180,10 +180,10 @@ namespace xServer.Forms
                 ListenServer.Disconnect();
 
             if (UPnP.IsPortForwarded)
-                UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                UPnP.RemovePort();
 
             nIcon.Visible = false;
-            FrmMain.Instance = null;
+            Instance = null;
         }
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
