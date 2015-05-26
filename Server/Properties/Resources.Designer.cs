@@ -83,6 +83,16 @@ namespace xServer.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap application_delete {
+            get {
+                object obj = ResourceManager.GetObject("application_delete", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap bricks {
             get {
                 object obj = ResourceManager.GetObject("bricks", resourceCulture);

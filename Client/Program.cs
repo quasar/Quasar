@@ -79,6 +79,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.Action),
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
+                typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),
@@ -328,6 +329,10 @@ namespace xClient
             else if (type == typeof (Core.Packets.ServerPackets.AddStartupItem))
             {
                 CommandHandler.HandleAddStartupItem((Core.Packets.ServerPackets.AddStartupItem) packet, client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.RemoveStartupItem))
+            {
+                CommandHandler.HandleAddRemoveStartupItem((Core.Packets.ServerPackets.RemoveStartupItem) packet, client);
             }
             else if (type == typeof (Core.Packets.ServerPackets.DownloadFileCanceled))
             {

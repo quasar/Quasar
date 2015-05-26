@@ -131,6 +131,7 @@ namespace xServer.Forms
                 typeof (Core.Packets.ServerPackets.Action),
                 typeof (Core.Packets.ServerPackets.GetStartupItems),
                 typeof (Core.Packets.ServerPackets.AddStartupItem),
+                typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
                 typeof (Core.Packets.ClientPackets.Initialize),

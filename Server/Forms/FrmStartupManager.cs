@@ -1,4 +1,5 @@
-﻿using System.Windows.Forms;
+﻿using System.Linq;
+using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
 
@@ -51,6 +52,43 @@ namespace xServer.Forms
         {
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmStm = null;
+        }
+
+        private void ctxtAddEntry_Click(object sender, System.EventArgs e)
+        {
+            using (var frm = new FrmAddToAutostart())
+            {
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    if (_connectClient != null)
+                    {
+                        new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path,
+                            AutostartItem.Type).Execute(_connectClient);
+                        lstStartupItems.Items.Clear();
+                        new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
+                    }
+                }
+            }
+        }
+
+        private void ctxtRemoveEntry_Click(object sender, System.EventArgs e)
+        {
+            int modified = 0;
+            foreach (ListViewItem item in lstStartupItems.SelectedItems)
+            {
+                if (_connectClient != null)
+                {
+                    int type = lstStartupItems.Groups.Cast<ListViewGroup>().TakeWhile(t => t != item.Group).Count();
+                    new Core.Packets.ServerPackets.RemoveStartupItem(item.Text, item.SubItems[1].Text, type).Execute(_connectClient);
+                }
+                modified++;
+            }
+
+            if (modified > 0 && _connectClient != null)
+            {
+                new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
+                lstStartupItems.Items.Clear();
+            }
         }
 
         private void lstStartupItems_ColumnClick(object sender, ColumnClickEventArgs e)
