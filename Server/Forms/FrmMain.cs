@@ -512,6 +512,33 @@ namespace xServer.Forms
             }
         }
 
+        private void ctxtReverseProxy_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                Client c = (Client) lstClients.SelectedItems[0].Tag;
+                if (c.Value.FrmProxy != null)
+                {
+                    c.Value.FrmProxy.Focus();
+                    return;
+                }
+
+                FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
+                frmRS.Show();
+            }
+        }
+
+        private Client[] GetSelectedClients()
+        {
+            List<Client> clients = new List<Client>();
+
+            for (int i = 0; i < lstClients.SelectedItems.Count; i++)
+            {
+                clients.Add((Client) lstClients.SelectedItems[i].Tag);
+            }
+            return clients.ToArray();
+        }
+
         private void ctxtShutdown_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
@@ -768,33 +795,5 @@ namespace xServer.Forms
         }
 
         #endregion
-
-        private void ctxtReverseProxy_Click(object sender, EventArgs e)
-        {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                Client c = (Client)lstClients.SelectedItems[0].Tag;
-                if (c.Value.FrmProxy != null)
-                {
-                    c.Value.FrmProxy.Focus();
-                    return;
-                }
-
-                FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
-                frmRS.Show();
-            }
-        }
-
-        private Client[] GetSelectedClients()
-        {
-            List<Client> clients = new List<Client>();
-
-            for (int i = 0; i < lstClients.SelectedItems.Count; i++)
-            {
-                if (lstClients.SelectedItems[i].Tag as Client != null)
-                    clients.Add(lstClients.SelectedItems[i].Tag as Client);
-            }
-            return clients.ToArray();
-        }
     }
 }
