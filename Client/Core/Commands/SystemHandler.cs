@@ -101,7 +101,7 @@ namespace xClient.Core.Commands
                 {
                     using (
                         var key =
-                            Registry.CurrentUser.OpenSubKey(
+                            Registry.LocalMachine.OpenSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
                                 false))
                     {
@@ -113,7 +113,7 @@ namespace xClient.Core.Commands
                     }
                     using (
                         var key =
-                            Registry.CurrentUser.OpenSubKey(
+                            Registry.LocalMachine.OpenSubKey(
                                 "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
                                 false))
                     {
