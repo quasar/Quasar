@@ -41,8 +41,10 @@ namespace xServer.Forms
             lstStartupItems.Groups.Add(
                 new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
             lstStartupItems.Groups.Add(
-                new ListViewGroup("COMMONAPPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
-            lstStartupItems.Groups.Add(new ListViewGroup("APPDATA\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"));
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"));
+            lstStartupItems.Groups.Add(new ListViewGroup("%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup"));
         }
 
         private void FrmStartupManager_FormClosing(object sender, FormClosingEventArgs e)

