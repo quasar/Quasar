@@ -7,8 +7,28 @@ namespace xServer.Core.Helper
 {
     internal static class UPnP
     {
+        private static bool _isPortForwarded = false;
+        public static bool IsPortForwarded 
+        { 
+            get 
+            { 
+                return _isPortForwarded; 
+            } 
+        }
+
+        private static ushort _port;
+        public static ushort Port
+        {
+            get
+            {
+                return _port;
+            }
+        }
+
         public static void ForwardPort(ushort port)
         {
+            _port = port;
+
             new Thread(() =>
             {
                 EndPoint endPoint;
@@ -63,20 +83,23 @@ namespace xServer.Core.Helper
                     IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
                     if (portMap != null)
                         portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
+                    _isPortForwarded = true;
                 }
                 catch
                 {
+
                 }
             }).Start();
         }
 
-        public static void RemovePort(ushort port)
+        public static void RemovePort()
         {
             try
             {
                 IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
                 if (portMap != null)
-                    portMap.Remove(port, "TCP");
+                    portMap.Remove(_port, "TCP");
+                _isPortForwarded = false;
             }
             catch
             {

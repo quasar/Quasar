@@ -179,7 +179,7 @@ namespace xServer.Forms
             if (ListenServer.Listening)
                 ListenServer.Disconnect();
 
-            if (XMLSettings.UseUPnP)
+            if (UPnP.IsPortForwarded)
                 UPnP.RemovePort(ushort.Parse(XMLSettings.ListenPort.ToString()));
 
             nIcon.Visible = false;
