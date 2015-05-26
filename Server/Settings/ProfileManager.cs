@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
@@ -7,18 +8,19 @@ namespace xServer.Settings
 {
     public class ProfileManager
     {
-        private string settingsFilePath { get; set; }
+        private readonly string _settingsFilePath;
 
         public ProfileManager(string settingsFile)
         {
-            settingsFilePath = Path.Combine(Application.StartupPath, "Profiles\\" + settingsFile);
+            if (string.IsNullOrEmpty(settingsFile)) throw new ArgumentException();
+            _settingsFilePath = Path.Combine(Application.StartupPath, "Profiles\\" + settingsFile);
 
             try
             {
-                if (!File.Exists(settingsFilePath))
+                if (!File.Exists(_settingsFilePath))
                 {
-                    if (!Directory.Exists(Path.GetDirectoryName(settingsFilePath)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(settingsFilePath));
+                    if (!Directory.Exists(Path.GetDirectoryName(_settingsFilePath)))
+                        Directory.CreateDirectory(Path.GetDirectoryName(_settingsFilePath));
 
                     XmlDocument doc = new XmlDocument();
                     XmlNode root = doc.CreateElement("settings");
@@ -49,7 +51,7 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("ProductVersion"));
                     root.AppendChild(doc.CreateElement("FileVersion"));
 
-                    doc.Save(settingsFilePath);
+                    doc.Save(_settingsFilePath);
                 }
             }
             catch
@@ -61,10 +63,9 @@ namespace xServer.Settings
         {
             try
             {
-                XPathDocument doc = new XPathDocument(settingsFilePath);
+                XPathDocument doc = new XPathDocument(_settingsFilePath);
                 XPathNavigator nav = doc.CreateNavigator();
-                XPathExpression expr;
-                expr = nav.Compile(@"/settings/" + pstrValueToRead);
+                XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
                 while (iterator.MoveNext())
                 {
@@ -89,24 +90,23 @@ namespace xServer.Settings
         {
             try
             {
-                XmlNode oldNode;
                 XmlDocument doc = new XmlDocument();
-                using (var reader = new XmlTextReader(settingsFilePath))
+                using (var reader = new XmlTextReader(_settingsFilePath))
                 {
                     doc.Load(reader);
                 }
 
                 XmlElement root = doc.DocumentElement;
-                oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
+                XmlNode oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
                 {
                     oldNode = doc.SelectSingleNode("settings");
                     oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
-                    doc.Save(settingsFilePath);
+                    doc.Save(_settingsFilePath);
                     return true;
                 }
                 oldNode.InnerText = pstrValueToWrite;
-                doc.Save(settingsFilePath);
+                doc.Save(_settingsFilePath);
                 return true;
             }
             catch
