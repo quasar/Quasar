@@ -33,11 +33,6 @@ namespace xServer.Core
             {
                 ClientState(this, c, connected);
             }
-            if (!connected)
-            {
-                c.Disconnect();
-                _clients.Remove(c);
-            }
         }
 
         public event ClientReadEventHandler ClientRead;
@@ -192,11 +187,19 @@ namespace xServer.Core
             if (_handle != null)
                 _handle.Close();
 
+
             lock (_clients)
             {
                 while (_clients.Count != 0)
                 {
                     _clients[0].Disconnect();
+                    try
+                    {
+                        _clients.RemoveAt(0);
+                    }
+                    catch
+                    {
+                    }
                 }
             }
 
