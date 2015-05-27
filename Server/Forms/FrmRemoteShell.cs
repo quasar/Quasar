@@ -45,18 +45,24 @@ namespace xServer.Forms
                 string input = txtConsoleInput.Text;
                 txtConsoleInput.Text = string.Empty;
 
-                switch (input)
+                bool isExit = (input.StartsWith("exit") && input.Length > "exit".Length && input[4] == ' ') || input == "exit";
+
+                if (isExit)
                 {
-                    case "cls":
-                        txtConsoleOutput.Text = string.Empty;
-                        break;
-                    case "exit":
-                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
-                        this.Close();
-                        break;
-                    default:
-                        new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
-                        break;
+                    new Core.Packets.ServerPackets.ShellCommand("exit").Execute(_connectClient);
+                    this.Close();
+                }
+                else
+                {
+                    switch (input)
+                    {
+                        case "cls":
+                            txtConsoleOutput.Text = string.Empty;
+                            break;
+                        default:
+                            new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
+                            break;
+                    }
                 }
 
                 e.Handled = true;
