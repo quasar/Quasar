@@ -346,7 +346,7 @@ namespace xServer.Forms
             // 
             this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.botListen});
-            this.botStrip.Location = new System.Drawing.Point(0, 366);
+            this.botStrip.Location = new System.Drawing.Point(0, 367);
             this.botStrip.Name = "botStrip";
             this.botStrip.Size = new System.Drawing.Size(770, 22);
             this.botStrip.TabIndex = 4;
@@ -620,6 +620,9 @@ namespace xServer.Forms
             // 
             // lstClients
             // 
+            this.lstClients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIP,
             this.hSocket,
@@ -630,13 +633,12 @@ namespace xServer.Forms
             this.hOS,
             this.hAccountType});
             this.lstClients.ContextMenuStrip = this.ctxtMenu;
-            this.lstClients.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstClients.FullRowSelect = true;
             this.lstClients.GridLines = true;
             this.lstClients.Location = new System.Drawing.Point(0, 0);
             this.lstClients.Name = "lstClients";
             this.lstClients.ShowItemToolTips = true;
-            this.lstClients.Size = new System.Drawing.Size(770, 388);
+            this.lstClients.Size = new System.Drawing.Size(770, 365);
             this.lstClients.SmallImageList = this.imgFlags;
             this.lstClients.TabIndex = 1;
             this.lstClients.UseCompatibleStateImageBehavior = false;
@@ -733,12 +735,13 @@ namespace xServer.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 388);
+            this.ClientSize = new System.Drawing.Size(770, 389);
             this.Controls.Add(this.botStrip);
             this.Controls.Add(this.lstClients);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Menu = this.mainMenu;
             this.MinimumSize = new System.Drawing.Size(680, 415);
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
