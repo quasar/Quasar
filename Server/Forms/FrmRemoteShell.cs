@@ -15,6 +15,8 @@ namespace xServer.Forms
 
             InitializeComponent();
 
+            this.DoubleBuffered = true;
+
             txtConsoleOutput.Text = ">> Type 'exit' to close this session" + Environment.NewLine;
         }
 
