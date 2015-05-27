@@ -18,7 +18,18 @@ namespace xServer.Core.Commands
             try
             {
                 client.Value.FrmRs.Invoke(
-                    (MethodInvoker)delegate { client.Value.FrmRs.txtConsoleOutput.Text += packet.Output; });
+                    (MethodInvoker)delegate
+                {
+                    if (packet.IsError)
+                    {
+                        client.Value.FrmRs.PrintError(packet.Output);
+                    }
+                    else
+                    {
+                        client.Value.FrmRs.PrintMessage(packet.Output);
+                    }
+                }
+                );
             }
             catch
             {

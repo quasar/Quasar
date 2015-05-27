@@ -1,10 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core;
+using System.Drawing;
 
 namespace xServer.Forms
 {
-    public partial class FrmRemoteShell : Form
+    public interface IRemoteShell
+    {
+        void PrintMessage(string message);
+        void PrintError(string errorMessage);
+    }
+
+    public partial class FrmRemoteShell : Form, IRemoteShell
     {
         private readonly Client _connectClient;
 
@@ -17,7 +24,23 @@ namespace xServer.Forms
 
             this.DoubleBuffered = true;
 
-            txtConsoleOutput.Text = ">> Type 'exit' to close this session" + Environment.NewLine;
+            txtConsoleOutput.AppendText(">> Type 'exit' to close this session" + Environment.NewLine);
+        }
+
+        public void PrintMessage(string message)
+        {
+            this.txtConsoleOutput.AppendText(message);
+        }
+
+        public void PrintError(string errorMessage)
+        {
+            Color OriginalColor = txtConsoleOutput.ForeColor;
+            txtConsoleOutput.ForeColor = Color.Red;
+
+            txtConsoleOutput.AppendText(errorMessage);
+
+
+            txtConsoleOutput.ForeColor = OriginalColor;
         }
 
         private void FrmRemoteShell_Load(object sender, EventArgs e)
