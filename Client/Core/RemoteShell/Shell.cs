@@ -14,9 +14,9 @@ namespace xClient.Core.RemoteShell
         // error output stream from the shell (after we are done reading the standard
         // output). Reading the standard output and the standard error output at the
         // same time will cause a deadlock.
-        private ManualResetEvent redirectOutputEvent = new ManualResetEvent(false);
+        private ManualResetEvent redirectOutputEvent;
 
-        private ManualResetEvent redirectStandardErrorEvent = new ManualResetEvent(true);
+        private ManualResetEvent redirectStandardErrorEvent;
 
         private void CreateSession()
         {
@@ -37,7 +37,7 @@ namespace xClient.Core.RemoteShell
 
             _prc.Start();
             
-            // Queue up the threads.
+            // Fire up the logic to redirect the outputs and handle them.
             RedirectOutputs();
 
             Thread.Sleep(100);
@@ -46,8 +46,26 @@ namespace xClient.Core.RemoteShell
                 Program.ConnectClient);
         }
 
+        /// <summary>
+        /// Sets or resets all ManualResetEvents needed to 
+        /// </summary>
+        private void InitializeResetEvents()
+        {
+            if (redirectOutputEvent != null)
+                redirectOutputEvent.Close();
+            
+            redirectOutputEvent = new ManualResetEvent(false);
+
+            if (redirectStandardErrorEvent != null)
+                redirectStandardErrorEvent.Close();
+
+            redirectStandardErrorEvent = new ManualResetEvent(true);
+        }
+
         private void RedirectOutputs()
         {
+            InitializeResetEvents();
+
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardOutput(); });
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardError(); });
         }
