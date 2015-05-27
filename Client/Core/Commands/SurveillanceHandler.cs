@@ -89,6 +89,7 @@ namespace xClient.Core.Commands
 
         public static void HandleMonitors(Packets.ServerPackets.Monitors command, Client client)
         {
+            if (Screen.AllScreens != null && Screen.AllScreens.Length >= 0)
             {
                 new Packets.ClientPackets.MonitorsResponse(Screen.AllScreens.Length).Execute(client);
             }
