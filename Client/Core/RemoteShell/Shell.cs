@@ -90,7 +90,8 @@ namespace xClient.Core.RemoteShell
                         if (!string.IsNullOrEmpty(read))
                         {
                             Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(Program.ConnectClient);
+                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(
+                                Program.ConnectClient);
                         }
 
                         redirectOutputEvent.Reset();
@@ -99,6 +100,10 @@ namespace xClient.Core.RemoteShell
 
                 if ((_prc == null || _prc.HasExited) && _read)
                     throw new ApplicationException("session unexpectedly closed");
+            }
+            catch (ObjectDisposedException ex)
+            {
+                // just exit
             }
             catch (Exception ex)
             {
@@ -132,7 +137,8 @@ namespace xClient.Core.RemoteShell
                         if (!string.IsNullOrEmpty(read))
                         {
                             Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine, true).Execute(Program.ConnectClient);
+                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine, true).Execute(
+                                Program.ConnectClient);
                         }
 
                         redirectStandardErrorEvent.Set();
@@ -141,6 +147,10 @@ namespace xClient.Core.RemoteShell
 
                 if ((_prc == null || _prc.HasExited) && _read)
                     throw new ApplicationException("session unexpectedly closed");
+            }
+            catch (ObjectDisposedException)
+            {
+                // just exit
             }
             catch (Exception ex)
             {
