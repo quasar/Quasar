@@ -184,6 +184,7 @@ namespace xServer.Forms
                 UPnP.RemovePort();
 
             nIcon.Visible = false;
+            nIcon.Dispose();
             Instance = null;
         }
 
@@ -538,6 +539,22 @@ namespace xServer.Forms
                 clients.Add((Client) lstClients.SelectedItems[i].Tag);
             }
             return clients.ToArray();
+        }
+
+        private void ctxtRegistryEditor_Click(object sender, EventArgs e)
+        {
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                // TODO
+                //Client c = (Client)lstClients.SelectedItems[0].Tag;
+                //if (c.Value.FrmReg != null)
+                //{
+                //    c.Value.FrmReg.Focus();
+                //    return;
+                //}
+                //FrmStartupManager FrmReg = new FrmStartupManager(c);
+                //FrmReg.Show();
+            }
         }
 
         private void ctxtShutdown_Click(object sender, EventArgs e)

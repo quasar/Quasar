@@ -45,6 +45,7 @@ namespace xServer.Forms
             this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtReverseProxy = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRegistryEditor = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtActions = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtShutdown = new System.Windows.Forms.ToolStripMenuItem();
@@ -92,7 +93,7 @@ namespace xServer.Forms
             this.ctxtSurveillance,
             this.ctxtMiscellaneous});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 114);
+            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
             // 
             // ctxtConnection
             // 
@@ -103,7 +104,7 @@ namespace xServer.Forms
             this.ctxtUninstall});
             this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
             this.ctxtConnection.Name = "ctxtConnection";
-            this.ctxtConnection.Size = new System.Drawing.Size(152, 22);
+            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
             this.ctxtConnection.Text = "Connection";
             // 
             // ctxtUpdate
@@ -147,11 +148,12 @@ namespace xServer.Forms
             this.ctxtTaskManager,
             this.ctxtRemoteShell,
             this.ctxtReverseProxy,
+            this.ctxtRegistryEditor,
             this.ctxtLine,
             this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
             this.ctxtSystem.Name = "ctxtSystem";
-            this.ctxtSystem.Size = new System.Drawing.Size(152, 22);
+            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
             this.ctxtSystem.Text = "System";
             // 
             // ctxtSystemInformation
@@ -202,6 +204,15 @@ namespace xServer.Forms
             this.ctxtReverseProxy.Text = "Reverse Proxy";
             this.ctxtReverseProxy.Click += new System.EventHandler(this.ctxtReverseProxy_Click);
             // 
+            // ctxtRegistryEditor
+            // 
+            this.ctxtRegistryEditor.Enabled = false;
+            this.ctxtRegistryEditor.Image = global::xServer.Properties.Resources.registry;
+            this.ctxtRegistryEditor.Name = "ctxtRegistryEditor";
+            this.ctxtRegistryEditor.Size = new System.Drawing.Size(178, 22);
+            this.ctxtRegistryEditor.Text = "Registry Editor";
+            this.ctxtRegistryEditor.Click += new System.EventHandler(this.ctxtRegistryEditor_Click);
+            // 
             // ctxtLine
             // 
             this.ctxtLine.Name = "ctxtLine";
@@ -250,7 +261,7 @@ namespace xServer.Forms
             this.ctxtKeylogger});
             this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
             this.ctxtSurveillance.Name = "ctxtSurveillance";
-            this.ctxtSurveillance.Size = new System.Drawing.Size(152, 22);
+            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
             this.ctxtSurveillance.Text = "Surveillance";
             // 
             // ctxtRemoteDesktop
@@ -286,7 +297,7 @@ namespace xServer.Forms
             this.ctxtShowMessagebox});
             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(152, 22);
+            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
             this.ctxtMiscellaneous.Text = "Miscellaneous";
             // 
             // ctxtRemoteExecute
@@ -792,6 +803,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtWebFile;
         private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
         private System.Windows.Forms.ToolStripMenuItem ctxtReverseProxy;
+        private System.Windows.Forms.ToolStripMenuItem ctxtRegistryEditor;
     }
 }
 

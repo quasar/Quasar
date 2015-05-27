@@ -51,8 +51,9 @@ Building a client
 
 ToDo
 ---
-* ~~Reverse SOCKS5/HTTPS Proxy~~
-* Password Recovery (Browsers, FTP-Clients)
+* Registry Editor (browse, delete, add registry keys)
+* Password Recovery
+ * Recover Passwords of common browsers (i.e. Chrome, Firefox, IE) and FTP-Clients (i.e. FileZilla Client)
 * Startup Persistence
 * [Issues](https://github.com/MaxXor/xRAT/issues)
 
