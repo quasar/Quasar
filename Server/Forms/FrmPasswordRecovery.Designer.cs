@@ -30,11 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPasswordRecovery));
-            this.lstPasswords = new xServer.Controls.ListViewEx();
-            this.hClientIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuMain = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.saveToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.allToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -44,55 +39,23 @@
             this.selectedToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.allToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.selectedToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.sfdPasswords = new System.Windows.Forms.SaveFileDialog();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label1 = new System.Windows.Forms.Label();
             this.txtFormat = new System.Windows.Forms.TextBox();
-            this.allToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
-            this.selectedToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
+            this.lstPasswords = new xServer.Controls.ListViewEx();
+            this.hClientIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.menuMain.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // lstPasswords
-            // 
-            this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hClientIP,
-            this.hURL,
-            this.hUser,
-            this.hPass});
-            this.lstPasswords.ContextMenuStrip = this.menuMain;
-            this.lstPasswords.GridLines = true;
-            this.lstPasswords.HideSelection = false;
-            this.lstPasswords.Location = new System.Drawing.Point(6, 19);
-            this.lstPasswords.Name = "lstPasswords";
-            this.lstPasswords.Size = new System.Drawing.Size(537, 300);
-            this.lstPasswords.TabIndex = 0;
-            this.lstPasswords.UseCompatibleStateImageBehavior = false;
-            this.lstPasswords.View = System.Windows.Forms.View.Details;
-            // 
-            // hClientIP
-            // 
-            this.hClientIP.Text = "Client IP";
-            this.hClientIP.Width = 107;
-            // 
-            // hURL
-            // 
-            this.hURL.Text = "URL";
-            this.hURL.Width = 151;
-            // 
-            // hUser
-            // 
-            this.hUser.Text = "Username";
-            this.hUser.Width = 142;
-            // 
-            // hPass
-            // 
-            this.hPass.Text = "Password";
-            this.hPass.Width = 130;
             // 
             // menuMain
             // 
@@ -103,7 +66,7 @@
             this.clearAllToolStripMenuItem,
             this.refreshToolStripMenuItem});
             this.menuMain.Name = "menuMain";
-            this.menuMain.Size = new System.Drawing.Size(169, 120);
+            this.menuMain.Size = new System.Drawing.Size(169, 98);
             // 
             // saveToFileToolStripMenuItem
             // 
@@ -118,14 +81,14 @@
             // allToolStripMenuItem
             // 
             this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.allToolStripMenuItem.Text = "All";
             this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
             // 
             // selectedToolStripMenuItem
             // 
             this.selectedToolStripMenuItem.Name = "selectedToolStripMenuItem";
-            this.selectedToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectedToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.selectedToolStripMenuItem.Text = "Selected";
             this.selectedToolStripMenuItem.Click += new System.EventHandler(this.selectedToolStripMenuItem_Click);
             // 
@@ -142,14 +105,14 @@
             // allToolStripMenuItem1
             // 
             this.allToolStripMenuItem1.Name = "allToolStripMenuItem1";
-            this.allToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.allToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.allToolStripMenuItem1.Text = "All";
             this.allToolStripMenuItem1.Click += new System.EventHandler(this.allToolStripMenuItem1_Click);
             // 
             // selectedToolStripMenuItem1
             // 
             this.selectedToolStripMenuItem1.Name = "selectedToolStripMenuItem1";
-            this.selectedToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.selectedToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
             this.selectedToolStripMenuItem1.Text = "Selected";
             this.selectedToolStripMenuItem1.Click += new System.EventHandler(this.selectedToolStripMenuItem1_Click);
             // 
@@ -167,6 +130,20 @@
             this.clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
             this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.clearAllToolStripMenuItem.Text = "Clear";
+            // 
+            // allToolStripMenuItem2
+            // 
+            this.allToolStripMenuItem2.Name = "allToolStripMenuItem2";
+            this.allToolStripMenuItem2.Size = new System.Drawing.Size(117, 22);
+            this.allToolStripMenuItem2.Text = "All";
+            this.allToolStripMenuItem2.Click += new System.EventHandler(this.allToolStripMenuItem2_Click);
+            // 
+            // selectedToolStripMenuItem2
+            // 
+            this.selectedToolStripMenuItem2.Name = "selectedToolStripMenuItem2";
+            this.selectedToolStripMenuItem2.Size = new System.Drawing.Size(117, 22);
+            this.selectedToolStripMenuItem2.Text = "Selected";
+            this.selectedToolStripMenuItem2.Click += new System.EventHandler(this.selectedToolStripMenuItem2_Click);
             // 
             // refreshToolStripMenuItem
             // 
@@ -207,12 +184,13 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 49);
+            this.label1.Location = new System.Drawing.Point(65, 49);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(418, 26);
             this.label1.TabIndex = 1;
             this.label1.Text = "You can change the way the logins are saved by adjusting the format in the box ab" +
     "ove.\r\nAvailable variables: BROWSER, URL, USER, PASS\r\n";
+            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtFormat
             // 
@@ -221,21 +199,46 @@
             this.txtFormat.Size = new System.Drawing.Size(543, 20);
             this.txtFormat.TabIndex = 0;
             this.txtFormat.Text = "BROWSER - URL - USER:PASS";
+            this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtFormat.TextChanged += new System.EventHandler(this.txtFormat_TextChanged);
             // 
-            // allToolStripMenuItem2
+            // lstPasswords
             // 
-            this.allToolStripMenuItem2.Name = "allToolStripMenuItem2";
-            this.allToolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
-            this.allToolStripMenuItem2.Text = "All";
-            this.allToolStripMenuItem2.Click += new System.EventHandler(this.allToolStripMenuItem2_Click);
+            this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hClientIP,
+            this.hURL,
+            this.hUser,
+            this.hPass});
+            this.lstPasswords.ContextMenuStrip = this.menuMain;
+            this.lstPasswords.FullRowSelect = true;
+            this.lstPasswords.GridLines = true;
+            this.lstPasswords.HideSelection = false;
+            this.lstPasswords.Location = new System.Drawing.Point(6, 19);
+            this.lstPasswords.Name = "lstPasswords";
+            this.lstPasswords.Size = new System.Drawing.Size(537, 300);
+            this.lstPasswords.TabIndex = 0;
+            this.lstPasswords.UseCompatibleStateImageBehavior = false;
+            this.lstPasswords.View = System.Windows.Forms.View.Details;
             // 
-            // selectedToolStripMenuItem2
+            // hClientIP
             // 
-            this.selectedToolStripMenuItem2.Name = "selectedToolStripMenuItem2";
-            this.selectedToolStripMenuItem2.Size = new System.Drawing.Size(152, 22);
-            this.selectedToolStripMenuItem2.Text = "Selected";
-            this.selectedToolStripMenuItem2.Click += new System.EventHandler(this.selectedToolStripMenuItem2_Click);
+            this.hClientIP.Text = "Client IP";
+            this.hClientIP.Width = 107;
+            // 
+            // hURL
+            // 
+            this.hURL.Text = "URL";
+            this.hURL.Width = 151;
+            // 
+            // hUser
+            // 
+            this.hUser.Text = "Username";
+            this.hUser.Width = 142;
+            // 
+            // hPass
+            // 
+            this.hPass.Text = "Password";
+            this.hPass.Width = 130;
             // 
             // FrmPasswordRecovery
             // 

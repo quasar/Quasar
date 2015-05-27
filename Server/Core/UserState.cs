@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using xServer.Core.Helper;
 using xServer.Core.ReverseProxy;
 using xServer.Forms;
@@ -48,26 +49,33 @@ namespace xServer.Core
 
         public void DisposeForms()
         {
-            if (FrmRdp != null)
-                FrmRdp.Close();
-            if (FrmTm != null)
-                FrmTm.Close();
-            if (FrmFm != null)
-                FrmFm.Close();
-            if (FrmSi != null)
-                FrmSi.Close();
-            if (FrmSm != null)
-                FrmSm.Close();
-            if (FrmRs != null)
-                FrmRs.Close();
-            if (FrmStm != null)
-                FrmStm.Close();
-            if (FrmKl != null)
-                FrmKl.Close();
-            if (FrmProxy != null)
-                FrmProxy.Close();
-            if (FrmPass != null)
-                FrmPass.Close();
+            try
+            {
+                if (FrmRdp != null)
+                    FrmRdp.Close();
+                if (FrmTm != null)
+                    FrmTm.Close();
+                if (FrmFm != null)
+                    FrmFm.Close();
+                if (FrmSi != null)
+                    FrmSi.Close();
+                if (FrmSm != null)
+                    FrmSm.Close();
+                if (FrmRs != null)
+                    FrmRs.Close();
+                if (FrmStm != null)
+                    FrmStm.Close();
+                if (FrmKl != null)
+                    FrmKl.Close();
+                if (FrmProxy != null)
+                    FrmProxy.Close();
+                if (FrmPass != null)
+                    FrmPass.Close();
+            }
+            catch (Exception)
+            {
+
+            }
         }
     }
 }

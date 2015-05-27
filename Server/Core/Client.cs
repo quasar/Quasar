@@ -10,6 +10,7 @@ using xServer.Core.Encryption;
 using xServer.Core.Extensions;
 using xServer.Core.Packets;
 using xServer.Settings;
+using System.Windows.Forms;
 
 namespace xServer.Core
 {
@@ -244,6 +245,7 @@ namespace xServer.Core
 
                 try
                 {
+                    //MessageBox.Show(packet.GetType().FullName);
                     using (MemoryStream ms = new MemoryStream())
                     {
                         Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);

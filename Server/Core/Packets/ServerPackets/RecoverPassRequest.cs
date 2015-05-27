@@ -1,12 +1,12 @@
 ﻿using ProtoBuf;
 using System;
 
-namespace xClient.Core.Packets.ServerPackets
+namespace xServer.Core.Packets.ServerPackets
 {
     [ProtoContract]
-    public class PasswordRequest : IPacket
+    public class RecoverPassRequest : IPacket
     {
-        public PasswordRequest()
+        public RecoverPassRequest()
         {
         }
         public void Execute(Client client)

