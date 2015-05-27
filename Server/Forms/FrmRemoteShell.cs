@@ -42,7 +42,7 @@ namespace xServer.Forms
         {
             if (e.KeyCode == Keys.Enter && !string.IsNullOrEmpty(txtConsoleInput.Text.Trim()))
             {
-                string input = txtConsoleInput.Text;
+                string input = txtConsoleInput.Text.TrimStart(' ').TrimEnd(' ');
                 txtConsoleInput.Text = string.Empty;
 
                 bool isExit = (input.StartsWith("exit") && input.Length > "exit".Length && input[4] == ' ') || input == "exit";
