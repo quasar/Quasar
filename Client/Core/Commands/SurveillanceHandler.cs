@@ -5,7 +5,6 @@ using System.Windows.Forms;
 using xClient.Core.Helper;
 using System.Drawing.Imaging;
 using System.Threading;
-using System.ComponentModel;
 
 namespace xClient.Core.Commands
 {
