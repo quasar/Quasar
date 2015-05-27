@@ -159,9 +159,10 @@ namespace xClient.Core.RemoteShell
         {
             if (disposing)
             {
+                _read = false;
+
                 try
                 {
-                    _read = false;
                     if (_prc != null)
                     {
                         if (!_prc.HasExited)
@@ -176,10 +177,19 @@ namespace xClient.Core.RemoteShell
                         _prc.Dispose();
                         _prc = null;
                     }
-                    GC.SuppressFinalize(this);
                 }
                 catch
+                { }
+                finally
                 {
+                    if (redirectOutputEvent != null)
+                    {
+                        redirectOutputEvent.Close();
+                    }
+                    if (redirectStandardErrorEvent != null)
+                    {
+                        redirectStandardErrorEvent.Close();
+                    }
                 }
             }
         }
