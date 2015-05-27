@@ -36,10 +36,9 @@ namespace xServer.Forms
         public void PrintError(string errorMessage)
         {
             Color OriginalColor = txtConsoleOutput.ForeColor;
-            txtConsoleOutput.ForeColor = Color.Red;
 
+            txtConsoleOutput.SelectionColor = Color.Red;
             txtConsoleOutput.AppendText(errorMessage);
-
 
             txtConsoleOutput.ForeColor = OriginalColor;
         }

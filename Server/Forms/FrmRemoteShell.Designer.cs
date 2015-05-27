@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteShell));
-            this.txtConsoleOutput = new System.Windows.Forms.TextBox();
+            this.txtConsoleOutput = new System.Windows.Forms.RichTextBox();
             this.txtConsoleInput = new System.Windows.Forms.TextBox();
             this.SuspendLayout();
             // 
@@ -44,7 +44,7 @@
             this.txtConsoleOutput.Multiline = true;
             this.txtConsoleOutput.Name = "txtConsoleOutput";
             this.txtConsoleOutput.ReadOnly = true;
-            this.txtConsoleOutput.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.txtConsoleOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.txtConsoleOutput.Size = new System.Drawing.Size(637, 307);
             this.txtConsoleOutput.TabIndex = 1;
             this.txtConsoleOutput.TextChanged += new System.EventHandler(this.txtConsoleOutput_TextChanged);
@@ -89,6 +89,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox txtConsoleInput;
-        public System.Windows.Forms.TextBox txtConsoleOutput;
+        public System.Windows.Forms.RichTextBox txtConsoleOutput;
     }
 }
