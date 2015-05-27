@@ -36,7 +36,11 @@ namespace xClient.Core.Helper
             var screenshot = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppArgb);
             using (Graphics graph = Graphics.FromImage(screenshot))
             {
-                graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+                try
+                {
+                    graph.CopyFromScreen(bounds.X, bounds.Y, 0, 0, bounds.Size, CopyPixelOperation.SourceCopy);
+                }
+                catch { }
                 return screenshot;
             }
         }
