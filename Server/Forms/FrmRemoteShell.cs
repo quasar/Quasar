@@ -70,12 +70,16 @@ namespace xServer.Forms
                 string input = txtConsoleInput.Text;
                 txtConsoleInput.Text = string.Empty;
 
+                // Split based on the space key.
+                string[] splitSpaceInput = input.Split(' ');
+                // Split based on the null key.
+                string[] splitNullInput = input.Split(' ');
+
                 // We have an exit command.
                 if (input == "exit" || input.Trim() == "exit" ||
-                    //    Space character                       null-character
-                    input.Split(' ').Contains("exit") || input.Split(' ').Contains("exit"))
+                    ((splitSpaceInput.Length > 0) && splitSpaceInput.Contains("exit")) ||
+                    ((splitNullInput.Length > 0) && splitNullInput.Contains("exit")))
                 {
-                    new Core.Packets.ServerPackets.ShellCommand("exit").Execute(_connectClient);
                     this.Close();
                 }
                 else
