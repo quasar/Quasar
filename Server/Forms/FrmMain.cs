@@ -184,6 +184,7 @@ namespace xServer.Forms
                 UPnP.RemovePort();
 
             nIcon.Visible = false;
+            nIcon.Dispose();
             Instance = null;
         }
 
