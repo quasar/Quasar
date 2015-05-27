@@ -11,6 +11,10 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
+        public static void HandlePasswordRequest(Packets.ServerPackets.PasswordRequest packet, Client client)
+        {
+
+        }
         public static void HandleRemoteDesktop(Packets.ServerPackets.Desktop command, Client client)
         {
             if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality ||

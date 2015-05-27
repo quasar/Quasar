@@ -120,6 +120,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\PasswordResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
@@ -136,6 +137,7 @@
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\PasswordRequest.cs" />
     <Compile Include="Core\Packets\ServerPackets\RemoveStartupitem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
@@ -152,6 +154,7 @@
     <Compile Include="Core\ProtoBuf\KeyValuePairProxy.cs" />
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
+    <Compile Include="Core\Recovery\Helper\LoginInfo.cs" />
     <Compile Include="Core\RemoteShell\Shell.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
@@ -278,6 +281,7 @@
   <ItemGroup>
     <Content Include="Core\Keylogger\HotKeys\ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>

