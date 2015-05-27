@@ -1,10 +1,18 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core;
+using System.Drawing;
+using System.Linq;
 
 namespace xServer.Forms
 {
-    public partial class FrmRemoteShell : Form
+    public interface IRemoteShell
+    {
+        void PrintMessage(string message);
+        void PrintError(string errorMessage);
+    }
+
+    public partial class FrmRemoteShell : Form, IRemoteShell
     {
         private readonly Client _connectClient;
 
@@ -15,11 +23,24 @@ namespace xServer.Forms
 
             InitializeComponent();
 
-            txtConsoleOutput.Text = ">> Type 'exit' to close this session" + Environment.NewLine;
+            txtConsoleOutput.AppendText(">> Type 'exit' to close this session" + Environment.NewLine);
+        }
+
+        public void PrintMessage(string message)
+        {
+            this.txtConsoleOutput.AppendText(message);
+        }
+
+        public void PrintError(string errorMessage)
+        {
+            txtConsoleOutput.SelectionColor = Color.Red;
+            txtConsoleOutput.AppendText(errorMessage);
         }
 
         private void FrmRemoteShell_Load(object sender, EventArgs e)
         {
+            this.DoubleBuffered = true;
+
             if (_connectClient != null)
                 this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]",
                     _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
@@ -42,14 +63,19 @@ namespace xServer.Forms
         {
             if (e.KeyCode == Keys.Enter && !string.IsNullOrEmpty(txtConsoleInput.Text.Trim()))
             {
-                string input = txtConsoleInput.Text.TrimStart(' ').TrimEnd(' ');
+                string input = txtConsoleInput.Text.TrimStart(' ', ' ').TrimEnd(' ', ' ');
                 txtConsoleInput.Text = string.Empty;
 
-                bool isExit = (input.StartsWith("exit") && input.Length > "exit".Length && input[4] == ' ') || input == "exit";
+                // Split based on the space key.
+                string[] splitSpaceInput = input.Split(' ');
+                // Split based on the null key.
+                string[] splitNullInput = input.Split(' ');
 
-                if (isExit)
+                // We have an exit command.
+                if (input == "exit" ||
+                    ((splitSpaceInput.Length > 0) && splitSpaceInput[0] == "exit") ||
+                    ((splitNullInput.Length > 0) && splitNullInput[0] == "exit"))
                 {
-                    new Core.Packets.ServerPackets.ShellCommand("exit").Execute(_connectClient);
                     this.Close();
                 }
                 else
