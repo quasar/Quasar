@@ -35,12 +35,8 @@ namespace xServer.Forms
 
         public void PrintError(string errorMessage)
         {
-            Color OriginalColor = txtConsoleOutput.ForeColor;
-
             txtConsoleOutput.SelectionColor = Color.Red;
             txtConsoleOutput.AppendText(errorMessage);
-
-            txtConsoleOutput.ForeColor = OriginalColor;
         }
 
         private void FrmRemoteShell_Load(object sender, EventArgs e)

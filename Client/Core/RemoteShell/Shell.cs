@@ -60,10 +60,14 @@ namespace xClient.Core.RemoteShell
                 {
                     while (!reader.EndOfStream && _read)
                     {
+                        if (redirectStandardErrorEvent == null)
+                            // Break out completely if the second part of our chain won't work...
+                            return;
+
                         // If we are reading the standard error output, just wait.
                         redirectStandardErrorEvent.WaitOne();
                         redirectOutputEvent.Set();
-                        
+
                         var read = reader.ReadLine();
                         if (!string.IsNullOrEmpty(read))
                         {
@@ -78,16 +82,15 @@ namespace xClient.Core.RemoteShell
                 if ((_prc == null || _prc.HasExited) && _read)
                     throw new ApplicationException("session unexpectedly closed");
             }
-            catch (ApplicationException)
+            catch (Exception ex)
             {
-                // Reset the states...
-                redirectOutputEvent.Set();
-                redirectStandardErrorEvent.Reset();
+                if (ex is ApplicationException || ex is InvalidOperationException)
+                {
+                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                        .Execute(Program.ConnectClient);
 
-                new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
-                    .Execute(Program.ConnectClient);
-
-                CreateSession();
+                    CreateSession();
+                }
             }
         }
 
@@ -100,6 +103,10 @@ namespace xClient.Core.RemoteShell
                     while (!reader.EndOfStream && _read)
                     {
                         // Wait for your turn! ;)
+                        if (redirectOutputEvent == null)
+                            // Break out completely if the first part of our chain doesn't work...
+                            return;
+
                         redirectOutputEvent.WaitOne();
                         redirectStandardErrorEvent.Reset();
 
@@ -117,16 +124,15 @@ namespace xClient.Core.RemoteShell
                 if ((_prc == null || _prc.HasExited) && _read)
                     throw new ApplicationException("session unexpectedly closed");
             }
-            catch (ApplicationException)
+            catch (Exception ex)
             {
-                // Reset the states...
-                redirectOutputEvent.Set();
-                redirectStandardErrorEvent.Reset();
+                if (ex is ApplicationException || ex is InvalidOperationException)
+                {
+                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                        .Execute(Program.ConnectClient);
 
-                new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
-                    .Execute(Program.ConnectClient);
-
-                CreateSession();
+                    CreateSession();
+                }
             }
         }
 
