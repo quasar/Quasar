@@ -44,6 +44,7 @@ namespace xServer.Forms
             this.ctxtStartupManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtReverseProxy = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtActions = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtShutdown = new System.Windows.Forms.ToolStripMenuItem();
@@ -79,7 +80,6 @@ namespace xServer.Forms
             this.menuBuilder = new System.Windows.Forms.MenuItem();
             this.menuStatistics = new System.Windows.Forms.MenuItem();
             this.menuAbout = new System.Windows.Forms.MenuItem();
-            this.ctxtReverseProxy = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenu.SuspendLayout();
             this.botStrip.SuspendLayout();
             this.SuspendLayout();
@@ -193,6 +193,14 @@ namespace xServer.Forms
             this.ctxtRemoteShell.Size = new System.Drawing.Size(178, 22);
             this.ctxtRemoteShell.Text = "Remote Shell";
             this.ctxtRemoteShell.Click += new System.EventHandler(this.ctxtRemoteShell_Click);
+            // 
+            // ctxtReverseProxy
+            // 
+            this.ctxtReverseProxy.Image = global::xServer.Properties.Resources.server_link;
+            this.ctxtReverseProxy.Name = "ctxtReverseProxy";
+            this.ctxtReverseProxy.Size = new System.Drawing.Size(178, 22);
+            this.ctxtReverseProxy.Text = "Reverse Proxy";
+            this.ctxtReverseProxy.Click += new System.EventHandler(this.ctxtReverseProxy_Click);
             // 
             // ctxtLine
             // 
@@ -709,13 +717,6 @@ namespace xServer.Forms
             this.menuAbout.Index = 4;
             this.menuAbout.Text = "About";
             this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
-            // 
-            // ctxtReverseProxy
-            // 
-            this.ctxtReverseProxy.Name = "ctxtReverseProxy";
-            this.ctxtReverseProxy.Size = new System.Drawing.Size(178, 22);
-            this.ctxtReverseProxy.Text = "Reverse Proxy";
-            this.ctxtReverseProxy.Click += new System.EventHandler(this.ctxtReverseProxy_Click);
             // 
             // FrmMain
             // 

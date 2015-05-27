@@ -37,11 +37,6 @@ namespace xServer.Forms
             this.nudServerPort = new System.Windows.Forms.NumericUpDown();
             this.tabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.killConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.lblProxyInfo = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
             this.LvConnections = new xServer.Controls.ListViewEx();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -50,6 +45,11 @@ namespace xServer.Forms
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.killConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.lblProxyInfo = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
             this.lblLoadBalance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).BeginInit();
             this.tabCtrl.SuspendLayout();
@@ -123,49 +123,6 @@ namespace xServer.Forms
             this.tabPage1.Text = "Open Connections";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.killConnectionToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 26);
-            // 
-            // killConnectionToolStripMenuItem
-            // 
-            this.killConnectionToolStripMenuItem.Name = "killConnectionToolStripMenuItem";
-            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
-            this.killConnectionToolStripMenuItem.Text = "Kill Connection";
-            this.killConnectionToolStripMenuItem.Click += new System.EventHandler(this.killConnectionToolStripMenuItem_Click);
-            // 
-            // btnStop
-            // 
-            this.btnStop.Enabled = false;
-            this.btnStop.Location = new System.Drawing.Point(363, 12);
-            this.btnStop.Name = "btnStop";
-            this.btnStop.Size = new System.Drawing.Size(114, 23);
-            this.btnStop.TabIndex = 4;
-            this.btnStop.Text = "Stop Listening";
-            this.btnStop.UseVisualStyleBackColor = true;
-            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
-            // 
-            // lblProxyInfo
-            // 
-            this.lblProxyInfo.AutoSize = true;
-            this.lblProxyInfo.Location = new System.Drawing.Point(23, 51);
-            this.lblProxyInfo.Name = "lblProxyInfo";
-            this.lblProxyInfo.Size = new System.Drawing.Size(346, 13);
-            this.lblProxyInfo.TabIndex = 5;
-            this.lblProxyInfo.Text = "Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:3128 (no user/pass)";
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(23, 67);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(404, 13);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "All the DNS Queries will be executed at the remote client to reduce DNS Leaks";
-            // 
             // LvConnections
             // 
             this.LvConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -224,6 +181,49 @@ namespace xServer.Forms
             this.columnHeader5.Text = "Proxy Type";
             this.columnHeader5.Width = 90;
             // 
+            // contextMenuStrip1
+            // 
+            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.killConnectionToolStripMenuItem});
+            this.contextMenuStrip1.Name = "contextMenuStrip1";
+            this.contextMenuStrip1.Size = new System.Drawing.Size(144, 26);
+            // 
+            // killConnectionToolStripMenuItem
+            // 
+            this.killConnectionToolStripMenuItem.Name = "killConnectionToolStripMenuItem";
+            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.killConnectionToolStripMenuItem.Text = "Kill Connection";
+            this.killConnectionToolStripMenuItem.Click += new System.EventHandler(this.killConnectionToolStripMenuItem_Click);
+            // 
+            // btnStop
+            // 
+            this.btnStop.Enabled = false;
+            this.btnStop.Location = new System.Drawing.Point(363, 12);
+            this.btnStop.Name = "btnStop";
+            this.btnStop.Size = new System.Drawing.Size(114, 23);
+            this.btnStop.TabIndex = 4;
+            this.btnStop.Text = "Stop Listening";
+            this.btnStop.UseVisualStyleBackColor = true;
+            this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
+            // 
+            // lblProxyInfo
+            // 
+            this.lblProxyInfo.AutoSize = true;
+            this.lblProxyInfo.Location = new System.Drawing.Point(23, 51);
+            this.lblProxyInfo.Name = "lblProxyInfo";
+            this.lblProxyInfo.Size = new System.Drawing.Size(346, 13);
+            this.lblProxyInfo.TabIndex = 5;
+            this.lblProxyInfo.Text = "Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:3128 (no user/pass)";
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(23, 67);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(405, 13);
+            this.label1.TabIndex = 6;
+            this.label1.Text = "All the DNS Queries will be executed at the remote client to reduce DNS Leaks";
+            // 
             // lblLoadBalance
             // 
             this.lblLoadBalance.AutoSize = true;
@@ -250,6 +250,7 @@ namespace xServer.Forms
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.Name = "FrmReverseProxy";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Reverse Proxy []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmReverseProxy_FormClosing);
             this.Load += new System.EventHandler(this.FrmReverseProxy_Load);

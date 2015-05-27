@@ -33,6 +33,11 @@ namespace xServer.Core
             {
                 ClientState(this, c, connected);
             }
+            if (!connected)
+            {
+                c.Disconnect();
+                _clients.Remove(c);
+            }
         }
 
         public event ClientReadEventHandler ClientRead;
@@ -152,16 +157,16 @@ namespace xServer.Core
             {
                 if (e.SocketError == SocketError.Success)
                 {
-                    Client T = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
+                    Client client = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
 
                     lock (_clients)
                     {
-                        _clients.Add(T);
-                        T.ClientState += OnClientState;
-                        T.ClientRead += OnClientRead;
-                        T.ClientWrite += OnClientWrite;
+                        _clients.Add(client);
+                        client.ClientState += OnClientState;
+                        client.ClientRead += OnClientRead;
+                        client.ClientWrite += OnClientWrite;
 
-                        OnClientState(T, true);
+                        OnClientState(client, true);
                     }
 
                     e.AcceptSocket = null;

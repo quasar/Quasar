@@ -115,6 +115,7 @@
     <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
     <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
     <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\RemoveStartupitem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
     <Compile Include="Core\Packets\ServerPackets\ShowMessageBox.cs" />

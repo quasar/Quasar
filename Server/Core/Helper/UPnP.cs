@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using NATUPNPLib;
@@ -7,11 +8,15 @@ namespace xServer.Core.Helper
 {
     internal static class UPnP
     {
+        public static bool IsPortForwarded { get; private set; }
+        public static ushort Port { get; private set; }
+
         public static void ForwardPort(ushort port)
         {
+            Port = port;
+
             new Thread(() =>
             {
-                EndPoint endPoint;
                 string ipAddr = string.Empty;
                 int retry = 0;
 
@@ -20,6 +25,7 @@ namespace xServer.Core.Helper
                     try
                     {
                         TcpClient c = null;
+                        EndPoint endPoint;
                         try
                         {
                             c = new TcpClient();
@@ -38,7 +44,7 @@ namespace xServer.Core.Helper
                         if (endPoint != null)
                         {
                             ipAddr = endPoint.ToString();
-                            int index = ipAddr.IndexOf(":");
+                            int index = ipAddr.IndexOf(":", StringComparison.Ordinal);
                             ipAddr = ipAddr.Remove(index);
 
                             // We got through successfully and with an endpoint and a parsed IP address. We may exit the loop.
@@ -63,6 +69,7 @@ namespace xServer.Core.Helper
                     IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
                     if (portMap != null)
                         portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
+                    IsPortForwarded = true;
                 }
                 catch
                 {
@@ -70,13 +77,14 @@ namespace xServer.Core.Helper
             }).Start();
         }
 
-        public static void RemovePort(ushort port)
+        public static void RemovePort()
         {
             try
             {
                 IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
                 if (portMap != null)
-                    portMap.Remove(port, "TCP");
+                    portMap.Remove(Port, "TCP");
+                IsPortForwarded = false;
             }
             catch
             {

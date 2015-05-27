@@ -21,7 +21,7 @@ namespace xServer.Settings
         public static string NoIPPassword { get; set; }
 
 
-        private static string _settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
+        private static readonly string _settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
 
         public static bool WriteDefaultSettings()
         {
@@ -62,7 +62,7 @@ namespace xServer.Settings
             {
                 XPathDocument doc = new XPathDocument(_settingsFilePath);
                 XPathNavigator nav = doc.CreateNavigator();
-                var expr = nav.Compile(@"/settings/" + pstrValueToRead);
+                XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
                 while (iterator.MoveNext())
                 {
@@ -94,7 +94,7 @@ namespace xServer.Settings
                 }
 
                 XmlElement root = doc.DocumentElement;
-                var oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
+                XmlNode oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
                 {
                     oldNode = doc.SelectSingleNode("settings");

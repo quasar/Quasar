@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Microsoft.Win32;
-using xClient.Config;
 using xClient.Core.Helper;
 
 namespace xClient.Core.Commands
@@ -99,113 +96,6 @@ namespace xClient.Core.Commands
                 _canceledDownloads.Add(command.ID, "canceled");
                 new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(
                     client);
-            }
-        }
-
-        public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)
-        {
-            new Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
-
-            if (Settings.STARTUP)
-            {
-                if (SystemCore.AccountType == "Admin")
-                {
-                    try
-                    {
-                        using (
-                            RegistryKey key =
-                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // try deleting from Registry.CurrentUser
-                        using (
-                            RegistryKey key =
-                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        using (
-                            RegistryKey key =
-                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
-
-            string logsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
-            if (Directory.Exists(logsDirectory)) // try to delete Logs from Keylogger
-            {
-                try
-                {
-                    Directory.Delete(logsDirectory, true);
-                }
-                catch
-                {
-                }
-            }
-
-            try
-            {
-                string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Helper.Helper.GetRandomFilename(12, ".bat"));
-
-                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
-                    ? "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
-                      "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                      "del " + "\"" + filename + "\""
-                    : "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
-                      "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                      "del " + "\"" + filename + "\""
-                    ;
-
-                File.WriteAllText(filename, uninstallBatch);
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    UseShellExecute = true,
-                    FileName = filename
-                };
-                Process.Start(startInfo);
-            }
-            finally
-            {
-                SystemCore.Disconnect = true;
-                client.Disconnect();
             }
         }
 
