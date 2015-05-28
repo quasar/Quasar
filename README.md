@@ -63,7 +63,7 @@ See [CONTRIBUTING.md](/CONTRIBUTING.md)
 
 License
 ---
-See LICENSE file for details.
+See [LICENSE.md](/LICENSE.md)
 
 Donate
 ---
