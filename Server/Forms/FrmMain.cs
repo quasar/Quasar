@@ -218,13 +218,10 @@ namespace xServer.Forms
                 int selectedClients = 0;
                 this.Invoke((MethodInvoker) delegate
                 {
-                    foreach (ListViewItem lvi in lstClients.Items)
+                    foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>().Where(lvi => (Client)lvi.Tag == client))
                     {
-                        if ((Client) lvi.Tag == client)
-                        {
-                            lvi.Remove();
-                            server.ConnectedClients--;
-                        }
+                        lvi.Remove();
+                        server.ConnectedClients--;
                     }
                     selectedClients = lstClients.SelectedItems.Count;
                 });
