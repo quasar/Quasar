@@ -98,6 +98,7 @@
     <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
     <Compile Include="Core\Packets\ClientPackets\Status.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
+    <Compile Include="Core\Packets\PacketHandler.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
     <Compile Include="Core\Packets\ServerPackets\AddStartupItem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Delete.cs" />

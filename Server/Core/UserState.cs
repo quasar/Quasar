@@ -20,7 +20,6 @@ namespace xServer.Core
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
         public FrmSystemInformation FrmSi { get; set; }
-        public FrmShowMessagebox FrmSm { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmStartupManager FrmStm { get; set; }
         public FrmKeylogger FrmKl { get; set; }
@@ -55,8 +54,6 @@ namespace xServer.Core
                 FrmFm.Close();
             if (FrmSi != null)
                 FrmSi.Close();
-            if (FrmSm != null)
-                FrmSm.Close();
             if (FrmRs != null)
                 FrmRs.Close();
             if (FrmStm != null)

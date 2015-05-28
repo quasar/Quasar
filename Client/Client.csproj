@@ -122,6 +122,7 @@
     <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
+    <Compile Include="Core\Packets\PacketHandler.cs" />
     <Compile Include="Core\Packets\ServerPackets\Action.cs" />
     <Compile Include="Core\Packets\ServerPackets\AddStartupItem.cs" />
     <Compile Include="Core\Packets\ServerPackets\Delete.cs" />
