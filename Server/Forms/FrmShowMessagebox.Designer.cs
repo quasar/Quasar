@@ -99,6 +99,7 @@
             // txtText
             // 
             this.txtText.Location = new System.Drawing.Point(60, 49);
+            this.txtText.MaxLength = 256;
             this.txtText.Name = "txtText";
             this.txtText.Size = new System.Drawing.Size(249, 22);
             this.txtText.TabIndex = 4;
@@ -107,6 +108,7 @@
             // txtCaption
             // 
             this.txtCaption.Location = new System.Drawing.Point(60, 21);
+            this.txtCaption.MaxLength = 256;
             this.txtCaption.Name = "txtCaption";
             this.txtCaption.Size = new System.Drawing.Size(249, 22);
             this.txtCaption.TabIndex = 2;
