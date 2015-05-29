@@ -10,19 +10,21 @@ namespace xServer.Core
     {
         public long BytesReceived { get; set; }
         public long BytesSent { get; set; }
+
         private readonly object locker = new object();
+        private readonly object eventLocker = new object();
 
         private ServerStateEventHandler serverState;
         public event ServerStateEventHandler ServerState
         {
             add
             {
-                lock (locker)
+                lock (eventLocker)
                     serverState += value;
             }
             remove
             {
-                lock (locker)
+                lock (eventLocker)
                     serverState -= value;
             }
         }
@@ -32,7 +34,7 @@ namespace xServer.Core
         private void OnServerState(bool listening)
         {
             ServerStateEventHandler handler;
-            lock (locker)
+            lock (eventLocker)
             {
                 handler = serverState;
             }
@@ -47,12 +49,12 @@ namespace xServer.Core
         {
             add
             {
-                lock (locker)
+                lock (eventLocker)
                     clientState += value;
             }
             remove
             {
-                lock (locker)
+                lock (eventLocker)
                     clientState -= value;
             }
         }
@@ -62,7 +64,7 @@ namespace xServer.Core
         private void OnClientState(Client c, bool connected)
         {
             ClientStateEventHandler handler;
-            lock (locker)
+            lock (eventLocker)
             {
                 handler = clientState;
             }
@@ -77,12 +79,12 @@ namespace xServer.Core
         {
             add
             {
-                lock (locker)
+                lock (eventLocker)
                     clientRead += value;
             }
             remove
             {
-                lock (locker)
+                lock (eventLocker)
                     clientRead -= value;
             }
         }
@@ -92,7 +94,7 @@ namespace xServer.Core
         private void OnClientRead(Client c, IPacket packet)
         {
             ClientReadEventHandler handler;
-            lock (locker)
+            lock (eventLocker)
             {
                 handler = clientRead;
             }
@@ -107,12 +109,12 @@ namespace xServer.Core
         {
             add
             {
-                lock (locker)
+                lock (eventLocker)
                     clientWrite += value;
             }
             remove
             {
-                lock (locker)
+                lock (eventLocker)
                     clientWrite -= value;
             }
         }
@@ -122,7 +124,7 @@ namespace xServer.Core
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
         {
             ClientWriteEventHandler handler;
-            lock (locker)
+            lock (eventLocker)
             {
                 handler = clientWrite;
             }
@@ -264,13 +266,19 @@ namespace xServer.Core
             {
                 while (_clients.Count != 0)
                 {
-                    _clients[0].Disconnect();
                     try
                     {
-                        _clients.RemoveAt(0);
+                        _clients[0].ClientState -= OnClientState;
+                        _clients[0].ClientRead -= OnClientRead;
+                        _clients[0].ClientWrite -= OnClientWrite;
+
+                        _clients[0].Disconnect();
                     }
                     catch
+                    { }
+                    finally
                     {
+                        _clients.RemoveAt(0);
                     }
                 }
 
