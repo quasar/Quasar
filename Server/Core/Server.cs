@@ -24,6 +24,10 @@ namespace xServer.Core
         /// is not listening.</param>
         public delegate void ServerStateEventHandler(Server s, bool listening);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the server has changed state.
+        /// </summary>
+        /// <param name="packet"></param>
         private void OnServerState(bool listening)
         {
             if (ServerState != null)
@@ -46,8 +50,7 @@ namespace xServer.Core
         public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the a packet has been
-        /// received from the client.
+        /// Fires an event that informs subscribers that a client has changed state.
         /// </summary>
         /// <param name="packet"></param>
         private void OnClientState(Client c, bool connected)
