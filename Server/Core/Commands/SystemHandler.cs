@@ -3,7 +3,6 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core.Extensions;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
 using xServer.Settings;
@@ -18,12 +17,7 @@ namespace xServer.Core.Commands
             if (client.Value.FrmFm == null)
                 return;
 
-            client.Value.FrmFm.Invoke((MethodInvoker)delegate
-            {
-                client.Value.FrmFm.cmbDrives.Items.Clear();
-                client.Value.FrmFm.cmbDrives.Items.AddRange(packet.Drives);
-                client.Value.FrmFm.cmbDrives.SelectedIndex = 0;
-            });
+            client.Value.FrmFm.AddDrives(packet.Drives);
         }
 
         public static void HandleDirectoryResponse(Client client, DirectoryResponse packet)
@@ -31,7 +25,7 @@ namespace xServer.Core.Commands
             if (client.Value.FrmFm == null)
                 return;
 
-            client.Value.FrmFm.Invoke((MethodInvoker)delegate { client.Value.FrmFm.lstDirectory.Items.Clear(); });
+            client.Value.FrmFm.ClearFileBrowser();
 
             new Thread(() =>
             {
@@ -41,8 +35,7 @@ namespace xServer.Core.Commands
                     ImageIndex = 0
                 };
 
-                client.Value.FrmFm.Invoke(
-                    (MethodInvoker)delegate { client.Value.FrmFm.lstDirectory.Items.Add(lviBack); });
+                client.Value.FrmFm.AddItemToFileBrowser(lviBack);
 
                 if (packet.Folders.Length != 0)
                 {
@@ -56,15 +49,10 @@ namespace xServer.Core.Commands
                                 ImageIndex = 1
                             };
 
-                            try
-                            {
-                                client.Value.FrmFm.Invoke(
-                                    (MethodInvoker)delegate { client.Value.FrmFm.lstDirectory.Items.Add(lvi); });
-                            }
-                            catch
-                            {
+                            if (client.Value.FrmFm == null)
                                 break;
-                            }
+
+                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
                         }
                     }
                 }
@@ -82,15 +70,10 @@ namespace xServer.Core.Commands
                                     ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 
-                            try
-                            {
-                                client.Value.FrmFm.Invoke(
-                                    (MethodInvoker)delegate { client.Value.FrmFm.lstDirectory.Items.Add(lvi); });
-                            }
-                            catch
-                            {
+                            if (client.Value.FrmFm == null)
                                 break;
-                            }
+
+                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
                         }
                     }
                 }
@@ -127,23 +110,8 @@ namespace xServer.Core.Commands
                 }
             }
 
-            try
-            {
-                client.Value.FrmSi.Invoke((MethodInvoker)delegate
-                {
-                    client.Value.FrmSi.lstSystem.Items.RemoveAt(2); // Loading... Information
-                    foreach (var lviItem in lviCollection)
-                    {
-                        if (lviItem != null)
-                            client.Value.FrmSi.lstSystem.Items.Add(lviItem);
-                    }
-
-                    client.Value.FrmSi.lstSystem.AutosizeColumns();
-                });
-            }
-            catch
-            {
-            }
+            if (client.Value.FrmSi != null)
+                client.Value.FrmSi.AddItems(lviCollection);
         }
 
         public static void HandleGetStartupItemsResponse(Client client, GetStartupItemsResponse packet)
@@ -151,24 +119,21 @@ namespace xServer.Core.Commands
             if (client.Value.FrmStm == null)
                 return;
 
-            try
+            foreach (var pair in packet.StartupItems)
             {
-                foreach (var pair in packet.StartupItems)
+                if (client.Value.FrmStm == null) return;
+
+                var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
+                var l = new ListViewItem(temp)
                 {
-                    client.Value.FrmStm.Invoke((MethodInvoker)delegate
-                    {
-                        var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
-                        var l = new ListViewItem(temp)
-                        {
-                            Group = client.Value.FrmStm.lstStartupItems.Groups[pair.Value],
-                            Tag = pair.Value
-                        };
-                        client.Value.FrmStm.lstStartupItems.Items.Add(l);
-                    });
-                }
-            }
-            catch
-            {
+                    Group = client.Value.FrmStm.GetGroup(pair.Value),
+                    Tag = pair.Value
+                };
+
+                if (l.Group == null)
+                    return;
+
+                client.Value.FrmStm.AddAutostartItemToListview(l);
             }
         }
     }
