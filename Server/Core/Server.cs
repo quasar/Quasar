@@ -103,7 +103,7 @@ namespace xServer.Core
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that
-        /// should prevent disconnection.
+        /// should prevent disconnection. 
         /// </summary>
         private bool Processing { get; set; }
 
@@ -141,6 +141,10 @@ namespace xServer.Core
             AllTimeConnectedClients = new Dictionary<string, DateTime>();
         }
 
+        /// <summary>
+        /// Begins listening for clients.
+        /// </summary>
+        /// <param name="port">Port to listen for clients on.</param>
         public void Listen(ushort port)
         {
             try
@@ -202,6 +206,12 @@ namespace xServer.Core
                 AddTypeToSerializer(parent, type);
         }
 
+        /// <summary>
+        /// Processes an incoming client; adding the client to the list of clients,
+        /// hooking up the client's events, and finally accepts the client.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="e"></param>
         private void Process(object s, SocketAsyncEventArgs e)
         {
             try
@@ -233,6 +243,10 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Disconnect the server from all of the clients and discontinue
+        /// listening (placing the server in an "off" state).
+        /// </summary>
         public void Disconnect()
         {
             if (Processing)
