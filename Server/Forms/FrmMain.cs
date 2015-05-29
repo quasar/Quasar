@@ -248,14 +248,17 @@ namespace xServer.Forms
 
         private Client[] GetSelectedClients()
         {
-            List<Client> clients = new List<Client>();
-
-            if (lstClients.SelectedItems.Count == 0) return clients.ToArray();
-
-            lstClients.Invoke((MethodInvoker)delegate
+            lock (locker)
             {
-                clients.AddRange(lstClients.SelectedItems.Cast<ListViewItem>().Where(lvi => lvi != null && (lvi.Tag as Client) != null).Select(lvi => (Client)lvi.Tag));
-            });
+                List<Client> clients = new List<Client>();
+
+                if (lstClients.SelectedItems.Count == 0) return clients.ToArray();
+
+                lstClients.Invoke((MethodInvoker)delegate
+                {
+                    clients.AddRange(lstClients.SelectedItems.Cast<ListViewItem>().Where(lvi => lvi != null && (lvi.Tag as Client) != null).Select(lvi => (Client)lvi.Tag));
+                });
+            }
 
             return clients.ToArray();
         }
