@@ -2,7 +2,6 @@
 using System.Windows.Forms;
 using xServer.Core;
 using System.Drawing;
-using System.Linq;
 
 namespace xServer.Forms
 {
@@ -24,17 +23,6 @@ namespace xServer.Forms
             InitializeComponent();
 
             txtConsoleOutput.AppendText(">> Type 'exit' to close this session" + Environment.NewLine);
-        }
-
-        public void PrintMessage(string message)
-        {
-            this.txtConsoleOutput.AppendText(message);
-        }
-
-        public void PrintError(string errorMessage)
-        {
-            txtConsoleOutput.SelectionColor = Color.Red;
-            txtConsoleOutput.AppendText(errorMessage);
         }
 
         private void FrmRemoteShell_Load(object sender, EventArgs e)
@@ -104,6 +92,49 @@ namespace xServer.Forms
                 txtConsoleInput.Focus();
                 txtConsoleInput.SelectionStart = txtConsoleOutput.TextLength;
                 txtConsoleInput.ScrollToCaret();
+            }
+        }
+
+        public void PrintMessage(string message)
+        {
+            try
+            {
+                txtConsoleOutput.Invoke((MethodInvoker)delegate
+                {
+                    txtConsoleOutput.AppendText(message);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void PrintError(string errorMessage)
+        {
+            try
+            {
+                txtConsoleOutput.Invoke((MethodInvoker)delegate
+                {
+                    txtConsoleOutput.SelectionColor = Color.Red;
+                    txtConsoleOutput.AppendText(errorMessage);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
     }

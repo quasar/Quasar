@@ -103,30 +103,16 @@ namespace xServer.Core.Commands
         {
             if (XMLSettings.ShowToolTip)
             {
-                try
+                var builder = new StringBuilder();
+                for (int i = 0; i < packet.SystemInfos.Length; i += 2)
                 {
-                    FrmMain.Instance.lstClients.Invoke((MethodInvoker)delegate
+                    if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
                     {
-                        foreach (ListViewItem item in FrmMain.Instance.lstClients.Items)
-                        {
-                            if (item.Tag == client)
-                            {
-                                var builder = new StringBuilder();
-                                for (int i = 0; i < packet.SystemInfos.Length; i += 2)
-                                {
-                                    if (packet.SystemInfos[i] != null && packet.SystemInfos[i + 1] != null)
-                                    {
-                                        builder.AppendFormat("{0}: {1}\r\n", packet.SystemInfos[i], packet.SystemInfos[i + 1]);
-                                    }
-                                }
-                                item.ToolTipText = builder.ToString();
-                            }
-                        }
-                    });
+                        builder.AppendFormat("{0}: {1}\r\n", packet.SystemInfos[i], packet.SystemInfos[i + 1]);
+                    }
                 }
-                catch
-                {
-                }
+
+                FrmMain.Instance.SetToolTipText(client, builder.ToString());
             }
 
             if (client.Value.FrmSi == null)

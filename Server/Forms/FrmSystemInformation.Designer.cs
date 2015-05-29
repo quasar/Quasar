@@ -32,7 +32,7 @@ namespace xServer.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSystemInformation));
-            this.lstSystem = new ListViewEx();
+            this.lstSystem = new xServer.Controls.ListViewEx();
             this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -70,17 +70,17 @@ namespace xServer.Forms
             this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtCopy});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 48);
+            this.ctxtMenu.Size = new System.Drawing.Size(103, 26);
             // 
             // ctxtCopy
             // 
             this.ctxtCopy.Image = global::xServer.Properties.Resources.copy;
             this.ctxtCopy.Name = "ctxtCopy";
-            this.ctxtCopy.Size = new System.Drawing.Size(152, 22);
+            this.ctxtCopy.Size = new System.Drawing.Size(102, 22);
             this.ctxtCopy.Text = "Copy";
             this.ctxtCopy.Click += new System.EventHandler(this.ctxtCopy_Click);
             // 
-            // frmSystemInformation
+            // FrmSystemInformation
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -91,7 +91,7 @@ namespace xServer.Forms
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmSystemInformation";
+            this.Name = "FrmSystemInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - System Information []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmSystemInformation_FormClosing);
@@ -105,8 +105,8 @@ namespace xServer.Forms
 
         private System.Windows.Forms.ColumnHeader hComponent;
         private System.Windows.Forms.ColumnHeader hValue;
-        public Controls.ListViewEx lstSystem;
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
         private System.Windows.Forms.ToolStripMenuItem ctxtCopy;
+        private ListViewEx lstSystem;
     }
 }

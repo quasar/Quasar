@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
@@ -281,6 +282,117 @@ namespace xServer.Forms
                 if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+            }
+        }
+
+        public void AddDrives(string[] drives)
+        {
+            try
+            {
+                cmbDrives.Invoke((MethodInvoker) delegate
+                {
+                    cmbDrives.Items.Clear();
+                    cmbDrives.Items.AddRange(drives);
+                    cmbDrives.SelectedIndex = 0;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void ClearFileBrowser()
+        {
+            try
+            {
+                lstDirectory.Invoke((MethodInvoker)delegate
+                {
+                    lstDirectory.Items.Clear();
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void AddItemToFileBrowser(ListViewItem lvi)
+        {
+            try
+            {
+                lstDirectory.Invoke((MethodInvoker)delegate
+                {
+                    lstDirectory.Items.Add(lvi);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public int GetTransferIndex(string ID)
+        {
+            int index = 0;
+
+            try
+            {
+                lstTransfers.Invoke((MethodInvoker)delegate
+                {
+                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && ID == lvi.SubItems[0].Text))
+                    {
+                        index = lvi.Index;
+                        break;
+                    }
+                });
+            }
+            catch (InvalidOperationException)
+            {
+                return -1;
+            }
+
+            return index;
+        }
+
+        public void UpdateTransferStatus(int index, string status, int imageIndex)
+        {
+            try
+            {
+                lstTransfers.Invoke((MethodInvoker)delegate
+                {
+                    lstTransfers.Items[index].SubItems[1].Text = status;
+                    if (imageIndex > 0)
+                        lstTransfers.Items[index].ImageIndex = imageIndex;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

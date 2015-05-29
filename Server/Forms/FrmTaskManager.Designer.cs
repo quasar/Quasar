@@ -35,12 +35,12 @@ namespace xServer.Forms
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtKillProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtStartProcess = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstTasks = new ListViewEx();
+            this.lstTasks = new xServer.Controls.ListViewEx();
             this.hProcessname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtMenu.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -52,13 +52,13 @@ namespace xServer.Forms
             this.ctxtLine,
             this.ctxtRefresh});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(153, 98);
+            this.ctxtMenu.Size = new System.Drawing.Size(142, 76);
             // 
             // ctxtKillProcess
             // 
             this.ctxtKillProcess.Image = global::xServer.Properties.Resources.cancel;
             this.ctxtKillProcess.Name = "ctxtKillProcess";
-            this.ctxtKillProcess.Size = new System.Drawing.Size(152, 22);
+            this.ctxtKillProcess.Size = new System.Drawing.Size(141, 22);
             this.ctxtKillProcess.Text = "Kill Process";
             this.ctxtKillProcess.Click += new System.EventHandler(this.ctxtKillProcess_Click);
             // 
@@ -66,15 +66,20 @@ namespace xServer.Forms
             // 
             this.ctxtStartProcess.Image = global::xServer.Properties.Resources.run;
             this.ctxtStartProcess.Name = "ctxtStartProcess";
-            this.ctxtStartProcess.Size = new System.Drawing.Size(152, 22);
+            this.ctxtStartProcess.Size = new System.Drawing.Size(141, 22);
             this.ctxtStartProcess.Text = "Start Process";
             this.ctxtStartProcess.Click += new System.EventHandler(this.ctxtStartProcess_Click);
+            // 
+            // ctxtLine
+            // 
+            this.ctxtLine.Name = "ctxtLine";
+            this.ctxtLine.Size = new System.Drawing.Size(138, 6);
             // 
             // ctxtRefresh
             // 
             this.ctxtRefresh.Image = global::xServer.Properties.Resources.refresh;
             this.ctxtRefresh.Name = "ctxtRefresh";
-            this.ctxtRefresh.Size = new System.Drawing.Size(152, 22);
+            this.ctxtRefresh.Size = new System.Drawing.Size(141, 22);
             this.ctxtRefresh.Text = "Refresh";
             this.ctxtRefresh.Click += new System.EventHandler(this.ctxtRefresh_Click);
             // 
@@ -110,12 +115,7 @@ namespace xServer.Forms
             this.hTitle.Text = "Title";
             this.hTitle.Width = 115;
             // 
-            // ctxtLine
-            // 
-            this.ctxtLine.Name = "ctxtLine";
-            this.ctxtLine.Size = new System.Drawing.Size(149, 6);
-            // 
-            // frmTaskManager
+            // FrmTaskManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -125,7 +125,7 @@ namespace xServer.Forms
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(351, 449);
-            this.Name = "frmTaskManager";
+            this.Name = "FrmTaskManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Task Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTaskManager_FormClosing);
@@ -141,10 +141,10 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtKillProcess;
         private System.Windows.Forms.ToolStripMenuItem ctxtRefresh;
         private System.Windows.Forms.ToolStripMenuItem ctxtStartProcess;
-        public Controls.ListViewEx lstTasks;
         private System.Windows.Forms.ColumnHeader hProcessname;
         private System.Windows.Forms.ColumnHeader hPID;
         private System.Windows.Forms.ColumnHeader hTitle;
         private System.Windows.Forms.ToolStripSeparator ctxtLine;
+        private ListViewEx lstTasks;
     }
 }

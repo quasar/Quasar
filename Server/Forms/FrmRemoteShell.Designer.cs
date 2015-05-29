@@ -41,12 +41,12 @@
             this.txtConsoleOutput.Font = new System.Drawing.Font("Consolas", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.txtConsoleOutput.ForeColor = System.Drawing.Color.WhiteSmoke;
             this.txtConsoleOutput.Location = new System.Drawing.Point(0, 0);
-            this.txtConsoleOutput.Multiline = true;
             this.txtConsoleOutput.Name = "txtConsoleOutput";
             this.txtConsoleOutput.ReadOnly = true;
             this.txtConsoleOutput.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
             this.txtConsoleOutput.Size = new System.Drawing.Size(637, 307);
             this.txtConsoleOutput.TabIndex = 1;
+            this.txtConsoleOutput.Text = "";
             this.txtConsoleOutput.TextChanged += new System.EventHandler(this.txtConsoleOutput_TextChanged);
             this.txtConsoleOutput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtConsoleOutput_KeyPress);
             // 
@@ -64,7 +64,7 @@
             this.txtConsoleInput.TabIndex = 0;
             this.txtConsoleInput.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtConsoleInput_KeyDown);
             // 
-            // frmRemoteShell
+            // FrmRemoteShell
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -76,7 +76,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmRemoteShell";
+            this.Name = "FrmRemoteShell";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Shell []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteShell_FormClosing);
@@ -89,6 +89,6 @@
         #endregion
 
         private System.Windows.Forms.TextBox txtConsoleInput;
-        public System.Windows.Forms.RichTextBox txtConsoleOutput;
+        private System.Windows.Forms.RichTextBox txtConsoleOutput;
     }
 }

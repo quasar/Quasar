@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 
@@ -15,7 +16,7 @@ namespace xServer.Core.ReverseProxy
         public event UpdateConnectionCallback OnUpdateConnection;
 
         private Socket _socket;
-        private List<ReverseProxyClient> _clients;
+        private readonly List<ReverseProxyClient> _clients;
 
         public ReverseProxyClient[] ProxyClients
         {
@@ -53,7 +54,7 @@ namespace xServer.Core.ReverseProxy
 
         //We can also use the Random class but not sure if that will evenly spread the connections
         //The Random class might even fail to make use of all the clients
-        private uint ClientIndex;
+        private uint _clientIndex;
 
         public ReverseProxyServer()
         {
@@ -66,7 +67,7 @@ namespace xServer.Core.ReverseProxy
 
             this.Clients = clients;
 
-            for(int i = 0; i < clients.Length; i++)
+            for (int i = 0; i < clients.Length; i++)
                 this.Clients[i].Value.ProxyServer = this;
 
             this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -81,8 +82,8 @@ namespace xServer.Core.ReverseProxy
             {
                 lock (_clients)
                 {
-                    _clients.Add(new ReverseProxyClient(Clients[ClientIndex % Clients.Length], this._socket.EndAccept(ar), this));
-                    ClientIndex++;
+                    _clients.Add(new ReverseProxyClient(Clients[_clientIndex % Clients.Length], this._socket.EndAccept(ar), this));
+                    _clientIndex++;
                 }
             }
             catch
@@ -116,12 +117,7 @@ namespace xServer.Core.ReverseProxy
         {
             lock (_clients)
             {
-                for (int i = 0; i < _clients.Count; i++)
-                {
-                    if (_clients[i].ConnectionId == connectionId)
-                        return _clients[i];
-                }
-                return null;
+                return _clients.FirstOrDefault(t => t.ConnectionId == connectionId);
             }
         }
 

