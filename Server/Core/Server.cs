@@ -10,52 +10,125 @@ namespace xServer.Core
     {
         public long BytesReceived { get; set; }
         public long BytesSent { get; set; }
+        private readonly object locker = new object();
 
-        public event ServerStateEventHandler ServerState;
+        private ServerStateEventHandler serverState;
+        public event ServerStateEventHandler ServerState
+        {
+            add
+            {
+                lock (locker)
+                    serverState += value;
+            }
+            remove
+            {
+                lock (locker)
+                    serverState -= value;
+            }
+        }
 
         public delegate void ServerStateEventHandler(Server s, bool listening);
 
         private void OnServerState(bool listening)
         {
-            if (ServerState != null)
+            ServerStateEventHandler handler;
+            lock (locker)
             {
-                ServerState(this, listening);
+                handler = serverState;
+            }
+            if (handler != null)
+            {
+                handler(this, listening);
             }
         }
 
-        public event ClientStateEventHandler ClientState;
+        private ClientStateEventHandler clientState;
+        public event ClientStateEventHandler ClientState
+        {
+            add
+            {
+                lock (locker)
+                    clientState += value;
+            }
+            remove
+            {
+                lock (locker)
+                    clientState -= value;
+            }
+        }
 
         public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         private void OnClientState(Client c, bool connected)
         {
-            if (ClientState != null)
+            ClientStateEventHandler handler;
+            lock (locker)
             {
-                ClientState(this, c, connected);
+                handler = clientState;
+            }
+            if (handler != null)
+            {
+                handler(this, c, connected);
             }
         }
 
-        public event ClientReadEventHandler ClientRead;
+        private ClientReadEventHandler clientRead;
+        public event ClientReadEventHandler ClientRead
+        {
+            add
+            {
+                lock (locker)
+                    clientRead += value;
+            }
+            remove
+            {
+                lock (locker)
+                    clientRead -= value;
+            }
+        }
 
         public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
         private void OnClientRead(Client c, IPacket packet)
         {
-            if (ClientRead != null)
+            ClientReadEventHandler handler;
+            lock (locker)
             {
-                ClientRead(this, c, packet);
+                handler = clientRead;
+            }
+            if (handler != null)
+            {
+                handler(this, c, packet);
             }
         }
 
-        public event ClientWriteEventHandler ClientWrite;
+        private ClientWriteEventHandler clientWrite;
+        public event ClientWriteEventHandler ClientWrite
+        {
+            add
+            {
+                lock (locker)
+                    clientWrite += value;
+            }
+            remove
+            {
+                lock (locker)
+                    clientWrite -= value;
+            }
+        }
 
         public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length);
 
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
         {
-            if (ClientWrite != null)
+            ClientWriteEventHandler handler;
+            lock (locker)
             {
-                ClientWrite(this, c, packet, length);
+                handler = clientWrite;
+            }
+            if (handler != null)
+            {
+                handler(this, c, packet, length);
             }
         }
 
@@ -137,7 +210,8 @@ namespace xServer.Core
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
-            PacketTypes.Add(type);
+            lock (locker)
+                PacketTypes.Add(type);
         }
 
         public void AddTypesToSerializer(Type parent, params Type[] types)
@@ -152,19 +226,21 @@ namespace xServer.Core
             {
                 if (e.SocketError == SocketError.Success)
                 {
-                    Client client = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
-
-                    lock (_clients)
+                    lock (locker)
                     {
-                        _clients.Add(client);
+                        Client client = new Client(this, e.AcceptSocket, PacketTypes.ToArray());
+
                         client.ClientState += OnClientState;
                         client.ClientRead += OnClientRead;
                         client.ClientWrite += OnClientWrite;
 
+                        _clients.Add(client);
+
                         OnClientState(client, true);
+
+                        e.AcceptSocket = null;
                     }
 
-                    e.AcceptSocket = null;
                     if (!_handle.AcceptAsync(e))
                         Process(null, e);
                 }
@@ -184,10 +260,7 @@ namespace xServer.Core
 
             Processing = true;
 
-            if (_handle != null)
-                _handle.Close();
-
-            lock (_clients)
+            lock (locker)
             {
                 while (_clients.Count != 0)
                 {
@@ -200,6 +273,9 @@ namespace xServer.Core
                     {
                     }
                 }
+
+                if (_handle != null)
+                    _handle.Close();
             }
 
             Listening = false;
