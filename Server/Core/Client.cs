@@ -48,7 +48,7 @@ namespace xServer.Core
 
         public bool Equals(Client c)
         {
-            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unqiue for each client
+            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
         }
 
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
