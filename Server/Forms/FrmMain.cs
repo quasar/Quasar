@@ -248,10 +248,10 @@ namespace xServer.Forms
 
         private Client[] GetSelectedClients()
         {
+            List<Client> clients = new List<Client>();
+
             lock (locker)
             {
-                List<Client> clients = new List<Client>();
-
                 if (lstClients.SelectedItems.Count == 0) return clients.ToArray();
 
                 lstClients.Invoke((MethodInvoker)delegate
