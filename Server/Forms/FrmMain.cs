@@ -21,6 +21,8 @@ namespace xServer.Forms
         public static volatile FrmMain Instance;
         private bool _titleUpdateRunning;
 
+        private readonly object locker = new object();
+
         private void ReadSettings(bool writeIfNotExist = true)
         {
             if (writeIfNotExist)
@@ -76,12 +78,12 @@ namespace xServer.Forms
 
         public void UpdateWindowTitle(int count, int selected)
         {
-            if (_titleUpdateRunning) return;
-            _titleUpdateRunning = true;
-            try
+            lock (locker)
             {
-                this.Invoke((MethodInvoker) delegate
+                try
                 {
+                    this.Invoke((MethodInvoker)delegate
+                    {
 #if DEBUG
                     if (selected > 0)
                         this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}] - Threads: {2}", count,
@@ -90,19 +92,16 @@ namespace xServer.Forms
                         this.Text = string.Format("xRAT 2.0 - Connected: {0} - Threads: {1}", count,
                             System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
 #else
-                    if (selected > 0)
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", count, selected);
-                    else
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0}", count);
+                        if (selected > 0)
+                            this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", count, selected);
+                        else
+                            this.Text = string.Format("xRAT 2.0 - Connected: {0}", count);
 #endif
-                });
-            }
-            catch
-            {
-            }
-            finally
-            {
-                _titleUpdateRunning = false;
+                    });
+                }
+                catch
+                {
+                }
             }
         }
 
