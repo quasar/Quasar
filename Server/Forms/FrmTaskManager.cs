@@ -66,6 +66,48 @@ namespace xServer.Forms
             }
         }
 
+        public void ClearListview()
+        {
+            try
+            {
+                lstTasks.Invoke((MethodInvoker)delegate
+                {
+                    lstTasks.Items.Clear();
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void AddProcessToListview(ListViewItem lvi)
+        {
+            try
+            {
+                lstTasks.Invoke((MethodInvoker)delegate
+                {
+                    lstTasks.Items.Add(lvi);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void lstTasks_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.

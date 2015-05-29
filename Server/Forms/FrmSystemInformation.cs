@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Extensions;
 
 namespace xServer.Forms
 {
@@ -56,14 +58,34 @@ namespace xServer.Forms
 
                 foreach (ListViewItem lvi in lstSystem.SelectedItems)
                 {
-                    foreach (ListViewItem.ListViewSubItem lvs in lvi.SubItems)
-                        output += lvs.Text + " : ";
-
+                    output = lvi.SubItems.Cast<ListViewItem.ListViewSubItem>().Aggregate(output, (current, lvs) => current + (lvs.Text + " : "));
                     output = output.Remove(output.Length - 3);
                     output = output + "\r\n";
                 }
 
                 Clipboard.SetText(output);
+            }
+        }
+
+        public void AddItems(ListViewItem[] lviCollection)
+        {
+            try
+            {
+                lstSystem.Invoke((MethodInvoker) delegate
+                {
+                    lstSystem.Items.RemoveAt(2); // Loading... Information
+
+                    foreach (var lviItem in lviCollection)
+                    {
+                        if (lviItem != null)
+                            lstSystem.Items.Add(lviItem);
+                    }
+
+                    lstSystem.AutosizeColumns();
+                });
+            }
+            catch (InvalidOperationException)
+            {
             }
         }
     }

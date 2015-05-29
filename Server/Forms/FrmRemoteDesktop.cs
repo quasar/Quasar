@@ -1,4 +1,6 @@
 ﻿using System;
+using System.CodeDom;
+using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
@@ -88,6 +90,50 @@ namespace xServer.Forms
             }
 
             _keepRunning = false;
+        }
+
+        public void AddMonitors(int montiors)
+        {
+            try
+            {
+                cbMonitors.Invoke((MethodInvoker) delegate
+                {
+                    for (int i = 0; i < montiors; i++)
+                        cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
+                    cbMonitors.SelectedIndex = 0;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void UpdateImage(Bitmap bmp)
+        {
+            try
+            {
+                picDesktop.Invoke((MethodInvoker) delegate
+                {
+                    picDesktop.Image = bmp;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void FrmRemoteDesktop_FormClosing(object sender, FormClosingEventArgs e)

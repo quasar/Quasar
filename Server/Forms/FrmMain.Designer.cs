@@ -793,8 +793,6 @@ namespace xServer.Forms
         private System.Windows.Forms.MenuItem menuStatistics;
         private System.Windows.Forms.MenuItem menuAbout;
         private System.Windows.Forms.ToolStripMenuItem ctxtRemoteShell;
-        public Controls.ListViewEx lstClients;
-        public System.Windows.Forms.NotifyIcon nIcon;
         private System.Windows.Forms.ToolStripSeparator ctxtLine;
         private System.Windows.Forms.ToolStripMenuItem ctxtActions;
         private System.Windows.Forms.ToolStripMenuItem ctxtShutdown;
@@ -807,6 +805,8 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
         private System.Windows.Forms.ToolStripMenuItem ctxtReverseProxy;
         private System.Windows.Forms.ToolStripMenuItem ctxtRegistryEditor;
+        private ListViewEx lstClients;
+        private System.Windows.Forms.NotifyIcon nIcon;
     }
 }
 

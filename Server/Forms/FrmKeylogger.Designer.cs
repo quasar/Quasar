@@ -114,10 +114,10 @@
         #endregion
 
         private System.Windows.Forms.ColumnHeader hLogs;
-        public System.Windows.Forms.ListView lstLogs;
         private System.Windows.Forms.StatusStrip statusStrip1;
-        public System.Windows.Forms.Button btnGetLogs;
         private System.Windows.Forms.WebBrowser wLogViewer;
+        private System.Windows.Forms.ListView lstLogs;
+        private System.Windows.Forms.Button btnGetLogs;
 
 
 

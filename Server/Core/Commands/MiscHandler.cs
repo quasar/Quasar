@@ -3,7 +3,6 @@ using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Packets.ClientPackets;
-using xServer.Forms;
 
 namespace xServer.Core.Commands
 {
@@ -15,25 +14,10 @@ namespace xServer.Core.Commands
             if (client.Value.FrmRs == null)
                 return;
 
-            try
-            {
-                client.Value.FrmRs.Invoke(
-                    (MethodInvoker)delegate
-                {
-                    if (packet.IsError)
-                    {
-                        client.Value.FrmRs.PrintError(packet.Output);
-                    }
-                    else
-                    {
-                        client.Value.FrmRs.PrintMessage(packet.Output);
-                    }
-                }
-                );
-            }
-            catch
-            {
-            }
+            if (packet.IsError)
+                client.Value.FrmRs.PrintError(packet.Output);
+            else
+                client.Value.FrmRs.PrintMessage(packet.Output);
         }
 
         public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
@@ -59,84 +43,54 @@ namespace xServer.Core.Commands
                 return;
             }
 
-            int index = 0;
-            try
-            {
-                client.Value.FrmFm.Invoke((MethodInvoker)delegate
-                {
-                    foreach (ListViewItem lvi in client.Value.FrmFm.lstTransfers.Items)
-                    {
-                        if (packet.ID.ToString() == lvi.SubItems[0].Text)
-                        {
-                            index = lvi.Index;
-                            break;
-                        }
-                    }
-                });
-            }
-            catch
-            {
+            int index = client.Value.FrmFm.GetTransferIndex(packet.ID.ToString());
+            if (index < 0)
                 return;
-            }
 
             if (Continue)
             {
                 if (!string.IsNullOrEmpty(packet.CustomMessage))
                 {
-                    client.Value.FrmFm.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = packet.CustomMessage;
-                        client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
-                    });
+                    if (client.Value.FrmFm == null) // abort download when form is closed
+                        return;
+
+                    client.Value.FrmFm.UpdateTransferStatus(index, packet.CustomMessage, 0);
                     return;
                 }
 
                 FileSplit destFile = new FileSplit(downloadPath);
                 if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
                 {
-                    client.Value.FrmFm.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = destFile.LastError;
-                        client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
-                    });
+                    if (client.Value.FrmFm == null)
+                        return;
+
+                    client.Value.FrmFm.UpdateTransferStatus(index, destFile.LastError, 0);
                     return;
                 }
 
                 decimal progress =
                     Math.Round((decimal)((double)(packet.CurrentBlock + 1) / (double)packet.MaxBlocks * 100.0), 2);
 
-                client.Value.FrmFm.Invoke(
-                    (MethodInvoker)
-                        delegate
-                        {
-                            client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text =
-                                string.Format("Downloading...({0}%)", progress);
-                        });
+                if (client.Value.FrmFm == null)
+                    return;
+
+                client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
 
                 if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
                 {
-                    client.Value.FrmFm.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Completed";
-                        client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 1;
-                    });
+                    if (client.Value.FrmFm == null)
+                        return;
+
+                    client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
                 }
             }
             else
             {
-                client.Value.FrmFm.Invoke((MethodInvoker)delegate
-                {
-                    client.Value.FrmFm.lstTransfers.Items[index].SubItems[1].Text = "Canceled";
-                    client.Value.FrmFm.lstTransfers.Items[index].ImageIndex = 0;
-                });
-            }
-        }
+                if (client.Value.FrmFm == null)
+                    return;
 
-        private static void ShowPopup(Client c)
-        {
-            FrmMain.Instance.nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
-                string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
-                    c.Value.OperatingSystem), ToolTipIcon.Info);
+                client.Value.FrmFm.UpdateTransferStatus(index, "Canceled", 0);
+            }
         }
     }
 }

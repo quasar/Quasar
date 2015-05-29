@@ -369,19 +369,15 @@ namespace xServer.Forms
 
         private System.Windows.Forms.Label lblDrive;
         private System.Windows.Forms.ImageList imgListDirectory;
-        public System.Windows.Forms.ComboBox cmbDrives;
-        public Controls.ListViewEx lstDirectory;
         private System.Windows.Forms.ColumnHeader hName;
         private System.Windows.Forms.ColumnHeader hSize;
         private System.Windows.Forms.ColumnHeader hType;
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
         private System.Windows.Forms.ToolStripMenuItem ctxtDownload;
-        public System.Windows.Forms.StatusStrip botStrip;
         private System.Windows.Forms.Button btnOpenDLFolder;
         private System.Windows.Forms.TabControl TabControlFileManager;
         private System.Windows.Forms.TabPage tabFileExplorer;
         private System.Windows.Forms.TabPage tabTransfers;
-        public Controls.ListViewEx lstTransfers;
         private System.Windows.Forms.ColumnHeader hStatus;
         private System.Windows.Forms.ColumnHeader hFilename;
         private System.Windows.Forms.ColumnHeader hID;
@@ -397,5 +393,9 @@ namespace xServer.Forms
         private System.Windows.Forms.ContextMenuStrip ctxtMenu2;
         private System.Windows.Forms.ToolStripMenuItem ctxtCancel;
         private System.Windows.Forms.ToolStripMenuItem ctxtOpenDirectory;
+        private System.Windows.Forms.ComboBox cmbDrives;
+        private ListViewEx lstDirectory;
+        private ListViewEx lstTransfers;
+        private System.Windows.Forms.StatusStrip botStrip;
     }
 }

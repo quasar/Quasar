@@ -67,6 +67,48 @@ namespace xServer.Forms
                 _connectClient.Value.FrmKl = null;
         }
 
+        public void AddLogToListview(string logName)
+        {
+            try
+            {
+                lstLogs.Invoke((MethodInvoker) delegate
+                {
+                    lstLogs.Items.Add(new ListViewItem {Text = logName});
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void SetGetLogsEnabled(bool enabled)
+        {
+            try
+            {
+                btnGetLogs.Invoke((MethodInvoker) delegate
+                {
+                    btnGetLogs.Enabled = enabled;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
         private void lstLogs_ColumnClick(object sender, ColumnClickEventArgs e)
         {
             // Determine if clicked column is already the column that is being sorted.

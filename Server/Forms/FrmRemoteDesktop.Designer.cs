@@ -197,7 +197,6 @@
 
         private System.Windows.Forms.Button btnStart;
         private System.Windows.Forms.Button btnStop;
-        public System.Windows.Forms.PictureBox picDesktop;
         private System.Windows.Forms.TrackBar barQuality;
         private System.Windows.Forms.Label lblQuality;
         private System.Windows.Forms.Label lblQualityShow;
@@ -205,6 +204,7 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnHide;
         private System.Windows.Forms.Button btnShow;
-        public System.Windows.Forms.ComboBox cbMonitors;
+        private System.Windows.Forms.PictureBox picDesktop;
+        private System.Windows.Forms.ComboBox cbMonitors;
     }
 }

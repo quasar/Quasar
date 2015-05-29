@@ -113,12 +113,12 @@
 
         #endregion
 
-        public Controls.ListViewEx lstStartupItems;
         private System.Windows.Forms.ColumnHeader hName;
         private System.Windows.Forms.ColumnHeader hPath;
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
         private System.Windows.Forms.ToolStripMenuItem ctxtAddEntry;
         private System.Windows.Forms.ToolStripMenuItem ctxtRemoveEntry;
+        private Controls.ListViewEx lstStartupItems;
 
     }
 }
