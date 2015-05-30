@@ -28,6 +28,11 @@ namespace xServer.Core
         /// is not connected.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the state of the client has changed.
+        /// </summary>
+        /// <param name="connected">True if the client is connected; False if the client is
+        /// not connected.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
