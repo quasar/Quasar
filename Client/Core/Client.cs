@@ -17,10 +17,24 @@ namespace xClient.Core
 {
     public class Client
     {
+        /// <summary>
+        /// Occurs as a result of an unrecoverable issue with the client.
+        /// </summary>
         public event ClientFailEventHandler ClientFail;
 
+        /// <summary>
+        /// Represents a method that will handle failure of the client.
+        /// </summary>
+        /// <param name="s">The client that has failed.</param>
+        /// <param name="ex">The exception containing information about the cause
+        /// of the client's failure.</param>
         public delegate void ClientFailEventHandler(Client s, Exception ex);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the client has failed.
+        /// </summary>
+        /// <param name="ex">The exception containing information about the cause
+        /// of the client's failure.</param>
         private void OnClientFail(Exception ex)
         {
             if (ClientFail != null)
@@ -29,10 +43,24 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when the state of the client has changed.
+        /// </summary>
         public event ClientStateEventHandler ClientState;
 
+        /// <summary>
+        /// Represents a method that handles when the state of the client has changed.
+        /// </summary>
+        /// <param name="s">The client to update the state of.</param>
+        /// <param name="connected">True if the client is connected; False if the client
+        /// is not connected.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the state of the client has changed.
+        /// </summary>
+        /// <param name="connected">True if the client is connected; False if the client is
+        /// not connected.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
@@ -44,10 +72,23 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is received from the server.
+        /// </summary>
         public event ClientReadEventHandler ClientRead;
 
+        /// <summary>
+        /// Represents a method that will handle a packet from the server to the client.
+        /// </summary>
+        /// <param name="s">The client that is receiving the packet (from the server).</param>
+        /// <param name="packet">The packet that has been received by the client from the server.</param>
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the a packet has been
+        /// received from the server to the client.
+        /// </summary>
+        /// <param name="packet"></param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -68,14 +109,23 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// The type of the packet received.
+        /// </summary>
         public enum ReceiveType
         {
             Header,
             Payload
         }
 
+        /// <summary>
+        /// A list of all the connected proxy clients that this client holds.
+        /// </summary>
         private List<ReverseProxyClient> _proxyClients;
 
+        /// <summary>
+        /// Returns an array containing all of the proxy clients of this client.
+        /// </summary>
         public ReverseProxyClient[] ProxyClients
         {
             get { return _proxyClients.ToArray(); }
@@ -89,6 +139,9 @@ namespace xClient.Core
         private Socket _handle;
         private int _typeIndex;
 
+        /// <summary>
+        /// The buffer for the client's incoming and outgoing packets.
+        /// </summary>
         private byte[] _buffer = new byte[MAX_PACKET_SIZE];
 
         //receive info
@@ -98,7 +151,9 @@ namespace xClient.Core
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
 
-        //Connection info
+        /// <summary>
+        /// Gets if the client is currently connected to a server.
+        /// </summary>
         public bool Connected { get; private set; }
 
         private const bool encryptionEnabled = true;
@@ -108,6 +163,11 @@ namespace xClient.Core
         {
         }
 
+        /// <summary>
+        /// Attempts to connect to the specified host on the specified port.
+        /// </summary>
+        /// <param name="host">The host (or server) to connect to.</param>
+        /// <param name="port">The port of the host.</param>
         public void Connect(string host, ushort port)
         {
             try
@@ -307,6 +367,11 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Disconnect the client from the server, disconnect all proxies that
+        /// are held by this client, and dispose of other resources associated
+        /// with this client.
+        /// </summary>
         public void Disconnect()
         {
             OnClientState(false);
