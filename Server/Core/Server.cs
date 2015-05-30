@@ -27,7 +27,8 @@ namespace xServer.Core
         /// <summary>
         /// Fires an event that informs subscribers that the server has changed state.
         /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="listening">True if the server is listening; False if the server
+        /// is not listening.</param>
         private void OnServerState(bool listening)
         {
             if (ServerState != null)
@@ -52,7 +53,9 @@ namespace xServer.Core
         /// <summary>
         /// Fires an event that informs subscribers that a client has changed state.
         /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="c"></param>
+        /// <param name="connected">True if the client is connected; False if the client
+        /// is not connected.</param>
         private void OnClientState(Client c, bool connected)
         {
             if (ClientState != null)
@@ -79,7 +82,7 @@ namespace xServer.Core
         /// Fires an event that informs subscribers that the a packet has been
         /// received from the client.
         /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="packet">The packet that has been received by the server from the client.</param>
         private void OnClientRead(Client c, IPacket packet)
         {
             if (ClientRead != null)
