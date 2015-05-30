@@ -11,10 +11,24 @@ namespace xServer.Core
         public long BytesReceived { get; set; }
         public long BytesSent { get; set; }
 
+        /// <summary>
+        /// Occurs when the state of the server changes.
+        /// </summary>
         public event ServerStateEventHandler ServerState;
 
+        /// <summary>
+        /// Represents a method that will handle a change in the server's state.
+        /// </summary>
+        /// <param name="s">The server to update the state of.</param>
+        /// <param name="listening">True if the server is listening; False if the server
+        /// is not listening.</param>
         public delegate void ServerStateEventHandler(Server s, bool listening);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the server has changed state.
+        /// </summary>
+        /// <param name="listening">True if the server is listening; False if the server
+        /// is not listening.</param>
         private void OnServerState(bool listening)
         {
             if (ServerState != null)
@@ -23,10 +37,25 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when the state of a client changes.
+        /// </summary>
         public event ClientStateEventHandler ClientState;
 
+        /// <summary>
+        /// Represents a method that will handle a change in a client's state.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="c"></param>
+        /// <param name="connected"></param>
         public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that a client has changed state.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="connected">True if the client is connected; False if the client
+        /// is not connected.</param>
         private void OnClientState(Client c, bool connected)
         {
             if (ClientState != null)
@@ -35,10 +64,25 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is received by a client.
+        /// </summary>
         public event ClientReadEventHandler ClientRead;
 
+        /// <summary>
+        /// Represents a method that will handle a packet received from a client.
+        /// </summary>
+        /// <param name="s">The destination server of the packet; also where the client specified
+        /// should reside</param>
+        /// <param name="c">The client that has sent the packet.</param>
+        /// <param name="packet">The packet that was sent to the server.</param>
         public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the a packet has been
+        /// received from the client.
+        /// </summary>
+        /// <param name="packet">The packet that has been received by the server from the client.</param>
         private void OnClientRead(Client c, IPacket packet)
         {
             if (ClientRead != null)
@@ -63,18 +107,36 @@ namespace xServer.Core
         private Socket _handle;
         private SocketAsyncEventArgs _item;
 
+        /// <summary>
+        /// Gets or sets if the server is currently processing data that
+        /// should prevent disconnection. 
+        /// </summary>
         private bool Processing { get; set; }
 
+        /// <summary>
+        /// Gets the status of the server. True if the server is currently
+        /// listening; False if the server is not currently listening.
+        /// </summary>
         public bool Listening { get; private set; }
 
+        /// <summary>
+        /// The internal list of the clients connected to the server.
+        /// </summary>
         private List<Client> _clients;
 
+        /// <summary>
+        /// Gets the clients currently connected to the server, or an empty array of
+        /// clients if the server is currently not listening.
+        /// </summary>
         public Client[] Clients
         {
             get { return Listening ? _clients.ToArray() : new Client[0]; }
         }
 
         public int ConnectedClients { get; set; }
+        /// <summary>
+        /// A collection containing all of the clients that have connected to the server.
+        /// </summary>
         public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
 
         private List<Type> PacketTypes { get; set; }
@@ -85,6 +147,10 @@ namespace xServer.Core
             AllTimeConnectedClients = new Dictionary<string, DateTime>();
         }
 
+        /// <summary>
+        /// Begins listening for clients.
+        /// </summary>
+        /// <param name="port">Port to listen for clients on.</param>
         public void Listen(ushort port)
         {
             try
@@ -146,6 +212,12 @@ namespace xServer.Core
                 AddTypeToSerializer(parent, type);
         }
 
+        /// <summary>
+        /// Processes an incoming client; adding the client to the list of clients,
+        /// hooking up the client's events, and finally accepts the client.
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="e"></param>
         private void Process(object s, SocketAsyncEventArgs e)
         {
             try
@@ -177,6 +249,10 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Disconnect the server from all of the clients and discontinue
+        /// listening (placing the server in an "off" state).
+        /// </summary>
         public void Disconnect()
         {
             if (Processing)

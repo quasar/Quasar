@@ -15,10 +15,24 @@ namespace xServer.Core
 {
     public class Client
     {
+        /// <summary>
+        /// Occurs when the state of the client changes.
+        /// </summary>
         public event ClientStateEventHandler ClientState;
 
+        /// <summary>
+        /// Represents the method that will handle a change in a client's state.
+        /// </summary>
+        /// <param name="s">The client to update the state of.</param>
+        /// <param name="connected">True if the client is connected; False if the client
+        /// is not connected.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the state of the client has changed.
+        /// </summary>
+        /// <param name="connected">True if the client is connected; False if the client is
+        /// not connected.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
@@ -30,10 +44,23 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is received from the client.
+        /// </summary>
         public event ClientReadEventHandler ClientRead;
 
+        /// <summary>
+        /// Represents the method that will handle a packet from a client.
+        /// </summary>
+        /// <param name="s">The client that has sent the packet.</param>
+        /// <param name="packet">The packet that has been received from the client.</param>
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the a packet has been
+        /// received from the client.
+        /// </summary>
+        /// <param name="packet"></param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -59,6 +86,9 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// The type of the packet received.
+        /// </summary>
         public enum ReceiveType
         {
             Header,
@@ -73,6 +103,9 @@ namespace xServer.Core
         private Socket _handle;
         private int _typeIndex;
 
+        /// <summary>
+        /// The buffer for the client's incoming and outgoing packets.
+        /// </summary>
         private byte[] _buffer = new byte[MAX_PACKET_SIZE];
 
         //receive info
@@ -294,6 +327,10 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Disconnect the client from the server and dispose of
+        /// resources associated with the client.
+        /// </summary>
         public void Disconnect()
         {
             OnClientState(false);
