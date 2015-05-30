@@ -85,10 +85,10 @@ namespace xClient.Core
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the a packet has been
+        /// Fires an event that informs subscribers that a packet has been
         /// received from the server to the client.
         /// </summary>
-        /// <param name="packet"></param>
+        /// <param name="packet">The packet that has been received by the client from the server.</param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -97,10 +97,27 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is sent by the client.
+        /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
+        /// <summary>
+        /// Represents the method that will handle the sent packet.
+        /// </summary>
+        /// <param name="s">The client that has sent the packet.</param>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the client has
+        /// sent a packet.
+        /// </summary>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
             if (ClientWrite != null)
