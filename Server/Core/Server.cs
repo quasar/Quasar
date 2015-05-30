@@ -82,6 +82,7 @@ namespace xServer.Core
         /// Fires an event that informs subscribers that the a packet has been
         /// received from the client.
         /// </summary>
+        /// <param name="c">The client that has sent the packet.</param>
         /// <param name="packet">The packet that has been received by the server from the client.</param>
         private void OnClientRead(Client c, IPacket packet)
         {

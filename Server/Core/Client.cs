@@ -73,17 +73,22 @@ namespace xServer.Core
 
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
-        public bool Equals(Client c)
-        {
-            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
-        }
-
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
             if (ClientWrite != null)
             {
                 ClientWrite(this, packet, length, rawData);
             }
+        }
+
+        /// <summary>
+        /// Checks whether the clients are equal.
+        /// </summary>
+        /// <param name="c">Client to compare with.</param>
+        /// <returns></returns>
+        public bool Equals(Client c)
+        {
+            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
         }
 
         /// <summary>
