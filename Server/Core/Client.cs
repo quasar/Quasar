@@ -42,7 +42,7 @@ namespace xServer.Core
                 ClientState(this, connected);
             }
 
-            if (!connected)
+            if (!connected && !_parentServer.Processing)
                 _parentServer.RemoveClient(this);
         }
 

@@ -149,7 +149,7 @@ namespace xServer.Core
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
         /// </summary>
-        private bool Processing { get; set; }
+        public bool Processing { get; private set; }
 
         /// <summary>
         /// The listening state of the server. True if listening, else False.
