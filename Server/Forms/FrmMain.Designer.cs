@@ -625,9 +625,9 @@ namespace xServer.Forms
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hUserPC,
             this.hIP,
             this.hSocket,
+            this.hUserPC,
             this.hVersion,
             this.hStatus,
             this.hUserStatus,

@@ -32,11 +32,11 @@ namespace xServer.Core.Commands
 
                 string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
-                // this " " leaves some space between the flag-icon and the User@PC item
+                // this " " leaves some space between the flag-icon and first item
                 ListViewItem lvi = new ListViewItem(new string[]
                 {
-                    " " + string.Format("{0}@{1}", client.Value.Username, client.Value.PCName),
-                    client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(), client.Value.Version,
+                    " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(),
+                    string.Format("{0}@{1}", client.Value.Username, client.Value.PCName), client.Value.Version,
                     "Connected", "Active", country, client.Value.OperatingSystem, client.Value.AccountType,
                 }) { Tag = client, ImageIndex = packet.ImageIndex };
 
