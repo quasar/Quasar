@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -23,16 +24,14 @@ namespace xServer.Core
         /// <summary>
         /// Represents the method that will handle a change in a client's state.
         /// </summary>
-        /// <param name="s">The client to update the state of.</param>
-        /// <param name="connected">True if the client is connected; False if the client
-        /// is not connected.</param>
+        /// <param name="s">The client which changed its state.</param>
+        /// <param name="connected">The new connection state of the client.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
         /// <summary>
         /// Fires an event that informs subscribers that the state of the client has changed.
         /// </summary>
-        /// <param name="connected">True if the client is connected; False if the client is
-        /// not connected.</param>
+        /// <param name="connected">The new connection state of the client.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
@@ -50,17 +49,17 @@ namespace xServer.Core
         public event ClientReadEventHandler ClientRead;
 
         /// <summary>
-        /// Represents the method that will handle a packet from a client.
+        /// Represents the method that will handle a packet received from the client.
         /// </summary>
-        /// <param name="s">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been received from the client.</param>
+        /// <param name="s">The client that has received the packet.</param>
+        /// <param name="packet">The packet that received by the client.</param>
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
         /// <summary>
         /// Fires an event that informs subscribers that a packet has been
         /// received from the client.
         /// </summary>
-        /// <param name="packet">The packet that has been received from the client.</param>
+        /// <param name="packet">The packet that received by the client.</param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -84,8 +83,7 @@ namespace xServer.Core
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the client has
-        /// sent a packet.
+        /// Fires an event that informs subscribers that the client has sent a packet.
         /// </summary>
         /// <param name="packet">The packet that has been sent by the client.</param>
         /// <param name="length">The length of the packet.</param>
@@ -365,8 +363,6 @@ namespace xServer.Core
                 _readableDataLen = 0;
                 _payloadLen = 0;
             }
-
-            Value.DisposeForms();
         }
 
         /// <summary>
@@ -379,18 +375,17 @@ namespace xServer.Core
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
-            bool isAdded = false;
-            foreach (SubType subType in RuntimeTypeModel.Default[parent].GetSubtypes())
-                if (subType.DerivedType.Type == type)
-                {
-                    isAdded = true;
-                    break;
-                }
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
 
-            if (!isAdded)
+            if (!isAlreadyAdded)
                 RuntimeTypeModel.Default[parent].AddSubType(_typeIndex += 1, type);
         }
 
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
         public void AddTypesToSerializer(Type parent, params Type[] types)
         {
             foreach (Type type in types)
