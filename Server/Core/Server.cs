@@ -317,7 +317,7 @@ namespace xServer.Core
             {
                 int index = -1;
                 for (int i = 0; i < _clients.Count; i++)
-                    if (_clients[i] == client)
+                    if (_clients[i].Equals(client))
                     {
                         index = i;
                         break;
