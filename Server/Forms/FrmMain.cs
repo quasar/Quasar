@@ -209,7 +209,12 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else
+            {
+                if (client.Value != null)
+                    client.Value.DisposeForms();
+
                 RemoveClientFromListview(client);
+            }
         }
 
         private void ClientRead(Server server, Client client, IPacket packet)
