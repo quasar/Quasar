@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using xServer.Core.Packets;
@@ -304,9 +305,35 @@ namespace xServer.Core
                 else
                     Disconnect();
             }
-            catch
+            catch (Exception ex)
             {
                 Disconnect();
+            }
+        }
+
+        public void RemoveClient(Client client)
+        {
+            lock (_clientsLock)
+            {
+                int index = -1;
+                for (int i = 0; i < _clients.Count; i++)
+                    if (_clients[i] == client)
+                    {
+                        index = i;
+                        break;
+                    }
+
+                if (index < 0)
+                    return;
+
+                try
+                {
+                    _clients[index].Disconnect();
+                    _clients.RemoveAt(index);
+                }
+                catch
+                {
+                }
             }
         }
 

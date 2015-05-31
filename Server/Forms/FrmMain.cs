@@ -217,7 +217,10 @@ namespace xServer.Forms
             else
             {
                 if (client.Value != null)
+                {
                     client.Value.DisposeForms();
+                    client.Value = null;
+                }
 
                 RemoveClientFromListview(client);
             }

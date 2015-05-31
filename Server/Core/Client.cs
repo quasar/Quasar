@@ -41,6 +41,9 @@ namespace xServer.Core
             {
                 ClientState(this, connected);
             }
+
+            if (!connected)
+                _parentServer.RemoveClient(this);
         }
 
         /// <summary>
@@ -358,10 +361,12 @@ namespace xServer.Core
             if (_handle != null)
             {
                 _handle.Close();
+                _buffer = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
+                GC.Collect();
             }
         }
 
