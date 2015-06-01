@@ -17,6 +17,7 @@ namespace xServer.Core
         public string Id { get; set; }
         public string Username { get; set; }
         public string PCName { get; set; }
+        public string DownloadDirectory { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }
@@ -34,7 +35,6 @@ namespace xServer.Core
         public int LastMonitor { get; set; }
         public Bitmap LastDesktop { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
-
         public ReverseProxyServer ProxyServer { get; set; }
 
         public UserState()
