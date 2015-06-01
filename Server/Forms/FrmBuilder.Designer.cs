@@ -175,12 +175,10 @@
             // txtPort
             // 
             this.txtPort.Location = new System.Drawing.Point(118, 43);
-            this.txtPort.MaxLength = 5;
             this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(66, 22);
+            this.txtPort.Size = new System.Drawing.Size(201, 22);
             this.txtPort.TabIndex = 3;
             this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
-            this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // lblPort
             // 

