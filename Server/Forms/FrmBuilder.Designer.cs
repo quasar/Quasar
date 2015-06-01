@@ -697,6 +697,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmBuilder";
             this.Text = "xRAT 2.0 - Builder";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
             this.groupConnection.ResumeLayout(false);
