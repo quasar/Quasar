@@ -167,7 +167,10 @@ namespace xClient
         private static void Connect()
         {
             TryAgain:
-            Thread.Sleep(250 + new Random().Next(0, 250));
+
+            //random sleep between 50% and 150% of the configured delay
+            int delayInMs = Settings.RECONNECTDELAY * 1000;
+            Thread.Sleep(new Random().Next(delayInMs) + delayInMs / 2);
 
             if (!_connected)
                 ConnectClient.Connect(Settings.HOST, Settings.PORT);

@@ -31,7 +31,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.groupConnection = new System.Windows.Forms.GroupBox();
-            this.lblMS = new System.Windows.Forms.Label();
+            this.lblSeconds = new System.Windows.Forms.Label();
             this.txtDelay = new System.Windows.Forms.TextBox();
             this.lblDelay = new System.Windows.Forms.Label();
             this.chkShowPass = new System.Windows.Forms.CheckBox();
@@ -97,7 +97,7 @@
             // 
             // groupConnection
             // 
-            this.groupConnection.Controls.Add(this.lblMS);
+            this.groupConnection.Controls.Add(this.lblSeconds);
             this.groupConnection.Controls.Add(this.txtDelay);
             this.groupConnection.Controls.Add(this.lblDelay);
             this.groupConnection.Controls.Add(this.chkShowPass);
@@ -114,14 +114,14 @@
             this.groupConnection.TabStop = false;
             this.groupConnection.Text = "Connection";
             // 
-            // lblMS
+            // lblSeconds
             // 
-            this.lblMS.AutoSize = true;
-            this.lblMS.Location = new System.Drawing.Point(186, 126);
-            this.lblMS.Name = "lblMS";
-            this.lblMS.Size = new System.Drawing.Size(21, 13);
-            this.lblMS.TabIndex = 9;
-            this.lblMS.Text = "ms";
+            this.lblSeconds.AutoSize = true;
+            this.lblSeconds.Location = new System.Drawing.Point(186, 126);
+            this.lblSeconds.Name = "lblSeconds";
+            this.lblSeconds.Size = new System.Drawing.Size(49, 13);
+            this.lblSeconds.TabIndex = 9;
+            this.lblSeconds.Text = "seconds";
             // 
             // txtDelay
             // 
@@ -130,7 +130,7 @@
             this.txtDelay.Name = "txtDelay";
             this.txtDelay.Size = new System.Drawing.Size(66, 22);
             this.txtDelay.TabIndex = 8;
-            this.txtDelay.Text = "5000";
+            this.txtDelay.Text = "300";
             this.txtDelay.TextChanged += new System.EventHandler(this.txtDelay_TextChanged);
             this.txtDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDelay_KeyPress);
             // 
@@ -745,7 +745,7 @@
         private System.Windows.Forms.Label lblRegistryKeyName;
         private System.Windows.Forms.CheckBox chkStartup;
         private System.Windows.Forms.Button btnBuild;
-        private System.Windows.Forms.Label lblMS;
+        private System.Windows.Forms.Label lblSeconds;
         private System.Windows.Forms.RadioButton rbSystem;
         private System.Windows.Forms.RadioButton rbProgramFiles;
         private System.Windows.Forms.PictureBox picUAC1;
