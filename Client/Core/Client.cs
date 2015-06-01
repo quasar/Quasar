@@ -31,6 +31,8 @@ namespace xClient.Core
         /// <param name="ex">The exception containing information about the cause of the client's failure.</param>
         public delegate void ClientFailEventHandler(Client s, Exception ex);
 
+        private static readonly Random _rnd = new Random();
+
         /// <summary>
         /// Fires an event that informs subscribers that the client has failed.
         /// </summary>
@@ -192,21 +194,30 @@ namespace xClient.Core
         /// </summary>
         /// <param name="host">The host (or server) to connect to.</param>
         /// <param name="port">The port of the host.</param>
-        public void Connect(string host, string port)
+        public void Connect(string csvListOfHosts, string csvListOfPorts)
         {
             try
             {
                 Disconnect();
                 Initialize();
 
+                char[] comma = {','};
+
+                string[] hostList = csvListOfHosts.Split(comma);
+                string[] portList = csvListOfPorts.Split(comma);
+
+                int index = getIndexFor(hostList, portList);
+                String hostName = hostList[index];
+                String portName = portList[index];
+
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
-                int portNumber = getPortNumber(port);
+                int portNumber = getPortNumber(portName);
 
-                _handle.Connect(host, portNumber);
+                _handle.Connect(hostName, portNumber);
 
                 if (_handle.Connected)
                 {
@@ -218,6 +229,19 @@ namespace xClient.Core
             {
                 OnClientFail(ex);
             }
+        }
+
+        private int getIndexFor(String[] hostList, String[] portList)
+        {
+            //90% chance of returning the primary, 10% chance of returning secondary, 1% chance of returning ternary
+            int index = 0;
+            int attempts = Math.Min(hostList.Length, portList.Length) - 1;
+            while (attempts > 0 && _rnd.NextDouble() > 0.9)
+            {
+                index++;
+                attempts--;
+            }
+            return index;
         }
 
         private int getPortNumber(string port)

