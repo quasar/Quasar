@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace xServer.Core.Helper
@@ -8,6 +10,12 @@ namespace xServer.Core.Helper
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static readonly Random _rnd = new Random(Environment.TickCount);
         private static readonly string[] _sizes = {"B", "KB", "MB", "GB"};
+        private static readonly char[] _illegalChars = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
+
+        public static bool CheckPathForIllegalChars(string path)
+        {
+            return path.Any(c => _illegalChars.Contains(c));
+        }
 
         public static string GetRandomFilename(int length, string extension)
         {

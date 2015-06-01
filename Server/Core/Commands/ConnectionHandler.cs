@@ -30,13 +30,10 @@ namespace xServer.Core.Commands
                 client.Value.PCName = packet.PCName;
 
                 string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
-                char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
-                bool containsIllegalChar = userAtPc.Count(c => illegal.Contains(c)) > 0;
 
-                if (!containsIllegalChar)
-                    client.Value.DownloadDirectory = Path.Combine(Application.StartupPath, "Clients\\" + userAtPc + "\\");
-                else
-                    client.Value.DownloadDirectory = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\");
+                client.Value.DownloadDirectory = (!Helper.Helper.CheckPathForIllegalChars(userAtPc)) ?
+                    Path.Combine(Application.StartupPath, "Clients\\" + userAtPc + "\\") :
+                    Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\");
 
                 if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
                     FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);

@@ -130,8 +130,7 @@ namespace xServer.Forms
 
         private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
+            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
         }
 
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
@@ -141,16 +140,14 @@ namespace xServer.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
-
-            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
-
-            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
 
         private void btnMutex_Click(object sender, EventArgs e)
