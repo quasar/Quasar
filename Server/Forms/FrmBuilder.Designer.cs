@@ -131,7 +131,7 @@
             this.txtDelay.Size = new System.Drawing.Size(66, 22);
             this.txtDelay.TabIndex = 8;
             this.txtDelay.Text = "5000";
-            this.txtDelay.TextChanged += new System.EventHandler(this.txtDelay_TextChanged);
+            this.txtDelay.TextChanged += new System.EventHandler(this.HasChangedSetting);
             this.txtDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDelay_KeyPress);
             // 
             // lblDelay
@@ -161,7 +161,7 @@
             this.txtPassword.PasswordChar = '•';
             this.txtPassword.Size = new System.Drawing.Size(201, 22);
             this.txtPassword.TabIndex = 5;
-            this.txtPassword.TextChanged += new System.EventHandler(this.txtPassword_TextChanged);
+            this.txtPassword.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblPassword
             // 
@@ -179,7 +179,7 @@
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(66, 22);
             this.txtPort.TabIndex = 3;
-            this.txtPort.TextChanged += new System.EventHandler(this.txtPort_TextChanged);
+            this.txtPort.TextChanged += new System.EventHandler(this.HasChangedSetting);
             this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // lblPort
@@ -197,7 +197,7 @@
             this.txtHost.Name = "txtHost";
             this.txtHost.Size = new System.Drawing.Size(201, 22);
             this.txtHost.TabIndex = 1;
-            this.txtHost.TextChanged += new System.EventHandler(this.txtHost_TextChanged);
+            this.txtHost.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblHost
             // 
@@ -271,7 +271,7 @@
             this.rbSystem.Text = "System";
             this.tooltip.SetToolTip(this.rbSystem, "Administrator Privileges are required to install the client in System.");
             this.rbSystem.UseVisualStyleBackColor = true;
-            this.rbSystem.CheckedChanged += new System.EventHandler(this.rbSystem_CheckedChanged);
+            this.rbSystem.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // rbProgramFiles
             // 
@@ -284,7 +284,7 @@
             this.rbProgramFiles.Text = "Program Files";
             this.tooltip.SetToolTip(this.rbProgramFiles, "Administrator Privileges are required to install the client in Program Files.");
             this.rbProgramFiles.UseVisualStyleBackColor = true;
-            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.rbProgramFiles_CheckedChanged);
+            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // txtRegistryKeyName
             // 
@@ -292,7 +292,7 @@
             this.txtRegistryKeyName.Name = "txtRegistryKeyName";
             this.txtRegistryKeyName.Size = new System.Drawing.Size(201, 22);
             this.txtRegistryKeyName.TabIndex = 18;
-            this.txtRegistryKeyName.TextChanged += new System.EventHandler(this.txtRegistryKeyName_TextChanged);
+            this.txtRegistryKeyName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblRegistryKeyName
             // 
@@ -323,7 +323,7 @@
             this.chkHide.TabIndex = 15;
             this.chkHide.Text = "Hide File";
             this.chkHide.UseVisualStyleBackColor = true;
-            this.chkHide.CheckedChanged += new System.EventHandler(this.chkHide_CheckedChanged);
+            this.chkHide.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // btnMutex
             // 
@@ -359,7 +359,7 @@
             this.txtInstallsub.Name = "txtInstallsub";
             this.txtInstallsub.Size = new System.Drawing.Size(201, 22);
             this.txtInstallsub.TabIndex = 12;
-            this.txtInstallsub.TextChanged += new System.EventHandler(this.txtInstallsub_TextChanged);
+            this.txtInstallsub.TextChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             this.txtInstallsub.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInstallsub_KeyPress);
             // 
             // lblInstallsub
@@ -391,7 +391,7 @@
             this.rbAppdata.TabStop = true;
             this.rbAppdata.Text = "Application Data";
             this.rbAppdata.UseVisualStyleBackColor = true;
-            this.rbAppdata.CheckedChanged += new System.EventHandler(this.rbAppdata_CheckedChanged);
+            this.rbAppdata.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // txtMutex
             // 
@@ -400,7 +400,7 @@
             this.txtMutex.Name = "txtMutex";
             this.txtMutex.Size = new System.Drawing.Size(201, 22);
             this.txtMutex.TabIndex = 1;
-            this.txtMutex.TextChanged += new System.EventHandler(this.txtMutex_TextChanged);
+            this.txtMutex.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblMutex
             // 
@@ -426,7 +426,7 @@
             this.txtInstallname.Name = "txtInstallname";
             this.txtInstallname.Size = new System.Drawing.Size(168, 22);
             this.txtInstallname.TabIndex = 5;
-            this.txtInstallname.TextChanged += new System.EventHandler(this.txtInstallname_TextChanged);
+            this.txtInstallname.TextChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             this.txtInstallname.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInstallname_KeyPress);
             // 
             // lblInstallname
@@ -459,7 +459,7 @@
             this.chkIconChange.Text = "Change Icon";
             this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkIconChange.UseVisualStyleBackColor = true;
-            this.chkIconChange.CheckedChanged += new System.EventHandler(this.chkIconChange_CheckedChanged);
+            this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // chkElevation
             // 
@@ -471,7 +471,7 @@
             this.chkElevation.Text = "Enable Admin Elevation";
             this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkElevation.UseVisualStyleBackColor = true;
-            this.chkElevation.CheckedChanged += new System.EventHandler(this.chkElevation_CheckedChanged);
+            this.chkElevation.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // btnBuild
             // 
@@ -526,7 +526,7 @@
             this.txtFileVersion.Name = "txtFileVersion";
             this.txtFileVersion.Size = new System.Drawing.Size(201, 22);
             this.txtFileVersion.TabIndex = 16;
-            this.txtFileVersion.TextChanged += new System.EventHandler(this.txtFileVersion_TextChanged);
+            this.txtFileVersion.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblFileVersion
             // 
@@ -543,7 +543,7 @@
             this.txtProductVersion.Name = "txtProductVersion";
             this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
             this.txtProductVersion.TabIndex = 14;
-            this.txtProductVersion.TextChanged += new System.EventHandler(this.txtProductVersion_TextChanged);
+            this.txtProductVersion.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblProductVersion
             // 
@@ -560,7 +560,7 @@
             this.txtOriginalFilename.Name = "txtOriginalFilename";
             this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
             this.txtOriginalFilename.TabIndex = 12;
-            this.txtOriginalFilename.TextChanged += new System.EventHandler(this.txtOriginalFilename_TextChanged);
+            this.txtOriginalFilename.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblOriginalFilename
             // 
@@ -577,7 +577,7 @@
             this.txtTrademarks.Name = "txtTrademarks";
             this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
             this.txtTrademarks.TabIndex = 10;
-            this.txtTrademarks.TextChanged += new System.EventHandler(this.txtTrademarks_TextChanged);
+            this.txtTrademarks.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblTrademarks
             // 
@@ -594,7 +594,7 @@
             this.txtCopyright.Name = "txtCopyright";
             this.txtCopyright.Size = new System.Drawing.Size(201, 22);
             this.txtCopyright.TabIndex = 8;
-            this.txtCopyright.TextChanged += new System.EventHandler(this.txtCopyright_TextChanged);
+            this.txtCopyright.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblCopyright
             // 
@@ -611,7 +611,7 @@
             this.txtCompanyName.Name = "txtCompanyName";
             this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
             this.txtCompanyName.TabIndex = 6;
-            this.txtCompanyName.TextChanged += new System.EventHandler(this.txtCompanyName_TextChanged);
+            this.txtCompanyName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblCompanyName
             // 
@@ -628,7 +628,7 @@
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(201, 22);
             this.txtDescription.TabIndex = 4;
-            this.txtDescription.TextChanged += new System.EventHandler(this.txtDescription_TextChanged);
+            this.txtDescription.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblDescription
             // 
@@ -645,7 +645,7 @@
             this.txtProductName.Name = "txtProductName";
             this.txtProductName.Size = new System.Drawing.Size(201, 22);
             this.txtProductName.TabIndex = 2;
-            this.txtProductName.TextChanged += new System.EventHandler(this.txtProductName_TextChanged);
+            this.txtProductName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblProductName
             // 
@@ -677,7 +677,7 @@
             this.chkKeylogger.TabIndex = 2;
             this.chkKeylogger.Text = "Enable Keylogger";
             this.chkKeylogger.UseVisualStyleBackColor = true;
-            this.chkKeylogger.CheckedChanged += new System.EventHandler(this.chkKeylogger_CheckedChanged);
+            this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // FrmBuilder
             // 
@@ -696,7 +696,6 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmBuilder";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
