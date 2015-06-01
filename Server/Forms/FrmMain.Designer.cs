@@ -66,6 +66,7 @@ namespace xServer.Forms
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
             this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.lstClients = new xServer.Controls.ListViewEx();
+            this.hUserPC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSocket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -346,9 +347,9 @@ namespace xServer.Forms
             // 
             this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.botListen});
-            this.botStrip.Location = new System.Drawing.Point(0, 367);
+            this.botStrip.Location = new System.Drawing.Point(0, 382);
             this.botStrip.Name = "botStrip";
-            this.botStrip.Size = new System.Drawing.Size(770, 22);
+            this.botStrip.Size = new System.Drawing.Size(1006, 22);
             this.botStrip.TabIndex = 4;
             this.botStrip.Text = "statusStrip1";
             // 
@@ -626,6 +627,7 @@ namespace xServer.Forms
             this.lstClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIP,
             this.hSocket,
+            this.hUserPC,
             this.hVersion,
             this.hStatus,
             this.hUserStatus,
@@ -638,13 +640,18 @@ namespace xServer.Forms
             this.lstClients.Location = new System.Drawing.Point(0, 0);
             this.lstClients.Name = "lstClients";
             this.lstClients.ShowItemToolTips = true;
-            this.lstClients.Size = new System.Drawing.Size(770, 365);
+            this.lstClients.Size = new System.Drawing.Size(1006, 380);
             this.lstClients.SmallImageList = this.imgFlags;
             this.lstClients.TabIndex = 1;
             this.lstClients.UseCompatibleStateImageBehavior = false;
             this.lstClients.View = System.Windows.Forms.View.Details;
             this.lstClients.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstClients_ColumnClick);
             this.lstClients.SelectedIndexChanged += new System.EventHandler(this.lstClients_SelectedIndexChanged);
+            // 
+            // hUserPC
+            // 
+            this.hUserPC.Text = "User@PC";
+            this.hUserPC.Width = 175;
             // 
             // hIP
             // 
@@ -673,12 +680,12 @@ namespace xServer.Forms
             // hCountry
             // 
             this.hCountry.Text = "Country";
-            this.hCountry.Width = 93;
+            this.hCountry.Width = 117;
             // 
             // hOS
             // 
             this.hOS.Text = "Operating System";
-            this.hOS.Width = 157;
+            this.hOS.Width = 222;
             // 
             // hAccountType
             // 
@@ -735,7 +742,7 @@ namespace xServer.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(770, 389);
+            this.ClientSize = new System.Drawing.Size(1006, 404);
             this.Controls.Add(this.botStrip);
             this.Controls.Add(this.lstClients);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -807,6 +814,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtRegistryEditor;
         private ListViewEx lstClients;
         private System.Windows.Forms.NotifyIcon nIcon;
+        private System.Windows.Forms.ColumnHeader hUserPC;
     }
 }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -15,10 +16,22 @@ namespace xServer.Core
 {
     public class Client
     {
+        /// <summary>
+        /// Occurs when the state of the client changes.
+        /// </summary>
         public event ClientStateEventHandler ClientState;
 
+        /// <summary>
+        /// Represents the method that will handle a change in a client's state.
+        /// </summary>
+        /// <param name="s">The client which changed its state.</param>
+        /// <param name="connected">The new connection state of the client.</param>
         public delegate void ClientStateEventHandler(Client s, bool connected);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that the state of the client has changed.
+        /// </summary>
+        /// <param name="connected">The new connection state of the client.</param>
         private void OnClientState(bool connected)
         {
             if (Connected == connected) return;
@@ -28,12 +41,28 @@ namespace xServer.Core
             {
                 ClientState(this, connected);
             }
+
+            if (!connected && !_parentServer.Processing)
+                _parentServer.RemoveClient(this);
         }
 
+        /// <summary>
+        /// Occurs when a packet is received from the client.
+        /// </summary>
         public event ClientReadEventHandler ClientRead;
 
+        /// <summary>
+        /// Represents the method that will handle a packet received from the client.
+        /// </summary>
+        /// <param name="s">The client that has received the packet.</param>
+        /// <param name="packet">The packet that received by the client.</param>
         public delegate void ClientReadEventHandler(Client s, IPacket packet);
 
+        /// <summary>
+        /// Fires an event that informs subscribers that a packet has been
+        /// received from the client.
+        /// </summary>
+        /// <param name="packet">The packet that received by the client.</param>
         private void OnClientRead(IPacket packet)
         {
             if (ClientRead != null)
@@ -42,15 +71,26 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Occurs when a packet is sent by the client.
+        /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
+        /// <summary>
+        /// Represents the method that will handle the sent packet.
+        /// </summary>
+        /// <param name="s">The client that has sent the packet.</param>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
 
-        public bool Equals(Client c)
-        {
-            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
-        }
-
+        /// <summary>
+        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// </summary>
+        /// <param name="packet">The packet that has been sent by the client.</param>
+        /// <param name="length">The length of the packet.</param>
+        /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
             if (ClientWrite != null)
@@ -59,6 +99,19 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Checks whether the clients are equal.
+        /// </summary>
+        /// <param name="c">Client to compare with.</param>
+        /// <returns></returns>
+        public bool Equals(Client c)
+        {
+            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+        }
+
+        /// <summary>
+        /// The type of the packet received.
+        /// </summary>
         public enum ReceiveType
         {
             Header,
@@ -73,6 +126,9 @@ namespace xServer.Core
         private Socket _handle;
         private int _typeIndex;
 
+        /// <summary>
+        /// The buffer for the client's incoming and outgoing packets.
+        /// </summary>
         private byte[] _buffer = new byte[MAX_PACKET_SIZE];
 
         //receive info
@@ -294,6 +350,10 @@ namespace xServer.Core
             }
         }
 
+        /// <summary>
+        /// Disconnect the client from the server and dispose of
+        /// resources associated with the client.
+        /// </summary>
         public void Disconnect()
         {
             OnClientState(false);
@@ -301,13 +361,13 @@ namespace xServer.Core
             if (_handle != null)
             {
                 _handle.Close();
+                _buffer = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
+                GC.Collect();
             }
-
-            Value.DisposeForms();
         }
 
         /// <summary>
@@ -320,18 +380,17 @@ namespace xServer.Core
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
-            bool isAdded = false;
-            foreach (SubType subType in RuntimeTypeModel.Default[parent].GetSubtypes())
-                if (subType.DerivedType.Type == type)
-                {
-                    isAdded = true;
-                    break;
-                }
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
 
-            if (!isAdded)
+            if (!isAlreadyAdded)
                 RuntimeTypeModel.Default[parent].AddSubType(_typeIndex += 1, type);
         }
 
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
         public void AddTypesToSerializer(Type parent, params Type[] types)
         {
             foreach (Type type in types)

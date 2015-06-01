@@ -2,12 +2,11 @@
 
 namespace xServer.Controls
 {
-    public partial class ListViewEx : ListView
+    public class ListViewEx : ListView
     {
         public ListViewEx()
         {
-            base.SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-            this.DoubleBuffered = true;
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
         }
     }
 }
