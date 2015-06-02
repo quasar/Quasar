@@ -70,9 +70,16 @@ namespace xClient.Core.Extensions
         /// <param name="name">The name of the sub-key.</param>
         /// <returns>Returns the sub-key obtained from the key and name provided; Returns null if
         /// unable to obtain a sub-key.</returns>
-        public static RegistryKey OpenWritableSubKey(this RegistryKey key, string name)
+        public static RegistryKey OpenWritableSubKeySafe(this RegistryKey key, string name)
         {
-            return key.OpenSubKey(name, true);
+            try
+            {
+                return key.OpenSubKey(name, true);
+            }
+            catch
+            {
+                return null;
+            }
         }
 
         /// <summary>
