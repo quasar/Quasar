@@ -265,11 +265,8 @@ namespace xServer.Forms
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            string downloadPath = Path.Combine(Application.StartupPath,
-                "Clients\\" + _connectClient.EndPoint.Address.ToString());
-
-            if (Directory.Exists(downloadPath))
-                Process.Start(downloadPath);
+            if (Directory.Exists(_connectClient.Value.DownloadDirectory))
+                Process.Start(_connectClient.Value.DownloadDirectory);
             else
                 MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);

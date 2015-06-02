@@ -22,11 +22,10 @@ namespace xServer.Core.Commands
 
         public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
         {
-            string downloadPath = Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString());
-            if (!Directory.Exists(downloadPath))
-                Directory.CreateDirectory(downloadPath);
+            if (!Directory.Exists(client.Value.DownloadDirectory))
+                Directory.CreateDirectory(client.Value.DownloadDirectory);
 
-            downloadPath = Path.Combine(downloadPath, packet.Filename);
+            string downloadPath = Path.Combine(client.Value.DownloadDirectory, packet.Filename);
 
             bool Continue = true;
             if (packet.CurrentBlock == 0 && File.Exists(downloadPath))

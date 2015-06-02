@@ -16,8 +16,7 @@ namespace xServer.Forms
         {
             _connectClient = c;
             _connectClient.Value.FrmKl = this;
-            _path = Path.Combine(Application.StartupPath,
-                "Clients\\" + _connectClient.EndPoint.Address.ToString() + "\\Logs\\");
+            _path = Path.Combine(_connectClient.Value.DownloadDirectory, "Logs\\");
             InitializeComponent();
 
             _lvwColumnSorter = new ListViewColumnSorter();
@@ -32,7 +31,10 @@ namespace xServer.Forms
                     _connectClient.EndPoint.Port.ToString());
 
                 if (!Directory.Exists(_path))
+                {
                     Directory.CreateDirectory(_path);
+                    return;
+                }
 
                 DirectoryInfo dicInfo = new DirectoryInfo(_path);
 

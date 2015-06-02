@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 
 namespace xServer.Forms
@@ -52,16 +53,14 @@ namespace xServer.Forms
 
         private void txtName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
 
         private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
         {
-            string illegal = new string(Path.GetInvalidPathChars()) + new string(Path.GetInvalidFileNameChars());
-            if ((e.KeyChar == '\\' || illegal.Contains(e.KeyChar.ToString())) && !char.IsControl(e.KeyChar))
-                e.Handled = true;
+            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
         }
     }
 }
