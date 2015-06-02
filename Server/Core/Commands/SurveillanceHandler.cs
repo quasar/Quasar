@@ -131,10 +131,10 @@ namespace xServer.Core.Commands
                 return;
             }
 
-            string downloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
-
             if (string.IsNullOrEmpty(packet.Filename))
                 return;
+
+            string downloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
 
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
