@@ -86,14 +86,13 @@ namespace xClient.Core.Extensions
         {
             if (key != null)
             {
-                foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key))
-                                                     .Select(keyVal => key.GetValueSafe(keyVal)))
+                foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)))
                 {
                     // Less-likely, but this will ensure no empty items if an exception was thrown
                     // when obtaining the value.
                     if (string.IsNullOrEmpty(k))
                     {
-                        yield return string.Format("{0}||{1}", k, key.GetValue(k));
+                        yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
                     }
                 }
             }
