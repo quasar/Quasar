@@ -64,6 +64,19 @@ namespace xClient.Core.Extensions
         }
 
         /// <summary>
+        /// Attempts to obtain a writable sub key from the key provided using the specified
+        /// name. This method assumes the caller will dispose of the key when done using it.
+        /// </summary>
+        /// <param name="key">The key of which the sub key is obtained from.</param>
+        /// <param name="name">The name of the sub-key.</param>
+        /// <returns>Returns the sub-key obtained from the key and name provided; Returns null if
+        /// unable to obtain a sub-key.</returns>
+        public static RegistryKey OpenWritableSubKey(this RegistryKey key, string name)
+        {
+            return Registry.LocalMachine.OpenSubKey(name, true);
+        }
+
+        /// <summary>
         /// Gets all of the value names associated with the registry key and returns
         /// formatted strings of the filtered values.
         /// </summary>
