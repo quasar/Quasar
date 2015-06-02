@@ -54,7 +54,7 @@ namespace xClient.Core.Extensions
         {
             try
             {
-                return Registry.LocalMachine.OpenSubKey(name, false);
+                return key.OpenSubKey(name, false);
             }
             catch
             {
@@ -72,7 +72,7 @@ namespace xClient.Core.Extensions
         /// unable to obtain a sub-key.</returns>
         public static RegistryKey OpenWritableSubKey(this RegistryKey key, string name)
         {
-            return Registry.LocalMachine.OpenSubKey(name, true);
+            return key.OpenSubKey(name, true);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace xClient.Core.Extensions
         {
             if (key == null) yield break;
 
-            foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)).Where(string.IsNullOrEmpty))
+            foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)).Where(k => !string.IsNullOrEmpty(k)))
             {
                 yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
             }
