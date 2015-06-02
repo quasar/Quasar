@@ -65,6 +65,7 @@
     </Compile>
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Encryption\SHA256.cs" />
+    <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\FileSplit.cs" />
     <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Information\OSInfo.cs" />

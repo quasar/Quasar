@@ -116,7 +116,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetStartupItemsResponse(Client client, GetStartupItemsResponse packet)
         {
-            if (client.Value.FrmStm == null)
+            if (client.Value.FrmStm == null || packet.StartupItems == null)
                 return;
 
             foreach (var pair in packet.StartupItems)
