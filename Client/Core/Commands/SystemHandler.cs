@@ -69,6 +69,7 @@ namespace xClient.Core.Commands
                         }
                     }
                 }
+                i++;
                 using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
@@ -79,6 +80,7 @@ namespace xClient.Core.Commands
                         }
                     }
                 }
+                i++;
                 using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
@@ -89,6 +91,7 @@ namespace xClient.Core.Commands
                         }
                     }
                 }
+                i++;
                 using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
@@ -99,6 +102,7 @@ namespace xClient.Core.Commands
                         }
                     }
                 }
+                i++;
                 if (OSInfo.Bits == 64)
                 {
                     using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
@@ -111,6 +115,7 @@ namespace xClient.Core.Commands
                             }
                         }
                     }
+                    i++;
                     using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
@@ -121,6 +126,7 @@ namespace xClient.Core.Commands
                             }
                         }
                     }
+                    i++;
                 }
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
@@ -129,7 +135,7 @@ namespace xClient.Core.Commands
                     foreach (var file in files)
                     {
                         if (file.Name != "desktop.ini")
-                            startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 6);
+                            startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), i);
                     }
                 }
 
