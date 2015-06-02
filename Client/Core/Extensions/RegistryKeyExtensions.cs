@@ -63,6 +63,12 @@ namespace xClient.Core.Extensions
             }
         }
 
+        /// <summary>
+        /// Gets all of the value names associated with the registry key and returns
+        /// formatted strings of the filtered values.
+        /// </summary>
+        /// <param name="key">The registry key of which the values are obtained.</param>
+        /// <returns>Yield returns formatted strings of the key and the key value.</returns>
         public static IEnumerable<string> GetFormattedKeyValues(this RegistryKey key)
         {
             if (key != null)
