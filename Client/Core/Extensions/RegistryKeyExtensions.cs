@@ -11,9 +11,8 @@ namespace xClient.Core.Extensions
         /// </summary>
         /// <param name="keyName">The name associated with the registry key.</param>
         /// <param name="key">The actual registry key.</param>
-        /// <param name="keyValue">The string value of the registry key determined by the key's name.</param>
         /// <returns>True if the provided name is null or empty, or the key is null; False if otherwise.</returns>
-        public static bool IsNameOrValueNull(this string keyName, RegistryKey key)
+        private static bool IsNameOrValueNull(this string keyName, RegistryKey key)
         {
             return (string.IsNullOrEmpty(keyName) || (key == null));
         }
@@ -26,7 +25,7 @@ namespace xClient.Core.Extensions
         /// <param name="keyName">The name of the key.</param>
         /// <returns>Returns the value of the key using the specified key name. If unable to do so,
         /// string.Empty will be returned instead.</returns>
-        public static string GetValueSafe(this RegistryKey key, string keyName)
+        private static string GetValueSafe(this RegistryKey key, string keyName)
         {
             // Before calling this, use something such as "IsNameOrValueNull" to make sure
             // that the input used for this method is usable. The responsibility for this
@@ -84,21 +83,11 @@ namespace xClient.Core.Extensions
         /// <returns>Yield returns formatted strings of the key and the key value.</returns>
         public static IEnumerable<string> GetFormattedKeyValues(this RegistryKey key)
         {
-            if (key != null)
+            if (key == null) yield break;
+
+            foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)).Where(string.IsNullOrEmpty))
             {
-                foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)))
-                {
-                    // Less-likely, but this will ensure no empty items if an exception was thrown
-                    // when obtaining the value.
-                    if (string.IsNullOrEmpty(k))
-                    {
-                        yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
-                    }
-                }
-            }
-            else
-            {
-                yield break;
+                yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
             }
         }
     }
