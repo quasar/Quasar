@@ -11,7 +11,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleShellCommandResponse(Client client, ShellCommandResponse packet)
         {
-            if (client.Value.FrmRs == null)
+            if (client.Value.FrmRs == null || string.IsNullOrEmpty(packet.Output))
                 return;
 
             if (packet.IsError)
@@ -22,6 +22,9 @@ namespace xServer.Core.Commands
 
         public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
         {
+            if (string.IsNullOrEmpty(packet.Filename))
+                return;
+
             if (!Directory.Exists(client.Value.DownloadDirectory))
                 Directory.CreateDirectory(client.Value.DownloadDirectory);
 
