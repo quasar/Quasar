@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Management;
+using System.Text.RegularExpressions;
 
 namespace xClient.Core.Information
 {
@@ -43,8 +44,7 @@ namespace xClient.Core.Information
                     }
                 }
 
-                if (name.StartsWith("Microsoft"))
-                    name = name.Substring(name.IndexOf(" ", StringComparison.Ordinal) + 1);
+                name = Regex.Replace(name, "^.*(?=Windows)", "").TrimEnd().TrimStart(); // Remove everything before first match "Windows" and trim end & start
 
                 _osName = name;
                 return _osName;
