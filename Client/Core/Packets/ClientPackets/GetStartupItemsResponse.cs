@@ -7,13 +7,13 @@ namespace xClient.Core.Packets.ClientPackets
     public class GetStartupItemsResponse : IPacket
     {
         [ProtoMember(1)]
-        public Dictionary<string, int> StartupItems { get; set; }
+        public List<string> StartupItems { get; set; }
 
         public GetStartupItemsResponse()
         {
         }
 
-        public GetStartupItemsResponse(Dictionary<string, int> startupitems)
+        public GetStartupItemsResponse(List<string> startupitems)
         {
             this.StartupItems = startupitems;
         }
