@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using xServer.Core.Packets;
+using System.ServiceModel.Channels;
 
 namespace xServer.Core
 {
@@ -190,6 +190,12 @@ namespace xServer.Core
         /// List of all supported Packet Types by the server.
         /// </summary>
         private List<Type> PacketTypes { get; set; }
+
+        public const int MAX_PACKET_SIZE = (1024*1024)*2; //2MB
+        
+        // Create the buffer manager. Max total pool size is 2/3 of the working set's ram. Just seems
+        // like a reasonable amount; still leaves some extra room for other things by the server.
+        public BufferManager bufManager = BufferManager.CreateBufferManager((Environment.WorkingSet / 3) * 2, MAX_PACKET_SIZE);
 
         /// <summary>
         /// Constructor of the server, initializes variables.
