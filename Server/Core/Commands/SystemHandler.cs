@@ -126,9 +126,8 @@ namespace xServer.Core.Commands
             {
                 if (client.Value.FrmStm == null) return;
 
-                char tempChar = item[0];
                 int type;
-                if (!int.TryParse(tempChar.ToString(), out type)) continue;
+                if (!int.TryParse(item.Substring(0, 1), out type)) continue;
 
                 string preparedItem = item.Remove(0, 1);
                 var temp = preparedItem.Split(new string[] { "||" }, StringSplitOptions.None);
