@@ -122,14 +122,13 @@ namespace xServer.Core
         public const uint KEEP_ALIVE_INTERVAL = 25000;
 
         public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024*1024)*2; //2MB
         private Socket _handle;
         private int _typeIndex;
 
         /// <summary>
         /// The buffer for the client's incoming and outgoing packets.
         /// </summary>
-        private byte[] _buffer = new byte[MAX_PACKET_SIZE];
+        private byte[] _buffer;
 
         //receive info
         private int _readOffset;
@@ -164,6 +163,7 @@ namespace xServer.Core
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
+                this._buffer = _parentServer.bufManager.TakeBuffer(Server.MAX_PACKET_SIZE);
                 _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
                 EndPoint = (IPEndPoint) _handle.RemoteEndPoint;
                 OnClientState(true);
@@ -361,12 +361,14 @@ namespace xServer.Core
             if (_handle != null)
             {
                 _handle.Close();
-                _buffer = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
-                GC.Collect();
+            }
+            if (_parentServer != null && _parentServer.bufManager != null)
+            {
+                _parentServer.bufManager.ReturnBuffer(this._buffer);
             }
         }
 
