@@ -184,17 +184,6 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Frees all buffers.
-        /// </summary>
-        public void FreeAllBuffers()
-        {
-            while (_buffers.Count != 0)
-            {
-                DecreaseBufferCount(1);
-            }
-        }
-
-        /// <summary>
         /// Increases the number of buffers available in the pool by a given size.
         /// </summary>
         /// <param name="buffersToAdd">The number of buffers to preallocate.</param>

@@ -42,6 +42,7 @@ namespace xServer.Core.Networking
                 ClientState(this, connected);
             }
 
+            if (connected && _parentServer.BufferManager.BuffersAvailable == 0)
                 _parentServer.BufferManager.IncreaseBufferCount(1);
 
             if (!connected && !_parentServer.Processing)

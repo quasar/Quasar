@@ -392,7 +392,6 @@ namespace xServer.Core.Networking
                 }
             }
 
-            BufferManager.FreeAllBuffers();
             Listening = false;
             OnServerState(false);
         }
