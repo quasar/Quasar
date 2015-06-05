@@ -13,6 +13,7 @@ using xClient.Config;
 using xClient.Core.Information;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
+using xClient.Core.Networking;
 
 namespace xClient.Core
 {

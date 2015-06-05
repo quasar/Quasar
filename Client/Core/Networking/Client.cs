@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Text;
 using ProtoBuf;
@@ -9,12 +11,10 @@ using xClient.Core.Compression;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Packets;
-using xClient.Core.ReverseProxy.Packets;
-using System.Collections.Generic;
-using System.Linq;
 using xClient.Core.ReverseProxy;
+using xClient.Core.ReverseProxy.Packets;
 
-namespace xClient.Core
+namespace xClient.Core.Networking
 {
     public class Client
     {
@@ -131,14 +131,24 @@ namespace xClient.Core
         }
 
         /// <summary>
-        /// A list of all the connected proxy clients that this client holds.
+        /// The maximum size of one package (also the buffer size for receiving data).
         /// </summary>
-        private List<ReverseProxyClient> _proxyClients;
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 2; } } // 2MB
 
         /// <summary>
-        /// Lock object for the list of proxy clients.
+        /// The keep-alive time in ms.
         /// </summary>
-        private readonly object _proxyClientsLock = new object();
+        public uint KEEP_ALIVE_TIME { get { return 25000; } } // 25s
+
+        /// <summary>
+        /// The keep-alive interval in ms.
+        /// </summary>
+        public uint KEEP_ALIVE_INTERVAL { get { return 25000; } } // 25s
+
+        /// <summary>
+        /// The header size in
+        /// </summary>
+        public int HEADER_SIZE { get { return 4; } } // 4 Byte
 
         /// <summary>
         /// Returns an array containing all of the proxy clients of this client.
@@ -154,18 +164,27 @@ namespace xClient.Core
             }
         }
 
-        public const uint KEEP_ALIVE_TIME = 25000;
-        public const uint KEEP_ALIVE_INTERVAL = 25000;
-
-        public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024*1024)*2; //2MB
+        /// <summary>
+        /// Handle of the Client Socket.
+        /// </summary>
         private Socket _handle;
+
+        /// <summary>
+        /// A list of all the connected proxy clients that this client holds.
+        /// </summary>
+        private List<ReverseProxyClient> _proxyClients;
+
+        /// <summary>
+        /// Lock object for the list of proxy clients.
+        /// </summary>
+        private readonly object _proxyClientsLock = new object();
+
         private int _typeIndex;
 
         /// <summary>
         /// The buffer for the client's incoming and outgoing packets.
         /// </summary>
-        private byte[] _buffer = new byte[MAX_PACKET_SIZE];
+        private byte[] _buffer;
 
         //receive info
         private int _readOffset;
@@ -203,11 +222,12 @@ namespace xClient.Core
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
+                _buffer = new byte[MAX_PACKET_SIZE];
                 _handle.Connect(host, port);
 
                 if (_handle.Connected)
                 {
-                    _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
+                    _handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
                     OnClientState(true);
                 }
             }
@@ -273,7 +293,7 @@ namespace xClient.Core
                             byte[] payload = new byte[_payloadLen];
                             try
                             {
-                                Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
+                                Array.Copy(_buffer, _readOffset, payload, 0, payload.Length);
                             }
                             catch
                             {
@@ -306,10 +326,10 @@ namespace xClient.Core
             }
 
             int len = _receiveState == ReceiveType.Header ? HEADER_SIZE : _payloadLen;
-            if (_readOffset + len >= this._buffer.Length)
+            if (_readOffset + len >= _buffer.Length)
             {
                 //copy the buffer to the beginning
-                Array.Copy(this._buffer, _readOffset, this._buffer, 0, _readableDataLen);
+                Array.Copy(_buffer, _readOffset, _buffer, 0, _readableDataLen);
                 _writeOffset = _readableDataLen;
                 _readOffset = 0;
             }
@@ -325,7 +345,7 @@ namespace xClient.Core
             {
                 if (_buffer.Length - _writeOffset > 0)
                 {
-                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
+                    _handle.BeginReceive(_buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
                         AsyncReceive, null);
                 }
                 else

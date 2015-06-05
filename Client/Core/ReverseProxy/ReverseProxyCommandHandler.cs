@@ -1,4 +1,5 @@
-﻿using xClient.Core.Packets;
+﻿using xClient.Core.Networking;
+using xClient.Core.Packets;
 using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.ReverseProxy

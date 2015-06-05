@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
+using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 
 namespace xServer.Core.Commands

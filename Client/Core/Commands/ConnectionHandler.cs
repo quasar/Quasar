@@ -5,6 +5,7 @@ using System.Net;
 using System.Threading;
 using xClient.Config;
 using xClient.Core.Helper;
+using xClient.Core.Networking;
 
 namespace xClient.Core.Commands
 {

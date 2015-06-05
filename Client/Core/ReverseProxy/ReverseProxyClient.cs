@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using xClient.Core.Networking;
 using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.ReverseProxy

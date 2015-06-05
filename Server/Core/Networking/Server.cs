@@ -1,29 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using xServer.Core.Packets;
 
-namespace xServer.Core
+namespace xServer.Core.Networking
 {
     public class Server
     {
-        /// <summary>
-        /// The port on which the server is listening.
-        /// </summary>
-        public ushort Port { get; private set; }
-
-        /// <summary>
-        /// The total amount of received bytes.
-        /// </summary>
-        public long BytesReceived { get; set; }
-
-        /// <summary>
-        /// The total amount of sent bytes.
-        /// </summary>
-        public long BytesSent { get; set; }
-
         /// <summary>
         /// The amount of currently connected and authenticated clients.
         /// </summary>
@@ -137,14 +121,39 @@ namespace xServer.Core
         }
 
         /// <summary>
-        /// Handle of the Server Socket.
+        /// The port on which the server is listening.
         /// </summary>
-        private Socket _handle;
+        public ushort Port { get; private set; }
 
         /// <summary>
-        /// The event to accept new connections asynchronously.
+        /// The total amount of received bytes.
         /// </summary>
-        private SocketAsyncEventArgs _item;
+        public long BytesReceived { get; set; }
+
+        /// <summary>
+        /// The total amount of sent bytes.
+        /// </summary>
+        public long BytesSent { get; set; }
+
+        /// <summary>
+        /// The maximum size of one package in byte (it is also the buffer size for receiving data).
+        /// </summary>
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 2; } } // 2MB
+
+        /// <summary>
+        /// The keep-alive time in ms.
+        /// </summary>
+        public uint KEEP_ALIVE_TIME { get { return 25000; } } // 25s
+
+        /// <summary>
+        /// The keep-alive interval in ms.
+        /// </summary>
+        public uint KEEP_ALIVE_INTERVAL { get { return 25000; } } // 25s
+
+        /// <summary>
+        /// The header size in byte.
+        /// </summary>
+        public int HEADER_SIZE { get { return 4; } } // 4B
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
@@ -152,19 +161,14 @@ namespace xServer.Core
         public bool Processing { get; private set; }
 
         /// <summary>
+        /// The buffer manager to handle the receive buffers for the clients.
+        /// </summary>
+        public PooledBufferManager BufferManager { get; private set; }
+
+        /// <summary>
         /// The listening state of the server. True if listening, else False.
         /// </summary>
         public bool Listening { get; private set; }
-
-        /// <summary>
-        /// List of the clients connected to the server.
-        /// </summary>
-        private List<Client> _clients;
-
-        /// <summary>
-        /// Lock object for the list of clients.
-        /// </summary>
-        private readonly object _clientsLock = new object();
 
         /// <summary>
         /// Gets the clients currently connected to the server, or an empty array of
@@ -185,6 +189,26 @@ namespace xServer.Core
         /// A collection containing all clients that have ever connected to the server.
         /// </summary>
         public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
+
+        /// <summary>
+        /// Handle of the Server Socket.
+        /// </summary>
+        private Socket _handle;
+
+        /// <summary>
+        /// The event to accept new connections asynchronously.
+        /// </summary>
+        private SocketAsyncEventArgs _item;
+
+        /// <summary>
+        /// List of the clients connected to the server.
+        /// </summary>
+        private List<Client> _clients;
+
+        /// <summary>
+        /// Lock object for the list of clients.
+        /// </summary>
+        private readonly object _clientsLock = new object();
 
         /// <summary>
         /// List of all supported Packet Types by the server.
@@ -229,6 +253,8 @@ namespace xServer.Core
                         {
                         }
                     }
+
+                    BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -366,6 +392,7 @@ namespace xServer.Core
                 }
             }
 
+            BufferManager.FreeAllBuffers();
             Listening = false;
             OnServerState(false);
         }

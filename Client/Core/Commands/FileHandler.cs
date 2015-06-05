@@ -2,6 +2,7 @@
 using System.IO;
 using System.Threading;
 using xClient.Core.Helper;
+using xClient.Core.Networking;
 
 namespace xClient.Core.Commands
 {

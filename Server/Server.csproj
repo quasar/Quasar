@@ -66,7 +66,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
-    <Compile Include="Core\Client.cs" />
+    <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
@@ -84,6 +84,7 @@
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Misc\NoIpUpdater.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />
+    <Compile Include="Core\Networking\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
@@ -220,9 +221,9 @@
     <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
-    <Compile Include="Core\Server.cs" />
+    <Compile Include="Core\Networking\Server.cs" />
     <Compile Include="Core\Helper\Helper.cs" />
-    <Compile Include="Core\UserState.cs" />
+    <Compile Include="Core\Networking\UserState.cs" />
     <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -445,6 +446,7 @@
       <EmbedInteropTypes>True</EmbedInteropTypes>
     </COMReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

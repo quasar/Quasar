@@ -8,6 +8,7 @@ using Microsoft.Win32;
 using xClient.Core.Information;
 using xClient.Core.RemoteShell;
 using xClient.Core.Extensions;
+using xClient.Core.Networking;
 
 namespace xClient.Core.Commands
 {

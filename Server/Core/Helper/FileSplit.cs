@@ -7,7 +7,7 @@ namespace xServer.Core.Helper
     {
         private int _maxBlocks;
 
-        private const int MAX_PACKET_SIZE = Client.MAX_PACKET_SIZE - Client.HEADER_SIZE - (1024 * 2);
+        private const int MAX_BLOCK_SIZE = (1024 * 1024) * 2 - (1024 * 2);
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
@@ -24,7 +24,7 @@ namespace xServer.Core.Helper
                     if (!fInfo.Exists)
                         throw new FileNotFoundException();
 
-                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_PACKET_SIZE);
+                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_BLOCK_SIZE);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -52,7 +52,7 @@ namespace xServer.Core.Helper
 
         private int GetSize(long length)
         {
-            return (length < MAX_PACKET_SIZE) ? (int) length : MAX_PACKET_SIZE;
+            return (length < MAX_BLOCK_SIZE) ? (int) length : MAX_BLOCK_SIZE;
         }
 
         public bool ReadBlock(int blockNumber, out byte[] readBytes)
@@ -72,7 +72,7 @@ namespace xServer.Core.Helper
                     }
                     else
                     {
-                        fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
+                        fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
                         readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
                         fStream.Read(readBytes, 0, readBytes.Length);
                     }
@@ -127,7 +127,7 @@ namespace xServer.Core.Helper
 
                 using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
                 {
-                    fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
+                    fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
                     fStream.Write(block, 0, block.Length);
                 }
 

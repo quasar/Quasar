@@ -12,7 +12,7 @@ using xServer.Core.Extensions;
 using xServer.Core.Packets;
 using xServer.Settings;
 
-namespace xServer.Core
+namespace xServer.Core.Networking
 {
     public class Client
     {
@@ -41,6 +41,8 @@ namespace xServer.Core
             {
                 ClientState(this, connected);
             }
+
+                _parentServer.BufferManager.IncreaseBufferCount(1);
 
             if (!connected && !_parentServer.Processing)
                 _parentServer.RemoveClient(this);
@@ -118,18 +120,9 @@ namespace xServer.Core
             Payload
         }
 
-        public const uint KEEP_ALIVE_TIME = 25000;
-        public const uint KEEP_ALIVE_INTERVAL = 25000;
 
-        public const int HEADER_SIZE = 4;
-        public const int MAX_PACKET_SIZE = (1024*1024)*2; //2MB
         private Socket _handle;
         private int _typeIndex;
-
-        /// <summary>
-        /// The buffer for the client's incoming and outgoing packets.
-        /// </summary>
-        private byte[] _buffer = new byte[MAX_PACKET_SIZE];
 
         //receive info
         private int _readOffset;
@@ -143,6 +136,11 @@ namespace xServer.Core
         public UserState Value { get; set; }
         public IPEndPoint EndPoint { get; private set; }
         private Server _parentServer;
+
+        /// <summary>
+        /// The buffer for the client's incoming and outgoing packets.
+        /// </summary>
+        private byte[] _buffer;
 
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
@@ -160,11 +158,13 @@ namespace xServer.Core
                 Initialize();
 
                 _handle = sock;
-                _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
+                _handle.SetKeepAliveEx(_parentServer.KEEP_ALIVE_INTERVAL, _parentServer.KEEP_ALIVE_TIME);
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
-                _handle.BeginReceive(this._buffer, 0, this._buffer.Length, SocketFlags.None, AsyncReceive, null);
+                _buffer = _parentServer.BufferManager.GetBuffer();
+
+                _handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
                 EndPoint = (IPEndPoint) _handle.RemoteEndPoint;
                 OnClientState(true);
             }
@@ -208,64 +208,64 @@ namespace xServer.Core
                 switch (_receiveState)
                 {
                     case ReceiveType.Header:
-                    {
-                        process = _readableDataLen >= HEADER_SIZE;
-                        if (process)
                         {
-                            _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
+                            process = _readableDataLen >= _parentServer.HEADER_SIZE;
+                            if (process)
+                            {
+                                _payloadLen = BitConverter.ToInt32(_buffer, _readOffset);
 
-                            _readableDataLen -= HEADER_SIZE;
-                            _readOffset += HEADER_SIZE;
-                            _receiveState = ReceiveType.Payload;
+                                _readableDataLen -= _parentServer.HEADER_SIZE;
+                                _readOffset += _parentServer.HEADER_SIZE;
+                                _receiveState = ReceiveType.Payload;
+                            }
+                            break;
                         }
-                        break;
-                    }
                     case ReceiveType.Payload:
-                    {
-                        process = _readableDataLen >= _payloadLen;
-                        if (process)
                         {
-                            byte[] payload = new byte[_payloadLen];
-                            try
+                            process = _readableDataLen >= _payloadLen;
+                            if (process)
                             {
-                                Array.Copy(this._buffer, _readOffset, payload, 0, payload.Length);
-                            }
-                            catch
-                            {
-                                Disconnect();
-                            }
-
-                            if (encryptionEnabled)
-                                payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                            if (payload.Length > 0)
-                            {
-                                if (compressionEnabled)
-                                    payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
-
-                                using (MemoryStream deserialized = new MemoryStream(payload))
+                                byte[] payload = new byte[_payloadLen];
+                                try
                                 {
-                                    IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                        PrefixStyle.Fixed32);
-
-                                    OnClientRead(packet);
+                                    Array.Copy(_buffer, _readOffset, payload, 0, payload.Length);
                                 }
-                            }
+                                catch
+                                {
+                                    Disconnect();
+                                }
 
-                            _readOffset += _payloadLen;
-                            _readableDataLen -= _payloadLen;
-                            _receiveState = ReceiveType.Header;
+                                if (encryptionEnabled)
+                                    payload = AES.Decrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+                                if (payload.Length > 0)
+                                {
+                                    if (compressionEnabled)
+                                        payload = new SafeQuickLZ().Decompress(payload, 0, payload.Length);
+
+                                    using (MemoryStream deserialized = new MemoryStream(payload))
+                                    {
+                                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                            PrefixStyle.Fixed32);
+
+                                        OnClientRead(packet);
+                                    }
+                                }
+
+                                _readOffset += _payloadLen;
+                                _readableDataLen -= _payloadLen;
+                                _receiveState = ReceiveType.Header;
+                            }
+                            break;
                         }
-                        break;
-                    }
                 }
             }
 
-            int len = _receiveState == ReceiveType.Header ? HEADER_SIZE : _payloadLen;
-            if (_readOffset + len >= this._buffer.Length)
+            int len = _receiveState == ReceiveType.Header ? _parentServer.HEADER_SIZE : _payloadLen;
+            if (_readOffset + len >= _buffer.Length)
             {
                 //copy the buffer to the beginning
-                Array.Copy(this._buffer, _readOffset, this._buffer, 0, _readableDataLen);
+                Array.Copy(_buffer, _readOffset, _buffer, 0, _readableDataLen);
                 _writeOffset = _readableDataLen;
                 _readOffset = 0;
             }
@@ -281,7 +281,7 @@ namespace xServer.Core
             {
                 if (_buffer.Length - _writeOffset > 0)
                 {
-                    _handle.BeginReceive(this._buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
+                    _handle.BeginReceive(_buffer, _writeOffset, _buffer.Length - _writeOffset, SocketFlags.None,
                         AsyncReceive, null);
                 }
                 else
@@ -361,12 +361,12 @@ namespace xServer.Core
             if (_handle != null)
             {
                 _handle.Close();
-                _buffer = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
-                GC.Collect();
+                if (_parentServer != null && _parentServer.BufferManager != null)
+                    _parentServer.BufferManager.ReturnBuffer(_buffer);
             }
         }
 

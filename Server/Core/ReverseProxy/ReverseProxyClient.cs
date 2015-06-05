@@ -3,6 +3,7 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using System.Windows.Forms;
+using xServer.Core.Networking;
 using xServer.Core.ReverseProxy.Packets;
 
 namespace xServer.Core.ReverseProxy

@@ -3,7 +3,7 @@ using xServer.Core.Helper;
 using xServer.Core.ReverseProxy;
 using xServer.Forms;
 
-namespace xServer.Core
+namespace xServer.Core.Networking
 {
     public class UserState
     {

