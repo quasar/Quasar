@@ -163,7 +163,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The buffer manager to handle the receive buffers for the clients.
         /// </summary>
-        public PooledBufferManager BufferManager { get; private set; }
+        public static PooledBufferManager BufferManager { get; private set; }
 
         /// <summary>
         /// The listening state of the server. True if listening, else False.
@@ -253,8 +253,9 @@ namespace xServer.Core.Networking
                         {
                         }
                     }
-
-                    BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
+                    
+                    if (BufferManager == null)
+                        BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = false};
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 

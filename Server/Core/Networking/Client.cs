@@ -42,8 +42,8 @@ namespace xServer.Core.Networking
                 ClientState(this, connected);
             }
 
-            if (connected && _parentServer.BufferManager.BuffersAvailable == 0)
-                _parentServer.BufferManager.IncreaseBufferCount(1);
+            if (connected && Server.BufferManager.BuffersAvailable == 0)
+                Server.BufferManager.IncreaseBufferCount(1);
 
             if (!connected && !_parentServer.Processing)
                 _parentServer.RemoveClient(this);
@@ -163,7 +163,7 @@ namespace xServer.Core.Networking
                 _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
-                _buffer = _parentServer.BufferManager.GetBuffer();
+                _buffer = Server.BufferManager.GetBuffer();
 
                 _handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
                 EndPoint = (IPEndPoint) _handle.RemoteEndPoint;
@@ -366,8 +366,8 @@ namespace xServer.Core.Networking
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
-                if (_parentServer != null && _parentServer.BufferManager != null)
-                    _parentServer.BufferManager.ReturnBuffer(_buffer);
+                if (Server.BufferManager != null)
+                    Server.BufferManager.ReturnBuffer(_buffer);
             }
         }
 

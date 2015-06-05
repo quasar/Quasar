@@ -360,12 +360,18 @@ namespace xServer.Forms
 
         public void ShowPopup(Client c)
         {
-            this.Invoke((MethodInvoker)delegate
+            try
             {
-                nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
-                    string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
-                    c.Value.OperatingSystem), ToolTipIcon.Info);
-            });
+                this.Invoke((MethodInvoker)delegate
+                {
+                    nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                        string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
+                        c.Value.OperatingSystem), ToolTipIcon.Info);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
         }
 
         private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)
