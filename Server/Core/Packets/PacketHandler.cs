@@ -16,6 +16,7 @@ namespace xServer.Core.Packets
                     CommandHandler.HandleInitialize(client, (ClientPackets.Initialize)packet);
                 else
                     client.Disconnect();
+                return;
             }
 
             if (type == typeof(ClientPackets.Status))
