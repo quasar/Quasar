@@ -322,6 +322,9 @@ namespace xServer.Core.Networking
                         client.ClientRead += OnClientRead;
                         client.ClientWrite += OnClientWrite;
 
+                        if (BufferManager.BuffersAvailable == 0)
+                            BufferManager.IncreaseBufferCount(1);
+
                         OnClientState(client, true);
                     }
 
