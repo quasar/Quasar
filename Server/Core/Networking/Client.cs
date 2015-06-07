@@ -147,12 +147,18 @@ namespace xServer.Core.Networking
         private Server _parentServer;
 
         /// <summary>
-        /// The buffer for the client's incoming and outgoing packets.
+        /// The buffer for the client's incoming packets.
         /// </summary>
         private byte[] _readBuffer;
 
+        /// <summary>
+        /// Lock object for the client's incoming packets buffer.
+        /// </summary>
         private object _readBufferLock = new object();
 
+        /// <summary>
+        /// The buffer for the client's incoming payload.
+        /// </summary>
         private byte[] _payloadBuffer;
 
         private const bool encryptionEnabled = true;
