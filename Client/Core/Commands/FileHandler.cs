@@ -95,8 +95,7 @@ namespace xClient.Core.Commands
             if (!_canceledDownloads.ContainsKey(command.ID))
             {
                 _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(
-                    client);
+                new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
             }
         }
 

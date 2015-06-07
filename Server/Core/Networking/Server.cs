@@ -138,7 +138,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The maximum size of one package in byte (it is also the buffer size for receiving data).
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 2; } } // 2MB
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -255,7 +255,7 @@ namespace xServer.Core.Networking
                     }
                     
                     if (BufferManager == null)
-                        BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = false};
+                        BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
@@ -341,6 +341,10 @@ namespace xServer.Core.Networking
             }
         }
 
+        /// <summary>
+        /// Removes a disconnected client from the list of clients.
+        /// </summary>
+        /// <param name="client">The client to remove.</param>
         public void RemoveClient(Client client)
         {
             lock (_clientsLock)

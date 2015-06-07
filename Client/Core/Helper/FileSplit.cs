@@ -6,7 +6,8 @@ namespace xClient.Core.Helper
     public class FileSplit
     {
         private int _maxBlocks;
-        private const int MAX_BLOCK_SIZE = (1024 * 1024) * 2 - (1024 * 2);
+        private readonly object _fileStreamLock = new object();
+        private const int MAX_BLOCK_SIZE = (1024 * 1024) * 1 - (1024 * 2);
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
@@ -61,19 +62,22 @@ namespace xClient.Core.Helper
                 if (blockNumber > this.MaxBlocks)
                     throw new ArgumentOutOfRangeException();
 
-                using (FileStream fStream = File.OpenRead(this.Path))
+                lock (_fileStreamLock)
                 {
-                    if (blockNumber == 0)
+                    using (FileStream fStream = File.OpenRead(this.Path))
                     {
-                        fStream.Seek(0, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
-                        fStream.Read(readBytes, 0, readBytes.Length);
-                    }
-                    else
-                    {
-                        fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
-                        fStream.Read(readBytes, 0, readBytes.Length);
+                        if (blockNumber == 0)
+                        {
+                            fStream.Seek(0, SeekOrigin.Begin);
+                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            fStream.Read(readBytes, 0, readBytes.Length);
+                        }
+                        else
+                        {
+                            fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            fStream.Read(readBytes, 0, readBytes.Length);
+                        }
                     }
                 }
 
@@ -113,21 +117,24 @@ namespace xClient.Core.Helper
                 if (!File.Exists(this.Path) && blockNumber > 0)
                     throw new FileNotFoundException(); // previous file got deleted somehow, error
 
-                if (blockNumber == 0)
+                lock (_fileStreamLock)
                 {
-                    using (FileStream fStream = File.Open(this.Path, FileMode.Create, FileAccess.Write))
+                    if (blockNumber == 0)
                     {
-                        fStream.Seek(0, SeekOrigin.Begin);
-                        fStream.Write(block, 0, block.Length);
+                        using (FileStream fStream = File.Open(this.Path, FileMode.Create, FileAccess.Write))
+                        {
+                            fStream.Seek(0, SeekOrigin.Begin);
+                            fStream.Write(block, 0, block.Length);
+                        }
+
+                        return true;
                     }
 
-                    return true;
-                }
-
-                using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
-                {
-                    fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
-                    fStream.Write(block, 0, block.Length);
+                    using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
+                    {
+                        fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                        fStream.Write(block, 0, block.Length);
+                    }
                 }
 
                 return true;

@@ -1,9 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using xServer.Core;
+using xServer.Core.Commands;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 
@@ -14,6 +15,7 @@ namespace xServer.Forms
         private string _currentDir;
         private readonly Client _connectClient;
         private readonly ListViewColumnSorter _lvwColumnSorter;
+        
 
         public FrmFileManager(Client c)
         {
@@ -278,8 +280,13 @@ namespace xServer.Forms
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
                 if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
+                if (!CommandHandler.CanceledDownloads.ContainsKey(transfer.Index))
+                    CommandHandler.CanceledDownloads.Add(int.Parse(transfer.Text), "canceled");
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+                var id = int.Parse(transfer.SubItems[0].Text);
+                CommandHandler.RenamedFiles.Remove(id);
+                UpdateTransferStatus(transfer.Index, "Canceled", 0);
             }
         }
 
@@ -378,7 +385,7 @@ namespace xServer.Forms
                 lstTransfers.Invoke((MethodInvoker)delegate
                 {
                     lstTransfers.Items[index].SubItems[1].Text = status;
-                    if (imageIndex > 0)
+                    if (imageIndex >= 0)
                         lstTransfers.Items[index].ImageIndex = imageIndex;
                 });
             }

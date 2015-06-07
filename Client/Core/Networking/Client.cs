@@ -133,7 +133,7 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The maximum size of one package (also the buffer size for receiving data).
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 2; } } // 2MB
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -170,6 +170,11 @@ namespace xClient.Core.Networking
         private Socket _handle;
 
         /// <summary>
+        /// Lock object for the Client Socket.
+        /// </summary>
+        private readonly object _handleLock = new object();
+
+        /// <summary>
         /// A list of all the connected proxy clients that this client holds.
         /// </summary>
         private List<ReverseProxyClient> _proxyClients;
@@ -179,6 +184,9 @@ namespace xClient.Core.Networking
         /// </summary>
         private readonly object _proxyClientsLock = new object();
 
+        /// <summary>
+        /// The internal index of the packet type.
+        /// </summary>
         private int _typeIndex;
 
         /// <summary>
@@ -186,7 +194,7 @@ namespace xClient.Core.Networking
         /// </summary>
         private byte[] _buffer;
 
-        //receive info
+        // Receive info
         private int _readOffset;
         private int _writeOffset;
         private int _readableDataLen;
@@ -362,7 +370,7 @@ namespace xClient.Core.Networking
 
         public void Send<T>(T packet) where T : IPacket
         {
-            lock (_handle)
+            lock (_handleLock)
             {
                 if (!Connected)
                     return;
