@@ -197,7 +197,7 @@ namespace xClient.Core.Networking
         /// <summary>
         /// Lock object for the incoming packets buffer.
         /// </summary>
-        private object _readBufferLock = new object();
+        private readonly object _readBufferLock = new object();
 
         /// <summary>
         /// The buffer for the client's incoming payload.
@@ -420,9 +420,9 @@ namespace xClient.Core.Networking
                     _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
                 }
             }
-            catch
+            catch (Exception ex)
             {
-                Disconnect();
+                OnClientFail(ex);
             }
         }
 

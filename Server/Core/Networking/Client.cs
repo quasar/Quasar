@@ -154,7 +154,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Lock object for the client's incoming packets buffer.
         /// </summary>
-        private object _readBufferLock = new object();
+        private readonly object _readBufferLock = new object();
 
         /// <summary>
         /// The buffer for the client's incoming payload.
