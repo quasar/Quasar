@@ -364,6 +364,9 @@ namespace xServer.Core.Networking
             {
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
             }
+            catch (ObjectDisposedException)
+            {
+            }
             catch
             {
                 Disconnect();
