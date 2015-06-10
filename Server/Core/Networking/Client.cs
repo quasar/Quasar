@@ -426,7 +426,6 @@ namespace xServer.Core.Networking
 
             if (_handle != null)
             {
-                _handle.Shutdown(SocketShutdown.Both);
                 _handle.Close();
                 _readOffset = 0;
                 _writeOffset = 0;

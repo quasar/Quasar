@@ -392,7 +392,6 @@ namespace xServer.Core.Networking
 
             if (_handle != null)
             {
-                _handle.Shutdown(SocketShutdown.Both);
                 _handle.Close();
             }
 
