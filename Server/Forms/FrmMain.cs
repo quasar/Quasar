@@ -364,6 +364,8 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker)delegate
                 {
+                    if (c == null || c.Value == null) return;
+                    
                     nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
