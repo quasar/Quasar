@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using xServer.Core.Compression;
@@ -133,6 +135,16 @@ namespace xServer.Core.Networking
         /// </summary>
         private int _typeIndex;
 
+        /// <summary>
+        /// The Queue which holds buffers to send.
+        /// </summary>
+        private readonly Queue<byte[]> _sendBuffers = new Queue<byte[]>();
+
+        /// <summary>
+        /// Determines if the client is currently sending packets.
+        /// </summary>
+        private bool _sendingPackets;
+
         //receive info
         private int _readOffset;
         private int _writeOffset;
@@ -200,7 +212,9 @@ namespace xServer.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
-            int bytesTransferred = -1;
+            bool process = true;
+            int bytesTransferred;
+
             try
             {
                 bytesTransferred = _handle.EndReceive(result);
@@ -216,11 +230,8 @@ namespace xServer.Core.Networking
                 OnClientState(false);
                 return;
             }
-
             _parentServer.BytesReceived += bytesTransferred;
-
             _readableDataLen += bytesTransferred;
-            bool process = true;
 
             while (process)
             {
@@ -242,7 +253,7 @@ namespace xServer.Core.Networking
                                 {
                                     break;
                                 }
-                                if (_payloadLen < 0)
+                                if (_payloadLen <= 0)
                                 {
                                     process = false;
                                     break;
@@ -313,6 +324,7 @@ namespace xServer.Core.Networking
 
                                 _writeOffset += _readableDataLen;
                                 _readOffset += _readableDataLen;
+                                _readableDataLen = 0;
 
                                 if (_writeOffset == _payloadLen)
                                 {
@@ -341,8 +353,7 @@ namespace xServer.Core.Networking
                 }
             }
 
-            int len = (_receiveState == ReceiveType.Header) ? _parentServer.HEADER_SIZE : _payloadLen;
-            if (len < _readOffset)
+            if (_receiveState == ReceiveType.Header)
             {
                 _writeOffset = 0; // prepare for next packet
             }
@@ -351,10 +362,7 @@ namespace xServer.Core.Networking
 
             try
             {
-                lock (_readBufferLock)
-                {
-                    _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
-                }
+                _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
             }
             catch
             {
@@ -364,21 +372,26 @@ namespace xServer.Core.Networking
 
         public void Send<T>(T packet) where T : IPacket
         {
-            lock (_handleLock)
-            {
-                if (!Connected)
-                    return;
+            if (!Connected) return;
 
+            lock (_sendBuffers)
+            {
                 try
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
                         Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);
 
-                        byte[] data = ms.ToArray();
+                        byte[] payload = ms.ToArray();
 
-                        Send(data);
-                        OnClientWrite(packet, data.LongLength, data);
+                        _sendBuffers.Enqueue(payload);
+
+                        OnClientWrite(packet, payload.LongLength, payload);
+
+                        if (_sendingPackets) return;
+
+                        _sendingPackets = true;
+                        ThreadPool.QueueUserWorkItem(Send);
                     }
                 }
                 catch
@@ -387,32 +400,46 @@ namespace xServer.Core.Networking
             }
         }
 
-        private void Send(byte[] data)
+        private void Send(object state)
         {
-            if (!Connected)
-                return;
-
-            if (compressionEnabled)
-                data = new SafeQuickLZ().Compress(data, 0, data.Length, 3);
-
-            if (encryptionEnabled)
-                data = AES.Encrypt(data, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-            byte[] temp = BitConverter.GetBytes(data.Length);
-
-            byte[] payload = new byte[data.Length + 4];
-            Array.Copy(temp, payload, temp.Length);
-            Array.Copy(data, 0, payload, 4, data.Length);
-
-            _parentServer.BytesSent += payload.Length;
-
-            try
+            while (true)
             {
-                _handle.Send(payload);
-            }
-            catch
-            {
-                Disconnect();
+                if (!Connected) return;
+
+                byte[] payload;
+                lock (_sendBuffers)
+                {
+                    if (_sendBuffers.Count == 0)
+                    {
+                        _sendingPackets = false;
+                        return;
+                    }
+
+                    payload = _sendBuffers.Dequeue();
+                }
+
+                if (compressionEnabled)
+                    payload = new SafeQuickLZ().Compress(payload, 0, payload.Length, 3);
+
+                if (encryptionEnabled)
+                    payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
+
+                byte[] header = BitConverter.GetBytes(payload.Length);
+
+                byte[] data = new byte[payload.Length + 4];
+                Array.Copy(header, data, header.Length);
+                Array.Copy(payload, 0, data, 4, payload.Length);
+
+                _parentServer.BytesSent += payload.Length;
+
+                try
+                {
+                    _handle.Send(data);
+                }
+                catch
+                {
+                    Disconnect();
+                }
             }
         }
 

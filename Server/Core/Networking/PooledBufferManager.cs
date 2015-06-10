@@ -11,8 +11,7 @@ namespace xServer.Core.Networking
     {
         private readonly int _bufferLength;
         private int _bufferCount;
-        private Stack<byte[]> _buffers;
-        private object _buffersLock = new object();
+        private readonly Stack<byte[]> _buffers;
 
         #region events
         /// <summary>
@@ -129,7 +128,7 @@ namespace xServer.Core.Networking
         {
             if (_buffers.Count > 0)
             {
-                lock (_buffersLock)
+                lock (_buffers)
                 {
                     if (_buffers.Count > 0)
                     {
@@ -176,7 +175,7 @@ namespace xServer.Core.Networking
                 }
             }
 
-            lock (_buffersLock)
+            lock (_buffers)
             {
                 if (!_buffers.Contains(buffer))
                     _buffers.Push(buffer);
@@ -204,7 +203,7 @@ namespace xServer.Core.Networking
                 newBuffers.Add(new byte[_bufferLength]);
             }
 
-            lock (_buffersLock)
+            lock (_buffers)
             {
                 _bufferCount += buffersToAdd;
                 for (int i = 0; i < buffersToAdd; i++)
@@ -232,7 +231,7 @@ namespace xServer.Core.Networking
 
             int numRemoved = 0;
 
-            lock (_buffersLock)
+            lock (_buffers)
             {
                 for (int i = 0; i < buffersToRemove && _buffers.Count > 0; i++)
                 {

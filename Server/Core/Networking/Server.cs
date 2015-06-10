@@ -241,7 +241,7 @@ namespace xServer.Core.Networking
                     }
 
                     _item = new SocketAsyncEventArgs();
-                    _item.Completed += Process;
+                    _item.Completed += AcceptClient;
 
                     if (_handle != null)
                     {
@@ -268,7 +268,7 @@ namespace xServer.Core.Networking
                     OnServerState(true);
 
                     if (!_handle.AcceptAsync(_item))
-                        Process(null, _item);
+                        AcceptClient(null, _item);
                 }
             }
             catch (Exception)
@@ -307,7 +307,7 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="s">Unused, use null.</param>
         /// <param name="e">Asynchronously Socket Event</param>
-        private void Process(object s, SocketAsyncEventArgs e)
+        private void AcceptClient(object s, SocketAsyncEventArgs e)
         {
             try
             {
@@ -334,13 +334,13 @@ namespace xServer.Core.Networking
                         case SocketError.ConnectionReset:
                             break;
                         default:
-                            throw new SocketException();
+                            throw new Exception("SocketError");
                     }
 
                     e.AcceptSocket = null; // enable reuse
                 } while (!_handle.AcceptAsync(e));
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException)
             {
             }
             catch (Exception ex)
