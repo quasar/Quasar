@@ -277,8 +277,6 @@ namespace xClient.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
-            if (!Connected) return;
-
             lock (_readBuffers)
             {
                 try
@@ -333,8 +331,6 @@ namespace xClient.Core.Networking
         {
             while (true)
             {
-                if (!Connected) return;
-
                 byte[] readBuffer;
                 lock (_readBuffers)
                 {
@@ -556,7 +552,7 @@ namespace xClient.Core.Networking
                 _readableDataLen = 0;
                 _payloadLen = 0;
                 _payloadBuffer = null;
-                if(_proxyClients != null)
+                if (_proxyClients != null)
                 {
                     lock (_proxyClientsLock)
                     {
