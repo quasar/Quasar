@@ -48,14 +48,14 @@ namespace xServer.Core.Commands
                     client.Value.OperatingSystem, client.Value.AccountType
                 }) { Tag = client, ImageIndex = packet.ImageIndex };
 
-
                 FrmMain.Instance.AddClientToListview(lvi);
 
                 if (XMLSettings.ShowPopup)
                     FrmMain.Instance.ShowPopup(client);
 
                 client.Value.IsAuthenticated = true;
-                new Packets.ServerPackets.GetSystemInfo().Execute(client);
+                if (XMLSettings.ShowToolTip)
+                    new Packets.ServerPackets.GetSystemInfo().Execute(client);
             }
             catch
             {
