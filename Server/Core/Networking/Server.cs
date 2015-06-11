@@ -258,7 +258,6 @@ namespace xServer.Core.Networking
                         BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));
                     _handle.Listen(1000);
 

@@ -171,11 +171,6 @@ namespace xClient.Core.Networking
         private Socket _handle;
 
         /// <summary>
-        /// Lock object for the Client Socket.
-        /// </summary>
-        private readonly object _handleLock = new object();
-
-        /// <summary>
         /// A list of all the connected proxy clients that this client holds.
         /// </summary>
         private List<ReverseProxyClient> _proxyClients;
@@ -196,11 +191,6 @@ namespace xClient.Core.Networking
         private byte[] _readBuffer;
 
         /// <summary>
-        /// Lock object for the incoming packets buffer.
-        /// </summary>
-        private readonly object _readBufferLock = new object();
-
-        /// <summary>
         /// The buffer for the client's incoming payload.
         /// </summary>
         private byte[] _payloadBuffer;
@@ -214,6 +204,16 @@ namespace xClient.Core.Networking
         /// Determines if the client is currently sending packets.
         /// </summary>
         private bool _sendingPackets;
+
+        /// <summary>
+        /// The Queue which holds buffers to read.
+        /// </summary>
+        private readonly Queue<byte[]> _readBuffers = new Queue<byte[]>();
+
+        /// <summary>
+        /// Determines if the client is currently reading packets.
+        /// </summary>
+        private bool _readingPackets;
 
         // Receive info
         private int _readOffset;
@@ -277,122 +277,123 @@ namespace xClient.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
-            bool process = true;
-            int bytesTransferred;
+            if (!Connected) return;
+
+            lock (_readBuffers)
+            {
+                try
+                {
+
+                    int bytesTransferred;
+
+                    try
+                    {
+                        bytesTransferred = _handle.EndReceive(result);
+
+                        if (bytesTransferred <= 0)
+                        {
+                            OnClientState(false);
+                            return;
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        OnClientState(false);
+                        return;
+                    }
+
+                    byte[] received = new byte[bytesTransferred];
+                    Array.Copy(_readBuffer, received, received.Length);
+                    _readBuffers.Enqueue(received);
+
+                    if (_readingPackets) return;
+
+                    _readingPackets = true;
+                    ThreadPool.QueueUserWorkItem(AsyncReceive);
+                }
+                catch
+                {
+                }
+            }
 
             try
             {
-                bytesTransferred = _handle.EndReceive(result);
+                _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (Exception ex)
+            {
+                OnClientFail(ex);
+            }
+        }
 
-                if (bytesTransferred <= 0)
+        private void AsyncReceive(object state)
+        {
+            while (true)
+            {
+                if (!Connected) return;
+
+                byte[] readBuffer;
+                lock (_readBuffers)
                 {
-                    OnClientState(false);
-                    return;
+                    if (_readBuffers.Count == 0)
+                    {
+                        _readingPackets = false;
+                        return;
+                    }
+
+                    readBuffer = _readBuffers.Dequeue();
                 }
-            }
-            catch (Exception)
-            {
-                OnClientState(false);
-                return;
-            }
 
-            _readableDataLen += bytesTransferred;
-
-            while (process)
-            {
-                switch (_receiveState)
+                _readableDataLen += readBuffer.Length;
+                bool process = true;
+                while (process)
                 {
-                    case ReceiveType.Header:
-                        {
-                            process = _readableDataLen >= HEADER_SIZE;
-                            if (process)
+                    switch (_receiveState)
+                    {
+                        case ReceiveType.Header:
                             {
-                                try
+                                process = _readableDataLen >= HEADER_SIZE;
+                                if (process)
                                 {
-                                    lock (_readBufferLock)
+                                    try
                                     {
-                                        _payloadLen = BitConverter.ToInt32(_readBuffer, _readOffset);
+                                        _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                     }
-                                }
-                                catch (Exception)
-                                {
-                                    break;
-                                }
-                                if (_payloadLen <= 0)
-                                {
-                                    process = false;
-                                    break;
-                                }
+                                    catch (Exception)
+                                    {
+                                        break;
+                                    }
+                                    if (_payloadLen <= 0)
+                                    {
+                                        process = false;
+                                        break;
+                                    }
 
-                                _readableDataLen -= HEADER_SIZE;
-                                _readOffset += HEADER_SIZE;
-                                _receiveState = ReceiveType.Payload;
+                                    _readableDataLen -= HEADER_SIZE;
+                                    _readOffset += HEADER_SIZE;
+                                    _receiveState = ReceiveType.Payload;
+                                }
+                                break;
                             }
-                            break;
-                        }
-                    case ReceiveType.Payload:
-                        {
-                            process = _readableDataLen >= _payloadLen;
-                            if (process)
+                        case ReceiveType.Payload:
                             {
-                                if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                    _payloadBuffer = new byte[_payloadLen];
-                                try
+                                process = _readableDataLen >= _payloadLen;
+                                if (process)
                                 {
-                                    lock (_readBufferLock)
+                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
+                                        _payloadBuffer = new byte[_payloadLen];
+                                    try
                                     {
-                                        Array.Copy(_readBuffer, _readOffset, _payloadBuffer, 0, _payloadBuffer.Length);
+                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, 0, _payloadBuffer.Length);
                                     }
-                                }
-                                catch
-                                {
-                                    Disconnect();
-                                }
-
-                                if (encryptionEnabled)
-                                    _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(Settings.PASSWORD));
-
-                                if (_payloadBuffer.Length > 0)
-                                {
-                                    if (compressionEnabled)
-                                        _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
-
-                                    using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                    catch
                                     {
-                                        IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                            PrefixStyle.Fixed32);
-
-                                        OnClientRead(packet);
+                                        Disconnect();
                                     }
-                                }
 
-                                _readOffset += _payloadLen;
-                                _readableDataLen -= _payloadLen;
-                                _receiveState = ReceiveType.Header;
-                            }
-                            else // handle payload that does not fit in one buffer
-                            {
-                                if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                    _payloadBuffer = new byte[_payloadLen];
-                                try
-                                {
-                                    lock (_readBufferLock)
-                                    {
-                                        Array.Copy(_readBuffer, _readOffset, _payloadBuffer, _writeOffset,
-                                            _readableDataLen);
-                                    }
-                                }
-                                catch
-                                {
-                                    Disconnect();
-                                }
-
-                                _writeOffset += _readableDataLen;
-                                _readOffset += _readableDataLen;
-                                _readableDataLen = 0;
-
-                                if (_writeOffset == _payloadLen)
-                                {
                                     if (encryptionEnabled)
                                         _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
@@ -410,31 +411,60 @@ namespace xClient.Core.Networking
                                         }
                                     }
 
+                                    _readOffset += _payloadLen;
+                                    _readableDataLen -= _payloadLen;
                                     _receiveState = ReceiveType.Header;
                                 }
+                                else // handle payload that does not fit in one buffer
+                                {
+                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
+                                        _payloadBuffer = new byte[_payloadLen];
+                                    try
+                                    {
+                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, _readableDataLen);
+                                    }
+                                    catch
+                                    {
+                                        Disconnect();
+                                    }
+
+                                    _writeOffset += _readableDataLen;
+                                    _readOffset += _readableDataLen;
+                                    _readableDataLen = 0;
+
+                                    if (_writeOffset == _payloadLen)
+                                    {
+                                        if (encryptionEnabled)
+                                            _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+
+                                        if (_payloadBuffer.Length > 0)
+                                        {
+                                            if (compressionEnabled)
+                                                _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
+
+                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                            {
+                                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                                    PrefixStyle.Fixed32);
+
+                                                OnClientRead(packet);
+                                            }
+                                        }
+
+                                        _receiveState = ReceiveType.Header;
+                                    }
+                                }
+                                break;
                             }
-                            break;
-                        }
+                    }
                 }
-            }
 
-            if (_receiveState == ReceiveType.Header)
-            {
-                _writeOffset = 0; // prepare for next packet
-            }
-            _readOffset = 0;
-            _readableDataLen = 0;
-
-            try
-            {
-                _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (Exception ex)
-            {
-                OnClientFail(ex);
+                if (_receiveState == ReceiveType.Header)
+                {
+                    _writeOffset = 0; // prepare for next packet
+                }
+                _readOffset = 0;
+                _readableDataLen = 0;
             }
         }
 
@@ -525,7 +555,7 @@ namespace xClient.Core.Networking
                 _writeOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
-
+                _payloadBuffer = null;
                 if(_proxyClients != null)
                 {
                     lock (_proxyClientsLock)
