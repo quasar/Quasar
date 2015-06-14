@@ -219,7 +219,6 @@ namespace xServer.Core.Networking
             {
                 try
                 {
-
                     int bytesTransferred;
 
                     try

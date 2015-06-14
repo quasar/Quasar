@@ -281,7 +281,6 @@ namespace xClient.Core.Networking
             {
                 try
                 {
-
                     int bytesTransferred;
 
                     try
