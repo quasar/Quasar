@@ -2,6 +2,7 @@
 using System.Windows.Forms;
 using xServer.Core;
 using System.Drawing;
+using xServer.Core.Networking;
 
 namespace xServer.Forms
 {

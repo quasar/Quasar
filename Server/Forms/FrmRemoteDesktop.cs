@@ -4,6 +4,7 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core;
+using xServer.Core.Networking;
 
 namespace xServer.Forms
 {

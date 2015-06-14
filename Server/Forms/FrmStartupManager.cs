@@ -3,6 +3,7 @@ using System.Linq;
 using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.Misc;
+using xServer.Core.Networking;
 
 namespace xServer.Forms
 {

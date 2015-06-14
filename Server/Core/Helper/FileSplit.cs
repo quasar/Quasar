@@ -6,8 +6,8 @@ namespace xServer.Core.Helper
     public class FileSplit
     {
         private int _maxBlocks;
-
-        private const int MAX_PACKET_SIZE = Client.MAX_PACKET_SIZE - Client.HEADER_SIZE - (1024 * 2);
+        private readonly object _fileStreamLock = new object();
+        private const int MAX_BLOCK_SIZE = (1024 * 1024) * 1 - (1024 * 2);
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
@@ -24,7 +24,7 @@ namespace xServer.Core.Helper
                     if (!fInfo.Exists)
                         throw new FileNotFoundException();
 
-                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_PACKET_SIZE);
+                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_BLOCK_SIZE);
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -52,7 +52,7 @@ namespace xServer.Core.Helper
 
         private int GetSize(long length)
         {
-            return (length < MAX_PACKET_SIZE) ? (int) length : MAX_PACKET_SIZE;
+            return (length < MAX_BLOCK_SIZE) ? (int) length : MAX_BLOCK_SIZE;
         }
 
         public bool ReadBlock(int blockNumber, out byte[] readBytes)
@@ -62,19 +62,22 @@ namespace xServer.Core.Helper
                 if (blockNumber > this.MaxBlocks)
                     throw new ArgumentOutOfRangeException();
 
-                using (FileStream fStream = File.OpenRead(this.Path))
+                lock (_fileStreamLock)
                 {
-                    if (blockNumber == 0)
+                    using (FileStream fStream = File.OpenRead(this.Path))
                     {
-                        fStream.Seek(0, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
-                        fStream.Read(readBytes, 0, readBytes.Length);
-                    }
-                    else
-                    {
-                        fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
-                        readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
-                        fStream.Read(readBytes, 0, readBytes.Length);
+                        if (blockNumber == 0)
+                        {
+                            fStream.Seek(0, SeekOrigin.Begin);
+                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            fStream.Read(readBytes, 0, readBytes.Length);
+                        }
+                        else
+                        {
+                            fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            fStream.Read(readBytes, 0, readBytes.Length);
+                        }
                     }
                 }
 
@@ -114,21 +117,24 @@ namespace xServer.Core.Helper
                 if (!File.Exists(this.Path) && blockNumber > 0)
                     throw new FileNotFoundException(); // previous file got deleted somehow, error
 
-                if (blockNumber == 0)
+                lock (_fileStreamLock)
                 {
-                    using (FileStream fStream = File.Open(this.Path, FileMode.Create, FileAccess.Write))
+                    if (blockNumber == 0)
                     {
-                        fStream.Seek(0, SeekOrigin.Begin);
-                        fStream.Write(block, 0, block.Length);
+                        using (FileStream fStream = File.Open(this.Path, FileMode.Create, FileAccess.Write))
+                        {
+                            fStream.Seek(0, SeekOrigin.Begin);
+                            fStream.Write(block, 0, block.Length);
+                        }
+
+                        return true;
                     }
 
-                    return true;
-                }
-
-                using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
-                {
-                    fStream.Seek(blockNumber*MAX_PACKET_SIZE, SeekOrigin.Begin);
-                    fStream.Write(block, 0, block.Length);
+                    using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
+                    {
+                        fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                        fStream.Write(block, 0, block.Length);
+                    }
                 }
 
                 return true;

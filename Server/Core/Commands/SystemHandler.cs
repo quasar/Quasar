@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
 using xServer.Settings;

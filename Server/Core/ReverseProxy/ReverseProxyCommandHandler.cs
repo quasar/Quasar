@@ -2,6 +2,7 @@
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Text;
+using xServer.Core.Networking;
 using xServer.Core.Packets;
 using xServer.Core.ReverseProxy.Packets;
 

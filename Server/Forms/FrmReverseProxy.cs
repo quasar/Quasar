@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using xServer.Core;
 using xServer.Core.ReverseProxy;
 using xServer.Core.Helper;
+using xServer.Core.Networking;
 
 namespace xServer.Forms
 {

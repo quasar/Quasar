@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using xServer.Core.Networking;
 
 namespace xServer.Core.ReverseProxy
 {
