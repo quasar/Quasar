@@ -190,7 +190,6 @@ namespace xServer.Core.Networking
 
                 _handle = sock;
                 _handle.SetKeepAliveEx(_parentServer.KEEP_ALIVE_INTERVAL, _parentServer.KEEP_ALIVE_TIME);
-                _handle.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.NoDelay, true);
                 _handle.NoDelay = true;
 
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
