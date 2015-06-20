@@ -49,7 +49,7 @@ namespace xServer.Core.Commands
                     client.Value.LastDesktop = newScreen;
 
                     if (client.Value.FrmRdp != null)
-                        client.Value.FrmRdp.UpdateImage((Bitmap)newScreen.Clone());
+                        client.Value.FrmRdp.UpdateImage(newScreen, true);
 
                     newScreen = null;
                 }
@@ -77,7 +77,7 @@ namespace xServer.Core.Commands
                         client.Value.LastDesktop = newScreen;
 
                         if (client.Value.FrmRdp != null)
-                            client.Value.FrmRdp.UpdateImage((Bitmap)newScreen.Clone());
+                            client.Value.FrmRdp.UpdateImage(newScreen, true);
 
                         newScreen = null;
                     }
