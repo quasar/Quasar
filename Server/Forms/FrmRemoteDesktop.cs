@@ -116,20 +116,13 @@ namespace xServer.Forms
             }
         }
 
-        public void UpdateImage(Bitmap bmp, bool CloneBitmap = false)
+        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
             try
             {
                 picDesktop.Invoke((MethodInvoker) delegate
                 {
-                    if (CloneBitmap)
-                    {
-                        picDesktop.Image = (Bitmap)bmp.Clone();
-                    }
-                    else
-                    {
-                        picDesktop.Image = bmp;
-                    }
+                    picDesktop.Image = cloneBitmap ? (Bitmap) bmp.Clone() : bmp;
                 });
             }
             catch (InvalidOperationException)
