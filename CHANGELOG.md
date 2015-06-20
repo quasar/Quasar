@@ -1,6 +1,30 @@
 Changelog - xRAT 2.0
 ====================
 
+xRAT v2.0.0.0 RELEASE4 [14.06.2015]
+---
+* **Changed Target Framework to .NET Framework 3.5 Client Profile**
+* Added Startup Manager
+* Added Keylogger
+* Added Reverse SOCKS5/HTTPS Proxy
+* Added option to show Tooltip on Clients with Information about their System
+* Added No-Ip.org Support for dynamic IPs
+* **Improved Client & Server network code**
+  * Added Buffer Manager
+  * Changed compression from LZ4 to QuickLZ
+  * Fixed reading of packets with length bigger than buffer size
+  * Changed buffer size to 1MB
+* Improved Remote Desktop support for multiple monitors
+* Improved Remote Shell
+* Improved Settings
+* Improved Builder
+* Improved File Transfers
+* Improved Updating of Clients
+* Fixed threading issues
+* Fixed memory leak in Server
+* Many other bug fixes and small improvements
+
+
 xRAT v2.0.0.0 RELEASE3 [10.08.2014]
 ---
 * Optimized connection between Client & Server (!)

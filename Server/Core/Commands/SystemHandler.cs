@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
 using xServer.Settings;
@@ -126,9 +127,8 @@ namespace xServer.Core.Commands
             {
                 if (client.Value.FrmStm == null) return;
 
-                char tempChar = item[0];
                 int type;
-                if (!int.TryParse(tempChar.ToString(), out type)) continue;
+                if (!int.TryParse(item.Substring(0, 1), out type)) continue;
 
                 string preparedItem = item.Remove(0, 1);
                 var temp = preparedItem.Split(new string[] { "||" }, StringSplitOptions.None);

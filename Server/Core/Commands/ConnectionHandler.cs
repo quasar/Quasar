@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using System.Linq;
 using System.Windows.Forms;
+using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
 using xServer.Settings;
@@ -13,7 +13,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleInitialize(Client client, Initialize packet)
         {
-            if (client.EndPoint.Address.ToString() == "255.255.255.255")
+            if (client.EndPoint.Address.ToString() == "255.255.255.255" || packet.Id.Length != 64)
                 return;
 
             try
@@ -32,8 +32,8 @@ namespace xServer.Core.Commands
                 string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
 
                 client.Value.DownloadDirectory = (!Helper.Helper.CheckPathForIllegalChars(userAtPc)) ?
-                    Path.Combine(Application.StartupPath, "Clients\\" + userAtPc + "\\") :
-                    Path.Combine(Application.StartupPath, "Clients\\" + client.EndPoint.Address.ToString() + "\\");
+                    Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", userAtPc, client.Value.Id.Substring(0, 7))) :
+                    Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
 
                 if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
                     FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
@@ -48,14 +48,14 @@ namespace xServer.Core.Commands
                     client.Value.OperatingSystem, client.Value.AccountType
                 }) { Tag = client, ImageIndex = packet.ImageIndex };
 
-
                 FrmMain.Instance.AddClientToListview(lvi);
 
                 if (XMLSettings.ShowPopup)
                     FrmMain.Instance.ShowPopup(client);
 
                 client.Value.IsAuthenticated = true;
-                new Packets.ServerPackets.GetSystemInfo().Execute(client);
+                if (XMLSettings.ShowToolTip)
+                    new Packets.ServerPackets.GetSystemInfo().Execute(client);
             }
             catch
             {

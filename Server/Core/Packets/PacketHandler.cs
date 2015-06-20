@@ -1,4 +1,5 @@
 ﻿using xServer.Core.Commands;
+using xServer.Core.Networking;
 using xServer.Core.ReverseProxy;
 
 namespace xServer.Core.Packets
@@ -14,7 +15,8 @@ namespace xServer.Core.Packets
                 if (type == typeof(ClientPackets.Initialize))
                     CommandHandler.HandleInitialize(client, (ClientPackets.Initialize)packet);
                 else
-                    return;
+                    client.Disconnect();
+                return;
             }
 
             if (type == typeof(ClientPackets.Status))

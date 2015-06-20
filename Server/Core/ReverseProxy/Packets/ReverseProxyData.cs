@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using xServer.Core.Networking;
 using xServer.Core.Packets;
 
 namespace xServer.Core.ReverseProxy.Packets

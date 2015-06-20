@@ -1,4 +1,5 @@
 ﻿using xClient.Core.Commands;
+using xClient.Core.Networking;
 using xClient.Core.ReverseProxy;
 
 namespace xClient.Core.Packets

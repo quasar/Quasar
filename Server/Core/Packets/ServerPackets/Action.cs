@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ServerPackets
 {

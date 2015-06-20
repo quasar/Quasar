@@ -12,8 +12,8 @@ Requirements
 
 Features
 ---
-* Buffered TCP/IP stream
-* Protocol Buffers
+* Buffered TCP/IP network stream
+* Protocol Buffers to send & receive serialized data
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
