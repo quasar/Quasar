@@ -9,6 +9,12 @@ xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (usin
 Requirements
 ---
 * .NET Framework 3.5 Client Profile
+* Supported Operating Systems (32- and 64-bit)
+  * Windows XP SP3
+  * Windows Vista
+  * Windows 7
+  * Windows 8/8.1
+  * Windows 10 Preview
 
 Features
 ---
