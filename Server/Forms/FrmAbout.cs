@@ -16,7 +16,7 @@ namespace xServer.Forms
             lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT" });
             lnkCredits.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT#credits" });
         }
-
+        
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             lnkGithubPage.LinkVisited = true;

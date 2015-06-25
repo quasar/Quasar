@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 
@@ -26,8 +26,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Task Manager [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("Task Manager", _connectClient);
                 new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
             }
         }

@@ -31,8 +31,8 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStatistics));
             this.tabControl = new System.Windows.Forms.TabControl();
             this.tabTraffic = new System.Windows.Forms.TabPage();
-            this.tabClients = new System.Windows.Forms.TabPage();
             this.lblTrafficStats = new System.Windows.Forms.Label();
+            this.tabClients = new System.Windows.Forms.TabPage();
             this.lblClientStats = new System.Windows.Forms.Label();
             this.tabControl.SuspendLayout();
             this.tabTraffic.SuspendLayout();
@@ -56,11 +56,21 @@
             this.tabTraffic.Location = new System.Drawing.Point(4, 22);
             this.tabTraffic.Name = "tabTraffic";
             this.tabTraffic.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTraffic.Size = new System.Drawing.Size(376, 253);
+            this.tabTraffic.Size = new System.Drawing.Size(470, 253);
             this.tabTraffic.TabIndex = 0;
             this.tabTraffic.Text = "Traffic Stats";
             this.tabTraffic.UseVisualStyleBackColor = true;
             this.tabTraffic.Paint += new System.Windows.Forms.PaintEventHandler(this.tabTraffic_Paint);
+            // 
+            // lblTrafficStats
+            // 
+            this.lblTrafficStats.AutoSize = true;
+            this.lblTrafficStats.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblTrafficStats.Location = new System.Drawing.Point(40, 13);
+            this.lblTrafficStats.Name = "lblTrafficStats";
+            this.lblTrafficStats.Size = new System.Drawing.Size(118, 21);
+            this.lblTrafficStats.TabIndex = 0;
+            this.lblTrafficStats.Text = "Traffic Statistics";
             // 
             // tabClients
             // 
@@ -74,16 +84,6 @@
             this.tabClients.UseVisualStyleBackColor = true;
             this.tabClients.Paint += new System.Windows.Forms.PaintEventHandler(this.tabClients_Paint);
             // 
-            // lblTrafficStats
-            // 
-            this.lblTrafficStats.AutoSize = true;
-            this.lblTrafficStats.Font = new System.Drawing.Font("Segoe UI", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblTrafficStats.Location = new System.Drawing.Point(40, 13);
-            this.lblTrafficStats.Name = "lblTrafficStats";
-            this.lblTrafficStats.Size = new System.Drawing.Size(118, 21);
-            this.lblTrafficStats.TabIndex = 0;
-            this.lblTrafficStats.Text = "Traffic Statistics";
-            // 
             // lblClientStats
             // 
             this.lblClientStats.AutoSize = true;
@@ -94,7 +94,7 @@
             this.lblClientStats.TabIndex = 1;
             this.lblClientStats.Text = "Client Statistics";
             // 
-            // frmStatistics
+            // FrmStatistics
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -105,9 +105,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmStatistics";
+            this.Name = "FrmStatistics";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Statistics";
+            this.Text = "Statistics";
             this.Load += new System.EventHandler(this.FrmStatistics_Load);
             this.tabControl.ResumeLayout(false);
             this.tabTraffic.ResumeLayout(false);

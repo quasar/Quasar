@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core;
 using System.Drawing;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 
 namespace xServer.Forms
@@ -31,8 +31,7 @@ namespace xServer.Forms
             this.DoubleBuffered = true;
 
             if (_connectClient != null)
-                this.Text = string.Format("xRAT 2.0 - Remote Shell [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("Remote Shell", _connectClient);
         }
 
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)

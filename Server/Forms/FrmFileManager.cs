@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using xServer.Core.Commands;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 
@@ -31,8 +31,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - File Manager [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("File Manager", _connectClient);
                 new Core.Packets.ServerPackets.Drives().Execute(_connectClient);
             }
         }

@@ -1,9 +1,8 @@
 ﻿using System;
-using System.CodeDom;
 using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 
 namespace xServer.Forms
@@ -25,14 +24,13 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Remote Desktop [{0}:{1}]", _connectClient.EndPoint.Address.ToString(),
-                _connectClient.EndPoint.Port.ToString());
+            this.Text = Helper.GetWindowTitle("Remote Desktop", _connectClient);
 
             panelTop.Left = (this.Width/2) - (panelTop.Width/2);
 
             btnHide.Left = (panelTop.Width/2) - (btnHide.Width/2);
 
-            btnShow.Location = new System.Drawing.Point(377, 0);
+            btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width/2) - (btnShow.Width/2);
 
             if (_connectClient.Value != null)

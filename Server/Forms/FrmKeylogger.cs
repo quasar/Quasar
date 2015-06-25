@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using xServer.Core;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 
@@ -28,8 +28,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Keylogger [{0}:{1}]", _connectClient.EndPoint.Address.ToString(),
-                    _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("Keylogger", _connectClient);
 
                 if (!Directory.Exists(_path))
                 {

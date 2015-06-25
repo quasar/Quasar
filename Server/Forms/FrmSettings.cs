@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using xServer.Core;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Settings;

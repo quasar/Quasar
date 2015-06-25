@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -15,7 +16,7 @@ namespace xServer.Forms
 
         private void FrmVisitWebsite_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Visit Website [Selected: {0}]", _selectedClients);
+            this.Text = Helper.GetWindowTitle("Visit Website", _selectedClients);
             txtURL.Text = Core.Misc.VisitWebsite.URL;
             chkVisitHidden.Checked = Core.Misc.VisitWebsite.Hidden;
         }

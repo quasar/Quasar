@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -16,7 +17,7 @@ namespace xServer.Forms
 
         private void FrmUpdate_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Update [Selected: {0}]", _selectedClients);
+            this.Text = Helper.GetWindowTitle("Update Clients", _selectedClients);
             if (Core.Misc.Update.UseDownload)
                 radioURL.Checked = true;
             txtPath.Text = File.Exists(Core.Misc.Update.UploadPath) ? Core.Misc.Update.UploadPath : string.Empty;

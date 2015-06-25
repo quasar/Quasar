@@ -2,6 +2,7 @@
 using System.IO;
 using System.Linq;
 using System.Text;
+using xServer.Core.Networking;
 
 namespace xServer.Core.Helper
 {
@@ -45,6 +46,16 @@ namespace xServer.Core.Helper
                 len = len/1024;
             }
             return string.Format("{0:0.##} {1}", len, _sizes[order]);
+        }
+
+        public static string GetWindowTitle(string title, Client c)
+        {
+            return string.Format("{0} - {1}@{2} [{3}:{4}]", title, c.Value.Username , c.Value.PCName, c.EndPoint.Address.ToString(), c.EndPoint.Port.ToString());
+        }
+
+        public static string GetWindowTitle(string title, int count)
+        {
+            return string.Format("{0} [Selected: {1}]", title, count);
         }
 
         public static int GetFileIcon(string extension)

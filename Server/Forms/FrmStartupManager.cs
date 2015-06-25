@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using xServer.Core;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 
@@ -22,12 +22,11 @@ namespace xServer.Forms
             lstStartupItems.ListViewItemSorter = _lvwColumnSorter;
         }
 
-        private void FrmStartupManager_Load(object sender, System.EventArgs e)
+        private void FrmStartupManager_Load(object sender, EventArgs e)
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - Startup Manager [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("Startup Manager", _connectClient);
                 AddGroups();
                 new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
             }

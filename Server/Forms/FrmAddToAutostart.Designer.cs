@@ -152,7 +152,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmAddToAutostart";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Add to Autostart";
+            this.Text = "Add to Autostart";
             this.groupAutostartItem.ResumeLayout(false);
             this.groupAutostartItem.PerformLayout();
             this.ResumeLayout(false);

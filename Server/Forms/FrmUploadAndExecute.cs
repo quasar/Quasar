@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -16,7 +17,7 @@ namespace xServer.Forms
 
         private void FrmUploadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Upload & Execute [Selected: {0}]", _selectedClients);
+            this.Text = Helper.GetWindowTitle("Upload & Execute", _selectedClients);
             chkRunHidden.Checked = Core.Misc.UploadAndExecute.RunHidden;
         }
 

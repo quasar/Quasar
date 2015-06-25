@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -16,7 +17,7 @@ namespace xServer.Forms
 
         private void FrmShowMessagebox_Load(object sender, EventArgs e)
         {
-            this.Text = string.Format("xRAT 2.0 - Show Messagebox [Selected: {0}]", _selectedClients);
+            this.Text = Helper.GetWindowTitle("Show Messagebox", _selectedClients);
 
             cmbMsgButtons.Items.AddRange(new string[]
             {"AbortRetryIgnore", "OK", "OKCancel", "RetryCancel", "YesNo", "YesNoCancel"});

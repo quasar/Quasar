@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core;
 using xServer.Core.ReverseProxy;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -11,7 +10,6 @@ namespace xServer.Forms
     {
         private readonly Client[] _clients;
         private ReverseProxyServer SocksServer { get; set; }
-        private delegate void Invoky();
         private ReverseProxyClient[] _openConnections;
         private Timer _refreshTimer;
 
@@ -28,15 +26,12 @@ namespace xServer.Forms
         {
             if (_clients.Length > 1)
             {
-                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [Load-Balancer is active]");
-
+                this.Text = "xRAT 2.0 - Reverse Proxy [Load-Balancer is active]";
                 lblLoadBalance.Text = "The Load Balancer is active, " + _clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
-
             }
             else if (_clients.Length == 1)
             {
-                this.Text = string.Format("xRAT 2.0 - Reverse Proxy [{0}:{1}]", _clients[0].EndPoint.Address.ToString(), _clients[0].EndPoint.Port.ToString());
-
+                this.Text = Helper.GetWindowTitle("Reverse Proxy", _clients[0]);
                 lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
             }
         }
@@ -131,18 +126,18 @@ namespace xServer.Forms
             {
                 if (e.ItemIndex < _openConnections.Length)
                 {
-                    ReverseProxyClient Connection = _openConnections[e.ItemIndex];
+                    ReverseProxyClient connection = _openConnections[e.ItemIndex];
 
                     e.Item = new ListViewItem(new string[]
                     {
-                        Connection.Client.EndPoint.ToString(),
-                        Connection.Client.Value.Country,
-                        Connection.TargetServer + (Connection.HostName.Length > 0 ? "    (" + Connection.HostName + ")" : ""),
-                        Connection.TargetPort.ToString(),
-                        Helper.GetDataSize(Connection.LengthReceived),
-                        Helper.GetDataSize(Connection.LengthSended),
-                        Connection.Type.ToString()
-                    }) { Tag = Connection };
+                        connection.Client.EndPoint.ToString(),
+                        connection.Client.Value.Country,
+                        connection.TargetServer + (connection.HostName.Length > 0 ? "    (" + connection.HostName + ")" : ""),
+                        connection.TargetPort.ToString(),
+                        Helper.GetDataSize(connection.LengthReceived),
+                        Helper.GetDataSize(connection.LengthSended),
+                        connection.Type.ToString()
+                    }) { Tag = connection };
                 }
             }
         }

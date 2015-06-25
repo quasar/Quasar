@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
-using xServer.Core;
 using xServer.Core.Extensions;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 
 namespace xServer.Forms
@@ -23,8 +23,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = string.Format("xRAT 2.0 - System Information [{0}:{1}]",
-                    _connectClient.EndPoint.Address.ToString(), _connectClient.EndPoint.Port.ToString());
+                this.Text = Helper.GetWindowTitle("System Information", _connectClient);
                 new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
 
                 if (_connectClient.Value != null)
