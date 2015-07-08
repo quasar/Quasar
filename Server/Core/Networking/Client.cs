@@ -141,6 +141,11 @@ namespace xServer.Core.Networking
         private bool _sendingPackets;
 
         /// <summary>
+        /// Lock object for the sending packets boolean.
+        /// </summary>
+        private readonly object _sendingPacketsLock = new object();
+
+        /// <summary>
         /// The Queue which holds buffers to read.
         /// </summary>
         private readonly Queue<byte[]> _readBuffers = new Queue<byte[]>();
@@ -149,6 +154,11 @@ namespace xServer.Core.Networking
         /// Determines if the client is currently reading packets.
         /// </summary>
         private bool _readingPackets;
+
+        /// <summary>
+        /// Lock object for the reading packets boolean.
+        /// </summary>
+        private readonly object _readingPacketsLock = new object();
 
         //receive info
         private int _readOffset;
@@ -212,44 +222,46 @@ namespace xServer.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
-            if (!Connected) return;
-
-            lock (_readBuffers)
+            try
             {
+                int bytesTransferred;
+
                 try
                 {
-                    int bytesTransferred;
+                    bytesTransferred = _handle.EndReceive(result);
 
-                    try
-                    {
-                        bytesTransferred = _handle.EndReceive(result);
-
-                        if (bytesTransferred <= 0)
-                        {
-                            OnClientState(false);
-                            return;
-                        }
-                    }
-                    catch (Exception)
+                    if (bytesTransferred <= 0)
                     {
                         OnClientState(false);
                         return;
                     }
-
-                    _parentServer.BytesReceived += bytesTransferred;
-
-                    byte[] received = new byte[bytesTransferred];
-                    Array.Copy(_readBuffer, received, received.Length);
-                    _readBuffers.Enqueue(received);
-
-                    if (_readingPackets) return;
-
-                    _readingPackets = true;
-                    ThreadPool.QueueUserWorkItem(AsyncReceive);
                 }
-                catch
+                catch (Exception)
                 {
+                    OnClientState(false);
+                    return;
                 }
+
+                _parentServer.BytesReceived += bytesTransferred;
+
+                byte[] received = new byte[bytesTransferred];
+                Array.Copy(_readBuffer, received, received.Length);
+                lock (_readBuffers)
+                {
+                    _readBuffers.Enqueue(received);
+                }
+
+                lock (_readingPacketsLock)
+                {
+                    if (!_readingPackets)
+                    {
+                        _readingPackets = true;
+                        ThreadPool.QueueUserWorkItem(AsyncReceive);
+                    }
+                }
+            }
+            catch
+            {
             }
 
             try
@@ -269,14 +281,15 @@ namespace xServer.Core.Networking
         {
             while (true)
             {
-                if (!Connected) return;
-
                 byte[] readBuffer;
                 lock (_readBuffers)
                 {
                     if (_readBuffers.Count == 0)
                     {
-                        _readingPackets = false;
+                        lock (_readingPacketsLock)
+                        {
+                            _readingPackets = false;
+                        }
                         return;
                     }
 
@@ -350,6 +363,8 @@ namespace xServer.Core.Networking
                                     _readOffset += _payloadLen;
                                     _readableDataLen -= _payloadLen;
                                     _receiveState = ReceiveType.Header;
+                                    _payloadBuffer = null;
+                                    _payloadLen = 0;
                                 }
                                 else // handle payload that does not fit in one buffer
                                 {
@@ -388,6 +403,8 @@ namespace xServer.Core.Networking
                                         }
 
                                         _receiveState = ReceiveType.Header;
+                                        _payloadBuffer = null;
+                                        _payloadLen = 0;
                                     }
                                 }
                                 break;
@@ -404,6 +421,11 @@ namespace xServer.Core.Networking
             }
         }
 
+        /// <summary>
+        /// Sends a packet to the connected client.
+        /// </summary>
+        /// <typeparam name="T">The type of the packet.</typeparam>
+        /// <param name="packet">The packet to be send.</param>
         public void Send<T>(T packet) where T : IPacket
         {
             if (!Connected) return;
@@ -422,9 +444,12 @@ namespace xServer.Core.Networking
 
                         OnClientWrite(packet, payload.LongLength, payload);
 
-                        if (_sendingPackets) return;
+                        lock (_sendingPacketsLock)
+                        {
+                            if (_sendingPackets) return;
 
-                        _sendingPackets = true;
+                            _sendingPackets = true;
+                        }
                         ThreadPool.QueueUserWorkItem(Send);
                     }
                 }
@@ -438,14 +463,18 @@ namespace xServer.Core.Networking
         {
             while (true)
             {
-                if (!Connected) return;
+                if (!Connected)
+                {
+                    SendCleanup(true);
+                    return;
+                }
 
                 byte[] payload;
                 lock (_sendBuffers)
                 {
                     if (_sendBuffers.Count == 0)
                     {
-                        _sendingPackets = false;
+                        SendCleanup();
                         return;
                     }
 
@@ -464,16 +493,31 @@ namespace xServer.Core.Networking
                 Array.Copy(header, data, header.Length);
                 Array.Copy(payload, 0, data, 4, payload.Length);
 
-                _parentServer.BytesSent += payload.Length;
-
                 try
                 {
                     _handle.Send(data);
                 }
-                catch
+                catch (Exception ex)
                 {
                     Disconnect();
+                    SendCleanup(true);
+                    return;
                 }
+            }
+        }
+
+        private void SendCleanup(bool clear = false)
+        {
+            lock (_sendingPacketsLock)
+            {
+                _sendingPackets = false;
+            }
+
+            if (!clear) return;
+
+            lock (_sendBuffers)
+            {
+                _sendBuffers.Clear();
             }
         }
 
