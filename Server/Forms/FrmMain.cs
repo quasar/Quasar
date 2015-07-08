@@ -293,7 +293,7 @@ namespace xServer.Forms
             {
             }
         }
-
+        
         public void SetClientStatus(Client c, string text)
         {
             try
@@ -326,7 +326,7 @@ namespace xServer.Forms
             }
         }
 
-        public ListViewItem GetListviewItemOfClient(Client c)
+        private ListViewItem GetListviewItemOfClient(Client c)
         {
             ListViewItem itemClient = null;
 
@@ -339,7 +339,7 @@ namespace xServer.Forms
             return itemClient;
         }
 
-        public Client[] GetSelectedClients()
+        private Client[] GetSelectedClients()
         {
             List<Client> clients = new List<Client>();
 
@@ -352,6 +352,25 @@ namespace xServer.Forms
                         lstClients.SelectedItems.Cast<ListViewItem>()
                             .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
                             .Select(lvi => (Client) lvi.Tag));
+                }
+            });
+
+            return clients.ToArray();
+        }
+
+        private Client[] GetAllClients()
+        {
+            List<Client> clients = new List<Client>();
+
+            lstClients.Invoke((MethodInvoker)delegate
+            {
+                lock (_lockClients)
+                {
+                    if (lstClients.Items.Count == 0) return;
+                    clients.AddRange(
+                        lstClients.Items.Cast<ListViewItem>()
+                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
+                            .Select(lvi => (Client)lvi.Tag));
                 }
             });
 
