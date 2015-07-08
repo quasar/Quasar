@@ -333,7 +333,7 @@ namespace xServer.Forms
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && lvi.Tag is Client && c.Equals((Client)lvi.Tag));
             });
 
             return itemClient;
@@ -350,8 +350,8 @@ namespace xServer.Forms
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
-                            .Select(lvi => (Client) lvi.Tag));
+                            .Where(lvi => lvi != null && lvi.Tag is Client)
+                            .Select(lvi => (Client)lvi.Tag));
                 }
             });
 
@@ -362,17 +362,7 @@ namespace xServer.Forms
         {
             List<Client> clients = new List<Client>();
 
-            lstClients.Invoke((MethodInvoker)delegate
-            {
-                lock (_lockClients)
-                {
-                    if (lstClients.Items.Count == 0) return;
-                    clients.AddRange(
-                        lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
-                            .Select(lvi => (Client)lvi.Tag));
-                }
-            });
+            clients.AddRange(ListenServer.Clients.Where(c => c.Value.IsAuthenticated));
 
             return clients.ToArray();
         }
