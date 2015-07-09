@@ -132,9 +132,9 @@ namespace xClient.Core.Networking
         }
 
         /// <summary>
-        /// The maximum size of one package (also the buffer size for receiving data).
+        /// The buffer size for receiving data.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -149,7 +149,7 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The header size in
         /// </summary>
-        public int HEADER_SIZE { get { return 3; } } // 3 Byte
+        public int HEADER_SIZE { get { return 3; } } // 3B
 
         /// <summary>
         /// Returns an array containing all of the proxy clients of this client.
@@ -260,7 +260,7 @@ namespace xClient.Core.Networking
                 _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
                 _handle.NoDelay = true;
 
-                _readBuffer = new byte[MAX_PACKET_SIZE];
+                _readBuffer = new byte[BUFFER_SIZE];
                 _handle.Connect(host, port);
 
                 if (_handle.Connected)

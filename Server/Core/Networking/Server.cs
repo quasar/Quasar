@@ -136,9 +136,9 @@ namespace xServer.Core.Networking
         public long BytesSent { get; set; }
 
         /// <summary>
-        /// The maximum size of one package in byte (it is also the buffer size for receiving data).
+        /// The buffer size for receiving data.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -255,7 +255,7 @@ namespace xServer.Core.Networking
                     }
                     
                     if (BufferManager == null)
-                        BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
+                        BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = true };
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));
