@@ -309,7 +309,7 @@ namespace xServer.Core.Networking
                                 {
                                     try
                                     {
-                                        _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
+                                        _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
                                     }
                                     catch (Exception)
                                     {
@@ -487,11 +487,16 @@ namespace xServer.Core.Networking
                 if (encryptionEnabled)
                     payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
-                byte[] header = BitConverter.GetBytes(payload.Length);
+                byte[] header = new byte[]
+                {
+                    (byte)payload.Length,
+                    (byte)(payload.Length >> 8),
+                    (byte)(payload.Length >> 16)
+                };
 
-                byte[] data = new byte[payload.Length + 4];
+                byte[] data = new byte[payload.Length + _parentServer.HEADER_SIZE];
                 Array.Copy(header, data, header.Length);
-                Array.Copy(payload, 0, data, 4, payload.Length);
+                Array.Copy(payload, 0, data, _parentServer.HEADER_SIZE, payload.Length);
 
                 try
                 {

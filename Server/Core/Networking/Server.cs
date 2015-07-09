@@ -153,7 +153,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The header size in byte.
         /// </summary>
-        public int HEADER_SIZE { get { return 4; } } // 4B
+        public int HEADER_SIZE { get { return 3; } } // 3B
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
