@@ -372,12 +372,11 @@ namespace xClient.Core.Networking
                                     try
                                     {
                                         _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
+
+                                        if (_payloadLen <= 0)
+                                            throw new Exception("invalid header");
                                     }
                                     catch (Exception)
-                                    {
-                                        break;
-                                    }
-                                    if (_payloadLen <= 0)
                                     {
                                         process = false;
                                         break;
