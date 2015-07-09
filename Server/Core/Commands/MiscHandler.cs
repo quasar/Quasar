@@ -51,7 +51,7 @@ namespace xServer.Core.Commands
 
             if (client.Value.FrmFm == null)
             {
-                FrmMain.Instance.SetClientStatus(client, "Download aborted, please keep the File Manager open.");
+                FrmMain.Instance.SetStatusByClient(client, "Download aborted, please keep the File Manager open.");
                 new Packets.ServerPackets.DownloadFileCanceled(packet.ID).Execute(client);
                 return;
             }

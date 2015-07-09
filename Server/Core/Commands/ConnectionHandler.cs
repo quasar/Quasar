@@ -64,12 +64,12 @@ namespace xServer.Core.Commands
 
         public static void HandleStatus(Client client, Status packet)
         {
-            FrmMain.Instance.SetClientStatus(client, packet.Message);
+            FrmMain.Instance.SetStatusByClient(client, packet.Message);
         }
 
         public static void HandleUserStatus(Client client, UserStatus packet)
         {
-            FrmMain.Instance.SetClientUserStatus(client, packet.Message);
+            FrmMain.Instance.SetUserStatusByClient(client, packet.Message);
         }
     }
 }

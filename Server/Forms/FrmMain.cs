@@ -4,7 +4,6 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core;
 using xServer.Core.Commands;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
@@ -232,13 +231,18 @@ namespace xServer.Forms
             PacketHandler.HandlePacket(client, packet);
         }
 
+        /// <summary>
+        /// Sets the tooltip text of the listview item of a client.
+        /// </summary>
+        /// <param name="c">The client on which the change is performed.</param>
+        /// <param name="text">The new tooltip text.</param>
         public void SetToolTipText(Client c, string text)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
                         item.ToolTipText = text;
                 });
@@ -248,6 +252,10 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Adds a connected client to the Listview.
+        /// </summary>
+        /// <param name="clientItem">The client to add.</param>
         public void AddClientToListview(ListViewItem clientItem)
         {
             try
@@ -270,6 +278,10 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Removes a connected client from the Listview.
+        /// </summary>
+        /// <param name="c">The client to remove.</param>
         public void RemoveClientFromListview(Client c)
         {
             try
@@ -294,13 +306,18 @@ namespace xServer.Forms
             }
         }
         
-        public void SetClientStatus(Client c, string text)
+        /// <summary>
+        /// Sets the status of a client.
+        /// </summary>
+        /// <param name="c">The client to update the status of.</param>
+        /// <param name="text">The new status.</param>
+        public void SetStatusByClient(Client c, string text)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
                         item.SubItems[STATUS_ID].Text = text;
                 });
@@ -310,13 +327,21 @@ namespace xServer.Forms
             }
         }
 
-        public void SetClientUserStatus(Client c, string text)
+        /// <summary>
+        /// Sets the user status of a client.
+        /// </summary>
+        /// <remarks>
+        /// Can be "Active" or "Idle".
+        /// </remarks>
+        /// <param name="c">The client to update the user status of.</param>
+        /// <param name="text">The new user status.</param>
+        public void SetUserStatusByClient(Client c, string text)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
                         item.SubItems[USERSTATUS_ID].Text = text;
                 });
@@ -326,19 +351,28 @@ namespace xServer.Forms
             }
         }
 
-        private ListViewItem GetListviewItemOfClient(Client c)
+        /// <summary>
+        /// Gets the Listview item which belongs to the client. 
+        /// </summary>
+        /// <param name="c">The client to get the Listview item of.</param>
+        /// <returns>Listview item of the client.</returns>
+        private ListViewItem GetListViewItemByClient(Client c)
         {
             ListViewItem itemClient = null;
 
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && lvi.Tag is Client && c.Equals((Client)lvi.Tag));
             });
 
             return itemClient;
         }
 
+        /// <summary>
+        /// Gets all selected clients.
+        /// </summary>
+        /// <returns>An array of selected Clients.</returns>
         private Client[] GetSelectedClients()
         {
             List<Client> clients = new List<Client>();
@@ -350,26 +384,7 @@ namespace xServer.Forms
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
-                            .Select(lvi => (Client) lvi.Tag));
-                }
-            });
-
-            return clients.ToArray();
-        }
-
-        private Client[] GetAllClients()
-        {
-            List<Client> clients = new List<Client>();
-
-            lstClients.Invoke((MethodInvoker)delegate
-            {
-                lock (_lockClients)
-                {
-                    if (lstClients.Items.Count == 0) return;
-                    clients.AddRange(
-                        lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
+                            .Where(lvi => lvi != null && lvi.Tag is Client)
                             .Select(lvi => (Client)lvi.Tag));
                 }
             });
@@ -377,6 +392,23 @@ namespace xServer.Forms
             return clients.ToArray();
         }
 
+        /// <summary>
+        /// Gets all connected and authenticated clients.
+        /// </summary>
+        /// <returns>An array of all Clients.</returns>
+        private Client[] GetAllClients()
+        {
+            List<Client> clients = new List<Client>();
+
+            clients.AddRange(ListenServer.Clients.Where(c => c.Value.IsAuthenticated));
+
+            return clients.ToArray();
+        }
+
+        /// <summary>
+        /// Displays a popup with information about a client.
+        /// </summary>
+        /// <param name="c">The client.</param>
         public void ShowPopup(Client c)
         {
             try
