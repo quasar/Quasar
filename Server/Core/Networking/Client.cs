@@ -471,6 +471,8 @@ namespace xServer.Core.Networking
                 Array.Copy(header, data, header.Length);
                 Array.Copy(payload, 0, data, _parentServer.HEADER_SIZE, payload.Length);
 
+                _parentServer.BytesSent += data.Length;
+
                 try
                 {
                     _handle.Send(data);
