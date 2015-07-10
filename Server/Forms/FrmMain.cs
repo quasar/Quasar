@@ -209,9 +209,6 @@ namespace xServer.Forms
         {
             if (connected)
             {
-                client.Value = new UserState();
-                // Initialize the UserState so we can store values in there if we need to.
-
                 new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
             }
             else

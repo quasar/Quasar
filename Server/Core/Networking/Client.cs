@@ -194,8 +194,8 @@ namespace xServer.Core.Networking
         {
             try
             {
-                AddTypesToSerializer(typeof (IPacket), packets);
                 _parentServer = server;
+                AddTypesToSerializer(typeof(IPacket), packets);
                 Initialize();
 
                 _handle = sock;
@@ -217,7 +217,8 @@ namespace xServer.Core.Networking
 
         private void Initialize()
         {
-            AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
+            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
+            Value = new UserState();
         }
 
         private void AsyncReceive(IAsyncResult result)

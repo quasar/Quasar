@@ -1,4 +1,6 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
+using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.ReverseProxy;
 using xServer.Forms;
@@ -7,6 +9,7 @@ namespace xServer.Core.Networking
 {
     public class UserState
     {
+        public DateTime ConnectedTime { get; private set; }
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
         public string AccountType { get; set; }
@@ -39,6 +42,7 @@ namespace xServer.Core.Networking
 
         public UserState()
         {
+            ConnectedTime = DateTime.UtcNow; // set time when client connected
             IsAuthenticated = false;
             LastDesktopSeen = true;
             LastDirectorySeen = true;
@@ -49,21 +53,21 @@ namespace xServer.Core.Networking
         public void DisposeForms()
         {
             if (FrmRdp != null)
-                FrmRdp.Close();
+                FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
             if (FrmTm != null)
-                FrmTm.Close();
+                FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
             if (FrmFm != null)
-                FrmFm.Close();
+                FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
             if (FrmSi != null)
-                FrmSi.Close();
+                FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
             if (FrmRs != null)
-                FrmRs.Close();
+                FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
             if (FrmStm != null)
-                FrmStm.Close();
+                FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
             if (FrmKl != null)
-                FrmKl.Close();
+                FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
             if (FrmProxy != null)
-                FrmProxy.Close();
+                FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
         }
     }
 }
