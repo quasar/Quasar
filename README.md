@@ -81,16 +81,20 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 Credits
 ---
 Protocol Buffers - Google's data interchange format  
-Copyright 2008 Google Inc.  
+Copyright (c) 2008 Google Inc.  
 https://developers.google.com/protocol-buffers/
 
-ResourceLib  
-Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
+ResourceLib
+Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013
 https://github.com/dblock/resourcelib
 
-globalmousekeyhook  
-Copyright (c) 2004-2015, George Mamaladze  
+GlobalMouseKeyHook
+Copyright (c) 2004-2015, George Mamaladze
 https://github.com/gmamaladze/globalmousekeyhook
+
+Cecil
+Copyright (c) 2008 - 2015 Jb Evain Copyright (c) 2008 - 2011 Novell, Inc.
+https://github.com/jbevain/cecil
 
 Thank you!
 ---
