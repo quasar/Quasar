@@ -168,12 +168,12 @@ namespace xServer.Forms
             // 
             // columnHeader3
             // 
-            this.columnHeader3.Text = "Total Receive";
+            this.columnHeader3.Text = "Total Received";
             this.columnHeader3.Width = 105;
             // 
             // columnHeader4
             // 
-            this.columnHeader4.Text = "Total Send";
+            this.columnHeader4.Text = "Total Sent";
             this.columnHeader4.Width = 95;
             // 
             // columnHeader5
@@ -186,12 +186,12 @@ namespace xServer.Forms
             this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.killConnectionToolStripMenuItem});
             this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(144, 26);
+            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 26);
             // 
             // killConnectionToolStripMenuItem
             // 
             this.killConnectionToolStripMenuItem.Name = "killConnectionToolStripMenuItem";
-            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
+            this.killConnectionToolStripMenuItem.Size = new System.Drawing.Size(155, 22);
             this.killConnectionToolStripMenuItem.Text = "Kill Connection";
             this.killConnectionToolStripMenuItem.Click += new System.EventHandler(this.killConnectionToolStripMenuItem_Click);
             // 
