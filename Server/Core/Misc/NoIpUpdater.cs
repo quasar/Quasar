@@ -24,25 +24,15 @@ namespace xServer.Core.Misc
             {
                 try
                 {
-                    string wanIp = string.Empty;
-                    using (WebClient wc = new WebClient())
+                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}", XMLSettings.NoIPHost));
+                    request.UserAgent = string.Format("xRAT No-Ip Updater/2.0 {0}", XMLSettings.NoIPUsername);
+                    request.Timeout = 10000;
+                    request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", XMLSettings.NoIPUsername, XMLSettings.NoIPPassword)))));
+                    request.Method = "GET";
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                     {
-                        wanIp = wc.DownloadString("http://icanhazip.com/");
                     }
-
-                    if (!string.IsNullOrEmpty(wanIp))
-                    {
-                        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}&myip={1}", XMLSettings.NoIPHost, wanIp));
-                        request.UserAgent = string.Format("X IP Automation Tool/3 {0}", XMLSettings.NoIPUsername);
-                        request.Timeout = 20000;
-                        request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", XMLSettings.NoIPUsername, XMLSettings.NoIPPassword)))));
-                        request.Method = "GET";
-
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                        {
-                        }
-                    }
-
                 }
                 catch
                 {

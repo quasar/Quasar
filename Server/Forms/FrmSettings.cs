@@ -23,6 +23,8 @@ namespace xServer.Forms
                 ncPort.Enabled = false;
                 txtPassword.Enabled = false;
             }
+
+            ShowPassword(false);
         }
 
         private void FrmSettings_Load(object sender, EventArgs e)
@@ -98,17 +100,14 @@ namespace xServer.Forms
             XMLSettings.WriteValue("EnableNoIPUpdater", chkNoIPIntegration.Checked.ToString());
             XMLSettings.IntegrateNoIP = chkNoIPIntegration.Checked;
 
-            if (chkNoIPIntegration.Checked)
-            {
-                XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
-                XMLSettings.NoIPHost = txtNoIPHost.Text;
+            XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
+            XMLSettings.NoIPHost = txtNoIPHost.Text;
 
-                XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
-                XMLSettings.NoIPUsername = txtNoIPUser.Text;
+            XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
+            XMLSettings.NoIPUsername = txtNoIPUser.Text;
 
-                XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
-                XMLSettings.NoIPPassword = txtNoIPPass.Text;
-            }
+            XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
+            XMLSettings.NoIPPassword = txtNoIPPass.Text;
 
             this.Close();
         }
@@ -133,6 +132,17 @@ namespace xServer.Forms
             txtNoIPHost.Enabled = enable;
             txtNoIPUser.Enabled = enable;
             txtNoIPPass.Enabled = enable;
+            chkShowPassword.Enabled = enable;
+        }
+
+        private void ShowPassword(bool show = true)
+        {
+            txtNoIPPass.PasswordChar = (show) ? (char)0 : (char)'●';
+        }
+
+        private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowPassword(chkShowPassword.Checked);
         }
     }
 }
