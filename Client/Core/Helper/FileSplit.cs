@@ -7,7 +7,7 @@ namespace xClient.Core.Helper
     {
         private int _maxBlocks;
         private readonly object _fileStreamLock = new object();
-        private const int MAX_BLOCK_SIZE = (1024 * 1024) * 1 - (1024 * 2);
+        private const int MAX_BLOCK_SIZE = 65535;
         public string Path { get; private set; }
         public string LastError { get; private set; }
 
