@@ -136,7 +136,7 @@ namespace xServer.Core.Networking
         public long BytesSent { get; set; }
 
         /// <summary>
-        /// The buffer size for receiving data.
+        /// The buffer size for receiving data in bytes.
         /// </summary>
         public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
@@ -151,7 +151,7 @@ namespace xServer.Core.Networking
         public uint KEEP_ALIVE_INTERVAL { get { return 25000; } } // 25s
 
         /// <summary>
-        /// The header size in byte.
+        /// The header size in bytes.
         /// </summary>
         public int HEADER_SIZE { get { return 3; } } // 3B
 
