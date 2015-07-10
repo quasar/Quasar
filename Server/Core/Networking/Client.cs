@@ -328,20 +328,30 @@ namespace xServer.Core.Networking
                             }
                         case ReceiveType.Payload:
                             {
-                                process = _readableDataLen >= _payloadLen;
-                                if (process)
-                                {
-                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                        _payloadBuffer = new byte[_payloadLen];
-                                    try
-                                    {
-                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, 0, _payloadBuffer.Length);
-                                    }
-                                    catch
-                                    {
-                                        Disconnect();
-                                    }
+                                if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
+                                    _payloadBuffer = new byte[_payloadLen];
 
+                                int length = _readableDataLen;
+                                if (_writeOffset + _readableDataLen >= _payloadLen)
+                                {
+                                    length = _payloadLen - _writeOffset;
+                                }
+
+                                try
+                                {
+                                    Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, length);
+                                }
+                                catch
+                                {
+                                    Disconnect();
+                                }
+
+                                _writeOffset += length;
+                                _readOffset += length;
+                                _readableDataLen -= length;
+
+                                if (_writeOffset == _payloadLen)
+                                {
                                     if (encryptionEnabled)
                                         _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
@@ -352,60 +362,24 @@ namespace xServer.Core.Networking
 
                                         using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                         {
-                                            IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                PrefixStyle.Fixed32);
+                                            IPacket packet =
+                                                Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
 
                                             OnClientRead(packet);
                                         }
                                     }
+                                    else // payload decryption failed
+                                        process = false;
 
-                                    _readOffset += _payloadLen;
-                                    _readableDataLen -= _payloadLen;
                                     _receiveState = ReceiveType.Header;
                                     _payloadBuffer = null;
                                     _payloadLen = 0;
+                                    _writeOffset = 0;
                                 }
-                                else // handle payload that does not fit in one buffer
-                                {
-                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                        _payloadBuffer = new byte[_payloadLen];
-                                    try
-                                    {
-                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, _readableDataLen);
-                                    }
-                                    catch
-                                    {
-                                        Disconnect();
-                                    }
 
-                                    _writeOffset += _readableDataLen;
-                                    _readOffset += _readableDataLen;
-                                    _readableDataLen = 0;
+                                if (_readableDataLen == 0)
+                                    process = false;
 
-                                    if (_writeOffset == _payloadLen)
-                                    {
-                                        if (encryptionEnabled)
-                                            _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                                        if (_payloadBuffer.Length > 0)
-                                        {
-                                            if (compressionEnabled)
-                                                _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
-
-                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
-                                            {
-                                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                    PrefixStyle.Fixed32);
-
-                                                OnClientRead(packet);
-                                            }
-                                        }
-
-                                        _receiveState = ReceiveType.Header;
-                                        _payloadBuffer = null;
-                                        _payloadLen = 0;
-                                    }
-                                }
                                 break;
                             }
                     }
