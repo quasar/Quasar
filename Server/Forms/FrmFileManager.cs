@@ -110,7 +110,7 @@ namespace xServer.Forms
                     else
                         path += @"\" + files.SubItems[0].Text;
 
-                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337) + files.Index; // ;)
+                    int ID = new Random().Next(0, int.MaxValue) + files.Index;
 
                     if (_connectClient != null)
                     {

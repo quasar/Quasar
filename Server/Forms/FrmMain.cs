@@ -488,7 +488,7 @@ namespace xServer.Forms
                                         break;
                                     }
 
-                                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+                                    int ID = new Random().Next(0, int.MaxValue);
 
                                     CommandHandler.HandleStatus(c,
                                         new Core.Packets.ClientPackets.Status("Uploading file..."));
@@ -730,7 +730,7 @@ namespace xServer.Forms
                                     break;
                                 }
 
-                                int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+                                int ID = new Random().Next(0, int.MaxValue);
 
                                 CommandHandler.HandleStatus(c,
                                     new Core.Packets.ClientPackets.Status("Uploading file..."));
