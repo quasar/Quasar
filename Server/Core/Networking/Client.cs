@@ -167,10 +167,29 @@ namespace xServer.Core.Networking
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
 
-        //Connection info
+        /// <summary>
+        /// The time when the client connected.
+        /// </summary>
+        public DateTime ConnectedTime { get; private set; }
+
+        /// <summary>
+        /// The connection state of the client.
+        /// </summary>
         public bool Connected { get; private set; }
+
+        /// <summary>
+        /// Stores values of the user.
+        /// </summary>
         public UserState Value { get; set; }
+
+        /// <summary>
+        /// The Endpoint which the client is connected to.
+        /// </summary>
         public IPEndPoint EndPoint { get; private set; }
+
+        /// <summary>
+        /// The parent server of the client.
+        /// </summary>
         private readonly Server _parentServer;
 
         /// <summary>
@@ -203,6 +222,7 @@ namespace xServer.Core.Networking
                 _handle.NoDelay = true;
 
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                ConnectedTime = DateTime.UtcNow;
 
                 _readBuffer = Server.BufferManager.GetBuffer();
 

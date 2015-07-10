@@ -1,5 +1,4 @@
-﻿using System;
-using System.Drawing;
+﻿using System.Drawing;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.ReverseProxy;
@@ -9,7 +8,6 @@ namespace xServer.Core.Networking
 {
     public class UserState
     {
-        public DateTime ConnectedTime { get; private set; }
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
         public string AccountType { get; set; }
@@ -42,7 +40,6 @@ namespace xServer.Core.Networking
 
         public UserState()
         {
-            ConnectedTime = DateTime.UtcNow; // set time when client connected
             IsAuthenticated = false;
             LastDesktopSeen = true;
             LastDirectorySeen = true;
