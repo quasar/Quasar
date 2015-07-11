@@ -1,23 +1,21 @@
 xRAT 2.0
 ========
+
+[![Join the chat at https://gitter.im/MaxXor/xRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MaxXor/xRAT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build status](https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true)](https://ci.appveyor.com/project/MaxXor/xrat)
 
 **Free, Open-Source Remote Administration Tool**
 
-xRAT 2.0 is a fast and light-weight Remote Administration Tool coded in C# (using .NET Framework 2.0).
-
-Requirements
----
-* .NET Framework 2.0
+xRAT 2.0 is a fast and light-weight remote administration tool coded in C#. Providing high stability and an easy-to-use user interface, xRAT is the perfect remote administration solution for you.
 
 Features
 ---
-* Buffered TCP/IP stream
-* Protocol Buffers
+* Buffered TCP/IP network stream
+* Protocol Buffers to send & receive serialized data
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
-* No-IP.org Support
+* No-Ip.com Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
@@ -32,6 +30,19 @@ Features
 * Computer Commands (Restart, Shutdown, Standby)
 * Keylogger
 * Reverse SOCKS5/HTTPS Proxy
+
+Requirements
+---
+* .NET Framework 3.5 Client Profile ([Download](https://www.microsoft.com/en-US/download/details.aspx?id=14037))
+* Supported Operating Systems (32- and 64-bit)
+  * Windows XP
+  * Windows Server 2003
+  * Windows Vista
+  * Windows Server 2008
+  * Windows 7
+  * Windows Server 2012
+  * Windows 8/8.1
+  * Windows 10 Preview
 
 Compiling
 ---
@@ -51,22 +62,19 @@ Building a client
 
 ToDo
 ---
-* ~~Reverse SOCKS5/HTTPS Proxy~~
-* Password Recovery (Browsers, FTP-Clients)
+* Registry Editor (browse, delete, add registry keys)
+* Password Recovery
+ * Recover Passwords of common browsers (i.e. Chrome, Firefox, IE) and FTP-Clients (i.e. FileZilla Client)
 * Startup Persistence
 * [Issues](https://github.com/MaxXor/xRAT/issues)
 
 Contributing
 ---
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Add some feature'`)
-4. Push to the branch (`git push origin my-new-feature`)
-5. Create new Pull Request
+See [CONTRIBUTING.md](/CONTRIBUTING.md)
 
 License
 ---
-See LICENSE file for details.
+See [LICENSE.md](/LICENSE.md)
 
 Donate
 ---
@@ -75,12 +83,20 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 Credits
 ---
 Protocol Buffers - Google's data interchange format  
-Copyright 2008 Google Inc.  
+Copyright (c) 2008 Google Inc.  
 https://developers.google.com/protocol-buffers/
 
 ResourceLib  
 Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
 https://github.com/dblock/resourcelib
+
+GlobalMouseKeyHook  
+Copyright (c) 2004-2015, George Mamaladze  
+https://github.com/gmamaladze/globalmousekeyhook
+
+Cecil  
+Copyright (c) 2008 - 2015 Jb Evain Copyright (c) 2008 - 2011 Novell, Inc.  
+https://github.com/jbevain/cecil
 
 Thank you!
 ---
