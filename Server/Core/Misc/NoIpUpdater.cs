@@ -25,6 +25,7 @@ namespace xServer.Core.Misc
                 try
                 {
                     HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}", XMLSettings.NoIPHost));
+                    request.Proxy = null;
                     request.UserAgent = string.Format("xRAT No-Ip Updater/2.0 {0}", XMLSettings.NoIPUsername);
                     request.Timeout = 10000;
                     request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", XMLSettings.NoIPUsername, XMLSettings.NoIPPassword)))));
