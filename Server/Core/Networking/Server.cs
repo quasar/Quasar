@@ -9,11 +9,6 @@ namespace xServer.Core.Networking
     public class Server
     {
         /// <summary>
-        /// The amount of currently connected and authenticated clients.
-        /// </summary>
-        public int ConnectedAndAuthenticatedClients { get; set; }
-
-        /// <summary>
         /// Occurs when the state of the server changes.
         /// </summary>
         public event ServerStateEventHandler ServerState;
@@ -186,11 +181,6 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// A collection containing all clients that have ever connected to the server.
-        /// </summary>
-        public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
-
-        /// <summary>
         /// Handle of the Server Socket.
         /// </summary>
         private Socket _handle;
@@ -221,7 +211,6 @@ namespace xServer.Core.Networking
         public Server()
         {
             PacketTypes = new List<Type>();
-            AllTimeConnectedClients = new Dictionary<string, DateTime>();
         }
 
         /// <summary>

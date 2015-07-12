@@ -35,8 +35,7 @@ namespace xServer.Core.Commands
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", userAtPc, client.Value.Id.Substring(0, 7))) :
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
 
-                if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
-                    FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
+                FrmMain.Instance.ConServer.CountAllTimeConnectedClientById(client.Value.Id);
 
                 string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 

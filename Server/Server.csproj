@@ -84,6 +84,7 @@
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Misc\NoIpUpdater.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />
+    <Compile Include="Core\Networking\ConnectionHandler.cs" />
     <Compile Include="Core\Networking\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />

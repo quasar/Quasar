@@ -9,9 +9,9 @@ namespace xServer.Forms
 {
     public partial class FrmSettings : Form
     {
-        private readonly Server _listenServer;
+        private readonly ConnectionHandler _listenServer;
 
-        public FrmSettings(Server listenServer)
+        public FrmSettings(ConnectionHandler listenServer)
         {
             this._listenServer = listenServer;
 
