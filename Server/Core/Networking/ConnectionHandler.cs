@@ -9,7 +9,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The Server which this class is handling.
         /// </summary>
-        private Server ListenServer { get; set; }
+        private readonly Server _server;
 
         /// <summary>
         /// A hashset containing all unique client IDs that have ever connected to the server.
@@ -29,17 +29,17 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The listening state of the server. True if listening, else False.
         /// </summary>
-        public bool Listening { get { return ListenServer.Listening; } }
+        public bool Listening { get { return _server.Listening; } }
 
         /// <summary>
         /// The total amount of received bytes.
         /// </summary>
-        public long BytesReceived { get { return ListenServer.BytesReceived; } }
+        public long BytesReceived { get { return _server.BytesReceived; } }
 
         /// <summary>
         /// The total amount of sent bytes.
         /// </summary>  
-        public long BytesSent { get { return ListenServer.BytesSent; } }
+        public long BytesSent { get { return _server.BytesSent; } }
 
         /// <summary>
         /// Occurs when the state of the server changes.
@@ -118,9 +118,9 @@ namespace xServer.Core.Networking
         {
             AllTimeConnectedClients = new HashSet<string>();
 
-            ListenServer = new Server();
+            _server = new Server();
 
-            ListenServer.AddTypesToSerializer(typeof(IPacket), new Type[]
+            _server.AddTypesToSerializer(typeof(IPacket), new Type[]
             {
                 typeof (Packets.ServerPackets.InitializeCommand),
                 typeof (Packets.ServerPackets.Disconnect),
@@ -169,9 +169,9 @@ namespace xServer.Core.Networking
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
-            ListenServer.ServerState += OnServerState;
-            ListenServer.ClientState += ClientState;
-            ListenServer.ClientRead += ClientRead;
+            _server.ServerState += OnServerState;
+            _server.ClientState += ClientState;
+            _server.ClientRead += ClientRead;
         }
 
         /// <summary>
@@ -192,7 +192,7 @@ namespace xServer.Core.Networking
         /// <param name="port">Port to listen for clients on.</param>
         public void Listen(ushort port)
         {
-            if (!ListenServer.Listening) ListenServer.Listen(port);
+            if (!_server.Listening) _server.Listen(port);
         }
 
         /// <summary>
@@ -201,7 +201,7 @@ namespace xServer.Core.Networking
         /// </summary>
         public void Disconnect()
         {
-            if (ListenServer.Listening) ListenServer.Disconnect();
+            if (_server.Listening) _server.Disconnect();
         }
 
         /// <summary>
