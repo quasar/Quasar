@@ -7,7 +7,7 @@ namespace xServer.Settings
 {
     public static class XMLSettings
     {
-        public const string VERSION = "RELEASE4";
+        public const string VERSION = "RELEASE4.1";
         public static ushort ListenPort { get; set; }
         public static bool ShowToU { get; set; }
         public static bool AutoListen { get; set; }
