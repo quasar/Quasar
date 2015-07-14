@@ -1,6 +1,6 @@
 xRAT 2.0
 ========
-[![Build status](https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true)](https://ci.appveyor.com/project/MaxXor/xrat) [![Join the chat at https://gitter.im/MaxXor/xRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MaxXor/xRAT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+<a href="https://ci.appveyor.com/project/MaxXor/xrat"><image src="https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true" height="18"></a> [![Join the chat at https://gitter.im/MaxXor/xRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MaxXor/xRAT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Free, Open-Source Remote Administration Tool**
 
