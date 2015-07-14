@@ -35,5 +35,11 @@ namespace xClient.Core.Commands
             Idle,
             Active
         }
+        public enum ShutdownAction
+        {
+            Shutdown,
+            Restart,
+            Standby
+        }
     }
 }

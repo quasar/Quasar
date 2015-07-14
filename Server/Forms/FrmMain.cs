@@ -11,6 +11,7 @@ using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Settings;
 using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
+using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
 
 namespace xServer.Forms
 {
@@ -572,7 +573,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(0).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Shutdown).Execute(c);
             }
         }
 
@@ -580,7 +581,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(1).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Restart).Execute(c);
             }
         }
 
@@ -588,7 +589,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(2).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Standby).Execute(c);
             }
         }
 

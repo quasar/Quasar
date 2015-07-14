@@ -25,9 +25,9 @@ namespace xClient.Core.Commands
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                switch (command.Mode)
+                switch (command.Action)
                 {
-                    case 0:
+                    case ShutdownAction.Shutdown:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
@@ -35,7 +35,7 @@ namespace xClient.Core.Commands
                         startInfo.FileName = "shutdown";
                         Process.Start(startInfo);
                         break;
-                    case 1:
+                    case ShutdownAction.Restart:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
@@ -43,7 +43,7 @@ namespace xClient.Core.Commands
                         startInfo.FileName = "shutdown";
                         Process.Start(startInfo);
                         break;
-                    case 2:
+                    case ShutdownAction.Standby:
                         Application.SetSuspendState(PowerState.Suspend, true, true); // standby
                         break;
                 }
