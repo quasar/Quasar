@@ -34,7 +34,7 @@ namespace xServer.Forms
             btnShow.Left = (this.Width/2) - (btnShow.Width/2);
 
             if (_connectClient.Value != null)
-                new Core.Packets.ServerPackets.Monitors().Execute(_connectClient);
+                new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
         private void GetDesktop()
@@ -64,7 +64,7 @@ namespace xServer.Forms
                                 selectedMonitorIndex = cbMonitors.SelectedIndex;
                             });
 
-                            new Core.Packets.ServerPackets.Desktop(quality, selectedMonitorIndex).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.GetDesktop(quality, selectedMonitorIndex).Execute(_connectClient);
                             _connectClient.Value.LastDesktopSeen = false;
                         }
                     }
@@ -212,7 +212,7 @@ namespace xServer.Forms
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseClick(left, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 
@@ -231,7 +231,7 @@ namespace xServer.Forms
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseClick(left, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 

@@ -13,7 +13,7 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleDrivesResponse(Client client, DrivesResponse packet)
+        public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
         {
             if (client.Value.FrmFm == null || packet.Drives == null)
                 return;
@@ -21,7 +21,7 @@ namespace xServer.Core.Commands
             client.Value.FrmFm.AddDrives(packet.Drives);
         }
 
-        public static void HandleDirectoryResponse(Client client, DirectoryResponse packet)
+        public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
         {
             if (client.Value.FrmFm == null)
                 return;

@@ -43,7 +43,7 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstTasks.SelectedItems)
                 {
-                    new Core.Packets.ServerPackets.KillProcess(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoProcessKill(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
                 }
             }
         }
@@ -54,7 +54,7 @@ namespace xServer.Forms
             if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
             {
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.StartProcess(processname).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoProcessStart(processname).Execute(_connectClient);
             }
         }
 

