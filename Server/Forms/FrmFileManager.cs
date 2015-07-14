@@ -15,7 +15,6 @@ namespace xServer.Forms
         private string _currentDir;
         private readonly Client _connectClient;
         private readonly ListViewColumnSorter _lvwColumnSorter;
-        
 
         public FrmFileManager(Client c)
         {
@@ -25,6 +24,11 @@ namespace xServer.Forms
 
             _lvwColumnSorter = new ListViewColumnSorter();
             lstDirectory.ListViewItemSorter = _lvwColumnSorter;
+        }
+
+        private string GetAbsolutePath(string item)
+        {
+            return Path.GetFullPath(Path.Combine(_currentDir, item));
         }
 
         private void FrmFileManager_Load(object sender, EventArgs e)
@@ -68,14 +72,7 @@ namespace xServer.Forms
                     {
                         if (lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
                         {
-                            if (_currentDir.EndsWith(@"\"))
-                                _currentDir = _currentDir.Remove(_currentDir.Length - 1);
-
-                            if (_currentDir.Length > 2)
-                                _currentDir = _currentDir.Remove(_currentDir.LastIndexOf(@"\", StringComparison.Ordinal));
-
-                            if (!_currentDir.EndsWith(@"\"))
-                                _currentDir = _currentDir + @"\";
+                            _currentDir = Path.GetFullPath(Path.Combine(_currentDir, @"..\"));
 
                             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                             _connectClient.Value.LastDirectorySeen = false;
@@ -84,10 +81,7 @@ namespace xServer.Forms
                         {
                             if (_connectClient.Value.LastDirectorySeen)
                             {
-                                if (_currentDir.EndsWith(@"\"))
-                                    _currentDir += lstDirectory.SelectedItems[0].SubItems[0].Text;
-                                else
-                                    _currentDir += @"\" + lstDirectory.SelectedItems[0].SubItems[0].Text;
+                                _currentDir = GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text);
 
                                 new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                                 _connectClient.Value.LastDirectorySeen = false;
@@ -104,11 +98,7 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
-                    if (path.EndsWith(@"\"))
-                        path += files.SubItems[0].Text;
-                    else
-                        path += @"\" + files.SubItems[0].Text;
+                    string path = GetAbsolutePath(files.SubItems[0].Text);
 
                     int ID = new Random().Next(0, int.MaxValue) + files.Index;
 
@@ -133,11 +123,7 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
-                    if (path.EndsWith(@"\"))
-                        path += files.SubItems[0].Text;
-                    else
-                        path += @"\" + files.SubItems[0].Text;
+                    string path = GetAbsolutePath(files.SubItems[0].Text);
 
                     if (_connectClient != null)
                         new Core.Packets.ServerPackets.DoProcessStart(path).Execute(_connectClient);
@@ -151,21 +137,13 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = _currentDir;
+                    string path = GetAbsolutePath(files.SubItems[0].Text);
                     string newName = files.SubItems[0].Text;
                     bool isDir = files.Tag.ToString() == "dir";
 
-                    if (path.EndsWith(@"\"))
-                        path += files.SubItems[0].Text;
-                    else
-                        path += @"\" + files.SubItems[0].Text;
-
                     if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                     {
-                        if (_currentDir.EndsWith(@"\"))
-                            newName = _currentDir + newName;
-                        else
-                            newName = _currentDir + @"\" + newName;
+                        newName = GetAbsolutePath(newName);
 
                         if (_connectClient != null)
                             new Core.Packets.ServerPackets.DoPathRename(path, newName, isDir).Execute(_connectClient);
@@ -180,15 +158,10 @@ namespace xServer.Forms
             {
                 if (files.SubItems[0].Text != "..")
                 {
-                    string path = _currentDir;
+                    string path = GetAbsolutePath(files.SubItems[0].Text);
                     bool isDir = files.Tag.ToString() == "dir";
                     string text = string.Format("Are you sure you want to delete this {0}",
                         (isDir) ? "directory?" : "file?");
-
-                    if (path.EndsWith(@"\"))
-                        path += files.SubItems[0].Text;
-                    else
-                        path += @"\" + files.SubItems[0].Text;
 
                     if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                         DialogResult.Yes)
@@ -206,11 +179,7 @@ namespace xServer.Forms
             {
                 if (files.Tag.ToString() == "file")
                 {
-                    string path = _currentDir;
-                    if (path.EndsWith(@"\"))
-                        path += files.SubItems[0].Text;
-                    else
-                        path += @"\" + files.SubItems[0].Text;
+                    string path = GetAbsolutePath(files.SubItems[0].Text);
 
                     using (var frm = new FrmAddToAutostart(path))
                     {
@@ -244,10 +213,7 @@ namespace xServer.Forms
                     var item = lstDirectory.SelectedItems[0];
                     if (item.SubItems[0].Text != ".." && item.Tag.ToString() == "dir")
                     {
-                        if (path.EndsWith(@"\"))
-                            path += item.SubItems[0].Text;
-                        else
-                            path += @"\" + item.SubItems[0].Text;
+                        path = GetAbsolutePath(item.SubItems[0].Text);
                     }
                 }
 
