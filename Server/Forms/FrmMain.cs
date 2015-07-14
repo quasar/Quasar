@@ -10,6 +10,7 @@ using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Settings;
+using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
 
 namespace xServer.Forms
 {
@@ -274,8 +275,8 @@ namespace xServer.Forms
         /// Can be "Active" or "Idle".
         /// </remarks>
         /// <param name="c">The client to update the user status of.</param>
-        /// <param name="text">The new user status.</param>
-        public void SetUserStatusByClient(Client c, string text)
+        /// <param name="userStatus">The new user status.</param>
+        public void SetUserStatusByClient(Client c, UserStatus userStatus)
         {
             try
             {
@@ -283,7 +284,7 @@ namespace xServer.Forms
                 {
                     var item = GetListViewItemByClient(c);
                     if (item != null)
-                        item.SubItems[USERSTATUS_ID].Text = text;
+                        item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
                 });
             }
             catch (InvalidOperationException)

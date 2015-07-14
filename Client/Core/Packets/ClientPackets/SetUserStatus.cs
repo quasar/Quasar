@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using xClient.Core.Networking;
+using UserStatus = xClient.Core.Commands.CommandHandler.UserStatus;
 
 namespace xClient.Core.Packets.ClientPackets
 {
@@ -7,13 +8,13 @@ namespace xClient.Core.Packets.ClientPackets
     public class SetUserStatus : IPacket
     {
         [ProtoMember(1)]
-        public string Message { get; set; }
+        public UserStatus Message { get; set; }
 
         public SetUserStatus()
         {
         }
 
-        public SetUserStatus(string message)
+        public SetUserStatus(UserStatus message)
         {
             Message = message;
         }

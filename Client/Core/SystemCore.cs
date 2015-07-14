@@ -14,6 +14,7 @@ using xClient.Core.Information;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Networking;
+using UserStatus = xClient.Core.Commands.CommandHandler.UserStatus;
 
 namespace xClient.Core
 {
@@ -63,18 +64,18 @@ namespace xClient.Core
             "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png"
         };
 
-        public static bool Disconnect = false; // when Disconnect is true, stop all running threads
-        public static string OperatingSystem = string.Empty;
-        public static string MyPath = string.Empty;
-        public static string InstallPath = string.Empty;
-        public static string AccountType = string.Empty;
-        public static string WanIp = string.Empty;
-        public static string Country = string.Empty;
-        public static string CountryCode = string.Empty;
-        public static string Region = string.Empty;
-        public static string City = string.Empty;
-        public static string LastStatus = "Active";
-        public static int ImageIndex;
+        public static UserStatus LastStatus { get; set; }
+        public static bool Disconnect { get; set; } // when Disconnect is true, stop all running threads
+        public static string OperatingSystem { get; set; }
+        public static string MyPath { get; set; }
+        public static string InstallPath { get; set; }
+        public static string AccountType { get; set; }
+        public static string WanIp { get; set; }
+        public static string Country { get; set; }
+        public static string CountryCode { get; set; }
+        public static string Region { get; set; }
+        public static string City { get; set; }
+        public static int ImageIndex { get; set; }
 
         public static string GetOperatingSystem()
         {
@@ -369,17 +370,17 @@ namespace xClient.Core
                 Thread.Sleep(5000);
                 if (IsUserIdle())
                 {
-                    if (LastStatus != "Idle")
+                    if (LastStatus != UserStatus.Idle)
                     {
-                        LastStatus = "Idle";
+                        LastStatus = UserStatus.Idle;
                         new Packets.ClientPackets.SetUserStatus(LastStatus).Execute(Program.ConnectClient);
                     }
                 }
                 else
                 {
-                    if (LastStatus != "Active")
+                    if (LastStatus != UserStatus.Active)
                     {
-                        LastStatus = "Active";
+                        LastStatus = UserStatus.Active;
                         new Packets.ClientPackets.SetUserStatus(LastStatus).Execute(Program.ConnectClient);
                     }
                 }
