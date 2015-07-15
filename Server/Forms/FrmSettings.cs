@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Settings;
@@ -47,8 +48,8 @@ namespace xServer.Forms
             {
                 try
                 {
-                    if (chkUseUpnp.Checked && !Core.Helper.UPnP.IsPortForwarded)
-                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (chkUseUpnp.Checked && !UPnP.IsPortForwarded)
+                        UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
                     _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
@@ -65,8 +66,8 @@ namespace xServer.Forms
                 try
                 {
                     _listenServer.Disconnect();
-                    if (Core.Helper.UPnP.IsPortForwarded)
-                        Core.Helper.UPnP.RemovePort();
+                    if (UPnP.IsPortForwarded)
+                        UPnP.RemovePort();
                 }
                 finally
                 {
