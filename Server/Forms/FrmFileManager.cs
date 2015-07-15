@@ -7,6 +7,7 @@ using xServer.Core.Commands;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
+using PathType = xServer.Core.Commands.CommandHandler.PathType;
 
 namespace xServer.Forms
 {
@@ -64,31 +65,26 @@ namespace xServer.Forms
 
         private void lstDirectory_DoubleClick(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            if (_connectClient != null && _connectClient.Value != null && lstDirectory.SelectedItems.Count > 0)
             {
-                if (lstDirectory.SelectedItems.Count != 0)
+                PathType type = (PathType) lstDirectory.SelectedItems[0].Tag;
+
+                switch (type)
                 {
-                    if (lstDirectory.SelectedItems[0].Tag.ToString() == "dir" && _connectClient.Value != null)
-                    {
-                        if (lstDirectory.SelectedItems[0].SubItems[0].Text == "..")
-                        {
-                            _currentDir = Path.GetFullPath(Path.Combine(_currentDir, @"..\"));
+                    case PathType.Back:
+                        if (!_connectClient.Value.LastDirectorySeen) return;
 
-                            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                            _connectClient.Value.LastDirectorySeen = false;
-                        }
-                        else
-                        {
-                            if (_connectClient.Value.LastDirectorySeen)
-                            {
-                                _currentDir = GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text);
+                        _currentDir = Path.GetFullPath(Path.Combine(_currentDir, @"..\"));
+                        break;
+                    case PathType.Directory:
+                        if (!_connectClient.Value.LastDirectorySeen) return;
 
-                                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                                _connectClient.Value.LastDirectorySeen = false;
-                            }
-                        }
-                    }
+                        _currentDir = GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text);
+                        break;
                 }
+
+                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+                _connectClient.Value.LastDirectorySeen = false;
             }
         }
 
@@ -96,7 +92,9 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (files.Tag.ToString() == "file")
+                PathType type = (PathType)files.Tag;
+
+                if (type == PathType.File)
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -121,7 +119,9 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (files.Tag.ToString() == "file")
+                PathType type = (PathType) files.Tag;
+
+                if (type == PathType.File)
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -135,19 +135,23 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (files.SubItems[0].Text != "..")
+                PathType type = (PathType)files.Tag;
+
+                switch (type)
                 {
-                    string path = GetAbsolutePath(files.SubItems[0].Text);
-                    string newName = files.SubItems[0].Text;
-                    bool isDir = files.Tag.ToString() == "dir";
+                    case PathType.Directory:
+                    case PathType.File:
+                        string path = GetAbsolutePath(files.SubItems[0].Text);
+                        string newName = files.SubItems[0].Text;
 
-                    if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
-                    {
-                        newName = GetAbsolutePath(newName);
+                        if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
+                        {
+                            newName = GetAbsolutePath(newName);
 
-                        if (_connectClient != null)
-                            new Core.Packets.ServerPackets.DoPathRename(path, newName, isDir).Execute(_connectClient);
-                    }
+                            if (_connectClient != null)
+                                new Core.Packets.ServerPackets.DoPathRename(path, newName, type).Execute(_connectClient);
+                        }
+                        break;
                 }
             }
         }
@@ -156,19 +160,22 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (files.SubItems[0].Text != "..")
-                {
-                    string path = GetAbsolutePath(files.SubItems[0].Text);
-                    bool isDir = files.Tag.ToString() == "dir";
-                    string text = string.Format("Are you sure you want to delete this {0}",
-                        (isDir) ? "directory?" : "file?");
+                PathType type = (PathType)files.Tag;
 
-                    if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                        DialogResult.Yes)
-                    {
-                        if (_connectClient != null)
-                            new Core.Packets.ServerPackets.DoPathDelete(path, isDir).Execute(_connectClient);
-                    }
+                switch (type)
+                {
+                    case PathType.Directory:
+                    case PathType.File:
+                        string path = GetAbsolutePath(files.SubItems[0].Text);
+                        string text = string.Format("Are you sure you want to delete this {0}?", type);
+
+                        if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                            DialogResult.Yes)
+                        {
+                            if (_connectClient != null)
+                                new Core.Packets.ServerPackets.DoPathDelete(path, type).Execute(_connectClient);
+                        }
+                        break;
                 }
             }
         }
@@ -177,7 +184,9 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                if (files.Tag.ToString() == "file")
+                PathType type = (PathType)files.Tag;
+
+                if (type == PathType.File)
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -211,7 +220,9 @@ namespace xServer.Forms
                 if (lstDirectory.SelectedItems.Count == 1)
                 {
                     var item = lstDirectory.SelectedItems[0];
-                    if (item.SubItems[0].Text != ".." && item.Tag.ToString() == "dir")
+                    PathType type = (PathType)item.Tag;
+
+                    if (type == PathType.Directory)
                     {
                         path = GetAbsolutePath(item.SubItems[0].Text);
                     }
@@ -320,7 +331,7 @@ namespace xServer.Forms
             }
         }
 
-        public int GetTransferIndex(string ID)
+        public int GetTransferIndex(string id)
         {
             int index = 0;
 
@@ -328,7 +339,7 @@ namespace xServer.Forms
             {
                 lstTransfers.Invoke((MethodInvoker)delegate
                 {
-                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && ID == lvi.SubItems[0].Text))
+                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && id == lvi.SubItems[0].Text))
                     {
                         index = lvi.Index;
                         break;

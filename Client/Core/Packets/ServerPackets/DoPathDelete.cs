@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using xClient.Core.Networking;
+using PathType = xClient.Core.Commands.CommandHandler.PathType;
 
 namespace xClient.Core.Packets.ServerPackets
 {
@@ -10,16 +11,16 @@ namespace xClient.Core.Packets.ServerPackets
         public string Path { get; set; }
 
         [ProtoMember(2)]
-        public bool IsDirectory { get; set; }
+        public PathType PathType { get; set; }
 
         public DoPathDelete()
         {
         }
 
-        public DoPathDelete(string path, bool isdirectory)
+        public DoPathDelete(string path, PathType pathtype)
         {
             this.Path = path;
-            this.IsDirectory = isdirectory;
+            this.PathType = pathtype;
         }
 
         public void Execute(Client client)

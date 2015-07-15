@@ -103,10 +103,15 @@ namespace xClient.Core.Commands
         {
             try
             {
-                if (command.IsDirectory)
-                    Directory.Delete(command.Path, true);
-                else
-                    File.Delete(command.Path);
+                switch (command.PathType)
+                {
+                    case PathType.Directory:
+                        Directory.Delete(command.Path, true);
+                        break;
+                    case PathType.File:
+                        File.Delete(command.Path);
+                        break;
+                }
 
                 HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
             }
@@ -119,10 +124,15 @@ namespace xClient.Core.Commands
         {
             try
             {
-                if (command.IsDirectory)
-                    Directory.Move(command.Path, command.NewPath);
-                else
-                    File.Move(command.Path, command.NewPath);
+                switch (command.PathType)
+                {
+                    case PathType.Directory:
+                        Directory.Move(command.Path, command.NewPath);
+                        break;
+                    case PathType.File:
+                        File.Move(command.Path, command.NewPath);
+                        break;
+                }
 
                 HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
             }

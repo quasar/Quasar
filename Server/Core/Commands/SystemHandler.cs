@@ -30,9 +30,9 @@ namespace xServer.Core.Commands
 
             new Thread(() =>
             {
-                ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "Directory" })
+                ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "" })
                 {
-                    Tag = "dir",
+                    Tag = PathType.Back,
                     ImageIndex = 0
                 };
 
@@ -44,9 +44,9 @@ namespace xServer.Core.Commands
                     {
                         if (packet.Folders[i] != DELIMITER)
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", "Directory" })
+                            ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", PathType.Directory.ToString() })
                             {
-                                Tag = "dir",
+                                Tag = PathType.Directory,
                                 ImageIndex = 1
                             };
 
@@ -65,9 +65,9 @@ namespace xServer.Core.Commands
                         if (packet.Files[i] != DELIMITER)
                         {
                             ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetDataSize(packet.FilesSize[i]), "File" })
+                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
                                 {
-                                    Tag = "file",
+                                    Tag = PathType.File,
                                     ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 

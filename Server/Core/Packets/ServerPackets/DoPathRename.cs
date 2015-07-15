@@ -1,5 +1,6 @@
 ﻿using ProtoBuf;
 using xServer.Core.Networking;
+using PathType = xServer.Core.Commands.CommandHandler.PathType;
 
 namespace xServer.Core.Packets.ServerPackets
 {
@@ -13,17 +14,17 @@ namespace xServer.Core.Packets.ServerPackets
         public string NewPath { get; set; }
 
         [ProtoMember(3)]
-        public bool IsDirectory { get; set; }
+        public PathType PathType { get; set; }
 
         public DoPathRename()
         {
         }
 
-        public DoPathRename(string path, string newpath, bool isdirectory)
+        public DoPathRename(string path, string newpath, PathType pathtype)
         {
             this.Path = path;
             this.NewPath = newpath;
-            this.IsDirectory = isdirectory;
+            this.PathType = pathtype;
         }
 
         public void Execute(Client client)

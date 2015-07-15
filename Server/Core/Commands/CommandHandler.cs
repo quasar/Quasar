@@ -20,5 +20,11 @@ namespace xServer.Core.Commands
             Restart,
             Standby
         }
+        public enum PathType
+        {
+            File,
+            Directory,
+            Back
+        }
     }
 }
