@@ -92,9 +92,13 @@ GlobalMouseKeyHook
 Copyright (c) 2004-2015, George Mamaladze  
 https://github.com/gmamaladze/globalmousekeyhook
 
-Cecil  
-Copyright (c) 2008 - 2015 Jb Evain Copyright (c) 2008 - 2011 Novell, Inc.  
+Mono.Cecil  
+Copyright (c) 2008 - 2015 Jb Evain, Copyright (c) 2008 - 2011 Novell, Inc.  
 https://github.com/jbevain/cecil
+
+Mono.Nat  
+Copyright (c) 2006 Alan McGovern, Copyright (c) 2007 Ben Motmans  
+https://github.com/nterry/Mono.Nat
 
 Thank you!
 ---
