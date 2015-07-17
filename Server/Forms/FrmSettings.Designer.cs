@@ -47,15 +47,16 @@
             this.txtNoIPPass = new System.Windows.Forms.TextBox();
             this.txtNoIPUser = new System.Windows.Forms.TextBox();
             this.txtNoIPHost = new System.Windows.Forms.TextBox();
+            this.chkShowPassword = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(227, 253);
+            this.btnSave.Location = new System.Drawing.Point(227, 273);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 17;
+            this.btnSave.TabIndex = 18;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -123,10 +124,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(146, 253);
+            this.btnCancel.Location = new System.Drawing.Point(146, 273);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 16;
+            this.btnCancel.TabIndex = 17;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -172,9 +173,9 @@
             this.chkNoIPIntegration.AutoSize = true;
             this.chkNoIPIntegration.Location = new System.Drawing.Point(15, 155);
             this.chkNoIPIntegration.Name = "chkNoIPIntegration";
-            this.chkNoIPIntegration.Size = new System.Drawing.Size(184, 17);
+            this.chkNoIPIntegration.Size = new System.Drawing.Size(192, 17);
             this.chkNoIPIntegration.TabIndex = 9;
-            this.chkNoIPIntegration.Text = "Activate NoIP.org DNS Updater";
+            this.chkNoIPIntegration.Text = "Activate No-Ip.com DNS Updater";
             this.chkNoIPIntegration.UseVisualStyleBackColor = true;
             this.chkNoIPIntegration.CheckedChanged += new System.EventHandler(this.chkNoIPIntegration_CheckedChanged);
             // 
@@ -204,9 +205,9 @@
             this.lblUser.Enabled = false;
             this.lblUser.Location = new System.Drawing.Point(33, 209);
             this.lblUser.Name = "lblUser";
-            this.lblUser.Size = new System.Drawing.Size(33, 13);
+            this.lblUser.Size = new System.Drawing.Size(32, 13);
             this.lblUser.TabIndex = 12;
-            this.lblUser.Text = "User:";
+            this.lblUser.Text = "Mail:";
             // 
             // txtNoIPPass
             // 
@@ -232,11 +233,24 @@
             this.txtNoIPHost.Size = new System.Drawing.Size(229, 22);
             this.txtNoIPHost.TabIndex = 11;
             // 
+            // chkShowPassword
+            // 
+            this.chkShowPassword.AutoSize = true;
+            this.chkShowPassword.Enabled = false;
+            this.chkShowPassword.Location = new System.Drawing.Point(195, 234);
+            this.chkShowPassword.Name = "chkShowPassword";
+            this.chkShowPassword.Size = new System.Drawing.Size(107, 17);
+            this.chkShowPassword.TabIndex = 16;
+            this.chkShowPassword.Text = "Show Password";
+            this.chkShowPassword.UseVisualStyleBackColor = true;
+            this.chkShowPassword.CheckedChanged += new System.EventHandler(this.chkShowPassword_CheckedChanged);
+            // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 288);
+            this.ClientSize = new System.Drawing.Size(314, 308);
+            this.Controls.Add(this.chkShowPassword);
             this.Controls.Add(this.txtNoIPHost);
             this.Controls.Add(this.txtNoIPUser);
             this.Controls.Add(this.txtNoIPPass);
@@ -290,5 +304,6 @@
         private System.Windows.Forms.TextBox txtNoIPPass;
         private System.Windows.Forms.TextBox txtNoIPUser;
         private System.Windows.Forms.TextBox txtNoIPHost;
+        private System.Windows.Forms.CheckBox chkShowPassword;
     }
 }

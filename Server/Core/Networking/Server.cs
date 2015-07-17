@@ -9,11 +9,6 @@ namespace xServer.Core.Networking
     public class Server
     {
         /// <summary>
-        /// The amount of currently connected and authenticated clients.
-        /// </summary>
-        public int ConnectedAndAuthenticatedClients { get; set; }
-
-        /// <summary>
         /// Occurs when the state of the server changes.
         /// </summary>
         public event ServerStateEventHandler ServerState;
@@ -136,9 +131,9 @@ namespace xServer.Core.Networking
         public long BytesSent { get; set; }
 
         /// <summary>
-        /// The maximum size of one package in byte (it is also the buffer size for receiving data).
+        /// The buffer size for receiving data in bytes.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -151,9 +146,9 @@ namespace xServer.Core.Networking
         public uint KEEP_ALIVE_INTERVAL { get { return 25000; } } // 25s
 
         /// <summary>
-        /// The header size in byte.
+        /// The header size in bytes.
         /// </summary>
-        public int HEADER_SIZE { get { return 4; } } // 4B
+        public int HEADER_SIZE { get { return 3; } } // 3B
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
@@ -186,11 +181,6 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// A collection containing all clients that have ever connected to the server.
-        /// </summary>
-        public Dictionary<string, DateTime> AllTimeConnectedClients { get; set; }
-
-        /// <summary>
         /// Handle of the Server Socket.
         /// </summary>
         private Socket _handle;
@@ -221,7 +211,6 @@ namespace xServer.Core.Networking
         public Server()
         {
             PacketTypes = new List<Type>();
-            AllTimeConnectedClients = new Dictionary<string, DateTime>();
         }
 
         /// <summary>
@@ -255,7 +244,7 @@ namespace xServer.Core.Networking
                     }
                     
                     if (BufferManager == null)
-                        BufferManager = new PooledBufferManager(MAX_PACKET_SIZE, 1) {ClearOnReturn = true};
+                        BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = true };
 
                     _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));

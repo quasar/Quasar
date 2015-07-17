@@ -2,7 +2,6 @@
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.ReverseProxy.Packets;
 
@@ -57,7 +56,7 @@ namespace xServer.Core.ReverseProxy
         public long PacketsSended { get; private set; }
 
         public long LengthReceived { get; private set; }
-        public long LengthSended { get; private set; }
+        public long LengthSent { get; private set; }
 
         private byte[] _buffer;
 
@@ -298,7 +297,7 @@ namespace xServer.Core.ReverseProxy
             {
                 try
                 {
-                    LengthSended += payload.Length;
+                    LengthSent += payload.Length;
                     Handle.Send(payload);
                 }
                 catch
@@ -449,7 +448,7 @@ namespace xServer.Core.ReverseProxy
                 Array.Copy(_buffer, payload, received);
                 new ReverseProxyData(this.ConnectionId, payload).Execute(Client);
 
-                LengthSended += payload.Length;
+                LengthSent += payload.Length;
                 PacketsSended++;
             }
             catch

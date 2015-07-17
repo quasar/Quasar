@@ -1,8 +1,6 @@
-﻿using System;
-using System.Net;
-using System.Net.Sockets;
+﻿using System.Collections.Generic;
 using System.Threading;
-using NATUPNPLib;
+using Mono.Nat;
 
 namespace xServer.Core.Helper
 {
@@ -10,85 +8,58 @@ namespace xServer.Core.Helper
     {
         public static bool IsPortForwarded { get; private set; }
         public static ushort Port { get; private set; }
+        private static readonly HashSet<INatDevice> Devices = new HashSet<INatDevice>();
 
         public static void ForwardPort(ushort port)
         {
             Port = port;
+            NatUtility.DeviceFound += DeviceFound;
+            NatUtility.DeviceLost += DeviceLost;
+            NatUtility.StartDiscovery();
 
             new Thread(() =>
             {
-                string ipAddr = string.Empty;
-                int retry = 0;
-
-                do
+                while (Devices.Count == 0) // wait until first device found
                 {
-                    try
-                    {
-                        TcpClient c = null;
-                        EndPoint endPoint;
-                        try
-                        {
-                            c = new TcpClient();
-                            c.Connect("www.google.com", 80);
-                            endPoint = c.Client.LocalEndPoint;
-                        }
-                        finally
-                        {
-                            // Placed in here to make sure that a failed TcpClient will never linger!
-                            if (c != null)
-                            {
-                                c.Close();
-                            }
-                        }
-
-                        if (endPoint != null)
-                        {
-                            ipAddr = endPoint.ToString();
-                            int index = ipAddr.IndexOf(":", StringComparison.Ordinal);
-                            ipAddr = ipAddr.Remove(index);
-
-                            // We got through successfully and with an endpoint and a parsed IP address. We may exit the loop.
-                            break;
-                        }
-                        else
-                        {
-                            retry++;
-                        }
-                    }
-                    catch
-                    {
-                        retry++;
-                    }
-                } while (retry < 5);
-
-                if (string.IsNullOrEmpty(ipAddr)) // If we can't successfully connect
-                    return;
+                    Thread.Sleep(1000);
+                }
 
                 try
                 {
-                    IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
-                    if (portMap != null)
-                        portMap.Add(port, "TCP", port, ipAddr, true, "xRAT 2.0 UPnP");
+                    foreach (var device in Devices)
+                    {
+                        device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                    }
                     IsPortForwarded = true;
                 }
-                catch
+                catch (MappingException)
                 {
+                    IsPortForwarded = false;
                 }
             }).Start();
         }
 
+        private static void DeviceFound(object sender, DeviceEventArgs args)
+        {
+            Devices.Add(args.Device);
+        }
+
+        private static void DeviceLost(object sender, DeviceEventArgs args)
+        {
+            Devices.Remove(args.Device);
+        }
+
         public static void RemovePort()
         {
-            try
+            foreach (var device in Devices)
             {
-                IStaticPortMappingCollection portMap = new UPnPNAT().StaticPortMappingCollection;
-                if (portMap != null)
-                    portMap.Remove(Port, "TCP");
-                IsPortForwarded = false;
+                if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort > 0) // if port map exists
+                {
+                    device.DeletePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                }
             }
-            catch
-            {
-            }
+            IsPortForwarded = false;
+            NatUtility.StopDiscovery();
         }
     }
 }

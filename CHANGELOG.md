@@ -1,6 +1,14 @@
 Changelog - xRAT 2.0
 ====================
 
+xRAT v2.0.0.0 RELEASE4.1 [12.07.2015]
+---
+* Improved No-Ip.com Updater
+* **Fixed networking code**
+* Fixed RemoteShell error output
+* Some minor bugfixes
+
+
 xRAT v2.0.0.0 RELEASE4 [14.06.2015]
 ---
 * **Changed Target Framework to .NET Framework 3.5 Client Profile**

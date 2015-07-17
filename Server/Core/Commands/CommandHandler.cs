@@ -8,5 +8,23 @@ namespace xServer.Core.Commands
         public static Dictionary<int, string> CanceledDownloads = new Dictionary<int, string>();
         public static Dictionary<int, string> RenamedFiles = new Dictionary<int, string>();
         private const string DELIMITER = "$E$";
+
+        public enum UserStatus
+        {
+            Idle,
+            Active
+        }
+        public enum ShutdownAction
+        {
+            Shutdown,
+            Restart,
+            Standby
+        }
+        public enum PathType
+        {
+            File,
+            Directory,
+            Back
+        }
     }
 }

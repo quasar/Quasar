@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
@@ -11,7 +10,7 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE CONNECTION. */
     public static partial class CommandHandler
     {
-        public static void HandleInitialize(Client client, Initialize packet)
+        public static void HandleGetAuthenticationResponse(Client client, GetAuthenticationResponse packet)
         {
             if (client.EndPoint.Address.ToString() == "255.255.255.255" || packet.Id.Length != 64)
                 return;
@@ -35,8 +34,7 @@ namespace xServer.Core.Commands
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", userAtPc, client.Value.Id.Substring(0, 7))) :
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
 
-                if (!FrmMain.Instance.ListenServer.AllTimeConnectedClients.ContainsKey(client.Value.Id))
-                    FrmMain.Instance.ListenServer.AllTimeConnectedClients.Add(client.Value.Id, DateTime.Now);
+                FrmMain.Instance.ConServer.CountAllTimeConnectedClientById(client.Value.Id);
 
                 string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
 
@@ -62,14 +60,14 @@ namespace xServer.Core.Commands
             }
         }
 
-        public static void HandleStatus(Client client, Status packet)
+        public static void HandleSetStatus(Client client, SetStatus packet)
         {
-            FrmMain.Instance.SetClientStatus(client, packet.Message);
+            FrmMain.Instance.SetStatusByClient(client, packet.Message);
         }
 
-        public static void HandleUserStatus(Client client, UserStatus packet)
+        public static void HandleSetUserStatus(Client client, SetUserStatus packet)
         {
-            FrmMain.Instance.SetClientUserStatus(client, packet.Message);
+            FrmMain.Instance.SetUserStatusByClient(client, packet.Message);
         }
     }
 }

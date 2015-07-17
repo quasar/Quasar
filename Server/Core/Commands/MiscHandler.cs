@@ -1,6 +1,5 @@
 ﻿using System;
 using System.IO;
-using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
@@ -11,7 +10,7 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
     public static partial class CommandHandler
     {
-        public static void HandleShellCommandResponse(Client client, ShellCommandResponse packet)
+        public static void HandleDoShellExecuteResponse(Client client, DoShellExecuteResponse packet)
         {
             if (client.Value.FrmRs == null || string.IsNullOrEmpty(packet.Output))
                 return;
@@ -22,7 +21,7 @@ namespace xServer.Core.Commands
                 client.Value.FrmRs.PrintMessage(packet.Output);
         }
 
-        public static void HandleDownloadFileResponse(Client client, DownloadFileResponse packet)
+        public static void HandleDoDownloadFileResponse(Client client, DoDownloadFileResponse packet)
         {
             if (CanceledDownloads.ContainsKey(packet.ID) || string.IsNullOrEmpty(packet.Filename))
                 return;
@@ -51,8 +50,8 @@ namespace xServer.Core.Commands
 
             if (client.Value.FrmFm == null)
             {
-                FrmMain.Instance.SetClientStatus(client, "Download aborted, please keep the File Manager open.");
-                new Packets.ServerPackets.DownloadFileCanceled(packet.ID).Execute(client);
+                FrmMain.Instance.SetStatusByClient(client, "Download aborted, please keep the File Manager open.");
+                new Packets.ServerPackets.DoDownloadFileCancel(packet.ID).Execute(client);
                 return;
             }
 

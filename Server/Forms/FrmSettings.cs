@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Settings;
@@ -9,9 +10,9 @@ namespace xServer.Forms
 {
     public partial class FrmSettings : Form
     {
-        private readonly Server _listenServer;
+        private readonly ConnectionHandler _listenServer;
 
-        public FrmSettings(Server listenServer)
+        public FrmSettings(ConnectionHandler listenServer)
         {
             this._listenServer = listenServer;
 
@@ -23,6 +24,8 @@ namespace xServer.Forms
                 ncPort.Enabled = false;
                 txtPassword.Enabled = false;
             }
+
+            ShowPassword(false);
         }
 
         private void FrmSettings_Load(object sender, EventArgs e)
@@ -45,8 +48,8 @@ namespace xServer.Forms
             {
                 try
                 {
-                    if (chkUseUpnp.Checked && !Core.Helper.UPnP.IsPortForwarded)
-                        Core.Helper.UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (chkUseUpnp.Checked && !UPnP.IsPortForwarded)
+                        UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
                     _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
@@ -63,8 +66,8 @@ namespace xServer.Forms
                 try
                 {
                     _listenServer.Disconnect();
-                    if (Core.Helper.UPnP.IsPortForwarded)
-                        Core.Helper.UPnP.RemovePort();
+                    if (UPnP.IsPortForwarded)
+                        UPnP.RemovePort();
                 }
                 finally
                 {
@@ -98,17 +101,14 @@ namespace xServer.Forms
             XMLSettings.WriteValue("EnableNoIPUpdater", chkNoIPIntegration.Checked.ToString());
             XMLSettings.IntegrateNoIP = chkNoIPIntegration.Checked;
 
-            if (chkNoIPIntegration.Checked)
-            {
-                XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
-                XMLSettings.NoIPHost = txtNoIPHost.Text;
+            XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
+            XMLSettings.NoIPHost = txtNoIPHost.Text;
 
-                XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
-                XMLSettings.NoIPUsername = txtNoIPUser.Text;
+            XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
+            XMLSettings.NoIPUsername = txtNoIPUser.Text;
 
-                XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
-                XMLSettings.NoIPPassword = txtNoIPPass.Text;
-            }
+            XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
+            XMLSettings.NoIPPassword = txtNoIPPass.Text;
 
             this.Close();
         }
@@ -133,6 +133,17 @@ namespace xServer.Forms
             txtNoIPHost.Enabled = enable;
             txtNoIPUser.Enabled = enable;
             txtNoIPPass.Enabled = enable;
+            chkShowPassword.Enabled = enable;
+        }
+
+        private void ShowPassword(bool show = true)
+        {
+            txtNoIPPass.PasswordChar = (show) ? (char)0 : (char)'●';
+        }
+
+        private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
+        {
+            ShowPassword(chkShowPassword.Checked);
         }
     }
 }

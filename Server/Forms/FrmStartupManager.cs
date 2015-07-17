@@ -63,7 +63,7 @@ namespace xServer.Forms
                 {
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.AddStartupItem(AutostartItem.Name, AutostartItem.Path,
+                        new Core.Packets.ServerPackets.DoStartupItemAdd(AutostartItem.Name, AutostartItem.Path,
                             AutostartItem.Type).Execute(_connectClient);
                         lstStartupItems.Items.Clear();
                         new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
@@ -80,7 +80,7 @@ namespace xServer.Forms
                 if (_connectClient != null)
                 {
                     int type = lstStartupItems.Groups.Cast<ListViewGroup>().TakeWhile(t => t != item.Group).Count();
-                    new Core.Packets.ServerPackets.RemoveStartupItem(item.Text, item.SubItems[1].Text, type).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoStartupItemRemove(item.Text, item.SubItems[1].Text, type).Execute(_connectClient);
                 }
                 modified++;
             }

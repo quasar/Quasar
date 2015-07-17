@@ -167,10 +167,29 @@ namespace xServer.Core.Networking
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
 
-        //Connection info
+        /// <summary>
+        /// The time when the client connected.
+        /// </summary>
+        public DateTime ConnectedTime { get; private set; }
+
+        /// <summary>
+        /// The connection state of the client.
+        /// </summary>
         public bool Connected { get; private set; }
+
+        /// <summary>
+        /// Stores values of the user.
+        /// </summary>
         public UserState Value { get; set; }
+
+        /// <summary>
+        /// The Endpoint which the client is connected to.
+        /// </summary>
         public IPEndPoint EndPoint { get; private set; }
+
+        /// <summary>
+        /// The parent server of the client.
+        /// </summary>
         private readonly Server _parentServer;
 
         /// <summary>
@@ -194,8 +213,8 @@ namespace xServer.Core.Networking
         {
             try
             {
-                AddTypesToSerializer(typeof (IPacket), packets);
                 _parentServer = server;
+                AddTypesToSerializer(typeof(IPacket), packets);
                 Initialize();
 
                 _handle = sock;
@@ -203,6 +222,7 @@ namespace xServer.Core.Networking
                 _handle.NoDelay = true;
 
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
+                ConnectedTime = DateTime.UtcNow;
 
                 _readBuffer = Server.BufferManager.GetBuffer();
 
@@ -217,7 +237,8 @@ namespace xServer.Core.Networking
 
         private void Initialize()
         {
-            AddTypeToSerializer(typeof (IPacket), typeof (UnknownPacket));
+            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
+            Value = new UserState();
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -309,13 +330,12 @@ namespace xServer.Core.Networking
                                 {
                                     try
                                     {
-                                        _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
+                                        _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
+
+                                        if (_payloadLen <= 0)
+                                            throw new Exception("invalid header");
                                     }
                                     catch (Exception)
-                                    {
-                                        break;
-                                    }
-                                    if (_payloadLen <= 0)
                                     {
                                         process = false;
                                         break;
@@ -329,20 +349,30 @@ namespace xServer.Core.Networking
                             }
                         case ReceiveType.Payload:
                             {
-                                process = _readableDataLen >= _payloadLen;
-                                if (process)
-                                {
-                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                        _payloadBuffer = new byte[_payloadLen];
-                                    try
-                                    {
-                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, 0, _payloadBuffer.Length);
-                                    }
-                                    catch
-                                    {
-                                        Disconnect();
-                                    }
+                                if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
+                                    _payloadBuffer = new byte[_payloadLen];
 
+                                int length = _readableDataLen;
+                                if (_writeOffset + _readableDataLen >= _payloadLen)
+                                {
+                                    length = _payloadLen - _writeOffset;
+                                }
+
+                                try
+                                {
+                                    Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, length);
+                                }
+                                catch
+                                {
+                                    Disconnect();
+                                }
+
+                                _writeOffset += length;
+                                _readOffset += length;
+                                _readableDataLen -= length;
+
+                                if (_writeOffset == _payloadLen)
+                                {
                                     if (encryptionEnabled)
                                         _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
@@ -353,60 +383,24 @@ namespace xServer.Core.Networking
 
                                         using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                         {
-                                            IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                PrefixStyle.Fixed32);
+                                            IPacket packet =
+                                                Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
 
                                             OnClientRead(packet);
                                         }
                                     }
+                                    else // payload decryption failed
+                                        process = false;
 
-                                    _readOffset += _payloadLen;
-                                    _readableDataLen -= _payloadLen;
                                     _receiveState = ReceiveType.Header;
                                     _payloadBuffer = null;
                                     _payloadLen = 0;
+                                    _writeOffset = 0;
                                 }
-                                else // handle payload that does not fit in one buffer
-                                {
-                                    if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
-                                        _payloadBuffer = new byte[_payloadLen];
-                                    try
-                                    {
-                                        Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, _readableDataLen);
-                                    }
-                                    catch
-                                    {
-                                        Disconnect();
-                                    }
 
-                                    _writeOffset += _readableDataLen;
-                                    _readOffset += _readableDataLen;
-                                    _readableDataLen = 0;
+                                if (_readableDataLen == 0)
+                                    process = false;
 
-                                    if (_writeOffset == _payloadLen)
-                                    {
-                                        if (encryptionEnabled)
-                                            _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(XMLSettings.Password));
-
-                                        if (_payloadBuffer.Length > 0)
-                                        {
-                                            if (compressionEnabled)
-                                                _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
-
-                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
-                                            {
-                                                IPacket packet = Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                    PrefixStyle.Fixed32);
-
-                                                OnClientRead(packet);
-                                            }
-                                        }
-
-                                        _receiveState = ReceiveType.Header;
-                                        _payloadBuffer = null;
-                                        _payloadLen = 0;
-                                    }
-                                }
                                 break;
                             }
                     }
@@ -487,11 +481,18 @@ namespace xServer.Core.Networking
                 if (encryptionEnabled)
                     payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(XMLSettings.Password));
 
-                byte[] header = BitConverter.GetBytes(payload.Length);
+                byte[] header = new byte[]
+                {
+                    (byte)payload.Length,
+                    (byte)(payload.Length >> 8),
+                    (byte)(payload.Length >> 16)
+                };
 
-                byte[] data = new byte[payload.Length + 4];
+                byte[] data = new byte[payload.Length + _parentServer.HEADER_SIZE];
                 Array.Copy(header, data, header.Length);
-                Array.Copy(payload, 0, data, 4, payload.Length);
+                Array.Copy(payload, 0, data, _parentServer.HEADER_SIZE, payload.Length);
+
+                _parentServer.BytesSent += data.Length;
 
                 try
                 {

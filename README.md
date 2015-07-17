@@ -1,6 +1,6 @@
 xRAT 2.0
 ========
-[![Build status](https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true)](https://ci.appveyor.com/project/MaxXor/xrat)
+<a href="https://ci.appveyor.com/project/MaxXor/xrat"><image src="https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true" height="18"></a> [![Join the chat at https://gitter.im/MaxXor/xRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MaxXor/xRAT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 **Free, Open-Source Remote Administration Tool**
 
@@ -13,7 +13,7 @@ Features
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
-* No-IP.org Support
+* No-Ip.com Support
 * Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
@@ -81,16 +81,24 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 Credits
 ---
 Protocol Buffers - Google's data interchange format  
-Copyright 2008 Google Inc.  
+Copyright (c) 2008 Google Inc.  
 https://developers.google.com/protocol-buffers/
 
 ResourceLib  
 Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
 https://github.com/dblock/resourcelib
 
-globalmousekeyhook  
+GlobalMouseKeyHook  
 Copyright (c) 2004-2015, George Mamaladze  
 https://github.com/gmamaladze/globalmousekeyhook
+
+Mono.Cecil  
+Copyright (c) 2008 - 2015 Jb Evain, Copyright (c) 2008 - 2011 Novell, Inc.  
+https://github.com/jbevain/cecil
+
+Mono.Nat  
+Copyright (c) 2006 Alan McGovern, Copyright (c) 2007 Ben Motmans  
+https://github.com/nterry/Mono.Nat
 
 Thank you!
 ---

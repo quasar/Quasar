@@ -29,5 +29,23 @@ namespace xClient.Core.Commands
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
         private const string DELIMITER = "$E$";
+
+        public enum UserStatus
+        {
+            Idle,
+            Active
+        }
+        public enum ShutdownAction
+        {
+            Shutdown,
+            Restart,
+            Standby
+        }
+        public enum PathType
+        {
+            File,
+            Directory,
+            Back
+        }
     }
 }
