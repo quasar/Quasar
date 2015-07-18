@@ -6,13 +6,37 @@ using System.Threading;
 
 namespace xClient.Core.RemoteShell
 {
+    /// <summary>
+    /// This class manages a remote shell session.
+    /// </summary>
     public class Shell : IDisposable
     {
+        /// <summary>
+        /// The Process of the command-line.
+        /// </summary>
         private Process _prc;
+
+        /// <summary>
+        /// Decides if we should still read from the output.
+        /// <remarks>
+        /// Detects unexpected closing of the shell.
+        /// </remarks>
+        /// </summary>
         private bool _read;
+
+        /// <summary>
+        /// The lock object for the read variable.
+        /// </summary>
         private readonly object _readLock = new object();
+
+        /// <summary>
+        /// The lock object for the StreamReader.
+        /// </summary>
         private readonly object _readStreamLock = new object();
 
+        /// <summary>
+        /// Creates a new session of the Shell
+        /// </summary>
         private void CreateSession()
         {
             lock (_readLock)
@@ -43,12 +67,21 @@ namespace xClient.Core.RemoteShell
                 Program.ConnectClient);
         }
 
+        /// <summary>
+        /// Starts the redirection of input and output
+        /// </summary>
         private void RedirectOutputs()
         {
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardOutput(); });
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardError(); });
         }
 
+        /// <summary>
+        /// Reads the output from the stream.
+        /// </summary>
+        /// <param name="firstCharRead">The first read char.</param>
+        /// <param name="streamReader">The StreamReader to read from.</param>
+        /// <param name="isError">True if reading from the error-stream, else False.</param>
         private void ReadStream(int firstCharRead, StreamReader streamReader, bool isError)
         {
             lock (_readStreamLock)
@@ -74,6 +107,11 @@ namespace xClient.Core.RemoteShell
             }
         }
 
+        /// <summary>
+        /// Sends the read output to the Client.
+        /// </summary>
+        /// <param name="textbuffer">Contains the contents of the output.</param>
+        /// <param name="isError">True if reading from the error-stream, else False.</param>
         private void SendAndFlushBuffer(ref StringBuilder textbuffer, bool isError)
         {
             if (textbuffer.Length == 0) return;
@@ -96,6 +134,9 @@ namespace xClient.Core.RemoteShell
             textbuffer.Length = 0;
         }
 
+        /// <summary>
+        /// Reads from the standard output-stream.
+        /// </summary>
         private void RedirectStandardOutput()
         {
             try
@@ -133,6 +174,9 @@ namespace xClient.Core.RemoteShell
             }
         }
 
+        /// <summary>
+        /// Reads from the standard error-stream.
+        /// </summary>
         private void RedirectStandardError()
         {
             try
@@ -170,6 +214,11 @@ namespace xClient.Core.RemoteShell
             }
         }
 
+        /// <summary>
+        /// Executes a shell command.
+        /// </summary>
+        /// <param name="command">The command to execute.</param>
+        /// <returns>False if execution failed, else True.</returns>
         public bool ExecuteCommand(string command)
         {
             if (_prc == null || _prc.HasExited)
@@ -183,11 +232,17 @@ namespace xClient.Core.RemoteShell
             return true;
         }
 
+        /// <summary>
+        /// Constructor, creates a new session.
+        /// </summary>
         public Shell()
         {
             CreateSession();
         }
 
+        /// <summary>
+        /// Releases all resources used by this class.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
@@ -204,27 +259,20 @@ namespace xClient.Core.RemoteShell
                     _read = false;
                 }
 
-                try
+                if (_prc == null) return;
+
+                if (!_prc.HasExited)
                 {
-                    if (_prc != null)
+                    try
                     {
-                        if (!_prc.HasExited)
-                        {
-                            try
-                            {
-                                _prc.Kill();
-                            }
-                            catch
-                            {
-                            }
-                        }
-                        _prc.Dispose();
-                        _prc = null;
+                        _prc.Kill();
+                    }
+                    catch
+                    {
                     }
                 }
-                catch
-                {
-                }
+                _prc.Dispose();
+                _prc = null;
             }
         }
     }
