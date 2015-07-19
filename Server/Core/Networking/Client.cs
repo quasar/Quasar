@@ -160,9 +160,10 @@ namespace xServer.Core.Networking
         /// </summary>
         private readonly object _readingPacketsLock = new object();
 
-        //receive info
+        // receive info
         private int _readOffset;
         private int _writeOffset;
+        private int _tempHeaderOffset;
         private int _readableDataLen;
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
@@ -202,6 +203,21 @@ namespace xServer.Core.Networking
         /// </summary>
         private byte[] _payloadBuffer;
 
+        /// <summary>
+        /// The temporary header to store parts of the header.
+        /// </summary>
+        /// <remarks>
+        /// This temporary header is used when we have i.e.
+        /// only 2 bytes left to read from the buffer but need more
+        /// which can only be read in the next Receive callback
+        /// </remarks>
+        private byte[] _tempHeader;
+
+        /// <summary>
+        /// Decides if we need to append bytes to the header.
+        /// </summary>
+        private bool _appendHeader;
+
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
@@ -225,6 +241,7 @@ namespace xServer.Core.Networking
                 ConnectedTime = DateTime.UtcNow;
 
                 _readBuffer = Server.BufferManager.GetBuffer();
+                _tempHeader = new byte[_parentServer.HEADER_SIZE];
 
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
                 OnClientState(true);
@@ -325,12 +342,26 @@ namespace xServer.Core.Networking
                     {
                         case ReceiveType.Header:
                             {
-                                process = _readableDataLen >= _parentServer.HEADER_SIZE;
-                                if (process)
-                                {
+                                if (_readableDataLen >= _parentServer.HEADER_SIZE)
+                                { // we can read the header
+                                    int size = (_appendHeader) ?
+                                        _parentServer.HEADER_SIZE - _tempHeaderOffset
+                                        : _parentServer.HEADER_SIZE;
+
                                     try
                                     {
-                                        _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
+                                        if (_appendHeader)
+                                        {
+                                            Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, size);
+                                            _payloadLen = (int)_tempHeader[0] | _tempHeader[1] << 8 | _tempHeader[2] << 16;
+                                            _tempHeaderOffset = 0;
+                                            _appendHeader = false;
+                                        }
+                                        else
+                                        {
+                                            _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 |
+                                                readBuffer[_readOffset + 2] << 16;
+                                        }
 
                                         if (_payloadLen <= 0)
                                             throw new Exception("invalid header");
@@ -341,9 +372,16 @@ namespace xServer.Core.Networking
                                         break;
                                     }
 
-                                    _readableDataLen -= _parentServer.HEADER_SIZE;
-                                    _readOffset += _parentServer.HEADER_SIZE;
+                                    _readableDataLen -= size;
+                                    _readOffset += size;
                                     _receiveState = ReceiveType.Payload;
+                                }
+                                else // _parentServer.HEADER_SIZE < _readableDataLen
+                                {
+                                    _appendHeader = true;
+                                    Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
+                                    _tempHeaderOffset += _readableDataLen;
+                                    process = false;
                                 }
                                 break;
                             }
