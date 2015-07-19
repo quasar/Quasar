@@ -104,5 +104,10 @@ namespace xServer.Core.Helper
                     return 10;
             }
         }
+
+        public static bool IsRunningOnMono()
+        {
+            return Type.GetType("Mono.Runtime") != null;
+        }
     }
 }

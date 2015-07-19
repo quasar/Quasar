@@ -18,16 +18,19 @@ namespace xServer.Core.Extensions
 
         public static void RemoveDots(this ListView targetListView)
         {
+            if (Helper.Helper.IsRunningOnMono()) return;
             SendMessage(targetListView.Handle, WM_CHANGEUISTATE, 65537, 0);
         }
 
         public static void ChangeTheme(this ListView targetListView)
         {
+            if (Helper.Helper.IsRunningOnMono()) return;
             SetWindowTheme(targetListView.Handle, "Explorer", 0);
         }
 
         public static void AutosizeColumns(this ListView targetListView)
         {
+            if (Helper.Helper.IsRunningOnMono()) return;
             for (int lngColumn = 0; lngColumn <= (targetListView.Columns.Count - 1); lngColumn++)
             {
                 SendMessage(targetListView.Handle, SET_COLUMN_WIDTH, lngColumn, AUTOSIZE_USEHEADER);
