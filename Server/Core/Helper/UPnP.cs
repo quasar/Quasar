@@ -19,10 +19,14 @@ namespace xServer.Core.Helper
 
             new Thread(() =>
             {
-                while (Devices.Count == 0) // wait until first device found
+                int trys = 0;
+                while (Devices.Count == 0 && trys < 10) // wait until first device found
                 {
+                    trys++;
                     Thread.Sleep(1000);
                 }
+
+                if (Devices.Count == 0) return;
 
                 try
                 {
