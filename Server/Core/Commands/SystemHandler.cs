@@ -3,6 +3,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
@@ -15,10 +16,18 @@ namespace xServer.Core.Commands
     {
         public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
         {
-            if (client.Value.FrmFm == null || packet.Drives == null)
+            if (client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
                 return;
 
-            client.Value.FrmFm.AddDrives(packet.Drives);
+            if (packet.DriveDisplayName.Length != packet.RootDirectory.Length) return;
+
+            RemoteDrive[] drives = new RemoteDrive[packet.DriveDisplayName.Length];
+            for (int i = 0; i < packet.DriveDisplayName.Length; i++)
+            {
+                drives[i] = new RemoteDrive(packet.DriveDisplayName[i], packet.RootDirectory[i]);
+            }
+
+            client.Value.FrmFm.AddDrives(drives);
         }
 
         public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)

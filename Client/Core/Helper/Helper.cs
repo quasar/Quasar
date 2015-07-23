@@ -4,6 +4,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Drawing.Imaging;
+using System.IO;
 
 namespace xClient.Core.Helper
 {
@@ -52,6 +53,21 @@ namespace xClient.Core.Helper
             return (macAddress.Length != 12)
                 ? "00:00:00:00:00:00"
                 : Regex.Replace(macAddress, "(.{2})(.{2})(.{2})(.{2})(.{2})(.{2})", "$1:$2:$3:$4:$5:$6");
+        }
+
+        public static string DriveTypeName(DriveType type)
+        {
+            switch (type)
+            {
+                case DriveType.Fixed:
+                    return "Local Disk";
+                case DriveType.Network:
+                    return "Network Drive";
+                case DriveType.Removable:
+                    return "Removable Drive";
+                default:
+                    return type.ToString();
+            }
         }
     }
 }

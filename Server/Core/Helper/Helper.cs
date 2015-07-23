@@ -70,17 +70,23 @@ namespace xServer.Core.Helper
                 case ".exe":
                     return 3;
                 case ".txt":
+                case ".log":
+                case ".conf":
+                case ".cfg":
+                case ".asc":
                     return 4;
                 case ".rar":
                 case ".zip":
                 case ".zipx":
                 case ".tar":
                 case ".tgz":
+                case ".gz":
                 case ".s7z":
                 case ".7z":
                 case ".bz2":
                 case ".cab":
                 case ".zz":
+                case ".apk":
                     return 5;
                 case ".doc":
                 case ".docx":
@@ -93,14 +99,21 @@ namespace xServer.Core.Helper
                 case ".png":
                 case ".bmp":
                 case ".gif":
+                case ".ico":
                     return 8;
                 case ".mp4":
                 case ".mov":
                 case ".avi":
                 case ".wmv":
+                case ".mkv":
+                case ".m4v":
+                case ".flv":
                     return 9;
                 case ".mp3":
                 case ".wav":
+                case ".pls":
+                case ".m3u":
+                case ".m4a":
                     return 10;
             }
         }

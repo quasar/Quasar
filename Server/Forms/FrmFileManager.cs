@@ -55,7 +55,7 @@ namespace xServer.Forms
                 {
                     if (_connectClient.Value.LastDirectorySeen)
                     {
-                        _currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
+                        _currentDir = cmbDrives.SelectedValue.ToString();
                         new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
                         _connectClient.Value.LastDirectorySeen = false;
                     }
@@ -266,15 +266,24 @@ namespace xServer.Forms
             }
         }
 
-        public void AddDrives(string[] drives)
+        private void ctxtRemove_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem transfer in lstTransfers.SelectedItems)
+            {
+                if (transfer.SubItems[1].Text != "Completed") return;
+                transfer.Remove();
+            }
+        }
+
+        public void AddDrives(RemoteDrive[] drives)
         {
             try
             {
                 cmbDrives.Invoke((MethodInvoker) delegate
                 {
-                    cmbDrives.Items.Clear();
-                    cmbDrives.Items.AddRange(drives);
-                    cmbDrives.SelectedIndex = 0;
+                    cmbDrives.DisplayMember = "DisplayName";
+                    cmbDrives.ValueMember = "RootDirectory";
+                    cmbDrives.DataSource = new BindingSource(drives, null);
                 });
             }
             catch (InvalidOperationException)
