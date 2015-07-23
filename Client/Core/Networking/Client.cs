@@ -533,6 +533,21 @@ namespace xClient.Core.Networking
             }
         }
 
+        /// <summary>
+        /// Sends a packet to the connected server.
+        /// Blocks the thread until all packets have been sent.
+        /// </summary>
+        /// <typeparam name="T">The type of the packet.</typeparam>
+        /// <param name="packet">The packet to be send.</param>
+        public void SendBlocking<T>(T packet) where T : IPacket
+        {
+            Send(packet);
+            while (_sendingPackets)
+            {
+                Thread.Sleep(10);
+            }
+        }
+
         private void Send(object state)
         {
             while (true)

@@ -256,11 +256,11 @@ namespace xServer.Forms
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
                 if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
-                if (!CommandHandler.CanceledDownloads.ContainsKey(transfer.Index))
-                    CommandHandler.CanceledDownloads.Add(int.Parse(transfer.Text), "canceled");
+                int id = int.Parse(transfer.SubItems[0].Text);
+                if (!CommandHandler.CanceledDownloads.ContainsKey(id))
+                    CommandHandler.CanceledDownloads.Add(id, "canceled");
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoDownloadFileCancel(int.Parse(transfer.Text)).Execute(_connectClient);
-                var id = int.Parse(transfer.SubItems[0].Text);
                 CommandHandler.RenamedFiles.Remove(id);
                 UpdateTransferStatus(transfer.Index, "Canceled", 0);
             }
