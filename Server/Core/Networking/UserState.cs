@@ -30,7 +30,6 @@ namespace xServer.Core.Networking
         public FrmReverseProxy FrmProxy { get; set; }
         
         public bool IsAuthenticated { get; set; }
-        public bool LastDesktopSeen { get; set; }
         public bool LastDirectorySeen { get; set; }
         public int LastQuality { get; set; }
         public int LastMonitor { get; set; }
@@ -41,7 +40,6 @@ namespace xServer.Core.Networking
         public UserState()
         {
             IsAuthenticated = false;
-            LastDesktopSeen = true;
             LastDirectorySeen = true;
             LastQuality = -1;
             LastMonitor = -1;

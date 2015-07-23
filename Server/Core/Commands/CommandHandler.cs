@@ -26,5 +26,10 @@ namespace xServer.Core.Commands
             Directory,
             Back
         }
+        public enum RemoteDesktopAction
+        {
+            Start,
+            Stop
+        }
     }
 }

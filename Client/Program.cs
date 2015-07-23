@@ -36,17 +36,15 @@ namespace xClient
 
         private static void Cleanup()
         {
+            CommandHandler.IsStreamingDesktop = false;
+            CommandHandler.StreamCodec = null;
             CommandHandler.CloseShell();
-            if (CommandHandler.LastDesktopScreenshot != null)
-                CommandHandler.LastDesktopScreenshot.Dispose();
             if (Logger.Instance != null)
                 Logger.Instance.Dispose();
             if (_msgLoop != null)
                 _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
-
-            CommandHandler.StreamCodec = null;
         }
 
         private static void InitializeClient()

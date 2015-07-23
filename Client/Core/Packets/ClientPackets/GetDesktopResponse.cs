@@ -28,7 +28,7 @@ namespace xClient.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send(this);
+            client.SendBlocking(this);
         }
     }
 }

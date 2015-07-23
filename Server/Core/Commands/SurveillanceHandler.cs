@@ -22,7 +22,6 @@ namespace xServer.Core.Commands
                     client.Value.FrmRdp.UpdateImage(client.Value.LastDesktop);
 
                 client.Value.LastDesktop = null;
-                client.Value.LastDesktopSeen = true;
 
                 return;
             }
@@ -85,7 +84,6 @@ namespace xServer.Core.Commands
             }
 
             packet.Image = null;
-            client.Value.LastDesktopSeen = true;
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
