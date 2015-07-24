@@ -2,7 +2,7 @@
 
 namespace xServer.Controls
 {
-    public class ListViewEx : ListView
+    internal class ListViewEx : ListView
     {
         public ListViewEx()
         {

@@ -65,6 +65,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Controls\DotNetBarTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MainMenuEx.cs">
       <SubType>Component</SubType>
     </Compile>

@@ -313,7 +313,7 @@ namespace xServer.Forms
         {
             this.Invoke((MethodInvoker) delegate
             {
-                foreach (Control ctrl in groupAsmInfo.Controls)
+                foreach (Control ctrl in assemblyPage.Controls)
                 {
                     if (ctrl is Label)
                         ((Label) ctrl).Enabled = chkChangeAsmInfo.Checked;

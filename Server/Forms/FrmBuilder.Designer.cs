@@ -30,7 +30,6 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
-            this.groupConnection = new System.Windows.Forms.GroupBox();
             this.lblMS = new System.Windows.Forms.Label();
             this.txtDelay = new System.Windows.Forms.TextBox();
             this.lblDelay = new System.Windows.Forms.Label();
@@ -41,7 +40,6 @@
             this.lblPort = new System.Windows.Forms.Label();
             this.txtHost = new System.Windows.Forms.TextBox();
             this.lblHost = new System.Windows.Forms.Label();
-            this.groupInstall = new System.Windows.Forms.GroupBox();
             this.picUAC2 = new System.Windows.Forms.PictureBox();
             this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.rbSystem = new System.Windows.Forms.RadioButton();
@@ -67,7 +65,6 @@
             this.chkElevation = new System.Windows.Forms.CheckBox();
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
-            this.groupAsmInfo = new System.Windows.Forms.GroupBox();
             this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
             this.txtFileVersion = new System.Windows.Forms.TextBox();
             this.lblFileVersion = new System.Windows.Forms.Label();
@@ -85,39 +82,25 @@
             this.lblDescription = new System.Windows.Forms.Label();
             this.txtProductName = new System.Windows.Forms.TextBox();
             this.lblProductName = new System.Windows.Forms.Label();
-            this.groupAdditional = new System.Windows.Forms.GroupBox();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.groupConnection.SuspendLayout();
-            this.groupInstall.SuspendLayout();
+            this.builderTabs = new xServer.Controls.DotNetBarTabControl();
+            this.connectionPage = new System.Windows.Forms.TabPage();
+            this.installationPage = new System.Windows.Forms.TabPage();
+            this.assemblyPage = new System.Windows.Forms.TabPage();
+            this.additionalTab = new System.Windows.Forms.TabPage();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
-            this.groupAsmInfo.SuspendLayout();
-            this.groupAdditional.SuspendLayout();
+            this.builderTabs.SuspendLayout();
+            this.connectionPage.SuspendLayout();
+            this.installationPage.SuspendLayout();
+            this.assemblyPage.SuspendLayout();
+            this.additionalTab.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // groupConnection
-            // 
-            this.groupConnection.Controls.Add(this.lblMS);
-            this.groupConnection.Controls.Add(this.txtDelay);
-            this.groupConnection.Controls.Add(this.lblDelay);
-            this.groupConnection.Controls.Add(this.chkShowPass);
-            this.groupConnection.Controls.Add(this.txtPassword);
-            this.groupConnection.Controls.Add(this.lblPassword);
-            this.groupConnection.Controls.Add(this.txtPort);
-            this.groupConnection.Controls.Add(this.lblPort);
-            this.groupConnection.Controls.Add(this.txtHost);
-            this.groupConnection.Controls.Add(this.lblHost);
-            this.groupConnection.Location = new System.Drawing.Point(12, 12);
-            this.groupConnection.Name = "groupConnection";
-            this.groupConnection.Size = new System.Drawing.Size(325, 153);
-            this.groupConnection.TabIndex = 0;
-            this.groupConnection.TabStop = false;
-            this.groupConnection.Text = "Connection";
             // 
             // lblMS
             // 
             this.lblMS.AutoSize = true;
-            this.lblMS.Location = new System.Drawing.Point(186, 126);
+            this.lblMS.Location = new System.Drawing.Point(184, 126);
             this.lblMS.Name = "lblMS";
             this.lblMS.Size = new System.Drawing.Size(21, 13);
             this.lblMS.TabIndex = 9;
@@ -125,7 +108,7 @@
             // 
             // txtDelay
             // 
-            this.txtDelay.Location = new System.Drawing.Point(118, 120);
+            this.txtDelay.Location = new System.Drawing.Point(116, 120);
             this.txtDelay.MaxLength = 6;
             this.txtDelay.Name = "txtDelay";
             this.txtDelay.Size = new System.Drawing.Size(66, 22);
@@ -137,7 +120,7 @@
             // lblDelay
             // 
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(17, 123);
+            this.lblDelay.Location = new System.Drawing.Point(15, 123);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(95, 13);
             this.lblDelay.TabIndex = 7;
@@ -146,7 +129,7 @@
             // chkShowPass
             // 
             this.chkShowPass.AutoSize = true;
-            this.chkShowPass.Location = new System.Drawing.Point(118, 99);
+            this.chkShowPass.Location = new System.Drawing.Point(116, 99);
             this.chkShowPass.Name = "chkShowPass";
             this.chkShowPass.Size = new System.Drawing.Size(107, 17);
             this.chkShowPass.TabIndex = 6;
@@ -156,7 +139,7 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(118, 71);
+            this.txtPassword.Location = new System.Drawing.Point(116, 71);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '•';
             this.txtPassword.Size = new System.Drawing.Size(201, 22);
@@ -166,7 +149,7 @@
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(53, 74);
+            this.lblPassword.Location = new System.Drawing.Point(51, 74);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(59, 13);
             this.lblPassword.TabIndex = 4;
@@ -174,7 +157,7 @@
             // 
             // txtPort
             // 
-            this.txtPort.Location = new System.Drawing.Point(118, 43);
+            this.txtPort.Location = new System.Drawing.Point(116, 43);
             this.txtPort.MaxLength = 5;
             this.txtPort.Name = "txtPort";
             this.txtPort.Size = new System.Drawing.Size(66, 22);
@@ -185,7 +168,7 @@
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(81, 46);
+            this.lblPort.Location = new System.Drawing.Point(79, 46);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(31, 13);
             this.lblPort.TabIndex = 2;
@@ -193,7 +176,7 @@
             // 
             // txtHost
             // 
-            this.txtHost.Location = new System.Drawing.Point(118, 15);
+            this.txtHost.Location = new System.Drawing.Point(116, 15);
             this.txtHost.Name = "txtHost";
             this.txtHost.Size = new System.Drawing.Size(201, 22);
             this.txtHost.TabIndex = 1;
@@ -202,46 +185,16 @@
             // lblHost
             // 
             this.lblHost.AutoSize = true;
-            this.lblHost.Location = new System.Drawing.Point(37, 18);
+            this.lblHost.Location = new System.Drawing.Point(35, 18);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(75, 13);
             this.lblHost.TabIndex = 0;
             this.lblHost.Text = "IP/Hostname:";
             // 
-            // groupInstall
-            // 
-            this.groupInstall.Controls.Add(this.picUAC2);
-            this.groupInstall.Controls.Add(this.picUAC1);
-            this.groupInstall.Controls.Add(this.rbSystem);
-            this.groupInstall.Controls.Add(this.rbProgramFiles);
-            this.groupInstall.Controls.Add(this.txtRegistryKeyName);
-            this.groupInstall.Controls.Add(this.lblRegistryKeyName);
-            this.groupInstall.Controls.Add(this.chkStartup);
-            this.groupInstall.Controls.Add(this.chkHide);
-            this.groupInstall.Controls.Add(this.btnMutex);
-            this.groupInstall.Controls.Add(this.lblExamplePath);
-            this.groupInstall.Controls.Add(this.txtExamplePath);
-            this.groupInstall.Controls.Add(this.txtInstallsub);
-            this.groupInstall.Controls.Add(this.lblInstallsub);
-            this.groupInstall.Controls.Add(this.lblInstallpath);
-            this.groupInstall.Controls.Add(this.rbAppdata);
-            this.groupInstall.Controls.Add(this.txtMutex);
-            this.groupInstall.Controls.Add(this.lblMutex);
-            this.groupInstall.Controls.Add(this.lblExtension);
-            this.groupInstall.Controls.Add(this.txtInstallname);
-            this.groupInstall.Controls.Add(this.lblInstallname);
-            this.groupInstall.Controls.Add(this.chkInstall);
-            this.groupInstall.Location = new System.Drawing.Point(12, 171);
-            this.groupInstall.Name = "groupInstall";
-            this.groupInstall.Size = new System.Drawing.Size(325, 310);
-            this.groupInstall.TabIndex = 1;
-            this.groupInstall.TabStop = false;
-            this.groupInstall.Text = "Install";
-            // 
             // picUAC2
             // 
             this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC2.Location = new System.Drawing.Point(240, 138);
+            this.picUAC2.Location = new System.Drawing.Point(238, 138);
             this.picUAC2.Name = "picUAC2";
             this.picUAC2.Size = new System.Drawing.Size(16, 20);
             this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -252,7 +205,7 @@
             // picUAC1
             // 
             this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC1.Location = new System.Drawing.Point(240, 118);
+            this.picUAC1.Location = new System.Drawing.Point(238, 118);
             this.picUAC1.Name = "picUAC1";
             this.picUAC1.Size = new System.Drawing.Size(16, 20);
             this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -263,7 +216,7 @@
             // rbSystem
             // 
             this.rbSystem.AutoSize = true;
-            this.rbSystem.Location = new System.Drawing.Point(118, 141);
+            this.rbSystem.Location = new System.Drawing.Point(116, 141);
             this.rbSystem.Name = "rbSystem";
             this.rbSystem.Size = new System.Drawing.Size(60, 17);
             this.rbSystem.TabIndex = 10;
@@ -276,7 +229,7 @@
             // rbProgramFiles
             // 
             this.rbProgramFiles.AutoSize = true;
-            this.rbProgramFiles.Location = new System.Drawing.Point(118, 118);
+            this.rbProgramFiles.Location = new System.Drawing.Point(116, 118);
             this.rbProgramFiles.Name = "rbProgramFiles";
             this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
             this.rbProgramFiles.TabIndex = 9;
@@ -288,7 +241,7 @@
             // 
             // txtRegistryKeyName
             // 
-            this.txtRegistryKeyName.Location = new System.Drawing.Point(118, 275);
+            this.txtRegistryKeyName.Location = new System.Drawing.Point(116, 275);
             this.txtRegistryKeyName.Name = "txtRegistryKeyName";
             this.txtRegistryKeyName.Size = new System.Drawing.Size(201, 22);
             this.txtRegistryKeyName.TabIndex = 18;
@@ -297,7 +250,7 @@
             // lblRegistryKeyName
             // 
             this.lblRegistryKeyName.AutoSize = true;
-            this.lblRegistryKeyName.Location = new System.Drawing.Point(9, 278);
+            this.lblRegistryKeyName.Location = new System.Drawing.Point(7, 278);
             this.lblRegistryKeyName.Name = "lblRegistryKeyName";
             this.lblRegistryKeyName.Size = new System.Drawing.Size(103, 13);
             this.lblRegistryKeyName.TabIndex = 17;
@@ -306,7 +259,7 @@
             // chkStartup
             // 
             this.chkStartup.AutoSize = true;
-            this.chkStartup.Location = new System.Drawing.Point(118, 252);
+            this.chkStartup.Location = new System.Drawing.Point(116, 252);
             this.chkStartup.Name = "chkStartup";
             this.chkStartup.Size = new System.Drawing.Size(102, 17);
             this.chkStartup.TabIndex = 16;
@@ -317,7 +270,7 @@
             // chkHide
             // 
             this.chkHide.AutoSize = true;
-            this.chkHide.Location = new System.Drawing.Point(118, 229);
+            this.chkHide.Location = new System.Drawing.Point(116, 229);
             this.chkHide.Name = "chkHide";
             this.chkHide.Size = new System.Drawing.Size(71, 17);
             this.chkHide.TabIndex = 15;
@@ -328,7 +281,7 @@
             // btnMutex
             // 
             this.btnMutex.Font = new System.Drawing.Font("Segoe UI", 6.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.btnMutex.Location = new System.Drawing.Point(244, 41);
+            this.btnMutex.Location = new System.Drawing.Point(242, 41);
             this.btnMutex.Name = "btnMutex";
             this.btnMutex.Size = new System.Drawing.Size(75, 18);
             this.btnMutex.TabIndex = 3;
@@ -339,7 +292,7 @@
             // lblExamplePath
             // 
             this.lblExamplePath.AutoSize = true;
-            this.lblExamplePath.Location = new System.Drawing.Point(34, 204);
+            this.lblExamplePath.Location = new System.Drawing.Point(32, 204);
             this.lblExamplePath.Name = "lblExamplePath";
             this.lblExamplePath.Size = new System.Drawing.Size(78, 13);
             this.lblExamplePath.TabIndex = 13;
@@ -347,7 +300,7 @@
             // 
             // txtExamplePath
             // 
-            this.txtExamplePath.Location = new System.Drawing.Point(118, 201);
+            this.txtExamplePath.Location = new System.Drawing.Point(116, 201);
             this.txtExamplePath.Name = "txtExamplePath";
             this.txtExamplePath.ReadOnly = true;
             this.txtExamplePath.Size = new System.Drawing.Size(201, 22);
@@ -355,7 +308,7 @@
             // 
             // txtInstallsub
             // 
-            this.txtInstallsub.Location = new System.Drawing.Point(118, 173);
+            this.txtInstallsub.Location = new System.Drawing.Point(116, 173);
             this.txtInstallsub.Name = "txtInstallsub";
             this.txtInstallsub.Size = new System.Drawing.Size(201, 22);
             this.txtInstallsub.TabIndex = 12;
@@ -365,7 +318,7 @@
             // lblInstallsub
             // 
             this.lblInstallsub.AutoSize = true;
-            this.lblInstallsub.Location = new System.Drawing.Point(17, 176);
+            this.lblInstallsub.Location = new System.Drawing.Point(15, 176);
             this.lblInstallsub.Name = "lblInstallsub";
             this.lblInstallsub.Size = new System.Drawing.Size(95, 13);
             this.lblInstallsub.TabIndex = 11;
@@ -374,7 +327,7 @@
             // lblInstallpath
             // 
             this.lblInstallpath.AutoSize = true;
-            this.lblInstallpath.Location = new System.Drawing.Point(45, 97);
+            this.lblInstallpath.Location = new System.Drawing.Point(43, 97);
             this.lblInstallpath.Name = "lblInstallpath";
             this.lblInstallpath.Size = new System.Drawing.Size(67, 13);
             this.lblInstallpath.TabIndex = 7;
@@ -384,7 +337,7 @@
             // 
             this.rbAppdata.AutoSize = true;
             this.rbAppdata.Checked = true;
-            this.rbAppdata.Location = new System.Drawing.Point(118, 95);
+            this.rbAppdata.Location = new System.Drawing.Point(116, 95);
             this.rbAppdata.Name = "rbAppdata";
             this.rbAppdata.Size = new System.Drawing.Size(111, 17);
             this.rbAppdata.TabIndex = 8;
@@ -395,7 +348,7 @@
             // 
             // txtMutex
             // 
-            this.txtMutex.Location = new System.Drawing.Point(118, 15);
+            this.txtMutex.Location = new System.Drawing.Point(116, 15);
             this.txtMutex.MaxLength = 64;
             this.txtMutex.Name = "txtMutex";
             this.txtMutex.Size = new System.Drawing.Size(201, 22);
@@ -405,7 +358,7 @@
             // lblMutex
             // 
             this.lblMutex.AutoSize = true;
-            this.lblMutex.Location = new System.Drawing.Point(74, 18);
+            this.lblMutex.Location = new System.Drawing.Point(68, 18);
             this.lblMutex.Name = "lblMutex";
             this.lblMutex.Size = new System.Drawing.Size(42, 13);
             this.lblMutex.TabIndex = 0;
@@ -414,7 +367,7 @@
             // lblExtension
             // 
             this.lblExtension.AutoSize = true;
-            this.lblExtension.Location = new System.Drawing.Point(288, 71);
+            this.lblExtension.Location = new System.Drawing.Point(284, 71);
             this.lblExtension.Name = "lblExtension";
             this.lblExtension.Size = new System.Drawing.Size(27, 13);
             this.lblExtension.TabIndex = 6;
@@ -422,7 +375,7 @@
             // 
             // txtInstallname
             // 
-            this.txtInstallname.Location = new System.Drawing.Point(118, 65);
+            this.txtInstallname.Location = new System.Drawing.Point(116, 65);
             this.txtInstallname.Name = "txtInstallname";
             this.txtInstallname.Size = new System.Drawing.Size(168, 22);
             this.txtInstallname.TabIndex = 5;
@@ -432,7 +385,7 @@
             // lblInstallname
             // 
             this.lblInstallname.AutoSize = true;
-            this.lblInstallname.Location = new System.Drawing.Point(40, 68);
+            this.lblInstallname.Location = new System.Drawing.Point(38, 68);
             this.lblInstallname.Name = "lblInstallname";
             this.lblInstallname.Size = new System.Drawing.Size(73, 13);
             this.lblInstallname.TabIndex = 4;
@@ -441,7 +394,7 @@
             // chkInstall
             // 
             this.chkInstall.AutoSize = true;
-            this.chkInstall.Location = new System.Drawing.Point(118, 42);
+            this.chkInstall.Location = new System.Drawing.Point(116, 42);
             this.chkInstall.Name = "chkInstall";
             this.chkInstall.Size = new System.Drawing.Size(90, 17);
             this.chkInstall.TabIndex = 2;
@@ -452,7 +405,7 @@
             // chkIconChange
             // 
             this.chkIconChange.AutoSize = true;
-            this.chkIconChange.Location = new System.Drawing.Point(6, 44);
+            this.chkIconChange.Location = new System.Drawing.Point(15, 35);
             this.chkIconChange.Name = "chkIconChange";
             this.chkIconChange.Size = new System.Drawing.Size(91, 17);
             this.chkIconChange.TabIndex = 1;
@@ -464,7 +417,7 @@
             // chkElevation
             // 
             this.chkElevation.AutoSize = true;
-            this.chkElevation.Location = new System.Drawing.Point(6, 21);
+            this.chkElevation.Location = new System.Drawing.Point(15, 12);
             this.chkElevation.Name = "chkElevation";
             this.chkElevation.Size = new System.Drawing.Size(147, 17);
             this.chkElevation.TabIndex = 0;
@@ -475,7 +428,7 @@
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(540, 458);
+            this.btnBuild.Location = new System.Drawing.Point(338, 325);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(121, 23);
             this.btnBuild.TabIndex = 4;
@@ -483,36 +436,10 @@
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
             // 
-            // groupAsmInfo
-            // 
-            this.groupAsmInfo.Controls.Add(this.chkChangeAsmInfo);
-            this.groupAsmInfo.Controls.Add(this.txtFileVersion);
-            this.groupAsmInfo.Controls.Add(this.lblFileVersion);
-            this.groupAsmInfo.Controls.Add(this.txtProductVersion);
-            this.groupAsmInfo.Controls.Add(this.lblProductVersion);
-            this.groupAsmInfo.Controls.Add(this.txtOriginalFilename);
-            this.groupAsmInfo.Controls.Add(this.lblOriginalFilename);
-            this.groupAsmInfo.Controls.Add(this.txtTrademarks);
-            this.groupAsmInfo.Controls.Add(this.lblTrademarks);
-            this.groupAsmInfo.Controls.Add(this.txtCopyright);
-            this.groupAsmInfo.Controls.Add(this.lblCopyright);
-            this.groupAsmInfo.Controls.Add(this.txtCompanyName);
-            this.groupAsmInfo.Controls.Add(this.lblCompanyName);
-            this.groupAsmInfo.Controls.Add(this.txtDescription);
-            this.groupAsmInfo.Controls.Add(this.lblDescription);
-            this.groupAsmInfo.Controls.Add(this.txtProductName);
-            this.groupAsmInfo.Controls.Add(this.lblProductName);
-            this.groupAsmInfo.Location = new System.Drawing.Point(343, 12);
-            this.groupAsmInfo.Name = "groupAsmInfo";
-            this.groupAsmInfo.Size = new System.Drawing.Size(317, 269);
-            this.groupAsmInfo.TabIndex = 2;
-            this.groupAsmInfo.TabStop = false;
-            this.groupAsmInfo.Text = "Assembly Information";
-            // 
             // chkChangeAsmInfo
             // 
             this.chkChangeAsmInfo.AutoSize = true;
-            this.chkChangeAsmInfo.Location = new System.Drawing.Point(110, 17);
+            this.chkChangeAsmInfo.Location = new System.Drawing.Point(15, 12);
             this.chkChangeAsmInfo.Name = "chkChangeAsmInfo";
             this.chkChangeAsmInfo.Size = new System.Drawing.Size(180, 17);
             this.chkChangeAsmInfo.TabIndex = 0;
@@ -522,7 +449,7 @@
             // 
             // txtFileVersion
             // 
-            this.txtFileVersion.Location = new System.Drawing.Point(110, 236);
+            this.txtFileVersion.Location = new System.Drawing.Point(116, 238);
             this.txtFileVersion.Name = "txtFileVersion";
             this.txtFileVersion.Size = new System.Drawing.Size(201, 22);
             this.txtFileVersion.TabIndex = 16;
@@ -531,7 +458,7 @@
             // lblFileVersion
             // 
             this.lblFileVersion.AutoSize = true;
-            this.lblFileVersion.Location = new System.Drawing.Point(34, 239);
+            this.lblFileVersion.Location = new System.Drawing.Point(40, 241);
             this.lblFileVersion.Name = "lblFileVersion";
             this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
             this.lblFileVersion.TabIndex = 15;
@@ -539,7 +466,7 @@
             // 
             // txtProductVersion
             // 
-            this.txtProductVersion.Location = new System.Drawing.Point(110, 208);
+            this.txtProductVersion.Location = new System.Drawing.Point(116, 210);
             this.txtProductVersion.Name = "txtProductVersion";
             this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
             this.txtProductVersion.TabIndex = 14;
@@ -548,7 +475,7 @@
             // lblProductVersion
             // 
             this.lblProductVersion.AutoSize = true;
-            this.lblProductVersion.Location = new System.Drawing.Point(12, 211);
+            this.lblProductVersion.Location = new System.Drawing.Point(18, 213);
             this.lblProductVersion.Name = "lblProductVersion";
             this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
             this.lblProductVersion.TabIndex = 13;
@@ -556,7 +483,7 @@
             // 
             // txtOriginalFilename
             // 
-            this.txtOriginalFilename.Location = new System.Drawing.Point(110, 180);
+            this.txtOriginalFilename.Location = new System.Drawing.Point(116, 182);
             this.txtOriginalFilename.Name = "txtOriginalFilename";
             this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
             this.txtOriginalFilename.TabIndex = 12;
@@ -565,7 +492,7 @@
             // lblOriginalFilename
             // 
             this.lblOriginalFilename.AutoSize = true;
-            this.lblOriginalFilename.Location = new System.Drawing.Point(3, 183);
+            this.lblOriginalFilename.Location = new System.Drawing.Point(9, 185);
             this.lblOriginalFilename.Name = "lblOriginalFilename";
             this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
             this.lblOriginalFilename.TabIndex = 11;
@@ -573,7 +500,7 @@
             // 
             // txtTrademarks
             // 
-            this.txtTrademarks.Location = new System.Drawing.Point(110, 152);
+            this.txtTrademarks.Location = new System.Drawing.Point(116, 154);
             this.txtTrademarks.Name = "txtTrademarks";
             this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
             this.txtTrademarks.TabIndex = 10;
@@ -582,7 +509,7 @@
             // lblTrademarks
             // 
             this.lblTrademarks.AutoSize = true;
-            this.lblTrademarks.Location = new System.Drawing.Point(36, 155);
+            this.lblTrademarks.Location = new System.Drawing.Point(42, 157);
             this.lblTrademarks.Name = "lblTrademarks";
             this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
             this.lblTrademarks.TabIndex = 9;
@@ -590,7 +517,7 @@
             // 
             // txtCopyright
             // 
-            this.txtCopyright.Location = new System.Drawing.Point(110, 124);
+            this.txtCopyright.Location = new System.Drawing.Point(116, 126);
             this.txtCopyright.Name = "txtCopyright";
             this.txtCopyright.Size = new System.Drawing.Size(201, 22);
             this.txtCopyright.TabIndex = 8;
@@ -599,7 +526,7 @@
             // lblCopyright
             // 
             this.lblCopyright.AutoSize = true;
-            this.lblCopyright.Location = new System.Drawing.Point(43, 127);
+            this.lblCopyright.Location = new System.Drawing.Point(49, 129);
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(61, 13);
             this.lblCopyright.TabIndex = 7;
@@ -607,7 +534,7 @@
             // 
             // txtCompanyName
             // 
-            this.txtCompanyName.Location = new System.Drawing.Point(110, 96);
+            this.txtCompanyName.Location = new System.Drawing.Point(116, 98);
             this.txtCompanyName.Name = "txtCompanyName";
             this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
             this.txtCompanyName.TabIndex = 6;
@@ -616,7 +543,7 @@
             // lblCompanyName
             // 
             this.lblCompanyName.AutoSize = true;
-            this.lblCompanyName.Location = new System.Drawing.Point(14, 99);
+            this.lblCompanyName.Location = new System.Drawing.Point(20, 101);
             this.lblCompanyName.Name = "lblCompanyName";
             this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
             this.lblCompanyName.TabIndex = 5;
@@ -624,7 +551,7 @@
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(110, 68);
+            this.txtDescription.Location = new System.Drawing.Point(116, 70);
             this.txtDescription.Name = "txtDescription";
             this.txtDescription.Size = new System.Drawing.Size(201, 22);
             this.txtDescription.TabIndex = 4;
@@ -633,7 +560,7 @@
             // lblDescription
             // 
             this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(35, 71);
+            this.lblDescription.Location = new System.Drawing.Point(41, 73);
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(69, 13);
             this.lblDescription.TabIndex = 3;
@@ -641,7 +568,7 @@
             // 
             // txtProductName
             // 
-            this.txtProductName.Location = new System.Drawing.Point(110, 40);
+            this.txtProductName.Location = new System.Drawing.Point(116, 42);
             this.txtProductName.Name = "txtProductName";
             this.txtProductName.Size = new System.Drawing.Size(201, 22);
             this.txtProductName.TabIndex = 2;
@@ -650,28 +577,16 @@
             // lblProductName
             // 
             this.lblProductName.AutoSize = true;
-            this.lblProductName.Location = new System.Drawing.Point(22, 43);
+            this.lblProductName.Location = new System.Drawing.Point(28, 45);
             this.lblProductName.Name = "lblProductName";
             this.lblProductName.Size = new System.Drawing.Size(82, 13);
             this.lblProductName.TabIndex = 1;
             this.lblProductName.Text = "Product Name:";
             // 
-            // groupAdditional
-            // 
-            this.groupAdditional.Controls.Add(this.chkKeylogger);
-            this.groupAdditional.Controls.Add(this.chkIconChange);
-            this.groupAdditional.Controls.Add(this.chkElevation);
-            this.groupAdditional.Location = new System.Drawing.Point(343, 287);
-            this.groupAdditional.Name = "groupAdditional";
-            this.groupAdditional.Size = new System.Drawing.Size(318, 153);
-            this.groupAdditional.TabIndex = 3;
-            this.groupAdditional.TabStop = false;
-            this.groupAdditional.Text = "Additional Settings";
-            // 
             // chkKeylogger
             // 
             this.chkKeylogger.AutoSize = true;
-            this.chkKeylogger.Location = new System.Drawing.Point(6, 67);
+            this.chkKeylogger.Location = new System.Drawing.Point(15, 58);
             this.chkKeylogger.Name = "chkKeylogger";
             this.chkKeylogger.Size = new System.Drawing.Size(115, 17);
             this.chkKeylogger.TabIndex = 2;
@@ -679,17 +594,120 @@
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
+            // builderTabs
+            // 
+            this.builderTabs.Alignment = System.Windows.Forms.TabAlignment.Left;
+            this.builderTabs.Controls.Add(this.connectionPage);
+            this.builderTabs.Controls.Add(this.installationPage);
+            this.builderTabs.Controls.Add(this.assemblyPage);
+            this.builderTabs.Controls.Add(this.additionalTab);
+            this.builderTabs.Dock = System.Windows.Forms.DockStyle.Top;
+            this.builderTabs.ItemSize = new System.Drawing.Size(44, 136);
+            this.builderTabs.Location = new System.Drawing.Point(0, 0);
+            this.builderTabs.Multiline = true;
+            this.builderTabs.Name = "builderTabs";
+            this.builderTabs.SelectedIndex = 0;
+            this.builderTabs.Size = new System.Drawing.Size(476, 317);
+            this.builderTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.builderTabs.TabIndex = 6;
+            // 
+            // connectionPage
+            // 
+            this.connectionPage.BackColor = System.Drawing.SystemColors.Control;
+            this.connectionPage.Controls.Add(this.lblMS);
+            this.connectionPage.Controls.Add(this.lblHost);
+            this.connectionPage.Controls.Add(this.txtDelay);
+            this.connectionPage.Controls.Add(this.txtHost);
+            this.connectionPage.Controls.Add(this.lblDelay);
+            this.connectionPage.Controls.Add(this.lblPort);
+            this.connectionPage.Controls.Add(this.chkShowPass);
+            this.connectionPage.Controls.Add(this.txtPort);
+            this.connectionPage.Controls.Add(this.txtPassword);
+            this.connectionPage.Controls.Add(this.lblPassword);
+            this.connectionPage.Location = new System.Drawing.Point(140, 4);
+            this.connectionPage.Name = "connectionPage";
+            this.connectionPage.Padding = new System.Windows.Forms.Padding(3);
+            this.connectionPage.Size = new System.Drawing.Size(332, 309);
+            this.connectionPage.TabIndex = 0;
+            this.connectionPage.Text = "Connection";
+            // 
+            // installationPage
+            // 
+            this.installationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.installationPage.Controls.Add(this.picUAC2);
+            this.installationPage.Controls.Add(this.txtMutex);
+            this.installationPage.Controls.Add(this.picUAC1);
+            this.installationPage.Controls.Add(this.chkInstall);
+            this.installationPage.Controls.Add(this.rbSystem);
+            this.installationPage.Controls.Add(this.lblInstallname);
+            this.installationPage.Controls.Add(this.rbProgramFiles);
+            this.installationPage.Controls.Add(this.txtInstallname);
+            this.installationPage.Controls.Add(this.txtRegistryKeyName);
+            this.installationPage.Controls.Add(this.lblExtension);
+            this.installationPage.Controls.Add(this.lblRegistryKeyName);
+            this.installationPage.Controls.Add(this.lblMutex);
+            this.installationPage.Controls.Add(this.chkStartup);
+            this.installationPage.Controls.Add(this.rbAppdata);
+            this.installationPage.Controls.Add(this.chkHide);
+            this.installationPage.Controls.Add(this.lblInstallpath);
+            this.installationPage.Controls.Add(this.btnMutex);
+            this.installationPage.Controls.Add(this.lblInstallsub);
+            this.installationPage.Controls.Add(this.lblExamplePath);
+            this.installationPage.Controls.Add(this.txtInstallsub);
+            this.installationPage.Controls.Add(this.txtExamplePath);
+            this.installationPage.Location = new System.Drawing.Point(140, 4);
+            this.installationPage.Name = "installationPage";
+            this.installationPage.Padding = new System.Windows.Forms.Padding(3);
+            this.installationPage.Size = new System.Drawing.Size(332, 309);
+            this.installationPage.TabIndex = 1;
+            this.installationPage.Text = "Installation";
+            // 
+            // assemblyPage
+            // 
+            this.assemblyPage.BackColor = System.Drawing.SystemColors.Control;
+            this.assemblyPage.Controls.Add(this.chkChangeAsmInfo);
+            this.assemblyPage.Controls.Add(this.txtFileVersion);
+            this.assemblyPage.Controls.Add(this.lblProductName);
+            this.assemblyPage.Controls.Add(this.lblFileVersion);
+            this.assemblyPage.Controls.Add(this.txtProductName);
+            this.assemblyPage.Controls.Add(this.txtProductVersion);
+            this.assemblyPage.Controls.Add(this.lblDescription);
+            this.assemblyPage.Controls.Add(this.lblProductVersion);
+            this.assemblyPage.Controls.Add(this.txtDescription);
+            this.assemblyPage.Controls.Add(this.txtOriginalFilename);
+            this.assemblyPage.Controls.Add(this.lblCompanyName);
+            this.assemblyPage.Controls.Add(this.lblOriginalFilename);
+            this.assemblyPage.Controls.Add(this.txtCompanyName);
+            this.assemblyPage.Controls.Add(this.txtTrademarks);
+            this.assemblyPage.Controls.Add(this.lblCopyright);
+            this.assemblyPage.Controls.Add(this.lblTrademarks);
+            this.assemblyPage.Controls.Add(this.txtCopyright);
+            this.assemblyPage.Location = new System.Drawing.Point(140, 4);
+            this.assemblyPage.Name = "assemblyPage";
+            this.assemblyPage.Size = new System.Drawing.Size(332, 309);
+            this.assemblyPage.TabIndex = 2;
+            this.assemblyPage.Text = "Assembly Information";
+            // 
+            // additionalTab
+            // 
+            this.additionalTab.BackColor = System.Drawing.SystemColors.Control;
+            this.additionalTab.Controls.Add(this.chkKeylogger);
+            this.additionalTab.Controls.Add(this.chkElevation);
+            this.additionalTab.Controls.Add(this.chkIconChange);
+            this.additionalTab.Location = new System.Drawing.Point(140, 4);
+            this.additionalTab.Name = "additionalTab";
+            this.additionalTab.Size = new System.Drawing.Size(332, 309);
+            this.additionalTab.TabIndex = 3;
+            this.additionalTab.Text = "Additional Settings";
+            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(673, 499);
-            this.Controls.Add(this.groupAdditional);
-            this.Controls.Add(this.groupAsmInfo);
+            this.ClientSize = new System.Drawing.Size(476, 358);
+            this.Controls.Add(this.builderTabs);
             this.Controls.Add(this.btnBuild);
-            this.Controls.Add(this.groupInstall);
-            this.Controls.Add(this.groupConnection);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -697,26 +715,26 @@
             this.MinimizeBox = false;
             this.Name = "FrmBuilder";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Builder";
+            this.Text = "Client Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
-            this.groupConnection.ResumeLayout(false);
-            this.groupConnection.PerformLayout();
-            this.groupInstall.ResumeLayout(false);
-            this.groupInstall.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
-            this.groupAsmInfo.ResumeLayout(false);
-            this.groupAsmInfo.PerformLayout();
-            this.groupAdditional.ResumeLayout(false);
-            this.groupAdditional.PerformLayout();
+            this.builderTabs.ResumeLayout(false);
+            this.connectionPage.ResumeLayout(false);
+            this.connectionPage.PerformLayout();
+            this.installationPage.ResumeLayout(false);
+            this.installationPage.PerformLayout();
+            this.assemblyPage.ResumeLayout(false);
+            this.assemblyPage.PerformLayout();
+            this.additionalTab.ResumeLayout(false);
+            this.additionalTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.GroupBox groupConnection;
         private System.Windows.Forms.CheckBox chkShowPass;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label lblPassword;
@@ -726,7 +744,6 @@
         private System.Windows.Forms.Label lblHost;
         private System.Windows.Forms.TextBox txtDelay;
         private System.Windows.Forms.Label lblDelay;
-        private System.Windows.Forms.GroupBox groupInstall;
         private System.Windows.Forms.CheckBox chkInstall;
         private System.Windows.Forms.TextBox txtInstallname;
         private System.Windows.Forms.Label lblInstallname;
@@ -753,7 +770,6 @@
         private System.Windows.Forms.ToolTip tooltip;
         private System.Windows.Forms.CheckBox chkElevation;
         private System.Windows.Forms.CheckBox chkIconChange;
-        private System.Windows.Forms.GroupBox groupAsmInfo;
         private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox txtProductName;
@@ -771,7 +787,11 @@
         private System.Windows.Forms.TextBox txtProductVersion;
         private System.Windows.Forms.Label lblProductVersion;
         private System.Windows.Forms.CheckBox chkChangeAsmInfo;
-        private System.Windows.Forms.GroupBox groupAdditional;
         private System.Windows.Forms.CheckBox chkKeylogger;
+        private Controls.DotNetBarTabControl builderTabs;
+        private System.Windows.Forms.TabPage connectionPage;
+        private System.Windows.Forms.TabPage installationPage;
+        private System.Windows.Forms.TabPage assemblyPage;
+        private System.Windows.Forms.TabPage additionalTab;
     }
 }
