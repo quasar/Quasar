@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Mono.Nat;
+using System.Windows.Forms;
 
 namespace xServer.Core.Helper
 {
@@ -32,9 +33,12 @@ namespace xServer.Core.Helper
                 {
                     foreach (var device in Devices)
                     {
-                        device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
-                    }
-                    IsPortForwarded = true;
+                        if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort < 0) //if port is not mapped
+                        {
+                            device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                            IsPortForwarded = true;
+                        }
+                    } 
                 }
                 catch (MappingException)
                 {
@@ -60,9 +64,9 @@ namespace xServer.Core.Helper
                 if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort > 0) // if port map exists
                 {
                     device.DeletePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                    IsPortForwarded = false;
                 }
             }
-            IsPortForwarded = false;
             NatUtility.StopDiscovery();
         }
     }
