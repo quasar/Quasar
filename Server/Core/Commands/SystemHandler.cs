@@ -35,10 +35,16 @@ namespace xServer.Core.Commands
             if (client.Value.FrmFm == null)
                 return;
 
-            client.Value.FrmFm.ClearFileBrowser();
-
             new Thread(() =>
             {
+                lock (_isAddingLock)
+                {
+                    if (_isAdding) return;
+                    _isAdding = true;
+                }
+
+                client.Value.FrmFm.ClearFileBrowser();
+
                 ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "" })
                 {
                     Tag = PathType.Back,
@@ -89,6 +95,10 @@ namespace xServer.Core.Commands
                 }
 
                 client.Value.LastDirectorySeen = true;
+                lock (_isAddingLock)
+                {
+                    _isAdding = false;
+                }
             }).Start();
         }
 
