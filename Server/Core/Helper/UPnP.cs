@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using Mono.Nat;
-using System.Windows.Forms;
 
 namespace xServer.Core.Helper
 {
