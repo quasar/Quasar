@@ -255,7 +255,7 @@ namespace xServer.Forms
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
+                if (!transfer.SubItems[1].Text.StartsWith("Downloading")) continue;
                 int id = int.Parse(transfer.SubItems[0].Text);
                 if (!CommandHandler.CanceledDownloads.ContainsKey(id))
                     CommandHandler.CanceledDownloads.Add(id, "canceled");
@@ -270,7 +270,7 @@ namespace xServer.Forms
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (transfer.SubItems[1].Text != "Completed") return;
+                if (transfer.SubItems[1].Text != "Completed" && transfer.SubItems[1].Text != "Canceled") continue;
                 transfer.Remove();
             }
         }

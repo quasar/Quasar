@@ -85,6 +85,8 @@ namespace xServer.Core.Commands
             if (client.Value.FrmFm == null)
                 return;
 
+            if (CanceledDownloads.ContainsKey(packet.ID)) return;
+
             client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
 
             if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
