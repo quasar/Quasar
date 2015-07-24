@@ -32,7 +32,7 @@ namespace xClient.Core.Commands
                 }
                 else
                 {
-                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", volumeLabel, drives[i].RootDirectory.FullName,
+                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", drives[i].RootDirectory.FullName, volumeLabel,
                         Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
                 }
                 rootDirectory[i] = drives[i].RootDirectory.FullName;
