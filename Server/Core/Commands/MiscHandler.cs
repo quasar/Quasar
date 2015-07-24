@@ -55,7 +55,7 @@ namespace xServer.Core.Commands
                 return;
             }
 
-            int index = client.Value.FrmFm.GetTransferIndex(packet.ID.ToString());
+            int index = client.Value.FrmFm.GetTransferIndex(packet.ID);
             if (index < 0)
                 return;
 

