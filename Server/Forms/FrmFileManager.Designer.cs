@@ -197,9 +197,9 @@ namespace xServer.Forms
             // 
             this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.stripLblHint});
-            this.botStrip.Location = new System.Drawing.Point(0, 383);
+            this.botStrip.Location = new System.Drawing.Point(0, 404);
             this.botStrip.Name = "botStrip";
-            this.botStrip.Size = new System.Drawing.Size(686, 22);
+            this.botStrip.Size = new System.Drawing.Size(692, 22);
             this.botStrip.TabIndex = 3;
             this.botStrip.Text = "statusStrip1";
             // 
@@ -212,9 +212,10 @@ namespace xServer.Forms
             // 
             // btnOpenDLFolder
             // 
+            this.btnOpenDLFolder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnOpenDLFolder.Location = new System.Drawing.Point(531, 9);
             this.btnOpenDLFolder.Name = "btnOpenDLFolder";
-            this.btnOpenDLFolder.Size = new System.Drawing.Size(139, 21);
+            this.btnOpenDLFolder.Size = new System.Drawing.Size(145, 21);
             this.btnOpenDLFolder.TabIndex = 4;
             this.btnOpenDLFolder.Text = "&Open Download Folder";
             this.btnOpenDLFolder.UseVisualStyleBackColor = true;
@@ -228,7 +229,7 @@ namespace xServer.Forms
             this.TabControlFileManager.Location = new System.Drawing.Point(0, 0);
             this.TabControlFileManager.Name = "TabControlFileManager";
             this.TabControlFileManager.SelectedIndex = 0;
-            this.TabControlFileManager.Size = new System.Drawing.Size(686, 383);
+            this.TabControlFileManager.Size = new System.Drawing.Size(692, 404);
             this.TabControlFileManager.TabIndex = 5;
             // 
             // tabFileExplorer
@@ -240,7 +241,7 @@ namespace xServer.Forms
             this.tabFileExplorer.Location = new System.Drawing.Point(4, 22);
             this.tabFileExplorer.Name = "tabFileExplorer";
             this.tabFileExplorer.Padding = new System.Windows.Forms.Padding(3);
-            this.tabFileExplorer.Size = new System.Drawing.Size(678, 357);
+            this.tabFileExplorer.Size = new System.Drawing.Size(684, 378);
             this.tabFileExplorer.TabIndex = 0;
             this.tabFileExplorer.Text = "File Explorer";
             this.tabFileExplorer.UseVisualStyleBackColor = true;
@@ -260,7 +261,7 @@ namespace xServer.Forms
             this.lstDirectory.GridLines = true;
             this.lstDirectory.Location = new System.Drawing.Point(11, 36);
             this.lstDirectory.Name = "lstDirectory";
-            this.lstDirectory.Size = new System.Drawing.Size(659, 315);
+            this.lstDirectory.Size = new System.Drawing.Size(665, 336);
             this.lstDirectory.SmallImageList = this.imgListDirectory;
             this.lstDirectory.TabIndex = 2;
             this.lstDirectory.UseCompatibleStateImageBehavior = false;
@@ -291,7 +292,7 @@ namespace xServer.Forms
             this.tabTransfers.Location = new System.Drawing.Point(4, 22);
             this.tabTransfers.Name = "tabTransfers";
             this.tabTransfers.Padding = new System.Windows.Forms.Padding(3);
-            this.tabTransfers.Size = new System.Drawing.Size(678, 357);
+            this.tabTransfers.Size = new System.Drawing.Size(684, 378);
             this.tabTransfers.TabIndex = 1;
             this.tabTransfers.Text = "Transfers";
             this.tabTransfers.UseVisualStyleBackColor = true;
@@ -310,7 +311,7 @@ namespace xServer.Forms
             this.lstTransfers.GridLines = true;
             this.lstTransfers.Location = new System.Drawing.Point(8, 6);
             this.lstTransfers.Name = "lstTransfers";
-            this.lstTransfers.Size = new System.Drawing.Size(662, 345);
+            this.lstTransfers.Size = new System.Drawing.Size(668, 366);
             this.lstTransfers.SmallImageList = this.imgListTransfers;
             this.lstTransfers.TabIndex = 0;
             this.lstTransfers.UseCompatibleStateImageBehavior = false;
@@ -366,7 +367,7 @@ namespace xServer.Forms
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(686, 405);
+            this.ClientSize = new System.Drawing.Size(692, 426);
             this.Controls.Add(this.TabControlFileManager);
             this.Controls.Add(this.botStrip);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
