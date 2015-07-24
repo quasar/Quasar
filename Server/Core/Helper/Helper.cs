@@ -36,6 +36,11 @@ namespace xServer.Core.Helper
             return randomName.ToString();
         }
 
+        public static int GetNewTransferId(int o = 0)
+        {
+            return _rnd.Next(0, int.MaxValue) + o;
+        }
+
         public static string GetDataSize(long size)
         {
             double len = size;

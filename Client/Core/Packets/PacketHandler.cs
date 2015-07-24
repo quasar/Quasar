@@ -63,6 +63,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoDownloadFile((ServerPackets.DoDownloadFile)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoUploadFile))
+            {
+                CommandHandler.HandleDoUploadFile((ServerPackets.DoUploadFile)packet, client);
+            }
             else if (type == typeof(ServerPackets.DoMouseClick))
             {
                 CommandHandler.HandleDoMouseClick((ServerPackets.DoMouseClick)packet, client);

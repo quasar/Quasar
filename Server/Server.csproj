@@ -110,6 +110,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoPathRename.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoShutdownAction.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoStartupItemAdd.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoUploadFile.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetDesktop.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetDirectory.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoClientDisconnect.cs" />

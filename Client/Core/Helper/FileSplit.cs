@@ -69,13 +69,19 @@ namespace xClient.Core.Helper
                         if (blockNumber == 0)
                         {
                             fStream.Seek(0, SeekOrigin.Begin);
-                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            var length = fStream.Length - fStream.Position;
+                            if (length < 0)
+                                throw new IOException("negative length");
+                            readBytes = new byte[this.GetSize(length)];
                             fStream.Read(readBytes, 0, readBytes.Length);
                         }
                         else
                         {
                             fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
-                            readBytes = new byte[this.GetSize(fStream.Length - fStream.Position)];
+                            var length = fStream.Length - fStream.Position;
+                            if (length < 0)
+                                throw new IOException("negative length");
+                            readBytes = new byte[this.GetSize(length)];
                             fStream.Read(readBytes, 0, readBytes.Length);
                         }
                     }
