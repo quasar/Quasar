@@ -32,7 +32,7 @@ namespace xServer.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSystemInformation));
-            this.lstSystem = new xServer.Controls.ListViewEx();
+            this.lstSystem = new xServer.Controls.AeroListView();
             this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -107,6 +107,6 @@ namespace xServer.Forms
         private System.Windows.Forms.ColumnHeader hValue;
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
         private System.Windows.Forms.ToolStripMenuItem ctxtCopy;
-        private ListViewEx lstSystem;
+        private AeroListView lstSystem;
     }
 }

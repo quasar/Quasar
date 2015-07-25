@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Controls;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -26,7 +27,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = Helper.GetWindowTitle("Task Manager", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);
                 new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
             }
         }

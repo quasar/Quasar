@@ -10,28 +10,5 @@ namespace xServer.Core.Commands
         private static bool _isAdding = false;
         private static readonly object _isAddingLock = new object();
         private const string DELIMITER = "$E$";
-
-        public enum UserStatus
-        {
-            Idle,
-            Active
-        }
-        public enum ShutdownAction
-        {
-            Shutdown,
-            Restart,
-            Standby
-        }
-        public enum PathType
-        {
-            File,
-            Directory,
-            Back
-        }
-        public enum RemoteDesktopAction
-        {
-            Start,
-            Stop
-        }
     }
 }

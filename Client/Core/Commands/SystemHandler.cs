@@ -8,7 +8,9 @@ using Microsoft.Win32;
 using xClient.Core.Information;
 using xClient.Core.RemoteShell;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
@@ -28,12 +30,12 @@ namespace xClient.Core.Commands
                 if (string.IsNullOrEmpty(volumeLabel))
                 {
                     displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,
-                        Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
                 }
                 else
                 {
                     displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", drives[i].RootDirectory.FullName, volumeLabel,
-                        Helper.Helper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
                 }
                 rootDirectory[i] = drives[i].RootDirectory.FullName;
             }

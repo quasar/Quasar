@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using xServer.Core.Networking;
-using RemoteDesktopAction = xServer.Core.Commands.CommandHandler.RemoteDesktopAction;
+using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {

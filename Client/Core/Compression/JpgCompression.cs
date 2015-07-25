@@ -1,10 +1,11 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 
 namespace xClient.Core.Compression
 {
-    public class JpgCompression
+    public class JpgCompression : IDisposable
     {
         private readonly ImageCodecInfo _encoderInfo;
         private readonly EncoderParameters _encoderParams;
@@ -15,7 +16,25 @@ namespace xClient.Core.Compression
             this._encoderInfo = GetEncoderInfo("image/jpeg");
             this._encoderParams = new EncoderParameters(2);
             this._encoderParams.Param[0] = parameter;
-            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long) EncoderValue.CompressionRle);
+            this._encoderParams.Param[1] = new EncoderParameter(Encoder.Compression, (long)EncoderValue.CompressionRle);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_encoderParams != null)
+                {
+                    _encoderParams.Dispose();
+                }
+            }
         }
 
         public byte[] Compress(Bitmap bmp)

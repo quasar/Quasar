@@ -2,15 +2,14 @@
 using System.IO;
 using System.Linq;
 using System.Text;
-using xServer.Core.Networking;
 
 namespace xServer.Core.Helper
 {
-    public static class Helper
+    public static class FileHelper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
         private static readonly Random _rnd = new Random(Environment.TickCount);
-        private static readonly string[] _sizes = {"B", "KB", "MB", "GB"};
+        private static readonly string[] _sizes = { "B", "KB", "MB", "GB" };
         private static readonly char[] _illegalChars = Path.GetInvalidPathChars().Union(Path.GetInvalidFileNameChars()).ToArray();
 
         public static bool CheckPathForIllegalChars(string path)
@@ -18,22 +17,13 @@ namespace xServer.Core.Helper
             return path.Any(c => _illegalChars.Contains(c));
         }
 
-        public static string GetRandomFilename(int length, string extension)
+        public static string GetRandomFilename(int length, string extension = "")
         {
             StringBuilder randomName = new StringBuilder(length);
             for (int i = 0; i < length; i++)
                 randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
 
             return string.Concat(randomName.ToString(), extension);
-        }
-
-        public static string GetRandomName(int length)
-        {
-            StringBuilder randomName = new StringBuilder(length);
-            for (int i = 0; i < length; i++)
-                randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
-
-            return randomName.ToString();
         }
 
         public static int GetNewTransferId(int o = 0)
@@ -48,19 +38,9 @@ namespace xServer.Core.Helper
             while (len >= 1024 && order + 1 < _sizes.Length)
             {
                 order++;
-                len = len/1024;
+                len = len / 1024;
             }
             return string.Format("{0:0.##} {1}", len, _sizes[order]);
-        }
-
-        public static string GetWindowTitle(string title, Client c)
-        {
-            return string.Format("{0} - {1}@{2} [{3}:{4}]", title, c.Value.Username , c.Value.PCName, c.EndPoint.Address.ToString(), c.EndPoint.Port.ToString());
-        }
-
-        public static string GetWindowTitle(string title, int count)
-        {
-            return string.Format("{0} [Selected: {1}]", title, count);
         }
 
         public static int GetFileIcon(string extension)
@@ -121,11 +101,6 @@ namespace xServer.Core.Helper
                 case ".m4a":
                     return 10;
             }
-        }
-
-        public static bool IsRunningOnMono()
-        {
-            return Type.GetType("Mono.Runtime") != null;
         }
     }
 }

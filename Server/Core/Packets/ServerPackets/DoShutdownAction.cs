@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using xServer.Core.Networking;
-using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
+using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {

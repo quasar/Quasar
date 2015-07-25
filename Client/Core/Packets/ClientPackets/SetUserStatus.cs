@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using xClient.Core.Networking;
-using UserStatus = xClient.Core.Commands.CommandHandler.UserStatus;
+using xClient.Enums;
 
 namespace xClient.Core.Packets.ClientPackets
 {

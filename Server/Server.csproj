@@ -72,8 +72,15 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
-    <Compile Include="Core\Helper\FrameCounter.cs" />
-    <Compile Include="Core\Misc\RemoteDrive.cs" />
+    <Compile Include="Core\Helper\FileHelper.cs" />
+    <Compile Include="Core\Helper\FormatHelper.cs" />
+    <Compile Include="Core\Utilities\FrameCounter.cs" />
+    <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
+    <Compile Include="Core\Helper\PlatformHelper.cs" />
+    <Compile Include="Core\Helper\RemoteDesktopHelper.cs" />
+    <Compile Include="Core\Helper\WindowHelper.cs" />
+    <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Utilities\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
@@ -83,15 +90,15 @@
     <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
-    <Compile Include="Core\Helper\FileSplit.cs" />
-    <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
+    <Compile Include="Core\Utilities\FileSplit.cs" />
+    <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
-    <Compile Include="Core\Misc\InputBox.cs" />
+    <Compile Include="Controls\InputBox.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
-    <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
+    <Compile Include="Core\Utilities\ListViewColumnSorter.cs" />
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
-    <Compile Include="Core\Misc\NoIpUpdater.cs" />
-    <Compile Include="Core\Misc\SavedVariables.cs" />
+    <Compile Include="Core\Utilities\NoIpUpdater.cs" />
+    <Compile Include="Core\Utilities\SavedVariables.cs" />
     <Compile Include="Core\Networking\ConnectionHandler.cs" />
     <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
@@ -232,8 +239,11 @@
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Networking\Server.cs" />
-    <Compile Include="Core\Helper\Helper.cs" />
     <Compile Include="Core\Networking\UserState.cs" />
+    <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\RemoteDesktopAction.cs" />
+    <Compile Include="Enums\ShutdownAction.cs" />
+    <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>

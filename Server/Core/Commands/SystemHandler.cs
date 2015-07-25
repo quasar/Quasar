@@ -3,9 +3,11 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core.Misc;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Utilities;
+using xServer.Enums;
 using xServer.Forms;
 using xServer.Settings;
 
@@ -80,10 +82,10 @@ namespace xServer.Core.Commands
                         if (packet.Files[i] != DELIMITER)
                         {
                             ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
+                                new ListViewItem(new string[] { packet.Files[i], FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
                                 {
                                     Tag = PathType.File,
-                                    ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
+                                    ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 
                             if (client.Value.FrmFm == null)

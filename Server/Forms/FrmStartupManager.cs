@@ -2,8 +2,8 @@
 using System.Linq;
 using System.Windows.Forms;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -26,7 +26,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = Helper.GetWindowTitle("Startup Manager", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("Startup Manager", _connectClient);
                 AddGroups();
                 new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
             }

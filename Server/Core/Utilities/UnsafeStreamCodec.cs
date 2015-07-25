@@ -3,15 +3,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Runtime.InteropServices;
-using xClient.Core.Compression;
+using xServer.Core.Compression;
 
-namespace xClient.Core.Helper
+namespace xServer.Core.Utilities
 {
-    public class UnsafeStreamCodec
+    public class UnsafeStreamCodec : IDisposable
     {
-        private int _imageQuality;
-
+        public int Monitor { get; private set; }
+        public Size CheckBlock { get; private set; }
         public int ImageQuality
         {
             get { return _imageQuality; }
@@ -20,14 +19,18 @@ namespace xClient.Core.Helper
                 lock (_imageProcessLock)
                 {
                     _imageQuality = value;
+
+                    if (_jpgCompression != null)
+                    {
+                        _jpgCompression.Dispose();
+                    }
+
                     _jpgCompression = new JpgCompression(_imageQuality);
                 }
             }
         }
 
-        public int Monitor { get; private set; }
-
-        public Size CheckBlock { get; private set; }
+        private int _imageQuality;
         private byte[] _encodeBuffer;
         private Bitmap _decodedBitmap;
         private PixelFormat _encodedFormat;
@@ -36,27 +39,41 @@ namespace xClient.Core.Helper
         private readonly object _imageProcessLock = new object();
         private JpgCompression _jpgCompression;
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe int memcmp(byte* ptr1, byte* ptr2, uint count);
-
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int memcmp(IntPtr ptr1, IntPtr ptr2, uint count);
-
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern int memcpy(IntPtr dst, IntPtr src, uint count);
-
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        public static extern unsafe int memcpy(void* dst, void* src, uint count);
-
         /// <summary>
-        /// Initialize a new object of UnsafeStreamCodec
+        /// Initialize a new instance of UnsafeStreamCodec class.
         /// </summary>
-        /// <param name="imageQuality">The quality to use between 0-100</param>
+        /// <param name="imageQuality">The quality to use between 0-100.</param>
+        /// <param name="monitor">The monitor used for the images.</param>
         public UnsafeStreamCodec(int imageQuality, int monitor)
         {
-            this.CheckBlock = new Size(50, 1);
             this.ImageQuality = imageQuality;
             this.Monitor = monitor;
+            this.CheckBlock = new Size(50, 1);
+        }
+
+        public void Dispose()
+        {
+            Dispose(true);
+
+            // Tell the Garbage Collector to not waste time finalizing this object
+            // since we took care of it.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (_decodedBitmap != null)
+                {
+                    _decodedBitmap.Dispose();
+                }
+
+                if (_jpgCompression != null)
+                {
+                    _jpgCompression.Dispose();
+                }
+            }
         }
 
         public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format,
@@ -109,7 +126,7 @@ namespace xClient.Core.Helper
 
                         outStream.Write(BitConverter.GetBytes(temp.Length), 0, 4);
                         outStream.Write(temp, 0, temp.Length);
-                        memcpy(new IntPtr(ptr), scan0, (uint) rawLength);
+                        NativeMethods.memcpy(new IntPtr(ptr), scan0, (uint) rawLength);
                     }
                     return;
                 }
@@ -155,7 +172,7 @@ namespace xClient.Core.Helper
 
                         int offset = (y*stride) + (scanArea.X*pixelSize);
 
-                        if (memcmp(encBuffer + offset, pScan0 + offset, (uint) stride) != 0)
+                        if (NativeMethods.memcmp(encBuffer + offset, pScan0 + offset, (uint)stride) != 0)
                         {
                             index = blocks.Count - 1;
 
@@ -191,12 +208,12 @@ namespace xClient.Core.Helper
                             {
                                 int blockOffset = (stride*(cBlock.Y + j)) + (pixelSize*cBlock.X);
 
-                                if (memcmp(encBuffer + blockOffset, pScan0 + blockOffset, blockStride) != 0)
+                                if (NativeMethods.memcmp(encBuffer + blockOffset, pScan0 + blockOffset, blockStride) != 0)
                                 {
                                     foundChanges = true;
                                 }
 
-                                memcpy(encBuffer + blockOffset, pScan0 + blockOffset, blockStride);
+                                NativeMethods.memcpy(encBuffer + blockOffset, pScan0 + blockOffset, blockStride);
                                 //copy-changes
                             }
 
@@ -239,7 +256,7 @@ namespace xClient.Core.Helper
                         for (int j = 0, offset = 0; j < rect.Height; j++)
                         {
                             int blockOffset = (stride*(rect.Y + j)) + (pixelSize*rect.X);
-                            memcpy((byte*) tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint) blockStride);
+                            NativeMethods.memcpy((byte*)tmpData.Scan0.ToPointer() + offset, pScan0 + blockOffset, (uint)blockStride);
                             //copy-changes
                             offset += blockStride;
                         }
@@ -290,7 +307,7 @@ namespace xClient.Core.Helper
 
                 fixed (byte* tempPtr = temp)
                 {
-                    memcpy(new IntPtr(tempPtr), new IntPtr(codecBuffer.ToInt32() + 4), (uint) dataSize);
+                    NativeMethods.memcpy(new IntPtr(tempPtr), new IntPtr(codecBuffer.ToInt32() + 4), (uint)dataSize);
                 }
 
                 this._decodedBitmap = (Bitmap) Bitmap.FromStream(new MemoryStream(temp));

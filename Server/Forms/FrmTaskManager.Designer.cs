@@ -37,7 +37,7 @@ namespace xServer.Forms
             this.ctxtStartProcess = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtRefresh = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstTasks = new xServer.Controls.ListViewEx();
+            this.lstTasks = new xServer.Controls.AeroListView();
             this.hProcessname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -145,6 +145,6 @@ namespace xServer.Forms
         private System.Windows.Forms.ColumnHeader hPID;
         private System.Windows.Forms.ColumnHeader hTitle;
         private System.Windows.Forms.ToolStripSeparator ctxtLine;
-        private ListViewEx lstTasks;
+        private AeroListView lstTasks;
     }
 }

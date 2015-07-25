@@ -2,6 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -17,8 +18,8 @@ namespace xServer.Forms
 
         private void FrmUploadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Upload & Execute", _selectedClients);
-            chkRunHidden.Checked = Core.Misc.UploadAndExecute.RunHidden;
+            this.Text = WindowHelper.GetWindowTitle("Upload & Execute", _selectedClients);
+            chkRunHidden.Checked = UploadAndExecute.RunHidden;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
@@ -36,8 +37,8 @@ namespace xServer.Forms
 
         private void btnUploadAndExecute_Click(object sender, EventArgs e)
         {
-            Core.Misc.UploadAndExecute.FilePath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
-            Core.Misc.UploadAndExecute.RunHidden = chkRunHidden.Checked;
+            UploadAndExecute.FilePath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
+            UploadAndExecute.RunHidden = chkRunHidden.Checked;
 
             this.DialogResult = DialogResult.OK;
             this.Close();

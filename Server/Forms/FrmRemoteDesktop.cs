@@ -4,7 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using RemoteDesktopAction = xServer.Core.Commands.CommandHandler.RemoteDesktopAction;
+using xServer.Core.Utilities;
+using xServer.Enums;
 
 namespace xServer.Forms
 {
@@ -25,7 +26,7 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Remote Desktop", _connectClient);
+            this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
 
             panelTop.Left = (this.Width/2) - (panelTop.Width/2);
 
@@ -77,7 +78,7 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    this.Text = string.Format("{0} - FPS: {1}", Helper.GetWindowTitle("Remote Desktop", _connectClient), fps.ToString("0.00"));
+                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), fps.ToString("0.00"));
                 });
             }
             catch (InvalidOperationException)

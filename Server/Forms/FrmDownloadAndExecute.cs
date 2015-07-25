@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core.Helper;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -16,8 +17,8 @@ namespace xServer.Forms
 
         private void btnDownloadAndExecute_Click(object sender, EventArgs e)
         {
-            Core.Misc.DownloadAndExecute.URL = txtURL.Text;
-            Core.Misc.DownloadAndExecute.RunHidden = chkRunHidden.Checked;
+            DownloadAndExecute.URL = txtURL.Text;
+            DownloadAndExecute.RunHidden = chkRunHidden.Checked;
 
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -25,9 +26,9 @@ namespace xServer.Forms
 
         private void FrmDownloadAndExecute_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Download & Execute", _selectedClients);
-            txtURL.Text = Core.Misc.DownloadAndExecute.URL;
-            chkRunHidden.Checked = Core.Misc.DownloadAndExecute.RunHidden;
+            this.Text = WindowHelper.GetWindowTitle("Download & Execute", _selectedClients);
+            txtURL.Text = DownloadAndExecute.URL;
+            chkRunHidden.Checked = DownloadAndExecute.RunHidden;
         }
     }
 }

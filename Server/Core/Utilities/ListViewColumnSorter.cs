@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Windows.Forms;
 
-namespace xServer.Core.Misc
+namespace xServer.Core.Utilities
 {
     public class ListViewColumnSorter : IComparer
     {

@@ -33,7 +33,7 @@
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtAddEntry = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemoveEntry = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstStartupItems = new xServer.Controls.ListViewEx();
+            this.lstStartupItems = new xServer.Controls.AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.ctxtMenu.SuspendLayout();
@@ -118,7 +118,7 @@
         private System.Windows.Forms.ContextMenuStrip ctxtMenu;
         private System.Windows.Forms.ToolStripMenuItem ctxtAddEntry;
         private System.Windows.Forms.ToolStripMenuItem ctxtRemoveEntry;
-        private Controls.ListViewEx lstStartupItems;
+        private Controls.AeroListView lstStartupItems;
 
     }
 }

@@ -4,6 +4,7 @@ using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Vestris.ResourceLib;
 using xServer.Core.Encryption;
+using xServer.Core.Helper;
 
 namespace xServer.Core.Build
 {
@@ -42,7 +43,7 @@ namespace xServer.Core.Build
             int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
-            string encKey = Helper.Helper.GetRandomName(20);
+            string encKey = FileHelper.GetRandomFilename(20);
             AssemblyDefinition asmDef;
             try
             {

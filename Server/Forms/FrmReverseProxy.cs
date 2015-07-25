@@ -31,7 +31,7 @@ namespace xServer.Forms
             }
             else if (_clients.Length == 1)
             {
-                this.Text = Helper.GetWindowTitle("Reverse Proxy", _clients[0]);
+                this.Text = WindowHelper.GetWindowTitle("Reverse Proxy", _clients[0]);
                 lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
             }
         }
@@ -134,8 +134,8 @@ namespace xServer.Forms
                         connection.Client.Value.Country,
                         (connection.HostName.Length > 0) ? string.Format("{0}  ({1})", connection.HostName, connection.TargetServer) : connection.TargetServer,
                         connection.TargetPort.ToString(),
-                        Helper.GetDataSize(connection.LengthReceived),
-                        Helper.GetDataSize(connection.LengthSent),
+                        FileHelper.GetDataSize(connection.LengthReceived),
+                        FileHelper.GetDataSize(connection.LengthSent),
                         connection.Type.ToString()
                     }) { Tag = connection };
                 }

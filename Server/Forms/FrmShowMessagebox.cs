@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core.Helper;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -17,7 +18,7 @@ namespace xServer.Forms
 
         private void FrmShowMessagebox_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Show Messagebox", _selectedClients);
+            this.Text = WindowHelper.GetWindowTitle("Show Messagebox", _selectedClients);
 
             cmbMsgButtons.Items.AddRange(new string[]
             {"AbortRetryIgnore", "OK", "OKCancel", "RetryCancel", "YesNo", "YesNoCancel"});
@@ -37,10 +38,10 @@ namespace xServer.Forms
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            Core.Misc.MessageBoxData.Caption = txtCaption.Text;
-            Core.Misc.MessageBoxData.Text = txtText.Text;
-            Core.Misc.MessageBoxData.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
-            Core.Misc.MessageBoxData.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
+            MessageBoxData.Caption = txtCaption.Text;
+            MessageBoxData.Text = txtText.Text;
+            MessageBoxData.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
+            MessageBoxData.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
 
             this.DialogResult = DialogResult.OK;
             this.Close();

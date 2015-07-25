@@ -1,10 +1,9 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
 {
@@ -18,69 +17,24 @@ namespace xServer.Core.Commands
 
             if (packet.Image == null)
             {
-                if (client.Value.FrmRdp != null)
-                    client.Value.FrmRdp.UpdateImage(client.Value.LastDesktop);
-
-                client.Value.LastDesktop = null;
-
                 return;
             }
 
-            // we can not dispose all bitmaps here, cause they are later used again in `client.Value.LastDesktop`
-            if (client.Value.LastDesktop == null)
+            if (client.Value.StreamCodec == null)
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor);
+
+            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor)
             {
                 if (client.Value.StreamCodec != null)
-                {
                     client.Value.StreamCodec.Dispose();
-                }
 
-                client.Value.StreamCodec = new UnsafeStreamCodec();
-                if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
-                {
-                    client.Value.LastQuality = packet.Quality;
-                    client.Value.LastMonitor = packet.Monitor;
-                }
-
-                using (MemoryStream ms = new MemoryStream(packet.Image))
-                {
-                    Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
-
-                    client.Value.LastDesktop = newScreen;
-
-                    if (client.Value.FrmRdp != null)
-                        client.Value.FrmRdp.UpdateImage(newScreen, true);
-
-                    newScreen = null;
-                }
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor);
             }
-            else
+
+            using (MemoryStream ms = new MemoryStream(packet.Image))
             {
-                using (MemoryStream ms = new MemoryStream(packet.Image))
-                {
-                    lock (client.Value.StreamCodec)
-                    {
-                        if (client.Value.LastQuality != packet.Quality || client.Value.LastMonitor != packet.Monitor)
-                        {
-                            if (client.Value.StreamCodec != null)
-                            {
-                                client.Value.StreamCodec.Dispose();
-                            }
-
-                            client.Value.StreamCodec = new UnsafeStreamCodec();
-                            client.Value.LastQuality = packet.Quality;
-                            client.Value.LastMonitor = packet.Monitor;
-                        }
-
-                        Bitmap newScreen = client.Value.StreamCodec.DecodeData(ms);
-
-                        client.Value.LastDesktop = newScreen;
-
-                        if (client.Value.FrmRdp != null)
-                            client.Value.FrmRdp.UpdateImage(newScreen, true);
-
-                        newScreen = null;
-                    }
-                }
+                if (client.Value.FrmRdp != null)
+                    client.Value.FrmRdp.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
             }
 
             packet.Image = null;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace xClient.Core.Helper
+namespace xServer.Core.Utilities
 {
     public class FileSplit
     {
@@ -52,7 +52,7 @@ namespace xClient.Core.Helper
 
         private int GetSize(long length)
         {
-            return (length < MAX_BLOCK_SIZE) ? (int)length : MAX_BLOCK_SIZE;
+            return (length < MAX_BLOCK_SIZE) ? (int) length : MAX_BLOCK_SIZE;
         }
 
         public bool ReadBlock(int blockNumber, out byte[] readBytes)
@@ -77,7 +77,7 @@ namespace xClient.Core.Helper
                         }
                         else
                         {
-                            fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                            fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
                             var length = fStream.Length - fStream.Position;
                             if (length < 0)
                                 throw new IOException("negative length");
@@ -138,7 +138,7 @@ namespace xClient.Core.Helper
 
                     using (FileStream fStream = File.Open(this.Path, FileMode.Append, FileAccess.Write))
                     {
-                        fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                        fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
                         fStream.Write(block, 0, block.Length);
                     }
                 }

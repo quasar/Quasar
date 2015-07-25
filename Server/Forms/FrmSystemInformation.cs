@@ -23,7 +23,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = Helper.GetWindowTitle("System Information", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
                 new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
 
                 if (_connectClient.Value != null)

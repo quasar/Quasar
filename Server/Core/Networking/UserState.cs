@@ -1,12 +1,12 @@
-﻿using System.Drawing;
+﻿using System;
 using System.Windows.Forms;
-using xServer.Core.Helper;
 using xServer.Core.ReverseProxy;
+using xServer.Core.Utilities;
 using xServer.Forms;
 
 namespace xServer.Core.Networking
 {
-    public class UserState
+    public class UserState : IDisposable
     {
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
@@ -31,9 +31,6 @@ namespace xServer.Core.Networking
         
         public bool IsAuthenticated { get; set; }
         public bool LastDirectorySeen { get; set; }
-        public int LastQuality { get; set; }
-        public int LastMonitor { get; set; }
-        public Bitmap LastDesktop { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
 
@@ -41,28 +38,36 @@ namespace xServer.Core.Networking
         {
             IsAuthenticated = false;
             LastDirectorySeen = true;
-            LastQuality = -1;
-            LastMonitor = -1;
         }
 
-        public void DisposeForms()
+        public void Dispose()
         {
-            if (FrmRdp != null)
-                FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
-            if (FrmTm != null)
-                FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
-            if (FrmFm != null)
-                FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
-            if (FrmSi != null)
-                FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
-            if (FrmRs != null)
-                FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
-            if (FrmStm != null)
-                FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
-            if (FrmKl != null)
-                FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
-            if (FrmProxy != null)
-                FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
+            Dispose(true);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                if (FrmRdp != null)
+                    FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
+                if (FrmTm != null)
+                    FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
+                if (FrmFm != null)
+                    FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
+                if (FrmSi != null)
+                    FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
+                if (FrmRs != null)
+                    FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
+                if (FrmStm != null)
+                    FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
+                if (FrmKl != null)
+                    FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
+                if (FrmProxy != null)
+                    FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
+                if (StreamCodec != null)
+                    StreamCodec.Dispose();
+            }
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace xServer.Core.Misc
+﻿namespace xServer.Core.Utilities
 {
     public static class Update
     {

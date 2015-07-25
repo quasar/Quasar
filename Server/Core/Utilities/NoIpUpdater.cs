@@ -4,7 +4,7 @@ using System.Text;
 using System.Threading;
 using xServer.Settings;
 
-namespace xServer.Core.Misc
+namespace xServer.Core.Utilities
 {
     public static class NoIpUpdater
     {

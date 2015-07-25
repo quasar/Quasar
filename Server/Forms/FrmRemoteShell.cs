@@ -31,7 +31,7 @@ namespace xServer.Forms
             this.DoubleBuffered = true;
 
             if (_connectClient != null)
-                this.Text = Helper.GetWindowTitle("Remote Shell", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("Remote Shell", _connectClient);
         }
 
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)

