@@ -85,7 +85,7 @@
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Helper\FileSplit.cs" />
     <Compile Include="Core\Helper\UnsafeStreamCodec.cs" />
-    <Compile Include="Core\Helper\UPnP.cs" />
+    <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Core\Misc\InputBox.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Misc\ListViewColumnSorter.cs" />
@@ -93,7 +93,7 @@
     <Compile Include="Core\Misc\NoIpUpdater.cs" />
     <Compile Include="Core\Misc\SavedVariables.cs" />
     <Compile Include="Core\Networking\ConnectionHandler.cs" />
-    <Compile Include="Core\Networking\PooledBufferManager.cs" />
+    <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />

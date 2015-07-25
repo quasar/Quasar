@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
+using xServer.Core.Networking.Utilities;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -42,17 +42,49 @@ namespace xServer.Forms
             txtNoIPPass.Text = XMLSettings.NoIPPassword;
         }
 
+        private ushort GetPortSafe()
+        {
+            var portValue = ncPort.Value.ToString(CultureInfo.InvariantCulture);
+            ushort port;
+            return (!ushort.TryParse(portValue, out port)) ? (ushort)0 : port;
+        }
+
         private void btnListen_Click(object sender, EventArgs e)
         {
+            ushort port = GetPortSafe();
+
+            if (port == 0)
+            {
+                MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
             if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
                 try
                 {
-                    if (chkUseUpnp.Checked && !UPnP.IsPortForwarded)
-                        UPnP.ForwardPort(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    if (chkUseUpnp.Checked)
+                    {
+                        if (!UPnP.IsDeviceFound)
+                        {
+                            MessageBox.Show("No available UPnP device found!", "No UPnP device", MessageBoxButtons.OK,
+                                MessageBoxIcon.Information);
+                        }
+                        else
+                        {
+                            int outPort;
+                            UPnP.CreatePortMap(port, out outPort);
+                            if (port != outPort)
+                            {
+                                MessageBox.Show("Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
+                                    MessageBoxIcon.Warning);
+                            }
+                        }
+                    }
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
-                    _listenServer.Listen(ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture)));
+                    _listenServer.Listen(port);
                 }
                 finally
                 {
@@ -66,8 +98,7 @@ namespace xServer.Forms
                 try
                 {
                     _listenServer.Disconnect();
-                    if (UPnP.IsPortForwarded)
-                        UPnP.RemovePort();
+                    UPnP.DeletePortMap(port);
                 }
                 finally
                 {
@@ -80,8 +111,17 @@ namespace xServer.Forms
 
         private void btnSave_Click(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("ListenPort", ncPort.Value.ToString(CultureInfo.InvariantCulture));
-            XMLSettings.ListenPort = ushort.Parse(ncPort.Value.ToString(CultureInfo.InvariantCulture));
+            ushort port = GetPortSafe();
+
+            if (port == 0)
+            {
+                MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
+                return;
+            }
+
+            XMLSettings.WriteValue("ListenPort", port.ToString());
+            XMLSettings.ListenPort = port;
 
             XMLSettings.WriteValue("AutoListen", chkAutoListen.Checked.ToString());
             XMLSettings.AutoListen = chkAutoListen.Checked;

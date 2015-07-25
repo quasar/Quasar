@@ -9,6 +9,7 @@ using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Misc;
 using xServer.Core.Networking;
+using xServer.Core.Networking.Utilities;
 using xServer.Settings;
 using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
 using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
@@ -109,15 +110,21 @@ namespace xServer.Forms
             ConServer.ClientDisconnected += ClientDisconnected;
         }
 
-        private void FrmMain_Load(object sender, EventArgs e)
+        private void AutostartListeningP()
         {
-            InitializeServer();
-
-            if (XMLSettings.AutoListen)
+            if (XMLSettings.AutoListen && XMLSettings.UseUPnP)
             {
-                if (XMLSettings.UseUPnP)
-                    UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                UPnP.Initialize(XMLSettings.ListenPort);
                 ConServer.Listen(XMLSettings.ListenPort);
+            }
+            else if (XMLSettings.AutoListen)
+            {
+                UPnP.Initialize();
+                ConServer.Listen(XMLSettings.ListenPort);
+            }
+            else
+            {
+                UPnP.Initialize();
             }
 
             if (XMLSettings.IntegrateNoIP)
@@ -126,13 +133,16 @@ namespace xServer.Forms
             }
         }
 
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            InitializeServer();
+            AutostartListeningP();
+        }
+
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             ConServer.Disconnect();
-
-            if (UPnP.IsPortForwarded)
-                UPnP.RemovePort();
-
+            UPnP.DeletePortMap(XMLSettings.ListenPort);
             nIcon.Visible = false;
             nIcon.Dispose();
             Instance = null;

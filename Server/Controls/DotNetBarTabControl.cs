@@ -74,7 +74,7 @@ namespace xServer.Controls
                                 Alignment = StringAlignment.Center
                             });
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             g.DrawString(TabPages[i].Text, new Font(Font.FontFamily, Font.Size, FontStyle.Bold),
                                 Brushes.Black, x2, new StringFormat
@@ -118,7 +118,7 @@ namespace xServer.Controls
                                 Alignment = StringAlignment.Center
                             });
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
                             g.DrawString(TabPages[i].Text, Font, Brushes.DimGray, x2, new StringFormat
                             {
