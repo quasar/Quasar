@@ -591,6 +591,11 @@ namespace xServer.Core.Networking
                 _readableDataLen = 0;
                 _payloadLen = 0;
                 _payloadBuffer = null;
+                if (Value != null)
+                {
+                    Value.Dispose();
+                    Value = null;
+                }
                 if (Server.BufferManager != null)
                     Server.BufferManager.ReturnBuffer(_readBuffer);
             }

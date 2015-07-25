@@ -169,12 +169,6 @@ namespace xServer.Forms
 
         private void ClientDisconnected(Client client)
         {
-            if (client.Value != null)
-            {
-                client.Value.Dispose();
-                client.Value = null;
-            }
-
             RemoveClientFromListview(client);
         }
 
