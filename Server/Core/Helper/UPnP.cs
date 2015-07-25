@@ -9,45 +9,62 @@ namespace xServer.Core.Helper
         public static bool IsPortForwarded { get; private set; }
         public static ushort Port { get; private set; }
         private static readonly HashSet<INatDevice> Devices = new HashSet<INatDevice>();
+        private static bool _eventSub;
+        private static bool _isDiscovering;
+        private static readonly object _isDiscoveringLock = new object();
 
         public static void ForwardPort(ushort port)
         {
+            lock (_isDiscoveringLock)
+            {
+                if (_isDiscovering) return;
+                _isDiscovering = true;
+            }
+
             Port = port;
-            NatUtility.DeviceFound += DeviceFound;
-            NatUtility.DeviceLost += DeviceLost;
-            NatUtility.StartDiscovery();
+
+            if (!_eventSub)
+            {
+                NatUtility.DeviceFound += DeviceFound;
+                NatUtility.DeviceLost += DeviceLost;
+                _eventSub = true;
+            }
 
             new Thread(() =>
             {
+                NatUtility.StartDiscovery();
+
                 int trys = 0;
-                while (Devices.Count == 0 && trys < 10) // wait until first device found
+                while (Devices.Count == 0 && trys < 8) // wait until first device found
                 {
                     trys++;
                     Thread.Sleep(1000);
                 }
 
-                if (Devices.Count == 0)
+                if (Devices.Count > 0)
                 {
-                    NatUtility.StopDiscovery();
-                    return;
-                }
-
-                try
-                {
-                    foreach (var device in Devices)
+                    try
                     {
-                        if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort < 0) //if port is not mapped
+                        foreach (var device in Devices)
                         {
-                            device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
-                            IsPortForwarded = true; 
-                            NatUtility.StopDiscovery();
+                            if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort < 0) // if port is not mapped
+                            {
+                                device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                                IsPortForwarded = true;
+                            }
                         }
                     }
+                    catch (MappingException)
+                    {
+                        IsPortForwarded = false;
+                    }
                 }
-                catch (MappingException)
+
+                NatUtility.StopDiscovery();
+
+                lock (_isDiscoveringLock)
                 {
-                    IsPortForwarded = false;
-                    NatUtility.StopDiscovery();
+                    _isDiscovering = false;
                 }
             }).Start();
         }
