@@ -47,11 +47,9 @@ namespace xServer.Core.Helper
                     {
                         foreach (var device in Devices)
                         {
-                            if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort < 0) // if port is not mapped
-                            {
-                                device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
-                                IsPortForwarded = true;
-                            }
+                            device.GetSpecificMapping(Protocol.Tcp, Port);
+                            device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                            IsPortForwarded = true;
                         }
                     }
                     catch (MappingException)
@@ -83,11 +81,9 @@ namespace xServer.Core.Helper
         {
             foreach (var device in Devices)
             {
-                if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort > 0) // if port map exists
-                {
-                    device.DeletePortMap(new Mapping(Protocol.Tcp, Port, Port));
-                    IsPortForwarded = false;
-                }
+                device.GetSpecificMapping(Protocol.Tcp, Port);
+                device.DeletePortMap(new Mapping(Protocol.Tcp, Port, Port));
+                IsPortForwarded = false;
             }
         }
     }
