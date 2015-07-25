@@ -10,6 +10,9 @@ namespace xServer.Core.Packets
         {
             var type = packet.GetType();
 
+            if (client.Value == null)
+                return;
+
             if (!client.Value.IsAuthenticated)
             {
                 if (type == typeof(ClientPackets.GetAuthenticationResponse))
