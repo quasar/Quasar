@@ -26,7 +26,11 @@ namespace xServer.Core.Helper
                     Thread.Sleep(1000);
                 }
 
-                if (Devices.Count == 0) return;
+                if (Devices.Count == 0)
+                {
+                    NatUtility.StopDiscovery();
+                    return;
+                }
 
                 try
                 {
@@ -35,13 +39,15 @@ namespace xServer.Core.Helper
                         if (device.GetSpecificMapping(Protocol.Tcp, Port).PublicPort < 0) //if port is not mapped
                         {
                             device.CreatePortMap(new Mapping(Protocol.Tcp, Port, Port));
-                            IsPortForwarded = true;
+                            IsPortForwarded = true; 
+                            NatUtility.StopDiscovery();
                         }
-                    } 
+                    }
                 }
                 catch (MappingException)
                 {
                     IsPortForwarded = false;
+                    NatUtility.StopDiscovery();
                 }
             }).Start();
         }
@@ -66,7 +72,6 @@ namespace xServer.Core.Helper
                     IsPortForwarded = false;
                 }
             }
-            NatUtility.StopDiscovery();
         }
     }
 }
