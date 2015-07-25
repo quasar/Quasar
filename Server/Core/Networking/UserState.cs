@@ -49,24 +49,30 @@ namespace xServer.Core.Networking
         {
             if (disposing)
             {
-                if (FrmRdp != null)
-                    FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
-                if (FrmTm != null)
-                    FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
-                if (FrmFm != null)
-                    FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
-                if (FrmSi != null)
-                    FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
-                if (FrmRs != null)
-                    FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
-                if (FrmStm != null)
-                    FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
-                if (FrmKl != null)
-                    FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
-                if (FrmProxy != null)
-                    FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
-                if (StreamCodec != null)
-                    StreamCodec.Dispose();
+                try
+                {
+                    if (FrmRdp != null)
+                        FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
+                    if (FrmTm != null)
+                        FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
+                    if (FrmFm != null)
+                        FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
+                    if (FrmSi != null)
+                        FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
+                    if (FrmRs != null)
+                        FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
+                    if (FrmStm != null)
+                        FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
+                    if (FrmKl != null)
+                        FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
+                    if (FrmProxy != null)
+                        FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
+                    if (StreamCodec != null)
+                        StreamCodec.Dispose();
+                }
+                catch (InvalidOperationException)
+                {
+                }
             }
         }
     }
