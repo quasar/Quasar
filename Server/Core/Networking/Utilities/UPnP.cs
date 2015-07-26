@@ -116,7 +116,6 @@ namespace xServer.Core.Networking.Utilities
 
                     if (maps.Length > 0 && _removePortTries < 8) //Attempt to remove port a few times until it is succesfully removed
                     {
-                        _removePortTries++;
                         DeletePortMap(port);
                     }
                     else
@@ -138,6 +137,8 @@ namespace xServer.Core.Networking.Utilities
             NatUtility.StopDiscovery();
 
             _discoveryComplete = true;
+
+            
 
             if (_port > 0)
             {
