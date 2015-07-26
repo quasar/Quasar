@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 
 namespace xClient.Core.Helper
@@ -25,6 +26,11 @@ namespace xClient.Core.Helper
                 default:
                     return type.ToString();
             }
+        }
+
+        public static string FormatScreenResolution(Rectangle resolution)
+        {
+            return string.Format("{0}x{1}", resolution.Width, resolution.Height);
         }
     }
 }

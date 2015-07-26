@@ -26,15 +26,18 @@ namespace xClient.Core.Commands
 
             IsStreamingDesktop = true;
 
-            if (StreamCodec == null)
-                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
+            var resolution = FormatHelper.FormatScreenResolution(RemoteDesktopHelper.GetBounds(command.Monitor));
 
-            if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor)
+            if (StreamCodec == null)
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
+
+            if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor
+                || StreamCodec.Resolution != resolution)
             {
                 if (StreamCodec != null)
                     StreamCodec.Dispose();
 
-                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor);
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
             }
 
             new Thread(() =>
@@ -46,6 +49,15 @@ namespace xClient.Core.Commands
                         IsStreamingDesktop = false;
                         return;
                     }
+
+                    // check screen resolution while streaming remote desktop
+                    resolution = FormatHelper.FormatScreenResolution(RemoteDesktopHelper.GetBounds(command.Monitor));
+                    if (StreamCodec != null && StreamCodec.Resolution != resolution)
+                    {
+                        StreamCodec.Dispose();
+                        StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
+                    }
+
                     BitmapData desktopData = null;
                     Bitmap desktop = null;
                     try
@@ -62,13 +74,14 @@ namespace xClient.Core.Commands
                                 new Size(desktop.Width, desktop.Height),
                                 desktop.PixelFormat, stream);
                             new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
-                                StreamCodec.Monitor).Execute(client);
+                                StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
                         }
                     }
                     catch (Exception)
                     {
                         if (StreamCodec != null)
-                            new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor).Execute(client);
+                            new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
+                                StreamCodec.Resolution).Execute(client);
 
                         StreamCodec = null;
                     }

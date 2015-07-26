@@ -10,6 +10,7 @@ namespace xClient.Core.Utilities
     public class UnsafeStreamCodec : IDisposable
     {
         public int Monitor { get; private set; }
+        public string Resolution { get; private set; }
         public Size CheckBlock { get; private set; }
         public int ImageQuality
         {
@@ -44,10 +45,12 @@ namespace xClient.Core.Utilities
         /// </summary>
         /// <param name="imageQuality">The quality to use between 0-100.</param>
         /// <param name="monitor">The monitor used for the images.</param>
-        public UnsafeStreamCodec(int imageQuality, int monitor)
+        /// <param name="resolution">The resolution of the monitor.</param>
+        public UnsafeStreamCodec(int imageQuality, int monitor, string resolution)
         {
             this.ImageQuality = imageQuality;
             this.Monitor = monitor;
+            this.Resolution = resolution;
             this.CheckBlock = new Size(50, 1);
         }
 

@@ -21,14 +21,15 @@ namespace xServer.Core.Commands
             }
 
             if (client.Value.StreamCodec == null)
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor);
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
 
-            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor)
+            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor
+                || client.Value.StreamCodec.Resolution != packet.Resolution)
             {
                 if (client.Value.StreamCodec != null)
                     client.Value.StreamCodec.Dispose();
 
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor);
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
             }
 
             using (MemoryStream ms = new MemoryStream(packet.Image))
