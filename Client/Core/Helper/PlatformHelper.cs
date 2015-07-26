@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Management;
+using System.Text.RegularExpressions;
 
-namespace xServer.Core.Helper
+namespace xClient.Core.Helper
 {
     public static class PlatformHelper
     {
@@ -15,7 +17,31 @@ namespace xServer.Core.Helper
             SevenOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(6, 1));
             EightOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(6, 2, 9200));
             RunningOnMono = Type.GetType("Mono.Runtime") != null;
+
+            Name = "Unknown OS";
+            using (
+                ManagementObjectSearcher searcher =
+                    new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
+            {
+                foreach (ManagementObject os in searcher.Get())
+                {
+                    Name = os["Caption"].ToString();
+                    break;
+                }
+            }
+
+            Name = Regex.Replace(Name, "^.*(?=Windows)", "").TrimEnd().TrimStart(); // Remove everything before first match "Windows" and trim end & start
         }
+
+        /// <summary>
+        /// Gets the name of the operating system running on this computer (including the edition).
+        /// </summary>
+        public static string Name { get; private set; }
+
+        /// <summary>
+        /// Determines if the current application is 32 or 64-bit.
+        /// </summary>
+        public static int Architecture { get { return IntPtr.Size * 8; } }
 
         /// <summary>
         /// Returns a indicating whether the application is running in Mono runtime.

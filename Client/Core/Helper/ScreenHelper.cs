@@ -5,7 +5,7 @@ using xClient.Core.Utilities;
 
 namespace xClient.Core.Helper
 {
-    public static class RemoteDesktopHelper
+    public static class ScreenHelper
     {
         private const int SRCCOPY = 0x00CC0020;
 

@@ -18,6 +18,11 @@ namespace xServer.Core.Helper
         }
 
         /// <summary>
+        /// Determines if the current application is 32 or 64-bit.
+        /// </summary>
+        public static int Architecture { get { return IntPtr.Size * 8; } }
+
+        /// <summary>
         /// Returns a indicating whether the application is running in Mono runtime.
         /// </summary>
         /// <value>

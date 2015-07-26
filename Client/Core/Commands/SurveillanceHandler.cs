@@ -26,7 +26,7 @@ namespace xClient.Core.Commands
 
             IsStreamingDesktop = true;
 
-            var resolution = FormatHelper.FormatScreenResolution(RemoteDesktopHelper.GetBounds(command.Monitor));
+            var resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
 
             if (StreamCodec == null)
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
@@ -51,7 +51,7 @@ namespace xClient.Core.Commands
                     }
 
                     // check screen resolution while streaming remote desktop
-                    resolution = FormatHelper.FormatScreenResolution(RemoteDesktopHelper.GetBounds(command.Monitor));
+                    resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
                     if (StreamCodec != null && StreamCodec.Resolution != resolution)
                     {
                         StreamCodec.Dispose();
@@ -62,7 +62,7 @@ namespace xClient.Core.Commands
                     Bitmap desktop = null;
                     try
                     {
-                        desktop = RemoteDesktopHelper.CaptureScreen(command.Monitor);
+                        desktop = ScreenHelper.CaptureScreen(command.Monitor);
                         desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                             ImageLockMode.ReadWrite, desktop.PixelFormat);
 

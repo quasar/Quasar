@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace xClient.Core.RemoteShell
+namespace xClient.Core.Utilities
 {
     /// <summary>
     /// This class manages a remote shell session.

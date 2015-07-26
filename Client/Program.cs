@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Helper;
 using xClient.Core.Keylogger;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
@@ -115,7 +116,7 @@ namespace xClient
             SystemCore.MyPath = Application.ExecutablePath;
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             SystemCore.AccountType = SystemCore.GetAccountType();
-            SystemCore.InitializeGeoIp();
+            GeoLocationHelper.Initialize();
 
             if (Settings.ENABLEUACESCALATION)
             {

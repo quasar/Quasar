@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using xClient.Core.RemoteShell;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
