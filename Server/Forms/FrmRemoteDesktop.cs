@@ -93,7 +93,13 @@ namespace xServer.Forms
                 CountFps();
                 picDesktop.Invoke((MethodInvoker) delegate
                 {
+                    // get old image to dispose it correctly
+                    var oldImage = picDesktop.Image;
+
                     picDesktop.Image = cloneBitmap ? (Bitmap) bmp.Clone() : bmp;
+
+                    if (oldImage != null)
+                        oldImage.Dispose();
                 });
             }
             catch (InvalidOperationException)
