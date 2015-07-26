@@ -73,9 +73,7 @@ namespace xServer.Forms
                         }
                         else
                         {
-                            int outPort;
-                            UPnP.CreatePortMap(port, out outPort);
-                            if (port != outPort)
+                            if (!UPnP.CreatePortMap(port))
                             {
                                 MessageBox.Show("Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
