@@ -68,7 +68,9 @@ namespace xServer.Core.Networking.Utilities
             try
             {
                 Mapping mapping = new Mapping(Protocol.Tcp, port, port);
-                _device.CreatePortMap(mapping);
+
+                for (int i = 0; i < 3; i++)
+                    _device.CreatePortMap(mapping);
 
                 if (_mappings.ContainsKey(mapping.PrivatePort))
                     _mappings[mapping.PrivatePort] = mapping;
@@ -78,7 +80,7 @@ namespace xServer.Core.Networking.Utilities
                 externalPort = mapping.PublicPort;
                 return true;
             }
-            catch (Exception)
+            catch (MappingException)
             {
                 externalPort = -1;
                 return false;
@@ -99,9 +101,10 @@ namespace xServer.Core.Networking.Utilities
             {
                 try
                 {
+                    for (int i = 0; i < 3; i++)
                     _device.DeletePortMap(mapping);
                 }
-                catch (Exception)
+                catch (MappingException)
                 {
                 }
             }
