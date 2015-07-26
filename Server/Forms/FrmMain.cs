@@ -114,12 +114,12 @@ namespace xServer.Forms
             }
             else if (XMLSettings.AutoListen)
             {
-                UPnP.Initialize();
+                UPnP.Initialize(0);
                 ConServer.Listen(XMLSettings.ListenPort);
             }
             else
             {
-                UPnP.Initialize();
+                UPnP.Initialize(0);
             }
 
             if (XMLSettings.IntegrateNoIP)
