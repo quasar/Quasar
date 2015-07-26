@@ -138,8 +138,6 @@ namespace xServer.Core.Networking.Utilities
 
             _discoveryComplete = true;
 
-            
-
             if (_port > 0)
             {
                 CreatePortMap(_port);
