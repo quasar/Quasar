@@ -96,7 +96,9 @@ namespace xServer.Forms
                     // get old image to dispose it correctly
                     var oldImage = picDesktop.Image;
 
-                    picDesktop.Image = cloneBitmap ? (Bitmap) bmp.Clone() : bmp;
+                    picDesktop.SuspendLayout();
+                    picDesktop.Image = cloneBitmap ? bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), bmp.PixelFormat) : bmp;
+                    picDesktop.ResumeLayout();
 
                     if (oldImage != null)
                         oldImage.Dispose();
