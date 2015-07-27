@@ -7,9 +7,6 @@ namespace xServer.Controls
 {
     internal class AeroListView : ListView
     {
-        private const int LVS_EX_DOUBLEBUFFER = 0x10000;
-        private const int LVM_SETEXTENDEDLISTVIEWSTYLE = 4150;
-
         private const uint WM_CHANGEUISTATE = 0x127;
 
         private const int UIS_SET = 1;
@@ -34,12 +31,19 @@ namespace xServer.Controls
         {
             base.OnHandleCreated(e);
 
-            if (!PlatformHelper.RunningOnMono && PlatformHelper.VistaOrHigher)
+            if (PlatformHelper.RunningOnMono) return;
+
+            if (PlatformHelper.VistaOrHigher)
             {
+                // set window theme to explorer
                 NativeMethods.SetWindowTheme(this.Handle, "explorer", null);
-                NativeMethods.SendMessage(this.Handle, LVM_SETEXTENDEDLISTVIEWSTYLE, new IntPtr(LVS_EX_DOUBLEBUFFER),
-                    new IntPtr(LVS_EX_DOUBLEBUFFER));
-                NativeMethods.SendMessage(this.Handle, WM_CHANGEUISTATE, NativeMethodsHelper.MakeLong(UIS_SET, UISF_HIDEFOCUS), 0);
+            }
+
+            if (PlatformHelper.XpOrHigher)
+            {
+                // removes the ugly dotted line around focused item
+                NativeMethods.SendMessage(this.Handle, WM_CHANGEUISTATE,
+                    NativeMethodsHelper.MakeLong(UIS_SET, UISF_HIDEFOCUS), 0);
             }
         }
     }

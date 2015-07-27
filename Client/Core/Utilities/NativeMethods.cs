@@ -4,7 +4,7 @@ using System.Runtime.InteropServices;
 namespace xClient.Core.Utilities
 {
     /// <summary>
-    /// Provides some methods from the "user32.dll" and uxtheme libraries.
+    /// Provides access to Win32 API and Microsoft C Runtime Library (msvcrt.dll).
     /// </summary>
     public static class NativeMethods
     {
@@ -17,15 +17,6 @@ namespace xClient.Core.Utilities
 
         [DllImport("user32.dll")]
         public static extern void mouse_event(int dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
-
-        [DllImport("user32.dll", SetLastError = false)]
-        public static extern IntPtr GetDesktopWindow();
-
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetWindowDC(IntPtr hWnd);
-
-        [DllImport("user32.dll")]
-        public static extern bool ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
         /// <summary>
         ///    Performs a bit-block transfer of the color data corresponding to a
@@ -47,6 +38,12 @@ namespace xClient.Core.Utilities
         [DllImport("gdi32.dll", EntryPoint = "BitBlt", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+
+        [DllImport("gdi32.dll")]
+        public static extern IntPtr CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
+
+        [DllImport("gdi32.dll")]
+        public static extern bool DeleteDC([In] IntPtr hdc);
 
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         public static extern unsafe int memcmp(byte* ptr1, byte* ptr2, uint count);
