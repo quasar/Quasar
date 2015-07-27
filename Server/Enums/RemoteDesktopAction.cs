@@ -4,11 +4,5 @@
     {
         Start,
         Stop,
-        LeftDown,
-        LeftUp,
-        RightDown,
-        RightUp,
-        MoveCursor,
-        None
     }
 }

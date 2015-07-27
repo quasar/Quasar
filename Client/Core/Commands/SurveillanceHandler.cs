@@ -109,15 +109,15 @@ namespace xClient.Core.Commands
 
             switch (command.Action)
             {
-                case RemoteDesktopAction.LeftDown:
-                case RemoteDesktopAction.LeftUp:
+                case MouseAction.LeftDown:
+                case MouseAction.LeftUp:
                     NativeMethodsHelper.DoMouseEventLeft(p, command.IsMouseDown);
                     break;
-                case RemoteDesktopAction.RightDown:
-                case RemoteDesktopAction.RightUp:
+                case MouseAction.RightDown:
+                case MouseAction.RightUp:
                     NativeMethodsHelper.DoMouseEventRight(p, command.IsMouseDown);
                     break;
-                case RemoteDesktopAction.MoveCursor:
+                case MouseAction.MoveCursor:
                     NativeMethodsHelper.DoMouseMoveCursor(p);
                     break;
             }       

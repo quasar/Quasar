@@ -212,12 +212,12 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                RemoteDesktopAction action = RemoteDesktopAction.None;
+                MouseAction action = MouseAction.None;
 
                 if (e.Button == MouseButtons.Left)
-                    action = RemoteDesktopAction.LeftDown;
+                    action = MouseAction.LeftDown;
                 if (e.Button == MouseButtons.Right)
-                    action = RemoteDesktopAction.RightDown;
+                    action = MouseAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
@@ -236,12 +236,12 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                RemoteDesktopAction action = RemoteDesktopAction.None;
+                MouseAction action = MouseAction.None;
 
                 if (e.Button == MouseButtons.Left)
-                    action = RemoteDesktopAction.LeftDown;
+                    action = MouseAction.LeftDown;
                 if (e.Button == MouseButtons.Right)
-                    action = RemoteDesktopAction.RightDown;
+                    action = MouseAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
@@ -263,7 +263,7 @@ namespace xServer.Forms
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(RemoteDesktopAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseEvent(MouseAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 

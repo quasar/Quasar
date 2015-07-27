@@ -8,7 +8,7 @@ namespace xServer.Core.Packets.ServerPackets
     public class DoMouseEvent : IPacket
     {
         [ProtoMember(1)]
-        public RemoteDesktopAction Action { get; set; }
+        public MouseAction Action { get; set; }
 
         [ProtoMember(2)]
         public bool IsMouseDown { get; set; }
@@ -26,7 +26,7 @@ namespace xServer.Core.Packets.ServerPackets
         {
         }
 
-        public DoMouseEvent(RemoteDesktopAction action, bool isMouseDown, int x, int y, int monitorIndex)
+        public DoMouseEvent(MouseAction action, bool isMouseDown, int x, int y, int monitorIndex)
         {
             this.Action = action;
             this.IsMouseDown = isMouseDown;
