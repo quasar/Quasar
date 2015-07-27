@@ -14,6 +14,7 @@ using xClient.Core.Encryption;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
 using xClient.Enums;
 
 namespace xClient.Core
@@ -404,6 +405,62 @@ namespace xClient.Core
             }
         }
 
+        public static void RemoveFromStartup()
+        {
+            if (Settings.STARTUP)
+            {
+                if (AccountType == "Admin")
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, false);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // try deleting from Registry.CurrentUser
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, false);
+                                key.Close();
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue(Settings.STARTUPKEY, false);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
+        }
+
         public static void Install(bool addToStartup = true)
         {
             bool isKilled = false;
@@ -523,65 +580,13 @@ namespace xClient.Core
 
         public static void RemoveTraces()
         {
-            if (Settings.STARTUP)
-            {
-                if (AccountType == "Admin")
-                {
-                    try
-                    {
-                        using (
-                            RegistryKey key =
-                                Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                    catch
-                    {
-                        // try deleting from Registry.CurrentUser
-                        using (
-                            RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    try
-                    {
-                        using (
-                            RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                        {
-                            if (key != null)
-                            {
-                                key.DeleteValue(Settings.STARTUPKEY, true);
-                                key.Close();
-                            }
-                        }
-                    }
-                    catch
-                    {
-                    }
-                }
-            }
+            RemoveFromStartup();
 
-            string logsDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
-            if (Directory.Exists(logsDirectory)) // try to delete Logs from Keylogger
+            if (Directory.Exists(Keylogger.LogDirectory)) // try to delete Logs from Keylogger
             {
                 try
                 {
-                    Directory.Delete(logsDirectory, true);
+                    Directory.Delete(Keylogger.LogDirectory, true);
                 }
                 catch
                 {
