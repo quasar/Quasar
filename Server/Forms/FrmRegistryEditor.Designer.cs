@@ -29,33 +29,33 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRegistryEditor));
-            this.treeView1 = new System.Windows.Forms.TreeView();
-            this.listView1 = new System.Windows.Forms.ListView();
+            this.tvRegistryDirectory = new System.Windows.Forms.TreeView();
+            this.lstRegistryKeys = new System.Windows.Forms.ListView();
             this.SuspendLayout();
             // 
-            // treeView1
+            // tvRegistryDirectory
             // 
-            this.treeView1.Location = new System.Drawing.Point(4, 5);
-            this.treeView1.Name = "treeView1";
-            this.treeView1.ShowPlusMinus = false;
-            this.treeView1.Size = new System.Drawing.Size(155, 402);
-            this.treeView1.TabIndex = 0;
+            this.tvRegistryDirectory.Location = new System.Drawing.Point(4, 5);
+            this.tvRegistryDirectory.Name = "tvRegistryDirectory";
+            this.tvRegistryDirectory.ShowPlusMinus = false;
+            this.tvRegistryDirectory.Size = new System.Drawing.Size(155, 402);
+            this.tvRegistryDirectory.TabIndex = 0;
             // 
-            // listView1
+            // lstRegistryKeys
             // 
-            this.listView1.Location = new System.Drawing.Point(163, 5);
-            this.listView1.Name = "listView1";
-            this.listView1.Size = new System.Drawing.Size(526, 402);
-            this.listView1.TabIndex = 1;
-            this.listView1.UseCompatibleStateImageBehavior = false;
+            this.lstRegistryKeys.Location = new System.Drawing.Point(163, 5);
+            this.lstRegistryKeys.Name = "lstRegistryKeys";
+            this.lstRegistryKeys.Size = new System.Drawing.Size(526, 402);
+            this.lstRegistryKeys.TabIndex = 1;
+            this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
             // 
             // FrmRegistryEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(694, 427);
-            this.Controls.Add(this.listView1);
-            this.Controls.Add(this.treeView1);
+            this.Controls.Add(this.lstRegistryKeys);
+            this.Controls.Add(this.tvRegistryDirectory);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -69,7 +69,7 @@
 
         #endregion
 
-        private System.Windows.Forms.TreeView treeView1;
-        private System.Windows.Forms.ListView listView1;
+        private System.Windows.Forms.TreeView tvRegistryDirectory;
+        private System.Windows.Forms.ListView lstRegistryKeys;
     }
 }
