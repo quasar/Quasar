@@ -12,20 +12,12 @@ namespace xClient.Core.Helper
 
         public static void DoMouseEventLeft(Point p, bool isMouseDown)
         {
-            NativeMethods.SetCursorPos(p.X, p.Y);
-            if (isMouseDown)
-                NativeMethods.mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
-            else
-                NativeMethods.mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
+            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
         }
 
         public static void DoMouseEventRight(Point p, bool isMouseDown)
         {
-            NativeMethods.SetCursorPos(p.X, p.Y);
-            if (isMouseDown)
-                NativeMethods.mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
-            else
-                NativeMethods.mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
+            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
         }
 
         public static void DoMouseMoveCursor(Point p)
