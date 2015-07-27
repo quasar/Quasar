@@ -2,7 +2,7 @@
 
 namespace xServer.Controls
 {
-    public class MainMenuEx : MainMenu
+    internal class MainMenuEx : MainMenu
     {
         public MainMenuEx()
         {

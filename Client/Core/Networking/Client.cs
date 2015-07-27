@@ -225,9 +225,25 @@ namespace xClient.Core.Networking
         /// </summary>
         private readonly object _readingPacketsLock = new object();
 
+        /// <summary>
+        /// The temporary header to store parts of the header.
+        /// </summary>
+        /// <remarks>
+        /// This temporary header is used when we have i.e.
+        /// only 2 bytes left to read from the buffer but need more
+        /// which can only be read in the next Receive callback
+        /// </remarks>
+        private byte[] _tempHeader;
+
+        /// <summary>
+        /// Decides if we need to append bytes to the header.
+        /// </summary>
+        private bool _appendHeader;
+
         // Receive info
         private int _readOffset;
         private int _writeOffset;
+        private int _tempHeaderOffset;
         private int _readableDataLen;
         private int _payloadLen;
         private ReceiveType _receiveState = ReceiveType.Header;
@@ -261,6 +277,8 @@ namespace xClient.Core.Networking
                 _handle.NoDelay = true;
 
                 _readBuffer = new byte[BUFFER_SIZE];
+                _tempHeader = new byte[HEADER_SIZE];
+
                 _handle.Connect(host, port);
 
                 if (_handle.Connected)
@@ -366,12 +384,26 @@ namespace xClient.Core.Networking
                     {
                         case ReceiveType.Header:
                             {
-                                process = _readableDataLen >= HEADER_SIZE;
-                                if (process)
-                                {
+                                if (_readableDataLen >= HEADER_SIZE)
+                                { // we can read the header
+                                    int size = (_appendHeader) ?
+                                        HEADER_SIZE - _tempHeaderOffset
+                                        : HEADER_SIZE;
+
                                     try
                                     {
-                                        _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 | readBuffer[_readOffset + 2] << 16;
+                                        if (_appendHeader)
+                                        {
+                                            Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, size);
+                                            _payloadLen = (int)_tempHeader[0] | _tempHeader[1] << 8 | _tempHeader[2] << 16;
+                                            _tempHeaderOffset = 0;
+                                            _appendHeader = false;
+                                        }
+                                        else
+                                        {
+                                            _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 |
+                                                readBuffer[_readOffset + 2] << 16;
+                                        }
 
                                         if (_payloadLen <= 0)
                                             throw new Exception("invalid header");
@@ -382,9 +414,16 @@ namespace xClient.Core.Networking
                                         break;
                                     }
 
-                                    _readableDataLen -= HEADER_SIZE;
-                                    _readOffset += HEADER_SIZE;
+                                    _readableDataLen -= size;
+                                    _readOffset += size;
                                     _receiveState = ReceiveType.Payload;
+                                }
+                                else // _parentServer.HEADER_SIZE < _readableDataLen
+                                {
+                                    _appendHeader = true;
+                                    Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
+                                    _tempHeaderOffset += _readableDataLen;
+                                    process = false;
                                 }
                                 break;
                             }
@@ -491,6 +530,21 @@ namespace xClient.Core.Networking
                 catch
                 {
                 }
+            }
+        }
+
+        /// <summary>
+        /// Sends a packet to the connected server.
+        /// Blocks the thread until all packets have been sent.
+        /// </summary>
+        /// <typeparam name="T">The type of the packet.</typeparam>
+        /// <param name="packet">The packet to be send.</param>
+        public void SendBlocking<T>(T packet) where T : IPacket
+        {
+            Send(packet);
+            while (_sendingPackets)
+            {
+                Thread.Sleep(10);
             }
         }
 

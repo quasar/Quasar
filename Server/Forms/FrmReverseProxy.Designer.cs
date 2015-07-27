@@ -37,7 +37,7 @@ namespace xServer.Forms
             this.nudServerPort = new System.Windows.Forms.NumericUpDown();
             this.tabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.LvConnections = new xServer.Controls.ListViewEx();
+            this.LvConnections = new xServer.Controls.AeroListView();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -270,7 +270,7 @@ namespace xServer.Forms
         private System.Windows.Forms.NumericUpDown nudServerPort;
         private System.Windows.Forms.TabControl tabCtrl;
         private System.Windows.Forms.TabPage tabPage1;
-        private ListViewEx LvConnections;
+        private AeroListView LvConnections;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;

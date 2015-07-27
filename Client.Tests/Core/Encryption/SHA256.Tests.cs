@@ -10,7 +10,7 @@ namespace xClient.Tests.Core.Encryption
         [TestMethod]
         public void ComputeHashTest()
         {
-            var input = Helper.GetRandomName(100);
+            var input = FileHelper.GetRandomFilename(100);
             var result = SHA256.ComputeHash(input);
 
             Assert.IsNotNull(result);

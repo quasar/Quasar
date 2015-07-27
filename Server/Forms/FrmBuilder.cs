@@ -102,7 +102,7 @@ namespace xServer.Forms
             {
                 txtPort.Text = XMLSettings.ListenPort.ToString();
                 txtPassword.Text = XMLSettings.Password;
-                txtMutex.Text = Helper.GetRandomName(32);
+                txtMutex.Text = FileHelper.GetRandomFilename(32);
             }
 
             UpdateControlStates();
@@ -139,13 +139,13 @@ namespace xServer.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
@@ -153,7 +153,7 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            txtMutex.Text = Helper.GetRandomName(32);
+            txtMutex.Text = FileHelper.GetRandomFilename(32);
         }
 
         private void chkInstall_CheckedChanged(object sender, EventArgs e)
@@ -313,7 +313,7 @@ namespace xServer.Forms
         {
             this.Invoke((MethodInvoker) delegate
             {
-                foreach (Control ctrl in groupAsmInfo.Controls)
+                foreach (Control ctrl in assemblyPage.Controls)
                 {
                     if (ctrl is Label)
                         ((Label) ctrl).Enabled = chkChangeAsmInfo.Checked;

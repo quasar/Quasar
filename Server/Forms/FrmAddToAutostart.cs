@@ -2,7 +2,7 @@
 using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -53,13 +53,13 @@ namespace xServer.Forms
 
         private void txtName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
         private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || Helper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
     }

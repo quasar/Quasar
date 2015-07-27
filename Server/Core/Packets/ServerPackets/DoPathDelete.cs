@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using xServer.Core.Networking;
-using PathType = xServer.Core.Commands.CommandHandler.PathType;
+using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {

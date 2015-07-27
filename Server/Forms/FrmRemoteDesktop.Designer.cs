@@ -117,8 +117,9 @@
             this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
-            this.picDesktop.MouseClick += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseClick);
-            this.picDesktop.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDoubleClick);
+            this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
+            this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
+            this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
             // panelTop
             // 

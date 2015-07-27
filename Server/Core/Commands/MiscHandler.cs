@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
-using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Utilities;
 using xServer.Forms;
 
 namespace xServer.Core.Commands
@@ -35,7 +35,7 @@ namespace xServer.Core.Commands
             {
                 for (int i = 1; i < 100; i++)
                 {
-                    var newFileName = string.Format("{0}_{1}{2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
+                    var newFileName = string.Format("{0} ({1}){2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
                     if (File.Exists(Path.Combine(client.Value.DownloadDirectory, newFileName))) continue;
 
                     downloadPath = Path.Combine(client.Value.DownloadDirectory, newFileName);
@@ -55,7 +55,7 @@ namespace xServer.Core.Commands
                 return;
             }
 
-            int index = client.Value.FrmFm.GetTransferIndex(packet.ID.ToString());
+            int index = client.Value.FrmFm.GetTransferIndex(packet.ID);
             if (index < 0)
                 return;
 
@@ -84,6 +84,8 @@ namespace xServer.Core.Commands
 
             if (client.Value.FrmFm == null)
                 return;
+
+            if (CanceledDownloads.ContainsKey(packet.ID)) return;
 
             client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
 

@@ -1,6 +1,6 @@
 ﻿using ProtoBuf;
 using xServer.Core.Networking;
-using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
+using xServer.Enums;
 
 namespace xServer.Core.Packets.ClientPackets
 {

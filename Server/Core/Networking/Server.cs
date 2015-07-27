@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
+using xServer.Core.Networking.Utilities;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
@@ -331,7 +332,7 @@ namespace xServer.Core.Networking
             catch (ObjectDisposedException)
             {
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 Disconnect();
             }

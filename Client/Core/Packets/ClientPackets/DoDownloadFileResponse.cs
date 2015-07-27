@@ -41,7 +41,9 @@ namespace xClient.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.Send(this);
+            // block thread till send queue is empty to prevent
+            // allocation of all blocks at once
+            client.SendBlocking(this);
         }
     }
 }

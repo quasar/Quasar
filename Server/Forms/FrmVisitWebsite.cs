@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using xServer.Core.Helper;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -16,15 +17,15 @@ namespace xServer.Forms
 
         private void FrmVisitWebsite_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Visit Website", _selectedClients);
-            txtURL.Text = Core.Misc.VisitWebsite.URL;
-            chkVisitHidden.Checked = Core.Misc.VisitWebsite.Hidden;
+            this.Text = WindowHelper.GetWindowTitle("Visit Website", _selectedClients);
+            txtURL.Text = VisitWebsite.URL;
+            chkVisitHidden.Checked = VisitWebsite.Hidden;
         }
 
         private void btnVisitWebsite_Click(object sender, EventArgs e)
         {
-            Core.Misc.VisitWebsite.URL = txtURL.Text;
-            Core.Misc.VisitWebsite.Hidden = chkVisitHidden.Checked;
+            VisitWebsite.URL = txtURL.Text;
+            VisitWebsite.Hidden = chkVisitHidden.Checked;
 
             this.DialogResult = DialogResult.OK;
             this.Close();

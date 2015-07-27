@@ -40,7 +40,7 @@ namespace xClient.Core.Packets.ServerPackets
 
         public void Execute(Client client)
         {
-            client.Send(this);
+            client.SendBlocking(this);
         }
     }
 }

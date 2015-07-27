@@ -1,5 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
@@ -30,7 +31,7 @@ namespace xServer.Core.Commands
 
                 string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
 
-                client.Value.DownloadDirectory = (!Helper.Helper.CheckPathForIllegalChars(userAtPc)) ?
+                client.Value.DownloadDirectory = (!FileHelper.CheckPathForIllegalChars(userAtPc)) ?
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", userAtPc, client.Value.Id.Substring(0, 7))) :
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
 

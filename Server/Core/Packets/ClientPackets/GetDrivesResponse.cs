@@ -7,15 +7,19 @@ namespace xServer.Core.Packets.ClientPackets
     public class GetDrivesResponse : IPacket
     {
         [ProtoMember(1)]
-        public string[] Drives { get; set; }
+        public string[] DriveDisplayName { get; set; }
+
+        [ProtoMember(2)]
+        public string[] RootDirectory { get; set; }
 
         public GetDrivesResponse()
         {
         }
 
-        public GetDrivesResponse(string[] drives)
+        public GetDrivesResponse(string[] driveDisplayName, string[] rootDirectory)
         {
-            this.Drives = drives;
+            this.DriveDisplayName = driveDisplayName;
+            this.RootDirectory = rootDirectory;
         }
 
         public void Execute(Client client)

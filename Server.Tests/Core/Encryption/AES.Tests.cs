@@ -11,8 +11,8 @@ namespace xServer.Tests.Core.Encryption
         [TestMethod]
         public void EncryptAndDecryptStringTest()
         {
-            var input = Helper.GetRandomName(100);
-            var password = Helper.GetRandomName(50);
+            var input = FileHelper.GetRandomFilename(100);
+            var password = FileHelper.GetRandomFilename(50);
             var encrypted = AES.Encrypt(input, password);
 
             Assert.IsNotNull(encrypted);
@@ -26,10 +26,10 @@ namespace xServer.Tests.Core.Encryption
         [TestMethod]
         public void EncryptAndDecryptByteArrayTest()
         {
-            var input = Helper.GetRandomName(100);
+            var input = FileHelper.GetRandomFilename(100);
             var inputByte = Encoding.UTF8.GetBytes(input);
 
-            var passwordByte = Encoding.UTF8.GetBytes(Helper.GetRandomName(50));
+            var passwordByte = Encoding.UTF8.GetBytes(FileHelper.GetRandomFilename(50));
             var encryptedByte = AES.Encrypt(inputByte, passwordByte);
 
             Assert.IsNotNull(encryptedByte);

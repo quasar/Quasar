@@ -1,30 +1,32 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Drawing;
-using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
+using xServer.Core.Utilities;
+using xServer.Enums;
 
 namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {
         private readonly Client _connectClient;
-        private bool _keepRunning;
         private bool _enableMouseInput;
+        private bool _started;
+        private FrameCounter _frameCounter;
+        private Stopwatch _sWatch;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
-            _keepRunning = false;
-            _enableMouseInput = false;
             InitializeComponent();
         }
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
-            this.Text = Helper.GetWindowTitle("Remote Desktop", _connectClient);
+            this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
 
             panelTop.Left = (this.Width/2) - (panelTop.Width/2);
 
@@ -35,60 +37,6 @@ namespace xServer.Forms
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
-        }
-
-        private void GetDesktop()
-        {
-            _keepRunning = true;
-
-            while (_keepRunning)
-            {
-                try
-                {
-                    this.Invoke((MethodInvoker) delegate
-                    {
-                        btnStart.Enabled = false;
-                        btnStop.Enabled = true;
-                        barQuality.Enabled = false;
-                    });
-
-                    if (_connectClient.Value != null)
-                    {
-                        if (_connectClient.Value.LastDesktopSeen)
-                        {
-                            int quality = 1;
-                            int selectedMonitorIndex = 0;
-                            this.Invoke((MethodInvoker) delegate
-                            {
-                                quality = barQuality.Value;
-                                selectedMonitorIndex = cbMonitors.SelectedIndex;
-                            });
-
-                            new Core.Packets.ServerPackets.GetDesktop(quality, selectedMonitorIndex).Execute(_connectClient);
-                            _connectClient.Value.LastDesktopSeen = false;
-                        }
-                    }
-                    Thread.Sleep(100);
-                }
-                catch
-                {
-                }
-            }
-
-            try
-            {
-                this.Invoke((MethodInvoker) delegate
-                {
-                    btnStart.Enabled = true;
-                    btnStop.Enabled = false;
-                    barQuality.Enabled = true;
-                });
-            }
-            catch
-            {
-            }
-
-            _keepRunning = false;
         }
 
         public void AddMonitors(int montiors)
@@ -114,13 +62,44 @@ namespace xServer.Forms
             }
         }
 
+        private void CountFps()
+        {
+            var deltaTime = (float)_sWatch.Elapsed.TotalSeconds;
+            _sWatch = Stopwatch.StartNew();
+
+            _frameCounter.Update(deltaTime);
+
+            UpdateFps(_frameCounter.AverageFramesPerSecond);
+        }
+
+        private void UpdateFps(float fps)
+        {
+            try
+            {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), fps.ToString("0.00"));
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
             try
             {
+                CountFps();
                 picDesktop.Invoke((MethodInvoker) delegate
                 {
+                    // get old image to dispose it correctly
+                    var oldImage = picDesktop.Image;
+
                     picDesktop.Image = cloneBitmap ? (Bitmap) bmp.Clone() : bmp;
+
+                    if (oldImage != null)
+                        oldImage.Dispose();
                 });
             }
             catch (InvalidOperationException)
@@ -135,9 +114,29 @@ namespace xServer.Forms
             }
         }
 
+        private void ToggleControls(bool t)
+        {
+            _started = !t;
+            try
+            {
+                this.Invoke((MethodInvoker) delegate
+                {
+                    btnStart.Enabled = t;
+                    btnStop.Enabled = !t;
+                    barQuality.Enabled = t;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
         private void FrmRemoteDesktop_FormClosing(object sender, FormClosingEventArgs e)
         {
-            _keepRunning = false;
+            if (_started)
+                new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
+            if (_sWatch != null)
+                _sWatch.Stop();
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
         }
@@ -157,13 +156,19 @@ namespace xServer.Forms
                 return;
             }
 
-            if (!_keepRunning)
-                new Thread(GetDesktop).Start();
+            _frameCounter = new FrameCounter();
+            _sWatch = Stopwatch.StartNew();
+
+            ToggleControls(false);
+
+            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex, RemoteDesktopAction.Start).Execute(_connectClient);
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            _keepRunning = false;
+            new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
+            ToggleControls(true);
+            _sWatch.Stop();
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)
@@ -197,9 +202,9 @@ namespace xServer.Forms
             }
         }
 
-        private void picDesktop_MouseClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -207,18 +212,23 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = (e.Button == MouseButtons.Left);
+                MouseAction action = MouseAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = MouseAction.LeftDown;
+                if (e.Button == MouseButtons.Right)
+                    action = MouseAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseClick(left, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseEvent(action, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 
-        private void picDesktop_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -226,12 +236,34 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = (e.Button == MouseButtons.Left);
+                MouseAction action = MouseAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = MouseAction.LeftDown;
+                if (e.Button == MouseButtons.Right)
+                    action = MouseAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseClick(left, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseEvent(action, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+            }
+        }
+
+        private void picDesktop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            {
+                int local_x = e.X;
+                int local_y = e.Y;
+
+                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+
+                int selectedMonitorIndex = cbMonitors.SelectedIndex;
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(MouseAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 
