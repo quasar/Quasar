@@ -3,6 +3,6 @@
     public enum RemoteDesktopAction
     {
         Start,
-        Stop
+        Stop,
     }
 }

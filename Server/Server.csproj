@@ -134,7 +134,7 @@
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoProcessKill.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetMonitors.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoMouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoMouseEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoStartupItemRemove.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoShellExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoShowMessageBox.cs" />
@@ -240,6 +240,7 @@
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Networking\Server.cs" />
     <Compile Include="Core\Networking\UserState.cs" />
+    <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
     <Compile Include="Enums\RemoteDesktopAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />

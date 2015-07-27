@@ -151,7 +151,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoClientUpdate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoUploadAndExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoVisitWebsite.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoMouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoMouseEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoProcessStart.cs" />
     <Compile Include="Core\ProtoBuf\CallbackAttributes.cs" />
     <Compile Include="Core\ProtoBuf\Extensible.cs" />
@@ -256,6 +256,7 @@
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Helper\GeoLocationHelper.cs" />
     <Compile Include="Core\Utilities\Keylogger.cs" />
+    <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
     <Compile Include="Enums\RemoteDesktopAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />

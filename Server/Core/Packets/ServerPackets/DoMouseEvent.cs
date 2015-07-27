@@ -1,16 +1,17 @@
 ﻿using ProtoBuf;
-using xClient.Core.Networking;
+using xServer.Core.Networking;
+using xServer.Enums;
 
-namespace xClient.Core.Packets.ServerPackets
+namespace xServer.Core.Packets.ServerPackets
 {
     [ProtoContract]
-    public class DoMouseClick : IPacket
+    public class DoMouseEvent : IPacket
     {
         [ProtoMember(1)]
-        public bool LeftClick { get; set; }
+        public MouseAction Action { get; set; }
 
         [ProtoMember(2)]
-        public bool DoubleClick { get; set; }
+        public bool IsMouseDown { get; set; }
 
         [ProtoMember(3)]
         public int X { get; set; }
@@ -21,14 +22,14 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(5)]
         public int MonitorIndex { get; set; }
 
-        public DoMouseClick()
+        public DoMouseEvent()
         {
         }
 
-        public DoMouseClick(bool leftclick, bool doubleclick, int x, int y, int monitorIndex)
+        public DoMouseEvent(MouseAction action, bool isMouseDown, int x, int y, int monitorIndex)
         {
-            this.LeftClick = leftclick;
-            this.DoubleClick = doubleclick;
+            this.Action = action;
+            this.IsMouseDown = isMouseDown;
             this.X = x;
             this.Y = y;
             this.MonitorIndex = monitorIndex;
