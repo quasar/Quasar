@@ -204,7 +204,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput)
+            if (picDesktop.Image != null && _enableMouseInput && btnStart.Enabled)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -228,7 +228,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput)
+            if (picDesktop.Image != null && _enableMouseInput && btnStart.Enabled)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -252,7 +252,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput)
+            if (picDesktop.Image != null && _enableMouseInput && btnStart.Enabled)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
