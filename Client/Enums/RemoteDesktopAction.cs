@@ -3,6 +3,12 @@
     public enum RemoteDesktopAction
     {
         Start,
-        Stop
+        Stop,
+        LeftDown,
+        LeftUp,
+        RightDown,
+        RightUp,
+        MoveCursor,
+        None
     }
 }

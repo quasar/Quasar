@@ -10,28 +10,27 @@ namespace xClient.Core.Helper
         private const int MOUSEEVENTF_RIGHTDOWN = 0x08;
         private const int MOUSEEVENTF_RIGHTUP = 0x10;
 
-        public static void DoMouseClickLeft(Point p, bool doubleClick)
+        public static void DoMouseEventLeft(Point p, bool isMouseDown)
         {
             NativeMethods.SetCursorPos(p.X, p.Y);
-            NativeMethods.mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
-            NativeMethods.mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
-            if (doubleClick)
-            {
+            if (isMouseDown)
                 NativeMethods.mouse_event(MOUSEEVENTF_LEFTDOWN, p.X, p.Y, 0, 0);
+            else
                 NativeMethods.mouse_event(MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
-            }
         }
 
-        public static void DoMouseClickRight(Point p, bool doubleClick)
+        public static void DoMouseEventRight(Point p, bool isMouseDown)
         {
             NativeMethods.SetCursorPos(p.X, p.Y);
-            NativeMethods.mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
-            NativeMethods.mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
-            if (doubleClick)
-            {
+            if (isMouseDown)
                 NativeMethods.mouse_event(MOUSEEVENTF_RIGHTDOWN, p.X, p.Y, 0, 0);
+            else
                 NativeMethods.mouse_event(MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
-            }
+        }
+
+        public static void DoMouseMoveCursor(Point p)
+        {
+            NativeMethods.SetCursorPos(p.X, p.Y);
         }
     }
 }

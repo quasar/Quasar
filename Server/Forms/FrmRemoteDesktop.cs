@@ -202,7 +202,7 @@ namespace xServer.Forms
             }
         }
 
-        private void picDesktop_MouseClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
@@ -212,16 +212,21 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = (e.Button == MouseButtons.Left);
+                RemoteDesktopAction action = RemoteDesktopAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = RemoteDesktopAction.LeftDown;
+                if (e.Button == MouseButtons.Right)
+                    action = RemoteDesktopAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseClick(left, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseEvent(action, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 
-        private void picDesktop_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput)
             {
@@ -231,12 +236,34 @@ namespace xServer.Forms
                 int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
                 int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
 
-                bool left = (e.Button == MouseButtons.Left);
+                RemoteDesktopAction action = RemoteDesktopAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = RemoteDesktopAction.LeftDown;
+                if (e.Button == MouseButtons.Right)
+                    action = RemoteDesktopAction.RightDown;
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseClick(left, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoMouseEvent(action, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+            }
+        }
+
+        private void picDesktop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput)
+            {
+                int local_x = e.X;
+                int local_y = e.Y;
+
+                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
+                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+
+                int selectedMonitorIndex = cbMonitors.SelectedIndex;
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(RemoteDesktopAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
             }
         }
 

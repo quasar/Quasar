@@ -134,7 +134,7 @@
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoProcessKill.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetMonitors.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoMouseClick.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoMouseEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoStartupItemRemove.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoShellExecute.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoShowMessageBox.cs" />
