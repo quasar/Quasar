@@ -24,13 +24,8 @@ namespace xServer.Controls
         {
             Bitmap b = new Bitmap(Width, Height);
             Graphics g = Graphics.FromImage(b);
-            try
-            {
+            if (!DesignMode)
                 SelectedTab.BackColor = SystemColors.Control;
-            }
-            catch (Exception)
-            {
-            }
             g.Clear(SystemColors.Control);
             g.FillRectangle(new SolidBrush(Color.FromArgb(246, 248, 252)),
                 new Rectangle(0, 0, ItemSize.Height + 4, Height));
