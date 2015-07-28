@@ -16,29 +16,21 @@ namespace xServer.Core.Commands
                 return;
 
             if (packet.Image == null)
-            {
                 return;
-            }
 
-            if (client.Value.StreamCodec == null)
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-
-            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor
-                || client.Value.StreamCodec.Resolution != packet.Resolution)
+            lock (client.Value.FrmRdp.ProcessingScreensQueue)
             {
-                if (client.Value.StreamCodec != null)
-                    client.Value.StreamCodec.Dispose();
-
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+                client.Value.FrmRdp.ProcessingScreensQueue.Enqueue(packet);
             }
 
-            using (MemoryStream ms = new MemoryStream(packet.Image))
+            lock (client.Value.FrmRdp.ProcessingScreensLock)
             {
-                if (client.Value.FrmRdp != null)
-                    client.Value.FrmRdp.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
+                if (!client.Value.FrmRdp.ProcessingScreens)
+                {
+                    client.Value.FrmRdp.ProcessingScreens = true;
+                    ThreadPool.QueueUserWorkItem(client.Value.FrmRdp.ProcessScreens);
+                }
             }
-
-            packet.Image = null;
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
