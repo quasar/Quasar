@@ -63,37 +63,20 @@ namespace xServer.Forms
                 }
 
                 if (_connectClient.Value.StreamCodec == null)
-                {
                     _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-                }
-                else if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor)
+
+                if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor
+                    || _connectClient.Value.StreamCodec.Resolution != packet.Resolution)
                 {
-                    if (string.Compare(_connectClient.Value.StreamCodec.Resolution, packet.Resolution, StringComparison.InvariantCultureIgnoreCase) != 0)
-                    {
+                    if (_connectClient.Value.StreamCodec != null)
                         _connectClient.Value.StreamCodec.Dispose();
-                    }
 
                     _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
                 }
 
                 using (MemoryStream ms = new MemoryStream(packet.Image))
                 {
-                    try
-                    {
-                        // update the new image from the packet data
-                        picDesktop.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
-
-                        this.Invoke((MethodInvoker)delegate
-                        {
-                            if (picDesktop != null && !picDesktop.IsDisposed)
-                            {
-                                picDesktop.Invalidate();
-                            }
-                        });
-                    }
-                    catch
-                    {
-                    }
+                    picDesktop.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
                 }
 
                 packet.Image = null;
@@ -114,22 +97,20 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
-        // Update on frame change.
         private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
         {
-            this.Invoke((MethodInvoker)delegate
+            try
             {
-                this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
-            });
+                this.Invoke((MethodInvoker)delegate
+                {
+                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
         }
 
         private void ToggleControls(bool t)

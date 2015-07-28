@@ -126,24 +126,22 @@ namespace xServer.Controls
 
                 lock (_imageLock)
                 {
-                    if (GetImageSafe != null)
-                    {
-                        GetImageSafe.Dispose();
-                        GetImageSafe = null;
-                    }
-
+                    // get old image to dispose it correctly
+                    var oldImage = GetImageSafe;
+                    
+                    SuspendLayout();
                     GetImageSafe = cloneBitmap ? new Bitmap(bmp, Width, Height) /*resize bitmap*/ : bmp;
+                    ResumeLayout();
+
+                    if (oldImage != null)
+                        oldImage.Dispose();
                 }
             }
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
