@@ -30,9 +30,9 @@ namespace xServer.Core.Utilities
 
         public void Update(float deltaTime)
         {
-            float CurrentFramesPerSecond = 1.0f / deltaTime;
+            float currentFramesPerSecond = 1.0f / deltaTime;
 
-            _sampleBuffer.Enqueue(CurrentFramesPerSecond);
+            _sampleBuffer.Enqueue(currentFramesPerSecond);
 
             if (_sampleBuffer.Count > MAXIMUM_SAMPLES)
             {
@@ -41,7 +41,7 @@ namespace xServer.Core.Utilities
             }
             else
             {
-                AverageFramesPerSecond = CurrentFramesPerSecond;
+                AverageFramesPerSecond = currentFramesPerSecond;
             }
 
             OnFrameUpdated(new FrameUpdatedEventArgs(AverageFramesPerSecond));

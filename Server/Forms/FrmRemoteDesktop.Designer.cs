@@ -35,7 +35,7 @@
             this.lblQuality = new System.Windows.Forms.Label();
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
-            this.picDesktop = new xServer.Controls.PictureBoxEx();
+            this.picDesktop = new xServer.Controls.RapidPictureBox();
             this.panelTop = new System.Windows.Forms.Panel();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
@@ -111,9 +111,11 @@
             this.picDesktop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
             this.picDesktop.Cursor = System.Windows.Forms.Cursors.Default;
             this.picDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picDesktop.GetImageSafe = null;
             this.picDesktop.Location = new System.Drawing.Point(0, 0);
             this.picDesktop.Name = "picDesktop";
-            this.picDesktop.Size = new System.Drawing.Size(797, 501);
+            this.picDesktop.Running = false;
+            this.picDesktop.Size = new System.Drawing.Size(784, 562);
             this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
@@ -171,15 +173,14 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 501);
+            this.ClientSize = new System.Drawing.Size(784, 562);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.picDesktop);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(570, 421);
+            this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "FrmRemoteDesktop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Desktop []";
@@ -205,7 +206,7 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnHide;
         private System.Windows.Forms.Button btnShow;
-        private xServer.Controls.PictureBoxEx picDesktop;
+        private xServer.Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
     }
 }

@@ -13,24 +13,19 @@ namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {
-        private readonly Client _connectClient;
-        private bool _enableMouseInput;
-        private bool _started;
-
-        private int _screenWidth;
-        private int _screenHeight;
-
         public readonly Queue<GetDesktopResponse> ProcessingScreensQueue = new Queue<GetDesktopResponse>();
         public readonly object ProcessingScreensLock = new object();
         public bool ProcessingScreens;
+
+        private readonly Client _connectClient;
+        private bool _enableMouseInput;
+        private bool _started;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
             InitializeComponent();
-
-            picDesktop.PictureSizeChanged += picDesktop_PictureSizeChanged;
         }
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
@@ -85,7 +80,7 @@ namespace xServer.Forms
                 {
                     try
                     {
-                        // Update the new image from the packet data.
+                        // update the new image from the packet data
                         picDesktop.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
 
                         this.Invoke((MethodInvoker)delegate
@@ -97,7 +92,8 @@ namespace xServer.Forms
                         });
                     }
                     catch
-                    { }
+                    {
+                    }
                 }
 
                 packet.Image = null;
@@ -136,12 +132,6 @@ namespace xServer.Forms
             });
         }
 
-        private void picDesktop_PictureSizeChanged(int width, int height)
-        {
-            _screenWidth = width;
-            _screenHeight = height;
-        }
-
         private void ToggleControls(bool t)
         {
             _started = !t;
@@ -171,8 +161,8 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
+            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -189,7 +179,7 @@ namespace xServer.Forms
             picDesktop.Start();
 
             // Subscribe to the new frame counter.
-            picDesktop._frameCounter.FrameUpdated += _frameCounter_FrameUpdated;
+            picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
 
             new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex, RemoteDesktopAction.Start).Execute(_connectClient);
         }
@@ -202,7 +192,7 @@ namespace xServer.Forms
             picDesktop.Stop();
 
             // Unsubscribe from the frame counter. It will be re-created when starting again.
-            picDesktop._frameCounter.FrameUpdated -= _frameCounter_FrameUpdated;
+            picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)
@@ -238,12 +228,12 @@ namespace xServer.Forms
 
         private int GetRemoteWidth(int localX)
         {
-            return localX * _screenWidth / picDesktop.Width;
+            return localX * picDesktop.ScreenWidth / picDesktop.Width;
         }
 
         private int GetRemoteHeight(int localY)
         {
-            return localY * _screenHeight / picDesktop.Height;
+            return localY * picDesktop.ScreenHeight / picDesktop.Height;
         }
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)

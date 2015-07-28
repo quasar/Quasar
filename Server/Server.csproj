@@ -71,11 +71,8 @@
     <Compile Include="Controls\MainMenuEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\PictureBoxEx.cs">
+    <Compile Include="Controls\RapidPictureBox.cs">
       <SubType>Component</SubType>
-    </Compile>
-    <Compile Include="Controls\PictureBoxEx.Designer.cs">
-      <DependentUpon>PictureBoxEx.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
@@ -378,9 +375,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings\ProfileManager.cs" />
     <Compile Include="Settings\Settings.cs" />
-    <EmbeddedResource Include="Controls\PictureBoxEx.resx">
-      <DependentUpon>PictureBoxEx.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </EmbeddedResource>
