@@ -35,7 +35,7 @@
             this.lblQuality = new System.Windows.Forms.Label();
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
-            this.picDesktop = new System.Windows.Forms.PictureBox();
+            this.picDesktop = new xServer.Controls.PictureBoxEx();
             this.panelTop = new System.Windows.Forms.Panel();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
@@ -205,7 +205,7 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnHide;
         private System.Windows.Forms.Button btnShow;
-        private System.Windows.Forms.PictureBox picDesktop;
+        private xServer.Controls.PictureBoxEx picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
     }
 }

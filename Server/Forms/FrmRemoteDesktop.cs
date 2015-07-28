@@ -33,16 +33,6 @@ namespace xServer.Forms
             InitializeComponent();
         }
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
-                CreateParams cp = base.CreateParams;
-                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
-                return cp;
-            }
-        }
-
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
