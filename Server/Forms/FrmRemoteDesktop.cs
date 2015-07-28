@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
@@ -17,8 +16,7 @@ namespace xServer.Forms
         private readonly Client _connectClient;
         private bool _enableMouseInput;
         private bool _started;
-        private FrameCounter _frameCounter;
-        private Stopwatch _sWatch;
+
         private int _screenWidth;
         private int _screenHeight;
 
@@ -31,18 +29,20 @@ namespace xServer.Forms
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
             InitializeComponent();
+
+            picDesktop.PictureSizeChanged += picDesktop_PictureSizeChanged;
         }
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
 
-            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
+            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
 
-            btnHide.Left = (panelTop.Width/2) - (btnHide.Width/2);
+            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
 
             btnShow.Location = new Point(377, 0);
-            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
+            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
@@ -50,7 +50,7 @@ namespace xServer.Forms
 
         public void ProcessScreens(object state)
         {
-            while (true)
+            while (true && picDesktop != null && !picDesktop.IsDisposed && !picDesktop.Disposing)
             {
                 GetDesktopResponse packet;
                 lock (ProcessingScreensQueue)
@@ -68,21 +68,36 @@ namespace xServer.Forms
                 }
 
                 if (_connectClient.Value.StreamCodec == null)
-                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-
-                if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor
-                    || _connectClient.Value.StreamCodec.Resolution != packet.Resolution)
                 {
-                    if (_connectClient.Value.StreamCodec != null)
+                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+                }
+                else if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor)
+                {
+                    if (string.Compare(_connectClient.Value.StreamCodec.Resolution, packet.Resolution, StringComparison.InvariantCultureIgnoreCase) != 0)
+                    {
                         _connectClient.Value.StreamCodec.Dispose();
+                    }
 
                     _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
                 }
 
                 using (MemoryStream ms = new MemoryStream(packet.Image))
                 {
-                    if (_connectClient.Value.FrmRdp != null)
-                        _connectClient.Value.FrmRdp.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
+                    try
+                    {
+                        // Update the new image from the packet data.
+                        picDesktop.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
+
+                        this.Invoke((MethodInvoker)delegate
+                        {
+                            if (picDesktop != null && !picDesktop.IsDisposed && picDesktop._Image != null)
+                            {
+                                picDesktop.Invalidate();
+                            }
+                        });
+                    }
+                    catch
+                    { }
                 }
 
                 packet.Image = null;
@@ -93,7 +108,7 @@ namespace xServer.Forms
         {
             try
             {
-                cbMonitors.Invoke((MethodInvoker) delegate
+                cbMonitors.Invoke((MethodInvoker)delegate
                 {
                     for (int i = 0; i < montiors; i++)
                         cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
@@ -112,65 +127,19 @@ namespace xServer.Forms
             }
         }
 
-        private void CountFps()
+        // Update on frame change.
+        private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
         {
-            var deltaTime = (float)_sWatch.Elapsed.TotalSeconds;
-            _sWatch = Stopwatch.StartNew();
-
-            _frameCounter.Update(deltaTime);
-
-            UpdateFps(_frameCounter.AverageFramesPerSecond);
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
+            });
         }
 
-        private void UpdateFps(float fps)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), fps.ToString("0.00"));
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        private void UpdateScreenResolution(int width, int height)
+        private void picDesktop_PictureSizeChanged(int width, int height)
         {
             _screenWidth = width;
             _screenHeight = height;
-        }
-
-        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
-        {
-            try
-            {
-                CountFps();
-                UpdateScreenResolution(bmp.Width, bmp.Height);
-                picDesktop.Invoke((MethodInvoker) delegate
-                {
-                    // get old image to dispose it correctly
-                    var oldImage = picDesktop.Image;
-
-                    picDesktop.SuspendLayout();
-                    picDesktop.Image = cloneBitmap ? new Bitmap(bmp, picDesktop.Width, picDesktop.Height) /*resize bitmap*/ : bmp;
-                    picDesktop.ResumeLayout();
-
-                    if (oldImage != null)
-                        oldImage.Dispose();
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void ToggleControls(bool t)
@@ -178,7 +147,7 @@ namespace xServer.Forms
             _started = !t;
             try
             {
-                this.Invoke((MethodInvoker) delegate
+                this.Invoke((MethodInvoker)delegate
                 {
                     btnStart.Enabled = t;
                     btnStop.Enabled = !t;
@@ -194,16 +163,16 @@ namespace xServer.Forms
         {
             if (_started)
                 new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
-            if (_sWatch != null)
-                _sWatch.Stop();
+            if (!picDesktop.IsDisposed && !picDesktop.Disposing)
+                picDesktop.Dispose();
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
-            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
-            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
+            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
+            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
         }
 
         private void btnStart_Click(object sender, EventArgs e)
@@ -215,10 +184,12 @@ namespace xServer.Forms
                 return;
             }
 
-            _frameCounter = new FrameCounter();
-            _sWatch = Stopwatch.StartNew();
-
             ToggleControls(false);
+
+            picDesktop.Start();
+
+            // Subscribe to the new frame counter.
+            picDesktop._frameCounter.FrameUpdated += _frameCounter_FrameUpdated;
 
             new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex, RemoteDesktopAction.Start).Execute(_connectClient);
         }
@@ -227,7 +198,11 @@ namespace xServer.Forms
         {
             new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
             ToggleControls(true);
-            _sWatch.Stop();
+
+            picDesktop.Stop();
+
+            // Unsubscribe from the frame counter. It will be re-created when starting again.
+            picDesktop._frameCounter.FrameUpdated -= _frameCounter_FrameUpdated;
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)

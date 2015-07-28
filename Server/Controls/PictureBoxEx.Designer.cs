@@ -16,7 +16,11 @@
             if (disposing && (components != null))
             {
                 components.Dispose();
+
+                // Stop running.
+                this.Stop();
             }
+
             base.Dispose(disposing);
         }
 
