@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using xClient.Core.Utilities;
 
@@ -12,7 +13,7 @@ namespace xClient.Core.Helper
         public static Bitmap CaptureScreen(int screenNumber)
         {
             Rectangle bounds = GetBounds(screenNumber);
-            Bitmap screen = new Bitmap(bounds.Width, bounds.Height);
+            Bitmap screen = new Bitmap(bounds.Width, bounds.Height, PixelFormat.Format32bppPArgb);
 
             using (Graphics g = Graphics.FromImage(screen))
             {

@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
+using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Utilities;
 using xServer.Enums;
 
@@ -16,12 +19,28 @@ namespace xServer.Forms
         private bool _started;
         private FrameCounter _frameCounter;
         private Stopwatch _sWatch;
+        private int _screenWidth;
+        private int _screenHeight;
+
+        public readonly Queue<GetDesktopResponse> ProcessingScreensQueue = new Queue<GetDesktopResponse>();
+        public readonly object ProcessingScreensLock = new object();
+        public bool ProcessingScreens;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
             InitializeComponent();
+        }
+
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
+                return cp;
+            }
         }
 
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
@@ -37,6 +56,47 @@ namespace xServer.Forms
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
+        }
+
+        public void ProcessScreens(object state)
+        {
+            while (true)
+            {
+                GetDesktopResponse packet;
+                lock (ProcessingScreensQueue)
+                {
+                    if (ProcessingScreensQueue.Count == 0)
+                    {
+                        lock (ProcessingScreensLock)
+                        {
+                            ProcessingScreens = false;
+                        }
+                        return;
+                    }
+
+                    packet = ProcessingScreensQueue.Dequeue();
+                }
+
+                if (_connectClient.Value.StreamCodec == null)
+                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+
+                if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor
+                    || _connectClient.Value.StreamCodec.Resolution != packet.Resolution)
+                {
+                    if (_connectClient.Value.StreamCodec != null)
+                        _connectClient.Value.StreamCodec.Dispose();
+
+                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+                }
+
+                using (MemoryStream ms = new MemoryStream(packet.Image))
+                {
+                    if (_connectClient.Value.FrmRdp != null)
+                        _connectClient.Value.FrmRdp.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
+                }
+
+                packet.Image = null;
+            }
         }
 
         public void AddMonitors(int montiors)
@@ -86,18 +146,25 @@ namespace xServer.Forms
             }
         }
 
+        private void UpdateScreenResolution(int width, int height)
+        {
+            _screenWidth = width;
+            _screenHeight = height;
+        }
+
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
             try
             {
                 CountFps();
+                UpdateScreenResolution(bmp.Width, bmp.Height);
                 picDesktop.Invoke((MethodInvoker) delegate
                 {
                     // get old image to dispose it correctly
                     var oldImage = picDesktop.Image;
 
                     picDesktop.SuspendLayout();
-                    picDesktop.Image = cloneBitmap ? bmp.Clone(new Rectangle(0, 0, bmp.Width, bmp.Height), bmp.PixelFormat) : bmp;
+                    picDesktop.Image = cloneBitmap ? new Bitmap(bmp, picDesktop.Width, picDesktop.Height) /*resize bitmap*/ : bmp;
                     picDesktop.ResumeLayout();
 
                     if (oldImage != null)
@@ -204,6 +271,16 @@ namespace xServer.Forms
             }
         }
 
+        private int GetRemoteWidth(int localX)
+        {
+            return localX * _screenWidth / picDesktop.Width;
+        }
+
+        private int GetRemoteHeight(int localY)
+        {
+            return localY * _screenHeight / picDesktop.Height;
+        }
+
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
@@ -211,8 +288,8 @@ namespace xServer.Forms
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 MouseAction action = MouseAction.None;
 
@@ -235,8 +312,8 @@ namespace xServer.Forms
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 MouseAction action = MouseAction.None;
 
@@ -259,8 +336,8 @@ namespace xServer.Forms
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
