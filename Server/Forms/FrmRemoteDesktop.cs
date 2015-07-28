@@ -104,13 +104,13 @@ namespace xServer.Forms
             }
         }
 
-        public void AddMonitors(int montiors)
+        public void AddMonitors(int monitors)
         {
             try
             {
                 cbMonitors.Invoke((MethodInvoker)delegate
                 {
-                    for (int i = 0; i < montiors; i++)
+                    for (int i = 0; i < monitors; i++)
                         cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
                     cbMonitors.SelectedIndex = 0;
                 });
