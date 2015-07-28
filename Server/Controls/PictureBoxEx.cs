@@ -38,6 +38,10 @@ namespace xServer.Controls
     {
         #region IRapidPictureBox Implementation
 
+        /// <summary>
+        /// True if the PictureBox should be currently streaming images; False if the
+        /// PictureBox should not be currently streaming images.
+        /// </summary>
         public bool Running { get; set; }
 
         public void Start()

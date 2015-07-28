@@ -90,7 +90,7 @@ namespace xServer.Forms
 
                         this.Invoke((MethodInvoker)delegate
                         {
-                            if (picDesktop != null && !picDesktop.IsDisposed && picDesktop._Image != null)
+                            if (picDesktop != null && !picDesktop.IsDisposed)
                             {
                                 picDesktop.Invalidate();
                             }
