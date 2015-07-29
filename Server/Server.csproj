@@ -117,6 +117,7 @@
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\MouseStruct.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\Point.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\ThreadNativeMethods.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />

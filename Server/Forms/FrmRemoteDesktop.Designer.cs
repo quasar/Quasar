@@ -35,14 +35,15 @@
             this.lblQuality = new System.Windows.Forms.Label();
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
-            this.picDesktop = new xServer.Controls.RapidPictureBox();
             this.panelTop = new System.Windows.Forms.Panel();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnShow = new System.Windows.Forms.Button();
+            this.picDesktop = new xServer.Controls.RapidPictureBox();
+            this.btnKeyboard = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
             this.panelTop.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
             this.SuspendLayout();
             // 
             // btnStart
@@ -72,7 +73,7 @@
             this.barQuality.Maximum = 100;
             this.barQuality.Minimum = 1;
             this.barQuality.Name = "barQuality";
-            this.barQuality.Size = new System.Drawing.Size(104, 45);
+            this.barQuality.Size = new System.Drawing.Size(76, 45);
             this.barQuality.TabIndex = 3;
             this.barQuality.Value = 75;
             this.barQuality.Scroll += new System.EventHandler(this.barQuality_Scroll);
@@ -80,16 +81,16 @@
             // lblQuality
             // 
             this.lblQuality.AutoSize = true;
-            this.lblQuality.Location = new System.Drawing.Point(184, 18);
+            this.lblQuality.Location = new System.Drawing.Point(188, 7);
             this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(47, 13);
+            this.lblQuality.Size = new System.Drawing.Size(46, 13);
             this.lblQuality.TabIndex = 4;
             this.lblQuality.Text = "Quality:";
             // 
             // lblQualityShow
             // 
             this.lblQualityShow.AutoSize = true;
-            this.lblQualityShow.Location = new System.Drawing.Point(254, 38);
+            this.lblQualityShow.Location = new System.Drawing.Point(242, 31);
             this.lblQualityShow.Name = "lblQualityShow";
             this.lblQualityShow.Size = new System.Drawing.Size(52, 13);
             this.lblQualityShow.TabIndex = 5;
@@ -98,34 +99,17 @@
             // btnMouse
             // 
             this.btnMouse.Image = global::xServer.Properties.Resources.mouse_delete;
-            this.btnMouse.Location = new System.Drawing.Point(340, 10);
+            this.btnMouse.Location = new System.Drawing.Point(312, 11);
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);
             this.btnMouse.TabIndex = 6;
             this.btnMouse.UseVisualStyleBackColor = true;
             this.btnMouse.Click += new System.EventHandler(this.btnMouse_Click);
             // 
-            // picDesktop
-            // 
-            this.picDesktop.BackColor = System.Drawing.Color.Black;
-            this.picDesktop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.picDesktop.Cursor = System.Windows.Forms.Cursors.Default;
-            this.picDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.picDesktop.GetImageSafe = null;
-            this.picDesktop.Location = new System.Drawing.Point(0, 0);
-            this.picDesktop.Name = "picDesktop";
-            this.picDesktop.Running = false;
-            this.picDesktop.Size = new System.Drawing.Size(784, 562);
-            this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.picDesktop.TabIndex = 0;
-            this.picDesktop.TabStop = false;
-            this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
-            this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
-            this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
-            // 
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cbMonitors);
             this.panelTop.Controls.Add(this.btnHide);
             this.panelTop.Controls.Add(this.lblQualityShow);
@@ -169,6 +153,33 @@
             this.btnShow.Visible = false;
             this.btnShow.Click += new System.EventHandler(this.btnShow_Click);
             // 
+            // picDesktop
+            // 
+            this.picDesktop.BackColor = System.Drawing.Color.Black;
+            this.picDesktop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.picDesktop.Cursor = System.Windows.Forms.Cursors.Default;
+            this.picDesktop.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.picDesktop.GetImageSafe = null;
+            this.picDesktop.Location = new System.Drawing.Point(0, 0);
+            this.picDesktop.Name = "picDesktop";
+            this.picDesktop.Running = false;
+            this.picDesktop.Size = new System.Drawing.Size(784, 562);
+            this.picDesktop.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.picDesktop.TabIndex = 0;
+            this.picDesktop.TabStop = false;
+            this.picDesktop.MouseDown += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseDown);
+            this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
+            this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
+            // 
+            // btnKeyboard
+            // 
+            this.btnKeyboard.Location = new System.Drawing.Point(346, 11);
+            this.btnKeyboard.Name = "btnKeyboard";
+            this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
+            this.btnKeyboard.TabIndex = 9;
+            this.btnKeyboard.UseVisualStyleBackColor = true;
+            this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
+            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -188,9 +199,9 @@
             this.Load += new System.EventHandler(this.FrmRemoteDesktop_Load);
             this.Resize += new System.EventHandler(this.FrmRemoteDesktop_Resize);
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).EndInit();
             this.panelTop.ResumeLayout(false);
             this.panelTop.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -208,5 +219,6 @@
         private System.Windows.Forms.Button btnShow;
         private xServer.Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
+        private System.Windows.Forms.Button btnKeyboard;
     }
 }

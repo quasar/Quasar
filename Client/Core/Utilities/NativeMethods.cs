@@ -18,6 +18,9 @@ namespace xClient.Core.Utilities
         [DllImport("user32.dll")]
         public static extern void mouse_event(uint dwFlags, int dx, int dy, int cButtons, int dwExtraInfo);
 
+        [DllImport("user32.dll")]
+        public static extern bool keybd_event(byte bVk, byte bScan, uint dwFlags, int dwExtraInfo);
+
         /// <summary>
         ///    Performs a bit-block transfer of the color data corresponding to a
         ///    rectangle of pixels from the specified source device context into

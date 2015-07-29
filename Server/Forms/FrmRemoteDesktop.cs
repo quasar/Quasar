@@ -14,7 +14,8 @@ namespace xServer.Forms
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
-        private IMouseEvents _mEvents;
+        private bool _enableKeyboardInput;
+        private IKeyboardMouseEvents _mEvents;
 
         public FrmRemoteDesktop(Client c)
         {
@@ -35,20 +36,24 @@ namespace xServer.Forms
             btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
+            _enableKeyboardInput = false;
+
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        private void Subscribe(IMouseEvents events)
+        private void Subscribe(IKeyboardMouseEvents events)
         {
             _mEvents = events;
             _mEvents.MouseWheel += MouseWheelEvent;
+            _mEvents.KeyDown += OnKeyDown;
         }
 
         private void Unsubscribe()
         {
             if (_mEvents == null) return;
             _mEvents.MouseWheel -= MouseWheelEvent;
+            _mEvents.KeyDown -= OnKeyDown;
         }
 
         public void AddMonitors(int monitors)
@@ -135,6 +140,8 @@ namespace xServer.Forms
             // Subscribe to the new frame counter.
             picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
 
+            this.ActiveControl = picDesktop;
+
             new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
         }
 
@@ -146,6 +153,8 @@ namespace xServer.Forms
 
             // Unsubscribe from the frame counter. It will be re-created when starting again.
             picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)
@@ -161,6 +170,8 @@ namespace xServer.Forms
                 lblQualityShow.Text += " (high)";
             else if (value >= 25)
                 lblQualityShow.Text += " (mid)";
+
+            this.ActiveControl = picDesktop;
         }
 
         private void btnMouse_Click(object sender, EventArgs e)
@@ -177,6 +188,14 @@ namespace xServer.Forms
                 btnMouse.Image = Properties.Resources.mouse_add;
                 _enableMouseInput = true;
             }
+
+            this.ActiveControl = picDesktop;
+        }
+
+        private void btnKeyboard_Click(object sender, EventArgs e)
+        {
+            _enableKeyboardInput = !_enableKeyboardInput;
+            this.ActiveControl = picDesktop;
         }
 
         private int GetRemoteWidth(int localX)
@@ -263,11 +282,21 @@ namespace xServer.Forms
             }
         }
 
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && !btnStart.Enabled)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode).Execute(_connectClient);
+            }
+        }
+
         private void btnHide_Click(object sender, EventArgs e)
         {
             panelTop.Visible = false;
             btnShow.Visible = true;
             btnHide.Visible = false;
+            this.ActiveControl = picDesktop;
         }
 
         private void btnShow_Click(object sender, EventArgs e)
@@ -275,6 +304,7 @@ namespace xServer.Forms
             panelTop.Visible = true;
             btnShow.Visible = false;
             btnHide.Visible = true;
+            this.ActiveControl = picDesktop;
         }
     }
 }

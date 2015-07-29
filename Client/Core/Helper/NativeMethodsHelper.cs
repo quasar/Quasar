@@ -10,6 +10,8 @@ namespace xClient.Core.Helper
         private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
         private const uint MOUSEEVENTF_RIGHTUP = 0x0010;
         private const uint MOUSEEVENTF_WHEEL = 0x0800;
+        private const uint KEYEVENTF_KEYDOWN = 0x0000;
+        private const uint KEYEVENTF_KEYUP = 0x0002;
 
         public static void DoMouseEventLeft(Point p, bool isMouseDown)
         {
@@ -29,6 +31,12 @@ namespace xClient.Core.Helper
         public static void DoMouseEventScroll(Point p, bool scrollDown)
         {
             NativeMethods.mouse_event(MOUSEEVENTF_WHEEL, p.X, p.Y, scrollDown ? -120 : 120, 0);
+        }
+
+        public static void DoKeyPress(byte key)
+        {
+            NativeMethods.keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
+            NativeMethods.keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
         }
     }
 }
