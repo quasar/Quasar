@@ -284,7 +284,7 @@ namespace xServer.Forms
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (picDesktop.Image != null && !btnStart.Enabled)
+            if (picDesktop.Image != null && !btnStart.Enabled && this.ContainsFocus)
             {
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode).Execute(_connectClient);
