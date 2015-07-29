@@ -32,7 +32,7 @@ namespace xServer.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.SendBlocking(this);
+            client.Send(this);
         }
     }
 }

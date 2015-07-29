@@ -115,7 +115,7 @@ namespace xServer.Controls
         /// </summary>
         /// <param name="bmp">The new bitmap to use.</param>
         /// <param name="cloneBitmap">If True the bitmap will be cloned, else it uses the original bitmap.</param>
-        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
+        public void UpdateImage(Bitmap bmp, bool cloneBitmap)
         {
             try
             {

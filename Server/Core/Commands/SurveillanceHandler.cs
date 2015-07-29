@@ -3,6 +3,7 @@ using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
@@ -18,19 +19,27 @@ namespace xServer.Core.Commands
             if (packet.Image == null)
                 return;
 
-            lock (client.Value.FrmRdp.ProcessingScreensQueue)
+            if (client.Value.StreamCodec == null)
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+
+            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor
+                || client.Value.StreamCodec.Resolution != packet.Resolution)
             {
-                client.Value.FrmRdp.ProcessingScreensQueue.Enqueue(packet);
+                if (client.Value.StreamCodec != null)
+                    client.Value.StreamCodec.Dispose();
+
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
             }
 
-            lock (client.Value.FrmRdp.ProcessingScreensLock)
+            using (MemoryStream ms = new MemoryStream(packet.Image))
             {
-                if (!client.Value.FrmRdp.ProcessingScreens)
-                {
-                    client.Value.FrmRdp.ProcessingScreens = true;
-                    ThreadPool.QueueUserWorkItem(client.Value.FrmRdp.ProcessScreens);
-                }
+                client.Value.FrmRdp.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
             }
+
+            packet.Image = null;
+
+            if (client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
+                new GetDesktop(packet.Quality, packet.Monitor).Execute(client);
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
