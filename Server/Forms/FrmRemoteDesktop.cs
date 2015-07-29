@@ -136,6 +136,14 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
             if (!picDesktop.IsDisposed && !picDesktop.Disposing)
                 picDesktop.Dispose();
+            lock (ProcessingScreensLock)
+            {
+                ProcessingScreens = false;
+            }
+            lock (ProcessingScreensQueue)
+            {
+                ProcessingScreensQueue.Clear();
+            }
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
         }
