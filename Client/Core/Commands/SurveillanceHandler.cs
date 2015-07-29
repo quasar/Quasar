@@ -81,16 +81,27 @@ namespace xClient.Core.Commands
             {
                 case MouseAction.LeftDown:
                 case MouseAction.LeftUp:
-                    NativeMethodsHelper.DoMouseEventLeft(p, command.IsMouseDown);
+                    NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
                     break;
                 case MouseAction.RightDown:
                 case MouseAction.RightUp:
-                    NativeMethodsHelper.DoMouseEventRight(p, command.IsMouseDown);
+                    NativeMethodsHelper.DoMouseRightClick(p, command.IsMouseDown);
                     break;
                 case MouseAction.MoveCursor:
-                    NativeMethodsHelper.DoMouseMoveCursor(p);
+                    NativeMethodsHelper.DoMouseMove(p);
                     break;
-            }       
+                case MouseAction.ScrollDown:
+                    NativeMethodsHelper.DoMouseScroll(p, true);
+                    break;
+                case MouseAction.ScrollUp:
+                    NativeMethodsHelper.DoMouseScroll(p, false);
+                    break;
+            }
+        }
+
+        public static void HandleDoKeyboardEvent(Packets.ServerPackets.DoKeyboardEvent command, Client client)
+        {
+            NativeMethodsHelper.DoKeyPress(command.Key, command.KeyDown);
         }
 
         public static void HandleGetMonitors(Packets.ServerPackets.GetMonitors command, Client client)

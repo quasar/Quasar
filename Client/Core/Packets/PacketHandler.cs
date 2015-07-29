@@ -71,6 +71,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoMouseEvent((ServerPackets.DoMouseEvent)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoKeyboardEvent))
+            {
+                CommandHandler.HandleDoKeyboardEvent((ServerPackets.DoKeyboardEvent)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetSystemInfo))
             {
                 CommandHandler.HandleGetSystemInfo((ServerPackets.GetSystemInfo)packet, client);
