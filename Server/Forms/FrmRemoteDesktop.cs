@@ -1,11 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Utilities;
 using xServer.Enums;
 
@@ -13,13 +10,9 @@ namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {
-        public readonly Queue<GetDesktopResponse> ProcessingScreensQueue = new Queue<GetDesktopResponse>();
-        public readonly object ProcessingScreensLock = new object();
-        public bool ProcessingScreens;
-
+        public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
-        private bool _started;
 
         public FrmRemoteDesktop(Client c)
         {
@@ -43,46 +36,6 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        public void ProcessScreens(object state)
-        {
-            while (true && picDesktop != null && !picDesktop.IsDisposed && !picDesktop.Disposing)
-            {
-                GetDesktopResponse packet;
-                lock (ProcessingScreensQueue)
-                {
-                    if (ProcessingScreensQueue.Count == 0)
-                    {
-                        lock (ProcessingScreensLock)
-                        {
-                            ProcessingScreens = false;
-                        }
-                        return;
-                    }
-
-                    packet = ProcessingScreensQueue.Dequeue();
-                }
-
-                if (_connectClient.Value.StreamCodec == null)
-                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-
-                if (_connectClient.Value.StreamCodec.ImageQuality != packet.Quality || _connectClient.Value.StreamCodec.Monitor != packet.Monitor
-                    || _connectClient.Value.StreamCodec.Resolution != packet.Resolution)
-                {
-                    if (_connectClient.Value.StreamCodec != null)
-                        _connectClient.Value.StreamCodec.Dispose();
-
-                    _connectClient.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-                }
-
-                using (MemoryStream ms = new MemoryStream(packet.Image))
-                {
-                    picDesktop.UpdateImage(_connectClient.Value.StreamCodec.DecodeData(ms), true);
-                }
-
-                packet.Image = null;
-            }
-        }
-
         public void AddMonitors(int monitors)
         {
             try
@@ -97,6 +50,11 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
+        }
+
+        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
+        {
+            picDesktop.UpdateImage(bmp, cloneBitmap);
         }
 
         private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
@@ -115,7 +73,7 @@ namespace xServer.Forms
 
         private void ToggleControls(bool t)
         {
-            _started = !t;
+            IsStarted = !t;
             try
             {
                 this.Invoke((MethodInvoker)delegate
@@ -132,18 +90,8 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_started)
-                new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
             if (!picDesktop.IsDisposed && !picDesktop.Disposing)
                 picDesktop.Dispose();
-            lock (ProcessingScreensLock)
-            {
-                ProcessingScreens = false;
-            }
-            lock (ProcessingScreensQueue)
-            {
-                ProcessingScreensQueue.Clear();
-            }
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
         }
@@ -170,12 +118,11 @@ namespace xServer.Forms
             // Subscribe to the new frame counter.
             picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
 
-            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex, RemoteDesktopAction.Start).Execute(_connectClient);
+            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
             ToggleControls(true);
 
             picDesktop.Stop();

