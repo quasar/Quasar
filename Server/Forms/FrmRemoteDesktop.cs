@@ -9,6 +9,7 @@ using xServer.Enums;
 
 namespace xServer.Forms
 {
+    //TODO: Register Hotkeys for WIN - and ALT-key combinations
     public partial class FrmRemoteDesktop : Form
     {
         public bool IsStarted { get; private set; }
@@ -182,12 +183,14 @@ namespace xServer.Forms
             {
                 this.picDesktop.Cursor = Cursors.Default;
                 btnMouse.Image = Properties.Resources.mouse_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
                 _enableMouseInput = false;
             }
             else
             {
                 this.picDesktop.Cursor = Cursors.Hand;
                 btnMouse.Image = Properties.Resources.mouse_add;
+                toolTipButtons.SetToolTip(btnMouse, "Disable mouse input.");
                 _enableMouseInput = true;
             }
 
@@ -196,7 +199,19 @@ namespace xServer.Forms
 
         private void btnKeyboard_Click(object sender, EventArgs e)
         {
-            _enableKeyboardInput = !_enableKeyboardInput;
+            if (_enableKeyboardInput)
+            {
+                btnKeyboard.Image = Properties.Resources.keyboard_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable keyboard input.");
+                _enableKeyboardInput = false;
+            }
+            else
+            {
+                btnKeyboard.Image = Properties.Resources.keyboard_add;
+                toolTipButtons.SetToolTip(btnMouse, "Disable keyboard input.");
+                _enableKeyboardInput = true;
+            }
+
             this.ActiveControl = picDesktop;
         }
 
@@ -316,18 +331,6 @@ namespace xServer.Forms
             btnShow.Visible = false;
             btnHide.Visible = true;
             this.ActiveControl = picDesktop;
-        }
-
-        private void chkForwardCommandKeys_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkForwardCommandKeys.Checked)
-            {
-                //register hot keys for command keys such as Windows key and ALT + key combinations
-            }
-            else
-            {
-
-            }
         }
     }
 }

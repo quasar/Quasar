@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteDesktop));
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
@@ -40,8 +41,8 @@
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnShow = new System.Windows.Forms.Button();
+            this.toolTipButtons = new System.Windows.Forms.ToolTip(this.components);
             this.picDesktop = new xServer.Controls.RapidPictureBox();
-            this.chkForwardCommandKeys = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -84,7 +85,7 @@
             this.lblQuality.AutoSize = true;
             this.lblQuality.Location = new System.Drawing.Point(167, 5);
             this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(46, 13);
+            this.lblQuality.Size = new System.Drawing.Size(47, 13);
             this.lblQuality.TabIndex = 4;
             this.lblQuality.Text = "Quality:";
             // 
@@ -104,13 +105,13 @@
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);
             this.btnMouse.TabIndex = 6;
+            this.toolTipButtons.SetToolTip(this.btnMouse, "Enable mouse input.");
             this.btnMouse.UseVisualStyleBackColor = true;
             this.btnMouse.Click += new System.EventHandler(this.btnMouse_Click);
             // 
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.panelTop.Controls.Add(this.chkForwardCommandKeys);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cbMonitors);
             this.panelTop.Controls.Add(this.btnHide);
@@ -127,10 +128,12 @@
             // 
             // btnKeyboard
             // 
+            this.btnKeyboard.Image = global::xServer.Properties.Resources.keyboard_delete;
             this.btnKeyboard.Location = new System.Drawing.Point(336, 5);
             this.btnKeyboard.Name = "btnKeyboard";
             this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
             this.btnKeyboard.TabIndex = 9;
+            this.toolTipButtons.SetToolTip(this.btnKeyboard, "Enable keyboard input.");
             this.btnKeyboard.UseVisualStyleBackColor = true;
             this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
             // 
@@ -182,17 +185,6 @@
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
-            // chkForwardCommandKeys
-            // 
-            this.chkForwardCommandKeys.AutoSize = true;
-            this.chkForwardCommandKeys.Location = new System.Drawing.Point(234, 39);
-            this.chkForwardCommandKeys.Name = "chkForwardCommandKeys";
-            this.chkForwardCommandKeys.Size = new System.Drawing.Size(149, 17);
-            this.chkForwardCommandKeys.TabIndex = 10;
-            this.chkForwardCommandKeys.Text = "Forward Command Keys";
-            this.chkForwardCommandKeys.UseVisualStyleBackColor = true;
-            this.chkForwardCommandKeys.CheckedChanged += new System.EventHandler(this.chkForwardCommandKeys_CheckedChanged);
-            // 
             // FrmRemoteDesktop
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -233,6 +225,6 @@
         private xServer.Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
         private System.Windows.Forms.Button btnKeyboard;
-        private System.Windows.Forms.CheckBox chkForwardCommandKeys;
+        private System.Windows.Forms.ToolTip toolTipButtons;
     }
 }
