@@ -54,6 +54,7 @@
             this.btnStart.Name = "btnStart";
             this.btnStart.Size = new System.Drawing.Size(68, 23);
             this.btnStart.TabIndex = 1;
+            this.btnStart.TabStop = false;
             this.btnStart.Text = "Start";
             this.btnStart.UseVisualStyleBackColor = true;
             this.btnStart.Click += new System.EventHandler(this.btnStart_Click);
@@ -65,6 +66,7 @@
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(68, 23);
             this.btnStop.TabIndex = 2;
+            this.btnStop.TabStop = false;
             this.btnStop.Text = "Stop";
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
@@ -77,6 +79,7 @@
             this.barQuality.Name = "barQuality";
             this.barQuality.Size = new System.Drawing.Size(76, 45);
             this.barQuality.TabIndex = 3;
+            this.barQuality.TabStop = false;
             this.barQuality.Value = 75;
             this.barQuality.Scroll += new System.EventHandler(this.barQuality_Scroll);
             // 
@@ -85,7 +88,7 @@
             this.lblQuality.AutoSize = true;
             this.lblQuality.Location = new System.Drawing.Point(167, 5);
             this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(47, 13);
+            this.lblQuality.Size = new System.Drawing.Size(46, 13);
             this.lblQuality.TabIndex = 4;
             this.lblQuality.Text = "Quality:";
             // 
@@ -105,6 +108,7 @@
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);
             this.btnMouse.TabIndex = 6;
+            this.btnMouse.TabStop = false;
             this.toolTipButtons.SetToolTip(this.btnMouse, "Enable mouse input.");
             this.btnMouse.UseVisualStyleBackColor = true;
             this.btnMouse.Click += new System.EventHandler(this.btnMouse_Click);
@@ -133,6 +137,7 @@
             this.btnKeyboard.Name = "btnKeyboard";
             this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
             this.btnKeyboard.TabIndex = 9;
+            this.btnKeyboard.TabStop = false;
             this.toolTipButtons.SetToolTip(this.btnKeyboard, "Enable keyboard input.");
             this.btnKeyboard.UseVisualStyleBackColor = true;
             this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
@@ -145,6 +150,7 @@
             this.cbMonitors.Name = "cbMonitors";
             this.cbMonitors.Size = new System.Drawing.Size(149, 21);
             this.cbMonitors.TabIndex = 8;
+            this.cbMonitors.TabStop = false;
             // 
             // btnHide
             // 
@@ -152,6 +158,7 @@
             this.btnHide.Name = "btnHide";
             this.btnHide.Size = new System.Drawing.Size(54, 19);
             this.btnHide.TabIndex = 7;
+            this.btnHide.TabStop = false;
             this.btnHide.Text = "Hide";
             this.btnHide.UseVisualStyleBackColor = true;
             this.btnHide.Click += new System.EventHandler(this.btnHide_Click);
@@ -162,6 +169,7 @@
             this.btnShow.Name = "btnShow";
             this.btnShow.Size = new System.Drawing.Size(54, 19);
             this.btnShow.TabIndex = 8;
+            this.btnShow.TabStop = false;
             this.btnShow.Text = "Show";
             this.btnShow.UseVisualStyleBackColor = true;
             this.btnShow.Visible = false;
