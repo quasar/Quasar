@@ -4,6 +4,7 @@ using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
+using xServer.Core.MouseKeyHook;
 using xServer.Enums;
 
 namespace xServer.Forms
@@ -13,11 +14,13 @@ namespace xServer.Forms
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
+        private IMouseEvents _mEvents;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
+            Subscribe(Hook.GlobalEvents());
             InitializeComponent();
         }
 
@@ -34,6 +37,18 @@ namespace xServer.Forms
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
+        }
+
+        private void Subscribe(IMouseEvents events)
+        {
+            _mEvents = events;
+            _mEvents.MouseWheel += MouseWheelEvent;
+        }
+
+        private void Unsubscribe()
+        {
+            if (_mEvents == null) return;
+            _mEvents.MouseWheel -= MouseWheelEvent;
         }
 
         public void AddMonitors(int monitors)
@@ -94,6 +109,8 @@ namespace xServer.Forms
                 picDesktop.Dispose();
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
+
+            Unsubscribe();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
@@ -234,6 +251,15 @@ namespace xServer.Forms
 
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoMouseEvent(MouseAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+            }
+        }
+
+        private void MouseWheelEvent(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
             }
         }
 

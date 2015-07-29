@@ -90,6 +90,12 @@ namespace xClient.Core.Commands
                 case MouseAction.MoveCursor:
                     NativeMethodsHelper.DoMouseMoveCursor(p);
                     break;
+                case MouseAction.ScrollDown:
+                    NativeMethodsHelper.DoMouseEventScroll(p, true);
+                    break;
+                case MouseAction.ScrollUp:
+                    NativeMethodsHelper.DoMouseEventScroll(p, false);
+                    break;
             }       
         }
 
