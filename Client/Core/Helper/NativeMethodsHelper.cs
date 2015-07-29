@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using xClient.Core.Utilities;
-using xClient.Enums;
 
 namespace xClient.Core.Helper
 {
