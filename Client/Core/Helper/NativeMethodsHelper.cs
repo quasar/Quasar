@@ -33,10 +33,9 @@ namespace xClient.Core.Helper
             NativeMethods.mouse_event(MOUSEEVENTF_WHEEL, p.X, p.Y, scrollDown ? -120 : 120, 0);
         }
 
-        public static void DoKeyPress(byte key)
+        public static void DoKeyPress(byte key, bool keyDown)
         {
-            NativeMethods.keybd_event(key, 0, KEYEVENTF_KEYDOWN, 0);
-            NativeMethods.keybd_event(key, 0, KEYEVENTF_KEYUP, 0);
+            NativeMethods.keybd_event(key, 0, keyDown ? KEYEVENTF_KEYDOWN : KEYEVENTF_KEYUP, 0);
         }
     }
 }

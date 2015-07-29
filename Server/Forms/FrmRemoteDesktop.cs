@@ -47,6 +47,7 @@ namespace xServer.Forms
             _mEvents = events;
             _mEvents.MouseWheel += MouseWheelEvent;
             _mEvents.KeyDown += OnKeyDown;
+            _mEvents.KeyUp += OnKeyUp;
         }
 
         private void Unsubscribe()
@@ -54,6 +55,7 @@ namespace xServer.Forms
             if (_mEvents == null) return;
             _mEvents.MouseWheel -= MouseWheelEvent;
             _mEvents.KeyDown -= OnKeyDown;
+            _mEvents.KeyUp -= OnKeyUp;
         }
 
         public void AddMonitors(int monitors)
@@ -210,7 +212,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -234,7 +236,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -258,7 +260,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -275,7 +277,7 @@ namespace xServer.Forms
 
         private void MouseWheelEvent(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
             {
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
@@ -287,7 +289,16 @@ namespace xServer.Forms
             if (picDesktop.Image != null && !btnStart.Enabled && this.ContainsFocus)
             {
                 if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode).Execute(_connectClient);
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+            }
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && !btnStart.Enabled && this.ContainsFocus)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
             }
         }
 

