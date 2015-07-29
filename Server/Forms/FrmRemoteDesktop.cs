@@ -212,7 +212,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -236,7 +236,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -260,7 +260,7 @@ namespace xServer.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
@@ -277,7 +277,7 @@ namespace xServer.Forms
 
         private void MouseWheelEvent(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
@@ -286,7 +286,7 @@ namespace xServer.Forms
 
         private void OnKeyDown(object sender, KeyEventArgs e)
         {
-            if (picDesktop.Image != null && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
@@ -295,7 +295,7 @@ namespace xServer.Forms
 
         private void OnKeyUp(object sender, KeyEventArgs e)
         {
-            if (picDesktop.Image != null && !btnStart.Enabled && this.ContainsFocus)
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
@@ -316,6 +316,18 @@ namespace xServer.Forms
             btnShow.Visible = false;
             btnHide.Visible = true;
             this.ActiveControl = picDesktop;
+        }
+
+        private void chkForwardCommandKeys_CheckedChanged(object sender, EventArgs e)
+        {
+            if (chkForwardCommandKeys.Checked)
+            {
+                //register hot keys for command keys such as Windows key and ALT + key combinations
+            }
+            else
+            {
+
+            }
         }
     }
 }

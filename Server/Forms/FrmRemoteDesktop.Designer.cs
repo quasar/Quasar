@@ -36,11 +36,12 @@
             this.lblQualityShow = new System.Windows.Forms.Label();
             this.btnMouse = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.btnKeyboard = new System.Windows.Forms.Button();
             this.cbMonitors = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnShow = new System.Windows.Forms.Button();
             this.picDesktop = new xServer.Controls.RapidPictureBox();
-            this.btnKeyboard = new System.Windows.Forms.Button();
+            this.chkForwardCommandKeys = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.barQuality)).BeginInit();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picDesktop)).BeginInit();
@@ -69,7 +70,7 @@
             // 
             // barQuality
             // 
-            this.barQuality.Location = new System.Drawing.Point(230, 3);
+            this.barQuality.Location = new System.Drawing.Point(206, -1);
             this.barQuality.Maximum = 100;
             this.barQuality.Minimum = 1;
             this.barQuality.Name = "barQuality";
@@ -81,7 +82,7 @@
             // lblQuality
             // 
             this.lblQuality.AutoSize = true;
-            this.lblQuality.Location = new System.Drawing.Point(188, 7);
+            this.lblQuality.Location = new System.Drawing.Point(167, 5);
             this.lblQuality.Name = "lblQuality";
             this.lblQuality.Size = new System.Drawing.Size(46, 13);
             this.lblQuality.TabIndex = 4;
@@ -90,7 +91,7 @@
             // lblQualityShow
             // 
             this.lblQualityShow.AutoSize = true;
-            this.lblQualityShow.Location = new System.Drawing.Point(242, 31);
+            this.lblQualityShow.Location = new System.Drawing.Point(220, 26);
             this.lblQualityShow.Name = "lblQualityShow";
             this.lblQualityShow.Size = new System.Drawing.Size(52, 13);
             this.lblQualityShow.TabIndex = 5;
@@ -99,7 +100,7 @@
             // btnMouse
             // 
             this.btnMouse.Image = global::xServer.Properties.Resources.mouse_delete;
-            this.btnMouse.Location = new System.Drawing.Point(312, 11);
+            this.btnMouse.Location = new System.Drawing.Point(302, 5);
             this.btnMouse.Name = "btnMouse";
             this.btnMouse.Size = new System.Drawing.Size(28, 28);
             this.btnMouse.TabIndex = 6;
@@ -109,6 +110,7 @@
             // panelTop
             // 
             this.panelTop.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.panelTop.Controls.Add(this.chkForwardCommandKeys);
             this.panelTop.Controls.Add(this.btnKeyboard);
             this.panelTop.Controls.Add(this.cbMonitors);
             this.panelTop.Controls.Add(this.btnHide);
@@ -122,6 +124,15 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(384, 57);
             this.panelTop.TabIndex = 7;
+            // 
+            // btnKeyboard
+            // 
+            this.btnKeyboard.Location = new System.Drawing.Point(336, 5);
+            this.btnKeyboard.Name = "btnKeyboard";
+            this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
+            this.btnKeyboard.TabIndex = 9;
+            this.btnKeyboard.UseVisualStyleBackColor = true;
+            this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
             // 
             // cbMonitors
             // 
@@ -171,14 +182,16 @@
             this.picDesktop.MouseMove += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseMove);
             this.picDesktop.MouseUp += new System.Windows.Forms.MouseEventHandler(this.picDesktop_MouseUp);
             // 
-            // btnKeyboard
+            // chkForwardCommandKeys
             // 
-            this.btnKeyboard.Location = new System.Drawing.Point(346, 11);
-            this.btnKeyboard.Name = "btnKeyboard";
-            this.btnKeyboard.Size = new System.Drawing.Size(28, 28);
-            this.btnKeyboard.TabIndex = 9;
-            this.btnKeyboard.UseVisualStyleBackColor = true;
-            this.btnKeyboard.Click += new System.EventHandler(this.btnKeyboard_Click);
+            this.chkForwardCommandKeys.AutoSize = true;
+            this.chkForwardCommandKeys.Location = new System.Drawing.Point(234, 39);
+            this.chkForwardCommandKeys.Name = "chkForwardCommandKeys";
+            this.chkForwardCommandKeys.Size = new System.Drawing.Size(149, 17);
+            this.chkForwardCommandKeys.TabIndex = 10;
+            this.chkForwardCommandKeys.Text = "Forward Command Keys";
+            this.chkForwardCommandKeys.UseVisualStyleBackColor = true;
+            this.chkForwardCommandKeys.CheckedChanged += new System.EventHandler(this.chkForwardCommandKeys_CheckedChanged);
             // 
             // FrmRemoteDesktop
             // 
@@ -220,5 +233,6 @@
         private xServer.Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
         private System.Windows.Forms.Button btnKeyboard;
+        private System.Windows.Forms.CheckBox chkForwardCommandKeys;
     }
 }
