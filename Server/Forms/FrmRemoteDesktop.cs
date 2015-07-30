@@ -25,9 +25,11 @@ namespace xServer.Forms
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
 
-            if (!PlatformHelper.RunningOnMono)
-                Subscribe(Hook.GlobalEvents());
-
+            if (PlatformHelper.RunningOnMono)
+                SubscribeMonoEvents();
+            else
+                SubscribeWindowsHookEvents(Hook.GlobalEvents());
+                
             InitializeComponent();
         }
 
@@ -42,27 +44,38 @@ namespace xServer.Forms
             btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
-            _enableKeyboardInput = false;
             _keysPressed = new List<Keys>();
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        private void Subscribe(IKeyboardMouseEvents events)
+        private void SubscribeWindowsHookEvents(IKeyboardMouseEvents events)
         {
             _mEvents = events;
             _mEvents.MouseWheel += MouseWheelEvent;
-            _mEvents.KeyDown += OnKeyDown;
-            _mEvents.KeyUp += OnKeyUp;
+            _mEvents.KeyDown += Windows_OnKeyDown;
+            _mEvents.KeyUp += Windows_OnKeyUp;
         }
 
-        private void Unsubscribe()
+        private void SubscribeMonoEvents()
+        {
+            this.KeyDown += new KeyEventHandler(this.Mono_KeyDown);
+            this.KeyUp += new KeyEventHandler(this.Mono_KeyUp);
+        }
+
+        private void UnsubscribeWindowsHookEvents()
         {
             if (_mEvents == null) return;
             _mEvents.MouseWheel -= MouseWheelEvent;
-            _mEvents.KeyDown -= OnKeyDown;
-            _mEvents.KeyUp -= OnKeyUp;
+            _mEvents.KeyDown -= Windows_OnKeyDown;
+            _mEvents.KeyUp -= Windows_OnKeyUp;
+        }
+
+        private void UnsubscribeMonoEvents()
+        {
+            this.KeyDown -= this.Mono_KeyDown;
+            this.KeyUp -= this.Mono_KeyUp;
         }
 
         public void AddMonitors(int monitors)
@@ -124,7 +137,8 @@ namespace xServer.Forms
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
 
-            Unsubscribe();
+            UnsubscribeWindowsHookEvents();
+            UnsubscribeMonoEvents();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
@@ -305,7 +319,7 @@ namespace xServer.Forms
             }
         }
 
-        private void OnKeyDown(object sender, KeyEventArgs e)
+        private void Windows_OnKeyDown(object sender, KeyEventArgs e)
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
@@ -321,7 +335,36 @@ namespace xServer.Forms
             }
         }
 
-        private void OnKeyUp(object sender, KeyEventArgs e)
+        private void Windows_OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                _keysPressed.Remove(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
+            }
+        }
+
+        private void Mono_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                if (_keysPressed.Contains(e.KeyCode))
+                    return;
+
+                _keysPressed.Add(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+            }
+        }
+
+        private void Mono_KeyUp(object sender, KeyEventArgs e)
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
