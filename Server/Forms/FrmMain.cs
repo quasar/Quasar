@@ -647,6 +647,7 @@ namespace xServer.Forms
                             foreach (Client c in GetSelectedClients())
                             {
                                 if (c == null) continue;
+                                if(error) continue;
 
                                 FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
                                 if (srcFile.MaxBlocks < 0)
@@ -656,8 +657,6 @@ namespace xServer.Forms
                                     error = true;
                                     break;
                                 }
-
-                                if(error) continue;
 
                                 int id = FileHelper.GetNewTransferId();
 
