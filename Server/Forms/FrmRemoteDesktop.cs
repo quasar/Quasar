@@ -24,7 +24,10 @@ namespace xServer.Forms
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
-            Subscribe(Hook.GlobalEvents());
+
+            if (!PlatformHelper.RunningOnMono)
+                Subscribe(Hook.GlobalEvents());
+
             InitializeComponent();
         }
 
