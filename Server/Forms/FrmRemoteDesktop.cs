@@ -28,8 +28,8 @@ namespace xServer.Forms
             if (PlatformHelper.RunningOnMono)
                 SubscribeMonoEvents();
             else
-                SubscribeWindowsHookEvents(Hook.GlobalEvents());
-                
+                SubscribeWindowsHookEvents();
+
             InitializeComponent();
         }
 
@@ -50,32 +50,32 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        private void SubscribeWindowsHookEvents(IKeyboardMouseEvents events)
+        private void SubscribeWindowsHookEvents()
         {
-            _mEvents = events;
-            _mEvents.MouseWheel += MouseWheelEvent;
-            _mEvents.KeyDown += Windows_OnKeyDown;
-            _mEvents.KeyUp += Windows_OnKeyUp;
+            _mEvents = Hook.GlobalEvents();
+            _mEvents.MouseWheel += OnMouseWheelMove;
+            _mEvents.KeyDown += OnKeyDown;
+            _mEvents.KeyUp += OnKeyUp;
         }
 
         private void SubscribeMonoEvents()
         {
-            this.KeyDown += new KeyEventHandler(this.Mono_KeyDown);
-            this.KeyUp += new KeyEventHandler(this.Mono_KeyUp);
+            this.KeyDown += OnKeyDown;
+            this.KeyUp += OnKeyUp;
         }
 
         private void UnsubscribeWindowsHookEvents()
         {
             if (_mEvents == null) return;
-            _mEvents.MouseWheel -= MouseWheelEvent;
-            _mEvents.KeyDown -= Windows_OnKeyDown;
-            _mEvents.KeyUp -= Windows_OnKeyUp;
+            _mEvents.MouseWheel -= OnMouseWheelMove;
+            _mEvents.KeyDown -= OnKeyDown;
+            _mEvents.KeyUp -= OnKeyUp;
         }
 
         private void UnsubscribeMonoEvents()
         {
-            this.KeyDown -= this.Mono_KeyDown;
-            this.KeyUp -= this.Mono_KeyUp;
+            this.KeyDown -= OnKeyDown;
+            this.KeyUp -= OnKeyUp;
         }
 
         public void AddMonitors(int monitors)
@@ -310,7 +310,7 @@ namespace xServer.Forms
             }
         }
 
-        private void MouseWheelEvent(object sender, MouseEventArgs e)
+        private void OnMouseWheelMove(object sender, MouseEventArgs e)
         {
             if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
@@ -319,7 +319,7 @@ namespace xServer.Forms
             }
         }
 
-        private void Windows_OnKeyDown(object sender, KeyEventArgs e)
+        private void OnKeyDown(object sender, KeyEventArgs e)
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
@@ -335,36 +335,7 @@ namespace xServer.Forms
             }
         }
 
-        private void Windows_OnKeyUp(object sender, KeyEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
-            {
-                e.Handled = true;
-
-                _keysPressed.Remove(e.KeyCode);
-
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
-            }
-        }
-
-        private void Mono_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
-            {
-                e.Handled = true;
-
-                if (_keysPressed.Contains(e.KeyCode))
-                    return;
-
-                _keysPressed.Add(e.KeyCode);
-
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
-            }
-        }
-
-        private void Mono_KeyUp(object sender, KeyEventArgs e)
+        private void OnKeyUp(object sender, KeyEventArgs e)
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
