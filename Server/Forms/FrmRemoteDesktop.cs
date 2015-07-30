@@ -26,7 +26,9 @@ namespace xServer.Forms
             _connectClient.Value.FrmRdp = this;
 
             if (!PlatformHelper.RunningOnMono)
-                Subscribe(Hook.GlobalEvents());
+                SubscribeWindowsHookEvents(Hook.GlobalEvents());
+            else
+                SubscribeMonoEvents();
 
             InitializeComponent();
         }
@@ -42,14 +44,13 @@ namespace xServer.Forms
             btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
-            _enableKeyboardInput = false;
             _keysPressed = new List<Keys>();
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        private void Subscribe(IKeyboardMouseEvents events)
+        private void SubscribeWindowsHookEvents(IKeyboardMouseEvents events)
         {
             _mEvents = events;
             _mEvents.MouseWheel += MouseWheelEvent;
@@ -57,12 +58,24 @@ namespace xServer.Forms
             _mEvents.KeyUp += OnKeyUp;
         }
 
-        private void Unsubscribe()
+        private void SubscribeMonoEvents()
+        {
+            this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmRemoteDesktop_KeyDown);
+            this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.FrmRemoteDesktop_KeyUp);
+        }
+
+        private void UnsubscribeWindowsHookEvents()
         {
             if (_mEvents == null) return;
             _mEvents.MouseWheel -= MouseWheelEvent;
             _mEvents.KeyDown -= OnKeyDown;
             _mEvents.KeyUp -= OnKeyUp;
+        }
+
+        private void UnsubscribeMonoEvents()
+        {
+            this.KeyDown -= new System.Windows.Forms.KeyEventHandler(this.FrmRemoteDesktop_KeyDown);
+            this.KeyUp -= new System.Windows.Forms.KeyEventHandler(this.FrmRemoteDesktop_KeyUp);
         }
 
         public void AddMonitors(int monitors)
@@ -124,7 +137,10 @@ namespace xServer.Forms
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
 
-            Unsubscribe();
+            if (!PlatformHelper.RunningOnMono)
+                UnsubscribeWindowsHookEvents();
+            else
+                UnsubscribeMonoEvents();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
@@ -322,6 +338,35 @@ namespace xServer.Forms
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                _keysPressed.Remove(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
+            }
+        }
+
+        private void FrmRemoteDesktop_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                if (_keysPressed.Contains(e.KeyCode))
+                    return;
+
+                _keysPressed.Add(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+            }
+        }
+
+        private void FrmRemoteDesktop_KeyUp(object sender, KeyEventArgs e)
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
