@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
@@ -9,7 +10,7 @@ using xServer.Enums;
 
 namespace xServer.Forms
 {
-    //TODO: Register Hotkeys for WIN - and ALT-key combinations
+    //TODO: Fix Alt + Tab
     public partial class FrmRemoteDesktop : Form
     {
         public bool IsStarted { get; private set; }
@@ -17,6 +18,7 @@ namespace xServer.Forms
         private bool _enableMouseInput;
         private bool _enableKeyboardInput;
         private IKeyboardMouseEvents _mEvents;
+        private List<Keys> _keysPressed;
 
         public FrmRemoteDesktop(Client c)
         {
@@ -38,6 +40,7 @@ namespace xServer.Forms
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
             _enableKeyboardInput = false;
+            _keysPressed = new List<Keys>();
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
@@ -303,6 +306,13 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
+                e.Handled = true;
+
+                if (_keysPressed.Contains(e.KeyCode))
+                    return;
+
+                _keysPressed.Add(e.KeyCode);
+
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
             }
@@ -312,6 +322,10 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
+                e.Handled = true;
+
+                _keysPressed.Remove(e.KeyCode);
+
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
             }
