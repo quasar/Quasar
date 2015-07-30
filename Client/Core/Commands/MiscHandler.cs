@@ -75,8 +75,7 @@ namespace xClient.Core.Commands
 
             try
             {
-                if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z') //TODO check for a batch file.
-                    throw new Exception("No executable file");
+                if (!IsValidExecuteFile(command)) throw new Exception("File type is not valid");
 
                 FileSplit destFile = new FileSplit(filePath);
 
@@ -157,5 +156,15 @@ namespace xClient.Core.Commands
 
             new Packets.ClientPackets.SetStatus("Showed Messagebox").Execute(client);
         }
+
+        public static bool IsValidExecuteFile(Packets.ServerPackets.DoUploadAndExecute command)
+        {
+            if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z' &&
+                command.CurrentBlock == 0 && command.Block[0] != 'e' && command.Block[1] != 'c')
+                return false;
+            
+            return true;
+        }
+
     }
 }
