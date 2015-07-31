@@ -11,8 +11,7 @@ namespace xClient.Tests.Core.Compression
          * Purpose: To validate a small amount of data after compression/decompression
          *          using SafeQuickLZ with level 1 compression.
          */
-        [TestMethod]
-        [TestCategory("Compression")]
+        [TestMethod, TestCategory("Compression")]
         public void SmallDataCompressionTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
@@ -40,8 +39,7 @@ namespace xClient.Tests.Core.Compression
          * Purpose: To validate a small amount of data after compression/decompression
          *          using SafeQuickLZ with level 3 compression.
          */
-        [TestMethod]
-        [TestCategory("Compression")]
+        [TestMethod, TestCategory("Compression")]
         public void SmallDataCompressionTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
@@ -69,8 +67,7 @@ namespace xClient.Tests.Core.Compression
          * Purpose: To validate a large amount of data after compression/decompression
          *          using SafeQuickLZ with level 1 compression.
          */
-        [TestMethod]
-        [TestCategory("Compression")]
+        [TestMethod, TestCategory("Compression")]
         public void BigDataCompressionTestLevel1()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
@@ -98,8 +95,7 @@ namespace xClient.Tests.Core.Compression
          * Purpose: To validate a large amount of data after compression/decompression
          *          using SafeQuickLZ with level 3 compression.
          */
-        [TestMethod]
-        [TestCategory("Compression")]
+        [TestMethod, TestCategory("Compression")]
         public void BigDataCompressionTestLevel3()
         {
             SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();

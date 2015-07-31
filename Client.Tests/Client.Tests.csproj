@@ -54,6 +54,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Core\Helper\FileHelper.Tests.cs" />
     <Compile Include="Core\Compression\JpgCompression.Tests.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.Tests.cs" />
     <Compile Include="Core\Encryption\AES.Tests.cs" />

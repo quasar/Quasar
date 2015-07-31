@@ -7,7 +7,7 @@ namespace xClient.Tests.Core.Encryption
     [TestClass]
     public class SHA256Tests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Encryption")]
         public void ComputeHashTest()
         {
             var input = FileHelper.GetRandomFilename(100);
