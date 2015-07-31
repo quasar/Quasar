@@ -8,7 +8,7 @@ namespace xServer.Tests.Core.Encryption
     [TestClass]
     public class AESTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Encryption")]
         public void EncryptAndDecryptStringTest()
         {
             var input = FileHelper.GetRandomFilename(100);
@@ -23,7 +23,7 @@ namespace xServer.Tests.Core.Encryption
             Assert.AreEqual(input, decrypted);
         }
 
-        [TestMethod]
+        [TestMethod, TestCategory("Encryption")]
         public void EncryptAndDecryptByteArrayTest()
         {
             var input = FileHelper.GetRandomFilename(100);
