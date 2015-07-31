@@ -40,7 +40,7 @@ Requirements
   * Windows 7
   * Windows Server 2012
   * Windows 8/8.1
-  * Windows 10 Preview
+  * Windows 10
 
 Compiling
 ---
