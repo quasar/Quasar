@@ -38,7 +38,7 @@ namespace xServer.Core.Commands
 
             packet.Image = null;
 
-            if (client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
+            if (client.Value != null && client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
                 new GetDesktop(packet.Quality, packet.Monitor).Execute(client);
         }
 
