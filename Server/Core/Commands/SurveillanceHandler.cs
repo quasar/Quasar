@@ -69,7 +69,7 @@ namespace xServer.Core.Commands
                             new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
 
                         if (client.Value != null && client.Value.FrmTm != null)
-                        client.Value.FrmTm.AddProcessToListview(lvi);
+                            client.Value.FrmTm.AddProcessToListview(lvi);
                     }
                 }
             }).Start();
@@ -82,8 +82,7 @@ namespace xServer.Core.Commands
 
             if (packet.FileCount == 0)
             {
-                if (client.Value != null && client.Value.FrmKl != null)
-                    client.Value.FrmKl.SetGetLogsEnabled(true);
+                client.Value.FrmKl.SetGetLogsEnabled(true);
 
                 return;
             }

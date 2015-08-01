@@ -18,7 +18,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
         {
-            if (client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
+            if (client.Value == null || client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
                 return;
 
             if (packet.DriveDisplayName.Length != packet.RootDirectory.Length) return;
