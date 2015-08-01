@@ -321,10 +321,10 @@ namespace xServer.Forms
                         _limitThreads.WaitOne();
                         for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                         {
-                            if (_connectClient.Value.FrmFm == null)
+                            if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
                             {
                                 _limitThreads.Release();
-                                return; // abort upload when from is closed
+                                return; // abort upload when from is closed or client disconnected
                             }
 
                             if (CanceledUploads.ContainsKey(id))
