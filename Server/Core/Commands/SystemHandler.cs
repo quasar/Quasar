@@ -18,7 +18,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
         {
-            if (client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
+            if (client.Value == null || client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
                 return;
 
             if (packet.DriveDisplayName.Length != packet.RootDirectory.Length) return;
@@ -29,12 +29,13 @@ namespace xServer.Core.Commands
                 drives[i] = new RemoteDrive(packet.DriveDisplayName[i], packet.RootDirectory[i]);
             }
 
-            client.Value.FrmFm.AddDrives(drives);
+            if (client.Value != null && client.Value.FrmFm != null)
+                client.Value.FrmFm.AddDrives(drives);
         }
 
         public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
         {
-            if (client.Value.FrmFm == null)
+            if (client.Value == null || client.Value.FrmFm == null)
                 return;
 
             new Thread(() =>
@@ -67,7 +68,7 @@ namespace xServer.Core.Commands
                                 ImageIndex = 1
                             };
 
-                            if (client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null)
                                 break;
 
                             client.Value.FrmFm.AddItemToFileBrowser(lvi);
@@ -88,7 +89,7 @@ namespace xServer.Core.Commands
                                     ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 
-                            if (client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null)
                                 break;
 
                             client.Value.FrmFm.AddItemToFileBrowser(lvi);
@@ -96,7 +97,9 @@ namespace xServer.Core.Commands
                     }
                 }
 
-                client.Value.LastDirectorySeen = true;
+                if (client.Value != null)
+                    client.Value.LastDirectorySeen = true;
+
                 lock (_isAddingLock)
                 {
                     _isAdding = false;
@@ -123,7 +126,7 @@ namespace xServer.Core.Commands
                 FrmMain.Instance.SetToolTipText(client, builder.ToString());
             }
 
-            if (client.Value.FrmSi == null)
+            if (client.Value == null || client.Value.FrmSi == null)
                 return;
 
             ListViewItem[] lviCollection = new ListViewItem[packet.SystemInfos.Length / 2];
@@ -135,18 +138,18 @@ namespace xServer.Core.Commands
                 }
             }
 
-            if (client.Value.FrmSi != null)
+            if (client.Value != null && client.Value.FrmSi != null)
                 client.Value.FrmSi.AddItems(lviCollection);
         }
 
         public static void HandleGetStartupItemsResponse(Client client, GetStartupItemsResponse packet)
         {
-            if (client.Value.FrmStm == null || packet.StartupItems == null)
+            if (client.Value == null || client.Value.FrmStm == null || packet.StartupItems == null)
                 return;
 
             foreach (var item in packet.StartupItems)
             {
-                if (client.Value.FrmStm == null) return;
+                if (client.Value == null || client.Value.FrmStm == null) return;
 
                 int type;
                 if (!int.TryParse(item.Substring(0, 1), out type)) continue;

