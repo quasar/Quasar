@@ -321,36 +321,39 @@ namespace xServer.Forms
                         _limitThreads.WaitOne();
                         for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                         {
-                            if (_connectClient.Value.FrmFm == null)
+                            if (_connectClient.Value != null)
                             {
-                                _limitThreads.Release();
-                                return; // abort upload when from is closed
-                            }
+                                if (_connectClient.Value.FrmFm == null)
+                                {
+                                    _limitThreads.Release();
+                                    return; // abort upload when from is closed
+                                }
 
-                            if (CanceledUploads.ContainsKey(id))
-                            {
-                                UpdateTransferStatus(index, "Canceled", 0);
-                                _limitThreads.Release();
-                                return;
-                            }
+                                if (CanceledUploads.ContainsKey(id))
+                                {
+                                    UpdateTransferStatus(index, "Canceled", 0);
+                                    _limitThreads.Release();
+                                    return;
+                                }
 
-                            decimal progress =
+                                decimal progress =
                                 Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
 
-                            UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
+                                UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
 
-                            byte[] block;
-                            if (srcFile.ReadBlock(currentBlock, out block))
-                            {
-                                new Core.Packets.ServerPackets.DoUploadFile(id,
-                                    remotePath, block, srcFile.MaxBlocks,
-                                    currentBlock).Execute(_connectClient);
-                            }
-                            else
-                            {
-                                UpdateTransferStatus(index, "Error reading file", 0);
-                                _limitThreads.Release();
-                                return;
+                                byte[] block;
+                                if (srcFile.ReadBlock(currentBlock, out block))
+                                {
+                                    new Core.Packets.ServerPackets.DoUploadFile(id,
+                                        remotePath, block, srcFile.MaxBlocks,
+                                        currentBlock).Execute(_connectClient);
+                                }
+                                else
+                                {
+                                    UpdateTransferStatus(index, "Error reading file", 0);
+                                    _limitThreads.Release();
+                                    return;
+                                }
                             }
                         }
                         _limitThreads.Release();
