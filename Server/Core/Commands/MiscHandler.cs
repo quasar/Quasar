@@ -12,7 +12,7 @@ namespace xServer.Core.Commands
     {
         public static void HandleDoShellExecuteResponse(Client client, DoShellExecuteResponse packet)
         {
-            if (client.Value.FrmRs == null || string.IsNullOrEmpty(packet.Output))
+            if (client.Value == null || client.Value.FrmRs == null || string.IsNullOrEmpty(packet.Output))
                 return;
 
             if (packet.IsError)
@@ -48,7 +48,7 @@ namespace xServer.Core.Commands
                 downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.ID]);
             }
 
-            if (client.Value.FrmFm == null)
+            if (client.Value == null || client.Value.FrmFm == null)
             {
                 FrmMain.Instance.SetStatusByClient(client, "Download aborted, please keep the File Manager open.");
                 new Packets.ServerPackets.DoDownloadFileCancel(packet.ID).Execute(client);
@@ -72,7 +72,7 @@ namespace xServer.Core.Commands
             FileSplit destFile = new FileSplit(downloadPath);
             if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
             {
-                if (client.Value.FrmFm == null)
+                if (client.Value == null || client.Value.FrmFm == null)
                     return;
 
                 client.Value.FrmFm.UpdateTransferStatus(index, destFile.LastError, 0);
@@ -82,7 +82,7 @@ namespace xServer.Core.Commands
             decimal progress =
                 Math.Round((decimal) ((double) (packet.CurrentBlock + 1)/(double) packet.MaxBlocks*100.0), 2);
 
-            if (client.Value.FrmFm == null)
+            if (client.Value == null || client.Value.FrmFm == null)
                 return;
 
             if (CanceledDownloads.ContainsKey(packet.ID)) return;
