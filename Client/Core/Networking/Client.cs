@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
-using xClient.Config;
 using xClient.Core.Compression;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
@@ -274,7 +272,6 @@ namespace xClient.Core.Networking
 
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
-                _handle.NoDelay = true;
 
                 _readBuffer = new byte[BUFFER_SIZE];
                 _tempHeader = new byte[HEADER_SIZE];
