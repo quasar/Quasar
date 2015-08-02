@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using xServer.Core.Encryption;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
 using xServer.Core.Utilities;
@@ -129,8 +130,11 @@ namespace xServer.Forms
             XMLSettings.WriteValue("ShowPopup", chkPopup.Checked.ToString());
             XMLSettings.ShowPopup = chkPopup.Checked;
 
-            XMLSettings.WriteValue("Password", txtPassword.Text);
-            XMLSettings.Password = txtPassword.Text;
+            var newPassword = txtPassword.Text;
+            if (newPassword != XMLSettings.Password)
+                AES.PreHashKey(newPassword);
+            XMLSettings.WriteValue("Password", newPassword);
+            XMLSettings.Password = newPassword;
 
             XMLSettings.WriteValue("UseUPnP", chkUseUpnp.Checked.ToString());
             XMLSettings.UseUPnP = chkUseUpnp.Checked;

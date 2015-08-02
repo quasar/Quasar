@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
+using xServer.Core.Encryption;
 using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -63,7 +64,7 @@ namespace xServer.Forms
             Instance = this;
 
             ReadSettings();
-
+            AES.PreHashKey(XMLSettings.Password);
 #if !DEBUG
             ShowTermsOfService(XMLSettings.ShowToU);
 #endif
