@@ -14,20 +14,19 @@ namespace xClient.Tests.Core.Compression
         [TestMethod, TestCategory("Compression")]
         public void SmallDataCompressionTestLevel1()
         {
-            SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
             new Random().NextBytes(smallData);
 
             // Store the compressed data.
-            byte[] smallDataCompressed = safeQuickLZtest.Compress(smallData, 0, smallData.Length, 1);
+            byte[] smallDataCompressed = SafeQuickLZ.Compress(smallData, 1);
 
             // The original should not equal the compressed data.
             Assert.AreNotEqual(smallData, smallDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] smallDataDecompressed = safeQuickLZtest.Decompress(smallDataCompressed, 0, smallDataCompressed.Length);
+            byte[] smallDataDecompressed = SafeQuickLZ.Decompress(smallDataCompressed);
 
             // The compressed data should not equal the decompressed data.
             Assert.AreNotEqual(smallDataCompressed, smallDataDecompressed, "Compressed data is equal to the decompressed data!");
@@ -42,20 +41,19 @@ namespace xClient.Tests.Core.Compression
         [TestMethod, TestCategory("Compression")]
         public void SmallDataCompressionTestLevel3()
         {
-            SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
             new Random().NextBytes(smallData);
 
             // Store the compressed data.
-            byte[] smallDataCompressed = safeQuickLZtest.Compress(smallData, 0, smallData.Length, 3);
+            byte[] smallDataCompressed = SafeQuickLZ.Compress(smallData, 3);
 
             // The original should not equal the compressed data.
             Assert.AreNotEqual(smallData, smallDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] smallDataDecompressed = safeQuickLZtest.Decompress(smallDataCompressed, 0, smallDataCompressed.Length);
+            byte[] smallDataDecompressed = SafeQuickLZ.Decompress(smallDataCompressed);
 
             // The compressed data should not equal the decompressed data.
             Assert.AreNotEqual(smallDataCompressed, smallDataDecompressed, "Compressed data is equal to the decompressed data!");
@@ -70,20 +68,19 @@ namespace xClient.Tests.Core.Compression
         [TestMethod, TestCategory("Compression")]
         public void BigDataCompressionTestLevel1()
         {
-            SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.
             new Random().NextBytes(bigData);
 
             // Store the compressed data.
-            byte[] bigDataCompressed = safeQuickLZtest.Compress(bigData, 0, bigData.Length, 1);
+            byte[] bigDataCompressed = SafeQuickLZ.Compress(bigData, 1);
 
             // The original should not equal the compressed data.
             Assert.AreNotEqual(bigData, bigDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] bigDataDecompressed = safeQuickLZtest.Decompress(bigDataCompressed, 0, bigDataCompressed.Length);
+            byte[] bigDataDecompressed = SafeQuickLZ.Decompress(bigDataCompressed);
 
             // The compressed data should not equal the decompressed data.
             Assert.AreNotEqual(bigDataCompressed, bigDataDecompressed, "Compressed data is equal to the decompressed data!");
@@ -98,20 +95,19 @@ namespace xClient.Tests.Core.Compression
         [TestMethod, TestCategory("Compression")]
         public void BigDataCompressionTestLevel3()
         {
-            SafeQuickLZ safeQuickLZtest = new SafeQuickLZ();
             byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.
             new Random().NextBytes(bigData);
 
             // Store the compressed data.
-            byte[] bigDataCompressed = safeQuickLZtest.Compress(bigData, 0, bigData.Length, 3);
+            byte[] bigDataCompressed = SafeQuickLZ.Compress(bigData, 3);
 
             // The original should not equal the compressed data.
             Assert.AreNotEqual(bigData, bigDataCompressed, "Original data is equal to the compressed data!");
 
             // Store the decompressed data.
-            byte[] bigDataDecompressed = safeQuickLZtest.Decompress(bigDataCompressed, 0, bigDataCompressed.Length);
+            byte[] bigDataDecompressed = SafeQuickLZ.Decompress(bigDataCompressed);
 
             // The compressed data should not equal the decompressed data.
             Assert.AreNotEqual(bigDataCompressed, bigDataDecompressed, "Compressed data is equal to the decompressed data!");

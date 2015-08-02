@@ -414,15 +414,21 @@ namespace xServer.Core.Networking
                                     if (_payloadBuffer.Length > 0)
                                     {
                                         if (compressionEnabled)
-                                            _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
+                                            _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
 
-                                        using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                        if (_payloadBuffer.Length > 0)
                                         {
-                                            IPacket packet =
-                                                Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
+                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                            {
+                                                IPacket packet =
+                                                    Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                                        PrefixStyle.Fixed32);
 
-                                            OnClientRead(packet);
+                                                OnClientRead(packet);
+                                            }
                                         }
+                                        else // payload decompression failed
+                                            process = false;
                                     }
                                     else // payload decryption failed
                                         process = false;
@@ -526,7 +532,7 @@ namespace xServer.Core.Networking
                 }
 
                 if (compressionEnabled)
-                    payload = new SafeQuickLZ().Compress(payload, 0, payload.Length, 3);
+                    payload = SafeQuickLZ.Compress(payload);
 
                 if (encryptionEnabled)
                     payload = AES.Encrypt(payload);
