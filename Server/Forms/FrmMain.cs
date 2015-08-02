@@ -552,8 +552,14 @@ namespace xServer.Forms
 
         private void ctxtReverseProxy_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
+                if (c.Value.FrmProxy != null)
+                {
+                    c.Value.FrmProxy.Focus();
+                    return;
+                }
+
                 FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
                 frmRS.Show();
             }
