@@ -142,49 +142,6 @@ namespace xClient.Core.Encryption
             }
         }
 
-        public static string Decrypt(string input, string keyy)
-        {
-            byte[] key, data;
-            int i;
-
-            try
-            {
-                using (var md5 = new MD5CryptoServiceProvider())
-                {
-                    key = md5.ComputeHash(Encoding.UTF8.GetBytes(keyy));
-                }
-
-                using (var ms = new MemoryStream(Convert.FromBase64String(input)))
-                {
-                    using (var rd = new RijndaelManaged())
-                    {
-                        byte[] iv = new byte[IVLENGTH];
-                        ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
-                        rd.IV = iv;
-                        rd.Key = key;
-
-                        using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
-                        {
-                            data = new byte[ms.Length - IVLENGTH + 1];
-                            i = cs.Read(data, 0, data.Length);
-                        }
-
-                        iv = null;
-                    }
-                }
-
-                return Encoding.UTF8.GetString(data, 0, i);
-            }
-            catch
-            {
-                return string.Empty;
-            }
-            finally
-            {
-                data = null;
-            }
-        }
-
         public static byte[] Decrypt(byte[] input)
         {
             if (_key == null) throw new Exception("The key can not be null.");

