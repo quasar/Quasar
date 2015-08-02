@@ -48,7 +48,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.txtFormat = new System.Windows.Forms.TextBox();
             this.lstPasswords = new xServer.Controls.AeroListView();
-            this.hClientIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hIdentification = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -66,7 +66,7 @@
             this.clearAllToolStripMenuItem,
             this.refreshToolStripMenuItem});
             this.menuMain.Name = "menuMain";
-            this.menuMain.Size = new System.Drawing.Size(169, 98);
+            this.menuMain.Size = new System.Drawing.Size(172, 98);
             // 
             // saveToFileToolStripMenuItem
             // 
@@ -75,20 +75,20 @@
             this.selectedToolStripMenuItem});
             this.saveToFileToolStripMenuItem.Image = global::xServer.Properties.Resources.save;
             this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
-            this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveToFileToolStripMenuItem.Text = "Save to File";
             // 
             // allToolStripMenuItem
             // 
             this.allToolStripMenuItem.Name = "allToolStripMenuItem";
-            this.allToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.allToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.allToolStripMenuItem.Text = "All";
             this.allToolStripMenuItem.Click += new System.EventHandler(this.allToolStripMenuItem_Click);
             // 
             // selectedToolStripMenuItem
             // 
             this.selectedToolStripMenuItem.Name = "selectedToolStripMenuItem";
-            this.selectedToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.selectedToolStripMenuItem.Size = new System.Drawing.Size(118, 22);
             this.selectedToolStripMenuItem.Text = "Selected";
             this.selectedToolStripMenuItem.Click += new System.EventHandler(this.selectedToolStripMenuItem_Click);
             // 
@@ -99,27 +99,27 @@
             this.selectedToolStripMenuItem1});
             this.saveToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
             this.saveToClipboardToolStripMenuItem.Name = "saveToClipboardToolStripMenuItem";
-            this.saveToClipboardToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.saveToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveToClipboardToolStripMenuItem.Text = "Copy to Clipboard";
             // 
             // allToolStripMenuItem1
             // 
             this.allToolStripMenuItem1.Name = "allToolStripMenuItem1";
-            this.allToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
+            this.allToolStripMenuItem1.Size = new System.Drawing.Size(118, 22);
             this.allToolStripMenuItem1.Text = "All";
             this.allToolStripMenuItem1.Click += new System.EventHandler(this.allToolStripMenuItem1_Click);
             // 
             // selectedToolStripMenuItem1
             // 
             this.selectedToolStripMenuItem1.Name = "selectedToolStripMenuItem1";
-            this.selectedToolStripMenuItem1.Size = new System.Drawing.Size(117, 22);
+            this.selectedToolStripMenuItem1.Size = new System.Drawing.Size(118, 22);
             this.selectedToolStripMenuItem1.Text = "Selected";
             this.selectedToolStripMenuItem1.Click += new System.EventHandler(this.selectedToolStripMenuItem1_Click);
             // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(165, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(168, 6);
             // 
             // clearAllToolStripMenuItem
             // 
@@ -128,20 +128,20 @@
             this.selectedToolStripMenuItem2});
             this.clearAllToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
             this.clearAllToolStripMenuItem.Name = "clearAllToolStripMenuItem";
-            this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.clearAllToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.clearAllToolStripMenuItem.Text = "Clear";
             // 
             // allToolStripMenuItem2
             // 
             this.allToolStripMenuItem2.Name = "allToolStripMenuItem2";
-            this.allToolStripMenuItem2.Size = new System.Drawing.Size(117, 22);
+            this.allToolStripMenuItem2.Size = new System.Drawing.Size(118, 22);
             this.allToolStripMenuItem2.Text = "All";
             this.allToolStripMenuItem2.Click += new System.EventHandler(this.allToolStripMenuItem2_Click);
             // 
             // selectedToolStripMenuItem2
             // 
             this.selectedToolStripMenuItem2.Name = "selectedToolStripMenuItem2";
-            this.selectedToolStripMenuItem2.Size = new System.Drawing.Size(117, 22);
+            this.selectedToolStripMenuItem2.Size = new System.Drawing.Size(118, 22);
             this.selectedToolStripMenuItem2.Text = "Selected";
             this.selectedToolStripMenuItem2.Click += new System.EventHandler(this.selectedToolStripMenuItem2_Click);
             // 
@@ -149,7 +149,7 @@
             // 
             this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             this.refreshToolStripMenuItem.Click += new System.EventHandler(this.refreshToolStripMenuItem_Click);
             // 
@@ -186,26 +186,26 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(65, 49);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(418, 26);
+            this.label1.Size = new System.Drawing.Size(453, 26);
             this.label1.TabIndex = 1;
             this.label1.Text = "You can change the way the logins are saved by adjusting the format in the box ab" +
-    "ove.\r\nAvailable variables: BROWSER, URL, USER, PASS\r\n";
+    "ove.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtFormat
             // 
             this.txtFormat.Location = new System.Drawing.Point(6, 19);
             this.txtFormat.Name = "txtFormat";
-            this.txtFormat.Size = new System.Drawing.Size(543, 20);
+            this.txtFormat.Size = new System.Drawing.Size(537, 22);
             this.txtFormat.TabIndex = 0;
-            this.txtFormat.Text = "BROWSER - URL - USER:PASS";
+            this.txtFormat.Text = "APP - URL - USER:PASS";
             this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtFormat.TextChanged += new System.EventHandler(this.txtFormat_TextChanged);
             // 
             // lstPasswords
             // 
             this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hClientIP,
+            this.hIdentification,
             this.hURL,
             this.hUser,
             this.hPass});
@@ -220,14 +220,14 @@
             this.lstPasswords.UseCompatibleStateImageBehavior = false;
             this.lstPasswords.View = System.Windows.Forms.View.Details;
             // 
-            // hClientIP
+            // hIdentification
             // 
-            this.hClientIP.Text = "Client IP";
-            this.hClientIP.Width = 107;
+            this.hIdentification.Text = "Identification";
+            this.hIdentification.Width = 107;
             // 
             // hURL
             // 
-            this.hURL.Text = "URL";
+            this.hURL.Text = "URL / Location";
             this.hURL.Width = 151;
             // 
             // hUser
@@ -247,6 +247,7 @@
             this.ClientSize = new System.Drawing.Size(573, 445);
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmPasswordRecovery";
@@ -264,7 +265,7 @@
 
         private Controls.AeroListView lstPasswords;
         private System.Windows.Forms.GroupBox groupBox1;
-        private System.Windows.Forms.ColumnHeader hClientIP;
+        private System.Windows.Forms.ColumnHeader hIdentification;
         private System.Windows.Forms.ColumnHeader hURL;
         private System.Windows.Forms.ColumnHeader hUser;
         private System.Windows.Forms.ColumnHeader hPass;

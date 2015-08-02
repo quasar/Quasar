@@ -5,7 +5,7 @@ using System.Text;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Recovery.Helper;
+using xServer.Core.Utilities;
 using xServer.Settings;
 
 namespace xServer.Forms
@@ -46,27 +46,27 @@ namespace xServer.Forms
             }
         }
 
-        public void AddPassword(LoginInfo login, Client client)
+        public void AddPassword(LoginInfo login, string identification)
         {
             try
             {
-                ListViewGroup lvg = GetGroupFromBrowser(login.Browser);
+                ListViewGroup lvg = GetGroupFromApplication(login.Application);
 
-                ListViewItem lvi = new ListViewItem() { Tag = login, Text = client.EndPoint.Address.ToString() };
+                ListViewItem lvi = new ListViewItem() { Tag = login, Text = identification };
                 lvi.SubItems.Add(login.URL); // URL
                 lvi.SubItems.Add(login.Username); // User
                 lvi.SubItems.Add(login.Password); // Pass
 
                 if (lvg == null)
                 {
-                    // No group exists for the browser in question
+                    // No group exists for the application in question
 
                     lvg = new ListViewGroup();
 
                     lvi.Group = lvg;
-                    // Space in the browser name will not be allowed in the property
-                    lvg.Name = login.Browser.Replace(" ", "");
-                    lvg.Header = login.Browser;
+                    // Space in the application name will not be allowed in the property
+                    lvg.Name = login.Application.Replace(" ", "");
+                    lvg.Header = login.Application;
 
                     this.Invoke(new MethodInvoker(delegate
                     {
@@ -76,7 +76,7 @@ namespace xServer.Forms
                 }
                 else
                 {
-                    // Group exists for the browser, lets update it with our new item appended
+                    // Group exists for the application, lets update it with our new item appended
 
                     // Get the group index so we can quickly set it after we've completed operations
                     int groupIndex = lstPasswords.Groups.IndexOf(lvg);
@@ -101,7 +101,7 @@ namespace xServer.Forms
         private string ConvertToFormat(string format, LoginInfo login)
         {
             return format
-                .Replace("BROWSER", login.Browser)
+                .Replace("APP", login.Application)
                 .Replace("URL", login.URL)
                 .Replace("USER", login.Username)
                 .Replace("PASS", login.Password);
@@ -138,7 +138,7 @@ namespace xServer.Forms
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Error while copying to your clipboard: " + ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show("Error while copying to your clipboard: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -149,14 +149,14 @@ namespace xServer.Forms
         #endregion
 
         #region Group Methods
-        public ListViewGroup GetGroupFromBrowser(string browser)
+        public ListViewGroup GetGroupFromApplication(string app)
         {
             ListViewGroup lvg = null;
             this.Invoke(new MethodInvoker(delegate {
                 foreach (ListViewGroup group in lstPasswords.Groups)
                 {
-                    // Check to see if the current group header is for our browser
-                    if (group.Header == browser)
+                    // Check to see if the current group header is for our application
+                    if (group.Header == app)
                         lvg = group;
                 }
             }));
@@ -173,7 +173,7 @@ namespace xServer.Forms
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData();
-            if (sfdPasswords.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (sfdPasswords.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(sfdPasswords.FileName, sb.ToString());
             }
@@ -182,7 +182,7 @@ namespace xServer.Forms
         private void selectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData(true);
-            if (sfdPasswords.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            if (sfdPasswords.ShowDialog() == DialogResult.OK)
             {
                 File.WriteAllText(sfdPasswords.FileName, sb.ToString());
             }

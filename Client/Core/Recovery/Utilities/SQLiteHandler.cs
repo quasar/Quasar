@@ -1,11 +1,11 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 using System.IO;
+using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.VisualBasic.CompilerServices;
 using Microsoft.VisualBasic;
+using Microsoft.VisualBasic.CompilerServices;
 
-namespace xClient.Core.Recovery.Helper
+namespace xClient.Core.Recovery.Utilities
 {
     public class SQLiteHandler
     {

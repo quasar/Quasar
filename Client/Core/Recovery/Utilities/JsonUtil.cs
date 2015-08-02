@@ -1,8 +1,8 @@
-﻿using System.Runtime.Serialization.Json;
-using System.IO;
+﻿using System.IO;
+using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace xClient.Core.Recovery.Helper
+namespace xClient.Core.Recovery.Utilities
 {
     public static class JsonUtil
     {

