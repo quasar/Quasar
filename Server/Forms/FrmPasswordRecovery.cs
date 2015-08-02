@@ -25,7 +25,7 @@ namespace xServer.Forms
             }
 
             InitializeComponent();
-            this.Text = WindowHelper.GetWindowTitle("Remote Desktop", ConnectedClients.Count);
+            this.Text = WindowHelper.GetWindowTitle("Password Recovery", ConnectedClients.Count);
 
             txtFormat.Text = XMLSettings.SaveFormat;
 
