@@ -43,15 +43,14 @@
             this.selectedToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.sfdPasswords = new System.Windows.Forms.SaveFileDialog();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.txtFormat = new System.Windows.Forms.TextBox();
             this.lstPasswords = new xServer.Controls.AeroListView();
             this.hIdentification = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.txtFormat = new System.Windows.Forms.TextBox();
             this.menuMain.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -163,12 +162,42 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Password Data";
             // 
-            // sfdPasswords
+            // lstPasswords
             // 
-            this.sfdPasswords.Filter = "Text Files|*.txt|All files|*.*";
-            this.sfdPasswords.RestoreDirectory = true;
-            this.sfdPasswords.SupportMultiDottedExtensions = true;
-            this.sfdPasswords.Title = "Save Passwords to File...";
+            this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hIdentification,
+            this.hURL,
+            this.hUser,
+            this.hPass});
+            this.lstPasswords.ContextMenuStrip = this.menuMain;
+            this.lstPasswords.FullRowSelect = true;
+            this.lstPasswords.HideSelection = false;
+            this.lstPasswords.Location = new System.Drawing.Point(6, 19);
+            this.lstPasswords.Name = "lstPasswords";
+            this.lstPasswords.Size = new System.Drawing.Size(537, 300);
+            this.lstPasswords.TabIndex = 0;
+            this.lstPasswords.UseCompatibleStateImageBehavior = false;
+            this.lstPasswords.View = System.Windows.Forms.View.Details;
+            // 
+            // hIdentification
+            // 
+            this.hIdentification.Text = "Identification";
+            this.hIdentification.Width = 107;
+            // 
+            // hURL
+            // 
+            this.hURL.Text = "URL / Location";
+            this.hURL.Width = 151;
+            // 
+            // hUser
+            // 
+            this.hUser.Text = "Username";
+            this.hUser.Width = 142;
+            // 
+            // hPass
+            // 
+            this.hPass.Text = "Password";
+            this.hPass.Width = 130;
             // 
             // groupBox2
             // 
@@ -201,44 +230,6 @@
             this.txtFormat.Text = "APP - URL - USER:PASS";
             this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.txtFormat.TextChanged += new System.EventHandler(this.txtFormat_TextChanged);
-            // 
-            // lstPasswords
-            // 
-            this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hIdentification,
-            this.hURL,
-            this.hUser,
-            this.hPass});
-            this.lstPasswords.ContextMenuStrip = this.menuMain;
-            this.lstPasswords.FullRowSelect = true;
-            this.lstPasswords.GridLines = true;
-            this.lstPasswords.HideSelection = false;
-            this.lstPasswords.Location = new System.Drawing.Point(6, 19);
-            this.lstPasswords.Name = "lstPasswords";
-            this.lstPasswords.Size = new System.Drawing.Size(537, 300);
-            this.lstPasswords.TabIndex = 0;
-            this.lstPasswords.UseCompatibleStateImageBehavior = false;
-            this.lstPasswords.View = System.Windows.Forms.View.Details;
-            // 
-            // hIdentification
-            // 
-            this.hIdentification.Text = "Identification";
-            this.hIdentification.Width = 107;
-            // 
-            // hURL
-            // 
-            this.hURL.Text = "URL / Location";
-            this.hURL.Width = 151;
-            // 
-            // hUser
-            // 
-            this.hUser.Text = "Username";
-            this.hUser.Width = 142;
-            // 
-            // hPass
-            // 
-            this.hPass.Text = "Password";
-            this.hPass.Width = 130;
             // 
             // FrmPasswordRecovery
             // 
@@ -279,7 +270,6 @@
         private System.Windows.Forms.ToolStripMenuItem selectedToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem selectedToolStripMenuItem1;
-        private System.Windows.Forms.SaveFileDialog sfdPasswords;
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox txtFormat;

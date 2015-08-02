@@ -174,18 +174,24 @@ namespace xServer.Forms
         private void allToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData();
-            if (sfdPasswords.ShowDialog() == DialogResult.OK)
+            using (var sfdPasswords = new SaveFileDialog())
             {
-                File.WriteAllText(sfdPasswords.FileName, sb.ToString());
+                if (sfdPasswords.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllText(sfdPasswords.FileName, sb.ToString());
+                }
             }
         }
 
         private void selectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData(true);
-            if (sfdPasswords.ShowDialog() == DialogResult.OK)
+            using (var sfdPasswords = new SaveFileDialog())
             {
-                File.WriteAllText(sfdPasswords.FileName, sb.ToString());
+                if (sfdPasswords.ShowDialog() == DialogResult.OK)
+                {
+                    File.WriteAllText(sfdPasswords.FileName, sb.ToString());
+                }
             }
         }
         #endregion
