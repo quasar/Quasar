@@ -158,6 +158,7 @@
     <Compile Include="Core\Packets\ClientPackets\SetUserStatus.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetAuthenticationResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatus.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />
     <Compile Include="Core\Packets\PacketHandler.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoPathDelete.cs" />
@@ -189,6 +190,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoVisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetAuthentication.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoClientReconnect.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Packets\UnknownPacket.cs" />
     <Compile Include="Core\ProtoBuf\BclHelpers.cs" />
     <Compile Include="Core\ProtoBuf\BufferExtension.cs" />
@@ -275,6 +277,7 @@
     <Compile Include="Core\ProtoBuf\SubItemToken.cs" />
     <Compile Include="Core\ProtoBuf\WireType.cs" />
     <Compile Include="Core\Build\Renamer.cs" />
+    <Compile Include="Core\Utilities\LoginInfo.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
@@ -332,6 +335,12 @@
     </Compile>
     <Compile Include="Controls\ListViewEx.cs">
       <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
@@ -413,6 +422,11 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Settings\ProfileManager.cs" />
     <Compile Include="Settings\Settings.cs" />
     <EmbeddedResource Include="Forms\FrmAbout.resx">
@@ -435,6 +449,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmMain.resx">
       <DependentUpon>FrmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
@@ -477,14 +495,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Resources.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-    </Compile>
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

