@@ -221,14 +221,16 @@ namespace xServer.Forms
         {
             if (_enableKeyboardInput)
             {
+                this.picDesktop.Cursor = Cursors.Default;
                 btnKeyboard.Image = Properties.Resources.keyboard_delete;
-                toolTipButtons.SetToolTip(btnMouse, "Enable keyboard input.");
+                toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
                 _enableKeyboardInput = false;
             }
             else
             {
+                this.picDesktop.Cursor = Cursors.Hand;
                 btnKeyboard.Image = Properties.Resources.keyboard_add;
-                toolTipButtons.SetToolTip(btnMouse, "Disable keyboard input.");
+                toolTipButtons.SetToolTip(btnKeyboard, "Disable keyboard input.");
                 _enableKeyboardInput = true;
             }
 
