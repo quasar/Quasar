@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using xClient.Core.Utilities;
@@ -12,14 +11,16 @@ namespace xClient.Core.Helper
         {
             List<Host> hostsList = new List<Host>();
 
+            if (string.IsNullOrEmpty(rawHosts)) return hostsList;
+
             var hosts = rawHosts.Split(';');
 
-            foreach (var hostPart in from host in hosts where !string.IsNullOrEmpty(host) select host.Split(':'))
+            foreach (var hostPart in from host in hosts where (!string.IsNullOrEmpty(host) && host.Contains(':')) select host.Split(':'))
             {
-                if (hostPart.Length != 2 || hostPart[0].Length < 1 || hostPart[1].Length < 1) throw new Exception("Invalid host");
+                if (hostPart.Length != 2 || hostPart[0].Length < 1 || hostPart[1].Length < 1) continue; // invalid, ignore host
 
                 ushort port;
-                if (!ushort.TryParse(hostPart[1], out port)) throw new Exception("Invalid host");
+                if (!ushort.TryParse(hostPart[1], out port)) continue; // invalid, ignore host
 
                 hostsList.Add(new Host { Hostname = hostPart[0], Port = port });
             }
