@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using xServer.Core.Build;
 using xServer.Core.Helper;
@@ -15,36 +15,19 @@ namespace xServer.Forms
     {
         private bool _profileLoaded;
         private bool _changed;
-        private List<Host> _hosts = new List<Host>();
+        private BindingList<Host> _hosts = new BindingList<Host>();
 
         public FrmBuilder()
         {
             InitializeComponent();
         }
 
-        private void HasChanged()
-        {
-            if (!_changed && _profileLoaded)
-                _changed = true;
-        }
-
-        private void UpdateControlStates()
-        {
-            txtInstallname.Enabled = chkInstall.Checked;
-            rbAppdata.Enabled = chkInstall.Checked;
-            rbProgramFiles.Enabled = chkInstall.Checked;
-            rbSystem.Enabled = chkInstall.Checked;
-            txtInstallsub.Enabled = chkInstall.Checked;
-            chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
-        }
-
         private void LoadProfile(string profilename)
         {
             ProfileManager pm = new ProfileManager(profilename + ".xml");
             var rawHosts = pm.ReadValueSafe("Hosts");
-            _hosts.AddRange(HostHelper.GetHostsList(rawHosts));
+            foreach (var host in HostHelper.GetHostsList(rawHosts))
+                _hosts.Add(host);
             lstHosts.DataSource = new BindingSource(_hosts, null);
             txtPassword.Text = pm.ReadValue("Password");
             txtDelay.Text = pm.ReadValue("Delay");
@@ -106,7 +89,7 @@ namespace xServer.Forms
             {
                 txtPort.Text = XMLSettings.ListenPort.ToString();
                 txtPassword.Text = XMLSettings.Password;
-                txtMutex.Text = FileHelper.GetRandomFilename(32);
+                txtMutex.Text = FormatHelper.GenerateMutex();
             }
 
             UpdateControlStates();
@@ -142,19 +125,18 @@ namespace xServer.Forms
             }
 
             _hosts.Add(new Host {Hostname = host, Port = port});
-            lstHosts.DataSource = new BindingSource(_hosts, null);
-
             txtHost.Text = "";
             txtPort.Text = "";
         }
 
+        #region "Context Menu"
         private void ctxtRemove_Click(object sender, EventArgs e)
         {
             HasChanged();
 
-            List<string> selected = (from object arr in lstHosts.SelectedItems select arr.ToString()).ToList();
+            List<string> selectedHosts = (from object arr in lstHosts.SelectedItems select arr.ToString()).ToList();
 
-            foreach (var item in selected)
+            foreach (var item in selectedHosts)
             {
                 foreach (var host in _hosts)
                 {
@@ -165,10 +147,17 @@ namespace xServer.Forms
                     }
                 }
             }
-
-            lstHosts.DataSource = new BindingSource(_hosts, null);
         }
 
+        private void ctxtClear_Click(object sender, EventArgs e)
+        {
+            HasChanged();
+
+            _hosts.Clear();
+        }
+        #endregion
+
+        #region "Misc"
         private void chkShowPass_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
@@ -200,7 +189,7 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            txtMutex.Text = FileHelper.GetRandomFilename(32);
+            txtMutex.Text = FormatHelper.GenerateMutex();
         }
 
         private void chkInstall_CheckedChanged(object sender, EventArgs e)
@@ -223,28 +212,7 @@ namespace xServer.Forms
 
             ToggleAsmInfoControls();
         }
-
-        private void RefreshExamplePath()
-        {
-            string path = string.Empty;
-            if (rbAppdata.Checked)
-                path =
-                    Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                            txtInstallsub.Text), txtInstallname.Text);
-            else if (rbProgramFiles.Checked)
-                path =
-                    Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
-                            txtInstallsub.Text), txtInstallname.Text);
-            else if (rbSystem.Checked)
-                path =
-                    Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text),
-                        txtInstallname.Text);
-
-            this.Invoke((MethodInvoker) delegate { txtExamplePath.Text = path + ".exe"; });
-        }
+        #endregion
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
@@ -287,8 +255,8 @@ namespace xServer.Forms
                         string[] asmInfo = null;
                         if (chkChangeAsmInfo.Checked)
                         {
-                            if (!IsValidVersionNumber(txtProductVersion.Text) ||
-                                !IsValidVersionNumber(txtFileVersion.Text))
+                            if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
+                                !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
                             {
                                 MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder",
                                     MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -333,6 +301,28 @@ namespace xServer.Forms
                     MessageBoxIcon.Information);
         }
 
+        private void RefreshExamplePath()
+        {
+            string path = string.Empty;
+            if (rbAppdata.Checked)
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                            txtInstallsub.Text), txtInstallname.Text);
+            else if (rbProgramFiles.Checked)
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                            txtInstallsub.Text), txtInstallname.Text);
+            else if (rbSystem.Checked)
+                path =
+                    Path.Combine(
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text),
+                        txtInstallname.Text);
+
+            this.Invoke((MethodInvoker)delegate { txtExamplePath.Text = path + ".exe"; });
+        }
+
         private int GetInstallPath()
         {
             if (rbAppdata.Checked) return 1;
@@ -362,25 +352,41 @@ namespace xServer.Forms
             {
                 foreach (Control ctrl in assemblyPage.Controls)
                 {
-                    if (ctrl is Label)
-                        ((Label) ctrl).Enabled = chkChangeAsmInfo.Checked;
-                    else if (ctrl is TextBox)
-                        ((TextBox) ctrl).Enabled = chkChangeAsmInfo.Checked;
+                    var label = ctrl as Label;
+                    if (label != null)
+                    {
+                        label.Enabled = chkChangeAsmInfo.Checked;
+                        continue;
+                    }
+
+                    var box = ctrl as TextBox;
+                    if (box != null)
+                        box.Enabled = chkChangeAsmInfo.Checked;
                 }
             });
         }
 
-        private bool IsValidVersionNumber(string input)
+        private void HasChanged()
         {
-            Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
-            return match.Success;
+            if (!_changed && _profileLoaded)
+                _changed = true;
+        }
+
+        private void UpdateControlStates()
+        {
+            txtInstallname.Enabled = chkInstall.Checked;
+            rbAppdata.Enabled = chkInstall.Checked;
+            rbProgramFiles.Enabled = chkInstall.Checked;
+            rbSystem.Enabled = chkInstall.Checked;
+            txtInstallsub.Enabled = chkInstall.Checked;
+            chkHide.Enabled = chkInstall.Checked;
+            chkStartup.Enabled = chkInstall.Checked;
+            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
         }
 
         /// <summary>
         /// Handles a basic change in setting.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void HasChangedSetting(object sender, EventArgs e)
         {
             HasChanged();
@@ -389,8 +395,6 @@ namespace xServer.Forms
         /// <summary>
         /// Handles a basic change in setting, also refreshing the example file path.
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void HasChangedSettingAndFilePath(object sender, EventArgs e)
         {
             HasChanged();

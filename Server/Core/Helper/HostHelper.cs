@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using xServer.Core.Utilities;
@@ -29,6 +30,16 @@ namespace xServer.Core.Helper
         }
 
         public static string GetRawHosts(List<Host> hosts)
+        {
+            StringBuilder rawHosts = new StringBuilder();
+
+            foreach (var host in hosts)
+                rawHosts.Append(host + ";");
+
+            return rawHosts.ToString();
+        }
+
+        public static string GetRawHosts(BindingList<Host> hosts)
         {
             StringBuilder rawHosts = new StringBuilder();
 
