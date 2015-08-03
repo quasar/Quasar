@@ -18,6 +18,7 @@ namespace xServer.Core.Networking
         public string Id { get; set; }
         public string Username { get; set; }
         public string PCName { get; set; }
+        public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }

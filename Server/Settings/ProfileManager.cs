@@ -26,8 +26,7 @@ namespace xServer.Settings
                     XmlNode root = doc.CreateElement("settings");
                     doc.AppendChild(root);
 
-                    root.AppendChild(doc.CreateElement("Hostname"));
-                    root.AppendChild(doc.CreateElement("ListenPort")).InnerText = "4782";
+                    root.AppendChild(doc.CreateElement("Hosts"));
                     root.AppendChild(doc.CreateElement("Password")).InnerText = "1234";
                     root.AppendChild(doc.CreateElement("Delay")).InnerText = "5000";
                     root.AppendChild(doc.CreateElement("Mutex"));

@@ -68,6 +68,9 @@
     <Compile Include="Controls\DotNetBarTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\Line.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\MainMenuEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -77,6 +80,7 @@
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
+    <Compile Include="Core\Helper\HostHelper.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\Hook.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\HotKeys\HotKeyArgs.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\HotKeys\HotKeySet.cs" />
@@ -123,6 +127,7 @@
     <Compile Include="Core\Helper\PlatformHelper.cs" />
     <Compile Include="Core\Helper\RemoteDesktopHelper.cs" />
     <Compile Include="Core\Helper\WindowHelper.cs" />
+    <Compile Include="Core\Utilities\Host.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Utilities\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
