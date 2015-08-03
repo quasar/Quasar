@@ -27,14 +27,14 @@ namespace xServer.Forms
             // Request the top-level node being referenced.
             RegistryKey key = Registry.CurrentUser;
 
-            TreeNode registryKeys = LoadSubKeyDirectories(key);
+            TreeNode registryKeys = LoadRootSubKeyDirectories(key);
             if ((registryKeys != null) && registryKeys.Nodes.Count >= 0)
             {
                 tvRegistryDirectory.Nodes.Add(registryKeys);
             }
         }
 
-        private TreeNode LoadSubKeyDirectories(RegistryKey key, int depth = 4)
+        private TreeNode LoadRootSubKeyDirectories(RegistryKey key, int depth = 4)
         {
             if (key != null && depth > 0)
             {
@@ -74,6 +74,51 @@ namespace xServer.Forms
                 {
                     return rootNode;
                 }
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        private TreeNode LoadSubKeyDirectories(RegistryKey key, int depth = 4)
+        {
+            if (key != null && depth > 0)
+            {
+                TreeNode subNode = null;
+
+                try
+                {
+                    subNode = new TreeNode(key.Name);
+
+                    foreach (string subKeyName in key.GetSubKeyNames())
+                    {
+                        try
+                        {
+                            using (RegistryKey SubKey = key.OpenSubKey(subKeyName))
+                            {
+                                if (SubKey != null)
+                                {
+                                    TreeNode lowerNode = LoadSubKeyDirectories(SubKey, depth--);
+
+                                    // Load more sub-key directories, but with decrementing levels of depth.
+                                    if (lowerNode != null)
+                                    {
+                                        subNode.Nodes.Add(lowerNode);
+                                    }
+                                }
+                            }
+                        }
+                        catch
+                        { }
+                    }
+                }
+                catch
+                {
+                    return null;
+                }
+
+                return subNode;
             }
             else
             {
