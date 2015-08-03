@@ -94,7 +94,7 @@ namespace xServer.Forms
             this.ctxtSurveillance,
             this.ctxtMiscellaneous});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
+            this.ctxtMenu.Size = new System.Drawing.Size(153, 114);
             // 
             // ctxtConnection
             // 
@@ -105,7 +105,7 @@ namespace xServer.Forms
             this.ctxtUninstall});
             this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
             this.ctxtConnection.Name = "ctxtConnection";
-            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
+            this.ctxtConnection.Size = new System.Drawing.Size(152, 22);
             this.ctxtConnection.Text = "Connection";
             // 
             // ctxtUpdate
@@ -154,7 +154,7 @@ namespace xServer.Forms
             this.ctxtActions});
             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
             this.ctxtSystem.Name = "ctxtSystem";
-            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
+            this.ctxtSystem.Size = new System.Drawing.Size(152, 22);
             this.ctxtSystem.Text = "System";
             // 
             // ctxtSystemInformation
@@ -207,7 +207,6 @@ namespace xServer.Forms
             // 
             // ctxtRegistryEditor
             // 
-            this.ctxtRegistryEditor.Enabled = false;
             this.ctxtRegistryEditor.Image = global::xServer.Properties.Resources.registry;
             this.ctxtRegistryEditor.Name = "ctxtRegistryEditor";
             this.ctxtRegistryEditor.Size = new System.Drawing.Size(178, 22);
@@ -262,7 +261,7 @@ namespace xServer.Forms
             this.ctxtKeylogger});
             this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
             this.ctxtSurveillance.Name = "ctxtSurveillance";
-            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
+            this.ctxtSurveillance.Size = new System.Drawing.Size(152, 22);
             this.ctxtSurveillance.Text = "Surveillance";
             // 
             // ctxtRemoteDesktop
@@ -297,7 +296,7 @@ namespace xServer.Forms
             this.ctxtShowMessagebox});
             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
+            this.ctxtMiscellaneous.Size = new System.Drawing.Size(152, 22);
             this.ctxtMiscellaneous.Text = "Miscellaneous";
             // 
             // ctxtRemoteExecute
@@ -746,7 +745,6 @@ namespace xServer.Forms
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Menu = this.mainMenu;
             this.MinimumSize = new System.Drawing.Size(680, 415);
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
