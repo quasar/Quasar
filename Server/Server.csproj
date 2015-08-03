@@ -346,6 +346,7 @@
     </Compile>
     <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRegistryEditor.cs">
       <SubType>Form</SubType>
     </Compile>
