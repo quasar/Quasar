@@ -19,6 +19,7 @@ namespace xServer.Forms
         private string _currentDir;
         private readonly Client _connectClient;
         private readonly ListViewColumnSorter _lvwColumnSorter;
+        private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
         public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
 
         public FrmFileManager(Client c)
@@ -317,13 +318,19 @@ namespace xServer.Forms
 
                         if (string.IsNullOrEmpty(remotePath)) return;
 
+                        _limitThreads.WaitOne();
                         for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                         {
-                            if (_connectClient.Value.FrmFm == null) return; // abort upload when from is closed
+                            if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
+                            {
+                                _limitThreads.Release();
+                                return; // abort upload when from is closed or client disconnected
+                            }
 
                             if (CanceledUploads.ContainsKey(id))
                             {
                                 UpdateTransferStatus(index, "Canceled", 0);
+                                _limitThreads.Release();
                                 return;
                             }
 
@@ -342,9 +349,11 @@ namespace xServer.Forms
                             else
                             {
                                 UpdateTransferStatus(index, "Error reading file", 0);
+                                _limitThreads.Release();
                                 return;
                             }
                         }
+                        _limitThreads.Release();
 
                         if (remoteDir == _currentDir)
                             RefreshDirectory();

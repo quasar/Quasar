@@ -7,6 +7,8 @@
         RightDown,
         RightUp,
         MoveCursor,
+        ScrollUp,
+        ScrollDown,
         None
     }
 }

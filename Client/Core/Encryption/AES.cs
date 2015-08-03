@@ -8,23 +8,29 @@ namespace xClient.Core.Encryption
     public static class AES
     {
         private const int IVLENGTH = 16;
+        private static byte[] _key;
 
-        public static string Encrypt(string input, string keyy)
+        public static void PreHashKey(string key)
         {
-            byte[] key, data = Encoding.UTF8.GetBytes(input), encdata;
+            using (var md5 = new MD5CryptoServiceProvider())
+            {
+                _key = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
+            }
+        }
+
+        public static string Encrypt(string input)
+        {
+            if (_key == null) throw new Exception("The key can not be null.");
+
+            byte[] data = Encoding.UTF8.GetBytes(input), encdata;
 
             try
             {
-                using (var md5 = new MD5CryptoServiceProvider())
-                {
-                    key = md5.ComputeHash(Encoding.UTF8.GetBytes(keyy));
-                }
-
                 using (var ms = new MemoryStream())
                 {
                     using (var rd = new RijndaelManaged())
                     {
-                        rd.Key = key;
+                        rd.Key = _key;
                         rd.GenerateIV();
                         byte[] iv = rd.IV;
 
@@ -51,26 +57,22 @@ namespace xClient.Core.Encryption
             {
                 encdata = null;
                 data = null;
-                key = null;
             }
         }
 
-        public static byte[] Encrypt(byte[] input, byte[] keyy)
+        public static byte[] Encrypt(byte[] input)
         {
-            byte[] key, data = input, encdata;
+            if (_key == null) throw new Exception("The key can not be null.");
+
+            byte[] data = input, encdata;
 
             try
             {
-                using (var md5 = new MD5CryptoServiceProvider())
-                {
-                    key = md5.ComputeHash(keyy);
-                }
-
                 using (var ms = new MemoryStream())
                 {
                     using (var rd = new RijndaelManaged())
                     {
-                        rd.Key = key;
+                        rd.Key = _key;
                         rd.GenerateIV();
                         byte[] iv = rd.IV;
 
@@ -97,22 +99,18 @@ namespace xClient.Core.Encryption
             {
                 encdata = null;
                 data = null;
-                key = null;
             }
         }
 
-        public static string Decrypt(string input, string keyy)
+        public static string Decrypt(string input)
         {
-            byte[] key, data;
+            if (_key == null) throw new Exception("The key can not be null.");
+
+            byte[] data;
             int i;
 
             try
             {
-                using (var md5 = new MD5CryptoServiceProvider())
-                {
-                    key = md5.ComputeHash(Encoding.UTF8.GetBytes(keyy));
-                }
-
                 using (var ms = new MemoryStream(Convert.FromBase64String(input)))
                 {
                     using (var rd = new RijndaelManaged())
@@ -120,7 +118,7 @@ namespace xClient.Core.Encryption
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
                         rd.IV = iv;
-                        rd.Key = key;
+                        rd.Key = _key;
 
                         using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
                         {
@@ -141,21 +139,17 @@ namespace xClient.Core.Encryption
             finally
             {
                 data = null;
-                key = null;
             }
         }
 
-        public static byte[] Decrypt(byte[] input, byte[] keyy)
+        public static byte[] Decrypt(byte[] input)
         {
-            byte[] key, temp, data;
+            if (_key == null) throw new Exception("The key can not be null.");
+
+            byte[] temp, data;
 
             try
             {
-                using (var md5 = new MD5CryptoServiceProvider())
-                {
-                    key = md5.ComputeHash(keyy);
-                }
-
                 using (var ms = new MemoryStream(input))
                 {
                     using (var rd = new RijndaelManaged())
@@ -163,7 +157,7 @@ namespace xClient.Core.Encryption
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
                         rd.IV = iv;
-                        rd.Key = key;
+                        rd.Key = _key;
 
                         using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
                         {
@@ -187,7 +181,6 @@ namespace xClient.Core.Encryption
             {
                 temp = null;
                 data = null;
-                key = null;
             }
         }
     }

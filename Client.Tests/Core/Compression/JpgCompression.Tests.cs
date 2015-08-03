@@ -8,7 +8,7 @@ namespace xClient.Tests.Core.Compression
     [TestClass]
     public class JpgCompressionTests
     {
-        [TestMethod]
+        [TestMethod, TestCategory("Compression")]
         public void CompressionTest()
         {
             var quality = Int64.MaxValue;

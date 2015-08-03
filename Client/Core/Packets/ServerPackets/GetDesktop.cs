@@ -1,6 +1,5 @@
 ﻿using ProtoBuf;
 using xClient.Core.Networking;
-using xClient.Enums;
 
 namespace xClient.Core.Packets.ServerPackets
 {
@@ -13,18 +12,14 @@ namespace xClient.Core.Packets.ServerPackets
         [ProtoMember(2)]
         public int Monitor { get; set; }
 
-        [ProtoMember(3)]
-        public RemoteDesktopAction Action { get; set; }
-
         public GetDesktop()
         {
         }
 
-        public GetDesktop(int quality, int monitor, RemoteDesktopAction action)
+        public GetDesktop(int quality, int monitor)
         {
             this.Quality = quality;
             this.Monitor = monitor;
-            this.Action = action;
         }
 
         public void Execute(Client client)

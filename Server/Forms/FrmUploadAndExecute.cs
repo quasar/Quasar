@@ -27,7 +27,7 @@ namespace xServer.Forms
             using (OpenFileDialog ofd = new OpenFileDialog())
             {
                 ofd.Multiselect = false;
-                ofd.Filter = "Executable (*.exe)|*.exe";
+                ofd.Filter = "Executable (*.exe)|*.exe|Batch (*.bat)|*.bat";
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
                     txtPath.Text = ofd.FileName;

