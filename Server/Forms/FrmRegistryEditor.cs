@@ -38,7 +38,7 @@ namespace xServer.Forms
         {
             if (key != null && depth > 0)
             {
-                TreeNode rootNode = new TreeNode(key.Name);
+                TreeNode rootNode = new TreeNode(key.Name) { Tag = key };
 
                 try
                 {
@@ -50,6 +50,8 @@ namespace xServer.Forms
 
                             using (RegistryKey SubKey = key.OpenSubKey(subKeyName))
                             {
+                                subNode.Tag = SubKey;
+
                                 if (SubKey != null)
                                 {
                                     TreeNode lowerNode = LoadSubKeyDirectories(SubKey, depth--);
