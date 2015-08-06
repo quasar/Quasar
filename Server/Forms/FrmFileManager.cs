@@ -54,16 +54,10 @@ namespace xServer.Forms
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            if (_connectClient != null && _connectClient.Value != null && _connectClient.Value.LastDirectorySeen)
             {
-                if (_connectClient.Value != null)
-                {
-                    if (_connectClient.Value.LastDirectorySeen)
-                    {
-                        _currentDir = cmbDrives.SelectedValue.ToString();
-                        RefreshDirectory();
-                    }
-                }
+                SetCurrentDir(cmbDrives.SelectedValue.ToString());
+                RefreshDirectory();
             }
         }
 
@@ -78,12 +72,12 @@ namespace xServer.Forms
                     case PathType.Back:
                         if (!_connectClient.Value.LastDirectorySeen) return;
 
-                        _currentDir = Path.GetFullPath(Path.Combine(_currentDir, @"..\"));
+                        SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
                         break;
                     case PathType.Directory:
                         if (!_connectClient.Value.LastDirectorySeen) return;
 
-                        _currentDir = GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text);
+                        SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
                         break;
                 }
 
@@ -509,10 +503,54 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Sets the current directory of the File Manager.
+        /// </summary>
+        /// <param name="path">The new path.</param>
+        public void SetCurrentDir(string path)
+        {
+            _currentDir = path;
+            try
+            {
+                txtPath.Invoke((MethodInvoker)delegate
+                {
+                    txtPath.Text = _currentDir;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        /// <summary>
+        /// Sets the status of the File Manager Form.
+        /// </summary>
+        /// <param name="text">The new status.</param>
+        /// <param name="setLastDirectorySeen">Sets LastDirectorySeen to true.</param>
+        public void SetStatus(string text, bool setLastDirectorySeen = false)
+        {
+            try
+            {
+                if (_connectClient.Value != null && setLastDirectorySeen)
+                {
+                    SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
+                    _connectClient.Value.LastDirectorySeen = true;
+                }
+                botStrip.Invoke((MethodInvoker)delegate
+                {
+                    stripLblStatus.Text = "Status: " + text;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
         private void RefreshDirectory()
         {
             if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.LastDirectorySeen == false) return;
             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+            SetStatus("Loading directory content...");
             _connectClient.Value.LastDirectorySeen = false;
         }
 

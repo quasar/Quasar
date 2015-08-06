@@ -349,7 +349,17 @@ namespace xServer.Core.Networking
                                     {
                                         if (_appendHeader)
                                         {
-                                            Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, headerLength);
+                                            try
+                                            {
+                                                Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset,
+                                                    headerLength);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                process = false;
+                                                Disconnect();
+                                                break;
+                                            }
                                             _payloadLen = BitConverter.ToInt32(_tempHeader, 0);
                                             _tempHeaderOffset = 0;
                                             _appendHeader = false;
@@ -375,7 +385,16 @@ namespace xServer.Core.Networking
                                 }
                                 else // _parentServer.HEADER_SIZE < _readableDataLen
                                 {
-                                    Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
+                                    try
+                                    {
+                                        Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
+                                    }
+                                    catch (Exception)
+                                    {
+                                        process = false;
+                                        Disconnect();
+                                        break;
+                                    }
                                     _tempHeaderOffset += _readableDataLen;
                                     _appendHeader = true;
                                     process = false;
@@ -395,9 +414,11 @@ namespace xServer.Core.Networking
                                 {
                                     Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, length);
                                 }
-                                catch
+                                catch (Exception)
                                 {
+                                    process = false;
                                     Disconnect();
+                                    break;
                                 }
 
                                 _writeOffset += length;
@@ -409,27 +430,31 @@ namespace xServer.Core.Networking
                                     if (encryptionEnabled)
                                         _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
+                                    bool isError = _payloadBuffer.Length == 0; // check if payload decryption failed
+
                                     if (_payloadBuffer.Length > 0)
                                     {
                                         if (compressionEnabled)
                                             _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
 
-                                        if (_payloadBuffer.Length > 0)
-                                        {
-                                            using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
-                                            {
-                                                IPacket packet =
-                                                    Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                        PrefixStyle.Fixed32);
-
-                                                OnClientRead(packet);
-                                            }
-                                        }
-                                        else // payload decompression failed
-                                            process = false;
+                                        isError = _payloadBuffer.Length == 0; // check if payload decompression failed
                                     }
-                                    else // payload decryption failed
+
+                                    if (isError)
+                                    {
                                         process = false;
+                                        Disconnect();
+                                        break;
+                                    }
+
+                                    using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
+                                    {
+                                        IPacket packet =
+                                            Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
+                                                PrefixStyle.Fixed32);
+
+                                        OnClientRead(packet);
+                                    }
 
                                     _receiveState = ReceiveType.Header;
                                     _payloadBuffer = null;

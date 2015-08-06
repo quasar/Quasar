@@ -59,7 +59,6 @@ namespace xServer.Core.Commands
             if (index < 0)
                 return;
 
-
             if (!string.IsNullOrEmpty(packet.CustomMessage))
             {
                 if (client.Value.FrmFm == null) // abort download when form is closed
@@ -96,6 +95,13 @@ namespace xServer.Core.Commands
                 RenamedFiles.Remove(packet.ID);
                 client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
             }
+        }
+
+        public static void HandleSetStatusFileManager(Client client, SetStatusFileManager packet)
+        {
+            if (client.Value == null || client.Value.FrmFm == null) return;
+
+            client.Value.FrmFm.SetStatus(packet.Message, packet.SetLastDirectorySeen);
         }
     }
 }

@@ -45,13 +45,15 @@ namespace xServer.Forms
             this.ctxtOpenDirectory = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListDirectory = new System.Windows.Forms.ImageList(this.components);
             this.botStrip = new System.Windows.Forms.StatusStrip();
-            this.stripLblHint = new System.Windows.Forms.ToolStripStatusLabel();
+            this.stripLblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.ctxtMenu2 = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtCancel = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
+            this.lblPath = new System.Windows.Forms.Label();
+            this.txtPath = new System.Windows.Forms.TextBox();
             this.lstDirectory = new xServer.Controls.AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -177,19 +179,18 @@ namespace xServer.Forms
             // botStrip
             // 
             this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.stripLblHint});
+            this.stripLblStatus});
             this.botStrip.Location = new System.Drawing.Point(0, 456);
             this.botStrip.Name = "botStrip";
             this.botStrip.Size = new System.Drawing.Size(858, 22);
             this.botStrip.TabIndex = 3;
             this.botStrip.Text = "statusStrip1";
             // 
-            // stripLblHint
+            // stripLblStatus
             // 
-            this.stripLblHint.Name = "stripLblHint";
-            this.stripLblHint.Size = new System.Drawing.Size(485, 17);
-            this.stripLblHint.Text = "Hint! You can drag && drop files from your desktop to upload them to the current " +
-    "directory.";
+            this.stripLblStatus.Name = "stripLblStatus";
+            this.stripLblStatus.Size = new System.Drawing.Size(131, 17);
+            this.stripLblStatus.Text = "Status: Loading drives...";
             // 
             // ctxtMenu2
             // 
@@ -240,6 +241,8 @@ namespace xServer.Forms
             // tabFileExplorer
             // 
             this.tabFileExplorer.BackColor = System.Drawing.SystemColors.Control;
+            this.tabFileExplorer.Controls.Add(this.lblPath);
+            this.tabFileExplorer.Controls.Add(this.txtPath);
             this.tabFileExplorer.Controls.Add(this.lstDirectory);
             this.tabFileExplorer.Controls.Add(this.lblDrive);
             this.tabFileExplorer.Controls.Add(this.cmbDrives);
@@ -249,6 +252,27 @@ namespace xServer.Forms
             this.tabFileExplorer.Size = new System.Drawing.Size(714, 448);
             this.tabFileExplorer.TabIndex = 0;
             this.tabFileExplorer.Text = "File Explorer";
+            // 
+            // lblPath
+            // 
+            this.lblPath.AutoSize = true;
+            this.lblPath.Location = new System.Drawing.Point(279, 12);
+            this.lblPath.Name = "lblPath";
+            this.lblPath.Size = new System.Drawing.Size(75, 13);
+            this.lblPath.TabIndex = 4;
+            this.lblPath.Text = "Remote Path:";
+            // 
+            // txtPath
+            // 
+            this.txtPath.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtPath.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtPath.Location = new System.Drawing.Point(360, 8);
+            this.txtPath.Name = "txtPath";
+            this.txtPath.ReadOnly = true;
+            this.txtPath.Size = new System.Drawing.Size(346, 22);
+            this.txtPath.TabIndex = 3;
+            this.txtPath.Text = "\\";
             // 
             // lstDirectory
             // 
@@ -430,6 +454,8 @@ namespace xServer.Forms
         private AeroListView lstTransfers;
         private System.Windows.Forms.StatusStrip botStrip;
         private System.Windows.Forms.ToolStripMenuItem ctxtRemove;
-        private System.Windows.Forms.ToolStripStatusLabel stripLblHint;
+        private System.Windows.Forms.ToolStripStatusLabel stripLblStatus;
+        private System.Windows.Forms.Label lblPath;
+        private System.Windows.Forms.TextBox txtPath;
     }
 }

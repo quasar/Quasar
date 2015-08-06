@@ -30,7 +30,10 @@ namespace xServer.Core.Commands
             }
 
             if (client.Value != null && client.Value.FrmFm != null)
+            {
                 client.Value.FrmFm.AddDrives(drives);
+                client.Value.FrmFm.SetStatus("Ready");
+            }
         }
 
         public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
@@ -98,7 +101,11 @@ namespace xServer.Core.Commands
                 }
 
                 if (client.Value != null)
+                {
                     client.Value.LastDirectorySeen = true;
+                    if (client.Value.FrmFm != null)
+                        client.Value.FrmFm.SetStatus("Ready");
+                }
 
                 lock (_isAddingLock)
                 {
