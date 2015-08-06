@@ -341,15 +341,15 @@ namespace xServer.Core.Networking
                             {
                                 if (_readableDataLen >= _parentServer.HEADER_SIZE)
                                 { // we can read the header
-                                    int size = (_appendHeader) ?
-                                        _parentServer.HEADER_SIZE - _tempHeaderOffset
+                                    int headerLength = (_appendHeader)
+                                        ? _parentServer.HEADER_SIZE - _tempHeaderOffset
                                         : _parentServer.HEADER_SIZE;
 
                                     try
                                     {
                                         if (_appendHeader)
                                         {
-                                            Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, size);
+                                            Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, headerLength);
                                             _payloadLen = BitConverter.ToInt32(_tempHeader, 0);
                                             _tempHeaderOffset = 0;
                                             _appendHeader = false;
@@ -369,8 +369,8 @@ namespace xServer.Core.Networking
                                         break;
                                     }
 
-                                    _readableDataLen -= size;
-                                    _readOffset += size;
+                                    _readableDataLen -= headerLength;
+                                    _readOffset += headerLength;
                                     _receiveState = ReceiveType.Payload;
                                 }
                                 else // _parentServer.HEADER_SIZE < _readableDataLen
@@ -387,11 +387,9 @@ namespace xServer.Core.Networking
                                 if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
                                     _payloadBuffer = new byte[_payloadLen];
 
-                                int length = _readableDataLen;
-                                if (_writeOffset + _readableDataLen >= _payloadLen)
-                                {
-                                    length = _payloadLen - _writeOffset;
-                                }
+                                int length = (_writeOffset + _readableDataLen >= _payloadLen)
+                                    ? _payloadLen - _writeOffset
+                                    : _readableDataLen;
 
                                 try
                                 {
