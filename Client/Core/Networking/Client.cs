@@ -132,7 +132,7 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The buffer size for receiving data in bytes.
         /// </summary>
-        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return 1024 * 16; } } // 16KB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -147,7 +147,12 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The header size in bytes.
         /// </summary>
-        public int HEADER_SIZE { get { return 3; } } // 3B
+        public int HEADER_SIZE { get { return 4; } } // 4B
+
+        /// <summary>
+        /// The maximum size of a packet in bytes.
+        /// </summary>
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// Returns an array containing all of the proxy clients of this client.
@@ -392,22 +397,22 @@ namespace xClient.Core.Networking
                                         if (_appendHeader)
                                         {
                                             Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, size);
-                                            _payloadLen = (int)_tempHeader[0] | _tempHeader[1] << 8 | _tempHeader[2] << 16;
+                                            _payloadLen = BitConverter.ToInt32(_tempHeader, 0);
                                             _tempHeaderOffset = 0;
                                             _appendHeader = false;
                                         }
                                         else
                                         {
-                                            _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 |
-                                                readBuffer[_readOffset + 2] << 16;
+                                            _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                         }
 
-                                        if (_payloadLen <= 0)
+                                        if (_payloadLen <= 0 || _payloadLen > MAX_PACKET_SIZE)
                                             throw new Exception("invalid header");
                                     }
                                     catch (Exception)
                                     {
                                         process = false;
+                                        Disconnect();
                                         break;
                                     }
 
@@ -417,9 +422,9 @@ namespace xClient.Core.Networking
                                 }
                                 else // _parentServer.HEADER_SIZE < _readableDataLen
                                 {
-                                    _appendHeader = true;
                                     Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
                                     _tempHeaderOffset += _readableDataLen;
+                                    _appendHeader = true;
                                     process = false;
                                 }
                                 break;
@@ -573,26 +578,9 @@ namespace xClient.Core.Networking
                     payload = _sendBuffers.Dequeue();
                 }
 
-                if (compressionEnabled)
-                    payload = SafeQuickLZ.Compress(payload);
-
-                if (encryptionEnabled)
-                    payload = AES.Encrypt(payload);
-
-                byte[] header = new byte[]
-                {
-                    (byte)payload.Length,
-                    (byte)(payload.Length >> 8),
-                    (byte)(payload.Length >> 16)
-                };
-
-                byte[] data = new byte[payload.Length + HEADER_SIZE];
-                Array.Copy(header, data, header.Length);
-                Array.Copy(payload, 0, data, HEADER_SIZE, payload.Length);
-
                 try
                 {
-                    _handle.Send(data);
+                    _handle.Send(BuildPacket(payload));
                 }
                 catch (Exception ex)
                 {
@@ -601,6 +589,20 @@ namespace xClient.Core.Networking
                     return;
                 }
             }
+        }
+
+        private byte[] BuildPacket(byte[] payload)
+        {
+            if (compressionEnabled)
+                payload = SafeQuickLZ.Compress(payload);
+
+            if (encryptionEnabled)
+                payload = AES.Encrypt(payload);
+
+            byte[] packet = new byte[payload.Length + HEADER_SIZE];
+            Array.Copy(BitConverter.GetBytes(payload.Length), packet, HEADER_SIZE);
+            Array.Copy(payload, 0, packet, HEADER_SIZE, payload.Length);
+            return packet;
         }
 
         private void SendCleanup(bool clear = false)

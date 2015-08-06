@@ -350,22 +350,22 @@ namespace xServer.Core.Networking
                                         if (_appendHeader)
                                         {
                                             Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, size);
-                                            _payloadLen = (int)_tempHeader[0] | _tempHeader[1] << 8 | _tempHeader[2] << 16;
+                                            _payloadLen = BitConverter.ToInt32(_tempHeader, 0);
                                             _tempHeaderOffset = 0;
                                             _appendHeader = false;
                                         }
                                         else
                                         {
-                                            _payloadLen = (int)readBuffer[_readOffset] | readBuffer[_readOffset + 1] << 8 |
-                                                readBuffer[_readOffset + 2] << 16;
+                                            _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                         }
 
-                                        if (_payloadLen <= 0)
+                                        if (_payloadLen <= 0 || _payloadLen > _parentServer.MAX_PACKET_SIZE)
                                             throw new Exception("invalid header");
                                     }
                                     catch (Exception)
                                     {
                                         process = false;
+                                        Disconnect();
                                         break;
                                     }
 
@@ -375,9 +375,9 @@ namespace xServer.Core.Networking
                                 }
                                 else // _parentServer.HEADER_SIZE < _readableDataLen
                                 {
-                                    _appendHeader = true;
                                     Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
                                     _tempHeaderOffset += _readableDataLen;
+                                    _appendHeader = true;
                                     process = false;
                                 }
                                 break;
@@ -531,28 +531,11 @@ namespace xServer.Core.Networking
                     payload = _sendBuffers.Dequeue();
                 }
 
-                if (compressionEnabled)
-                    payload = SafeQuickLZ.Compress(payload);
-
-                if (encryptionEnabled)
-                    payload = AES.Encrypt(payload);
-
-                byte[] header = new byte[]
-                {
-                    (byte)payload.Length,
-                    (byte)(payload.Length >> 8),
-                    (byte)(payload.Length >> 16)
-                };
-
-                byte[] data = new byte[payload.Length + _parentServer.HEADER_SIZE];
-                Array.Copy(header, data, header.Length);
-                Array.Copy(payload, 0, data, _parentServer.HEADER_SIZE, payload.Length);
-
-                _parentServer.BytesSent += data.Length;
-
                 try
                 {
-                    _handle.Send(data);
+                    var packet = BuildPacket(payload);
+                    _parentServer.BytesSent += packet.Length;
+                    _handle.Send(packet);
                 }
                 catch (Exception)
                 {
@@ -561,6 +544,20 @@ namespace xServer.Core.Networking
                     return;
                 }
             }
+        }
+
+        private byte[] BuildPacket(byte[] payload)
+        {
+            if (compressionEnabled)
+                payload = SafeQuickLZ.Compress(payload);
+
+            if (encryptionEnabled)
+                payload = AES.Encrypt(payload);
+
+            byte[] packet = new byte[payload.Length + _parentServer.HEADER_SIZE];
+            Array.Copy(BitConverter.GetBytes(payload.Length), packet, _parentServer.HEADER_SIZE);
+            Array.Copy(payload, 0, packet, _parentServer.HEADER_SIZE, payload.Length);
+            return packet;
         }
 
         private void SendCleanup(bool clear = false)

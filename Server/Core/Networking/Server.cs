@@ -134,7 +134,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The buffer size for receiving data in bytes.
         /// </summary>
-        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return 1024 * 16; } } // 16KB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -149,7 +149,12 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The header size in bytes.
         /// </summary>
-        public int HEADER_SIZE { get { return 3; } } // 3B
+        public int HEADER_SIZE { get { return 4; } } // 4B
+
+        /// <summary>
+        /// The maximum size of a packet in bytes.
+        /// </summary>
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
