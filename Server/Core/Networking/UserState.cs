@@ -32,14 +32,36 @@ namespace xServer.Core.Networking
         public FrmPasswordRecovery FrmPass { get; set; }
         
         public bool IsAuthenticated { get; set; }
-        public bool LastDirectorySeen { get; set; }
+        public bool ReceivedLastDirectory { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
+
+        public bool ProcessingDirectory
+        {
+            get
+            {
+                lock (_processingDirectoryLock)
+                {
+                    return _processingDirectory;
+                }
+            }
+            set
+            {
+                lock (_processingDirectoryLock)
+                {
+                    _processingDirectory = value;
+                }
+            }
+        }
+        private bool _processingDirectory;
+        private readonly object _processingDirectoryLock;
 
         public UserState()
         {
             IsAuthenticated = false;
-            LastDirectorySeen = true;
+            ReceivedLastDirectory = true;
+            _processingDirectory = false;
+            _processingDirectoryLock = new object();
         }
 
         public void Dispose()

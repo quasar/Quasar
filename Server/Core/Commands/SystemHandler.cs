@@ -43,11 +43,8 @@ namespace xServer.Core.Commands
 
             new Thread(() =>
             {
-                lock (_isAddingLock)
-                {
-                    if (_isAdding) return;
-                    _isAdding = true;
-                }
+                if (client.Value.ProcessingDirectory) return;
+                client.Value.ProcessingDirectory = true;
 
                 client.Value.FrmFm.ClearFileBrowser();
 
@@ -102,14 +99,10 @@ namespace xServer.Core.Commands
 
                 if (client.Value != null)
                 {
-                    client.Value.LastDirectorySeen = true;
+                    client.Value.ReceivedLastDirectory = true;
+                    client.Value.ProcessingDirectory = false;
                     if (client.Value.FrmFm != null)
                         client.Value.FrmFm.SetStatus("Ready");
-                }
-
-                lock (_isAddingLock)
-                {
-                    _isAdding = false;
                 }
             }).Start();
         }

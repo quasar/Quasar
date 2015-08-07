@@ -54,7 +54,7 @@ namespace xServer.Forms
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_connectClient != null && _connectClient.Value != null && _connectClient.Value.LastDirectorySeen)
+            if (_connectClient != null && _connectClient.Value != null && _connectClient.Value.ReceivedLastDirectory)
             {
                 SetCurrentDir(cmbDrives.SelectedValue.ToString());
                 RefreshDirectory();
@@ -70,12 +70,12 @@ namespace xServer.Forms
                 switch (type)
                 {
                     case PathType.Back:
-                        if (!_connectClient.Value.LastDirectorySeen) return;
+                        if (!_connectClient.Value.ReceivedLastDirectory) return;
 
                         SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
                         break;
                     case PathType.Directory:
-                        if (!_connectClient.Value.LastDirectorySeen) return;
+                        if (!_connectClient.Value.ReceivedLastDirectory) return;
 
                         SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
                         break;
@@ -625,7 +625,7 @@ namespace xServer.Forms
                 if (_connectClient.Value != null && setLastDirectorySeen)
                 {
                     SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
-                    _connectClient.Value.LastDirectorySeen = true;
+                    _connectClient.Value.ReceivedLastDirectory = true;
                 }
                 botStrip.Invoke((MethodInvoker)delegate
                 {
@@ -639,10 +639,10 @@ namespace xServer.Forms
 
         private void RefreshDirectory()
         {
-            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.LastDirectorySeen == false) return;
+            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.ReceivedLastDirectory == false) return;
             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
             SetStatus("Loading directory content...");
-            _connectClient.Value.LastDirectorySeen = false;
+            _connectClient.Value.ReceivedLastDirectory = false;
         }
 
         private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)
