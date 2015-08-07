@@ -52,6 +52,7 @@ namespace xServer.Forms
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
+            this.btnRefresh = new System.Windows.Forms.Button();
             this.lblPath = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.lstDirectory = new xServer.Controls.AeroListView();
@@ -66,6 +67,7 @@ namespace xServer.Forms
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.ctxtUpload = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenu.SuspendLayout();
             this.botStrip.SuspendLayout();
             this.ctxtMenu2.SuspendLayout();
@@ -78,6 +80,7 @@ namespace xServer.Forms
             // 
             this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.ctxtDownload,
+            this.ctxtUpload,
             this.ctxtLine2,
             this.ctxtExecute,
             this.ctxtRename,
@@ -88,10 +91,11 @@ namespace xServer.Forms
             this.ctxtRefresh,
             this.ctxtOpenDirectory});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(240, 176);
+            this.ctxtMenu.Size = new System.Drawing.Size(240, 220);
             // 
             // ctxtDownload
             // 
+            this.ctxtDownload.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ctxtDownload.Image = global::xServer.Properties.Resources.download;
             this.ctxtDownload.Name = "ctxtDownload";
             this.ctxtDownload.Size = new System.Drawing.Size(239, 22);
@@ -241,6 +245,7 @@ namespace xServer.Forms
             // tabFileExplorer
             // 
             this.tabFileExplorer.BackColor = System.Drawing.SystemColors.Control;
+            this.tabFileExplorer.Controls.Add(this.btnRefresh);
             this.tabFileExplorer.Controls.Add(this.lblPath);
             this.tabFileExplorer.Controls.Add(this.txtPath);
             this.tabFileExplorer.Controls.Add(this.lstDirectory);
@@ -252,6 +257,19 @@ namespace xServer.Forms
             this.tabFileExplorer.Size = new System.Drawing.Size(714, 448);
             this.tabFileExplorer.TabIndex = 0;
             this.tabFileExplorer.Text = "File Explorer";
+            // 
+            // btnRefresh
+            // 
+            this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
+            this.btnRefresh.Image = global::xServer.Properties.Resources.refresh;
+            this.btnRefresh.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
+            this.btnRefresh.Location = new System.Drawing.Point(682, 8);
+            this.btnRefresh.Name = "btnRefresh";
+            this.btnRefresh.Size = new System.Drawing.Size(22, 22);
+            this.btnRefresh.TabIndex = 5;
+            this.btnRefresh.UseVisualStyleBackColor = true;
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             // 
             // lblPath
             // 
@@ -270,7 +288,7 @@ namespace xServer.Forms
             this.txtPath.Location = new System.Drawing.Point(360, 8);
             this.txtPath.Name = "txtPath";
             this.txtPath.ReadOnly = true;
-            this.txtPath.Size = new System.Drawing.Size(346, 22);
+            this.txtPath.Size = new System.Drawing.Size(323, 22);
             this.txtPath.TabIndex = 3;
             this.txtPath.Text = "\\";
             // 
@@ -390,6 +408,14 @@ namespace xServer.Forms
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 337;
             // 
+            // ctxtUpload
+            // 
+            this.ctxtUpload.Image = global::xServer.Properties.Resources.upload;
+            this.ctxtUpload.Name = "ctxtUpload";
+            this.ctxtUpload.Size = new System.Drawing.Size(239, 22);
+            this.ctxtUpload.Text = "Upload";
+            this.ctxtUpload.Click += new System.EventHandler(this.ctxtUpload_Click);
+            // 
             // FrmFileManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -457,5 +483,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripStatusLabel stripLblStatus;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.TextBox txtPath;
+        private System.Windows.Forms.Button btnRefresh;
+        private System.Windows.Forms.ToolStripMenuItem ctxtUpload;
     }
 }
