@@ -73,15 +73,15 @@ namespace xServer.Forms
                         if (!_connectClient.Value.ReceivedLastDirectory) return;
 
                         SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
+                        RefreshDirectory();
                         break;
                     case PathType.Directory:
                         if (!_connectClient.Value.ReceivedLastDirectory) return;
 
                         SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
+                        RefreshDirectory();
                         break;
                 }
-
-                RefreshDirectory();
             }
         }
 
