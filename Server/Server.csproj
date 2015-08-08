@@ -78,6 +78,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
@@ -121,7 +122,9 @@
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\MouseStruct.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\Point.cs" />
     <Compile Include="Core\Helper\MouseKeyHook\WinApi\ThreadNativeMethods.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
@@ -129,6 +132,7 @@
     <Compile Include="Core\Helper\WindowHelper.cs" />
     <Compile Include="Core\Utilities\Host.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Utilities\RegistryKeyEx.cs" />
     <Compile Include="Core\Utilities\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
@@ -294,6 +298,7 @@
     <Compile Include="Core\Networking\UserState.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\RegistrySearchAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Forms\FrmAbout.cs">

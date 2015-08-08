@@ -35,14 +35,22 @@
             // 
             // tvRegistryDirectory
             // 
+            this.tvRegistryDirectory.HideSelection = false;
             this.tvRegistryDirectory.Location = new System.Drawing.Point(4, 5);
             this.tvRegistryDirectory.Name = "tvRegistryDirectory";
             this.tvRegistryDirectory.ShowPlusMinus = false;
             this.tvRegistryDirectory.Size = new System.Drawing.Size(155, 402);
             this.tvRegistryDirectory.TabIndex = 0;
+            this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
+            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
+            this.tvRegistryDirectory.AfterSelect += new System.Windows.Forms.TreeViewEventHandler(this.tvRegistryDirectory_AfterSelect);
+            this.tvRegistryDirectory.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvRegistryDirectory_NodeMouseClick);
+            this.tvRegistryDirectory.KeyDown += new System.Windows.Forms.KeyEventHandler(this.tvRegistryDirectory_KeyDown);
+            this.tvRegistryDirectory.MouseUp += new System.Windows.Forms.MouseEventHandler(this.tvRegistryDirectory_MouseUp);
             // 
             // lstRegistryKeys
             // 
+            this.lstRegistryKeys.GridLines = true;
             this.lstRegistryKeys.Location = new System.Drawing.Point(163, 5);
             this.lstRegistryKeys.Name = "lstRegistryKeys";
             this.lstRegistryKeys.Size = new System.Drawing.Size(526, 402);
@@ -63,6 +71,7 @@
             this.Name = "FrmRegistryEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "xRAT 2.0 - Registry Editor";
+            this.Load += new System.EventHandler(this.FrmRegistryEditor_Load);
             this.ResumeLayout(false);
 
         }
