@@ -9,7 +9,7 @@ xRAT 2.0 is a fast and light-weight remote administration tool coded in C#. Prov
 Features
 ---
 * Buffered TCP/IP network stream
-* Fast Serializer for packets (NetSerializer)
+* Fast network serialization (NetSerializer)
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
@@ -26,9 +26,9 @@ Features
 * Upload & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
-* Keylogger
-* Reverse SOCKS5/HTTPS Proxy
-* Password Recovery
+* Keylogger (Unicode Support)
+* Reverse Proxy (SOCKS5)
+* Password Recovery (Common Browsers)
 
 Requirements
 ---
