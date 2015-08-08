@@ -211,9 +211,9 @@ namespace xServer.Forms
             this.lblProxyInfo.AutoSize = true;
             this.lblProxyInfo.Location = new System.Drawing.Point(23, 51);
             this.lblProxyInfo.Name = "lblProxyInfo";
-            this.lblProxyInfo.Size = new System.Drawing.Size(346, 13);
+            this.lblProxyInfo.Size = new System.Drawing.Size(312, 13);
             this.lblProxyInfo.TabIndex = 5;
-            this.lblProxyInfo.Text = "Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:3128 (no user/pass)";
+            this.lblProxyInfo.Text = "Connect to this SOCKS5 Proxy: 127.0.0.1:3128 (no user/pass)";
             // 
             // label1
             // 
