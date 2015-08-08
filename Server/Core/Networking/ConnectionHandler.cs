@@ -120,7 +120,7 @@ namespace xServer.Core.Networking
 
             _server = new Server();
 
-            _server.AddTypesToSerializer(typeof(IPacket), new Type[]
+            _server.AddTypesToSerializer(new Type[]
             {
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),

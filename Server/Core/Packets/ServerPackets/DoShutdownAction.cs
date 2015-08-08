@@ -1,13 +1,12 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoShutdownAction : IPacket
     {
-        [ProtoMember(1)]
         public ShutdownAction Action { get; set; }
 
         public DoShutdownAction()

@@ -1,13 +1,12 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 using xClient.Enums;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class SetUserStatus : IPacket
     {
-        [ProtoMember(1)]
         public UserStatus Message { get; set; }
 
         public SetUserStatus()

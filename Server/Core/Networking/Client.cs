@@ -1,15 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ProtoBuf;
-using ProtoBuf.Meta;
 using xServer.Core.Compression;
 using xServer.Core.Encryption;
 using xServer.Core.Extensions;
+using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
@@ -216,6 +214,11 @@ namespace xServer.Core.Networking
         /// </summary>
         private bool _appendHeader;
 
+        /// <summary>
+        /// The packet serializer.
+        /// </summary>
+        private Serializer _serializer;
+
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
@@ -228,7 +231,8 @@ namespace xServer.Core.Networking
             try
             {
                 _parentServer = server;
-                AddTypesToSerializer(typeof(IPacket), packets);
+                AddTypesToSerializer(packets);
+                if (_serializer == null) throw new Exception("Serializer not initialized");
                 Initialize();
 
                 _handle = sock;
@@ -251,7 +255,6 @@ namespace xServer.Core.Networking
 
         private void Initialize()
         {
-            AddTypeToSerializer(typeof(IPacket), typeof(UnknownPacket));
             Value = new UserState();
         }
 
@@ -449,9 +452,7 @@ namespace xServer.Core.Networking
 
                                     using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                     {
-                                        IPacket packet =
-                                            Serializer.DeserializeWithLengthPrefix<IPacket>(deserialized,
-                                                PrefixStyle.Fixed32);
+                                        IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
 
                                         OnClientRead(packet);
                                     }
@@ -494,7 +495,7 @@ namespace xServer.Core.Networking
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        Serializer.SerializeWithLengthPrefix<T>(ms, packet, PrefixStyle.Fixed32);
+                        _serializer.Serialize(ms, packet);
 
                         byte[] payload = ms.ToArray();
 
@@ -625,30 +626,12 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
-        /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
-        /// <param name="type">Type to be added</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
-            if (type == null || parent == null)
-                throw new ArgumentNullException();
-
-            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
-
-            if (!isAlreadyAdded)
-                RuntimeTypeModel.Default[parent].AddSubType(_typeIndex += 1, type);
-        }
-
-        /// <summary>
         /// Adds Types to the serializer.
         /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
+        public void AddTypesToSerializer(Type[] types)
         {
-            foreach (Type type in types)
-                AddTypeToSerializer(parent, type);
+            _serializer = new Serializer(types);
         }
     }
 }

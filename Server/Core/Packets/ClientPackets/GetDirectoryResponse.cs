@@ -1,18 +1,15 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetDirectoryResponse : IPacket
     {
-        [ProtoMember(1)]
         public string[] Files { get; set; }
 
-        [ProtoMember(2)]
         public string[] Folders { get; set; }
 
-        [ProtoMember(3)]
         public long[] FilesSize { get; set; }
 
         public GetDirectoryResponse()

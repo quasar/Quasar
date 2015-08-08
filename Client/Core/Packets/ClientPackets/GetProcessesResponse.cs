@@ -1,18 +1,15 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetProcessesResponse : IPacket
     {
-        [ProtoMember(1)]
         public string[] Processes { get; set; }
 
-        [ProtoMember(2)]
         public int[] IDs { get; set; }
 
-        [ProtoMember(3)]
         public string[] Titles { get; set; }
 
         public GetProcessesResponse()

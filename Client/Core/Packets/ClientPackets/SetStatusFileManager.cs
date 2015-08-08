@@ -1,15 +1,13 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class SetStatusFileManager : IPacket
     {
-        [ProtoMember(1)]
         public string Message { get; set; }
 
-        [ProtoMember(2)]
         public bool SetLastDirectorySeen { get; set; }
 
         public SetStatusFileManager()

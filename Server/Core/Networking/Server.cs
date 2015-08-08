@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using xServer.Core.Networking.Utilities;
@@ -225,6 +226,8 @@ namespace xServer.Core.Networking
         /// <param name="port">Port to listen for clients on.</param>
         public void Listen(ushort port)
         {
+            if (PacketTypes.Count == 0) throw new Exception("No packet types added");
+
             this.Port = port;
             try
             {
@@ -272,27 +275,12 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
-        /// </summary>
-        /// <param name="parent">The parent type.</param>
-        /// <param name="type">Type to be added.</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
-            if (type == null || parent == null)
-                throw new ArgumentNullException();
-
-            PacketTypes.Add(type);
-        }
-
-        /// <summary>
         /// Adds Types to the serializer.
         /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
+        public void AddTypesToSerializer(Type[] types)
         {
-            foreach (Type type in types)
-                AddTypeToSerializer(parent, type);
+            PacketTypes.AddRange(types.Where(t => t != null));
         }
 
         /// <summary>

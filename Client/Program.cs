@@ -54,7 +54,7 @@ namespace xClient
         {
             ConnectClient = new Client();
 
-            ConnectClient.AddTypesToSerializer(typeof (IPacket), new Type[]
+            ConnectClient.AddTypesToSerializer(new Type[]
             {
                 typeof (Core.Packets.ServerPackets.GetAuthentication),
                 typeof (Core.Packets.ServerPackets.DoClientDisconnect),

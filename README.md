@@ -9,7 +9,7 @@ xRAT 2.0 is a fast and light-weight remote administration tool coded in C#. Prov
 Features
 ---
 * Buffered TCP/IP network stream
-* Protocol Buffers to send & receive serialized data
+* Fast Serializer for packets (NetSerializer)
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
@@ -78,16 +78,16 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 
 Credits
 ---
-Protocol Buffers - Google's data interchange format  
-Copyright (c) 2008 Google Inc.  
-https://developers.google.com/protocol-buffers/
+NetSerializer  
+Copyright (c) 2015 Tomi Valkeinen  
+https://github.com/tomba/netserializer
 
 ResourceLib  
-Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
+Copyright (c) 2008-2013 Daniel Doubrovkine, Vestris Inc.  
 https://github.com/dblock/resourcelib
 
 GlobalMouseKeyHook  
-Copyright (c) 2004-2015, George Mamaladze  
+Copyright (c) 2004-2015 George Mamaladze  
 https://github.com/gmamaladze/globalmousekeyhook
 
 Mono.Cecil  

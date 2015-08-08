@@ -1,12 +1,11 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetSystemInfoResponse : IPacket
     {
-        [ProtoMember(1)]
         public string[] SystemInfos { get; set; }
 
         public GetSystemInfoResponse()
