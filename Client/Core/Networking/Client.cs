@@ -668,7 +668,12 @@ namespace xClient.Core.Networking
                             proxy.Disconnect();
                     }
                 }
-                Commands.CommandHandler.StreamCodec = null;
+
+                if (Commands.CommandHandler.StreamCodec != null)
+                {
+                    Commands.CommandHandler.StreamCodec.Dispose();
+                    Commands.CommandHandler.StreamCodec = null;
+                }
             }
         }
 

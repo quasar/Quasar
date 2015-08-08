@@ -93,12 +93,13 @@ namespace xServer.Core.Networking
                         FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
                     if (FrmPass != null)
                         FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
-                    if (StreamCodec != null)
-                        StreamCodec.Dispose();
                 }
                 catch (InvalidOperationException)
                 {
                 }
+
+                if (StreamCodec != null)
+                    StreamCodec.Dispose();
             }
         }
     }
