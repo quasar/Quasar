@@ -36,7 +36,6 @@
             this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.rbSystem = new System.Windows.Forms.RadioButton();
             this.rbProgramFiles = new System.Windows.Forms.RadioButton();
-            this.chkElevation = new System.Windows.Forms.CheckBox();
             this.chkIconChange = new System.Windows.Forms.CheckBox();
             this.ctxtMenuHosts = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
@@ -189,18 +188,6 @@
             this.rbProgramFiles.UseVisualStyleBackColor = true;
             this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
-            // chkElevation
-            // 
-            this.chkElevation.AutoSize = true;
-            this.chkElevation.Location = new System.Drawing.Point(23, 119);
-            this.chkElevation.Name = "chkElevation";
-            this.chkElevation.Size = new System.Drawing.Size(147, 17);
-            this.chkElevation.TabIndex = 5;
-            this.chkElevation.Text = "Enable Admin Elevation";
-            this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
-            this.chkElevation.UseVisualStyleBackColor = true;
-            this.chkElevation.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
-            // 
             // chkIconChange
             // 
             this.chkIconChange.AutoSize = true;
@@ -311,6 +298,7 @@
             this.txtTag.Size = new System.Drawing.Size(203, 22);
             this.txtTag.TabIndex = 3;
             this.txtTag.Text = "Office04";
+            this.txtTag.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // label7
             // 
@@ -988,7 +976,6 @@
             this.additionalTab.Controls.Add(this.line9);
             this.additionalTab.Controls.Add(this.label12);
             this.additionalTab.Controls.Add(this.chkKeylogger);
-            this.additionalTab.Controls.Add(this.chkElevation);
             this.additionalTab.Controls.Add(this.chkIconChange);
             this.additionalTab.Location = new System.Drawing.Point(140, 4);
             this.additionalTab.Name = "additionalTab";
@@ -1123,7 +1110,6 @@
         private System.Windows.Forms.PictureBox picUAC1;
         private System.Windows.Forms.PictureBox picUAC2;
         private System.Windows.Forms.ToolTip tooltip;
-        private System.Windows.Forms.CheckBox chkElevation;
         private System.Windows.Forms.CheckBox chkIconChange;
         private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Label lblDescription;

@@ -14,7 +14,6 @@ Features
 * Multi-Threaded
 * UPnP Support
 * No-Ip.com Support
-* Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
 * Task Manager

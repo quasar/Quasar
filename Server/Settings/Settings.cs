@@ -40,7 +40,7 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("ShowToU")).InnerText = "True";
                     root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ShowToolTip")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("SaveFormat")).InnerText = "BROWSER - URL - USER:PASS";
+                    root.AppendChild(doc.CreateElement("SaveFormat")).InnerText = "APP - URL - USER:PASS";
 
                     root.AppendChild(doc.CreateElement("EnableNoIPUpdater")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("NoIPHost")).InnerText = "";

