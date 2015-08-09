@@ -1,25 +1,20 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoMouseEvent : IPacket
     {
-        [ProtoMember(1)]
         public MouseAction Action { get; set; }
 
-        [ProtoMember(2)]
         public bool IsMouseDown { get; set; }
 
-        [ProtoMember(3)]
         public int X { get; set; }
 
-        [ProtoMember(4)]
         public int Y { get; set; }
 
-        [ProtoMember(5)]
         public int MonitorIndex { get; set; }
 
         public DoMouseEvent()

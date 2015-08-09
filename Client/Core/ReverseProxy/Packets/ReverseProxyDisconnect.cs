@@ -1,13 +1,12 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
 
 namespace xClient.Core.ReverseProxy.Packets
 {
-    [ProtoContract]
+    [Serializable]
     public class ReverseProxyDisconnect : IPacket
     {
-        [ProtoMember(1)]
         public int ConnectionId { get; set; }
 
         public ReverseProxyDisconnect(int connectionId)

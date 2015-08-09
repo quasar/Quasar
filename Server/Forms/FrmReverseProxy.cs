@@ -110,7 +110,7 @@ namespace xServer.Forms
 
             for (int i = 0; i < _clients.Length; i++)
             {
-                if (_clients[i].Value != null)
+                if (_clients[i] != null && _clients[i].Value != null)
                     _clients[i].Value.FrmProxy = null;
             }
         }

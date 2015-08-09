@@ -19,7 +19,7 @@ namespace xServer.Settings
         public static string NoIPHost { get; set; }
         public static string NoIPUsername { get; set; }
         public static string NoIPPassword { get; set; }
-
+        public static string SaveFormat { get; set; }
 
         private static readonly string _settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
 
@@ -40,6 +40,7 @@ namespace xServer.Settings
                     root.AppendChild(doc.CreateElement("ShowToU")).InnerText = "True";
                     root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("ShowToolTip")).InnerText = "False";
+                    root.AppendChild(doc.CreateElement("SaveFormat")).InnerText = "APP - URL - USER:PASS";
 
                     root.AppendChild(doc.CreateElement("EnableNoIPUpdater")).InnerText = "False";
                     root.AppendChild(doc.CreateElement("NoIPHost")).InnerText = "";

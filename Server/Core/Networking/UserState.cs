@@ -18,6 +18,7 @@ namespace xServer.Core.Networking
         public string Id { get; set; }
         public string Username { get; set; }
         public string PCName { get; set; }
+        public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
@@ -28,16 +29,39 @@ namespace xServer.Core.Networking
         public FrmStartupManager FrmStm { get; set; }
         public FrmKeylogger FrmKl { get; set; }
         public FrmReverseProxy FrmProxy { get; set; }
+        public FrmPasswordRecovery FrmPass { get; set; }
         
         public bool IsAuthenticated { get; set; }
-        public bool LastDirectorySeen { get; set; }
+        public bool ReceivedLastDirectory { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
+
+        public bool ProcessingDirectory
+        {
+            get
+            {
+                lock (_processingDirectoryLock)
+                {
+                    return _processingDirectory;
+                }
+            }
+            set
+            {
+                lock (_processingDirectoryLock)
+                {
+                    _processingDirectory = value;
+                }
+            }
+        }
+        private bool _processingDirectory;
+        private readonly object _processingDirectoryLock;
 
         public UserState()
         {
             IsAuthenticated = false;
-            LastDirectorySeen = true;
+            ReceivedLastDirectory = true;
+            _processingDirectory = false;
+            _processingDirectoryLock = new object();
         }
 
         public void Dispose()
@@ -67,12 +91,15 @@ namespace xServer.Core.Networking
                         FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
                     if (FrmProxy != null)
                         FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
-                    if (StreamCodec != null)
-                        StreamCodec.Dispose();
+                    if (FrmPass != null)
+                        FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
                 }
                 catch (InvalidOperationException)
                 {
                 }
+
+                if (StreamCodec != null)
+                    StreamCodec.Dispose();
             }
         }
     }

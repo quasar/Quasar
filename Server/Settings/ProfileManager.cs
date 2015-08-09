@@ -14,49 +14,6 @@ namespace xServer.Settings
         {
             if (string.IsNullOrEmpty(settingsFile)) throw new ArgumentException();
             _settingsFilePath = Path.Combine(Application.StartupPath, "Profiles\\" + settingsFile);
-
-            try
-            {
-                if (!File.Exists(_settingsFilePath))
-                {
-                    if (!Directory.Exists(Path.GetDirectoryName(_settingsFilePath)))
-                        Directory.CreateDirectory(Path.GetDirectoryName(_settingsFilePath));
-
-                    XmlDocument doc = new XmlDocument();
-                    XmlNode root = doc.CreateElement("settings");
-                    doc.AppendChild(root);
-
-                    root.AppendChild(doc.CreateElement("Hostname"));
-                    root.AppendChild(doc.CreateElement("ListenPort")).InnerText = "4782";
-                    root.AppendChild(doc.CreateElement("Password")).InnerText = "1234";
-                    root.AppendChild(doc.CreateElement("Delay")).InnerText = "5000";
-                    root.AppendChild(doc.CreateElement("Mutex"));
-                    root.AppendChild(doc.CreateElement("InstallClient")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("InstallName"));
-                    root.AppendChild(doc.CreateElement("InstallPath")).InnerText = "1";
-                    root.AppendChild(doc.CreateElement("InstallSub"));
-                    root.AppendChild(doc.CreateElement("HideFile")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("AddStartup")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("RegistryName"));
-                    root.AppendChild(doc.CreateElement("AdminElevation")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("ChangeIcon")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("ChangeAsmInfo")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("Keylogger")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("ProductName"));
-                    root.AppendChild(doc.CreateElement("Description"));
-                    root.AppendChild(doc.CreateElement("CompanyName"));
-                    root.AppendChild(doc.CreateElement("Copyright"));
-                    root.AppendChild(doc.CreateElement("Trademarks"));
-                    root.AppendChild(doc.CreateElement("OriginalFilename"));
-                    root.AppendChild(doc.CreateElement("ProductVersion"));
-                    root.AppendChild(doc.CreateElement("FileVersion"));
-
-                    doc.Save(_settingsFilePath);
-                }
-            }
-            catch
-            {
-            }
         }
 
         public string ReadValue(string pstrValueToRead)

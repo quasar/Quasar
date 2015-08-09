@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using xServer.Core.Networking.Utilities;
@@ -134,7 +135,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The buffer size for receiving data in bytes.
         /// </summary>
-        public int BUFFER_SIZE { get { return (1024 * 1024) * 1; } } // 1MB
+        public int BUFFER_SIZE { get { return 1024 * 16; } } // 16KB
 
         /// <summary>
         /// The keep-alive time in ms.
@@ -149,7 +150,12 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The header size in bytes.
         /// </summary>
-        public int HEADER_SIZE { get { return 3; } } // 3B
+        public int HEADER_SIZE { get { return 4; } } // 4B
+
+        /// <summary>
+        /// The maximum size of a packet in bytes.
+        /// </summary>
+        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// Gets or sets if the server is currently processing data that should prevent disconnection. 
@@ -220,6 +226,8 @@ namespace xServer.Core.Networking
         /// <param name="port">Port to listen for clients on.</param>
         public void Listen(ushort port)
         {
+            if (PacketTypes.Count == 0) throw new Exception("No packet types added");
+
             this.Port = port;
             try
             {
@@ -267,27 +275,12 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
-        /// </summary>
-        /// <param name="parent">The parent type.</param>
-        /// <param name="type">Type to be added.</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
-            if (type == null || parent == null)
-                throw new ArgumentNullException();
-
-            PacketTypes.Add(type);
-        }
-
-        /// <summary>
         /// Adds Types to the serializer.
         /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
+        public void AddTypesToSerializer(Type[] types)
         {
-            foreach (Type type in types)
-                AddTypeToSerializer(parent, type);
+            PacketTypes.AddRange(types.Where(t => t != null));
         }
 
         /// <summary>

@@ -1,9 +1,9 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetAuthentication : IPacket
     {
         public GetAuthentication()

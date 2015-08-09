@@ -67,7 +67,7 @@ namespace xServer.Forms
             this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
             this.lstClients = new xServer.Controls.AeroListView();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hSocket = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hTag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUserPC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hVersion = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -275,7 +275,6 @@ namespace xServer.Forms
             // 
             // ctxtPasswordRecovery
             // 
-            this.ctxtPasswordRecovery.Enabled = false;
             this.ctxtPasswordRecovery.Image = ((System.Drawing.Image)(resources.GetObject("ctxtPasswordRecovery.Image")));
             this.ctxtPasswordRecovery.Name = "ctxtPasswordRecovery";
             this.ctxtPasswordRecovery.Size = new System.Drawing.Size(175, 22);
@@ -626,7 +625,7 @@ namespace xServer.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIP,
-            this.hSocket,
+            this.hTag,
             this.hUserPC,
             this.hVersion,
             this.hStatus,
@@ -652,9 +651,9 @@ namespace xServer.Forms
             this.hIP.Text = "IP Address";
             this.hIP.Width = 112;
             // 
-            // hSocket
+            // hTag
             // 
-            this.hSocket.Text = "Socket";
+            this.hTag.Text = "Tag";
             // 
             // hUserPC
             // 
@@ -772,7 +771,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem ctxtConnection;
         private System.Windows.Forms.ToolStripMenuItem ctxtReconnect;
         private System.Windows.Forms.ToolStripMenuItem ctxtDisconnect;
-        private System.Windows.Forms.ColumnHeader hSocket;
+        private System.Windows.Forms.ColumnHeader hTag;
         private System.Windows.Forms.StatusStrip botStrip;
         private System.Windows.Forms.ToolStripStatusLabel botListen;
         private System.Windows.Forms.ImageList imgFlags;

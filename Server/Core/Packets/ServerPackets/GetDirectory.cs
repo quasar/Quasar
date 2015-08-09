@@ -1,12 +1,11 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetDirectory : IPacket
     {
-        [ProtoMember(1)]
         public string RemotePath { get; set; }
 
         public GetDirectory()

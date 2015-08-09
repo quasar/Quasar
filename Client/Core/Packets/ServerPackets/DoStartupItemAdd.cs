@@ -1,18 +1,15 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoStartupItemAdd : IPacket
     {
-        [ProtoMember(1)]
         public string Name { get; set; }
 
-        [ProtoMember(2)]
         public string Path { get; set; }
 
-        [ProtoMember(3)]
         public int Type { get; set; }
 
         public DoStartupItemAdd()

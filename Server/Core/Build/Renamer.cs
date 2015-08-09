@@ -60,7 +60,7 @@ namespace xServer.Core.Build
                 || typeDef.Namespace.StartsWith("xClient.Core.Elevation")
                 || typeDef.Namespace.StartsWith("xClient.Core.Compression")
                 || typeDef.Namespace.StartsWith("xClient.Core.Networking")
-                || typeDef.Namespace.StartsWith("ProtoBuf")
+                || typeDef.Namespace.StartsWith("xClient.Core.NetSerializer")
                 || typeDef.Namespace.StartsWith("xClient.Core.ReverseProxy")
                 || typeDef.Namespace.StartsWith("xClient.Core.MouseKeyHook")
                 || typeDef.Namespace.StartsWith("xClient.Core.Packets")
