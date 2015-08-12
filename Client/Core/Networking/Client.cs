@@ -183,11 +183,6 @@ namespace xClient.Core.Networking
         private readonly object _proxyClientsLock = new object();
 
         /// <summary>
-        /// The internal index of the packet type.
-        /// </summary>
-        private int _typeIndex;
-
-        /// <summary>
         /// The buffer for incoming packets.
         /// </summary>
         private byte[] _readBuffer;
