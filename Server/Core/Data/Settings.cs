@@ -155,7 +155,7 @@ namespace xServer.Core.Data
             }
         }
 
-        public static string ReadValue(string pstrValueToRead)
+        private static string ReadValue(string pstrValueToRead)
         {
             try
             {
