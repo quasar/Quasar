@@ -27,7 +27,7 @@ namespace xServer.Forms
             InitializeComponent();
             this.Text = WindowHelper.GetWindowTitle("Password Recovery", _clients.Length);
 
-            txtFormat.Text = XMLSettings.SaveFormat;
+            txtFormat.Text = Settings.SaveFormat;
         }
 
         private void FrmPasswordRecovery_Load(object sender, EventArgs e)
@@ -144,8 +144,7 @@ namespace xServer.Forms
 
         private void txtFormat_TextChanged(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("SaveFormat", txtFormat.Text);
-            XMLSettings.SaveFormat = txtFormat.Text;
+            Settings.SaveFormat = txtFormat.Text;
         }
         #endregion
 

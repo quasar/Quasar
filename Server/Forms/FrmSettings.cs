@@ -31,16 +31,16 @@ namespace xServer.Forms
 
         private void FrmSettings_Load(object sender, EventArgs e)
         {
-            ncPort.Value = XMLSettings.ListenPort;
-            chkAutoListen.Checked = XMLSettings.AutoListen;
-            chkPopup.Checked = XMLSettings.ShowPopup;
-            txtPassword.Text = XMLSettings.Password;
-            chkUseUpnp.Checked = XMLSettings.UseUPnP;
-            chkShowTooltip.Checked = XMLSettings.ShowToolTip;
-            chkNoIPIntegration.Checked = XMLSettings.IntegrateNoIP;
-            txtNoIPHost.Text = XMLSettings.NoIPHost;
-            txtNoIPUser.Text = XMLSettings.NoIPUsername;
-            txtNoIPPass.Text = XMLSettings.NoIPPassword;
+            ncPort.Value = Settings.ListenPort;
+            chkAutoListen.Checked = Settings.AutoListen;
+            chkPopup.Checked = Settings.ShowPopup;
+            txtPassword.Text = Settings.Password;
+            chkUseUpnp.Checked = Settings.UseUPnP;
+            chkShowTooltip.Checked = Settings.ShowToolTip;
+            chkNoIPIntegration.Checked = Settings.EnableNoIPUpdater;
+            txtNoIPHost.Text = Settings.NoIPHost;
+            txtNoIPUser.Text = Settings.NoIPUsername;
+            txtNoIPPass.Text = Settings.NoIPPassword;
         }
 
         private ushort GetPortSafe()
@@ -121,39 +121,19 @@ namespace xServer.Forms
                 return;
             }
 
-            XMLSettings.WriteValue("ListenPort", port.ToString());
-            XMLSettings.ListenPort = port;
-
-            XMLSettings.WriteValue("AutoListen", chkAutoListen.Checked.ToString());
-            XMLSettings.AutoListen = chkAutoListen.Checked;
-
-            XMLSettings.WriteValue("ShowPopup", chkPopup.Checked.ToString());
-            XMLSettings.ShowPopup = chkPopup.Checked;
-
+            Settings.ListenPort = port;
+            Settings.AutoListen = chkAutoListen.Checked;
+            Settings.ShowPopup = chkPopup.Checked;
             var newPassword = txtPassword.Text;
-            if (newPassword != XMLSettings.Password)
+            if (newPassword != Settings.Password)
                 AES.PreHashKey(newPassword);
-            XMLSettings.WriteValue("Password", newPassword);
-            XMLSettings.Password = newPassword;
-
-            XMLSettings.WriteValue("UseUPnP", chkUseUpnp.Checked.ToString());
-            XMLSettings.UseUPnP = chkUseUpnp.Checked;
-
-            XMLSettings.WriteValue("ShowToolTip", chkShowTooltip.Checked.ToString());
-            XMLSettings.ShowToolTip = chkShowTooltip.Checked;
-
-            XMLSettings.WriteValue("EnableNoIPUpdater", chkNoIPIntegration.Checked.ToString());
-            XMLSettings.IntegrateNoIP = chkNoIPIntegration.Checked;
-
-            XMLSettings.WriteValue("NoIPHost", txtNoIPHost.Text);
-            XMLSettings.NoIPHost = txtNoIPHost.Text;
-
-            XMLSettings.WriteValue("NoIPUsername", txtNoIPUser.Text);
-            XMLSettings.NoIPUsername = txtNoIPUser.Text;
-
-            XMLSettings.WriteValue("NoIPPassword", txtNoIPPass.Text);
-            XMLSettings.NoIPPassword = txtNoIPPass.Text;
-
+            Settings.Password = newPassword;
+            Settings.UseUPnP = chkUseUpnp.Checked;
+            Settings.ShowToolTip = chkShowTooltip.Checked;
+            Settings.EnableNoIPUpdater = chkNoIPIntegration.Checked;
+            Settings.NoIPHost = txtNoIPHost.Text;
+            Settings.NoIPUsername = txtNoIPUser.Text;
+            Settings.NoIPPassword = txtNoIPPass.Text;
             this.Close();
         }
 

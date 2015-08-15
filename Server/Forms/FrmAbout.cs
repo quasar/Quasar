@@ -11,7 +11,7 @@ namespace xServer.Forms
         {
             InitializeComponent();
 
-            lblVersion.Text = XMLSettings.VERSION;
+            lblVersion.Text = Settings.VERSION;
             rtxtContent.Text = Properties.Resources.TermsOfUse;
 
             lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT" });

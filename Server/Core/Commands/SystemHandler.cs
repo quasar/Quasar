@@ -112,7 +112,7 @@ namespace xServer.Core.Commands
             if (packet.SystemInfos == null)
                 return;
 
-            if (XMLSettings.ShowToolTip)
+            if (Settings.ShowToolTip)
             {
                 var builder = new StringBuilder();
                 for (int i = 0; i < packet.SystemInfos.Length; i += 2)

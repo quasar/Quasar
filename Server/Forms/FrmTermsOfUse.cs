@@ -31,8 +31,7 @@ namespace xServer.Forms
         private void btnAccept_Click(object sender, EventArgs e)
         {
             var showToU = !chkDontShowAgain.Checked;
-            XMLSettings.WriteValue("ShowToU", showToU.ToString());
-            XMLSettings.ShowToU = showToU;
+            Settings.ShowToU = showToU;
             _exit = false;
             this.Close();
         }
