@@ -1,4 +1,17 @@
-﻿using System;
+﻿/*
+ * Derived and Adapted from CrackSoft's Reg Explore.
+ * Reg Explore v1.1 (Release Date: June 24, 2011)
+ * First Modified by Justin Yanke on August 15, 2015
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * This is a work that is not of the original. It
+ * has been modified to suit the needs of another
+ * application.
+ * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+ * Unmodified Source:
+ * https://regexplore.codeplex.com/SourceControl/latest#Registry/RegSearcher.cs
+ */
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security;
