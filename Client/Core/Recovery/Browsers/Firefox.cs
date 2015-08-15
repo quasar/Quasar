@@ -198,9 +198,9 @@ namespace xClient.Core.Recovery.Browsers
             DirectoryInfo firefoxPath = null;
             // get firefox path from registry
             // we'll search the 32bit install location
-            RegistryKey localMachine1 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Mozilla\Mozilla Firefox", false);
+            RegistryKey localMachine1 = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Mozilla\Mozilla Firefox", false);
             // and lets try the 64bit install location just in case
-            RegistryKey localMachine2 = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox", false);
+            RegistryKey localMachine2 = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox", false);
 
             if (localMachine1 != null)
             {

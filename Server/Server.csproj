@@ -151,7 +151,6 @@
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Utilities\RegistryKeyEx.cs" />
-    <Compile Include="Core\Utilities\RemoteDrive.cs" />
     <Compile Include="Core\Data\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
@@ -163,6 +162,8 @@
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
+    <Compile Include="Core\Utilities\RegistrySeekerParams.cs" />
+    <Compile Include="Core\Utilities\RegSeekerMatch.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Controls\InputBox.cs" />

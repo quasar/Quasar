@@ -13,7 +13,7 @@ namespace xServer.Core.Utilities
         /// </summary>
         /// <param name="obj">The RegistryKeyEx to compare.</param>
         /// <returns>Returns </returns>
-        public int CompareTo(object obj)
+        public int CompareTo(RegistryKeyEx obj)
         {
             if (obj == null)
             {

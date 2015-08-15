@@ -323,7 +323,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                                Microsoft.Win32.Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -336,7 +336,7 @@ namespace xClient.Core
                         {
                             using (
                                 RegistryKey key =
-                                    Registry.CurrentUser.OpenWritableSubKeySafe(
+                                    Microsoft.Win32.Registry.CurrentUser.OpenWritableSubKeySafe(
                                         "Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                             {
                                 if (key == null) throw new Exception();
@@ -355,7 +355,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                                Microsoft.Win32.Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(Settings.STARTUPKEY, InstallPath);
@@ -379,7 +379,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                                Microsoft.Win32.Registry.LocalMachine.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {
@@ -393,7 +393,7 @@ namespace xClient.Core
                         // try deleting from Registry.CurrentUser
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                                Microsoft.Win32.Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {
@@ -409,7 +409,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                                Microsoft.Win32.Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows\\CurrentVersion\\Run"))
                         {
                             if (key != null)
                             {

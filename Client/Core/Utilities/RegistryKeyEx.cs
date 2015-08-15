@@ -13,15 +13,15 @@ namespace xClient.Core.Utilities
         /// </summary>
         /// <param name="obj">The RegistryKeyEx to compare.</param>
         /// <returns>Returns </returns>
-        public int CompareTo(object obj)
+        public int CompareTo(RegistryKeyEx key)
         {
-            if (obj == null)
+            if (key == null)
             {
                 return 1;
             }
             else
             {
-                RegistryKeyEx regKeyEx = obj as RegistryKeyEx;
+                RegistryKeyEx regKeyEx = key as RegistryKeyEx;
 
                 if (regKeyEx == null)
                 {
