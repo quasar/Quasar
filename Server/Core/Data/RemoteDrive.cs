@@ -1,4 +1,4 @@
-﻿namespace xServer.Core.Utilities
+﻿namespace xServer.Core.Data
 {
     public class RemoteDrive
     {

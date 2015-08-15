@@ -160,7 +160,7 @@
             this.groupBox1.Size = new System.Drawing.Size(549, 325);
             this.groupBox1.TabIndex = 1;
             this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Password Data";
+            this.groupBox1.Text = "Recovered Accounts";
             // 
             // lstPasswords
             // 
@@ -213,12 +213,12 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(65, 49);
+            this.label1.Location = new System.Drawing.Point(35, 50);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(453, 26);
+            this.label1.Size = new System.Drawing.Size(467, 26);
             this.label1.TabIndex = 1;
-            this.label1.Text = "You can change the way the logins are saved by adjusting the format in the box ab" +
-    "ove.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
+            this.label1.Text = "You can change the way the accounts are saved by adjusting the format in the box " +
+    "above.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
             this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtFormat
@@ -244,6 +244,8 @@
             this.Name = "FrmPasswordRecovery";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Password Recovery []";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmPasswordRecovery_FormClosing);
+            this.Load += new System.EventHandler(this.FrmPasswordRecovery_Load);
             this.menuMain.ResumeLayout(false);
             this.groupBox1.ResumeLayout(false);
             this.groupBox2.ResumeLayout(false);

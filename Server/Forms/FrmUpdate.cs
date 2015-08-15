@@ -18,18 +18,18 @@ namespace xServer.Forms
         private void FrmUpdate_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Update Clients", _selectedClients);
-            if (Core.Utilities.Update.UseDownload)
+            if (Core.Data.Update.UseDownload)
                 radioURL.Checked = true;
-            txtPath.Text = File.Exists(Core.Utilities.Update.UploadPath) ? Core.Utilities.Update.UploadPath : string.Empty;
-            txtURL.Text = Core.Utilities.Update.DownloadURL;
+            txtPath.Text = File.Exists(Core.Data.Update.UploadPath) ? Core.Data.Update.UploadPath : string.Empty;
+            txtURL.Text = Core.Data.Update.DownloadURL;
             btnUpdate.Text = "Update Client" + ((_selectedClients > 1) ? "s" : string.Empty);
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            Core.Utilities.Update.UseDownload = radioURL.Checked;
-            Core.Utilities.Update.UploadPath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
-            Core.Utilities.Update.DownloadURL = txtURL.Text;
+            Core.Data.Update.UseDownload = radioURL.Checked;
+            Core.Data.Update.UploadPath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
+            Core.Data.Update.DownloadURL = txtURL.Text;
 
             this.DialogResult = DialogResult.OK;
             this.Close();

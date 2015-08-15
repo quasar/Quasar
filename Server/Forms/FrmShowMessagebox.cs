@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Utilities;
 
@@ -38,10 +39,10 @@ namespace xServer.Forms
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            MessageBoxData.Caption = txtCaption.Text;
-            MessageBoxData.Text = txtText.Text;
-            MessageBoxData.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
-            MessageBoxData.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
+            Messagebox.Caption = txtCaption.Text;
+            Messagebox.Text = txtText.Text;
+            Messagebox.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
+            Messagebox.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
 
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using xClient.Core.Data;
 
 namespace xClient.Core.Utilities
 {

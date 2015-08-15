@@ -1,6 +1,6 @@
-﻿namespace xServer.Core.Utilities
+﻿namespace xClient.Core.Data
 {
-    public class LoginInfo
+    public class RecoveredAccount
     {
         public string Username { get; set; }
         public string Password { get; set; }

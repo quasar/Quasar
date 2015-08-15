@@ -83,7 +83,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
-    <Compile Include="Core\Utilities\Host.cs" />
+    <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
@@ -171,7 +171,7 @@
     <Compile Include="Core\Recovery\Browsers\Firefox.cs" />
     <Compile Include="Core\Recovery\Utilities\Chromium.cs" />
     <Compile Include="Core\Recovery\Utilities\JsonUtil.cs" />
-    <Compile Include="Core\Utilities\LoginInfo.cs" />
+    <Compile Include="Core\Data\RecoveredAccount.cs" />
     <Compile Include="Core\Recovery\Utilities\SQLiteHandler.cs" />
     <Compile Include="Core\Recovery\Browsers\InternetExplorer.cs" />
     <Compile Include="Core\Recovery\Browsers\Opera.cs" />

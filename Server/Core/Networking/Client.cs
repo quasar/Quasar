@@ -122,11 +122,6 @@ namespace xServer.Core.Networking
         private readonly Socket _handle;
 
         /// <summary>
-        /// The internal index of the packet type.
-        /// </summary>
-        private int _typeIndex;
-
-        /// <summary>
         /// The Queue which holds buffers to send.
         /// </summary>
         private readonly Queue<byte[]> _sendBuffers = new Queue<byte[]>();

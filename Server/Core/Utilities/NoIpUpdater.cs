@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Threading;
-using xServer.Settings;
+using xServer.Core.Data;
 
 namespace xServer.Core.Utilities
 {
@@ -20,15 +20,15 @@ namespace xServer.Core.Utilities
         private static void BackgroundUpdater()
         {
             _running = true;
-            while (XMLSettings.IntegrateNoIP)
+            while (Settings.EnableNoIPUpdater)
             {
                 try
                 {
-                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}", XMLSettings.NoIPHost));
+                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}", Settings.NoIPHost));
                     request.Proxy = null;
-                    request.UserAgent = string.Format("xRAT No-Ip Updater/2.0 {0}", XMLSettings.NoIPUsername);
+                    request.UserAgent = string.Format("xRAT No-Ip Updater/2.0 {0}", Settings.NoIPUsername);
                     request.Timeout = 10000;
-                    request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", XMLSettings.NoIPUsername, XMLSettings.NoIPPassword)))));
+                    request.Headers.Add(HttpRequestHeader.Authorization, string.Format("Basic {0}", Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", Settings.NoIPUsername, Settings.NoIPPassword)))));
                     request.Method = "GET";
 
                     using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())

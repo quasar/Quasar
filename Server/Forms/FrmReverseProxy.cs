@@ -15,11 +15,15 @@ namespace xServer.Forms
 
         public FrmReverseProxy(Client[] clients)
         {
-            InitializeComponent();
             this._clients = clients;
 
-            foreach (Client t in clients)
-                t.Value.FrmProxy = this;
+            foreach (Client c in clients)
+            {
+                if (c == null || c.Value == null) continue;
+                c.Value.FrmProxy = this;
+            }
+
+            InitializeComponent();
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)

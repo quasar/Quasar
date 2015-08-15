@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Settings;
+using xServer.Core.Data;
 
 namespace xServer.Forms
 {
@@ -30,7 +30,8 @@ namespace xServer.Forms
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            XMLSettings.WriteValue("ShowToU", (!chkDontShowAgain.Checked).ToString());
+            var showToU = !chkDontShowAgain.Checked;
+            Settings.ShowToU = showToU;
             _exit = false;
             this.Close();
         }

