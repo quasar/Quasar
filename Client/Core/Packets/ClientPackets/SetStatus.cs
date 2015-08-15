@@ -1,12 +1,11 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class SetStatus : IPacket
     {
-        [ProtoMember(1)]
         public string Message { get; set; }
 
         public SetStatus()

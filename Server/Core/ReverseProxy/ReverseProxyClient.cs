@@ -12,7 +12,7 @@ namespace xServer.Core.ReverseProxy
         public enum ProxyType
         {
             Unknown,
-            Socks5,
+            SOCKS5,
             HTTPS
         };
 
@@ -146,7 +146,7 @@ namespace xServer.Core.ReverseProxy
                         //check the proxy client
                         if (payload[0] == SOCKS5_VERSION_NUMBER)
                         {
-                            Type = ProxyType.Socks5;
+                            Type = ProxyType.SOCKS5;
                         }
                         else if (headerStr.StartsWith("CONNECT") && headerStr.Contains(":"))
                         {
@@ -313,7 +313,7 @@ namespace xServer.Core.ReverseProxy
             if (Type == ProxyType.HTTPS)
                 Disconnect();
 
-            if (Type == ProxyType.Socks5)
+            if (Type == ProxyType.SOCKS5)
             {
                 SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS});
                 Disconnect();
@@ -322,7 +322,7 @@ namespace xServer.Core.ReverseProxy
 
         private void SendSuccessToClient()
         {
-            if (Type == ProxyType.Socks5)
+            if (Type == ProxyType.SOCKS5)
                 SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_CMD_REPLY_SUCCEEDED});
         }
 
@@ -356,7 +356,7 @@ namespace xServer.Core.ReverseProxy
                     {
                         SendToClient(Encoding.ASCII.GetBytes("HTTP/1.0 200 Connection established\r\n\r\n"));
                     }
-                    else if (Type == ProxyType.Socks5)
+                    else if (Type == ProxyType.SOCKS5)
                     {
                         //Thanks to http://www.mentalis.org/soft/projects/proxy/ for the Maths
                         try
@@ -411,7 +411,7 @@ namespace xServer.Core.ReverseProxy
                     {
                         Disconnect();
                     }
-                    else if (Type == ProxyType.Socks5)
+                    else if (Type == ProxyType.SOCKS5)
                     {
                         //send a connection fail packet
                         SendToClient(new byte[]

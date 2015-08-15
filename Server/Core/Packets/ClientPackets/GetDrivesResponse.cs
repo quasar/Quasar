@@ -1,15 +1,13 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetDrivesResponse : IPacket
     {
-        [ProtoMember(1)]
         public string[] DriveDisplayName { get; set; }
 
-        [ProtoMember(2)]
         public string[] RootDirectory { get; set; }
 
         public GetDrivesResponse()

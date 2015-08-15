@@ -7,7 +7,6 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Threading;
-using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.Encryption;
@@ -261,41 +260,6 @@ namespace xClient.Core
             }
 
             return "-";
-        }
-
-        public static bool TryUacTrick()
-        {
-            if (AccountType == "Admin")
-                return false;
-
-            if (MyPath == InstallPath)
-                return false;
-
-            Thread.Sleep(3000);
-
-            Application.Run(new Elevation.FrmElevation());
-
-            Thread.Sleep(200);
-
-            Application.Exit();
-
-            ProcessStartInfo processStartInfo = new ProcessStartInfo
-            {
-                FileName = "cmd.exe",
-                Verb = "runas",
-                Arguments = "/k START \"\" \"" + MyPath + "\" -CHECK & PING -n 2 127.0.0.1 & EXIT",
-                WindowStyle = ProcessWindowStyle.Hidden,
-                UseShellExecute = true
-            };
-            try
-            {
-                Process.Start(processStartInfo);
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
         }
 
         public static bool CreateMutex(ref Mutex mutex)

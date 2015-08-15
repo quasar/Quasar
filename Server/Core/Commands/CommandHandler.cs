@@ -7,8 +7,6 @@ namespace xServer.Core.Commands
     {
         public static Dictionary<int, string> CanceledDownloads = new Dictionary<int, string>();
         public static Dictionary<int, string> RenamedFiles = new Dictionary<int, string>();
-        private static bool _isAdding = false;
-        private static readonly object _isAddingLock = new object();
         private const string DELIMITER = "$E$";
     }
 }

@@ -1,9 +1,9 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoClientUninstall : IPacket
     {
         public DoClientUninstall()

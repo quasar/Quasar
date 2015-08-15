@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -44,6 +45,8 @@ namespace xClient.Core.Utilities
                 _read = true;
             }
 
+            CultureInfo cultureInfo = CultureInfo.InstalledUICulture;
+
             _prc = new Process
             {
                 StartInfo = new ProcessStartInfo("cmd")
@@ -52,6 +55,8 @@ namespace xClient.Core.Utilities
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
+                    StandardOutputEncoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage),
+                    StandardErrorEncoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage),
                     CreateNoWindow = true,
                     WorkingDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)),
                     Arguments = "/K"

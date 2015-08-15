@@ -1,12 +1,11 @@
-﻿using ProtoBuf;
+﻿using System;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoDownloadFileCancel : IPacket
     {
-        [ProtoMember(1)]
         public int ID { get; set; }
 
         public DoDownloadFileCancel()

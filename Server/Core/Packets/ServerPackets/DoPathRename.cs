@@ -1,19 +1,16 @@
-﻿using ProtoBuf;
+﻿using System;
 using xServer.Core.Networking;
 using xServer.Enums;
 
 namespace xServer.Core.Packets.ServerPackets
 {
-    [ProtoContract]
+    [Serializable]
     public class DoPathRename : IPacket
     {
-        [ProtoMember(1)]
         public string Path { get; set; }
 
-        [ProtoMember(2)]
         public string NewPath { get; set; }
 
-        [ProtoMember(3)]
         public PathType PathType { get; set; }
 
         public DoPathRename()

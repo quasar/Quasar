@@ -32,8 +32,14 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.picUAC2 = new System.Windows.Forms.PictureBox();
+            this.picUAC1 = new System.Windows.Forms.PictureBox();
+            this.rbSystem = new System.Windows.Forms.RadioButton();
+            this.rbProgramFiles = new System.Windows.Forms.RadioButton();
+            this.chkIconChange = new System.Windows.Forms.CheckBox();
             this.ctxtMenuHosts = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtClear = new System.Windows.Forms.ToolStripMenuItem();
             this.builderTabs = new xServer.Controls.DotNetBarTabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
@@ -72,12 +78,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.line4 = new xServer.Controls.Line();
             this.label5 = new System.Windows.Forms.Label();
-            this.picUAC2 = new System.Windows.Forms.PictureBox();
-            this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.chkInstall = new System.Windows.Forms.CheckBox();
-            this.rbSystem = new System.Windows.Forms.RadioButton();
             this.lblInstallname = new System.Windows.Forms.Label();
-            this.rbProgramFiles = new System.Windows.Forms.RadioButton();
             this.txtInstallname = new System.Windows.Forms.TextBox();
             this.txtRegistryKeyName = new System.Windows.Forms.TextBox();
             this.lblExtension = new System.Windows.Forms.Label();
@@ -117,15 +119,13 @@
             this.line9 = new xServer.Controls.Line();
             this.label12 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.chkElevation = new System.Windows.Forms.CheckBox();
-            this.chkIconChange = new System.Windows.Forms.CheckBox();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.ctxtMenuHosts.SuspendLayout();
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.connectionPage.SuspendLayout();
             this.installationPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.assemblyPage.SuspendLayout();
             this.additionalTab.SuspendLayout();
             this.SuspendLayout();
@@ -140,20 +140,89 @@
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
             // 
+            // picUAC2
+            // 
+            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC2.Location = new System.Drawing.Point(363, 88);
+            this.picUAC2.Name = "picUAC2";
+            this.picUAC2.Size = new System.Drawing.Size(16, 20);
+            this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picUAC2.TabIndex = 32;
+            this.picUAC2.TabStop = false;
+            this.tooltip.SetToolTip(this.picUAC2, "Administrator Privileges are required to install the client in System.");
+            // 
+            // picUAC1
+            // 
+            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC1.Location = new System.Drawing.Point(363, 68);
+            this.picUAC1.Name = "picUAC1";
+            this.picUAC1.Size = new System.Drawing.Size(16, 20);
+            this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picUAC1.TabIndex = 31;
+            this.picUAC1.TabStop = false;
+            this.tooltip.SetToolTip(this.picUAC1, "Administrator Privileges are required to install the client in Program Files.");
+            // 
+            // rbSystem
+            // 
+            this.rbSystem.AutoSize = true;
+            this.rbSystem.Location = new System.Drawing.Point(241, 91);
+            this.rbSystem.Name = "rbSystem";
+            this.rbSystem.Size = new System.Drawing.Size(60, 17);
+            this.rbSystem.TabIndex = 5;
+            this.rbSystem.TabStop = true;
+            this.rbSystem.Text = "System";
+            this.tooltip.SetToolTip(this.rbSystem, "Administrator Privileges are required to install the client in System.");
+            this.rbSystem.UseVisualStyleBackColor = true;
+            this.rbSystem.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
+            // 
+            // rbProgramFiles
+            // 
+            this.rbProgramFiles.AutoSize = true;
+            this.rbProgramFiles.Location = new System.Drawing.Point(241, 68);
+            this.rbProgramFiles.Name = "rbProgramFiles";
+            this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
+            this.rbProgramFiles.TabIndex = 4;
+            this.rbProgramFiles.TabStop = true;
+            this.rbProgramFiles.Text = "Program Files";
+            this.tooltip.SetToolTip(this.rbProgramFiles, "Administrator Privileges are required to install the client in Program Files.");
+            this.rbProgramFiles.UseVisualStyleBackColor = true;
+            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
+            // 
+            // chkIconChange
+            // 
+            this.chkIconChange.AutoSize = true;
+            this.chkIconChange.Location = new System.Drawing.Point(23, 39);
+            this.chkIconChange.Name = "chkIconChange";
+            this.chkIconChange.Size = new System.Drawing.Size(91, 17);
+            this.chkIconChange.TabIndex = 2;
+            this.chkIconChange.Text = "Change Icon";
+            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
+            this.chkIconChange.UseVisualStyleBackColor = true;
+            this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
             // ctxtMenuHosts
             // 
             this.ctxtMenuHosts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtRemove});
+            this.ctxtRemove,
+            this.ctxtClear});
             this.ctxtMenuHosts.Name = "ctxtMenuHosts";
-            this.ctxtMenuHosts.Size = new System.Drawing.Size(118, 26);
+            this.ctxtMenuHosts.Size = new System.Drawing.Size(144, 48);
             // 
             // ctxtRemove
             // 
             this.ctxtRemove.Image = global::xServer.Properties.Resources.delete;
             this.ctxtRemove.Name = "ctxtRemove";
-            this.ctxtRemove.Size = new System.Drawing.Size(117, 22);
-            this.ctxtRemove.Text = "Remove";
+            this.ctxtRemove.Size = new System.Drawing.Size(143, 22);
+            this.ctxtRemove.Text = "Remove host";
             this.ctxtRemove.Click += new System.EventHandler(this.ctxtRemove_Click);
+            // 
+            // ctxtClear
+            // 
+            this.ctxtClear.Image = global::xServer.Properties.Resources.broom;
+            this.ctxtClear.Name = "ctxtClear";
+            this.ctxtClear.Size = new System.Drawing.Size(143, 22);
+            this.ctxtClear.Text = "Clear all";
+            this.ctxtClear.Click += new System.EventHandler(this.ctxtClear_Click);
             // 
             // builderTabs
             // 
@@ -229,6 +298,7 @@
             this.txtTag.Size = new System.Drawing.Size(203, 22);
             this.txtTag.TabIndex = 3;
             this.txtTag.Text = "Office04";
+            this.txtTag.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // label7
             // 
@@ -569,28 +639,6 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Installation Location";
             // 
-            // picUAC2
-            // 
-            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC2.Location = new System.Drawing.Point(363, 88);
-            this.picUAC2.Name = "picUAC2";
-            this.picUAC2.Size = new System.Drawing.Size(16, 20);
-            this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picUAC2.TabIndex = 32;
-            this.picUAC2.TabStop = false;
-            this.tooltip.SetToolTip(this.picUAC2, "Administrator Privileges are required to install the client in System.");
-            // 
-            // picUAC1
-            // 
-            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC1.Location = new System.Drawing.Point(363, 68);
-            this.picUAC1.Name = "picUAC1";
-            this.picUAC1.Size = new System.Drawing.Size(16, 20);
-            this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picUAC1.TabIndex = 31;
-            this.picUAC1.TabStop = false;
-            this.tooltip.SetToolTip(this.picUAC1, "Administrator Privileges are required to install the client in Program Files.");
-            // 
             // chkInstall
             // 
             this.chkInstall.AutoSize = true;
@@ -602,19 +650,6 @@
             this.chkInstall.UseVisualStyleBackColor = true;
             this.chkInstall.CheckedChanged += new System.EventHandler(this.chkInstall_CheckedChanged);
             // 
-            // rbSystem
-            // 
-            this.rbSystem.AutoSize = true;
-            this.rbSystem.Location = new System.Drawing.Point(241, 91);
-            this.rbSystem.Name = "rbSystem";
-            this.rbSystem.Size = new System.Drawing.Size(60, 17);
-            this.rbSystem.TabIndex = 5;
-            this.rbSystem.TabStop = true;
-            this.rbSystem.Text = "System";
-            this.tooltip.SetToolTip(this.rbSystem, "Administrator Privileges are required to install the client in System.");
-            this.rbSystem.UseVisualStyleBackColor = true;
-            this.rbSystem.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
-            // 
             // lblInstallname
             // 
             this.lblInstallname.AutoSize = true;
@@ -623,19 +658,6 @@
             this.lblInstallname.Size = new System.Drawing.Size(73, 13);
             this.lblInstallname.TabIndex = 8;
             this.lblInstallname.Text = "Install Name:";
-            // 
-            // rbProgramFiles
-            // 
-            this.rbProgramFiles.AutoSize = true;
-            this.rbProgramFiles.Location = new System.Drawing.Point(241, 68);
-            this.rbProgramFiles.Name = "rbProgramFiles";
-            this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
-            this.rbProgramFiles.TabIndex = 4;
-            this.rbProgramFiles.TabStop = true;
-            this.rbProgramFiles.Text = "Program Files";
-            this.tooltip.SetToolTip(this.rbProgramFiles, "Administrator Privileges are required to install the client in Program Files.");
-            this.rbProgramFiles.UseVisualStyleBackColor = true;
-            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // txtInstallname
             // 
@@ -954,7 +976,6 @@
             this.additionalTab.Controls.Add(this.line9);
             this.additionalTab.Controls.Add(this.label12);
             this.additionalTab.Controls.Add(this.chkKeylogger);
-            this.additionalTab.Controls.Add(this.chkElevation);
             this.additionalTab.Controls.Add(this.chkIconChange);
             this.additionalTab.Location = new System.Drawing.Point(140, 4);
             this.additionalTab.Name = "additionalTab";
@@ -1018,30 +1039,6 @@
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
-            // chkElevation
-            // 
-            this.chkElevation.AutoSize = true;
-            this.chkElevation.Location = new System.Drawing.Point(23, 119);
-            this.chkElevation.Name = "chkElevation";
-            this.chkElevation.Size = new System.Drawing.Size(147, 17);
-            this.chkElevation.TabIndex = 5;
-            this.chkElevation.Text = "Enable Admin Elevation";
-            this.tooltip.SetToolTip(this.chkElevation, "Custom social engineering tactic to elevate Admin privileges.");
-            this.chkElevation.UseVisualStyleBackColor = true;
-            this.chkElevation.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
-            // 
-            // chkIconChange
-            // 
-            this.chkIconChange.AutoSize = true;
-            this.chkIconChange.Location = new System.Drawing.Point(23, 39);
-            this.chkIconChange.Name = "chkIconChange";
-            this.chkIconChange.Size = new System.Drawing.Size(91, 17);
-            this.chkIconChange.TabIndex = 2;
-            this.chkIconChange.Text = "Change Icon";
-            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
-            this.chkIconChange.UseVisualStyleBackColor = true;
-            this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
-            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1060,6 +1057,8 @@
             this.Text = "Client Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.ctxtMenuHosts.ResumeLayout(false);
             this.builderTabs.ResumeLayout(false);
             this.generalPage.ResumeLayout(false);
@@ -1068,8 +1067,6 @@
             this.connectionPage.PerformLayout();
             this.installationPage.ResumeLayout(false);
             this.installationPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.assemblyPage.ResumeLayout(false);
             this.assemblyPage.PerformLayout();
             this.additionalTab.ResumeLayout(false);
@@ -1113,7 +1110,6 @@
         private System.Windows.Forms.PictureBox picUAC1;
         private System.Windows.Forms.PictureBox picUAC2;
         private System.Windows.Forms.ToolTip tooltip;
-        private System.Windows.Forms.CheckBox chkElevation;
         private System.Windows.Forms.CheckBox chkIconChange;
         private System.Windows.Forms.TextBox txtDescription;
         private System.Windows.Forms.Label lblDescription;
@@ -1169,5 +1165,6 @@
         private System.Windows.Forms.Label label12;
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
+        private System.Windows.Forms.ToolStripMenuItem ctxtClear;
     }
 }

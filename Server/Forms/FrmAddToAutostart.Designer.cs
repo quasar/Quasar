@@ -53,7 +53,7 @@
             this.groupAutostartItem.Controls.Add(this.lblName);
             this.groupAutostartItem.Location = new System.Drawing.Point(12, 12);
             this.groupAutostartItem.Name = "groupAutostartItem";
-            this.groupAutostartItem.Size = new System.Drawing.Size(438, 105);
+            this.groupAutostartItem.Size = new System.Drawing.Size(653, 105);
             this.groupAutostartItem.TabIndex = 0;
             this.groupAutostartItem.TabStop = false;
             this.groupAutostartItem.Text = "Autostart Item";
@@ -73,7 +73,7 @@
             this.cmbType.FormattingEnabled = true;
             this.cmbType.Location = new System.Drawing.Point(74, 71);
             this.cmbType.Name = "cmbType";
-            this.cmbType.Size = new System.Drawing.Size(358, 21);
+            this.cmbType.Size = new System.Drawing.Size(573, 21);
             this.cmbType.TabIndex = 5;
             this.toolTip1.SetToolTip(this.cmbType, "Remote Type of Autostart Item.");
             // 
@@ -81,7 +81,7 @@
             // 
             this.txtPath.Location = new System.Drawing.Point(74, 43);
             this.txtPath.Name = "txtPath";
-            this.txtPath.Size = new System.Drawing.Size(358, 22);
+            this.txtPath.Size = new System.Drawing.Size(573, 22);
             this.txtPath.TabIndex = 3;
             this.toolTip1.SetToolTip(this.txtPath, "Remote Path to Autostart Item.");
             this.txtPath.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPath_KeyPress);
@@ -91,7 +91,7 @@
             this.txtName.Location = new System.Drawing.Point(74, 15);
             this.txtName.MaxLength = 64;
             this.txtName.Name = "txtName";
-            this.txtName.Size = new System.Drawing.Size(358, 22);
+            this.txtName.Size = new System.Drawing.Size(573, 22);
             this.txtName.TabIndex = 1;
             this.txtName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtName_KeyPress);
             // 
@@ -116,9 +116,9 @@
             // btnAdd
             // 
             this.btnAdd.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnAdd.Location = new System.Drawing.Point(375, 123);
+            this.btnAdd.Location = new System.Drawing.Point(576, 123);
             this.btnAdd.Name = "btnAdd";
-            this.btnAdd.Size = new System.Drawing.Size(75, 23);
+            this.btnAdd.Size = new System.Drawing.Size(89, 23);
             this.btnAdd.TabIndex = 1;
             this.btnAdd.Text = "&Add";
             this.btnAdd.UseVisualStyleBackColor = true;
@@ -127,9 +127,9 @@
             // btnCancel
             // 
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(294, 123);
+            this.btnCancel.Location = new System.Drawing.Point(449, 123);
             this.btnCancel.Name = "btnCancel";
-            this.btnCancel.Size = new System.Drawing.Size(75, 23);
+            this.btnCancel.Size = new System.Drawing.Size(89, 23);
             this.btnCancel.TabIndex = 2;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
@@ -141,7 +141,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.CancelButton = this.btnCancel;
-            this.ClientSize = new System.Drawing.Size(462, 158);
+            this.ClientSize = new System.Drawing.Size(677, 158);
             this.Controls.Add(this.btnCancel);
             this.Controls.Add(this.btnAdd);
             this.Controls.Add(this.groupAutostartItem);
