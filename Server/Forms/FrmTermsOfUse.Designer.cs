@@ -82,12 +82,12 @@
             this.chkDontShowAgain.AutoSize = true;
             this.chkDontShowAgain.Location = new System.Drawing.Point(12, 295);
             this.chkDontShowAgain.Name = "chkDontShowAgain";
-            this.chkDontShowAgain.Size = new System.Drawing.Size(120, 17);
+            this.chkDontShowAgain.Size = new System.Drawing.Size(125, 17);
             this.chkDontShowAgain.TabIndex = 4;
-            this.chkDontShowAgain.Text = "Don\'t Show Again";
+            this.chkDontShowAgain.Text = "Do not show again";
             this.chkDontShowAgain.UseVisualStyleBackColor = true;
             // 
-            // frmTermsOfUse
+            // FrmTermsOfUse
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -102,7 +102,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmTermsOfUse";
+            this.Name = "FrmTermsOfUse";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "xRAT 2.0 - Terms of Use";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTermsOfUse_FormClosing);

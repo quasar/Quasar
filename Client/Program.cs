@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using xClient.Config;
 using xClient.Core;
 using xClient.Core.Commands;
+using xClient.Core.Data;
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
 using xClient.Core.Networking;

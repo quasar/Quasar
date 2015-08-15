@@ -2,7 +2,7 @@
 using System.Net;
 using System.Text;
 using System.Threading;
-using xServer.Settings;
+using xServer.Core.Data;
 
 namespace xServer.Core.Utilities
 {

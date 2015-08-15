@@ -7,6 +7,7 @@ using System.Threading;
 using System.Windows.Forms;
 using xServer.Controls;
 using xServer.Core.Commands;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;

@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace xServer.Settings
+namespace xServer.Core.Data
 {
     public static class XMLSettings
     {
@@ -21,47 +21,29 @@ namespace xServer.Settings
         public static string NoIPPassword { get; set; }
         public static string SaveFormat { get; set; }
 
-        private static readonly string _settingsFilePath = Path.Combine(Application.StartupPath, "settings.xml");
+        private static readonly string _settingsPath = Path.Combine(Application.StartupPath, "settings.xml");
 
-        public static bool WriteDefaultSettings()
+        public static void ReadSettings()
         {
-            try
-            {
-                if (!File.Exists(_settingsFilePath))
-                {
-                    XmlDocument doc = new XmlDocument();
-                    XmlNode root = doc.CreateElement("settings");
-                    doc.AppendChild(root);
-
-                    root.AppendChild(doc.CreateElement("ListenPort")).InnerText = "4782";
-                    root.AppendChild(doc.CreateElement("AutoListen")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("ShowPopup")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("Password")).InnerText = "1234";
-                    root.AppendChild(doc.CreateElement("ShowToU")).InnerText = "True";
-                    root.AppendChild(doc.CreateElement("UseUPnP")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("ShowToolTip")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("SaveFormat")).InnerText = "APP - URL - USER:PASS";
-
-                    root.AppendChild(doc.CreateElement("EnableNoIPUpdater")).InnerText = "False";
-                    root.AppendChild(doc.CreateElement("NoIPHost")).InnerText = "";
-                    root.AppendChild(doc.CreateElement("NoIPUsername")).InnerText = "";
-                    root.AppendChild(doc.CreateElement("NoIPPassword")).InnerText = "";
-
-                    doc.Save(_settingsFilePath);
-                }
-                return true;
-            }
-            catch
-            {
-                return false;
-            }
+            ListenPort = ushort.Parse(ReadValueSafe("ListenPort", "4782"));
+            ShowToU = bool.Parse(ReadValueSafe("ShowToU", "True"));
+            AutoListen = bool.Parse(ReadValueSafe("AutoListen", "False"));
+            ShowPopup = bool.Parse(ReadValueSafe("ShowPopup", "False"));
+            UseUPnP = bool.Parse(ReadValueSafe("UseUPnP", "False"));
+            SaveFormat = ReadValueSafe("SaveFormat", "APP - URL - USER:PASS");
+            ShowToolTip = bool.Parse(ReadValueSafe("ShowToolTip", "False"));
+            IntegrateNoIP = bool.Parse(ReadValueSafe("EnableNoIPUpdater", "False"));
+            NoIPHost = ReadValueSafe("NoIPHost");
+            NoIPUsername = ReadValueSafe("NoIPUsername");
+            NoIPPassword = ReadValueSafe("NoIPPassword");
+            Password = ReadValueSafe("Password", "1234");
         }
 
         public static string ReadValue(string pstrValueToRead)
         {
             try
             {
-                XPathDocument doc = new XPathDocument(_settingsFilePath);
+                XPathDocument doc = new XPathDocument(_settingsPath);
                 XPathNavigator nav = doc.CreateNavigator();
                 XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
@@ -89,9 +71,22 @@ namespace xServer.Settings
             try
             {
                 XmlDocument doc = new XmlDocument();
-                using (var reader = new XmlTextReader(_settingsFilePath))
+
+                if (File.Exists(_settingsPath))
                 {
-                    doc.Load(reader);
+                    using (var reader = new XmlTextReader(_settingsPath))
+                    {
+                        doc.Load(reader);
+                    }
+                }
+                else
+                {
+                    var dir = Path.GetDirectoryName(_settingsPath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    doc.AppendChild(doc.CreateElement("settings"));
                 }
 
                 XmlElement root = doc.DocumentElement;
@@ -100,11 +95,11 @@ namespace xServer.Settings
                 {
                     oldNode = doc.SelectSingleNode("settings");
                     oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
-                    doc.Save(_settingsFilePath);
+                    doc.Save(_settingsPath);
                     return true;
                 }
                 oldNode.InnerText = pstrValueToWrite;
-                doc.Save(_settingsFilePath);
+                doc.Save(_settingsPath);
                 return true;
             }
             catch

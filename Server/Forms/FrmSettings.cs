@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Encryption;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
 using xServer.Core.Utilities;
-using xServer.Settings;
 
 namespace xServer.Forms
 {

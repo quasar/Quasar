@@ -4,23 +4,23 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace xServer.Settings
+namespace xServer.Core.Data
 {
-    public class ProfileManager
+    public class BuilderProfile
     {
-        private readonly string _settingsFilePath;
+        private readonly string _profilePath;
 
-        public ProfileManager(string settingsFile)
+        public BuilderProfile(string profilePath)
         {
-            if (string.IsNullOrEmpty(settingsFile)) throw new ArgumentException();
-            _settingsFilePath = Path.Combine(Application.StartupPath, "Profiles\\" + settingsFile);
+            if (string.IsNullOrEmpty(profilePath)) throw new ArgumentException("Invalid Profile Path");
+            _profilePath = Path.Combine(Application.StartupPath, "Profiles\\" + profilePath);
         }
 
         public string ReadValue(string pstrValueToRead)
         {
             try
             {
-                XPathDocument doc = new XPathDocument(_settingsFilePath);
+                XPathDocument doc = new XPathDocument(_profilePath);
                 XPathNavigator nav = doc.CreateNavigator();
                 XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
@@ -48,22 +48,35 @@ namespace xServer.Settings
             try
             {
                 XmlDocument doc = new XmlDocument();
-                using (var reader = new XmlTextReader(_settingsFilePath))
-                {
-                    doc.Load(reader);
-                }
 
+                if (File.Exists(_profilePath))
+                {
+                    using (var reader = new XmlTextReader(_profilePath))
+                    {
+                        doc.Load(reader);
+                    }
+                }
+                else
+                {
+                    var dir = Path.GetDirectoryName(_profilePath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    doc.AppendChild(doc.CreateElement("settings"));
+                }
+                
                 XmlElement root = doc.DocumentElement;
                 XmlNode oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
                 {
                     oldNode = doc.SelectSingleNode("settings");
                     oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
-                    doc.Save(_settingsFilePath);
+                    doc.Save(_profilePath);
                     return true;
                 }
                 oldNode.InnerText = pstrValueToWrite;
-                doc.Save(_settingsFilePath);
+                doc.Save(_profilePath);
                 return true;
             }
             catch

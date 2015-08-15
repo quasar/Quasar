@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using xClient.Core.Data;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Helper

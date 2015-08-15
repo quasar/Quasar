@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using xServer.Core.Data;
 
 namespace xServer.Forms
 {
@@ -10,7 +11,7 @@ namespace xServer.Forms
         {
             InitializeComponent();
 
-            lblVersion.Text = Settings.XMLSettings.VERSION;
+            lblVersion.Text = XMLSettings.VERSION;
             rtxtContent.Text = Properties.Resources.TermsOfUse;
 
             lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT" });

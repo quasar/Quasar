@@ -1,10 +1,10 @@
 ﻿using System.IO;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Forms;
-using xServer.Settings;
 
 namespace xServer.Core.Commands
 {
