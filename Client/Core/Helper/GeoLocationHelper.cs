@@ -1,7 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
-using System.Xml;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 
 namespace xClient.Core.Helper
 {
@@ -108,12 +110,16 @@ namespace xClient.Core.Helper
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://freegeoip.net/xml/");
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInfo));
+
+                GeoInfo geoInfo = new GeoInfo();
+
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
 
-                using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
                     using (Stream dataStream = response.GetResponseStream())
                     {
@@ -121,22 +127,24 @@ namespace xClient.Core.Helper
                         {
                             string responseString = reader.ReadToEnd();
 
-                            XmlDocument doc = new XmlDocument();
-                            doc.LoadXml(responseString);
+                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
+                            {
+                                geoInfo = (GeoInfo)jsonSerializer.ReadObject(ms);
 
-                            Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml))
-                                ? doc.SelectSingleNode("Response//CountryName").InnerXml
-                                : "Unknown";
-                            CountryCode =
-                                (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml))
-                                    ? doc.SelectSingleNode("Response//CountryCode").InnerXml
-                                    : "-";
-                            Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml))
-                                ? doc.SelectSingleNode("Response//RegionName").InnerXml
-                                : "Unknown";
-                            City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml))
-                                ? doc.SelectSingleNode("Response//City").InnerXml
-                                : "Unknown";
+                                Country = (!string.IsNullOrEmpty(geoInfo.country)) 
+                                    ? geoInfo.country
+                                    : "Unknown";
+                                CountryCode =
+                                    (!string.IsNullOrEmpty(geoInfo.country_code))
+                                        ? geoInfo.country_code
+                                        : "-";
+                                Region = (!string.IsNullOrEmpty(geoInfo.region))
+                                    ? geoInfo.region
+                                    : "Unknown";
+                                City = (!string.IsNullOrEmpty(geoInfo.city))
+                                    ? geoInfo.city
+                                    : "Unknown";
+                            }
                         }
                     }
                 }
@@ -152,5 +160,60 @@ namespace xClient.Core.Helper
                 LocationCompleted = false;
             }
         }
+    }
+
+    [DataContract]
+    public class GeoInfo
+    {
+        [DataMember]
+        public double longitude { get; set; }
+
+        [DataMember]
+        public double latitude { get; set; }
+
+        [DataMember]
+        public string asn { get; set; }
+
+        [DataMember]
+        public string offset { get; set; }
+
+        [DataMember]
+        public string ip { get; set; }
+
+        [DataMember]
+        public string area_code { get; set; }
+
+        [DataMember]
+        public string continent_code { get; set; }
+
+        [DataMember]
+        public string dma_code { get; set; }
+
+        [DataMember]
+        public string city { get; set; }
+
+        [DataMember]
+        public string timezone { get; set; }
+
+        [DataMember]
+        public string region { get; set; }
+
+        [DataMember]
+        public string country_code { get; set; }
+
+        [DataMember]
+        public string isp { get; set; }
+
+        [DataMember]
+        public string postal_code { get; set; }
+
+        [DataMember]
+        public string country { get; set; }
+
+        [DataMember]
+        public string country_code3 { get; set; }
+
+        [DataMember]
+        public string region_code { get; set; }
     }
 }
