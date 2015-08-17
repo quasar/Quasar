@@ -1,6 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
+using System.Text;
 using System.Xml;
 
 namespace xClient.Core.Helper
@@ -36,10 +39,7 @@ namespace xClient.Core.Helper
         };
 
         public static int ImageIndex { get; set; }
-        public static string Country { get; private set; }
-        public static string CountryCode { get; private set; }
-        public static string Region { get; private set; }
-        public static string City { get; private set; }
+        public static GeoInfo GeoInformation { get; private set; }
         public static DateTime LastLocated { get; private set; }
         public static bool LocationCompleted { get; private set; }
 
@@ -55,10 +55,9 @@ namespace xClient.Core.Helper
             // last location was 30 minutes ago or last location has not completed
             if (lastLocateTry.TotalMinutes > 30 || !LocationCompleted)
             {
-                TryGetWanIp();
                 TryLocate();
 
-                if (CountryCode == "-" || Country == "Unknown")
+                if (GeoInformation.country_code == "-" || GeoInformation.country == "Unknown")
                 {
                     ImageIndex = 247; // question icon
                     return;
@@ -66,7 +65,7 @@ namespace xClient.Core.Helper
 
                 for (int i = 0; i < ImageList.Length; i++)
                 {
-                    if (ImageList[i].Contains(CountryCode.ToLower()))
+                    if (ImageList[i].Contains(GeoInformation.country_code.ToLower()))
                     {
                         ImageIndex = i;
                         break;
@@ -81,7 +80,7 @@ namespace xClient.Core.Helper
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.ipify.org/");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.ipify.org/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
@@ -108,12 +107,69 @@ namespace xClient.Core.Helper
         {
             try
             {
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://freegeoip.net/xml/");
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInfo));
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
 
-                using (HttpWebResponse response = (HttpWebResponse) request.GetResponse())
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    using (Stream dataStream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(dataStream))
+                        {
+                            string responseString = reader.ReadToEnd();
+
+                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
+                            {
+                                GeoInformation = (GeoInfo)jsonSerializer.ReadObject(ms);
+
+                                SystemCore.WanIp = GeoInformation.ip = (!string.IsNullOrEmpty(GeoInformation.ip))
+                                    ? GeoInformation.ip
+                                    : "-";
+                                GeoInformation.country = (!string.IsNullOrEmpty(GeoInformation.country)) 
+                                    ? GeoInformation.country
+                                    : "Unknown";
+                                GeoInformation.country_code =
+                                    (!string.IsNullOrEmpty(GeoInformation.country_code))
+                                        ? GeoInformation.country_code
+                                        : "-";
+                                GeoInformation.region = (!string.IsNullOrEmpty(GeoInformation.region))
+                                    ? GeoInformation.region
+                                    : "Unknown";
+                                GeoInformation.city = (!string.IsNullOrEmpty(GeoInformation.city))
+                                    ?  GeoInformation.city
+                                    : "Unknown";
+                            }
+                        }
+                    }
+                }
+                LastLocated = DateTime.UtcNow;
+                LocationCompleted = true;
+            }
+            catch
+            {
+                TryLocateFallback();
+            }
+
+            if (string.IsNullOrEmpty(GeoInformation.ip) || GeoInformation.ip == "-")
+                TryGetWanIp();
+        }
+
+        private static void TryLocateFallback()
+        {
+            try
+            {
+                GeoInformation = new GeoInfo();
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
+                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
+                request.Proxy = null;
+                request.Timeout = 5000;
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
                     using (Stream dataStream = response.GetResponseStream())
                     {
@@ -124,17 +180,17 @@ namespace xClient.Core.Helper
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(responseString);
 
-                            Country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml))
+                            GeoInformation.country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml))
                                 ? doc.SelectSingleNode("Response//CountryName").InnerXml
                                 : "Unknown";
-                            CountryCode =
+                            GeoInformation.country_code =
                                 (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml))
                                     ? doc.SelectSingleNode("Response//CountryCode").InnerXml
                                     : "-";
-                            Region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml))
+                            GeoInformation.region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml))
                                 ? doc.SelectSingleNode("Response//RegionName").InnerXml
                                 : "Unknown";
-                            City = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml))
+                            GeoInformation.city = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml))
                                 ? doc.SelectSingleNode("Response//City").InnerXml
                                 : "Unknown";
                         }
@@ -145,12 +201,67 @@ namespace xClient.Core.Helper
             }
             catch
             {
-                Country = "Unknown";
-                CountryCode = "-";
-                Region = "Unknown";
-                City = "Unknown";
+                GeoInformation.country = "Unknown";
+                GeoInformation.country_code = "-";
+                GeoInformation.region = "Unknown";
+                GeoInformation.city = "Unknown";
                 LocationCompleted = false;
             }
         }
+    }
+
+    [DataContract]
+    public class GeoInfo
+    {
+        [DataMember]
+        public double longitude { get; set; }
+
+        [DataMember]
+        public double latitude { get; set; }
+
+        [DataMember]
+        public string asn { get; set; }
+
+        [DataMember]
+        public string offset { get; set; }
+
+        [DataMember]
+        public string ip { get; set; }
+
+        [DataMember]
+        public string area_code { get; set; }
+
+        [DataMember]
+        public string continent_code { get; set; }
+
+        [DataMember]
+        public string dma_code { get; set; }
+
+        [DataMember]
+        public string city { get; set; }
+
+        [DataMember]
+        public string timezone { get; set; }
+
+        [DataMember]
+        public string region { get; set; }
+
+        [DataMember]
+        public string country_code { get; set; }
+
+        [DataMember]
+        public string isp { get; set; }
+
+        [DataMember]
+        public string postal_code { get; set; }
+
+        [DataMember]
+        public string country { get; set; }
+
+        [DataMember]
+        public string country_code3 { get; set; }
+
+        [DataMember]
+        public string region_code { get; set; }
     }
 }
