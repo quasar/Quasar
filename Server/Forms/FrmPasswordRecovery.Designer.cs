@@ -229,7 +229,6 @@
             this.txtFormat.TabIndex = 0;
             this.txtFormat.Text = "APP - URL - USER:PASS";
             this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtFormat.TextChanged += new System.EventHandler(this.txtFormat_TextChanged);
             // 
             // FrmPasswordRecovery
             // 

@@ -30,10 +30,11 @@ namespace xClient.Core
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
         {
-            public static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
-
-            [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
-            [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
         }
 
         public static UserStatus LastStatus { get; set; }
@@ -86,14 +87,10 @@ namespace xClient.Core
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         cpuName = mObject["Name"].ToString();
-
-                        // If a cpu name was found, return the name. Otherwise, we would continue iterating.
-                        if (!string.IsNullOrEmpty(cpuName))
-                        {
-                            return cpuName;
-                        }
                     }
                 }
+
+                return (!string.IsNullOrEmpty(cpuName)) ? cpuName : "N/A";
             }
             catch
             {
@@ -154,7 +151,8 @@ namespace xClient.Core
             try
             {
                 string antivirusName = string.Empty;
-                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                // starting with Windows Vista we must use the root\SecurityCenter2 namespace
+                string scope = (PlatformHelper.VistaOrHigher) ? "root\\SecurityCenter2" : "root\\SecurityCenter";
                 string query = "SELECT * FROM AntivirusProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
@@ -178,7 +176,8 @@ namespace xClient.Core
             try
             {
                 string firewallName = string.Empty;
-                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                // starting with Windows Vista we must use the root\SecurityCenter2 namespace
+                string scope = (PlatformHelper.VistaOrHigher) ? "root\\SecurityCenter2" : "root\\SecurityCenter";
                 string query = "SELECT * FROM FirewallProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))

@@ -27,7 +27,7 @@ Features
 * Computer Commands (Restart, Shutdown, Standby)
 * Keylogger (Unicode Support)
 * Reverse Proxy (SOCKS5)
-* Password Recovery (Common Browsers)
+* Password Recovery (Common Browsers and FTP Clients)
 
 Requirements
 ---
