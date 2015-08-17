@@ -52,8 +52,6 @@ namespace xClient.Core.Helper
         {
             TimeSpan lastLocateTry = new TimeSpan(DateTime.UtcNow.Ticks - LastLocated.Ticks);
 
-            GeoInformation = new GeoInfo();
-
             // last location was 30 minutes ago or last location has not completed
             if (lastLocateTry.TotalMinutes > 30 || !LocationCompleted)
             {
@@ -175,6 +173,8 @@ namespace xClient.Core.Helper
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
+
+                GeoInformation = new GeoInfo();
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
