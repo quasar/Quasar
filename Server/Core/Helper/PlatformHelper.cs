@@ -22,11 +22,6 @@ namespace xServer.Core.Helper
         }
 
         /// <summary>
-        /// Gets the name of the operating system running on this computer (including the edition).
-        /// </summary>
-        public static string Name { get; private set; }
-
-        /// <summary>
         /// Determines if the current application is 32 or 64-bit.
         /// </summary>
         public static int Architecture { get { return IntPtr.Size * 8; } }
