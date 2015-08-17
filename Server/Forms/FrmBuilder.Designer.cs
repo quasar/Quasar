@@ -113,12 +113,14 @@
             this.lblTrademarks = new System.Windows.Forms.Label();
             this.txtCopyright = new System.Windows.Forms.TextBox();
             this.additionalTab = new System.Windows.Forms.TabPage();
+            this.chkCritical = new System.Windows.Forms.CheckBox();
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.line9 = new xServer.Controls.Line();
             this.label12 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
+            this.pictureBox1 = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.ctxtMenuHosts.SuspendLayout();
@@ -128,6 +130,7 @@
             this.installationPage.SuspendLayout();
             this.assemblyPage.SuspendLayout();
             this.additionalTab.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).BeginInit();
             this.SuspendLayout();
             // 
             // btnBuild
@@ -206,13 +209,13 @@
             this.ctxtRemove,
             this.ctxtClear});
             this.ctxtMenuHosts.Name = "ctxtMenuHosts";
-            this.ctxtMenuHosts.Size = new System.Drawing.Size(144, 48);
+            this.ctxtMenuHosts.Size = new System.Drawing.Size(138, 48);
             // 
             // ctxtRemove
             // 
             this.ctxtRemove.Image = global::xServer.Properties.Resources.delete;
             this.ctxtRemove.Name = "ctxtRemove";
-            this.ctxtRemove.Size = new System.Drawing.Size(143, 22);
+            this.ctxtRemove.Size = new System.Drawing.Size(137, 22);
             this.ctxtRemove.Text = "Remove host";
             this.ctxtRemove.Click += new System.EventHandler(this.ctxtRemove_Click);
             // 
@@ -220,7 +223,7 @@
             // 
             this.ctxtClear.Image = global::xServer.Properties.Resources.broom;
             this.ctxtClear.Name = "ctxtClear";
-            this.ctxtClear.Size = new System.Drawing.Size(143, 22);
+            this.ctxtClear.Size = new System.Drawing.Size(137, 22);
             this.ctxtClear.Text = "Clear all";
             this.ctxtClear.Click += new System.EventHandler(this.ctxtClear_Click);
             // 
@@ -970,6 +973,8 @@
             // additionalTab
             // 
             this.additionalTab.BackColor = System.Drawing.SystemColors.Control;
+            this.additionalTab.Controls.Add(this.pictureBox1);
+            this.additionalTab.Controls.Add(this.chkCritical);
             this.additionalTab.Controls.Add(this.line10);
             this.additionalTab.Controls.Add(this.label14);
             this.additionalTab.Controls.Add(this.label13);
@@ -982,6 +987,16 @@
             this.additionalTab.Size = new System.Drawing.Size(391, 370);
             this.additionalTab.TabIndex = 3;
             this.additionalTab.Text = "Additional Settings";
+            // 
+            // chkCritical
+            // 
+            this.chkCritical.AutoSize = true;
+            this.chkCritical.Location = new System.Drawing.Point(170, 96);
+            this.chkCritical.Name = "chkCritical";
+            this.chkCritical.Size = new System.Drawing.Size(185, 17);
+            this.chkCritical.TabIndex = 42;
+            this.chkCritical.Text = "Enable Protect Process (Critical)";
+            this.chkCritical.UseVisualStyleBackColor = true;
             // 
             // line10
             // 
@@ -1039,6 +1054,17 @@
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
+            // pictureBox1
+            // 
+            this.pictureBox1.Image = global::xServer.Properties.Resources.uac_shield;
+            this.pictureBox1.Location = new System.Drawing.Point(361, 96);
+            this.pictureBox1.Name = "pictureBox1";
+            this.pictureBox1.Size = new System.Drawing.Size(16, 20);
+            this.pictureBox1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.pictureBox1.TabIndex = 43;
+            this.pictureBox1.TabStop = false;
+            this.tooltip.SetToolTip(this.pictureBox1, "Administrator Privileges are required to install the client in Program Files.");
+            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1071,6 +1097,7 @@
             this.assemblyPage.PerformLayout();
             this.additionalTab.ResumeLayout(false);
             this.additionalTab.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.pictureBox1)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -1166,5 +1193,7 @@
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem ctxtClear;
+        private System.Windows.Forms.CheckBox chkCritical;
+        private System.Windows.Forms.PictureBox pictureBox1;
     }
 }

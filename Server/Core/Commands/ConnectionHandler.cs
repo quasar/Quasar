@@ -1,4 +1,6 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
+using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using xServer.Core.Data;
 using xServer.Core.Helper;
@@ -21,6 +23,7 @@ namespace xServer.Core.Commands
                 client.Value.Version = packet.Version;
                 client.Value.OperatingSystem = packet.OperatingSystem;
                 client.Value.AccountType = packet.AccountType;
+                client.Value.Ping = Ping(client.EndPoint.Address.ToString());
                 client.Value.Country = packet.Country;
                 client.Value.CountryCode = packet.CountryCode;
                 client.Value.Region = packet.Region;
@@ -45,8 +48,9 @@ namespace xServer.Core.Commands
                 {
                     " " + client.EndPoint.Address, client.Value.Tag,
                     userAtPc, client.Value.Version, "Connected", "Active", country,
-                    client.Value.OperatingSystem, client.Value.AccountType
-                }) { Tag = client, ImageIndex = packet.ImageIndex };
+                    client.Value.OperatingSystem, client.Value.AccountType, client.Value.Ping
+                })
+                { Tag = client, ImageIndex = packet.ImageIndex };
 
                 FrmMain.Instance.AddClientToListview(lvi);
 
@@ -61,6 +65,22 @@ namespace xServer.Core.Commands
             {
             }
         }
+
+        private static string Ping(string host)
+        {
+            try
+            {
+                Ping pingClass = new Ping();
+                PingReply pingReply = pingClass.Send(host);
+                return pingReply.RoundtripTime.ToString() + "ms";
+            }
+            catch
+
+            {
+                return "Unknown";
+            }
+        }
+
 
         public static void HandleSetStatus(Client client, SetStatus packet)
         {

