@@ -63,7 +63,7 @@ namespace xClient.Core.Helper
         /// Returns a value indicating whether the Operating System is Windows XP or higher.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if the Operating System is Windows 8 or higher; otherwise, <c>false</c>.
+        ///   <c>true</c> if the Operating System is Windows XP or higher; otherwise, <c>false</c>.
         /// </value>
         public static bool XpOrHigher { get; private set; }
 

