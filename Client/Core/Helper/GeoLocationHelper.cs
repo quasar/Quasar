@@ -114,7 +114,7 @@ namespace xClient.Core.Helper
 
                 GeoInfo geoInfo = new GeoInfo();
 
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("https://telize.com/geoip");
+                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
