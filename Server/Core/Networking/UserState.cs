@@ -11,6 +11,7 @@ namespace xServer.Core.Networking
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
         public string AccountType { get; set; }
+        public string Ping { get; set; }
         public string Country { get; set; }
         public string CountryCode { get; set; }
         public string Region { get; set; }

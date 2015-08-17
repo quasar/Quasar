@@ -270,6 +270,7 @@ namespace xServer.Core.Networking
             }
             catch (Exception)
             {
+                System.Windows.Forms.MessageBox.Show("Error listening on " + port.ToString());
                 Disconnect();
             }
         }

