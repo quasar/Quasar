@@ -37,6 +37,7 @@ namespace xServer.Forms
 
         private void FrmPasswordRecovery_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Settings.SaveFormat = txtFormat.Text;
             foreach (Client client in _clients)
             {
                 if (client == null || client.Value == null) continue;
@@ -116,17 +117,17 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstPasswords.SelectedItems)
                 {
-                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag) + "\n");
                 }
             }
             else
             {
                 foreach (ListViewItem lvi in lstPasswords.Items)
                 {
-                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag));
+                    sb.Append(ConvertToFormat(format, (RecoveredAccount)lvi.Tag) + "\n");
                 }
             }
-          
+
             return sb;
         }
 
@@ -136,15 +137,9 @@ namespace xServer.Forms
             {
                 Clipboard.SetText(text);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                MessageBox.Show("Error while copying to your clipboard: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-        }
-
-        private void txtFormat_TextChanged(object sender, EventArgs e)
-        {
-            Settings.SaveFormat = txtFormat.Text;
         }
         #endregion
 

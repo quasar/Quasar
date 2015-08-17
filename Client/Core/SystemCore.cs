@@ -30,10 +30,11 @@ namespace xClient.Core
         [StructLayout(LayoutKind.Sequential)]
         private struct LASTINPUTINFO
         {
-            public static readonly int SizeOf = Marshal.SizeOf(typeof (LASTINPUTINFO));
-
-            [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
-            [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
         }
 
         public static UserStatus LastStatus { get; set; }
