@@ -4,6 +4,7 @@ using System.Net;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Json;
 using System.Text;
+using System.Xml;
 
 namespace xClient.Core.Helper
 {
@@ -81,7 +82,7 @@ namespace xClient.Core.Helper
 
             try
             {
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://api.ipify.org/");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.ipify.org/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
@@ -110,7 +111,7 @@ namespace xClient.Core.Helper
             {
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInfo));
 
-                HttpWebRequest request = (HttpWebRequest) WebRequest.Create("http://telize.com/geoip");
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
@@ -158,10 +159,61 @@ namespace xClient.Core.Helper
                 GeoInformation.region = "Unknown";
                 GeoInformation.city = "Unknown";
                 LocationCompleted = false;
+
+                TryLocateFallback();
             }
 
             if (string.IsNullOrEmpty(GeoInformation.ip) || GeoInformation.ip == "-")
                 TryGetWanIp();
+        }
+
+        private static void TryLocateFallback()
+        {
+            try
+            {
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
+                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
+                request.Proxy = null;
+                request.Timeout = 5000;
+
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                {
+                    using (Stream dataStream = response.GetResponseStream())
+                    {
+                        using (StreamReader reader = new StreamReader(dataStream))
+                        {
+                            string responseString = reader.ReadToEnd();
+
+                            XmlDocument doc = new XmlDocument();
+                            doc.LoadXml(responseString);
+
+                            GeoInformation.country = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryName").InnerXml))
+                                ? doc.SelectSingleNode("Response//CountryName").InnerXml
+                                : "Unknown";
+                            GeoInformation.country_code =
+                                (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//CountryCode").InnerXml))
+                                    ? doc.SelectSingleNode("Response//CountryCode").InnerXml
+                                    : "-";
+                            GeoInformation.region = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//RegionName").InnerXml))
+                                ? doc.SelectSingleNode("Response//RegionName").InnerXml
+                                : "Unknown";
+                            GeoInformation.city = (!string.IsNullOrEmpty(doc.SelectSingleNode("Response//City").InnerXml))
+                                ? doc.SelectSingleNode("Response//City").InnerXml
+                                : "Unknown";
+                        }
+                    }
+                }
+                LastLocated = DateTime.UtcNow;
+                LocationCompleted = true;
+            }
+            catch
+            {
+                GeoInformation.country = "Unknown";
+                GeoInformation.country_code = "-";
+                GeoInformation.region = "Unknown";
+                GeoInformation.city = "Unknown";
+                LocationCompleted = false;
+            }
         }
     }
 
