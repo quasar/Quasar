@@ -151,13 +151,6 @@ namespace xClient.Core.Helper
             }
             catch
             {
-                GeoInformation.ip = "-";
-                GeoInformation.country = "Unknown";
-                GeoInformation.country_code = "-";
-                GeoInformation.region = "Unknown";
-                GeoInformation.city = "Unknown";
-                LocationCompleted = false;
-
                 TryLocateFallback();
             }
 
@@ -169,12 +162,12 @@ namespace xClient.Core.Helper
         {
             try
             {
+                GeoInformation = new GeoInfo();
+
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
-
-                GeoInformation = new GeoInfo();
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
