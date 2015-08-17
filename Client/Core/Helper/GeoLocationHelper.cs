@@ -38,10 +38,7 @@ namespace xClient.Core.Helper
         };
 
         public static int ImageIndex { get; set; }
-        public static string Country { get; private set; }
-        public static string CountryCode { get; private set; }
-        public static string Region { get; private set; }
-        public static string City { get; private set; }
+        public static GeoInfo GeoInformation { get; private set; }
         public static DateTime LastLocated { get; private set; }
         public static bool LocationCompleted { get; private set; }
 
@@ -54,13 +51,14 @@ namespace xClient.Core.Helper
         {
             TimeSpan lastLocateTry = new TimeSpan(DateTime.UtcNow.Ticks - LastLocated.Ticks);
 
+            GeoInformation = new GeoInfo();
+
             // last location was 30 minutes ago or last location has not completed
             if (lastLocateTry.TotalMinutes > 30 || !LocationCompleted)
             {
-                TryGetWanIp();
                 TryLocate();
 
-                if (CountryCode == "-" || Country == "Unknown")
+                if (GeoInformation.country_code == "-" || GeoInformation.country == "Unknown")
                 {
                     ImageIndex = 247; // question icon
                     return;
@@ -68,7 +66,7 @@ namespace xClient.Core.Helper
 
                 for (int i = 0; i < ImageList.Length; i++)
                 {
-                    if (ImageList[i].Contains(CountryCode.ToLower()))
+                    if (ImageList[i].Contains(GeoInformation.country_code.ToLower()))
                     {
                         ImageIndex = i;
                         break;
@@ -112,8 +110,6 @@ namespace xClient.Core.Helper
             {
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInfo));
 
-                GeoInfo geoInfo = new GeoInfo();
-
                 HttpWebRequest request = (HttpWebRequest) WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
@@ -129,20 +125,23 @@ namespace xClient.Core.Helper
 
                             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
                             {
-                                geoInfo = (GeoInfo)jsonSerializer.ReadObject(ms);
+                                GeoInformation = (GeoInfo)jsonSerializer.ReadObject(ms);
 
-                                Country = (!string.IsNullOrEmpty(geoInfo.country)) 
-                                    ? geoInfo.country
+                                SystemCore.WanIp = GeoInformation.ip = (!string.IsNullOrEmpty(GeoInformation.ip))
+                                    ? GeoInformation.ip
+                                    : "-";
+                                GeoInformation.country = (!string.IsNullOrEmpty(GeoInformation.country)) 
+                                    ? GeoInformation.country
                                     : "Unknown";
-                                CountryCode =
-                                    (!string.IsNullOrEmpty(geoInfo.country_code))
-                                        ? geoInfo.country_code
+                                GeoInformation.country_code =
+                                    (!string.IsNullOrEmpty(GeoInformation.country_code))
+                                        ? GeoInformation.country_code
                                         : "-";
-                                Region = (!string.IsNullOrEmpty(geoInfo.region))
-                                    ? geoInfo.region
+                                GeoInformation.region = (!string.IsNullOrEmpty(GeoInformation.region))
+                                    ? GeoInformation.region
                                     : "Unknown";
-                                City = (!string.IsNullOrEmpty(geoInfo.city))
-                                    ? geoInfo.city
+                                GeoInformation.city = (!string.IsNullOrEmpty(GeoInformation.city))
+                                    ?  GeoInformation.city
                                     : "Unknown";
                             }
                         }
@@ -153,12 +152,16 @@ namespace xClient.Core.Helper
             }
             catch
             {
-                Country = "Unknown";
-                CountryCode = "-";
-                Region = "Unknown";
-                City = "Unknown";
+                GeoInformation.ip = "-";
+                GeoInformation.country = "Unknown";
+                GeoInformation.country_code = "-";
+                GeoInformation.region = "Unknown";
+                GeoInformation.city = "Unknown";
                 LocationCompleted = false;
             }
+
+            if (string.IsNullOrEmpty(GeoInformation.ip) || GeoInformation.ip == "-")
+                TryGetWanIp();
         }
     }
 
