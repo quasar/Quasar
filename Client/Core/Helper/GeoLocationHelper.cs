@@ -76,6 +76,8 @@ namespace xClient.Core.Helper
 
         private static void TryLocate()
         {
+            LocationCompleted = false;
+
             try
             {
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
@@ -100,7 +102,7 @@ namespace xClient.Core.Helper
                         }
                     }
                 }
-                SystemCore.WanIp = GeoInfo.ip;
+
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
             }
@@ -156,7 +158,7 @@ namespace xClient.Core.Helper
                         }
                     }
                 }
-                SystemCore.WanIp = GeoInfo.ip;
+
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
             }
@@ -169,7 +171,7 @@ namespace xClient.Core.Helper
                 LocationCompleted = false;
             }
 
-            if (string.IsNullOrEmpty(SystemCore.WanIp))
+            if (string.IsNullOrEmpty(GeoInfo.ip))
                 TryGetWanIp();
         }
 
@@ -199,7 +201,7 @@ namespace xClient.Core.Helper
             {
             }
 
-            SystemCore.WanIp = wanIp;
+            GeoInfo.ip = wanIp;
         }
     }
 
