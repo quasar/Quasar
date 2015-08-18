@@ -39,7 +39,7 @@ namespace xClient.Core.Helper
         };
 
         public static int ImageIndex { get; set; }
-        public static GeoInfo GeoInformation { get; private set; }
+        public static GeoInformation GeoInfo { get; private set; }
         public static DateTime LastLocated { get; private set; }
         public static bool LocationCompleted { get; private set; }
 
@@ -57,7 +57,7 @@ namespace xClient.Core.Helper
             {
                 TryLocate();
 
-                if (GeoInformation.country_code == "-" || GeoInformation.country == "Unknown")
+                if (GeoInfo.country_code == "-" || GeoInfo.country == "Unknown")
                 {
                     ImageIndex = 247; // question icon
                     return;
@@ -65,7 +65,7 @@ namespace xClient.Core.Helper
 
                 for (int i = 0; i < ImageList.Length; i++)
                 {
-                    if (ImageList[i].Contains(GeoInformation.country_code.ToLower()))
+                    if (ImageList[i].Contains(GeoInfo.country_code.ToLower()))
                     {
                         ImageIndex = i;
                         break;
@@ -78,7 +78,7 @@ namespace xClient.Core.Helper
         {
             try
             {
-                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInfo));
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
@@ -95,12 +95,12 @@ namespace xClient.Core.Helper
 
                             using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
                             {
-                                GeoInformation = (GeoInfo)jsonSerializer.ReadObject(ms);
+                                GeoInfo = (GeoInformation)jsonSerializer.ReadObject(ms);
                             }
                         }
                     }
                 }
-                SystemCore.WanIp = GeoInformation.ip;
+                SystemCore.WanIp = GeoInfo.ip;
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
             }
@@ -112,13 +112,7 @@ namespace xClient.Core.Helper
 
         private static void TryLocateFallback()
         {
-            string xmlIp;
-            string xmlCountry;
-            string xmlCountryCode;
-            string xmlRegion;
-            string xmlCity;
-
-            GeoInformation = new GeoInfo();
+            GeoInfo = new GeoInformation();
 
             try
             {
@@ -138,40 +132,40 @@ namespace xClient.Core.Helper
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(responseString);
 
-                            xmlIp = doc.SelectSingleNode("Response//IP").InnerXml;
-                            xmlCountry = doc.SelectSingleNode("Response//CountryName").InnerXml;
-                            xmlCountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
-                            xmlRegion = doc.SelectSingleNode("Response//RegionName").InnerXml;
-                            xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
+                            string xmlIp = doc.SelectSingleNode("Response//IP").InnerXml;
+                            string xmlCountry = doc.SelectSingleNode("Response//CountryName").InnerXml;
+                            string xmlCountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
+                            string xmlRegion = doc.SelectSingleNode("Response//RegionName").InnerXml;
+                            string xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
 
-                            GeoInformation.ip = (!string.IsNullOrEmpty(xmlIp))
+                            GeoInfo.ip = (!string.IsNullOrEmpty(xmlIp))
                                 ? xmlIp
                                 : "-";
-                            GeoInformation.country = (!string.IsNullOrEmpty(xmlCountry))
+                            GeoInfo.country = (!string.IsNullOrEmpty(xmlCountry))
                                 ? xmlCountry
                                 : "Unknown";
-                            GeoInformation.country_code = (!string.IsNullOrEmpty(xmlCountryCode))
+                            GeoInfo.country_code = (!string.IsNullOrEmpty(xmlCountryCode))
                                 ? xmlCountryCode
                                 : "-";
-                            GeoInformation.region = (!string.IsNullOrEmpty(xmlRegion))
+                            GeoInfo.region = (!string.IsNullOrEmpty(xmlRegion))
                                 ? xmlRegion
                                 : "Unknown";
-                            GeoInformation.city = (!string.IsNullOrEmpty(xmlCity))
+                            GeoInfo.city = (!string.IsNullOrEmpty(xmlCity))
                                 ? xmlCity
                                 : "Unknown";
                         }
                     }
                 }
-                SystemCore.WanIp = GeoInformation.ip;
+                SystemCore.WanIp = GeoInfo.ip;
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
             }
             catch
             {
-                GeoInformation.country = "Unknown";
-                GeoInformation.country_code = "-";
-                GeoInformation.region = "Unknown";
-                GeoInformation.city = "Unknown";
+                GeoInfo.country = "Unknown";
+                GeoInfo.country_code = "-";
+                GeoInfo.region = "Unknown";
+                GeoInfo.city = "Unknown";
                 LocationCompleted = false;
             }
 
@@ -210,7 +204,7 @@ namespace xClient.Core.Helper
     }
 
     [DataContract]
-    public class GeoInfo
+    public class GeoInformation
     {
         [DataMember]
         public double longitude { get; set; }
