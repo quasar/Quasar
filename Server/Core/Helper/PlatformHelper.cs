@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Management;
-using System.Text.RegularExpressions;
 
 namespace xServer.Core.Helper
 {
