@@ -42,7 +42,6 @@ namespace xClient.Core
         public static string OperatingSystem { get; set; }
         public static string MyPath { get; set; }
         public static string InstallPath { get; set; }
-        public static string WanIp { get; set; }
         public static string AccountType { get; set; }
 
         public static string GetOperatingSystem()
