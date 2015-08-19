@@ -207,7 +207,7 @@
             this.MinimumSize = new System.Drawing.Size(640, 480);
             this.Name = "FrmRemoteDesktop";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Remote Desktop []";
+            this.Text = "Remote Desktop []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteDesktop_FormClosing);
             this.Load += new System.EventHandler(this.FrmRemoteDesktop_Load);
             this.Resize += new System.EventHandler(this.FrmRemoteDesktop_Resize);

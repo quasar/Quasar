@@ -78,7 +78,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmRemoteShell";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Remote Shell []";
+            this.Text = "Remote Shell []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteShell_FormClosing);
             this.Load += new System.EventHandler(this.FrmRemoteShell_Load);
             this.ResumeLayout(false);

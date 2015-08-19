@@ -172,7 +172,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmUpdate";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Update []";
+            this.Text = "Update []";
             this.Load += new System.EventHandler(this.FrmUpdate_Load);
             this.groupLocalFile.ResumeLayout(false);
             this.groupLocalFile.PerformLayout();

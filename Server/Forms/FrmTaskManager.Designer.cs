@@ -127,7 +127,7 @@ namespace xServer.Forms
             this.MinimumSize = new System.Drawing.Size(351, 449);
             this.Name = "FrmTaskManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Task Manager []";
+            this.Text = "Task Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTaskManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmTaskManager_Load);
             this.ctxtMenu.ResumeLayout(false);

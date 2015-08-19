@@ -9,8 +9,6 @@ namespace xServer.Core.Data
     {
         private static readonly string SettingsPath = Path.Combine(Application.StartupPath, "settings.xml");
 
-        public const string VERSION = "RELEASE4.1";
-
         public static ushort ListenPort
         {
             get

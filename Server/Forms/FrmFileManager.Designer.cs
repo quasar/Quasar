@@ -34,6 +34,7 @@ namespace xServer.Forms
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmFileManager));
             this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.ctxtDownload = new System.Windows.Forms.ToolStripMenuItem();
+            this.ctxtUpload = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine2 = new System.Windows.Forms.ToolStripSeparator();
             this.ctxtExecute = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtRename = new System.Windows.Forms.ToolStripMenuItem();
@@ -67,7 +68,6 @@ namespace xServer.Forms
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ctxtUpload = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtMenu.SuspendLayout();
             this.botStrip.SuspendLayout();
             this.ctxtMenu2.SuspendLayout();
@@ -91,7 +91,7 @@ namespace xServer.Forms
             this.ctxtRefresh,
             this.ctxtOpenDirectory});
             this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(240, 220);
+            this.ctxtMenu.Size = new System.Drawing.Size(240, 198);
             // 
             // ctxtDownload
             // 
@@ -101,6 +101,14 @@ namespace xServer.Forms
             this.ctxtDownload.Size = new System.Drawing.Size(239, 22);
             this.ctxtDownload.Text = "Download";
             this.ctxtDownload.Click += new System.EventHandler(this.ctxtDownload_Click);
+            // 
+            // ctxtUpload
+            // 
+            this.ctxtUpload.Image = global::xServer.Properties.Resources.upload;
+            this.ctxtUpload.Name = "ctxtUpload";
+            this.ctxtUpload.Size = new System.Drawing.Size(239, 22);
+            this.ctxtUpload.Text = "Upload";
+            this.ctxtUpload.Click += new System.EventHandler(this.ctxtUpload_Click);
             // 
             // ctxtLine2
             // 
@@ -408,14 +416,6 @@ namespace xServer.Forms
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 337;
             // 
-            // ctxtUpload
-            // 
-            this.ctxtUpload.Image = global::xServer.Properties.Resources.upload;
-            this.ctxtUpload.Name = "ctxtUpload";
-            this.ctxtUpload.Size = new System.Drawing.Size(239, 22);
-            this.ctxtUpload.Text = "Upload";
-            this.ctxtUpload.Click += new System.EventHandler(this.ctxtUpload_Click);
-            // 
             // FrmFileManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -430,7 +430,7 @@ namespace xServer.Forms
             this.MinimumSize = new System.Drawing.Size(663, 377);
             this.Name = "FrmFileManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - File Manager []";
+            this.Text = "File Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmFileManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmFileManager_Load);
             this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.FrmFileManager_KeyDown);
