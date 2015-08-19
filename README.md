@@ -60,7 +60,8 @@ Building a client
 
 ToDo
 ---
-* Registry Editor (browse, delete, add registry keys)
+* New icon for Quasar ([#337](https://github.com/quasar/QuasarRAT/issues/337))
+* Registry Editor ([#328](https://github.com/quasar/QuasarRAT/pull/328))
 * [Issues](https://github.com/quasar/QuasarRAT/issues)
 
 Contributing
