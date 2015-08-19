@@ -512,9 +512,9 @@ namespace xServer.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap xRAT_64x64 {
+        internal static System.Drawing.Bitmap Quasar_Server {
             get {
-                object obj = ResourceManager.GetObject("xRAT_64x64", resourceCulture);
+                object obj = ResourceManager.GetObject("Quasar_Server", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

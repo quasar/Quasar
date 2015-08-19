@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
+using xServer.Core.Data;
 
 namespace xServer.Forms
 {
@@ -13,8 +14,8 @@ namespace xServer.Forms
             lblVersion.Text = "v" + Application.ProductVersion;
             rtxtContent.Text = Properties.Resources.TermsOfUse;
 
-            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/quasar/QuasarRAT" });
-            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/quasar/QuasarRAT#credits" });
+            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL });
+            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL + "#credits" });
         }
         
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

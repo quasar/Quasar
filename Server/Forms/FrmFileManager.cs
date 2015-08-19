@@ -322,7 +322,7 @@ namespace xServer.Forms
             if (Directory.Exists(_connectClient.Value.DownloadDirectory))
                 Process.Start(_connectClient.Value.DownloadDirectory);
             else
-                MessageBox.Show("No files downloaded yet!", "xRAT 2.0 - File Manager", MessageBoxButtons.OK,
+                MessageBox.Show("No files downloaded yet!", "File Manager", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
         }
 
@@ -474,13 +474,6 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         public void ClearFileBrowser()
@@ -495,13 +488,6 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         public void AddItemToFileBrowser(ListViewItem lvi)
@@ -515,13 +501,6 @@ namespace xServer.Forms
             }
             catch (InvalidOperationException)
             {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -538,13 +517,6 @@ namespace xServer.Forms
             }
             catch (InvalidOperationException)
             {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -585,13 +557,6 @@ namespace xServer.Forms
             }
             catch (InvalidOperationException)
             {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

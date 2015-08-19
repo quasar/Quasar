@@ -147,7 +147,7 @@ namespace xServer.Core.Data
         {
             get
             {
-                return ReadValueSafe("RegistryName", "xRAT Client Startup");
+                return ReadValueSafe("RegistryName", "Quasar Client Startup");
             }
             set
             {

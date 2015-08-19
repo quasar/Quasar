@@ -42,7 +42,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>xRAT-64x64.ico</ApplicationIcon>
+    <ApplicationIcon>Quasar_Server.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -451,7 +451,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\Helper\MouseKeyHook\HotKeys\ReadMe.txt" />
-    <Content Include="xRAT-64x64.ico" />
+    <Content Include="Quasar_Server.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

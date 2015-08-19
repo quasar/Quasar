@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAbout));
-            this.picXRAT = new System.Windows.Forms.PictureBox();
+            this.picIcon = new System.Windows.Forms.PictureBox();
             this.lblTitle = new System.Windows.Forms.Label();
             this.lblVersion = new System.Windows.Forms.Label();
             this.btnOkay = new System.Windows.Forms.Button();
@@ -38,18 +38,18 @@
             this.lnkCredits = new System.Windows.Forms.LinkLabel();
             this.lnkGithubPage = new System.Windows.Forms.LinkLabel();
             this.lblSubTitle = new System.Windows.Forms.Label();
-            ((System.ComponentModel.ISupportInitialize)(this.picXRAT)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picIcon)).BeginInit();
             this.SuspendLayout();
             // 
-            // picXRAT
+            // picIcon
             // 
-            this.picXRAT.Image = global::xServer.Properties.Resources.xRAT_64x64;
-            this.picXRAT.Location = new System.Drawing.Point(12, 12);
-            this.picXRAT.Name = "picXRAT";
-            this.picXRAT.Size = new System.Drawing.Size(64, 64);
-            this.picXRAT.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picXRAT.TabIndex = 0;
-            this.picXRAT.TabStop = false;
+            this.picIcon.Image = global::xServer.Properties.Resources.Quasar_Server;
+            this.picIcon.Location = new System.Drawing.Point(12, 12);
+            this.picIcon.Name = "picIcon";
+            this.picIcon.Size = new System.Drawing.Size(64, 64);
+            this.picIcon.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picIcon.TabIndex = 0;
+            this.picIcon.TabStop = false;
             // 
             // lblTitle
             // 
@@ -149,7 +149,7 @@
             this.Controls.Add(this.btnOkay);
             this.Controls.Add(this.lblVersion);
             this.Controls.Add(this.lblTitle);
-            this.Controls.Add(this.picXRAT);
+            this.Controls.Add(this.picIcon);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -158,7 +158,7 @@
             this.Name = "FrmAbout";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quasar - About";
-            ((System.ComponentModel.ISupportInitialize)(this.picXRAT)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picIcon)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -166,7 +166,7 @@
 
         #endregion
 
-        private System.Windows.Forms.PictureBox picXRAT;
+        private System.Windows.Forms.PictureBox picIcon;
         private System.Windows.Forms.Label lblTitle;
         private System.Windows.Forms.Label lblVersion;
         private System.Windows.Forms.Button btnOkay;
