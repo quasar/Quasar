@@ -744,10 +744,14 @@ namespace xServer.Forms
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
+#if DEBUG
+            MessageBox.Show("Client Builder is not available in DEBUG configuration.\nPlease build the project using RELEASE configuration.", "Not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
+#else
             using (var frm = new FrmBuilder())
             {
                 frm.ShowDialog();
             }
+#endif
         }
 
         private void menuStatistics_Click(object sender, EventArgs e)
