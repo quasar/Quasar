@@ -62,14 +62,14 @@ namespace xServer.Forms
             {
                 if (ex.ErrorCode == 10048)
                 {
-                    MessageBox.Show("The port is already in use.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show("The port is already in use.", "Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 else
                 {
                     MessageBox.Show(
                         string.Format(
                             "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
-                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 btnStop_Click(sender, null);
             }
@@ -78,7 +78,7 @@ namespace xServer.Forms
                 MessageBox.Show(
                     string.Format(
                         "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\n{1}/issues",
-                        ex.Message, Settings.RepositoryURL), "Unexpected Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        ex.Message, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnStop_Click(sender, null);
             }
         }
