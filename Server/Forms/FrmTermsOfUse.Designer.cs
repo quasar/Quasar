@@ -104,7 +104,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmTermsOfUse";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Terms of Use";
+            this.Text = "Quasar - Terms of Use";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmTermsOfUse_FormClosing);
             this.Load += new System.EventHandler(this.FrmTermsOfUse_Load);
             this.ResumeLayout(false);
