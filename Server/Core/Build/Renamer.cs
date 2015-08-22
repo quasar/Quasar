@@ -64,6 +64,7 @@ namespace xServer.Core.Build
                 || typeDef.Namespace.StartsWith("xClient.Core.ReverseProxy")
                 || typeDef.Namespace.StartsWith("xClient.Core.MouseKeyHook")
                 || typeDef.Namespace.StartsWith("xClient.Core.Packets")
+                || typeDef.Namespace.StartsWith("xClient.Core.Recovery.Browsers")
                 || typeDef.HasInterfaces)
                 return;
 
