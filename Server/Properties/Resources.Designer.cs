@@ -441,18 +441,17 @@ namespace xServer.Properties {
         }
         
         /// <summary>
-        ///   Sucht eine lokalisierte Zeichenfolge, die     xRAT 2.0
+        ///   Sucht eine lokalisierte Zeichenfolge, die     Quasar - Remote Administration Tool
         ///    Copyright (C) 2015 MaxX0r
         ///
-        ///    xRAT 2.0 is free software: you can redistribute it and/or modify
+        ///    Quasar is free software: you can redistribute it and/or modify
         ///    it under the terms of the GNU General Public License as published by
         ///    the Free Software Foundation, either version 3 of the License, or
         ///    (at your option) any later version.
         ///
-        ///    xRAT 2.0 is distributed in the hope that it will be useful,
+        ///    Quasar is distributed in the hope that it will be useful,
         ///    but WITHOUT ANY WARRANTY; without even the implied warranty of
-        ///    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-        ///    GNU [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
+        ///    MERCHANTABILITY or FITNESS FOR A PARTICULAR PUR [Rest der Zeichenfolge wurde abgeschnitten]&quot;; ähnelt.
         /// </summary>
         internal static string TermsOfUse {
             get {
@@ -513,9 +512,9 @@ namespace xServer.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap xRAT_64x64 {
+        internal static System.Drawing.Bitmap Quasar_Server {
             get {
-                object obj = ResourceManager.GetObject("xRAT_64x64", resourceCulture);
+                object obj = ResourceManager.GetObject("Quasar_Server", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

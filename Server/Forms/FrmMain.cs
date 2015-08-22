@@ -65,8 +65,8 @@ namespace xServer.Forms
                 {
                     int selected = lstClients.SelectedItems.Count;
                     this.Text = (selected > 0) ?
-                        string.Format("xRAT 2.0 - Connected: {0} [Selected: {1}]", ConServer.ConnectedAndAuthenticatedClients, selected) :
-                        string.Format("xRAT 2.0 - Connected: {0}", ConServer.ConnectedAndAuthenticatedClients);
+                        string.Format("Quasar - Connected: {0} [Selected: {1}]", ConServer.ConnectedAndAuthenticatedClients, selected) :
+                        string.Format("Quasar - Connected: {0}", ConServer.ConnectedAndAuthenticatedClients);
                 });
             }
             catch
@@ -744,16 +744,20 @@ namespace xServer.Forms
 
         private void menuBuilder_Click(object sender, EventArgs e)
         {
+#if DEBUG
+            MessageBox.Show("Client Builder is not available in DEBUG configuration.\nPlease build the project using RELEASE configuration.", "Not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
+#else
             using (var frm = new FrmBuilder())
             {
                 frm.ShowDialog();
             }
+#endif
         }
 
         private void menuStatistics_Click(object sender, EventArgs e)
         {
             if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
-                MessageBox.Show("Please wait for at least one connected Client!", "xRAT 2.0", MessageBoxButtons.OK,
+                MessageBox.Show("Please wait for at least one connected Client!", "Quasar", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             else
             {

@@ -383,7 +383,7 @@ namespace xClient.Core.Commands
                     "LAN IP Address",
                     SystemCore.GetLanIp(),
                     "WAN IP Address",
-                    SystemCore.WanIp,
+                    GeoLocationHelper.GeoInfo.ip,
                     "Antivirus",
                     SystemCore.GetAntivirus(),
                     "Firewall",

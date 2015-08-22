@@ -71,7 +71,7 @@
             this.chkRunHidden.Text = "Run file hidden";
             this.chkRunHidden.UseVisualStyleBackColor = true;
             // 
-            // frmDownloadAndExecute
+            // FrmDownloadAndExecute
             // 
             this.AcceptButton = this.btnDownloadAndExecute;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -86,9 +86,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmDownloadAndExecute";
+            this.Name = "FrmDownloadAndExecute";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Download & Execute []";
+            this.Text = "Download & Execute []";
             this.Load += new System.EventHandler(this.FrmDownloadAndExecute_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -251,7 +251,7 @@ namespace xServer.Forms
             this.MaximizeBox = false;
             this.Name = "FrmReverseProxy";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Reverse Proxy []";
+            this.Text = "Reverse Proxy []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmReverseProxy_FormClosing);
             this.Load += new System.EventHandler(this.FrmReverseProxy_Load);
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).EndInit();

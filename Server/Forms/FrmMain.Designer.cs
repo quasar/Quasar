@@ -614,7 +614,7 @@ namespace xServer.Forms
             // nIcon
             // 
             this.nIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("nIcon.Icon")));
-            this.nIcon.Text = "xRAT 2.0";
+            this.nIcon.Text = "Quasar";
             this.nIcon.Visible = true;
             this.nIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.nIcon_MouseDoubleClick);
             // 
@@ -750,7 +750,7 @@ namespace xServer.Forms
             this.MinimumSize = new System.Drawing.Size(680, 415);
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Connected: 0";
+            this.Text = "Quasar - Connected: 0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
             this.Load += new System.EventHandler(this.FrmMain_Load);
             this.ctxtMenu.ResumeLayout(false);

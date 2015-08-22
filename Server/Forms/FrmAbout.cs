@@ -11,11 +11,11 @@ namespace xServer.Forms
         {
             InitializeComponent();
 
-            lblVersion.Text = Settings.VERSION;
+            lblVersion.Text = "v" + Application.ProductVersion;
             rtxtContent.Text = Properties.Resources.TermsOfUse;
 
-            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT" });
-            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = "https://github.com/MaxXor/xRAT#credits" });
+            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL });
+            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL + "#credits" });
         }
         
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

@@ -23,9 +23,10 @@ namespace xClient.Core.Extensions
         /// </summary>
         /// <param name="key">The key of which we obtain the value of.</param>
         /// <param name="keyName">The name of the key.</param>
+        /// <param name="defaultValue">The default value if value can not be determinated.</param>
         /// <returns>Returns the value of the key using the specified key name. If unable to do so,
-        /// string.Empty will be returned instead.</returns>
-        private static string GetValueSafe(this RegistryKey key, string keyName)
+        /// defaultValue will be returned instead.</returns>
+        public static string GetValueSafe(this RegistryKey key, string keyName, string defaultValue = "")
         {
             // Before calling this, use something such as "IsNameOrValueNull" to make sure
             // that the input used for this method is usable. The responsibility for this
@@ -33,11 +34,11 @@ namespace xClient.Core.Extensions
             // allowing exceptions if any are generated.
             try
             {
-                return key.GetValue(keyName).ToString();
+                return key.GetValue(keyName, defaultValue).ToString();
             }
             catch
             {
-                return string.Empty;
+                return defaultValue;
             }
         }
 

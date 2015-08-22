@@ -1,10 +1,10 @@
-xRAT 2.0
-========
-<a href="https://ci.appveyor.com/project/MaxXor/xrat"><image src="https://ci.appveyor.com/api/projects/status/na7hitbqx8327xr9?svg=true" height="18"></a> [![Join the chat at https://gitter.im/MaxXor/xRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/MaxXor/xRAT?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+QuasarRAT
+=========
+<a href="https://ci.appveyor.com/project/MaxXor/quasarrat"><image src="https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true" height="18"></a> [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
 
-**Free, Open-Source Remote Administration Tool**
+**Free, Open-Source Remote Administration Tool for Windows**
 
-xRAT 2.0 is a fast and light-weight remote administration tool coded in C#. Providing high stability and an easy-to-use user interface, xRAT is the perfect remote administration solution for you.
+Quasar is a fast and light-weight remote administration tool coded in C#. Providing high stability and an easy-to-use user interface, Quasar is the perfect remote administration solution for you.
 
 Features
 ---
@@ -60,8 +60,9 @@ Building a client
 
 ToDo
 ---
-* Registry Editor (browse, delete, add registry keys)
-* [Issues](https://github.com/MaxXor/xRAT/issues)
+* New icon for Quasar ([#337](https://github.com/quasar/QuasarRAT/issues/337))
+* Registry Editor ([#328](https://github.com/quasar/QuasarRAT/pull/328))
+* [Issues](https://github.com/quasar/QuasarRAT/issues)
 
 Contributing
 ---
@@ -99,4 +100,4 @@ https://github.com/nterry/Mono.Nat
 
 Thank you!
 ---
-I really appreciate all kinds of feedback and contributions. Thanks for using and supporting xRAT 2.0!
+I really appreciate all kinds of feedback and contributions. Thanks for using and supporting Quasar!

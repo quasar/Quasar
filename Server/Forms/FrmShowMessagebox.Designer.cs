@@ -167,7 +167,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmShowMessagebox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Show Messagebox []";
+            this.Text = "Show Messagebox []";
             this.Load += new System.EventHandler(this.FrmShowMessagebox_Load);
             this.groupMsgSettings.ResumeLayout(false);
             this.groupMsgSettings.PerformLayout();
