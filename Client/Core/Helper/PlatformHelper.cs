@@ -70,18 +70,21 @@ namespace xClient.Core.Helper
                 "SELECT AddressWidth FROM Win32_Processor");
 
             // Perform the query and get the result.
-            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
-            ManagementObjectCollection queryCollection = searcher.Get();
-            foreach (ManagementObject queryObj in queryCollection)
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query))
             {
-                if (queryObj["AddressWidth"].ToString() == "64")
+                using (ManagementObjectCollection queryCollection = searcher.Get())
                 {
-                    return 64;
+                    foreach (ManagementObject queryObj in queryCollection)
+                    {
+                        if (queryObj["AddressWidth"].ToString() == "64")
+                        {
+                            return 64;
+                        }
+                    }
+                    return 32;
                 }
             }
-            return 32;
         }
-
 
         /// <summary>
         /// Gets the name of the operating system running on this computer (including the edition).
