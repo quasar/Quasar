@@ -219,7 +219,8 @@ namespace xClient.Core.Registry
 
             if (MatchFound != null)
                 searcher.ReportProgress(0, match);
-            else if (SearchComplete != null)
+            
+            if (SearchComplete != null)
                 matches.Add(match);
         }
         
