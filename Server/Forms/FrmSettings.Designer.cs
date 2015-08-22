@@ -97,9 +97,9 @@
             this.chkAutoListen.AutoSize = true;
             this.chkAutoListen.Location = new System.Drawing.Point(15, 63);
             this.chkAutoListen.Name = "chkAutoListen";
-            this.chkAutoListen.Size = new System.Drawing.Size(249, 17);
+            this.chkAutoListen.Size = new System.Drawing.Size(222, 17);
             this.chkAutoListen.TabIndex = 5;
-            this.chkAutoListen.Text = "Listen for new connections on xRAT startup";
+            this.chkAutoListen.Text = "Listen for new connections on startup";
             this.chkAutoListen.UseVisualStyleBackColor = true;
             // 
             // chkPopup

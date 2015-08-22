@@ -16,6 +16,8 @@ namespace xClient.Core.Helper
             VistaOrHigher = Win32NT && Environment.OSVersion.Version.Major >= 6;
             SevenOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(6, 1));
             EightOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(6, 2, 9200));
+            EightPointOneOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(6, 3));
+            TenOrHigher = Win32NT && (Environment.OSVersion.Version >= new Version(10, 0));
             RunningOnMono = Type.GetType("Mono.Runtime") != null;
 
             Name = "Unknown OS";
@@ -63,7 +65,7 @@ namespace xClient.Core.Helper
         /// Returns a value indicating whether the Operating System is Windows XP or higher.
         /// </summary>
         /// <value>
-        ///   <c>true</c> if the Operating System is Windows 8 or higher; otherwise, <c>false</c>.
+        ///   <c>true</c> if the Operating System is Windows XP or higher; otherwise, <c>false</c>.
         /// </value>
         public static bool XpOrHigher { get; private set; }
 
@@ -90,5 +92,21 @@ namespace xClient.Core.Helper
         ///   <c>true</c> if the Operating System is Windows 8 or higher; otherwise, <c>false</c>.
         /// </value>
         public static bool EightOrHigher { get; private set; }
+
+        /// <summary>
+        /// Returns a value indicating whether the Operating System is Windows 8.1 or higher.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the Operating System is Windows 8.1 or higher; otherwise, <c>false</c>.
+        /// </value>
+        public static bool EightPointOneOrHigher { get; private set; }
+
+        /// <summary>
+        /// Returns a value indicating whether the Operating System is Windows 10 or higher.
+        /// </summary>
+        /// <value>
+        ///   <c>true</c> if the Operating System is Windows 10 or higher; otherwise, <c>false</c>.
+        /// </value>
+        public static bool TenOrHigher { get; private set; }
     }
 }

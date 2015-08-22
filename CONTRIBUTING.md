@@ -8,7 +8,7 @@
 
 ##Guidelines for Pull Requests:
 
-1. Respect xRAT 2.0 coding style.
+1. Respect the coding style of QuasarRAT.
 2. Make a single change per commit.
 3. Make your modification compact - don't reformat source code in your request. It makes code review more difficult.
 4. PR of reformatting (changing of ws/TAB, line endings or coding style) of source code won't be accepted.

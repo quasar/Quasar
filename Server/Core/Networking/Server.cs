@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
+using System.Windows.Forms;
+using xServer.Core.Data;
 using xServer.Core.Networking.Utilities;
 using xServer.Core.Packets;
 
@@ -251,7 +253,7 @@ namespace xServer.Core.Networking
                         {
                         }
                     }
-                    
+
                     if (BufferManager == null)
                         BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = true };
 
@@ -267,6 +269,21 @@ namespace xServer.Core.Networking
                     if (!_handle.AcceptAsync(_item))
                         AcceptClient(null, _item);
                 }
+            }
+            catch (SocketException ex)
+            {
+                if (ex.ErrorCode == 10048)
+                {
+                    MessageBox.Show("The port is already in use.", "Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(
+                        string.Format(
+                            "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
+                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                Disconnect();
             }
             catch (Exception)
             {

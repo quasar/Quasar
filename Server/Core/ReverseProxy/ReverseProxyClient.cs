@@ -288,7 +288,7 @@ namespace xServer.Core.ReverseProxy
         }
 
         /// <summary>
-        /// xRAT -> ProxyClient
+        /// Server -> ProxyClient
         /// </summary>
         /// <param name="payload"></param>
         public void SendToClient(byte[] payload)

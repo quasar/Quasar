@@ -93,7 +93,7 @@ namespace xServer.Forms
             this.MinimizeBox = false;
             this.Name = "FrmSystemInformation";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - System Information []";
+            this.Text = "System Information []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmSystemInformation_FormClosing);
             this.Load += new System.EventHandler(this.FrmSystemInformation_Load);
             this.ctxtMenu.ResumeLayout(false);

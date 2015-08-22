@@ -79,13 +79,6 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
         }
 
         public void AddProcessToListview(ListViewItem lvi)
@@ -99,13 +92,6 @@ namespace xServer.Forms
             }
             catch (InvalidOperationException)
             {
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\\https://github.com/MaxXor/xRAT/issues",
-                        ex.Message), "", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

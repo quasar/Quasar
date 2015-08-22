@@ -3,10 +3,9 @@ skip_tags: true
 configuration:
 - Debug
 - Release
-before_build:
-- nuget restore
+shallow_clone: true
 build:
-  project: xRAT 2.sln
+  project: QuasarRAT.sln
   parallel: true
   verbosity: minimal
 artifacts:

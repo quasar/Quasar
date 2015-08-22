@@ -103,7 +103,7 @@
             this.MinimizeBox = false;
             this.Name = "FrmStartupManager";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Startup Manager []";
+            this.Text = "Startup Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmStartupManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmStartupManager_Load);
             this.ctxtMenu.ResumeLayout(false);

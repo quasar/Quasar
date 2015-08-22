@@ -229,7 +229,6 @@
             this.txtFormat.TabIndex = 0;
             this.txtFormat.Text = "APP - URL - USER:PASS";
             this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            this.txtFormat.TextChanged += new System.EventHandler(this.txtFormat_TextChanged);
             // 
             // FrmPasswordRecovery
             // 
@@ -243,7 +242,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmPasswordRecovery";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "xRAT 2.0 - Password Recovery []";
+            this.Text = "Password Recovery []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmPasswordRecovery_FormClosing);
             this.Load += new System.EventHandler(this.FrmPasswordRecovery_Load);
             this.menuMain.ResumeLayout(false);
