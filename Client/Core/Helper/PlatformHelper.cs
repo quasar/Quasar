@@ -35,6 +35,54 @@ namespace xClient.Core.Helper
             Name = Regex.Replace(Name, "^.*(?=Windows)", "").TrimEnd().TrimStart(); // Remove everything before first match "Windows" and trim end & start
         }
 
+        //Credits: http://1code.codeplex.com/SourceControl/changeset/view/39074#842775
+        public static int Is64BitOperatingSystem(string machineName,
+            string domain, string userName, string password)
+        {
+            ConnectionOptions options = null;
+            if (!string.IsNullOrEmpty(userName))
+            {
+                // Build a ConnectionOptions object for the remote connection 
+                // if you plan to connect to the remote with a different user 
+                // name and password than the one you are currently using.
+                options = new ConnectionOptions();
+                options.Username = userName;
+                options.Password = password;
+                options.Authority = "NTLMDOMAIN:" + domain;
+            }
+            // Else the connection will use the currently logged-on user
+
+            // Make a connection to the target computer.
+            ManagementScope scope = new ManagementScope("\\\\" +
+                (string.IsNullOrEmpty(machineName) ? "." : machineName) +
+                "\\root\\cimv2", options);
+            scope.Connect();
+
+            // Query Win32_Processor.AddressWidth which dicates the current 
+            // operating mode of the processor (on a 32-bit OS, it would be 
+            // "32"; on a 64-bit OS, it would be "64").
+            // Note: Win32_Processor.DataWidth indicates the capability of 
+            // the processor. On a 64-bit processor, it is "64".
+            // Note: Win32_OperatingSystem.OSArchitecture tells the bitness
+            // of OS too. On a 32-bit OS, it would be "32-bit". However, it 
+            // is only available on Windows Vista and newer OS.
+            ObjectQuery query = new ObjectQuery(
+                "SELECT AddressWidth FROM Win32_Processor");
+
+            // Perform the query and get the result.
+            ManagementObjectSearcher searcher = new ManagementObjectSearcher(scope, query);
+            ManagementObjectCollection queryCollection = searcher.Get();
+            foreach (ManagementObject queryObj in queryCollection)
+            {
+                if (queryObj["AddressWidth"].ToString() == "64")
+                {
+                    return 64;
+                }
+            }
+            return 32;
+        }
+
+
         /// <summary>
         /// Gets the name of the operating system running on this computer (including the edition).
         /// </summary>
@@ -43,7 +91,7 @@ namespace xClient.Core.Helper
         /// <summary>
         /// Determines if the current application is 32 or 64-bit.
         /// </summary>
-        public static int Architecture { get { return IntPtr.Size * 8; } }
+        public static int Architecture { get {return Is64BitOperatingSystem(".", null, null, null); } }
 
         /// <summary>
         /// Returns a indicating whether the application is running in Mono runtime.

