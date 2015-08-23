@@ -196,7 +196,6 @@
             this.chkIconChange.Size = new System.Drawing.Size(91, 17);
             this.chkIconChange.TabIndex = 2;
             this.chkIconChange.Text = "Change Icon";
-            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkIconChange.UseVisualStyleBackColor = true;
             this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
