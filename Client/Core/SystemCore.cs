@@ -197,9 +197,10 @@ namespace xClient.Core
 
         public static string GetUptime()
         {
-            int uptimeSec = Environment.TickCount/1000;
-            TimeSpan result = TimeSpan.FromSeconds(uptimeSec);
-            return string.Format("{0}d : {1}h : {2}m : {3}s", result.Days, result.Hours, result.Minutes, result.Seconds);
+            long ticks = Stopwatch.GetTimestamp();
+            double uptime = ((double)ticks) / Stopwatch.Frequency;
+            var uptimeSpan = TimeSpan.FromSeconds(uptime);
+            return string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
         }
 
         public static string GetUsername()
