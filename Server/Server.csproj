@@ -78,6 +78,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\DownloadAndExecute.cs" />
     <Compile Include="Core\Data\Messagebox.cs" />
@@ -87,6 +88,7 @@
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\MouseKeyHook\Hook.cs" />
     <Compile Include="Core\MouseKeyHook\HotKeys\HotKeyArgs.cs" />
     <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySet.cs" />
@@ -140,6 +142,7 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
@@ -147,6 +150,7 @@
     <Compile Include="Core\Helper\WindowHelper.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Utilities\RegistryKeyEx.cs" />
     <Compile Include="Core\Data\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
@@ -158,6 +162,8 @@
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
+    <Compile Include="Core\Utilities\RegistrySeekerParams.cs" />
+    <Compile Include="Core\Utilities\RegSeekerMatch.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Controls\InputBox.cs" />
@@ -226,6 +232,7 @@
     <Compile Include="Core\Networking\UserState.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\RegistrySearchAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Forms\FrmAbout.cs">
@@ -278,6 +285,12 @@
     </Compile>
     <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.Designer.cs">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
@@ -390,6 +403,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegistryEditor.resx">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>

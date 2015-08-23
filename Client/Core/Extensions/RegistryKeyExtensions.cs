@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
 namespace xClient.Core.Extensions
 {
@@ -96,6 +98,27 @@ namespace xClient.Core.Extensions
             foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)).Where(k => !string.IsNullOrEmpty(k)))
             {
                 yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
+            }
+        }
+
+        public static string RegistryTypeToString(this RegistryValueKind valueKind, object valueData)
+        {
+            switch (valueKind)
+            {
+                case RegistryValueKind.Binary:
+                    return Encoding.ASCII.GetString((byte[])valueData);
+                case RegistryValueKind.MultiString:
+                    return string.Join(" ", (string[])valueData);
+                case RegistryValueKind.DWord:
+                    return ((uint)((int)valueData)).ToString();
+                case RegistryValueKind.QWord:
+                    return ((ulong)((long)valueData)).ToString();
+                case RegistryValueKind.String:
+                case RegistryValueKind.ExpandString:
+                    return valueData.ToString();
+                case RegistryValueKind.Unknown:
+                default:
+                    return string.Empty;
             }
         }
     }

