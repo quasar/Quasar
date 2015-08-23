@@ -85,9 +85,10 @@ namespace xClient.Core
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        cpuName = mObject["Name"].ToString();
+                        cpuName = mObject["Name"].ToString() + "; ";
                     }
                 }
+                cpuName = FormatHelper.RemoveEnd(cpuName);
 
                 return (!string.IsNullOrEmpty(cpuName)) ? cpuName : "N/A";
             }
@@ -133,9 +134,10 @@ namespace xClient.Core
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        gpuName = mObject["Description"].ToString();
+                        gpuName = mObject["Description"].ToString() + "; ";
                     }
                 }
+                gpuName = FormatHelper.RemoveEnd(gpuName);
 
                 return (!string.IsNullOrEmpty(gpuName)) ? gpuName : "N/A";
             }
@@ -158,9 +160,10 @@ namespace xClient.Core
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        antivirusName = mObject["displayName"].ToString();
+                        antivirusName = mObject["displayName"].ToString() + "; ";
                     }
                 }
+                antivirusName = FormatHelper.RemoveEnd(antivirusName);
 
                 return (!string.IsNullOrEmpty(antivirusName)) ? antivirusName : "N/A";
             }
@@ -183,9 +186,10 @@ namespace xClient.Core
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        firewallName = mObject["displayName"].ToString();
+                        firewallName = mObject["displayName"].ToString() + "; ";
                     }
                 }
+                firewallName = FormatHelper.RemoveEnd(firewallName);
 
                 return (!string.IsNullOrEmpty(firewallName)) ? firewallName : "N/A";
             }
