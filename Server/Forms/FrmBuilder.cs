@@ -34,6 +34,7 @@ namespace xServer.Forms
             txtDelay.Text = profile.Delay.ToString();
             txtMutex.Text = profile.Mutex;
             chkInstall.Checked = profile.InstallClient;
+            chkHiddenStartup.Checked = profile.HiddenStartup;
             txtInstallname.Text = profile.InstallName;
             GetInstallPath(profile.InstallPath).Checked = true;
             txtInstallsub.Text = profile.InstallSub;
@@ -65,6 +66,7 @@ namespace xServer.Forms
             profile.Delay = int.Parse(txtDelay.Text);
             profile.Mutex = txtMutex.Text;
             profile.InstallClient = chkInstall.Checked;
+            profile.HiddenStartup = chkHiddenStartup.Checked;
             profile.InstallName = txtInstallname.Text;
             profile.InstallPath = GetInstallPath();
             profile.HideFile = chkHide.Checked;
@@ -198,7 +200,15 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            txtRegistryKeyName.Enabled = chkStartup.Checked;
+            chkHiddenStartup.Enabled = chkStartup.Checked;
+            txtRegistryKeyName.Enabled = (chkStartup.Checked && !chkHiddenStartup.Checked);
+        }
+
+        private void chkHiddenStartup_CheckedChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+
+            txtRegistryKeyName.Enabled = !chkHiddenStartup.Checked;
         }
 
         private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e)
@@ -279,7 +289,7 @@ namespace xServer.Forms
                     }
 
                     ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
-                        txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
+                        txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkHiddenStartup.Checked, chkStartup.Checked,
                         chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
                         Application.ProductVersion);
 
@@ -383,7 +393,8 @@ namespace xServer.Forms
             txtInstallsub.Enabled = chkInstall.Checked;
             chkHide.Enabled = chkInstall.Checked;
             chkStartup.Enabled = chkInstall.Checked;
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked && !chkHiddenStartup.Checked);
+            chkHiddenStartup.Enabled = (chkInstall.Checked && chkStartup.Checked);
         }
 
         /// <summary>

