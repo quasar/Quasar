@@ -83,6 +83,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public bool HiddenStartup
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("HiddenStartup", "False"));
+            }
+            set
+            {
+                WriteValue("HiddenStartup", value.ToString());
+            }
+        }
+
         public string InstallName
         {
             get
