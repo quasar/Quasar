@@ -67,6 +67,7 @@ namespace xServer.Forms
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallname.Text;
             profile.InstallPath = GetInstallPath();
+            profile.InstallSub = txtInstallsub.Text;
             profile.HideFile = chkHide.Checked;
             profile.AddStartup = chkStartup.Checked;
             profile.RegistryName = txtRegistryKeyName.Text;
