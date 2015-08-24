@@ -38,12 +38,10 @@ namespace xClient.Core.Helper
         }
 
         /// <summary>
-        /// The function determines whether the current operating system is a 
-        /// 64-bit operating system.
+        /// The function determines whether the current operating system is a 64-bit operating system.
         /// </summary>
         /// <returns>
-        /// The function returns true if the operating system is 64-bit; 
-        /// otherwise, it returns false.
+        /// The function returns true if the operating system is 64-bit; otherwise, it returns false.
         /// </returns>
         static bool Is64BitOperatingSystem()
         {
@@ -62,14 +60,13 @@ namespace xClient.Core.Helper
         }
 
         /// <summary>
-        /// The function determins whether a method exists in the export 
-        /// table of a certain module.
+        /// The function determines whether a method exists in the export table of a certain module.
         /// </summary>
         /// <param name="moduleName">The name of the module</param>
         /// <param name="methodName">The name of the method</param>
         /// <returns>
-        /// The function returns true if the method specified by methodName 
-        /// exists in the export table of the module specified by moduleName.
+        /// The function returns true if the method specified by methodName exists in the export table
+        /// of the module specified by moduleName.
         /// </returns>
         static bool DoesWin32MethodExist(string moduleName, string methodName)
         {
@@ -82,13 +79,21 @@ namespace xClient.Core.Helper
         }
 
         /// <summary>
+        /// Gets the full name of the operating system running on this computer (including the edition and architecture).
+        /// </summary>
+        public static string FullName { get { return string.Format("{0} {1} Bit", Name, Architecture); } } 
+
+        /// <summary>
         /// Gets the name of the operating system running on this computer (including the edition).
         /// </summary>
         public static string Name { get; private set; }
 
         /// <summary>
-        /// Determines whether the operating system is 32 or 64-bit.
+        /// Determines whether the Operating System is 32 or 64-bit.
         /// </summary>
+        /// <value>
+        ///   <c>32</c> if the Operating System is 32-bit, otherwise <c>64</c> for 64-bit.
+        /// </value>
         public static int Architecture { get; private set; }
 
         /// <summary>

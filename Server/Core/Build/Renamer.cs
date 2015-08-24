@@ -56,8 +56,7 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace == "xClient.Core"
-                || typeDef.Namespace.StartsWith("xClient.Core.Elevation")
+            if (typeDef.Namespace.StartsWith("xClient.Core.Elevation")
                 || typeDef.Namespace.StartsWith("xClient.Core.Compression")
                 || typeDef.Namespace.StartsWith("xClient.Core.Networking")
                 || typeDef.Namespace.StartsWith("xClient.Core.NetSerializer")

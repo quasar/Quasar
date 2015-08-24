@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Utilities
 {
@@ -8,6 +9,16 @@ namespace xClient.Core.Utilities
     /// </summary>
     public static class NativeMethods
     {
+        [StructLayout(LayoutKind.Sequential)]
+        public struct LASTINPUTINFO
+        {
+            public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 cbSize;
+            [MarshalAs(UnmanagedType.U4)]
+            public UInt32 dwTime;
+        }
+
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool DeleteFile(string name);
@@ -28,6 +39,9 @@ namespace xClient.Core.Utilities
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool IsWow64Process(IntPtr hProcess, out bool wow64Process);
+
+        [DllImport("user32.dll")]
+        public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
         [DllImport("user32.dll")]
         public static extern bool SetCursorPos(int x, int y);

