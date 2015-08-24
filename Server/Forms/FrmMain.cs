@@ -791,5 +791,19 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        private void ctxtRemoteWebcam_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                if (c.Value.FrmRwc != null)
+                {
+                    c.Value.FrmRwc.Focus();
+                    return;
+                }
+                FrmRemoteWebcam frmRWC = new FrmRemoteWebcam(c);
+                frmRWC.Show();
+            }
+        }
     }
 }
