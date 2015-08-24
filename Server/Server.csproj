@@ -138,8 +138,12 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\GenericSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamImageResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcamImage.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcams.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
@@ -279,6 +283,12 @@
     <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmRemoteWebcam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteWebcam.Designer.cs">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -390,6 +400,10 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>

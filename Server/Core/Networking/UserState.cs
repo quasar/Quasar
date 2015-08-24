@@ -22,6 +22,7 @@ namespace xServer.Core.Networking
         public string DownloadDirectory { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
+        public FrmRemoteWebcam FrmRwc { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
         public FrmSystemInformation FrmSi { get; set; }
