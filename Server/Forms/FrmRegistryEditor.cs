@@ -24,26 +24,34 @@ namespace xServer.Forms
             new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(null).Execute(_connectClient);
         }
 
-        public void AddRootKey(RegSeekerMatch match)
+        public TreeNode AddRootKey(RegSeekerMatch match)
         {
+            TreeNode node = null;
+
             tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-                TreeNode node = CreateNode(match.Key, match.Value, null);
+                node = CreateNode(match.Key, match.Value, null);
                 tvRegistryDirectory.Nodes.Add(node);
 
                 node.Nodes.Add(new TreeNode());
             });
+            
+            return node;
         }
 
-        public void AddRootKey(RegistryKey key)
+        public TreeNode AddRootKey(RegistryKey key)
         {
+            TreeNode node = null;
+
             tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-                TreeNode node = CreateNode(key.Name, key.Name, key);
+                node = CreateNode(key.Name, key.Name, key);
                 tvRegistryDirectory.Nodes.Add(node);
 
                 node.Nodes.Add(new TreeNode());
             });
+            
+            return node;
         }
 
         private TreeNode CreateNode(string key, string text, object tag)
@@ -56,20 +64,77 @@ namespace xServer.Forms
             };
         }
 
-        public void AddKeyToTree(TreeNode parent, RegistryKeyEx subKey)
+        public void AddKeyToTree(RegSeekerMatch match)
         {
-            RegistryKey key = subKey.Key;
-            TreeNode newNode = CreateNode(key.Name, subKey.Name, key);
-            parent.Nodes.Add(newNode);
-
-            // If it contains more nodes, prepare for additional keys to be added to the new node.
-            if (key.SubKeyCount > 0)
+            TreeNode parent = GetParentTreeNode(match);
+            if (parent != null)
             {
-                newNode.Nodes.Add(new TreeNode());
+                // ToDo: Add more on the object's tag.
+                parent.Nodes.Add(CreateNode(match.Key, match.Key, match.Data));
             }
         }
 
-        public  void PopulateLstRegistryKeys(RegistryKey[] keys)
+        /// <summary>
+        /// Using the RegSeekerMatch's name, obtain the parent TreeNode of the match, creating
+        /// the TreeNodes if necessary.
+        /// </summary>
+        /// <param name="match">The match from which we obtain the corresponding TreeNode from.</param>
+        /// <returns>Null if an invalid name is passed; The parent TreeNode for non-root matches; Returns
+        /// itself if it is a root match.</returns>
+        private TreeNode GetParentTreeNode(RegSeekerMatch match)
+        {
+            if (string.IsNullOrEmpty(match.Key) || string.IsNullOrEmpty(match.Key.Trim()))
+            {
+                return null;
+            }
+            else if (match.Key.Contains("//"))
+            {
+                // It might not be a root node.
+                string[] nodePath = match.Key.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+                // Only one valid node. Probably malformed.
+                if (nodePath.Length < 2)
+                {
+                    return null;
+                }
+                else
+                {
+                    TreeNode lastNode = null;
+                    if (tvRegistryDirectory.Nodes.ContainsKey(nodePath[0]))
+                    {
+                        lastNode = tvRegistryDirectory.Nodes[nodePath[0]];
+                    }
+                    else
+                    {
+                        lastNode = CreateNode(nodePath[0], nodePath[0], null);
+                        tvRegistryDirectory.Nodes.Add(lastNode);
+                    }
+
+                    for (int i = 1; i < nodePath.Length; i++)
+                    {
+                        if (lastNode.Nodes.ContainsKey(nodePath[i]))
+                        {
+                            lastNode = tvRegistryDirectory.Nodes[nodePath[i]];
+                        }
+                        else
+                        {
+                            TreeNode newNode = CreateNode(nodePath[i], nodePath[i], null);
+                            lastNode.Nodes.Add(newNode);
+
+                            lastNode = newNode;
+                        }
+                    }
+
+                    return lastNode.Parent;
+                }
+            }
+            else
+            {
+                // Likely a root node.
+                return AddRootKey(match);
+            }
+        }
+
+        public void PopulateLstRegistryKeys(RegistryKey[] keys)
         {
             // Clear the ListView.
             for (int i = 0; i < lstRegistryKeys.Items.Count; i++)

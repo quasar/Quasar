@@ -19,7 +19,7 @@ namespace xServer.Core.Commands
                 if (packet.Matches != null && packet.Matches.Length > 0)
                 {
                     // Make sure that the client is in the correct state to handle the packet appropriately.
-                    if (client != null && client.Value.FrmRe != null && client.Value.FrmRe.IsDisposed || client.Value.FrmRe.Disposing)
+                    if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
                     {
                         if (packet.IsRootKey)
                         {
@@ -31,8 +31,10 @@ namespace xServer.Core.Commands
                         else
                         {
                             // Add the key to the TreeView.
-                            // ToDo: Add the regular keys (matches) to the TreeView.
-                            // ToDo: Maintain order when adding to the TreeView.
+                            foreach (Utilities.RegSeekerMatch match in packet.Matches)
+                            {
+                                client.Value.FrmRe.AddKeyToTree(match);
+                            }
                         }
                     }
                 }

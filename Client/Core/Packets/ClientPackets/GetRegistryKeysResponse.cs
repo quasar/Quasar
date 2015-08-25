@@ -14,6 +14,10 @@ namespace xClient.Core.Packets.ClientPackets
         public GetRegistryKeysResponse()
         { }
 
+        public GetRegistryKeysResponse(RegSeekerMatch match, bool isRootKey = false)
+            : this(new RegSeekerMatch[] { match }, isRootKey)
+        { }
+
         public GetRegistryKeysResponse(RegSeekerMatch[] matches, bool isRootKey = false)
         {
             Matches = matches;
