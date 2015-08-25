@@ -184,21 +184,21 @@ namespace xServer.Core.Build
         }
 
         /// <summary>
-        /// Attempts to obtain the signed-integer value of a special folder from the install path value provided.
+        /// Attempts to obtain the signed-byte value of a special folder from the install path value provided.
         /// </summary>
         /// <param name="installpath">The integer value of the install path.</param>
-        /// <returns>Returns the signed-integer value of the special folder.</returns>
+        /// <returns>Returns the signed-byte value of the special folder.</returns>
         /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
         private static sbyte GetSpecialFolder(int installpath)
         {
             switch (installpath)
             {
                 case 1:
-                    return 26; // Appdata
+                    return (sbyte)Environment.SpecialFolder.ApplicationData;
                 case 2:
-                    return 38; // ProgramFiles
+                    return (sbyte)Environment.SpecialFolder.ProgramFiles;
                 case 3:
-                    return 37; // System
+                    return (sbyte)Environment.SpecialFolder.System;
                 default:
                     throw new ArgumentException("InstallPath");
             }
