@@ -5,6 +5,7 @@ using System.Text;
 
 namespace xServer.Core.Utilities
 {
+    [Serializable]
     public class RegSeekerMatch
     {
         public string Key { get; private set; }

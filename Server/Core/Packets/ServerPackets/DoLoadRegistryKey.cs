@@ -8,11 +8,11 @@ namespace xServer.Core.Packets.ServerPackets
     [Serializable]
     public class DoLoadRegistryKey : IPacket
     {
-        public RegistrySeekerParams SearchParameters { get; set; }
+        public string[] RootKeyNames { get; set; }
 
-        public DoLoadRegistryKey(RegistrySeekerParams args)
+        public DoLoadRegistryKey(string[] rootKeyNames)
         {
-            SearchParameters = args;
+            RootKeyNames = rootKeyNames;
         }
 
         public void Execute(Client client)

@@ -87,10 +87,11 @@ namespace xServer.Forms
             {
                 return null;
             }
-            else if (match.Key.Contains("//"))
+            else if (match.Key.Contains("/"))
             {
                 // It might not be a root node.
-                string[] nodePath = match.Key.Split(new string[] { "//" }, StringSplitOptions.RemoveEmptyEntries);
+                string[] nodePath = match.Key.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries);
+
                 // Only one valid node. Probably malformed.
                 if (nodePath.Length < 2)
                 {
