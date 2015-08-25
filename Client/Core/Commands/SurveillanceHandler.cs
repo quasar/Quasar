@@ -90,7 +90,12 @@ namespace xClient.Core.Commands
                 {
                     if (desktopData != null)
                     {
-                        desktop.UnlockBits(desktopData);
+                        try
+                        {
+                            desktop.UnlockBits(desktopData);
+                        }
+                        catch
+                        { }
                     }
                     desktop.Dispose();
                 }
@@ -99,31 +104,36 @@ namespace xClient.Core.Commands
 
         public static void HandleDoMouseEvent(Packets.ServerPackets.DoMouseEvent command, Client client)
         {
-            Screen[] allScreens = Screen.AllScreens;
-            int offsetX = allScreens[command.MonitorIndex].Bounds.X;
-            int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
-            Point p = new Point(command.X + offsetX, command.Y + offsetY);
-
-            switch (command.Action)
+            try
             {
-                case MouseAction.LeftDown:
-                case MouseAction.LeftUp:
-                    NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
-                    break;
-                case MouseAction.RightDown:
-                case MouseAction.RightUp:
-                    NativeMethodsHelper.DoMouseRightClick(p, command.IsMouseDown);
-                    break;
-                case MouseAction.MoveCursor:
-                    NativeMethodsHelper.DoMouseMove(p);
-                    break;
-                case MouseAction.ScrollDown:
-                    NativeMethodsHelper.DoMouseScroll(p, true);
-                    break;
-                case MouseAction.ScrollUp:
-                    NativeMethodsHelper.DoMouseScroll(p, false);
-                    break;
+                Screen[] allScreens = Screen.AllScreens;
+                int offsetX = allScreens[command.MonitorIndex].Bounds.X;
+                int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
+                Point p = new Point(command.X + offsetX, command.Y + offsetY);
+
+                switch (command.Action)
+                {
+                    case MouseAction.LeftDown:
+                    case MouseAction.LeftUp:
+                        NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
+                        break;
+                    case MouseAction.RightDown:
+                    case MouseAction.RightUp:
+                        NativeMethodsHelper.DoMouseRightClick(p, command.IsMouseDown);
+                        break;
+                    case MouseAction.MoveCursor:
+                        NativeMethodsHelper.DoMouseMove(p);
+                        break;
+                    case MouseAction.ScrollDown:
+                        NativeMethodsHelper.DoMouseScroll(p, true);
+                        break;
+                    case MouseAction.ScrollUp:
+                        NativeMethodsHelper.DoMouseScroll(p, false);
+                        break;
+                }
             }
+            catch
+            { }
         }
 
         public static void HandleDoKeyboardEvent(Packets.ServerPackets.DoKeyboardEvent command, Client client)
