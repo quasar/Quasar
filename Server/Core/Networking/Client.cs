@@ -447,9 +447,20 @@ namespace xServer.Core.Networking
 
                                     using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                     {
-                                        IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
+                                        try
+                                        {
+                                            IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
 
-                                        OnClientRead(packet);
+                                            OnClientRead(packet);
+                                        }
+                                        catch (InvalidOperationException ex)
+                                        {
+                                            new Packets.ClientPackets.SetStatus("Unable to handle packet: " + ex.Message).Execute(this);
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            new Packets.ClientPackets.SetStatus("Invalid packet (is your client up to date?): " + ex.Message).Execute(this);
+                                        }
                                     }
 
                                     _receiveState = ReceiveType.Header;

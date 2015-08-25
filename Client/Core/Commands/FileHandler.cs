@@ -166,11 +166,14 @@ namespace xClient.Core.Commands
                         new Packets.ClientPackets.SetStatusFileManager("Deleted file", false).Execute(client);
                         break;
                 }
-
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
             }
             catch
             {
+                new Packets.ClientPackets.SetStatus("Unable to delete path:" + command.Path).Execute(client);
+            }
+            finally
+            {
+                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
             }
         }
 
@@ -189,11 +192,14 @@ namespace xClient.Core.Commands
                         new Packets.ClientPackets.SetStatusFileManager("Renamed file", false).Execute(client);
                         break;
                 }
-
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
             }
             catch
             {
+                new Packets.ClientPackets.SetStatus("Unable to rename path:" + command.Path).Execute(client);
+            }
+            finally
+            {
+                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
             }
         }
     }
