@@ -32,7 +32,7 @@ namespace xClient.Core.Helper
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        antivirusName = mObject["displayName"].ToString() + "; ";
+                        antivirusName += mObject["displayName"].ToString() + "; ";
                     }
                 }
                 antivirusName = FormatHelper.RemoveEnd(antivirusName);
@@ -58,7 +58,7 @@ namespace xClient.Core.Helper
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        firewallName = mObject["displayName"].ToString() + "; ";
+                        firewallName += mObject["displayName"].ToString() + "; ";
                     }
                 }
                 firewallName = FormatHelper.RemoveEnd(firewallName);

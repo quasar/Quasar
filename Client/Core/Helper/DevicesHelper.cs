@@ -76,7 +76,7 @@ namespace xClient.Core.Helper
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        cpuName = mObject["Name"].ToString() + "; ";
+                        cpuName += mObject["Name"].ToString() + "; ";
                     }
                 }
                 cpuName = FormatHelper.RemoveEnd(cpuName);
@@ -103,6 +103,7 @@ namespace xClient.Core.Helper
                     {
                         double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
                         installedRAM = (int)(bytes / 1048576);
+                        break;
                     }
                 }
 
@@ -125,7 +126,7 @@ namespace xClient.Core.Helper
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        gpuName = mObject["Description"].ToString() + "; ";
+                        gpuName += mObject["Description"].ToString() + "; ";
                     }
                 }
                 gpuName = FormatHelper.RemoveEnd(gpuName);
