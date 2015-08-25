@@ -60,9 +60,8 @@ Building a client
 
 ToDo
 ---
-* New icon for Quasar ([#337](https://github.com/quasar/QuasarRAT/issues/337))
-* Registry Editor ([#328](https://github.com/quasar/QuasarRAT/pull/328))
-* [Issues](https://github.com/quasar/QuasarRAT/issues)
+* Registry Editor ([#108](https://github.com/quasar/QuasarRAT/issues/108))
+* [Open Issues](https://github.com/quasar/QuasarRAT/issues)
 
 Contributing
 ---
