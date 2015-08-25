@@ -70,7 +70,7 @@
             this.MinimumSize = new System.Drawing.Size(710, 465);
             this.Name = "FrmRegistryEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
-            this.Text = "xRAT 2.0 - Registry Editor";
+            this.Text = "Registry Editor";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRegistryEditor_FormClosing);
             this.Load += new System.EventHandler(this.FrmRegistryEditor_Load);
             this.ResumeLayout(false);
