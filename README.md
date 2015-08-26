@@ -31,9 +31,9 @@ Features
 
 Requirements
 ---
-* .NET Framework 3.5 Client Profile ([Download](https://www.microsoft.com/en-US/download/details.aspx?id=14037))
+* .NET Framework 4.0 Client Profile ([Download](https://www.microsoft.com/en-us/download/details.aspx?id=24872))
 * Supported Operating Systems (32- and 64-bit)
-  * Windows XP
+  * Windows XP SP3
   * Windows Server 2003
   * Windows Vista
   * Windows Server 2008

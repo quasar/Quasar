@@ -316,12 +316,12 @@ namespace xServer.Forms
             else if (rbProgramFiles.Checked)
                 path =
                     Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles),
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
                             txtInstallsub.Text), txtInstallname.Text);
             else if (rbSystem.Checked)
                 path =
                     Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallsub.Text),
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), txtInstallsub.Text),
                         txtInstallname.Text);
 
             this.Invoke((MethodInvoker)delegate { txtExamplePath.Text = path + ".exe"; });
@@ -332,7 +332,7 @@ namespace xServer.Forms
             if (rbAppdata.Checked) return 1;
             if (rbProgramFiles.Checked) return 2;
             if (rbSystem.Checked) return 3;
-            return 1;
+            throw new ArgumentException("InstallPath");
         }
 
         private RadioButton GetInstallPath(short installPath)
@@ -346,7 +346,7 @@ namespace xServer.Forms
                 case 3:
                     return rbSystem;
                 default:
-                    return rbAppdata;
+                    throw new ArgumentException("InstallPath");
             }
         }
 
