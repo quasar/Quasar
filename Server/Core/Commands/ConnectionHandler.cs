@@ -54,6 +54,8 @@ namespace xServer.Core.Commands
                     FrmMain.Instance.ShowPopup(client);
 
                 client.Value.IsAuthenticated = true;
+                new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client);
+
                 if (Settings.ShowToolTip)
                     new Packets.ServerPackets.GetSystemInfo().Execute(client);
             }

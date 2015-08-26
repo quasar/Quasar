@@ -447,9 +447,18 @@ namespace xServer.Core.Networking
 
                                     using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                     {
-                                        IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
+                                        try
+                                        {
+                                            IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
 
-                                        OnClientRead(packet);
+                                            OnClientRead(packet);
+                                        }
+                                        catch (Exception)
+                                        {
+                                            process = false;
+                                            Disconnect();
+                                            break;
+                                        }
                                     }
 
                                     _receiveState = ReceiveType.Header;

@@ -86,6 +86,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Core.Packets.ServerPackets.DoUploadFile),
                 typeof (Core.Packets.ServerPackets.GetPasswords),
+                typeof (Core.Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
                 typeof (Core.Packets.ClientPackets.SetStatusFileManager),
@@ -213,6 +214,8 @@ namespace xClient
 
         private static void ClientState(Client client, bool connected)
         {
+            ClientData.IsAuthenticated = false;
+
             if (connected && !ClientData.Disconnect)
                 _reconnect = true;
             else if (!connected && ClientData.Disconnect)

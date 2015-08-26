@@ -81,6 +81,10 @@ namespace xClient.Core.Commands
             {
                 onError("GetDirectory: I/O error");
             }
+            catch (Exception)
+            {
+                onError("GetDirectory: Failed");
+            }
             finally
             {
                 if (isError && !string.IsNullOrEmpty(message))
@@ -153,6 +157,15 @@ namespace xClient.Core.Commands
 
         public static void HandleDoPathDelete(Packets.ServerPackets.DoPathDelete command, Client client)
         {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) =>
+            {
+                isError = true;
+                message = msg;
+            };
+
             try
             {
                 switch (command.PathType)
@@ -169,13 +182,44 @@ namespace xClient.Core.Commands
 
                 HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
+                onError("DeletePath: No permission");
+            }
+            catch (PathTooLongException)
+            {
+                onError("DeletePath: Path too long");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                onError("DeletePath: Path not found");
+            }
+            catch (IOException)
+            {
+                onError("DeletePath: I/O error");
+            }
+            catch (Exception)
+            {
+                onError("DeletePath: Failed");
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
             }
         }
 
         public static void HandleDoPathRename(Packets.ServerPackets.DoPathRename command, Client client)
         {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) =>
+            {
+                isError = true;
+                message = msg;
+            };
+
             try
             {
                 switch (command.PathType)
@@ -192,8 +236,30 @@ namespace xClient.Core.Commands
 
                 HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
             }
-            catch
+            catch (UnauthorizedAccessException)
             {
+                onError("RenamePath: No permission");
+            }
+            catch (PathTooLongException)
+            {
+                onError("RenamePath: Path too long");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                onError("RenamePath: Path not found");
+            }
+            catch (IOException)
+            {
+                onError("RenamePath: I/O error");
+            }
+            catch (Exception)
+            {
+                onError("RenamePath: Failed");
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
             }
         }
     }
