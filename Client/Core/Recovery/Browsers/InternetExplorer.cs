@@ -8,7 +8,6 @@ using System.Security.Cryptography;
 using System.Text;
 using Microsoft.Win32;
 using xClient.Core.Data;
-using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Browsers
 {

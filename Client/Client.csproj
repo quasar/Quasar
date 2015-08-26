@@ -15,7 +15,7 @@
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -26,8 +26,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>..\Bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
@@ -54,12 +54,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\Commands\RegistryHandler.cs" />
+    <Compile Include="Core\Data\ClientData.cs" />
+    <Compile Include="Core\Data\GeoInformation.cs" />
+    <Compile Include="Core\Helper\MutexHelper.cs" />
+    <Compile Include="Core\Helper\WindowsAccountHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
+    <Compile Include="Core\Helper\RegistryKeyHelper.cs" />
     <Compile Include="Core\Helper\ScreenHelper.cs" />
+    <Compile Include="Core\Helper\DevicesHelper.cs" />
+    <Compile Include="Core\Helper\SystemHelper.cs" />
+    <Compile Include="Core\Installation\ClientInstaller.cs" />
+    <Compile Include="Core\Installation\ClientUninstaller.cs" />
+    <Compile Include="Core\Installation\ClientUpdater.cs" />
+    <Compile Include="Core\Installation\Startup.cs" />
     <Compile Include="Core\NetSerializer\CodeGenContext.cs" />
     <Compile Include="Core\NetSerializer\Helpers.cs" />
     <Compile Include="Core\NetSerializer\ITypeSerializer.cs" />
@@ -194,7 +205,6 @@
     <Compile Include="Core\ReverseProxy\Packets\ReverseProxyDisconnect.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
-    <Compile Include="Core\SystemCore.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatus.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetAuthenticationResponse.cs" />
     <Compile Include="Core\Packets\IPacket.cs" />

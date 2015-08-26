@@ -8,7 +8,7 @@ using xServer.Forms;
 
 namespace xServer.Core.Commands
 {
-    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE CONNECTION. */
+    /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE CONNECTION COMMANDS. */
     public static partial class CommandHandler
     {
         public static void HandleGetAuthenticationResponse(Client client, GetAuthenticationResponse packet)
