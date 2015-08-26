@@ -28,7 +28,7 @@ namespace xClient.Core.Installation
                 if (!FileHelper.ClearReadOnly(ClientData.CurrentPath))
                     new Packets.ClientPackets.SetStatus("Uninstallation failed: File is read-only").Execute(client);
 
-                string batchFile = FileHelper.CreateUninstallBatch(Settings.HIDEFILE);
+                string batchFile = FileHelper.CreateUninstallBatch(Settings.INSTALL && Settings.HIDEFILE);
 
                 if (string.IsNullOrEmpty(batchFile)) return;
 
