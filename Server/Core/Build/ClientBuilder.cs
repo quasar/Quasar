@@ -213,9 +213,9 @@ namespace xServer.Core.Build
                 case 1:
                     return (sbyte)Environment.SpecialFolder.ApplicationData;
                 case 2:
-                    return (sbyte)Environment.SpecialFolder.ProgramFiles;
+                    return (sbyte)Environment.SpecialFolder.ProgramFilesX86;
                 case 3:
-                    return (sbyte)Environment.SpecialFolder.System;
+                    return (sbyte)Environment.SpecialFolder.SystemX86;
                 default:
                     throw new ArgumentException("InstallPath");
             }

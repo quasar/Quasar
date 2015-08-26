@@ -8,6 +8,7 @@ namespace xClient.Core.Data
         public static string CurrentPath { get; set; }
         public static string InstallPath { get; set; }
         public static bool AddToStartupFailed { get; set; }
+        public static bool IsAuthenticated { get; set; }
 
         static ClientData()
         {

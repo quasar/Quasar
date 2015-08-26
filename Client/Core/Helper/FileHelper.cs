@@ -92,5 +92,21 @@ namespace xClient.Core.Helper
                 return string.Empty;
             }
         }
+
+        public static bool ClearReadOnly(string filePath)
+        {
+            try
+            {
+                FileInfo fi = new FileInfo(filePath);
+                if (!fi.Exists) return false;
+                if (fi.IsReadOnly)
+                    fi.IsReadOnly = false;
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
     }
 }

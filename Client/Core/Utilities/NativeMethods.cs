@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Runtime.InteropServices;
-using System.Text;
 
 namespace xClient.Core.Utilities
 {
@@ -29,19 +28,6 @@ namespace xClient.Core.Utilities
         [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
         public static extern IntPtr GetProcAddress(IntPtr hModule,
         [MarshalAs(UnmanagedType.LPStr)]string procName);
-
-        [DllImport("kernel32.dll")]
-        public static extern IntPtr GetCurrentProcess();
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto)]
-        public static extern IntPtr GetModuleHandle(string moduleName);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Auto, SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool IsWow64Process(IntPtr hProcess, out bool wow64Process);
-
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
-        public static extern int GetSystemWow64Directory([Out, MarshalAs(UnmanagedType.LPWStr)] StringBuilder lpBuffer, [MarshalAs(UnmanagedType.U4)] uint size);
 
         [DllImport("user32.dll")]
         public static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);

