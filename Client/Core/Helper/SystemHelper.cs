@@ -8,10 +8,20 @@ namespace xClient.Core.Helper
     {
         public static string GetUptime()
         {
-            long ticks = Stopwatch.GetTimestamp();
-            double uptime = ((double)ticks) / Stopwatch.Frequency;
-            var uptimeSpan = TimeSpan.FromSeconds(uptime);
-            return string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+            SelectQuery query = new SelectQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem WHERE Primary='true'");
+            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            {
+                foreach (ManagementObject mo in searcher.Get())
+                {
+                    DateTime now = DateTime.UtcNow;
+                    DateTime dtBootTime = ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
+                    TimeSpan uptimeSpan = TimeSpan.FromTicks((now - dtBootTime).Ticks);
+
+                    return string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+                }
+            }
+
+            return string.Format("{0}d : {1}h : {2}m : {3}s", 0, 0, 0, 0);
         }
 
         public static string GetPcName()
