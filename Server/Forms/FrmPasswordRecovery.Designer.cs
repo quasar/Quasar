@@ -49,7 +49,7 @@
             this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
+            this.lblInfo = new System.Windows.Forms.Label();
             this.txtFormat = new System.Windows.Forms.TextBox();
             this.menuMain.SuspendLayout();
             this.groupBox1.SuspendLayout();
@@ -154,6 +154,9 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.lstPasswords);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
@@ -164,6 +167,9 @@
             // 
             // lstPasswords
             // 
+            this.lstPasswords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIdentification,
             this.hURL,
@@ -201,7 +207,9 @@
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.label1);
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.lblInfo);
             this.groupBox2.Controls.Add(this.txtFormat);
             this.groupBox2.Location = new System.Drawing.Point(12, 343);
             this.groupBox2.Name = "groupBox2";
@@ -210,19 +218,22 @@
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Custom Saving/Copying Format";
             // 
-            // label1
+            // lblInfo
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(35, 50);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(467, 26);
-            this.label1.TabIndex = 1;
-            this.label1.Text = "You can change the way the accounts are saved by adjusting the format in the box " +
+            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblInfo.Location = new System.Drawing.Point(35, 50);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(467, 26);
+            this.lblInfo.TabIndex = 1;
+            this.lblInfo.Text = "You can change the way the accounts are saved by adjusting the format in the box " +
     "above.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
-            this.label1.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // txtFormat
             // 
+            this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFormat.Location = new System.Drawing.Point(6, 19);
             this.txtFormat.Name = "txtFormat";
             this.txtFormat.Size = new System.Drawing.Size(537, 22);
@@ -238,8 +249,8 @@
             this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(589, 400);
             this.Name = "FrmPasswordRecovery";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Password Recovery []";
@@ -272,7 +283,7 @@
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem selectedToolStripMenuItem1;
         private System.Windows.Forms.GroupBox groupBox2;
-        private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label lblInfo;
         private System.Windows.Forms.TextBox txtFormat;
         private System.Windows.Forms.ToolStripMenuItem allToolStripMenuItem2;
         private System.Windows.Forms.ToolStripMenuItem selectedToolStripMenuItem2;

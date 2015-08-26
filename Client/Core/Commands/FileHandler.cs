@@ -59,31 +59,31 @@ namespace xClient.Core.Commands
             }
             catch (UnauthorizedAccessException)
             {
-                onError("GetDirectory: No permission");
+                onError("GetDirectory No permission");
             }
             catch (SecurityException)
             {
-                onError("GetDirectory: No permission");
+                onError("GetDirectory No permission");
             }
             catch (PathTooLongException)
             {
-                onError("GetDirectory: Path too long");
+                onError("GetDirectory Path too long");
             }
             catch (DirectoryNotFoundException)
             {
-                onError("GetDirectory: Directory not found");
+                onError("GetDirectory Directory not found");
             }
             catch (FileNotFoundException)
             {
-                onError("GetDirectory: File not found");
+                onError("GetDirectory File not found");
             }
             catch (IOException)
             {
-                onError("GetDirectory: I/O error");
+                onError("GetDirectory I/O error");
             }
             catch (Exception)
             {
-                onError("GetDirectory: Failed");
+                onError("GetDirectory Failed");
             }
             finally
             {
@@ -184,23 +184,23 @@ namespace xClient.Core.Commands
             }
             catch (UnauthorizedAccessException)
             {
-                onError("DeletePath: No permission");
+                onError("DeletePath No permission");
             }
             catch (PathTooLongException)
             {
-                onError("DeletePath: Path too long");
+                onError("DeletePath Path too long");
             }
             catch (DirectoryNotFoundException)
             {
-                onError("DeletePath: Path not found");
+                onError("DeletePath Path not found");
             }
             catch (IOException)
             {
-                onError("DeletePath: I/O error");
+                onError("DeletePath I/O error");
             }
             catch (Exception)
             {
-                onError("DeletePath: Failed");
+                onError("DeletePath Failed");
             }
             finally
             {
@@ -238,23 +238,23 @@ namespace xClient.Core.Commands
             }
             catch (UnauthorizedAccessException)
             {
-                onError("RenamePath: No permission");
+                onError("RenamePath No permission");
             }
             catch (PathTooLongException)
             {
-                onError("RenamePath: Path too long");
+                onError("RenamePath Path too long");
             }
             catch (DirectoryNotFoundException)
             {
-                onError("RenamePath: Path not found");
+                onError("RenamePath Path not found");
             }
             catch (IOException)
             {
-                onError("RenamePath: I/O error");
+                onError("RenamePath I/O error");
             }
             catch (Exception)
             {
-                onError("RenamePath: Failed");
+                onError("RenamePath Failed");
             }
             finally
             {

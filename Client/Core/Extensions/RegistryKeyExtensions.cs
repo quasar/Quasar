@@ -18,7 +18,7 @@ namespace xClient.Core.Extensions
         }
 
         /// <summary>
-        /// Attempts to get the value of the key using the specified key name. This method assumes
+        /// Attempts to get the string value of the key using the specified key name. This method assumes
         /// correct input.
         /// </summary>
         /// <param name="key">The key of which we obtain the value of.</param>
@@ -28,10 +28,6 @@ namespace xClient.Core.Extensions
         /// defaultValue will be returned instead.</returns>
         public static string GetValueSafe(this RegistryKey key, string keyName, string defaultValue = "")
         {
-            // Before calling this, use something such as "IsNameOrValueNull" to make sure
-            // that the input used for this method is usable. The responsibility for this
-            // method is to take these valid parameters and try to get the value of them,
-            // allowing exceptions if any are generated.
             try
             {
                 return key.GetValue(keyName, defaultValue).ToString();
