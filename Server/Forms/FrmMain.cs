@@ -143,7 +143,7 @@ namespace xServer.Forms
 
         private void ClientConnected(Client client)
         {
-            AddClientToListview(client, client.Value.UserAtPc, client.Value.CountryWithCode, client.Value.ImageIndex);
+            AddClientToListview(client);
             if (Settings.ShowPopup)
                 ShowPopup(client);
         }
@@ -178,10 +178,7 @@ namespace xServer.Forms
         /// Adds a connected client to the Listview.
         /// </summary>
         /// <param name="client">The client to add.</param>
-        /// <param name="userAtPc">User@PC string.</param>
-        /// <param name="country">The country of the client.</param>
-        /// <param name="imageIndex">The index of the country-flag image.</param>
-        private void AddClientToListview(Client client, string userAtPc, string country, int imageIndex)
+        private void AddClientToListview(Client client)
         {
             if (client == null || !client.Authenticated) return;
 
@@ -191,9 +188,9 @@ namespace xServer.Forms
                 ListViewItem lvi = new ListViewItem(new string[]
                 {
                     " " + client.EndPoint.Address, client.Value.Tag,
-                    userAtPc, client.Value.Version, "Connected", "Active", country,
+                    client.Value.UserAtPc, client.Value.Version, "Connected", "Active", client.Value.CountryWithCode,
                     client.Value.OperatingSystem, client.Value.AccountType
-                }) { Tag = client, ImageIndex = imageIndex };
+                }) { Tag = client, ImageIndex = client.Value.ImageIndex };
 
                 lstClients.Invoke((MethodInvoker) delegate
                 {
