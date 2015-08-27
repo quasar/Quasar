@@ -425,12 +425,17 @@ namespace xServer.Core.Networking
 
                                 if (_writeOffset == _payloadLen)
                                 {
-                                    if (encryptionEnabled)
-                                        _payloadBuffer = AES.Decrypt(_payloadBuffer);
+                                    bool isError = _payloadBuffer.Length == 0;
 
-                                    bool isError = _payloadBuffer.Length == 0; // check if payload decryption failed
+                                    if (!isError)
+                                    {
+                                        if (encryptionEnabled)
+                                            _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
-                                    if (_payloadBuffer.Length > 0)
+                                        isError = _payloadBuffer.Length == 0; // check if payload decryption failed
+                                    }
+
+                                    if (!isError)
                                     {
                                         if (compressionEnabled)
                                             _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
@@ -616,9 +621,11 @@ namespace xServer.Core.Networking
                 _handle.Close();
                 _readOffset = 0;
                 _writeOffset = 0;
+                _tempHeaderOffset = 0;
                 _readableDataLen = 0;
                 _payloadLen = 0;
                 _payloadBuffer = null;
+                _receiveState = ReceiveType.Header;
                 if (Value != null)
                 {
                     Value.Dispose();
