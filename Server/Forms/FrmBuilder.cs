@@ -219,6 +219,14 @@ namespace xServer.Forms
             {
                 string output = string.Empty;
                 string icon = string.Empty;
+                string password = txtPassword.Text;
+
+                if (password.Length < 3)
+                {
+                    MessageBox.Show("Please enter a secure password with more than 3 characters.",
+                        "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    return;
+                }
 
                 if (chkIconChange.Checked)
                 {
@@ -256,15 +264,6 @@ namespace xServer.Forms
 
                 try
                 {
-                    string password = txtPassword.Text;
-
-                    if (password.Length < 3)
-                    {
-                        MessageBox.Show("Please enter a secure password with more than 3 characters.",
-                            "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        return;
-                    }
-
                     string[] asmInfo = null;
                     if (chkChangeAsmInfo.Checked)
                     {
