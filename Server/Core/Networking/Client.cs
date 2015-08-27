@@ -35,13 +35,11 @@ namespace xServer.Core.Networking
             if (Connected == connected) return;
 
             Connected = connected;
+
             if (ClientState != null)
             {
                 ClientState(this, connected);
             }
-
-            if (!connected && !_parentServer.Processing)
-                _parentServer.RemoveClient(this);
         }
 
         /// <summary>
@@ -119,7 +117,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Handle of the Client Socket.
         /// </summary>
-        private readonly Socket _handle;
+        private Socket _handle;
 
         /// <summary>
         /// The Queue which holds buffers to send.
@@ -231,6 +229,7 @@ namespace xServer.Core.Networking
             try
             {
                 _parentServer = server;
+                _parentServer.AddClient(this);
                 AddTypesToSerializer(packets);
                 if (_serializer == null) throw new Exception("Serializer not initialized");
                 Initialize();
@@ -271,13 +270,21 @@ namespace xServer.Core.Networking
 
                     if (bytesTransferred <= 0)
                     {
-                        OnClientState(false);
+                        Disconnect();
                         return;
                     }
                 }
+                catch (NullReferenceException)
+                {
+                    return;
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
+                }
                 catch (Exception)
                 {
-                    OnClientState(false);
+                    Disconnect();
                     return;
                 }
 
@@ -620,11 +627,10 @@ namespace xServer.Core.Networking
         /// </summary>
         public void Disconnect()
         {
-            OnClientState(false);
-
             if (_handle != null)
             {
                 _handle.Close();
+                _handle = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _tempHeaderOffset = 0;
@@ -632,14 +638,20 @@ namespace xServer.Core.Networking
                 _payloadLen = 0;
                 _payloadBuffer = null;
                 _receiveState = ReceiveType.Header;
+
                 if (Value != null)
                 {
                     Value.Dispose();
                     Value = null;
                 }
+
                 if (_parentServer.BufferManager != null)
                     _parentServer.BufferManager.ReturnBuffer(_readBuffer);
             }
+
+            _parentServer.RemoveClient(this);
+
+            OnClientState(false);
         }
 
         /// <summary>

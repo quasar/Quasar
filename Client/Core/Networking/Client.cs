@@ -61,6 +61,7 @@ namespace xClient.Core.Networking
             if (Connected == connected) return;
 
             Connected = connected;
+
             if (ClientState != null)
             {
                 ClientState(this, connected);
@@ -319,6 +320,14 @@ namespace xClient.Core.Networking
                         OnClientState(false);
                         return;
                     }
+                }
+                catch (NullReferenceException)
+                {
+                    return;
+                }
+                catch (ObjectDisposedException)
+                {
+                    return;
                 }
                 catch (Exception)
                 {
@@ -662,11 +671,10 @@ namespace xClient.Core.Networking
         /// </summary>
         public void Disconnect()
         {
-            OnClientState(false);
-
             if (_handle != null)
             {
                 _handle.Close();
+                _handle = null;
                 _readOffset = 0;
                 _writeOffset = 0;
                 _tempHeaderOffset = 0;
@@ -674,6 +682,7 @@ namespace xClient.Core.Networking
                 _payloadLen = 0;
                 _payloadBuffer = null;
                 _receiveState = ReceiveType.Header;
+
                 if (_proxyClients != null)
                 {
                     lock (_proxyClientsLock)
@@ -689,6 +698,8 @@ namespace xClient.Core.Networking
                     Commands.CommandHandler.StreamCodec = null;
                 }
             }
+
+            OnClientState(false);
         }
 
         /// <summary>
