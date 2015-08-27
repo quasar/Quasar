@@ -317,7 +317,7 @@ namespace xClient.Core.Networking
 
                     if (bytesTransferred <= 0)
                     {
-                        OnClientState(false);
+                        Disconnect();
                         return;
                     }
                 }
@@ -331,7 +331,7 @@ namespace xClient.Core.Networking
                 }
                 catch (Exception)
                 {
-                    OnClientState(false);
+                    Disconnect();
                     return;
                 }
 
