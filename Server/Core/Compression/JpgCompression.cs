@@ -32,7 +32,11 @@ namespace xServer.Core.Compression
             {
                 if (_encoderParams != null)
                 {
-                    _encoderParams.Dispose();
+                    try
+                    {
+                        _encoderParams.Dispose();
+                    }
+                    catch { }
                 }
             }
         }
