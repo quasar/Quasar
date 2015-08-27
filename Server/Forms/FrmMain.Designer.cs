@@ -726,6 +726,7 @@ namespace xServer.Forms
             // 
             // menuStatistics
             // 
+            this.menuStatistics.Enabled = false;
             this.menuStatistics.Index = 3;
             this.menuStatistics.Text = "Statistics";
             this.menuStatistics.Click += new System.EventHandler(this.menuStatistics_Click);

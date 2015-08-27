@@ -1,69 +1,15 @@
 ﻿using System;
-using System.Collections.Generic;
+using xServer.Core.Commands;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class ConnectionHandler
+    public class ServerHandler : Server
     {
-        /// <summary>
-        /// The Server which this class is handling.
-        /// </summary>
-        private readonly Server _server;
-
-        /// <summary>
-        /// A hashset containing all unique client IDs that have ever connected to the server.
-        /// </summary>
-        private HashSet<string> AllTimeConnectedClients { get; set; }
-
-        /// <summary>
-        /// The number of all unique clients which have ever connected to the server.
-        /// </summary>
-        public int AllTimeConnectedClientsCount { get { return AllTimeConnectedClients.Count; } }
-
         /// <summary>
         /// The amount of currently connected and authenticated clients.
         /// </summary>
-        public int ConnectedAndAuthenticatedClients { get; set; }
-
-        /// <summary>
-        /// The listening state of the server. True if listening, else False.
-        /// </summary>
-        public bool Listening { get { return _server.Listening; } }
-
-        /// <summary>
-        /// The total amount of received bytes.
-        /// </summary>
-        public long BytesReceived { get { return _server.BytesReceived; } }
-
-        /// <summary>
-        /// The total amount of sent bytes.
-        /// </summary>  
-        public long BytesSent { get { return _server.BytesSent; } }
-
-        /// <summary>
-        /// Occurs when the state of the server changes.
-        /// </summary>
-        public event ServerStateEventHandler ServerState;
-
-        /// <summary>
-        /// Represents a method that will handle a change in the server's state.
-        /// </summary>
-        /// <param name="listening">The new listening state of the server.</param>
-        public delegate void ServerStateEventHandler(ushort port, bool listening);
-
-        /// <summary>
-        /// Fires an event that informs subscribers that the server has changed it's state.
-        /// </summary>
-        /// <param name="server">The server which changed it's state.</param>
-        /// <param name="listening">The new listening state of the server.</param>
-        private void OnServerState(Server server, bool listening)
-        {
-            if (ServerState != null)
-            {
-                ServerState(server.Port, listening);
-            }
-        }
+        public int ConnectedClients { get; private set; }
 
         /// <summary>
         /// Occurs when a client connected.
@@ -114,13 +60,9 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public ConnectionHandler()
+        public ServerHandler()
         {
-            AllTimeConnectedClients = new HashSet<string>();
-
-            _server = new Server();
-
-            _server.AddTypesToSerializer(new Type[]
+            base.AddTypesToSerializer(new Type[]
             {
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),
@@ -175,39 +117,8 @@ namespace xServer.Core.Networking
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
-            _server.ServerState += OnServerState;
-            _server.ClientState += ClientState;
-            _server.ClientRead += ClientRead;
-        }
-
-        /// <summary>
-        /// Counts the unique client ID to all time connected clients.
-        /// </summary>
-        /// <remarks>
-        /// If the client already connected before, the client ID won't be added.
-        /// </remarks>
-        /// <param name="id">The ID to add.</param>
-        public void CountAllTimeConnectedClientById(string id)
-        {
-            AllTimeConnectedClients.Add(id);
-        }
-
-        /// <summary>
-        /// Begins listening for clients.
-        /// </summary>
-        /// <param name="port">Port to listen for clients on.</param>
-        public void Listen(ushort port)
-        {
-            if (!_server.Listening) _server.Listen(port);
-        }
-
-        /// <summary>
-        /// Disconnect the server from all of the clients and discontinue
-        /// listening (placing the server in an "off" state).
-        /// </summary>
-        public void Disconnect()
-        {
-            if (_server.Listening) _server.Disconnect();
+            base.ClientState += ClientStateHandler;
+            base.ClientRead += ClientReadHandler;
         }
 
         /// <summary>
@@ -216,15 +127,19 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which changed its state.</param>
         /// <param name="connected">True if the client connected, false if disconnected.</param>
-        private void ClientState(Server server, Client client, bool connected)
+        private void ClientStateHandler(Server server, Client client, bool connected)
         {
             switch (connected)
             {
                 case true:
-                    OnClientConnected(client);
+                    new Packets.ServerPackets.GetAuthentication().Execute(client); // begin handshake
                     break;
                 case false:
-                    OnClientDisconnected(client);
+                    if (client.Authenticated)
+                    {
+                        ConnectedClients--;
+                        OnClientDisconnected(client);
+                    }
                     break;
             }
         }
@@ -235,8 +150,28 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which has received the packet.</param>
         /// <param name="packet">The received packet.</param>
-        private void ClientRead(Server server, Client client, IPacket packet)
+        private void ClientReadHandler(Server server, Client client, IPacket packet)
         {
+            var type = packet.GetType();
+
+            if (!client.Authenticated)
+            {
+                if (type == typeof (Packets.ClientPackets.GetAuthenticationResponse))
+                {
+                    client.Authenticated = true;
+                    ConnectedClients++;
+                    new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client); // finish handshake
+                    CommandHandler.HandleGetAuthenticationResponse(client,
+                        (Packets.ClientPackets.GetAuthenticationResponse) packet);
+                    OnClientConnected(client);
+                }
+                else
+                {
+                    client.Disconnect();
+                }
+                return;
+            }
+
             PacketHandler.HandlePacket(client, packet);
         }
     }

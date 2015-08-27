@@ -166,7 +166,7 @@
     <Compile Include="Core\Utilities\ListViewColumnSorter.cs" />
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Utilities\NoIpUpdater.cs" />
-    <Compile Include="Core\Networking\ConnectionHandler.cs" />
+    <Compile Include="Core\Networking\ServerHandler.cs" />
     <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
@@ -316,12 +316,6 @@
     <Compile Include="Forms\FrmStartupManager.Designer.cs">
       <DependentUpon>FrmStartupManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FrmStatistics.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FrmStatistics.Designer.cs">
-      <DependentUpon>FrmStatistics.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FrmSystemInformation.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -410,9 +404,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmStartupManager.resx">
       <DependentUpon>FrmStartupManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FrmStatistics.resx">
-      <DependentUpon>FrmStatistics.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmSystemInformation.resx">
       <DependentUpon>FrmSystemInformation.cs</DependentUpon>

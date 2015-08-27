@@ -11,6 +11,7 @@ namespace xServer.Core.Networking
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
         public string AccountType { get; set; }
+        public int ImageIndex { get; set; }
         public string Country { get; set; }
         public string CountryCode { get; set; }
         public string Region { get; set; }
@@ -18,6 +19,8 @@ namespace xServer.Core.Networking
         public string Id { get; set; }
         public string Username { get; set; }
         public string PCName { get; set; }
+        public string UserAtPc { get { return string.Format("{0}@{1}", Username, PCName); } }
+        public string CountryWithCode { get { return string.Format("{0} [{1}]", Country, CountryCode); } }
         public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
 
@@ -30,8 +33,7 @@ namespace xServer.Core.Networking
         public FrmKeylogger FrmKl { get; set; }
         public FrmReverseProxy FrmProxy { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
-        
-        public bool IsAuthenticated { get; set; }
+
         public bool ReceivedLastDirectory { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
@@ -58,7 +60,6 @@ namespace xServer.Core.Networking
 
         public UserState()
         {
-            IsAuthenticated = false;
             ReceivedLastDirectory = true;
             _processingDirectory = false;
             _processingDirectoryLock = new object();

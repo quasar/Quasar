@@ -8,19 +8,10 @@ namespace xServer.Core.Packets
     {
         public static void HandlePacket(Client client, IPacket packet)
         {
+            if (client == null || !client.Authenticated || client.Value == null)
+                return;
+
             var type = packet.GetType();
-
-            if (client.Value == null)
-                return;
-
-            if (!client.Value.IsAuthenticated)
-            {
-                if (type == typeof(ClientPackets.GetAuthenticationResponse))
-                    CommandHandler.HandleGetAuthenticationResponse(client, (ClientPackets.GetAuthenticationResponse)packet);
-                else
-                    client.Disconnect();
-                return;
-            }
 
             if (type == typeof(ClientPackets.SetStatus))
             {

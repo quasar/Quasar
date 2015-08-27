@@ -74,7 +74,7 @@
             // 
             this.ncPort.Location = new System.Drawing.Point(111, 7);
             this.ncPort.Maximum = new decimal(new int[] {
-            65535,
+            65534,
             0,
             0,
             0});

