@@ -496,7 +496,18 @@ namespace xClient.Core.Networking
                                     if (!isError)
                                     {
                                         if (compressionEnabled)
-                                            _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
+                                        {
+                                            try
+                                            {
+                                                _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                process = false;
+                                                Disconnect();
+                                                break;
+                                            }
+                                        }
 
                                         isError = _payloadBuffer.Length == 0; // check if payload decompression failed
                                     }
