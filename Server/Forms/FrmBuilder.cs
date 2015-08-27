@@ -51,7 +51,6 @@ namespace xServer.Forms
             txtOriginalFilename.Text = profile.OriginalFilename;
             txtProductVersion.Text = profile.ProductVersion;
             txtFileVersion.Text = profile.FileVersion;
-            chkRequireAdministrator.Checked = profile.RequireAdministrator;
 
             _profileLoaded = true;
         }
@@ -83,7 +82,6 @@ namespace xServer.Forms
             profile.OriginalFilename = txtOriginalFilename.Text;
             profile.ProductVersion = txtProductVersion.Text;
             profile.FileVersion = txtFileVersion.Text;
-            profile.RequireAdministrator = chkRequireAdministrator.Checked;
         }
 
         private void FrmBuilder_Load(object sender, EventArgs e)
@@ -283,7 +281,7 @@ namespace xServer.Forms
                     ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), txtPassword.Text, txtInstallsub.Text,
                         txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
                         chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
-                        Application.ProductVersion, chkRequireAdministrator.Checked);
+                        Application.ProductVersion);
 
                     MessageBox.Show("Successfully built client!", "Build Success", MessageBoxButtons.OK,
                         MessageBoxIcon.Information);

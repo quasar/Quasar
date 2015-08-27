@@ -113,7 +113,6 @@
             this.lblTrademarks = new System.Windows.Forms.Label();
             this.txtCopyright = new System.Windows.Forms.TextBox();
             this.additionalTab = new System.Windows.Forms.TabPage();
-            this.chkRequireAdministrator = new System.Windows.Forms.CheckBox();
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.label13 = new System.Windows.Forms.Label();
@@ -970,7 +969,6 @@
             // additionalTab
             // 
             this.additionalTab.BackColor = System.Drawing.SystemColors.Control;
-            this.additionalTab.Controls.Add(this.chkRequireAdministrator);
             this.additionalTab.Controls.Add(this.line10);
             this.additionalTab.Controls.Add(this.label14);
             this.additionalTab.Controls.Add(this.label13);
@@ -983,17 +981,6 @@
             this.additionalTab.Size = new System.Drawing.Size(391, 370);
             this.additionalTab.TabIndex = 3;
             this.additionalTab.Text = "Additional Settings";
-            // 
-            // chkRequireAdministrator
-            // 
-            this.chkRequireAdministrator.AutoSize = true;
-            this.chkRequireAdministrator.Location = new System.Drawing.Point(23, 119);
-            this.chkRequireAdministrator.Name = "chkRequireAdministrator";
-            this.chkRequireAdministrator.Size = new System.Drawing.Size(226, 17);
-            this.chkRequireAdministrator.TabIndex = 5;
-            this.chkRequireAdministrator.Text = "Require Administrator privileges to run";
-            this.chkRequireAdministrator.UseVisualStyleBackColor = true;
-            this.chkRequireAdministrator.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // line10
             // 
@@ -1178,6 +1165,5 @@
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
         private System.Windows.Forms.ToolStripMenuItem ctxtClear;
-        private System.Windows.Forms.CheckBox chkRequireAdministrator;
     }
 }

@@ -287,18 +287,6 @@ namespace xServer.Core.Data
             }
         }
 
-        public bool RequireAdministrator
-        {
-            get
-            {
-                return bool.Parse(ReadValueSafe("RequireAdministrator", "False"));
-            }
-            set
-            {
-                WriteValue("RequireAdministrator", value.ToString());
-            }
-        }
-
         public BuilderProfile(string profileName)
         {
             if (string.IsNullOrEmpty(profileName)) throw new ArgumentException("Invalid Profile Path");
