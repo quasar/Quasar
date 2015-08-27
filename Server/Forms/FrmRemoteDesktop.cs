@@ -325,7 +325,8 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
-                e.Handled = true;
+                if (!IsLockKey(e.KeyCode))
+                    e.Handled = true;
 
                 if (_keysPressed.Contains(e.KeyCode))
                     return;
@@ -341,13 +342,21 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
             {
-                e.Handled = true;
+                if (!IsLockKey(e.KeyCode))
+                    e.Handled = true;
 
                 _keysPressed.Remove(e.KeyCode);
 
                 if (_connectClient != null)
                     new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
             }
+        }
+
+        private bool IsLockKey(Keys key)
+        {
+            return ((key & Keys.CapsLock) == Keys.CapsLock)
+                || ((key & Keys.NumLock) == Keys.NumLock)
+                || ((key & Keys.Scroll) == Keys.Scroll);
         }
 
         private void btnHide_Click(object sender, EventArgs e)
