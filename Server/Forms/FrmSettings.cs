@@ -61,6 +61,10 @@ namespace xServer.Forms
                 return;
             }
 
+            var newPassword = txtPassword.Text;
+            if (newPassword != Settings.Password)
+                AES.PreHashKey(newPassword);
+
             if (btnListen.Text == "Start listening" && !_listenServer.Listening)
             {
                 try
