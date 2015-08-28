@@ -16,7 +16,10 @@ namespace xClient.Core.Helper
         public static void CloseMutex()
         {
             if (_appMutex != null)
+            {
                 _appMutex.Close();
+                _appMutex = null;
+            }
         }
     }
 }

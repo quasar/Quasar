@@ -213,7 +213,7 @@ namespace xServer.Forms
         private void btnBuild_Click(object sender, EventArgs e)
         {
             if (!string.IsNullOrEmpty(txtTag.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // General Settings
-                lstHosts.Items.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
+                _hosts.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
                 !chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text)) && // Installation
                 !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text))) // Installation
             {

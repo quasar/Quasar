@@ -5,6 +5,8 @@ namespace xClient.Core.Utilities
 {
     public class HostsManager
     {
+        public bool IsEmpty { get { return _hosts.Count == 0; } }
+
         private readonly Queue<Host> _hosts = new Queue<Host>();
 
         public HostsManager(List<Host> hosts)

