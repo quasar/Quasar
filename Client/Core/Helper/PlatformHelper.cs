@@ -33,13 +33,14 @@ namespace xClient.Core.Helper
             }
 
             Name = Regex.Replace(Name, "^.*(?=Windows)", "").TrimEnd().TrimStart(); // Remove everything before first match "Windows" and trim end & start
-            Architecture = (Environment.Is64BitOperatingSystem) ? (ushort)64 : (ushort)32;
+            Is64Bit = Environment.Is64BitOperatingSystem;
+            FullName = string.Format("{0} {1} Bit", Name, Is64Bit ? (ushort)64 : (ushort)32);
         }
 
         /// <summary>
         /// Gets the full name of the operating system running on this computer (including the edition and architecture).
         /// </summary>
-        public static string FullName { get { return string.Format("{0} {1} Bit", Name, Architecture); } } 
+        public static string FullName { get; private set; } 
 
         /// <summary>
         /// Gets the name of the operating system running on this computer (including the edition).
@@ -50,9 +51,9 @@ namespace xClient.Core.Helper
         /// Determines whether the Operating System is 32 or 64-bit.
         /// </summary>
         /// <value>
-        ///   <c>32</c> if the Operating System is 32-bit, otherwise <c>64</c> for 64-bit.
+        ///   <c>true</c> if the Operating System is 64-bit, otherwise <c>false</c> for 32-bit.
         /// </value>
-        public static ushort Architecture { get; private set; }
+        public static bool Is64Bit { get; private set; }
 
         /// <summary>
         /// Returns a indicating whether the application is running in Mono runtime.

