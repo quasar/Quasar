@@ -400,7 +400,7 @@ namespace xServer.Core.Networking
 
             lock (_clientsLock)
             {
-                while (_clients.Count != 0)
+                while (_clients != null && _clients.Count != 0)
                 {
                     try
                     {
