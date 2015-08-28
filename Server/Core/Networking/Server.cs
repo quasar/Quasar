@@ -400,15 +400,18 @@ namespace xServer.Core.Networking
 
             lock (_clientsLock)
             {
-                while (_clients.Count != 0)
+                if (_clients != null)
                 {
-                    try
+                    while (_clients.Count != 0)
                     {
-                        _clients[0].Disconnect();
-                        _clients.RemoveAt(0);
-                    }
-                    catch
-                    {
+                        try
+                        {
+                            _clients[0].Disconnect();
+                            _clients.RemoveAt(0);
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
             }
