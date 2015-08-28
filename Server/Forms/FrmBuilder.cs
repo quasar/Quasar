@@ -210,105 +210,111 @@ namespace xServer.Forms
         }
         #endregion
 
+        private bool CheckInput()
+        {
+            return (!string.IsNullOrEmpty(txtTag.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // General Settings
+                 _hosts.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
+                 (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text))) && // Installation
+                 (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))); // Installation
+        }
+
         private void btnBuild_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(txtTag.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // General Settings
-                _hosts.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
-                !chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text)) && // Installation
-                !chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text))) // Installation
+            if (!CheckInput())
             {
-                string output = string.Empty;
-                string icon = string.Empty;
-                string password = txtPassword.Text;
-
-                if (password.Length < 3)
-                {
-                    MessageBox.Show("Please enter a secure password with more than 3 characters.",
-                        "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    return;
-                }
-
-                if (chkIconChange.Checked)
-                {
-                    using (OpenFileDialog ofd = new OpenFileDialog())
-                    {
-                        ofd.Title = "Choose Icon";
-                        ofd.Filter = "Icons *.ico|*.ico";
-                        ofd.Multiselect = false;
-                        if (ofd.ShowDialog() == DialogResult.OK)
-                            icon = ofd.FileName;
-                    }
-                }
-
-                using (SaveFileDialog sfd = new SaveFileDialog())
-                {
-                    sfd.Title = "Save Client as";
-                    sfd.Filter = "Executables *.exe|*.exe";
-                    sfd.RestoreDirectory = true;
-                    sfd.FileName = "Client-built.exe";
-                    if (sfd.ShowDialog() != DialogResult.OK) return;
-                    output = sfd.FileName;
-                }
-
-                if (string.IsNullOrEmpty(output))
-                {
-                    MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                if (chkIconChange.Checked && string.IsNullOrEmpty(icon))
-                {
-                    MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                    return;
-                }
-
-                try
-                {
-                    string[] asmInfo = null;
-                    if (chkChangeAsmInfo.Checked)
-                    {
-                        if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
-                            !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
-                        {
-                            MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Build failed",
-                                MessageBoxButtons.OK, MessageBoxIcon.Information);
-                            return;
-                        }
-
-                        asmInfo = new string[8];
-                        asmInfo[0] = txtProductName.Text;
-                        asmInfo[1] = txtDescription.Text;
-                        asmInfo[2] = txtCompanyName.Text;
-                        asmInfo[3] = txtCopyright.Text;
-                        asmInfo[4] = txtTrademarks.Text;
-                        asmInfo[5] = txtOriginalFilename.Text;
-                        asmInfo[6] = txtProductVersion.Text;
-                        asmInfo[7] = txtFileVersion.Text;
-                    }
-
-                    ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), password, txtInstallsub.Text,
-                        txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
-                        chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
-                        Application.ProductVersion);
-
-                    MessageBox.Show("Successfully built client!", "Build Success", MessageBoxButtons.OK,
-                        MessageBoxIcon.Information);
-                }
-                catch (FileLoadException)
-                {
-                    MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
-                        "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show(
-                        string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
-                            ex.StackTrace), "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-            }
-            else
                 MessageBox.Show("Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
+                return;
+            }
+
+            string output = string.Empty;
+            string icon = string.Empty;
+            string password = txtPassword.Text;
+
+            if (password.Length < 3)
+            {
+                MessageBox.Show("Please enter a secure password with more than 3 characters.",
+                    "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (chkIconChange.Checked)
+            {
+                using (OpenFileDialog ofd = new OpenFileDialog())
+                {
+                    ofd.Title = "Choose Icon";
+                    ofd.Filter = "Icons *.ico|*.ico";
+                    ofd.Multiselect = false;
+                    if (ofd.ShowDialog() == DialogResult.OK)
+                        icon = ofd.FileName;
+                }
+            }
+
+            using (SaveFileDialog sfd = new SaveFileDialog())
+            {
+                sfd.Title = "Save Client as";
+                sfd.Filter = "Executables *.exe|*.exe";
+                sfd.RestoreDirectory = true;
+                sfd.FileName = "Client-built.exe";
+                if (sfd.ShowDialog() != DialogResult.OK) return;
+                output = sfd.FileName;
+            }
+
+            if (string.IsNullOrEmpty(output))
+            {
+                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (chkIconChange.Checked && string.IsNullOrEmpty(icon))
+            {
+                MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            try
+            {
+                string[] asmInfo = null;
+                if (chkChangeAsmInfo.Checked)
+                {
+                    if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
+                        !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                    {
+                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Build failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        return;
+                    }
+
+                    asmInfo = new string[8];
+                    asmInfo[0] = txtProductName.Text;
+                    asmInfo[1] = txtDescription.Text;
+                    asmInfo[2] = txtCompanyName.Text;
+                    asmInfo[3] = txtCopyright.Text;
+                    asmInfo[4] = txtTrademarks.Text;
+                    asmInfo[5] = txtOriginalFilename.Text;
+                    asmInfo[6] = txtProductVersion.Text;
+                    asmInfo[7] = txtFileVersion.Text;
+                }
+
+                ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), password, txtInstallsub.Text,
+                    txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
+                    chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
+                    Application.ProductVersion);
+
+                MessageBox.Show("Successfully built client!", "Build Success", MessageBoxButtons.OK,
+                    MessageBoxIcon.Information);
+            }
+            catch (FileLoadException)
+            {
+                MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
+                    "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(
+                    string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
+                        ex.StackTrace), "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
         private void RefreshExamplePath()
