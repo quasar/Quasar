@@ -1,4 +1,5 @@
 ﻿using System;
+using xClient.Core.Helper;
 
 #if !DEBUG
 using xClient.Core.Encryption;
@@ -13,7 +14,8 @@ namespace xClient.Config
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 500;
         public static string PASSWORD = "1234";
-        public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
+        public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
         public static string SUBFOLDER = "Test";
         public static string INSTALLNAME = "test.exe";
         public static bool INSTALL = false;
@@ -26,13 +28,15 @@ namespace xClient.Config
 
         public static void Initialize()
         {
+            FixSpecialFolder();
         }
 #else
         public static string VERSION = "1.0.0.0r";
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";
-        public static string DIR = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
+        public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
         public static string SUBFOLDER = "SUB";
         public static string INSTALLNAME = "INSTALL";
         public static bool INSTALL = false;
@@ -55,7 +59,24 @@ namespace xClient.Config
             INSTALLNAME = AES.Decrypt(INSTALLNAME);
             MUTEX = AES.Decrypt(MUTEX);
             STARTUPKEY = AES.Decrypt(STARTUPKEY);
+            FixSpecialFolder();
         }
 #endif
+
+        static void FixSpecialFolder()
+        {
+            if (PlatformHelper.Architecture == 64) return;
+
+            // https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx
+            switch (SPECIALFOLDER)
+            {
+                case Environment.SpecialFolder.ProgramFilesX86:
+                    SPECIALFOLDER = Environment.SpecialFolder.ProgramFiles;
+                    break;
+                case Environment.SpecialFolder.SystemX86:
+                    SPECIALFOLDER = Environment.SpecialFolder.System;
+                    break;
+            }
+        }
     }
 }
