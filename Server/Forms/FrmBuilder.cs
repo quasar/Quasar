@@ -322,13 +322,17 @@ namespace xServer.Forms
             else if (rbProgramFiles.Checked)
                 path =
                     Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86),
-                            txtInstallsub.Text), txtInstallname.Text);
+                        Path.Combine(
+                            Environment.GetFolderPath(PlatformHelper.Architecture == 64
+                                ? Environment.SpecialFolder.ProgramFilesX86
+                                : Environment.SpecialFolder.ProgramFiles), txtInstallsub.Text), txtInstallname.Text);
             else if (rbSystem.Checked)
                 path =
                     Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.SystemX86), txtInstallsub.Text),
-                        txtInstallname.Text);
+                        Path.Combine(
+                            Environment.GetFolderPath(PlatformHelper.Architecture == 64
+                                ? Environment.SpecialFolder.SystemX86
+                                : Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
 
             this.Invoke((MethodInvoker)delegate { txtExamplePath.Text = path + ".exe"; });
         }

