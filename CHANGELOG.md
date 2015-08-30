@@ -1,5 +1,28 @@
 #QuasarRAT Changelog
 
+##Quasar v1.1.0.0 [30.08.2015]
+* **Changed Target Framework to .NET Framework 4.0 Client Profile**
+* Added deletion of ZoneIdentifier file when installing
+* Improved Client installation error handling
+* Improved Client HardwareID generation
+* Improved Client-Server handshake
+* Support detection of multiple AVs, Firewalls, GPUs, CPUs
+* Fixed Builder Profile not saving correctly Installation Subfolder
+* Fixed Builder not validating input correctly
+* Fixed Builder creating Client with empty list of hosts
+* Fixed Settings Password not hashed when pressing 'Start listening'
+* Fixed Reverse Proxy using always wrong port
+* Fixed Server throwing NullReferenceException when closing and no Clients connected
+* Fixed Client reporting wrong uptime on systems with uptime longer than 49.7 days
+* Fixed Client installation path empty on Windows XP 32-bit in some scenarios
+* Fixed Client installation to system directory failing on 64-bit OS
+* Fixed Client uninstallation not working when file is marked as read-only
+* Fixed Client crashing after update on first start in some scenarios
+* Fixed Client crashing when list of hosts is empty (Client exits now)
+* Fixed Client not reconnecting when Server uses different password
+* Fixed Client registry access
+* Removed Statistics window, will be remade in a later version
+
 ##Quasar v1.0.0.0 [22.08.2015]
 * **xRAT is now Quasar**
 * Added Password Recovery (Common Browsers and FTP Clients)
