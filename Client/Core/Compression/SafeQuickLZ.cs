@@ -1,5 +1,7 @@
 ﻿using System;
 
+#pragma warning disable 0675
+
 namespace xClient.Core.Compression
 {
     // QuickLZ data compression library
