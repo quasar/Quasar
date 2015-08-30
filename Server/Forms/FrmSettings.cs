@@ -156,9 +156,26 @@ namespace xServer.Forms
 
         private void btnCancel_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                DialogResult.Yes)
+            if (ncPort.Value == Settings.ListenPort &&
+                chkAutoListen.Checked == Settings.AutoListen &&
+                chkPopup.Checked == Settings.ShowPopup &&
+                txtPassword.Text == Settings.Password &&
+                chkUseUpnp.Checked == Settings.UseUPnP &&
+                chkShowTooltip.Checked == Settings.ShowToolTip &&
+                chkNoIPIntegration.Checked == Settings.EnableNoIPUpdater &&
+                txtNoIPHost.Text == Settings.NoIPHost &&
+                txtNoIPUser.Text == Settings.NoIPUsername &&
+                txtNoIPPass.Text == Settings.NoIPPassword)
+            {
                 this.Close();
+            }
+            else
+            {
+                if (
+                    MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
+                    DialogResult.Yes)
+                    this.Close();
+            }
         }
 
         private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e)
