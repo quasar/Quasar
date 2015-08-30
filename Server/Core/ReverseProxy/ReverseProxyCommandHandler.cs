@@ -1,8 +1,4 @@
-﻿using System;
-using System.CodeDom;
-using System.Collections.Generic;
-using System.Text;
-using xServer.Core.Networking;
+﻿using xServer.Core.Networking;
 using xServer.Core.Packets;
 using xServer.Core.ReverseProxy.Packets;
 
@@ -22,7 +18,7 @@ namespace xServer.Core.ReverseProxy
                         client.Value.ProxyServer.GetClientByConnectionId(response.ConnectionId);
                     if (socksClient != null)
                     {
-                        socksClient.CommandResponse(response);
+                        socksClient.HandleCommandResponse(response);
                     }
                 }
             }

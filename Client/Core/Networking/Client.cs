@@ -698,8 +698,14 @@ namespace xClient.Core.Networking
                 {
                     lock (_proxyClientsLock)
                     {
-                        foreach (ReverseProxyClient proxy in _proxyClients)
-                            proxy.Disconnect();
+                        try
+                        {
+                            foreach (ReverseProxyClient proxy in _proxyClients)
+                                proxy.Disconnect();
+                        }
+                        catch
+                        {
+                        }
                     }
                 }
 

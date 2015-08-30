@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
@@ -96,7 +97,7 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_Receive, null);
+                socket.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
             }
             catch
             {
@@ -104,7 +105,7 @@ namespace xServer.Core.ReverseProxy
             }
         }
 
-        private void socket_Receive(IAsyncResult ar)
+        private void AsyncReceive(IAsyncResult ar)
         {
             try
             {
@@ -258,7 +259,7 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_Receive, null);
+                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
             }
             catch
             {
@@ -340,7 +341,7 @@ namespace xServer.Core.ReverseProxy
             return true;
         }
 
-        public void CommandResponse(ReverseProxyConnectResponse response)
+        public void HandleCommandResponse(ReverseProxyConnectResponse response)
         {
             //a small prevention for calling this method twice, not required... just incase
             if (!_receivedConnResponse)
@@ -361,19 +362,16 @@ namespace xServer.Core.ReverseProxy
                         //Thanks to http://www.mentalis.org/soft/projects/proxy/ for the Maths
                         try
                         {
-                            SendToClient(new byte[]
-                            {
-                                SOCKS5_VERSION_NUMBER,
-                                SOCKS5_CMD_REPLY_SUCCEEDED,
-                                SOCKS5_RESERVED,
-                                1, //static: it's always 1
-                                (byte) (response.LocalEndPoint%256),
-                                (byte) (Math.Floor((decimal) (response.LocalEndPoint%65536)/256)),
-                                (byte) (Math.Floor((decimal) (response.LocalEndPoint%16777216)/65536)),
-                                (byte) (Math.Floor((decimal) response.LocalEndPoint/16777216)),
-                                (byte) (Math.Floor((decimal) response.LocalPort/256)),
-                                (byte) (response.LocalPort%256)
-                            });
+                            List<byte> responsePacket = new List<byte>();
+                            responsePacket.Add(SOCKS5_VERSION_NUMBER);
+                            responsePacket.Add(SOCKS5_CMD_REPLY_SUCCEEDED);
+                            responsePacket.Add(SOCKS5_RESERVED);
+                            responsePacket.Add(1);
+                            responsePacket.AddRange(response.LocalAddress.GetAddressBytes());
+                            responsePacket.Add((byte)(Math.Floor((decimal)response.LocalPort / 256)));
+                            responsePacket.Add((byte)(response.LocalPort % 256));
+
+                            SendToClient(responsePacket.ToArray());
                         }
                         catch
                         {
@@ -398,7 +396,7 @@ namespace xServer.Core.ReverseProxy
                     try
                     {
                         //start receiving data from the proxy
-                        Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+                        Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceiveProxy, null);
                     }
                     catch
                     {
@@ -430,7 +428,7 @@ namespace xServer.Core.ReverseProxy
             }
         }
 
-        private void socket_ReceiveProxy(IAsyncResult ar)
+        private void AsyncReceiveProxy(IAsyncResult ar)
         {
             try
             {
@@ -463,7 +461,7 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, socket_ReceiveProxy, null);
+                Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceiveProxy, null);
             }
             catch
             {

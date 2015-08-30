@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using xServer.Core.Networking;
 using xServer.Core.Packets;
 
@@ -11,21 +12,17 @@ namespace xServer.Core.ReverseProxy.Packets
 
         public bool IsConnected { get; set; }
 
-        public long LocalEndPoint { get; set; }
+        public IPAddress LocalAddress { get; set; }
 
         public int LocalPort { get; set; }
 
         public string HostName { get; set; }
 
-        public ReverseProxyConnectResponse()
-        {
-        }
-
-        public ReverseProxyConnectResponse(int connectionId, bool isConnected, long localEndPoint, int localPort)
+        public ReverseProxyConnectResponse(int connectionId, bool isConnected, IPAddress localAddress, int localPort)
         {
             this.ConnectionId = connectionId;
             this.IsConnected = isConnected;
-            this.LocalEndPoint = localEndPoint;
+            this.LocalAddress = localAddress;
             this.LocalPort = localPort;
         }
 

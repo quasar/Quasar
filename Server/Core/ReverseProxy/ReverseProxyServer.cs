@@ -74,10 +74,10 @@ namespace xServer.Core.ReverseProxy
             this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this._socket.Bind(new IPEndPoint(IPAddress.Parse(ipAddress), port));
             this._socket.Listen(100);
-            this._socket.BeginAccept(socket_BeginAccept, null);
+            this._socket.BeginAccept(AsyncAccept, null);
         }
 
-        private void socket_BeginAccept(IAsyncResult ar)
+        private void AsyncAccept(IAsyncResult ar)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace xServer.Core.ReverseProxy
 
             try
             {
-                this._socket.BeginAccept(socket_BeginAccept, null);
+                this._socket.BeginAccept(AsyncAccept, null);
             }
             catch
             {
