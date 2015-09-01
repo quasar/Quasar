@@ -102,7 +102,14 @@ namespace xServer.Core.Networking
         /// <returns></returns>
         public bool Equals(Client c)
         {
-            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+            try
+            {
+                return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>
