@@ -2,7 +2,7 @@
 using xClient.Core.Helper;
 
 #if !DEBUG
-using xClient.Core.Encryption;
+using xClient.Core.Cryptography;
 #endif
 
 namespace xClient.Config
