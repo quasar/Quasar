@@ -2,7 +2,7 @@
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using xClient.Core.Encryption;
+using xClient.Core.Cryptography;
 
 namespace xClient.Core.Helper
 {

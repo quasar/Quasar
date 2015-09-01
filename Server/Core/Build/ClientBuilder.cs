@@ -3,7 +3,7 @@ using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Vestris.ResourceLib;
-using xServer.Core.Encryption;
+using xServer.Core.Cryptography;
 using xServer.Core.Helper;
 
 namespace xServer.Core.Build

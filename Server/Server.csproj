@@ -158,7 +158,7 @@
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
-    <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
