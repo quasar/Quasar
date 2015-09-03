@@ -30,38 +30,38 @@
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStartupManager));
-            this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ctxtAddEntry = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRemoveEntry = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.removeEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lstStartupItems = new xServer.Controls.AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.ctxtMenu.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // ctxtMenu
+            // contextMenuStrip
             // 
-            this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtAddEntry,
-            this.ctxtRemoveEntry});
-            this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(148, 48);
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.addEntryToolStripMenuItem,
+            this.removeEntryToolStripMenuItem});
+            this.contextMenuStrip.Name = "ctxtMenu";
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 70);
             // 
-            // ctxtAddEntry
+            // addEntryToolStripMenuItem
             // 
-            this.ctxtAddEntry.Image = global::xServer.Properties.Resources.application_add;
-            this.ctxtAddEntry.Name = "ctxtAddEntry";
-            this.ctxtAddEntry.Size = new System.Drawing.Size(147, 22);
-            this.ctxtAddEntry.Text = "Add Entry";
-            this.ctxtAddEntry.Click += new System.EventHandler(this.ctxtAddEntry_Click);
+            this.addEntryToolStripMenuItem.Image = global::xServer.Properties.Resources.application_add;
+            this.addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
+            this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.addEntryToolStripMenuItem.Text = "Add Entry";
+            this.addEntryToolStripMenuItem.Click += new System.EventHandler(this.addEntryToolStripMenuItem_Click);
             // 
-            // ctxtRemoveEntry
+            // removeEntryToolStripMenuItem
             // 
-            this.ctxtRemoveEntry.Image = global::xServer.Properties.Resources.application_delete;
-            this.ctxtRemoveEntry.Name = "ctxtRemoveEntry";
-            this.ctxtRemoveEntry.Size = new System.Drawing.Size(147, 22);
-            this.ctxtRemoveEntry.Text = "Remove Entry";
-            this.ctxtRemoveEntry.Click += new System.EventHandler(this.ctxtRemoveEntry_Click);
+            this.removeEntryToolStripMenuItem.Image = global::xServer.Properties.Resources.application_delete;
+            this.removeEntryToolStripMenuItem.Name = "removeEntryToolStripMenuItem";
+            this.removeEntryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.removeEntryToolStripMenuItem.Text = "Remove Entry";
+            this.removeEntryToolStripMenuItem.Click += new System.EventHandler(this.removeEntryToolStripMenuItem_Click);
             // 
             // lstStartupItems
             // 
@@ -71,7 +71,7 @@
             this.lstStartupItems.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hName,
             this.hPath});
-            this.lstStartupItems.ContextMenuStrip = this.ctxtMenu;
+            this.lstStartupItems.ContextMenuStrip = this.contextMenuStrip;
             this.lstStartupItems.FullRowSelect = true;
             this.lstStartupItems.GridLines = true;
             this.lstStartupItems.Location = new System.Drawing.Point(12, 12);
@@ -80,7 +80,6 @@
             this.lstStartupItems.TabIndex = 0;
             this.lstStartupItems.UseCompatibleStateImageBehavior = false;
             this.lstStartupItems.View = System.Windows.Forms.View.Details;
-            this.lstStartupItems.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstStartupItems_ColumnClick);
             // 
             // hName
             // 
@@ -106,7 +105,7 @@
             this.Text = "Startup Manager []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmStartupManager_FormClosing);
             this.Load += new System.EventHandler(this.FrmStartupManager_Load);
-            this.ctxtMenu.ResumeLayout(false);
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -115,9 +114,9 @@
 
         private System.Windows.Forms.ColumnHeader hName;
         private System.Windows.Forms.ColumnHeader hPath;
-        private System.Windows.Forms.ContextMenuStrip ctxtMenu;
-        private System.Windows.Forms.ToolStripMenuItem ctxtAddEntry;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRemoveEntry;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem addEntryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem removeEntryToolStripMenuItem;
         private Controls.AeroListView lstStartupItems;
 
     }

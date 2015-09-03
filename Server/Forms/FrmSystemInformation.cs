@@ -50,23 +50,6 @@ namespace xServer.Forms
                 _connectClient.Value.FrmSi = null;
         }
 
-        private void ctxtCopy_Click(object sender, EventArgs e)
-        {
-            if (lstSystem.SelectedItems.Count != 0)
-            {
-                string output = string.Empty;
-
-                foreach (ListViewItem lvi in lstSystem.SelectedItems)
-                {
-                    output = lvi.SubItems.Cast<ListViewItem.ListViewSubItem>().Aggregate(output, (current, lvs) => current + (lvs.Text + " : "));
-                    output = output.Remove(output.Length - 3);
-                    output = output + "\r\n";
-                }
-
-                Clipboard.SetText(output);
-            }
-        }
-
         public void AddItems(ListViewItem[] lviCollection)
         {
             try
@@ -86,6 +69,65 @@ namespace xServer.Forms
             }
             catch (InvalidOperationException)
             {
+            }
+        }
+
+        private void copyAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lstSystem.Items.Count == 0) return;
+
+            string output = string.Empty;
+
+            foreach (ListViewItem lvi in lstSystem.Items)
+            {
+                output = lvi.SubItems.Cast<ListViewItem.ListViewSubItem>().Aggregate(output, (current, lvs) => current + (lvs.Text + " : "));
+                output = output.Remove(output.Length - 3);
+                output = output + "\r\n";
+            }
+
+            ClipboardHelper.SetClipboardText(output);
+        }
+
+        private void copySelectedToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (lstSystem.SelectedItems.Count == 0) return;
+
+            string output = string.Empty;
+
+            foreach (ListViewItem lvi in lstSystem.SelectedItems)
+            {
+                output = lvi.SubItems.Cast<ListViewItem.ListViewSubItem>().Aggregate(output, (current, lvs) => current + (lvs.Text + " : "));
+                output = output.Remove(output.Length - 3);
+                output = output + "\r\n";
+            }
+
+            ClipboardHelper.SetClipboardText(output);
+        }
+
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstSystem.Items.Clear();
+
+            if (_connectClient != null)
+            {
+                this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
+                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
+
+                if (_connectClient.Value != null)
+                {
+                    ListViewItem lvi =
+                        new ListViewItem(new string[] { "Operating System", _connectClient.Value.OperatingSystem });
+                    lstSystem.Items.Add(lvi);
+                    lvi =
+                        new ListViewItem(new string[]
+                        {
+                            "Architecture",
+                            (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
+                        });
+                    lstSystem.Items.Add(lvi);
+                    lvi = new ListViewItem(new string[] { "", "Getting more information..." });
+                    lstSystem.Items.Add(lvi);
+                }
             }
         }
     }

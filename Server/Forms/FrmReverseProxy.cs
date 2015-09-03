@@ -100,8 +100,8 @@ namespace xServer.Forms
                 lock (SocksServer)
                 {
                     this._openConnections = SocksServer.OpenConnections;
-                    LvConnections.VirtualListSize = this._openConnections.Length;
-                    LvConnections.Refresh();
+                    lstConnections.VirtualListSize = this._openConnections.Length;
+                    lstConnections.Refresh();
                 }
             }
             catch { }
@@ -191,11 +191,11 @@ namespace xServer.Forms
         {
             lock (SocksServer)
             {
-                if (LvConnections.SelectedIndices.Count > 0)
+                if (lstConnections.SelectedIndices.Count > 0)
                 {
                     //copy the list, it could happen the suddenly the items de-select
-                    int[] items = new int[LvConnections.SelectedIndices.Count];
-                    LvConnections.SelectedIndices.CopyTo(items, 0);
+                    int[] items = new int[lstConnections.SelectedIndices.Count];
+                    lstConnections.SelectedIndices.CopyTo(items, 0);
 
                     foreach (int index in items)
                     {

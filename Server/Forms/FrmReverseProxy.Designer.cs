@@ -37,7 +37,13 @@ namespace xServer.Forms
             this.nudServerPort = new System.Windows.Forms.NumericUpDown();
             this.tabCtrl = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.LvConnections = new xServer.Controls.AeroListView();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.killConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.btnStop = new System.Windows.Forms.Button();
+            this.lblProxyInfo = new System.Windows.Forms.Label();
+            this.label1 = new System.Windows.Forms.Label();
+            this.lblLoadBalance = new System.Windows.Forms.Label();
+            this.lstConnections = new xServer.Controls.AeroListView();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -45,16 +51,10 @@ namespace xServer.Forms
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader4 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader5 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.contextMenuStrip1 = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.killConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.btnStop = new System.Windows.Forms.Button();
-            this.lblProxyInfo = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.lblLoadBalance = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).BeginInit();
             this.tabCtrl.SuspendLayout();
             this.tabPage1.SuspendLayout();
-            this.contextMenuStrip1.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnStart
@@ -114,7 +114,7 @@ namespace xServer.Forms
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.LvConnections);
+            this.tabPage1.Controls.Add(this.lstConnections);
             this.tabPage1.Location = new System.Drawing.Point(4, 22);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
@@ -123,70 +123,12 @@ namespace xServer.Forms
             this.tabPage1.Text = "Open Connections";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // LvConnections
+            // contextMenuStrip
             // 
-            this.LvConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.columnHeader6,
-            this.columnHeader7,
-            this.columnHeader1,
-            this.columnHeader2,
-            this.columnHeader3,
-            this.columnHeader4,
-            this.columnHeader5});
-            this.LvConnections.ContextMenuStrip = this.contextMenuStrip1;
-            this.LvConnections.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.LvConnections.FullRowSelect = true;
-            this.LvConnections.GridLines = true;
-            this.LvConnections.Location = new System.Drawing.Point(3, 3);
-            this.LvConnections.Name = "LvConnections";
-            this.LvConnections.Size = new System.Drawing.Size(722, 242);
-            this.LvConnections.TabIndex = 0;
-            this.LvConnections.UseCompatibleStateImageBehavior = false;
-            this.LvConnections.View = System.Windows.Forms.View.Details;
-            this.LvConnections.VirtualMode = true;
-            this.LvConnections.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.LvConnections_RetrieveVirtualItem);
-            // 
-            // columnHeader6
-            // 
-            this.columnHeader6.Text = "Client IP";
-            this.columnHeader6.Width = 106;
-            // 
-            // columnHeader7
-            // 
-            this.columnHeader7.Text = "Client Country";
-            this.columnHeader7.Width = 106;
-            // 
-            // columnHeader1
-            // 
-            this.columnHeader1.Text = "Target Server";
-            this.columnHeader1.Width = 135;
-            // 
-            // columnHeader2
-            // 
-            this.columnHeader2.Text = "Target Port";
-            this.columnHeader2.Width = 68;
-            // 
-            // columnHeader3
-            // 
-            this.columnHeader3.Text = "Total Received";
-            this.columnHeader3.Width = 105;
-            // 
-            // columnHeader4
-            // 
-            this.columnHeader4.Text = "Total Sent";
-            this.columnHeader4.Width = 95;
-            // 
-            // columnHeader5
-            // 
-            this.columnHeader5.Text = "Proxy Type";
-            this.columnHeader5.Width = 90;
-            // 
-            // contextMenuStrip1
-            // 
-            this.contextMenuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.killConnectionToolStripMenuItem});
-            this.contextMenuStrip1.Name = "contextMenuStrip1";
-            this.contextMenuStrip1.Size = new System.Drawing.Size(156, 26);
+            this.contextMenuStrip.Name = "contextMenuStrip1";
+            this.contextMenuStrip.Size = new System.Drawing.Size(156, 26);
             // 
             // killConnectionToolStripMenuItem
             // 
@@ -233,6 +175,64 @@ namespace xServer.Forms
             this.lblLoadBalance.TabIndex = 7;
             this.lblLoadBalance.Text = "[Load Balance Info]";
             // 
+            // lstConnections
+            // 
+            this.lstConnections.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.columnHeader6,
+            this.columnHeader7,
+            this.columnHeader1,
+            this.columnHeader2,
+            this.columnHeader3,
+            this.columnHeader4,
+            this.columnHeader5});
+            this.lstConnections.ContextMenuStrip = this.contextMenuStrip;
+            this.lstConnections.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstConnections.FullRowSelect = true;
+            this.lstConnections.GridLines = true;
+            this.lstConnections.Location = new System.Drawing.Point(3, 3);
+            this.lstConnections.Name = "lstConnections";
+            this.lstConnections.Size = new System.Drawing.Size(722, 242);
+            this.lstConnections.TabIndex = 0;
+            this.lstConnections.UseCompatibleStateImageBehavior = false;
+            this.lstConnections.View = System.Windows.Forms.View.Details;
+            this.lstConnections.VirtualMode = true;
+            this.lstConnections.RetrieveVirtualItem += new System.Windows.Forms.RetrieveVirtualItemEventHandler(this.LvConnections_RetrieveVirtualItem);
+            // 
+            // columnHeader6
+            // 
+            this.columnHeader6.Text = "Client IP";
+            this.columnHeader6.Width = 106;
+            // 
+            // columnHeader7
+            // 
+            this.columnHeader7.Text = "Client Country";
+            this.columnHeader7.Width = 106;
+            // 
+            // columnHeader1
+            // 
+            this.columnHeader1.Text = "Target Server";
+            this.columnHeader1.Width = 135;
+            // 
+            // columnHeader2
+            // 
+            this.columnHeader2.Text = "Target Port";
+            this.columnHeader2.Width = 68;
+            // 
+            // columnHeader3
+            // 
+            this.columnHeader3.Text = "Total Received";
+            this.columnHeader3.Width = 105;
+            // 
+            // columnHeader4
+            // 
+            this.columnHeader4.Text = "Total Sent";
+            this.columnHeader4.Width = 95;
+            // 
+            // columnHeader5
+            // 
+            this.columnHeader5.Text = "Proxy Type";
+            this.columnHeader5.Width = 90;
+            // 
             // FrmReverseProxy
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -256,7 +256,7 @@ namespace xServer.Forms
             ((System.ComponentModel.ISupportInitialize)(this.nudServerPort)).EndInit();
             this.tabCtrl.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
-            this.contextMenuStrip1.ResumeLayout(false);
+            this.contextMenuStrip.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -269,7 +269,7 @@ namespace xServer.Forms
         private System.Windows.Forms.NumericUpDown nudServerPort;
         private System.Windows.Forms.TabControl tabCtrl;
         private System.Windows.Forms.TabPage tabPage1;
-        private AeroListView LvConnections;
+        private AeroListView lstConnections;
         private System.Windows.Forms.ColumnHeader columnHeader1;
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
@@ -277,7 +277,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ColumnHeader columnHeader5;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.Label lblProxyInfo;
-        private System.Windows.Forms.ContextMenuStrip contextMenuStrip1;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.ToolStripMenuItem killConnectionToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader columnHeader6;
         private System.Windows.Forms.ColumnHeader columnHeader7;

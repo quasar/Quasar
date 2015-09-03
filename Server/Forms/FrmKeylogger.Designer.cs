@@ -31,7 +31,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmKeylogger));
             this.lstLogs = new System.Windows.Forms.ListView();
             this.hLogs = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.statusStrip1 = new System.Windows.Forms.StatusStrip();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.btnGetLogs = new System.Windows.Forms.Button();
             this.wLogViewer = new System.Windows.Forms.WebBrowser();
             this.SuspendLayout();
@@ -51,7 +51,6 @@
             this.lstLogs.TabIndex = 0;
             this.lstLogs.UseCompatibleStateImageBehavior = false;
             this.lstLogs.View = System.Windows.Forms.View.Details;
-            this.lstLogs.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstLogs_ColumnClick);
             this.lstLogs.ItemActivate += new System.EventHandler(this.lstLogs_ItemActivate);
             // 
             // hLogs
@@ -59,13 +58,13 @@
             this.hLogs.Text = "Logs";
             this.hLogs.Width = 149;
             // 
-            // statusStrip1
+            // statusStrip
             // 
-            this.statusStrip1.Location = new System.Drawing.Point(0, 460);
-            this.statusStrip1.Name = "statusStrip1";
-            this.statusStrip1.Size = new System.Drawing.Size(862, 22);
-            this.statusStrip1.TabIndex = 6;
-            this.statusStrip1.Text = "statusStrip1";
+            this.statusStrip.Location = new System.Drawing.Point(0, 460);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(862, 22);
+            this.statusStrip.TabIndex = 6;
+            this.statusStrip.Text = "statusStrip1";
             // 
             // btnGetLogs
             // 
@@ -96,7 +95,7 @@
             this.ClientSize = new System.Drawing.Size(862, 482);
             this.Controls.Add(this.wLogViewer);
             this.Controls.Add(this.btnGetLogs);
-            this.Controls.Add(this.statusStrip1);
+            this.Controls.Add(this.statusStrip);
             this.Controls.Add(this.lstLogs);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
@@ -114,7 +113,7 @@
         #endregion
 
         private System.Windows.Forms.ColumnHeader hLogs;
-        private System.Windows.Forms.StatusStrip statusStrip1;
+        private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.WebBrowser wLogViewer;
         private System.Windows.Forms.ListView lstLogs;
         private System.Windows.Forms.Button btnGetLogs;

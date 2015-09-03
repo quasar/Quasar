@@ -3,14 +3,12 @@ using System.Windows.Forms;
 using xServer.Controls;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmTaskManager : Form
     {
         private readonly Client _connectClient;
-        private readonly ListViewColumnSorter _lvwColumnSorter;
 
         public FrmTaskManager(Client c)
         {
@@ -18,9 +16,6 @@ namespace xServer.Forms
             _connectClient.Value.FrmTm = this;
 
             InitializeComponent();
-
-            _lvwColumnSorter = new ListViewColumnSorter();
-            lstTasks.ListViewItemSorter = _lvwColumnSorter;
         }
 
         private void FrmTaskManager_Load(object sender, EventArgs e)
@@ -38,7 +33,9 @@ namespace xServer.Forms
                 _connectClient.Value.FrmTm = null;
         }
 
-        private void ctxtKillProcess_Click(object sender, EventArgs e)
+        #region "ContextMenuStrip"
+
+        private void killProcessToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_connectClient != null)
             {
@@ -49,7 +46,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtStartProcess_Click(object sender, EventArgs e)
+        private void startProcessToolStripMenuItem_Click(object sender, EventArgs e)
         {
             string processname = string.Empty;
             if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
@@ -59,7 +56,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRefresh_Click(object sender, EventArgs e)
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_connectClient != null)
             {
@@ -67,7 +64,9 @@ namespace xServer.Forms
             }
         }
 
-        public void ClearListview()
+        #endregion
+
+        public void ClearListviewItems()
         {
             try
             {
@@ -81,10 +80,15 @@ namespace xServer.Forms
             }
         }
 
-        public void AddProcessToListview(ListViewItem lvi)
+        public void AddProcessToListview(string processName, int pid, string windowTitle)
         {
             try
             {
+                ListViewItem lvi = new ListViewItem(new string[]
+                {
+                    processName, pid.ToString(), windowTitle
+                });
+
                 lstTasks.Invoke((MethodInvoker)delegate
                 {
                     lstTasks.Items.Add(lvi);
@@ -95,26 +99,18 @@ namespace xServer.Forms
             }
         }
 
-        private void lstTasks_ColumnClick(object sender, ColumnClickEventArgs e)
+        public void SetProcessesCount(int processesCount)
         {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == _lvwColumnSorter.SortColumn)
+            try
             {
-                // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
+                statusStrip.Invoke((MethodInvoker) delegate
+                {
+                    processesToolStripStatusLabel.Text = "Processes: " + processesCount.ToString();
+                });
             }
-            else
+            catch (InvalidOperationException)
             {
-                // Set the column number that is to be sorted; default to ascending.
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
             }
-
-            // Perform the sort with these new sort options.
-            lstTasks.Sort();
         }
     }
 }

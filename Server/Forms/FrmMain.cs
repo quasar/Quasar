@@ -7,6 +7,7 @@ using System.Windows.Forms;
 using xServer.Core.Commands;
 using xServer.Core.Cryptography;
 using xServer.Core.Data;
+using xServer.Core.Extensions;
 using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -23,7 +24,6 @@ namespace xServer.Forms
         private const int STATUS_ID = 4;
         private const int USERSTATUS_ID = 5;
 
-        private readonly ListViewColumnSorter _lvwColumnSorter;
         private readonly object _lockClients = new object();
         private bool _titleUpdateRunning;
 
@@ -48,11 +48,6 @@ namespace xServer.Forms
 #endif
 
             InitializeComponent();
-
-            this.Menu = mainMenu;
-
-            _lvwColumnSorter = new ListViewColumnSorter();
-            lstClients.ListViewItemSorter = _lvwColumnSorter;
         }
 
         public void UpdateWindowTitle()
@@ -117,8 +112,8 @@ namespace xServer.Forms
         {
             ConServer.Disconnect();
             UPnP.DeletePortMap(Settings.ListenPort);
-            nIcon.Visible = false;
-            nIcon.Dispose();
+            notifyIcon.Visible = false;
+            notifyIcon.Dispose();
             Instance = null;
         }
 
@@ -133,7 +128,7 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker) delegate
                 {
-                    botListen.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
+                    listenToolStripStatusLabel.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
             }
             catch (InvalidOperationException)
@@ -332,7 +327,7 @@ namespace xServer.Forms
                 {
                     if (c == null || c.Value == null) return;
                     
-                    nIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                    notifyIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
                 });
@@ -342,33 +337,11 @@ namespace xServer.Forms
             }
         }
 
-        private void lstClients_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == _lvwColumnSorter.SortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            // Perform the sort with these new sort options.
-            lstClients.Sort();
-        }
-
-        #region "ContextMenu"
+        #region "ContextMenuStrip"
 
         #region "Connection"
 
-        private void ctxtUpdate_Click(object sender, EventArgs e)
+        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
             {
@@ -428,15 +401,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtDisconnect_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
-            }
-        }
-
-        private void ctxtReconnect_Click(object sender, EventArgs e)
+        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -444,7 +409,15 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtUninstall_Click(object sender, EventArgs e)
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
+            }
+        }
+
+        private void uninstallToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count == 0) return;
             if (
@@ -465,7 +438,7 @@ namespace xServer.Forms
 
         #region "System"
 
-        private void ctxtSystemInformation_Click(object sender, EventArgs e)
+        private void systemInformationToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -479,7 +452,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtFileManager_Click(object sender, EventArgs e)
+        private void fileManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -493,7 +466,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtStartupManager_Click(object sender, EventArgs e)
+        private void startupManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -507,7 +480,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtTaskManager_Click(object sender, EventArgs e)
+        private void taskManagerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -521,7 +494,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRemoteShell_Click(object sender, EventArgs e)
+        private void remoteShellToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -535,7 +508,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtReverseProxy_Click(object sender, EventArgs e)
+        private void reverseProxyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -550,12 +523,12 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRegistryEditor_Click(object sender, EventArgs e)
+        private void registryEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // TODO
         }
 
-        private void ctxtShutdown_Click(object sender, EventArgs e)
+        private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -563,7 +536,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRestart_Click(object sender, EventArgs e)
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -571,7 +544,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtStandby_Click(object sender, EventArgs e)
+        private void standbyToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -583,7 +556,7 @@ namespace xServer.Forms
 
         #region "Surveillance"
 
-        private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
+        private void remoteDesktopToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -597,7 +570,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtPasswordRecovery_Click(object sender, EventArgs e)
+        private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -612,7 +585,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtKeylogger_Click(object sender, EventArgs e)
+        private void keyloggerToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -630,7 +603,7 @@ namespace xServer.Forms
 
         #region "Miscellaneous"
 
-        private void ctxtLocalFile_Click(object sender, EventArgs e)
+        private void localFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
             {
@@ -684,7 +657,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtWebFile_Click(object sender, EventArgs e)
+        private void webFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
             {
@@ -702,7 +675,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtVisitWebsite_Click(object sender, EventArgs e)
+        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
             {
@@ -719,7 +692,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtShowMessagebox_Click(object sender, EventArgs e)
+        private void showMessageboxToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (lstClients.SelectedItems.Count != 0)
             {
@@ -739,16 +712,21 @@ namespace xServer.Forms
 
         #endregion
 
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstClients.SelectAllItems();
+        }
+
         #endregion
 
         #region "MenuStrip"
 
-        private void menuClose_Click(object sender, EventArgs e)
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             Application.Exit();
         }
 
-        private void menuSettings_Click(object sender, EventArgs e)
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var frm = new FrmSettings(ConServer))
             {
@@ -756,7 +734,7 @@ namespace xServer.Forms
             }
         }
 
-        private void menuBuilder_Click(object sender, EventArgs e)
+        private void builderToolStripMenuItem_Click(object sender, EventArgs e)
         {
 #if DEBUG
             MessageBox.Show("Client Builder is not available in DEBUG configuration.\nPlease build the project using RELEASE configuration.", "Not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -768,23 +746,7 @@ namespace xServer.Forms
 #endif
         }
 
-        private void menuStatistics_Click(object sender, EventArgs e)
-        {
-            //if (ConServer.BytesReceived == 0 || ConServer.BytesSent == 0)
-            //    MessageBox.Show("Statistics makes no sense when no data is available.\nPlease wait for at least one connected Client!", "Not available", MessageBoxButtons.OK,
-            //        MessageBoxIcon.Information);
-            //else
-            //{
-            //    using (
-            //        var frm = new FrmStatistics(ConServer.BytesReceived, ConServer.BytesSent,
-            //            ConServer.ConnectedAndAuthenticatedClients, ConServer.AllTimeConnectedClientsCount))
-            //    {
-            //        frm.ShowDialog();
-            //    }
-            //}
-        }
-
-        private void menuAbout_Click(object sender, EventArgs e)
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var frm = new FrmAbout())
             {
@@ -796,7 +758,7 @@ namespace xServer.Forms
 
         #region "NotifyIcon"
 
-        private void nIcon_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             this.WindowState = (this.WindowState == FormWindowState.Normal)
                 ? FormWindowState.Minimized

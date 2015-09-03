@@ -32,39 +32,42 @@ namespace xServer.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmMain));
-            this.ctxtMenu = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ctxtConnection = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtUpdate = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtReconnect = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtDisconnect = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtUninstall = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtSystem = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtSystemInformation = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtFileManager = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtStartupManager = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtReverseProxy = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRegistryEditor = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.connectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.updateToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.disconnectToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uninstallToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.systemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.systemInformationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.fileManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.startupManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.taskManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteShellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.reverseProxyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.registryEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
-            this.ctxtActions = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtShutdown = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRestart = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtStandby = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtSurveillance = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRemoteDesktop = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtPasswordRecovery = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtKeylogger = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtMiscellaneous = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtRemoteExecute = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtLocalFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtWebFile = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtVisitWebsite = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtShowMessagebox = new System.Windows.Forms.ToolStripMenuItem();
-            this.botStrip = new System.Windows.Forms.StatusStrip();
-            this.botListen = new System.Windows.Forms.ToolStripStatusLabel();
+            this.actionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.shutdownToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.standbyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.surveillanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteDesktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.passwordRecoveryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.keyloggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.miscellaneousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteExecuteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.localFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.webFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.showMessageboxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
+            this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
-            this.nIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.notifyIcon = new System.Windows.Forms.NotifyIcon(this.components);
+            this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
+            this.statusStrip = new System.Windows.Forms.StatusStrip();
+            this.listenToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
             this.lstClients = new xServer.Controls.AeroListView();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -75,288 +78,287 @@ namespace xServer.Forms
             this.hCountry = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hOS = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hAccountType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.mainMenu = new xServer.Controls.MainMenuEx();
-            this.menuFile = new System.Windows.Forms.MenuItem();
-            this.menuClose = new System.Windows.Forms.MenuItem();
-            this.menuSettings = new System.Windows.Forms.MenuItem();
-            this.menuBuilder = new System.Windows.Forms.MenuItem();
-            this.menuStatistics = new System.Windows.Forms.MenuItem();
-            this.menuAbout = new System.Windows.Forms.MenuItem();
-            this.ctxtMenu.SuspendLayout();
-            this.botStrip.SuspendLayout();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
+            this.fIleToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.closeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.builderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip.SuspendLayout();
+            this.tableLayoutPanel.SuspendLayout();
+            this.statusStrip.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.SuspendLayout();
             // 
-            // ctxtMenu
+            // contextMenuStrip
             // 
-            this.ctxtMenu.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtConnection,
-            this.ctxtSystem,
-            this.ctxtSurveillance,
-            this.ctxtMiscellaneous});
-            this.ctxtMenu.Name = "ctxtMenu";
-            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.connectionToolStripMenuItem,
+            this.systemToolStripMenuItem,
+            this.surveillanceToolStripMenuItem,
+            this.miscellaneousToolStripMenuItem,
+            this.lineToolStripMenuItem,
+            this.selectAllToolStripMenuItem});
+            this.contextMenuStrip.Name = "ctxtMenu";
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
             // 
-            // ctxtConnection
+            // connectionToolStripMenuItem
             // 
-            this.ctxtConnection.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtUpdate,
-            this.ctxtReconnect,
-            this.ctxtDisconnect,
-            this.ctxtUninstall});
-            this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
-            this.ctxtConnection.Name = "ctxtConnection";
-            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
-            this.ctxtConnection.Text = "Connection";
+            this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateToolStripMenuItem,
+            this.reconnectToolStripMenuItem,
+            this.disconnectToolStripMenuItem,
+            this.uninstallToolStripMenuItem});
+            this.connectionToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("connectionToolStripMenuItem.Image")));
+            this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectionToolStripMenuItem.Text = "Connection";
             // 
-            // ctxtUpdate
+            // updateToolStripMenuItem
             // 
-            this.ctxtUpdate.Image = ((System.Drawing.Image)(resources.GetObject("ctxtUpdate.Image")));
-            this.ctxtUpdate.Name = "ctxtUpdate";
-            this.ctxtUpdate.Size = new System.Drawing.Size(133, 22);
-            this.ctxtUpdate.Text = "Update";
-            this.ctxtUpdate.Click += new System.EventHandler(this.ctxtUpdate_Click);
+            this.updateToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("updateToolStripMenuItem.Image")));
+            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Text = "Update";
+            this.updateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
             // 
-            // ctxtReconnect
+            // reconnectToolStripMenuItem
             // 
-            this.ctxtReconnect.Image = ((System.Drawing.Image)(resources.GetObject("ctxtReconnect.Image")));
-            this.ctxtReconnect.Name = "ctxtReconnect";
-            this.ctxtReconnect.Size = new System.Drawing.Size(133, 22);
-            this.ctxtReconnect.Text = "Reconnect";
-            this.ctxtReconnect.Click += new System.EventHandler(this.ctxtReconnect_Click);
+            this.reconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("reconnectToolStripMenuItem.Image")));
+            this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
+            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reconnectToolStripMenuItem.Text = "Reconnect";
+            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
             // 
-            // ctxtDisconnect
+            // disconnectToolStripMenuItem
             // 
-            this.ctxtDisconnect.Image = ((System.Drawing.Image)(resources.GetObject("ctxtDisconnect.Image")));
-            this.ctxtDisconnect.Name = "ctxtDisconnect";
-            this.ctxtDisconnect.Size = new System.Drawing.Size(133, 22);
-            this.ctxtDisconnect.Text = "Disconnect";
-            this.ctxtDisconnect.Click += new System.EventHandler(this.ctxtDisconnect_Click);
+            this.disconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("disconnectToolStripMenuItem.Image")));
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
-            // ctxtUninstall
+            // uninstallToolStripMenuItem
             // 
-            this.ctxtUninstall.Image = ((System.Drawing.Image)(resources.GetObject("ctxtUninstall.Image")));
-            this.ctxtUninstall.Name = "ctxtUninstall";
-            this.ctxtUninstall.Size = new System.Drawing.Size(133, 22);
-            this.ctxtUninstall.Text = "Uninstall";
-            this.ctxtUninstall.Click += new System.EventHandler(this.ctxtUninstall_Click);
+            this.uninstallToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uninstallToolStripMenuItem.Image")));
+            this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.uninstallToolStripMenuItem.Text = "Uninstall";
+            this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
             // 
-            // ctxtSystem
+            // systemToolStripMenuItem
             // 
-            this.ctxtSystem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtSystemInformation,
-            this.ctxtFileManager,
-            this.ctxtStartupManager,
-            this.ctxtTaskManager,
-            this.ctxtRemoteShell,
-            this.ctxtReverseProxy,
-            this.ctxtRegistryEditor,
+            this.systemToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.systemInformationToolStripMenuItem,
+            this.fileManagerToolStripMenuItem,
+            this.startupManagerToolStripMenuItem,
+            this.taskManagerToolStripMenuItem,
+            this.remoteShellToolStripMenuItem,
+            this.reverseProxyToolStripMenuItem,
+            this.registryEditorToolStripMenuItem,
             this.ctxtLine,
-            this.ctxtActions});
-            this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
-            this.ctxtSystem.Name = "ctxtSystem";
-            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
-            this.ctxtSystem.Text = "System";
+            this.actionsToolStripMenuItem});
+            this.systemToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemToolStripMenuItem.Image")));
+            this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.systemToolStripMenuItem.Text = "System";
             // 
-            // ctxtSystemInformation
+            // systemInformationToolStripMenuItem
             // 
-            this.ctxtSystemInformation.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystemInformation.Image")));
-            this.ctxtSystemInformation.Name = "ctxtSystemInformation";
-            this.ctxtSystemInformation.Size = new System.Drawing.Size(178, 22);
-            this.ctxtSystemInformation.Text = "System Information";
-            this.ctxtSystemInformation.Click += new System.EventHandler(this.ctxtSystemInformation_Click);
+            this.systemInformationToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemInformationToolStripMenuItem.Image")));
+            this.systemInformationToolStripMenuItem.Name = "systemInformationToolStripMenuItem";
+            this.systemInformationToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.systemInformationToolStripMenuItem.Text = "System Information";
+            this.systemInformationToolStripMenuItem.Click += new System.EventHandler(this.systemInformationToolStripMenuItem_Click);
             // 
-            // ctxtFileManager
+            // fileManagerToolStripMenuItem
             // 
-            this.ctxtFileManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtFileManager.Image")));
-            this.ctxtFileManager.Name = "ctxtFileManager";
-            this.ctxtFileManager.Size = new System.Drawing.Size(178, 22);
-            this.ctxtFileManager.Text = "File Manager";
-            this.ctxtFileManager.Click += new System.EventHandler(this.ctxtFileManager_Click);
+            this.fileManagerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("fileManagerToolStripMenuItem.Image")));
+            this.fileManagerToolStripMenuItem.Name = "fileManagerToolStripMenuItem";
+            this.fileManagerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.fileManagerToolStripMenuItem.Text = "File Manager";
+            this.fileManagerToolStripMenuItem.Click += new System.EventHandler(this.fileManagerToolStripMenuItem_Click);
             // 
-            // ctxtStartupManager
+            // startupManagerToolStripMenuItem
             // 
-            this.ctxtStartupManager.Image = global::xServer.Properties.Resources.startup_programs;
-            this.ctxtStartupManager.Name = "ctxtStartupManager";
-            this.ctxtStartupManager.Size = new System.Drawing.Size(178, 22);
-            this.ctxtStartupManager.Text = "Startup Manager";
-            this.ctxtStartupManager.Click += new System.EventHandler(this.ctxtStartupManager_Click);
+            this.startupManagerToolStripMenuItem.Image = global::xServer.Properties.Resources.startup_programs;
+            this.startupManagerToolStripMenuItem.Name = "startupManagerToolStripMenuItem";
+            this.startupManagerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.startupManagerToolStripMenuItem.Text = "Startup Manager";
+            this.startupManagerToolStripMenuItem.Click += new System.EventHandler(this.startupManagerToolStripMenuItem_Click);
             // 
-            // ctxtTaskManager
+            // taskManagerToolStripMenuItem
             // 
-            this.ctxtTaskManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtTaskManager.Image")));
-            this.ctxtTaskManager.Name = "ctxtTaskManager";
-            this.ctxtTaskManager.Size = new System.Drawing.Size(178, 22);
-            this.ctxtTaskManager.Text = "Task Manager";
-            this.ctxtTaskManager.Click += new System.EventHandler(this.ctxtTaskManager_Click);
+            this.taskManagerToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("taskManagerToolStripMenuItem.Image")));
+            this.taskManagerToolStripMenuItem.Name = "taskManagerToolStripMenuItem";
+            this.taskManagerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.taskManagerToolStripMenuItem.Text = "Task Manager";
+            this.taskManagerToolStripMenuItem.Click += new System.EventHandler(this.taskManagerToolStripMenuItem_Click);
             // 
-            // ctxtRemoteShell
+            // remoteShellToolStripMenuItem
             // 
-            this.ctxtRemoteShell.Image = ((System.Drawing.Image)(resources.GetObject("ctxtRemoteShell.Image")));
-            this.ctxtRemoteShell.Name = "ctxtRemoteShell";
-            this.ctxtRemoteShell.Size = new System.Drawing.Size(178, 22);
-            this.ctxtRemoteShell.Text = "Remote Shell";
-            this.ctxtRemoteShell.Click += new System.EventHandler(this.ctxtRemoteShell_Click);
+            this.remoteShellToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteShellToolStripMenuItem.Image")));
+            this.remoteShellToolStripMenuItem.Name = "remoteShellToolStripMenuItem";
+            this.remoteShellToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.remoteShellToolStripMenuItem.Text = "Remote Shell";
+            this.remoteShellToolStripMenuItem.Click += new System.EventHandler(this.remoteShellToolStripMenuItem_Click);
             // 
-            // ctxtReverseProxy
+            // reverseProxyToolStripMenuItem
             // 
-            this.ctxtReverseProxy.Image = global::xServer.Properties.Resources.server_link;
-            this.ctxtReverseProxy.Name = "ctxtReverseProxy";
-            this.ctxtReverseProxy.Size = new System.Drawing.Size(178, 22);
-            this.ctxtReverseProxy.Text = "Reverse Proxy";
-            this.ctxtReverseProxy.Click += new System.EventHandler(this.ctxtReverseProxy_Click);
+            this.reverseProxyToolStripMenuItem.Image = global::xServer.Properties.Resources.server_link;
+            this.reverseProxyToolStripMenuItem.Name = "reverseProxyToolStripMenuItem";
+            this.reverseProxyToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.reverseProxyToolStripMenuItem.Text = "Reverse Proxy";
+            this.reverseProxyToolStripMenuItem.Click += new System.EventHandler(this.reverseProxyToolStripMenuItem_Click);
             // 
-            // ctxtRegistryEditor
+            // registryEditorToolStripMenuItem
             // 
-            this.ctxtRegistryEditor.Enabled = false;
-            this.ctxtRegistryEditor.Image = global::xServer.Properties.Resources.registry;
-            this.ctxtRegistryEditor.Name = "ctxtRegistryEditor";
-            this.ctxtRegistryEditor.Size = new System.Drawing.Size(178, 22);
-            this.ctxtRegistryEditor.Text = "Registry Editor";
-            this.ctxtRegistryEditor.Click += new System.EventHandler(this.ctxtRegistryEditor_Click);
+            this.registryEditorToolStripMenuItem.Enabled = false;
+            this.registryEditorToolStripMenuItem.Image = global::xServer.Properties.Resources.registry;
+            this.registryEditorToolStripMenuItem.Name = "registryEditorToolStripMenuItem";
+            this.registryEditorToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.registryEditorToolStripMenuItem.Text = "Registry Editor";
+            this.registryEditorToolStripMenuItem.Click += new System.EventHandler(this.registryEditorToolStripMenuItem_Click);
             // 
             // ctxtLine
             // 
             this.ctxtLine.Name = "ctxtLine";
             this.ctxtLine.Size = new System.Drawing.Size(175, 6);
             // 
-            // ctxtActions
+            // actionsToolStripMenuItem
             // 
-            this.ctxtActions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtShutdown,
-            this.ctxtRestart,
-            this.ctxtStandby});
-            this.ctxtActions.Image = global::xServer.Properties.Resources.actions;
-            this.ctxtActions.Name = "ctxtActions";
-            this.ctxtActions.Size = new System.Drawing.Size(178, 22);
-            this.ctxtActions.Text = "Actions";
+            this.actionsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.shutdownToolStripMenuItem,
+            this.restartToolStripMenuItem,
+            this.standbyToolStripMenuItem});
+            this.actionsToolStripMenuItem.Image = global::xServer.Properties.Resources.actions;
+            this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
+            this.actionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.actionsToolStripMenuItem.Text = "Actions";
             // 
-            // ctxtShutdown
+            // shutdownToolStripMenuItem
             // 
-            this.ctxtShutdown.Image = global::xServer.Properties.Resources.shutdown;
-            this.ctxtShutdown.Name = "ctxtShutdown";
-            this.ctxtShutdown.Size = new System.Drawing.Size(128, 22);
-            this.ctxtShutdown.Text = "Shutdown";
-            this.ctxtShutdown.Click += new System.EventHandler(this.ctxtShutdown_Click);
+            this.shutdownToolStripMenuItem.Image = global::xServer.Properties.Resources.shutdown;
+            this.shutdownToolStripMenuItem.Name = "shutdownToolStripMenuItem";
+            this.shutdownToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.shutdownToolStripMenuItem.Text = "Shutdown";
+            this.shutdownToolStripMenuItem.Click += new System.EventHandler(this.shutdownToolStripMenuItem_Click);
             // 
-            // ctxtRestart
+            // restartToolStripMenuItem
             // 
-            this.ctxtRestart.Image = global::xServer.Properties.Resources.restart;
-            this.ctxtRestart.Name = "ctxtRestart";
-            this.ctxtRestart.Size = new System.Drawing.Size(128, 22);
-            this.ctxtRestart.Text = "Restart";
-            this.ctxtRestart.Click += new System.EventHandler(this.ctxtRestart_Click);
+            this.restartToolStripMenuItem.Image = global::xServer.Properties.Resources.restart;
+            this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
+            this.restartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restartToolStripMenuItem.Text = "Restart";
+            this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
             // 
-            // ctxtStandby
+            // standbyToolStripMenuItem
             // 
-            this.ctxtStandby.Image = global::xServer.Properties.Resources.standby;
-            this.ctxtStandby.Name = "ctxtStandby";
-            this.ctxtStandby.Size = new System.Drawing.Size(128, 22);
-            this.ctxtStandby.Text = "Standby";
-            this.ctxtStandby.Click += new System.EventHandler(this.ctxtStandby_Click);
+            this.standbyToolStripMenuItem.Image = global::xServer.Properties.Resources.standby;
+            this.standbyToolStripMenuItem.Name = "standbyToolStripMenuItem";
+            this.standbyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.standbyToolStripMenuItem.Text = "Standby";
+            this.standbyToolStripMenuItem.Click += new System.EventHandler(this.standbyToolStripMenuItem_Click);
             // 
-            // ctxtSurveillance
+            // surveillanceToolStripMenuItem
             // 
-            this.ctxtSurveillance.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtRemoteDesktop,
-            this.ctxtPasswordRecovery,
-            this.ctxtKeylogger});
-            this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
-            this.ctxtSurveillance.Name = "ctxtSurveillance";
-            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
-            this.ctxtSurveillance.Text = "Surveillance";
+            this.surveillanceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteDesktopToolStripMenuItem,
+            this.passwordRecoveryToolStripMenuItem,
+            this.keyloggerToolStripMenuItem});
+            this.surveillanceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("surveillanceToolStripMenuItem.Image")));
+            this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
+            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.surveillanceToolStripMenuItem.Text = "Surveillance";
             // 
-            // ctxtRemoteDesktop
+            // remoteDesktopToolStripMenuItem
             // 
-            this.ctxtRemoteDesktop.Image = ((System.Drawing.Image)(resources.GetObject("ctxtRemoteDesktop.Image")));
-            this.ctxtRemoteDesktop.Name = "ctxtRemoteDesktop";
-            this.ctxtRemoteDesktop.Size = new System.Drawing.Size(175, 22);
-            this.ctxtRemoteDesktop.Text = "Remote Desktop";
-            this.ctxtRemoteDesktop.Click += new System.EventHandler(this.ctxtRemoteDesktop_Click);
+            this.remoteDesktopToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteDesktopToolStripMenuItem.Image")));
+            this.remoteDesktopToolStripMenuItem.Name = "remoteDesktopToolStripMenuItem";
+            this.remoteDesktopToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteDesktopToolStripMenuItem.Text = "Remote Desktop";
+            this.remoteDesktopToolStripMenuItem.Click += new System.EventHandler(this.remoteDesktopToolStripMenuItem_Click);
             // 
-            // ctxtPasswordRecovery
+            // passwordRecoveryToolStripMenuItem
             // 
-            this.ctxtPasswordRecovery.Image = ((System.Drawing.Image)(resources.GetObject("ctxtPasswordRecovery.Image")));
-            this.ctxtPasswordRecovery.Name = "ctxtPasswordRecovery";
-            this.ctxtPasswordRecovery.Size = new System.Drawing.Size(175, 22);
-            this.ctxtPasswordRecovery.Text = "Password Recovery";
-            this.ctxtPasswordRecovery.Click += new System.EventHandler(this.ctxtPasswordRecovery_Click);
+            this.passwordRecoveryToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("passwordRecoveryToolStripMenuItem.Image")));
+            this.passwordRecoveryToolStripMenuItem.Name = "passwordRecoveryToolStripMenuItem";
+            this.passwordRecoveryToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.passwordRecoveryToolStripMenuItem.Text = "Password Recovery";
+            this.passwordRecoveryToolStripMenuItem.Click += new System.EventHandler(this.passwordRecoveryToolStripMenuItem_Click);
             // 
-            // ctxtKeylogger
+            // keyloggerToolStripMenuItem
             // 
-            this.ctxtKeylogger.Image = global::xServer.Properties.Resources.logger;
-            this.ctxtKeylogger.Name = "ctxtKeylogger";
-            this.ctxtKeylogger.Size = new System.Drawing.Size(175, 22);
-            this.ctxtKeylogger.Text = "Keylogger";
-            this.ctxtKeylogger.Click += new System.EventHandler(this.ctxtKeylogger_Click);
+            this.keyloggerToolStripMenuItem.Image = global::xServer.Properties.Resources.logger;
+            this.keyloggerToolStripMenuItem.Name = "keyloggerToolStripMenuItem";
+            this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.keyloggerToolStripMenuItem.Text = "Keylogger";
+            this.keyloggerToolStripMenuItem.Click += new System.EventHandler(this.keyloggerToolStripMenuItem_Click);
             // 
-            // ctxtMiscellaneous
+            // miscellaneousToolStripMenuItem
             // 
-            this.ctxtMiscellaneous.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtRemoteExecute,
-            this.ctxtVisitWebsite,
-            this.ctxtShowMessagebox});
-            this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
-            this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
-            this.ctxtMiscellaneous.Text = "Miscellaneous";
+            this.miscellaneousToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteExecuteToolStripMenuItem,
+            this.visitWebsiteToolStripMenuItem,
+            this.showMessageboxToolStripMenuItem});
+            this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
+            this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
+            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
             // 
-            // ctxtRemoteExecute
+            // remoteExecuteToolStripMenuItem
             // 
-            this.ctxtRemoteExecute.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtLocalFile,
-            this.ctxtWebFile});
-            this.ctxtRemoteExecute.Image = global::xServer.Properties.Resources.lightning;
-            this.ctxtRemoteExecute.Name = "ctxtRemoteExecute";
-            this.ctxtRemoteExecute.Size = new System.Drawing.Size(171, 22);
-            this.ctxtRemoteExecute.Text = "Remote Execute";
+            this.remoteExecuteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.localFileToolStripMenuItem,
+            this.webFileToolStripMenuItem});
+            this.remoteExecuteToolStripMenuItem.Image = global::xServer.Properties.Resources.lightning;
+            this.remoteExecuteToolStripMenuItem.Name = "remoteExecuteToolStripMenuItem";
+            this.remoteExecuteToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.remoteExecuteToolStripMenuItem.Text = "Remote Execute";
             // 
-            // ctxtLocalFile
+            // localFileToolStripMenuItem
             // 
-            this.ctxtLocalFile.Image = global::xServer.Properties.Resources.drive_go;
-            this.ctxtLocalFile.Name = "ctxtLocalFile";
-            this.ctxtLocalFile.Size = new System.Drawing.Size(132, 22);
-            this.ctxtLocalFile.Text = "Local File...";
-            this.ctxtLocalFile.Click += new System.EventHandler(this.ctxtLocalFile_Click);
+            this.localFileToolStripMenuItem.Image = global::xServer.Properties.Resources.drive_go;
+            this.localFileToolStripMenuItem.Name = "localFileToolStripMenuItem";
+            this.localFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.localFileToolStripMenuItem.Text = "Local File...";
+            this.localFileToolStripMenuItem.Click += new System.EventHandler(this.localFileToolStripMenuItem_Click);
             // 
-            // ctxtWebFile
+            // webFileToolStripMenuItem
             // 
-            this.ctxtWebFile.Image = global::xServer.Properties.Resources.world_go;
-            this.ctxtWebFile.Name = "ctxtWebFile";
-            this.ctxtWebFile.Size = new System.Drawing.Size(132, 22);
-            this.ctxtWebFile.Text = "Web File...";
-            this.ctxtWebFile.Click += new System.EventHandler(this.ctxtWebFile_Click);
+            this.webFileToolStripMenuItem.Image = global::xServer.Properties.Resources.world_go;
+            this.webFileToolStripMenuItem.Name = "webFileToolStripMenuItem";
+            this.webFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.webFileToolStripMenuItem.Text = "Web File...";
+            this.webFileToolStripMenuItem.Click += new System.EventHandler(this.webFileToolStripMenuItem_Click);
             // 
-            // ctxtVisitWebsite
+            // visitWebsiteToolStripMenuItem
             // 
-            this.ctxtVisitWebsite.Image = ((System.Drawing.Image)(resources.GetObject("ctxtVisitWebsite.Image")));
-            this.ctxtVisitWebsite.Name = "ctxtVisitWebsite";
-            this.ctxtVisitWebsite.Size = new System.Drawing.Size(171, 22);
-            this.ctxtVisitWebsite.Text = "Visit Website";
-            this.ctxtVisitWebsite.Click += new System.EventHandler(this.ctxtVisitWebsite_Click);
+            this.visitWebsiteToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("visitWebsiteToolStripMenuItem.Image")));
+            this.visitWebsiteToolStripMenuItem.Name = "visitWebsiteToolStripMenuItem";
+            this.visitWebsiteToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.visitWebsiteToolStripMenuItem.Text = "Visit Website";
+            this.visitWebsiteToolStripMenuItem.Click += new System.EventHandler(this.visitWebsiteToolStripMenuItem_Click);
             // 
-            // ctxtShowMessagebox
+            // showMessageboxToolStripMenuItem
             // 
-            this.ctxtShowMessagebox.Image = ((System.Drawing.Image)(resources.GetObject("ctxtShowMessagebox.Image")));
-            this.ctxtShowMessagebox.Name = "ctxtShowMessagebox";
-            this.ctxtShowMessagebox.Size = new System.Drawing.Size(171, 22);
-            this.ctxtShowMessagebox.Text = "Show Messagebox";
-            this.ctxtShowMessagebox.Click += new System.EventHandler(this.ctxtShowMessagebox_Click);
+            this.showMessageboxToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("showMessageboxToolStripMenuItem.Image")));
+            this.showMessageboxToolStripMenuItem.Name = "showMessageboxToolStripMenuItem";
+            this.showMessageboxToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.showMessageboxToolStripMenuItem.Text = "Show Messagebox";
+            this.showMessageboxToolStripMenuItem.Click += new System.EventHandler(this.showMessageboxToolStripMenuItem_Click);
             // 
-            // botStrip
+            // lineToolStripMenuItem
             // 
-            this.botStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.botListen});
-            this.botStrip.Location = new System.Drawing.Point(0, 382);
-            this.botStrip.Name = "botStrip";
-            this.botStrip.Size = new System.Drawing.Size(1006, 22);
-            this.botStrip.TabIndex = 4;
-            this.botStrip.Text = "statusStrip1";
+            this.lineToolStripMenuItem.Name = "lineToolStripMenuItem";
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
             // 
-            // botListen
+            // selectAllToolStripMenuItem
             // 
-            this.botListen.Name = "botListen";
-            this.botListen.Size = new System.Drawing.Size(87, 17);
-            this.botListen.Text = "Listening: False";
+            this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectAllToolStripMenuItem.Text = "Select All";
+            this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
             // imgFlags
             // 
@@ -611,18 +613,50 @@ namespace xServer.Forms
             this.imgFlags.Images.SetKeyName(246, "zw.png");
             this.imgFlags.Images.SetKeyName(247, "xy.png");
             // 
-            // nIcon
+            // notifyIcon
             // 
-            this.nIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("nIcon.Icon")));
-            this.nIcon.Text = "Quasar";
-            this.nIcon.Visible = true;
-            this.nIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.nIcon_MouseDoubleClick);
+            this.notifyIcon.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIcon.Icon")));
+            this.notifyIcon.Text = "Quasar";
+            this.notifyIcon.Visible = true;
+            this.notifyIcon.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIcon_MouseDoubleClick);
+            // 
+            // tableLayoutPanel
+            // 
+            this.tableLayoutPanel.ColumnCount = 1;
+            this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.Controls.Add(this.statusStrip, 0, 2);
+            this.tableLayoutPanel.Controls.Add(this.lstClients, 0, 1);
+            this.tableLayoutPanel.Controls.Add(this.menuStrip, 0, 0);
+            this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tableLayoutPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
+            this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
+            this.tableLayoutPanel.Name = "tableLayoutPanel";
+            this.tableLayoutPanel.RowCount = 3;
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
+            this.tableLayoutPanel.Size = new System.Drawing.Size(1022, 458);
+            this.tableLayoutPanel.TabIndex = 6;
+            // 
+            // statusStrip
+            // 
+            this.statusStrip.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.listenToolStripStatusLabel});
+            this.statusStrip.Location = new System.Drawing.Point(0, 436);
+            this.statusStrip.Name = "statusStrip";
+            this.statusStrip.Size = new System.Drawing.Size(1022, 22);
+            this.statusStrip.TabIndex = 3;
+            this.statusStrip.Text = "statusStrip1";
+            // 
+            // listenToolStripStatusLabel
+            // 
+            this.listenToolStripStatusLabel.Name = "listenToolStripStatusLabel";
+            this.listenToolStripStatusLabel.Size = new System.Drawing.Size(87, 17);
+            this.listenToolStripStatusLabel.Text = "Listening: False";
             // 
             // lstClients
             // 
-            this.lstClients.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstClients.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIP,
             this.hTag,
@@ -633,17 +667,18 @@ namespace xServer.Forms
             this.hCountry,
             this.hOS,
             this.hAccountType});
-            this.lstClients.ContextMenuStrip = this.ctxtMenu;
+            this.lstClients.ContextMenuStrip = this.contextMenuStrip;
+            this.lstClients.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstClients.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lstClients.FullRowSelect = true;
-            this.lstClients.Location = new System.Drawing.Point(0, 0);
+            this.lstClients.Location = new System.Drawing.Point(3, 28);
             this.lstClients.Name = "lstClients";
             this.lstClients.ShowItemToolTips = true;
-            this.lstClients.Size = new System.Drawing.Size(1006, 380);
+            this.lstClients.Size = new System.Drawing.Size(1016, 405);
             this.lstClients.SmallImageList = this.imgFlags;
             this.lstClients.TabIndex = 1;
             this.lstClients.UseCompatibleStateImageBehavior = false;
             this.lstClients.View = System.Windows.Forms.View.Details;
-            this.lstClients.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstClients_ColumnClick);
             this.lstClients.SelectedIndexChanged += new System.EventHandler(this.lstClients_SelectedIndexChanged);
             // 
             // hIP
@@ -690,75 +725,80 @@ namespace xServer.Forms
             this.hAccountType.Text = "Account Type";
             this.hAccountType.Width = 100;
             // 
-            // mainMenu
+            // menuStrip
             // 
-            this.mainMenu.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuFile,
-            this.menuSettings,
-            this.menuBuilder,
-            this.menuStatistics,
-            this.menuAbout});
+            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.fIleToolStripMenuItem,
+            this.settingsToolStripMenuItem,
+            this.builderToolStripMenuItem,
+            this.aboutToolStripMenuItem});
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(216, 25);
+            this.menuStrip.TabIndex = 2;
             // 
-            // menuFile
+            // fIleToolStripMenuItem
             // 
-            this.menuFile.Index = 0;
-            this.menuFile.MenuItems.AddRange(new System.Windows.Forms.MenuItem[] {
-            this.menuClose});
-            this.menuFile.Text = "File";
+            this.fIleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.closeToolStripMenuItem});
+            this.fIleToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fIleToolStripMenuItem.Name = "fIleToolStripMenuItem";
+            this.fIleToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
+            this.fIleToolStripMenuItem.Text = "File";
             // 
-            // menuClose
+            // closeToolStripMenuItem
             // 
-            this.menuClose.Index = 0;
-            this.menuClose.Text = "Close";
-            this.menuClose.Click += new System.EventHandler(this.menuClose_Click);
+            this.closeToolStripMenuItem.Name = "closeToolStripMenuItem";
+            this.closeToolStripMenuItem.Size = new System.Drawing.Size(108, 22);
+            this.closeToolStripMenuItem.Text = "Close";
+            this.closeToolStripMenuItem.Click += new System.EventHandler(this.closeToolStripMenuItem_Click);
             // 
-            // menuSettings
+            // settingsToolStripMenuItem
             // 
-            this.menuSettings.Index = 1;
-            this.menuSettings.Text = "Settings";
-            this.menuSettings.Click += new System.EventHandler(this.menuSettings_Click);
+            this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 21);
+            this.settingsToolStripMenuItem.Text = "Settings";
+            this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
-            // menuBuilder
+            // builderToolStripMenuItem
             // 
-            this.menuBuilder.Index = 2;
-            this.menuBuilder.Text = "Builder";
-            this.menuBuilder.Click += new System.EventHandler(this.menuBuilder_Click);
+            this.builderToolStripMenuItem.Name = "builderToolStripMenuItem";
+            this.builderToolStripMenuItem.Size = new System.Drawing.Size(56, 21);
+            this.builderToolStripMenuItem.Text = "Builder";
+            this.builderToolStripMenuItem.Click += new System.EventHandler(this.builderToolStripMenuItem_Click);
             // 
-            // menuStatistics
+            // aboutToolStripMenuItem
             // 
-            this.menuStatistics.Enabled = false;
-            this.menuStatistics.Index = 3;
-            this.menuStatistics.Text = "Statistics";
-            this.menuStatistics.Click += new System.EventHandler(this.menuStatistics_Click);
-            // 
-            // menuAbout
-            // 
-            this.menuAbout.Index = 4;
-            this.menuAbout.Text = "About";
-            this.menuAbout.Click += new System.EventHandler(this.menuAbout_Click);
+            this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 21);
+            this.aboutToolStripMenuItem.Text = "About";
+            this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1006, 404);
-            this.Controls.Add(this.botStrip);
-            this.Controls.Add(this.lstClients);
+            this.ClientSize = new System.Drawing.Size(1022, 458);
+            this.Controls.Add(this.tableLayoutPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Menu = this.mainMenu;
             this.MinimumSize = new System.Drawing.Size(680, 415);
             this.Name = "FrmMain";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Quasar - Connected: 0";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmMain_FormClosing);
             this.Load += new System.EventHandler(this.FrmMain_Load);
-            this.ctxtMenu.ResumeLayout(false);
-            this.botStrip.ResumeLayout(false);
-            this.botStrip.PerformLayout();
+            this.contextMenuStrip.ResumeLayout(false);
+            this.tableLayoutPanel.ResumeLayout(false);
+            this.tableLayoutPanel.PerformLayout();
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -768,52 +808,54 @@ namespace xServer.Forms
         private System.Windows.Forms.ColumnHeader hVersion;
         private System.Windows.Forms.ColumnHeader hCountry;
         private System.Windows.Forms.ColumnHeader hOS;
-        private System.Windows.Forms.ContextMenuStrip ctxtMenu;
-        private System.Windows.Forms.ToolStripMenuItem ctxtConnection;
-        private System.Windows.Forms.ToolStripMenuItem ctxtReconnect;
-        private System.Windows.Forms.ToolStripMenuItem ctxtDisconnect;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
+        private System.Windows.Forms.ToolStripMenuItem connectionToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reconnectToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem disconnectToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hTag;
-        private System.Windows.Forms.StatusStrip botStrip;
-        private System.Windows.Forms.ToolStripStatusLabel botListen;
         private System.Windows.Forms.ImageList imgFlags;
-        private System.Windows.Forms.ToolStripMenuItem ctxtSystem;
+        private System.Windows.Forms.ToolStripMenuItem systemToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hStatus;
-        private System.Windows.Forms.ToolStripMenuItem ctxtUninstall;
-        private System.Windows.Forms.ToolStripMenuItem ctxtSurveillance;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRemoteDesktop;
-        private System.Windows.Forms.ToolStripMenuItem ctxtTaskManager;
-        private System.Windows.Forms.ToolStripMenuItem ctxtFileManager;
+        private System.Windows.Forms.ToolStripMenuItem uninstallToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem surveillanceToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem remoteDesktopToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem taskManagerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem fileManagerToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hAccountType;
-        private System.Windows.Forms.ToolStripMenuItem ctxtSystemInformation;
+        private System.Windows.Forms.ToolStripMenuItem systemInformationToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hUserStatus;
-        private System.Windows.Forms.ToolStripMenuItem ctxtMiscellaneous;
-        private System.Windows.Forms.ToolStripMenuItem ctxtVisitWebsite;
-        private System.Windows.Forms.ToolStripMenuItem ctxtPasswordRecovery;
-        private System.Windows.Forms.ToolStripMenuItem ctxtShowMessagebox;
-        private System.Windows.Forms.ToolStripMenuItem ctxtUpdate;
-        private Controls.MainMenuEx mainMenu;
-        private System.Windows.Forms.MenuItem menuFile;
-        private System.Windows.Forms.MenuItem menuClose;
-        private System.Windows.Forms.MenuItem menuSettings;
-        private System.Windows.Forms.MenuItem menuBuilder;
-        private System.Windows.Forms.MenuItem menuStatistics;
-        private System.Windows.Forms.MenuItem menuAbout;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRemoteShell;
+        private System.Windows.Forms.ToolStripMenuItem miscellaneousToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem passwordRecoveryToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem showMessageboxToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem updateToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem remoteShellToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator ctxtLine;
-        private System.Windows.Forms.ToolStripMenuItem ctxtActions;
-        private System.Windows.Forms.ToolStripMenuItem ctxtShutdown;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRestart;
-        private System.Windows.Forms.ToolStripMenuItem ctxtStandby;
-        private System.Windows.Forms.ToolStripMenuItem ctxtStartupManager;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRemoteExecute;
-        private System.Windows.Forms.ToolStripMenuItem ctxtLocalFile;
-        private System.Windows.Forms.ToolStripMenuItem ctxtWebFile;
-        private System.Windows.Forms.ToolStripMenuItem ctxtKeylogger;
-        private System.Windows.Forms.ToolStripMenuItem ctxtReverseProxy;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRegistryEditor;
+        private System.Windows.Forms.ToolStripMenuItem actionsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem shutdownToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem restartToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem standbyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem startupManagerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem remoteExecuteToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem localFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem webFileToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem keyloggerToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem reverseProxyToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem registryEditorToolStripMenuItem;
         private AeroListView lstClients;
-        private System.Windows.Forms.NotifyIcon nIcon;
+        private System.Windows.Forms.NotifyIcon notifyIcon;
         private System.Windows.Forms.ColumnHeader hUserPC;
+        private System.Windows.Forms.ToolStripSeparator lineToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem selectAllToolStripMenuItem;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
+        private System.Windows.Forms.MenuStrip menuStrip;
+        private System.Windows.Forms.ToolStripMenuItem fIleToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem closeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem settingsToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem builderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
+        private System.Windows.Forms.StatusStrip statusStrip;
+        private System.Windows.Forms.ToolStripStatusLabel listenToolStripStatusLabel;
     }
 }
 
