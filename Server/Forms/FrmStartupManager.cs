@@ -4,23 +4,18 @@ using System.Windows.Forms;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmStartupManager : Form
     {
         private readonly Client _connectClient;
-        private readonly ListViewColumnSorter _lvwColumnSorter;
 
         public FrmStartupManager(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmStm = this;
             InitializeComponent();
-
-            _lvwColumnSorter = new ListViewColumnSorter();
-            lstStartupItems.ListViewItemSorter = _lvwColumnSorter;
         }
 
         private void FrmStartupManager_Load(object sender, EventArgs e)
@@ -56,7 +51,9 @@ namespace xServer.Forms
                 _connectClient.Value.FrmStm = null;
         }
 
-        private void ctxtAddEntry_Click(object sender, System.EventArgs e)
+        #region "ContextMenuStrip"
+
+        private void addEntryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var frm = new FrmAddToAutostart())
             {
@@ -73,7 +70,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRemoveEntry_Click(object sender, System.EventArgs e)
+        private void removeEntryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             int modified = 0;
             foreach (ListViewItem item in lstStartupItems.SelectedItems)
@@ -92,6 +89,8 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
             }
         }
+
+        #endregion
 
         public void AddAutostartItemToListview(ListViewItem lvi)
         {
@@ -122,28 +121,6 @@ namespace xServer.Forms
                 return null;
             }
             return g;
-        }
-
-        private void lstStartupItems_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == _lvwColumnSorter.SortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            // Perform the sort with these new sort options.
-            lstStartupItems.Sort();
         }
     }
 }

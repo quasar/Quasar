@@ -126,7 +126,7 @@ namespace xServer.Forms
         }
 
         #region "Context Menu"
-        private void ctxtRemove_Click(object sender, EventArgs e)
+        private void removeHostToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HasChanged();
 
@@ -145,7 +145,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtClear_Click(object sender, EventArgs e)
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HasChanged();
 

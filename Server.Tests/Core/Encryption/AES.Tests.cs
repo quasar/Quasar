@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xServer.Core.Encryption;
+using xServer.Core.Cryptography;
 using xServer.Core.Helper;
 
 namespace xServer.Tests.Core.Encryption

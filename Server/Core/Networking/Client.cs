@@ -5,7 +5,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using xServer.Core.Compression;
-using xServer.Core.Encryption;
+using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
 using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
@@ -102,7 +102,14 @@ namespace xServer.Core.Networking
         /// <returns></returns>
         public bool Equals(Client c)
         {
-            return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+            try
+            {
+                return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
 
         /// <summary>

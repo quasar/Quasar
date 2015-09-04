@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace xClient.Core.Encryption
+namespace xServer.Core.Cryptography
 {
     public static class AES
     {
@@ -62,7 +62,6 @@ namespace xClient.Core.Encryption
         public static byte[] Encrypt(byte[] input, byte[] key)
         {
             if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
-            if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
             using (var md5 = new MD5CryptoServiceProvider())
             {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net.Sockets;
 using System.Threading;
 using xClient.Core.Compression;
-using xClient.Core.Encryption;
+using xClient.Core.Cryptography;
 using xClient.Core.Extensions;
 using xClient.Core.NetSerializer;
 using xClient.Core.Packets;

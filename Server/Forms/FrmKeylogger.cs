@@ -10,7 +10,6 @@ namespace xServer.Forms
     public partial class FrmKeylogger : Form
     {
         private readonly Client _connectClient;
-        private readonly ListViewColumnSorter _lvwColumnSorter;
         private readonly string _path;
 
         public FrmKeylogger(Client c)
@@ -19,9 +18,6 @@ namespace xServer.Forms
             _connectClient.Value.FrmKl = this;
             _path = Path.Combine(_connectClient.Value.DownloadDirectory, "Logs\\");
             InitializeComponent();
-
-            _lvwColumnSorter = new ListViewColumnSorter();
-            lstLogs.ListViewItemSorter = _lvwColumnSorter;
         }
 
         private void FrmKeylogger_Load(object sender, EventArgs e)
@@ -95,28 +91,6 @@ namespace xServer.Forms
             catch (InvalidOperationException)
             {
             }
-        }
-
-        private void lstLogs_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == _lvwColumnSorter.SortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            // Perform the sort with these new sort options.
-            lstLogs.Sort();
         }
     }
 }

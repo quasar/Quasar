@@ -37,9 +37,9 @@
             this.rbSystem = new System.Windows.Forms.RadioButton();
             this.rbProgramFiles = new System.Windows.Forms.RadioButton();
             this.chkIconChange = new System.Windows.Forms.CheckBox();
-            this.ctxtMenuHosts = new System.Windows.Forms.ContextMenuStrip(this.components);
-            this.ctxtRemove = new System.Windows.Forms.ToolStripMenuItem();
-            this.ctxtClear = new System.Windows.Forms.ToolStripMenuItem();
+            this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
+            this.removeHostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.builderTabs = new xServer.Controls.DotNetBarTabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
@@ -121,7 +121,7 @@
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
-            this.ctxtMenuHosts.SuspendLayout();
+            this.contextMenuStrip.SuspendLayout();
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.connectionPage.SuspendLayout();
@@ -199,29 +199,29 @@
             this.chkIconChange.UseVisualStyleBackColor = true;
             this.chkIconChange.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
-            // ctxtMenuHosts
+            // contextMenuStrip
             // 
-            this.ctxtMenuHosts.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.ctxtRemove,
-            this.ctxtClear});
-            this.ctxtMenuHosts.Name = "ctxtMenuHosts";
-            this.ctxtMenuHosts.Size = new System.Drawing.Size(144, 48);
+            this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.removeHostToolStripMenuItem,
+            this.clearToolStripMenuItem});
+            this.contextMenuStrip.Name = "ctxtMenuHosts";
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 70);
             // 
-            // ctxtRemove
+            // removeHostToolStripMenuItem
             // 
-            this.ctxtRemove.Image = global::xServer.Properties.Resources.delete;
-            this.ctxtRemove.Name = "ctxtRemove";
-            this.ctxtRemove.Size = new System.Drawing.Size(143, 22);
-            this.ctxtRemove.Text = "Remove host";
-            this.ctxtRemove.Click += new System.EventHandler(this.ctxtRemove_Click);
+            this.removeHostToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
+            this.removeHostToolStripMenuItem.Name = "removeHostToolStripMenuItem";
+            this.removeHostToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.removeHostToolStripMenuItem.Text = "Remove host";
+            this.removeHostToolStripMenuItem.Click += new System.EventHandler(this.removeHostToolStripMenuItem_Click);
             // 
-            // ctxtClear
+            // clearToolStripMenuItem
             // 
-            this.ctxtClear.Image = global::xServer.Properties.Resources.broom;
-            this.ctxtClear.Name = "ctxtClear";
-            this.ctxtClear.Size = new System.Drawing.Size(143, 22);
-            this.ctxtClear.Text = "Clear all";
-            this.ctxtClear.Click += new System.EventHandler(this.ctxtClear_Click);
+            this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.broom;
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.clearToolStripMenuItem.Text = "Clear all";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // builderTabs
             // 
@@ -459,7 +459,7 @@
             // 
             // lstHosts
             // 
-            this.lstHosts.ContextMenuStrip = this.ctxtMenuHosts;
+            this.lstHosts.ContextMenuStrip = this.contextMenuStrip;
             this.lstHosts.FormattingEnabled = true;
             this.lstHosts.Location = new System.Drawing.Point(20, 21);
             this.lstHosts.Name = "lstHosts";
@@ -1058,7 +1058,7 @@
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
-            this.ctxtMenuHosts.ResumeLayout(false);
+            this.contextMenuStrip.ResumeLayout(false);
             this.builderTabs.ResumeLayout(false);
             this.generalPage.ResumeLayout(false);
             this.generalPage.PerformLayout();
@@ -1134,9 +1134,9 @@
         private System.Windows.Forms.TabPage assemblyPage;
         private System.Windows.Forms.TabPage additionalTab;
         private System.Windows.Forms.ListBox lstHosts;
-        private System.Windows.Forms.ContextMenuStrip ctxtMenuHosts;
+        private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.Button btnAddHost;
-        private System.Windows.Forms.ToolStripMenuItem ctxtRemove;
+        private System.Windows.Forms.ToolStripMenuItem removeHostToolStripMenuItem;
         private Controls.Line line1;
         private System.Windows.Forms.Label label1;
         private Controls.Line line3;
@@ -1164,6 +1164,6 @@
         private System.Windows.Forms.Label label12;
         private Controls.Line line10;
         private System.Windows.Forms.Label label14;
-        private System.Windows.Forms.ToolStripMenuItem ctxtClear;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
     }
 }

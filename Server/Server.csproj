@@ -72,9 +72,6 @@
     <Compile Include="Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Controls\MainMenuEx.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Controls\RapidPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -85,6 +82,7 @@
     <Compile Include="Core\Data\Update.cs" />
     <Compile Include="Core\Data\UploadAndExecute.cs" />
     <Compile Include="Core\Data\VisitWebsite.cs" />
+    <Compile Include="Core\Helper\ClipboardHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
@@ -158,7 +156,7 @@
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
-    <Compile Include="Core\Encryption\AES.cs" />
+    <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />

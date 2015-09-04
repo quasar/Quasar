@@ -88,8 +88,8 @@
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
-    <Compile Include="Core\Encryption\AES.cs" />
-    <Compile Include="Core\Encryption\SHA256.cs" />
+    <Compile Include="Core\Cryptography\AES.cs" />
+    <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />

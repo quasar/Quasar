@@ -1,7 +1,7 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace xClient.Core.Encryption
+namespace xClient.Core.Cryptography
 {
     public static class SHA256
     {

@@ -1,5 +1,5 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xClient.Core.Encryption;
+using xClient.Core.Cryptography;
 using xClient.Core.Helper;
 
 namespace xClient.Tests.Core.Encryption
