@@ -234,7 +234,14 @@ namespace xServer.Forms
             if (password.Length < 3)
             {
                 MessageBox.Show("Please enter a secure password with more than 3 characters.",
-                    "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            if (!File.Exists("client.bin"))
+            {
+                MessageBox.Show("Could not locate \"client.bin\" file. It should be in the same directory as Quasar.",
+                    "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -262,13 +269,13 @@ namespace xServer.Forms
 
             if (string.IsNullOrEmpty(output))
             {
-                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
             if (chkIconChange.Checked && string.IsNullOrEmpty(icon))
             {
-                MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
 
@@ -277,11 +284,17 @@ namespace xServer.Forms
                 string[] asmInfo = null;
                 if (chkChangeAsmInfo.Checked)
                 {
-                    if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text) ||
-                        !FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                    if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text))
                     {
-                        MessageBox.Show("Please enter a valid version number!\nExample: 1.0.0.0", "Build failed",
-                            MessageBoxButtons.OK, MessageBoxIcon.Information);
+                        MessageBox.Show("Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return;
+                    }
+
+                    if (!FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                    {
+                        MessageBox.Show("Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
                         return;
                     }
 
@@ -301,13 +314,8 @@ namespace xServer.Forms
                     chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
                     Application.ProductVersion);
 
-                MessageBox.Show("Successfully built client!", "Build Success", MessageBoxButtons.OK,
+                MessageBox.Show("Successfully built client!\nSaved to: " + output, "Build Success", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-            }
-            catch (FileLoadException)
-            {
-                MessageBox.Show("Unable to load the Client Assembly Information.\nPlease re-build the Client.",
-                    "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
             catch (Exception ex)
             {

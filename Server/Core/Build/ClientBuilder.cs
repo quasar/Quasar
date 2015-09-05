@@ -42,15 +42,7 @@ namespace xServer.Core.Build
         {
             // PHASE 1 - Settings
             string encKey = FileHelper.GetRandomFilename(20);
-            AssemblyDefinition asmDef;
-            try
-            {
-                asmDef = AssemblyDefinition.ReadAssembly("client.bin");
-            }
-            catch (Exception ex)
-            {
-                throw new FileLoadException(ex.Message);
-            }
+            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
