@@ -3,6 +3,7 @@ using System.Windows.Forms;
 using System.Drawing;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
+using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
@@ -43,8 +44,7 @@ namespace xServer.Forms
 
         private void txtConsoleOutput_TextChanged(object sender, EventArgs e)
         {
-            txtConsoleOutput.SelectionStart = txtConsoleOutput.TextLength;
-            txtConsoleOutput.ScrollToCaret();
+            NativeMethods.SendMessage(txtConsoleOutput.Handle, 277, 7, 0);
         }
 
         private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e)
