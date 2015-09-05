@@ -8,6 +8,9 @@ namespace xServer.Core.Helper
         private const int LVM_FIRST = 0x1000;
         private const int LVM_SETITEMSTATE = LVM_FIRST + 43;
 
+        private const int WM_VSCROLL = 277;
+        private const int SB_PAGEBOTTOM = 7;
+
         public static int MakeLong(int wLow, int wHigh)
         {
             int low = (int)IntLoWord(wLow);
@@ -30,6 +33,11 @@ namespace xServer.Core.Helper
                 state = value
             };
             NativeMethods.SendMessageLVItem(handle, LVM_SETITEMSTATE, itemIndex, ref lvItem);
+        }
+
+        public static void ScrollToBottom(IntPtr handle)
+        {
+            NativeMethods.SendMessage(handle, WM_VSCROLL, SB_PAGEBOTTOM, 0);
         }
     }
 }

@@ -43,8 +43,7 @@ namespace xServer.Forms
 
         private void txtConsoleOutput_TextChanged(object sender, EventArgs e)
         {
-            txtConsoleOutput.SelectionStart = txtConsoleOutput.TextLength;
-            txtConsoleOutput.ScrollToCaret();
+            NativeMethodsHelper.ScrollToBottom(txtConsoleOutput.Handle);
         }
 
         private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e)
@@ -101,6 +100,7 @@ namespace xServer.Forms
             {
                 txtConsoleOutput.Invoke((MethodInvoker)delegate
                 {
+                    txtConsoleOutput.SelectionColor = Color.WhiteSmoke;
                     txtConsoleOutput.AppendText(message);
                 });
             }
