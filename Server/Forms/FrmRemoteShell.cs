@@ -101,6 +101,7 @@ namespace xServer.Forms
             {
                 txtConsoleOutput.Invoke((MethodInvoker)delegate
                 {
+                    txtConsoleOutput.SelectionColor = Color.White;
                     txtConsoleOutput.AppendText(message);
                 });
             }
