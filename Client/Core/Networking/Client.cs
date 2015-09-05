@@ -34,9 +34,10 @@ namespace xClient.Core.Networking
         /// <param name="ex">The exception containing information about the cause of the client's failure.</param>
         private void OnClientFail(Exception ex)
         {
-            if (ClientFail != null)
+            var handler = ClientFail;
+            if (handler != null)
             {
-                ClientFail(this, ex);
+                handler(this, ex);
             }
         }
 
@@ -62,9 +63,10 @@ namespace xClient.Core.Networking
 
             Connected = connected;
 
-            if (ClientState != null)
+            var handler = ClientState;
+            if (handler != null)
             {
-                ClientState(this, connected);
+                handler(this, connected);
             }
         }
 
@@ -86,9 +88,10 @@ namespace xClient.Core.Networking
         /// <param name="packet">The packet that has been received by the server.</param>
         private void OnClientRead(IPacket packet)
         {
-            if (ClientRead != null)
+            var handler = ClientRead;
+            if (handler != null)
             {
-                ClientRead(this, packet);
+                handler(this, packet);
             }
         }
 
@@ -114,9 +117,10 @@ namespace xClient.Core.Networking
         /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
-            if (ClientWrite != null)
+            var handler = ClientWrite;
+            if (handler != null)
             {
-                ClientWrite(this, packet, length, rawData);
+                handler(this, packet, length, rawData);
             }
         }
 

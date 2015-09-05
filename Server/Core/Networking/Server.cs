@@ -35,9 +35,10 @@ namespace xServer.Core.Networking
 
             Listening = listening;
 
-            if (ServerState != null)
+            var handler = ServerState;
+            if (handler != null)
             {
-                ServerState(this, listening, Port);
+                handler(this, listening, Port);
             }
         }
 
@@ -61,9 +62,10 @@ namespace xServer.Core.Networking
         /// <param name="connected">The new connection state of the client.</param>
         private void OnClientState(Client c, bool connected)
         {
-            if (ClientState != null)
+            var handler = ClientState;
+            if (handler != null)
             {
-                ClientState(this, c, connected);
+                handler(this, c, connected);
             }
         }
 
@@ -88,9 +90,10 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that received by the client.</param>
         private void OnClientRead(Client c, IPacket packet)
         {
-            if (ClientRead != null)
+            var handler = ClientRead;
+            if (handler != null)
             {
-                ClientRead(this, c, packet);
+                handler(this, c, packet);
             }
         }
 
@@ -118,9 +121,10 @@ namespace xServer.Core.Networking
         /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
         {
-            if (ClientWrite != null)
+            var handler = ClientWrite;
+            if (handler != null)
             {
-                ClientWrite(this, c, packet, length, rawData);
+                handler(this, c, packet, length, rawData);
             }
         }
 
