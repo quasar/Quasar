@@ -67,14 +67,10 @@ namespace xServer.Forms
                 switch (type)
                 {
                     case PathType.Back:
-                        if (!_connectClient.Value.ReceivedLastDirectory) return;
-
                         SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
                         RefreshDirectory();
                         break;
                     case PathType.Directory:
-                        if (!_connectClient.Value.ReceivedLastDirectory) return;
-
                         SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
                         RefreshDirectory();
                         break;
@@ -601,7 +597,11 @@ namespace xServer.Forms
 
         private void RefreshDirectory()
         {
-            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.ReceivedLastDirectory == false) return;
+            if (_connectClient == null || _connectClient.Value == null) return;
+
+            if (!_connectClient.Value.ReceivedLastDirectory)
+                _connectClient.Value.ProcessingDirectory = false;
+
             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
             SetStatus("Loading directory content...");
             _connectClient.Value.ReceivedLastDirectory = false;

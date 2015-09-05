@@ -7,7 +7,6 @@ using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
-using xServer.Core.Utilities;
 using xServer.Enums;
 using xServer.Forms;
 
@@ -56,7 +55,7 @@ namespace xServer.Core.Commands
 
                 client.Value.FrmFm.AddItemToFileBrowser(lviBack);
 
-                if (packet.Folders != null && packet.Folders.Length != 0)
+                if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
                 {
                     for (int i = 0; i < packet.Folders.Length; i++)
                     {
@@ -68,7 +67,7 @@ namespace xServer.Core.Commands
                                 ImageIndex = 1
                             };
 
-                            if (client.Value == null || client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
                             client.Value.FrmFm.AddItemToFileBrowser(lvi);
@@ -76,7 +75,7 @@ namespace xServer.Core.Commands
                     }
                 }
 
-                if (packet.Files != null && packet.Files.Length != 0)
+                if (packet.Files != null && packet.Files.Length != 0 && client.Value.ProcessingDirectory)
                 {
                     for (int i = 0; i < packet.Files.Length; i++)
                     {
@@ -89,7 +88,7 @@ namespace xServer.Core.Commands
                                     ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
                                 };
 
-                            if (client.Value == null || client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
                             client.Value.FrmFm.AddItemToFileBrowser(lvi);
