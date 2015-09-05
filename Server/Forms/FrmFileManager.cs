@@ -51,7 +51,7 @@ namespace xServer.Forms
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_connectClient != null && _connectClient.Value != null && _connectClient.Value.ReceivedLastDirectory)
+            if (_connectClient != null && _connectClient.Value != null)
             {
                 SetCurrentDir(cmbDrives.SelectedValue.ToString());
                 RefreshDirectory();
