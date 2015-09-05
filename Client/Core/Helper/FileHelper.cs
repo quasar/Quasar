@@ -20,6 +20,21 @@ namespace xClient.Core.Helper
             return string.Concat(randomName.ToString(), extension);
         }
 
+        /// <summary>
+        /// Creates an unused temp file path. 
+        /// </summary>
+        /// <param name="extension">The file extension with dot.</param>
+        /// <returns>The path to the temp file.</returns>
+        public static string GetTempFilePath(string extension)
+        {
+            while (true)
+            {
+                string tempFilePath = Path.Combine(Path.GetTempPath(), GetRandomFilename(12, extension));
+                if (File.Exists(tempFilePath)) continue;
+                return tempFilePath;
+            }
+        }
+
         public static bool IsValidExecuteableFile(byte[] block)
         {
             if (block.Length < 2) return false;
@@ -35,8 +50,7 @@ namespace xClient.Core.Helper
         {
             try
             {
-                string batchFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    GetRandomFilename(12, ".bat"));
+                string batchFile = GetTempFilePath(".bat");
 
                 string uninstallBatch = (isFileHidden)
                     ? "@echo off" + "\n" +
@@ -64,8 +78,7 @@ namespace xClient.Core.Helper
         {
             try
             {
-                string batchFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    GetRandomFilename(12, ".bat"));
+                string batchFile = GetTempFilePath(".bat");
 
                 string uninstallBatch = (isFileHidden)
                     ? "@echo off" + "\n" +

