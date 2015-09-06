@@ -159,6 +159,17 @@ namespace xClient
                         ClientData.AddToStartupFailed = true;
                 }
 
+                if (Settings.INSTALL && Settings.HIDEFILE)
+                {
+                    try
+                    {
+                        File.SetAttributes(ClientData.InstallPath, FileAttributes.Hidden);
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
+
                 InitializeClient();
 
                 if (Settings.ENABLELOGGER)
