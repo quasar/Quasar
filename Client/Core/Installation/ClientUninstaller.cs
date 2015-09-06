@@ -15,9 +15,6 @@ namespace xClient.Core.Installation
         {
             try
             {
-                if (!Settings.INSTALL)
-                    throw new Exception("Installation is not enabled");
-
                 RemoveExistingLogs();
 
                 if (Settings.STARTUP)

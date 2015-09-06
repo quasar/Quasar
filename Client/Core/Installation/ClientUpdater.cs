@@ -35,7 +35,7 @@ namespace xClient.Core.Installation
                 Process.Start(startInfo);
 
                 ClientData.Disconnect = true;
-                if (Settings.INSTALL && Settings.STARTUP)
+                if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
                 client.Disconnect();
             }

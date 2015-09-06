@@ -167,6 +167,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public string IconPath
+        {
+            get
+            {
+                return ReadValueSafe("IconPath");
+            }
+            set
+            {
+                WriteValue("IconPath", value);
+            }
+        }
+
         public bool ChangeAsmInfo
         {
             get

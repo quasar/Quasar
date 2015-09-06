@@ -29,7 +29,7 @@ namespace xServer.Forms
             cmbMsgIcon.SelectedIndex = 0;
         }
 
-        private void btnTest_Click(object sender, EventArgs e)
+        private void btnPreview_Click(object sender, EventArgs e)
         {
             MessageBox.Show(null, txtText.Text, txtCaption.Text,
                 (MessageBoxButtons)
