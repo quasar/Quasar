@@ -154,6 +154,7 @@ namespace xServer.Forms
 
                                 if (CanceledUploads.ContainsKey(id))
                                 {
+                                    UpdateTransferStatus(index, "Canceled", 0);
                                     _limitThreads.Release();
                                     return;
                                 }
