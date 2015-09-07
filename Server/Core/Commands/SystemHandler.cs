@@ -46,14 +46,7 @@ namespace xServer.Core.Commands
                 client.Value.ProcessingDirectory = true;
 
                 client.Value.FrmFm.ClearFileBrowser();
-
-                ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "" })
-                {
-                    Tag = PathType.Back,
-                    ImageIndex = 0
-                };
-
-                client.Value.FrmFm.AddItemToFileBrowser(lviBack);
+                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0);
 
                 if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
                 {
@@ -61,16 +54,10 @@ namespace xServer.Core.Commands
                     {
                         if (packet.Folders[i] != DELIMITER)
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", PathType.Directory.ToString() })
-                            {
-                                Tag = PathType.Directory,
-                                ImageIndex = 1
-                            };
-
                             if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
+                            client.Value.FrmFm.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1);
                         }
                     }
                 }
@@ -81,17 +68,12 @@ namespace xServer.Core.Commands
                     {
                         if (packet.Files[i] != DELIMITER)
                         {
-                            ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
-                                {
-                                    Tag = PathType.File,
-                                    ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
-                                };
-
                             if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
+                            client.Value.FrmFm.AddItemToFileBrowser(packet.Files[i],
+                                FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
+                                FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])));
                         }
                     }
                 }

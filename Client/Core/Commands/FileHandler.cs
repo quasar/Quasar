@@ -120,7 +120,7 @@ namespace xClient.Core.Commands
                 }
                 catch (Exception ex)
                 {
-                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
+                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath), new byte[0], -1, -1, ex.Message)
                         .Execute(client);
                 }
                 _limitThreads.Release();
@@ -132,7 +132,6 @@ namespace xClient.Core.Commands
             if (!_canceledDownloads.ContainsKey(command.ID))
             {
                 _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
             }
         }
 

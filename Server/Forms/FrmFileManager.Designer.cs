@@ -49,7 +49,7 @@ namespace xServer.Forms
             this.stripLblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStripTransfers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.removeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
             this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
@@ -66,8 +66,10 @@ namespace xServer.Forms
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
             this.lstTransfers = new xServer.Controls.AeroListView();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStripDirectory.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextMenuStripTransfers.SuspendLayout();
@@ -91,7 +93,7 @@ namespace xServer.Forms
             this.refreshToolStripMenuItem,
             this.openDirectoryInShellToolStripMenuItem});
             this.contextMenuStripDirectory.Name = "ctxtMenu";
-            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 220);
+            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 198);
             // 
             // downloadToolStripMenuItem
             // 
@@ -208,25 +210,26 @@ namespace xServer.Forms
             // 
             this.contextMenuStripTransfers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cancelToolStripMenuItem,
-            this.removeToolStripMenuItem});
+            this.toolStripMenuItem1,
+            this.clearToolStripMenuItem});
             this.contextMenuStripTransfers.Name = "ctxtMenu2";
-            this.contextMenuStripTransfers.Size = new System.Drawing.Size(118, 48);
+            this.contextMenuStripTransfers.Size = new System.Drawing.Size(150, 54);
             // 
             // cancelToolStripMenuItem
             // 
             this.cancelToolStripMenuItem.Image = global::xServer.Properties.Resources.cancel;
             this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
-            this.cancelToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
+            this.cancelToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.cancelToolStripMenuItem.Text = "Cancel";
             this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
             // 
-            // removeToolStripMenuItem
+            // clearToolStripMenuItem
             // 
-            this.removeToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
-            this.removeToolStripMenuItem.Name = "removeToolStripMenuItem";
-            this.removeToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
-            this.removeToolStripMenuItem.Text = "Remove";
-            this.removeToolStripMenuItem.Click += new System.EventHandler(this.removeToolStripMenuItem_Click);
+            this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.broom;
+            this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.clearToolStripMenuItem.Text = "Clear transfers";
+            this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
             // imgListTransfers
             // 
@@ -387,6 +390,7 @@ namespace xServer.Forms
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstTransfers.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hID,
+            this.hTransferType,
             this.hStatus,
             this.hFilename});
             this.lstTransfers.ContextMenuStrip = this.contextMenuStripTransfers;
@@ -405,15 +409,25 @@ namespace xServer.Forms
             this.hID.Text = "ID";
             this.hID.Width = 128;
             // 
+            // hTransferType
+            // 
+            this.hTransferType.Text = "Transfer Type";
+            this.hTransferType.Width = 93;
+            // 
             // hStatus
             // 
             this.hStatus.Text = "Status";
-            this.hStatus.Width = 201;
+            this.hStatus.Width = 173;
             // 
             // hFilename
             // 
             this.hFilename.Text = "Filename";
-            this.hFilename.Width = 337;
+            this.hFilename.Width = 289;
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(146, 6);
             // 
             // FrmFileManager
             // 
@@ -477,11 +491,13 @@ namespace xServer.Forms
         private AeroListView lstDirectory;
         private AeroListView lstTransfers;
         private System.Windows.Forms.StatusStrip statusStrip;
-        private System.Windows.Forms.ToolStripMenuItem removeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem clearToolStripMenuItem;
         private System.Windows.Forms.ToolStripStatusLabel stripLblStatus;
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Button btnRefresh;
         private System.Windows.Forms.ToolStripMenuItem uploadToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader hTransferType;
+        private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
     }
 }
