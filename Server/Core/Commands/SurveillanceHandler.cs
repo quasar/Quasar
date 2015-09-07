@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using System.Windows.Forms;
 using xServer.Core.Data;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
@@ -108,7 +107,6 @@ namespace xServer.Core.Commands
             if (packet.FileCount == 0)
             {
                 client.Value.FrmKl.SetGetLogsEnabled(true);
-
                 return;
             }
 

