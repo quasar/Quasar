@@ -215,7 +215,7 @@ namespace xServer.Forms
                     lock (_lockClients)
                     {
                         foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
+                            .Where(lvi => lvi != null && c.Equals(lvi.Tag)))
                         {
                             lvi.Remove();
                             break;
@@ -286,7 +286,7 @@ namespace xServer.Forms
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && lvi.Tag is Client && c.Equals((Client)lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && c.Equals(lvi.Tag));
             });
 
             return itemClient;

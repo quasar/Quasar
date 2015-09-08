@@ -7,12 +7,11 @@ using System.Threading;
 using xServer.Core.Compression;
 using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
-using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class Client
+    public class Client : IEquatable<Client>
     {
         /// <summary>
         /// Occurs when the state of the client changes.
@@ -102,18 +101,43 @@ namespace xServer.Core.Networking
         /// Checks whether the clients are equal.
         /// </summary>
         /// <param name="c">Client to compare with.</param>
-        /// <returns></returns>
+        /// <returns>True if equal, else False.</returns>
         public bool Equals(Client c)
         {
             try
             {
-                return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+                // the port is always unique for each client
+                return this.EndPoint.Port.Equals(c.EndPoint.Port);
             }
             catch (Exception)
             {
                 return false;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Client);
+        }
+
+        public static bool operator ==(Client lhs, Client rhs)
+        {
+            return ReferenceEquals(lhs, null) ? ReferenceEquals(rhs, null) : lhs.Equals(rhs);
+        }
+
+        public static bool operator !=(Client lhs, Client rhs)
+        {
+            return !(lhs == rhs);
+        }
+
+        /// <summary>
+        /// Returns the hashcode for this instance.
+        /// </summary>
+        /// <returns>A hash code for the current instance.</returns>
+        public override int GetHashCode()
+        {
+            return this.EndPoint.Port.GetHashCode();
+        }  
 
         /// <summary>
         /// The type of the packet received.
@@ -222,29 +246,17 @@ namespace xServer.Core.Networking
         /// </summary>
         private bool _appendHeader;
 
-        /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        private Serializer _serializer;
-
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        public Client()
-        {
-        }
-
-        internal Client(Server server, Socket sock, Type[] packets)
+        public Client(Server parentServer, Socket socket)
         {
             try
             {
-                _parentServer = server;
-                _parentServer.AddClient(this);
-                AddTypesToSerializer(packets);
-                if (_serializer == null) throw new Exception("Serializer not initialized");
+                _parentServer = parentServer;
                 Initialize();
 
-                _handle = sock;
+                _handle = socket;
                 _handle.SetKeepAliveEx(_parentServer.KEEP_ALIVE_INTERVAL, _parentServer.KEEP_ALIVE_TIME);
 
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
@@ -488,7 +500,7 @@ namespace xServer.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
+                                            IPacket packet = (IPacket)_parentServer.Serializer.Deserialize(deserialized);
 
                                             OnClientRead(packet);
                                         }
@@ -538,7 +550,7 @@ namespace xServer.Core.Networking
                 {
                     using (MemoryStream ms = new MemoryStream())
                     {
-                        _serializer.Serialize(ms, packet);
+                        _parentServer.Serializer.Serialize(ms, packet);
 
                         byte[] payload = ms.ToArray();
 
@@ -665,23 +677,11 @@ namespace xServer.Core.Networking
                     Value.Dispose();
                     Value = null;
                 }
-
-                if (_parentServer.BufferManager != null)
-                    _parentServer.BufferManager.ReturnBuffer(_readBuffer);
+                
+                _parentServer.BufferManager.ReturnBuffer(_readBuffer);
             }
 
-            _parentServer.RemoveClient(this);
-
             OnClientState(false);
-        }
-
-        /// <summary>
-        /// Adds Types to the serializer.
-        /// </summary>
-        /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type[] types)
-        {
-            _serializer = new Serializer(types);
         }
     }
 }

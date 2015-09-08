@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Linq;
 using xServer.Core.Commands;
+using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
@@ -9,7 +11,12 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The amount of currently connected and authenticated clients.
         /// </summary>
-        public int ConnectedClients { get; private set; }
+        public int ConnectedClients {
+            get
+            {
+                return Clients.Count(c => c != null && c.Authenticated);
+            }
+        }
 
         /// <summary>
         /// Occurs when a client connected.
@@ -62,9 +69,9 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public ServerHandler()
+        public ServerHandler() : base()
         {
-            base.AddTypesToSerializer(new Type[]
+            base.Serializer = new Serializer(new Type[]
             {
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),
@@ -139,7 +146,6 @@ namespace xServer.Core.Networking
                 case false:
                     if (client.Authenticated)
                     {
-                        ConnectedClients--;
                         OnClientDisconnected(client);
                     }
                     break;
@@ -161,7 +167,6 @@ namespace xServer.Core.Networking
                 if (type == typeof (Packets.ClientPackets.GetAuthenticationResponse))
                 {
                     client.Authenticated = true;
-                    ConnectedClients++;
                     new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client); // finish handshake
                     CommandHandler.HandleGetAuthenticationResponse(client,
                         (Packets.ClientPackets.GetAuthenticationResponse) packet);

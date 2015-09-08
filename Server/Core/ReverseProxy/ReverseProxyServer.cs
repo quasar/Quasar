@@ -104,7 +104,10 @@ namespace xServer.Core.ReverseProxy
         public void Stop()
         {
             if (_socket != null)
+            {
                 _socket.Close();
+                _socket = null;
+            }
 
             lock (_clients)
             {
