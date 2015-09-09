@@ -29,7 +29,7 @@ namespace xServer.Core.Networking
         /// Fires an event that informs subscribers that the server has changed it's state.
         /// </summary>
         /// <param name="listening">The new listening state of the server.</param>
-        protected void OnServerState(bool listening)
+        private void OnServerState(bool listening)
         {
             if (Listening == listening) return;
 
@@ -60,7 +60,7 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="c">The client which changed its state.</param>
         /// <param name="connected">The new connection state of the client.</param>
-        protected void OnClientState(Client c, bool connected)
+        private void OnClientState(Client c, bool connected)
         {
             var handler = ClientState;
 
@@ -92,7 +92,7 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="c">The client that has received the packet.</param>
         /// <param name="packet">The packet that received by the client.</param>
-        protected void OnClientRead(Client c, IPacket packet)
+        private void OnClientRead(Client c, IPacket packet)
         {
             var handler = ClientRead;
             if (handler != null)
@@ -123,7 +123,7 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that has been sent by the client.</param>
         /// <param name="length">The length of the packet.</param>
         /// <param name="rawData">The packet in raw bytes.</param>
-        protected void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
+        private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
@@ -183,10 +183,9 @@ namespace xServer.Core.Networking
         public bool Listening { get; private set; }
 
         /// <summary>
-        /// Gets the clients currently connected to the server, or an empty array of
-        /// clients if the server is currently not listening.
+        /// Gets the clients currently connected to the server.
         /// </summary>
-        public Client[] Clients
+        protected Client[] Clients
         {
             get
             {
@@ -312,7 +311,7 @@ namespace xServer.Core.Networking
                             if (BufferManager.BuffersAvailable == 0)
                                 BufferManager.IncreaseBufferCount(1);
 
-                            Client client = new Client(this, e.AcceptSocket /*, PacketTypes.ToArray()*/);
+                            Client client = new Client(this, e.AcceptSocket);
                             AddClient(client);
                             OnClientState(client, true);
                             break;

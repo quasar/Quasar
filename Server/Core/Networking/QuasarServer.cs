@@ -6,16 +6,14 @@ using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class ServerHandler : Server
+    public class QuasarServer : Server
     {
         /// <summary>
-        /// The amount of currently connected and authenticated clients.
+        /// Gets the clients currently connected and authenticated to the server.
         /// </summary>
-        public int ConnectedClients {
-            get
-            {
-                return Clients.Count(c => c != null && c.Authenticated);
-            }
+        public Client[] ConnectedClients
+        {
+            get { return Clients.Where(c => c != null && c.Authenticated).ToArray(); }
         }
 
         /// <summary>
@@ -69,7 +67,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public ServerHandler() : base()
+        public QuasarServer() : base()
         {
             base.Serializer = new Serializer(new Type[]
             {
@@ -126,8 +124,8 @@ namespace xServer.Core.Networking
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
-            base.ClientState += ClientStateHandler;
-            base.ClientRead += ClientReadHandler;
+            base.ClientState += OnClientState;
+            base.ClientRead += OnClientRead;
         }
 
         /// <summary>
@@ -136,7 +134,7 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which changed its state.</param>
         /// <param name="connected">True if the client connected, false if disconnected.</param>
-        private void ClientStateHandler(Server server, Client client, bool connected)
+        private void OnClientState(Server server, Client client, bool connected)
         {
             switch (connected)
             {
@@ -158,7 +156,7 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which has received the packet.</param>
         /// <param name="packet">The received packet.</param>
-        private void ClientReadHandler(Server server, Client client, IPacket packet)
+        private void OnClientRead(Server server, Client client, IPacket packet)
         {
             var type = packet.GetType();
 

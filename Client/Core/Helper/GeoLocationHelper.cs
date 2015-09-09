@@ -85,7 +85,7 @@ namespace xClient.Core.Helper
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
-                request.Timeout = 5000;
+                request.Timeout = 10000;
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
@@ -121,7 +121,7 @@ namespace xClient.Core.Helper
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
-                request.Timeout = 5000;
+                request.Timeout = 10000;
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
@@ -168,6 +168,8 @@ namespace xClient.Core.Helper
                 GeoInfo.country_code = "-";
                 GeoInfo.region = "Unknown";
                 GeoInfo.city = "Unknown";
+                GeoInfo.timezone = "Unknown";
+                GeoInfo.isp = "Unknown";
                 LocationCompleted = false;
             }
 

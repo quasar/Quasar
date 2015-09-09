@@ -166,7 +166,7 @@
     <Compile Include="Core\Utilities\ListViewColumnSorter.cs" />
     <Compile Include="Core\Extensions\ListViewExtensions.cs" />
     <Compile Include="Core\Utilities\NoIpUpdater.cs" />
-    <Compile Include="Core\Networking\ServerHandler.cs" />
+    <Compile Include="Core\Networking\QuasarServer.cs" />
     <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />

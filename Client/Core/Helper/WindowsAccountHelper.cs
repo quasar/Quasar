@@ -38,7 +38,7 @@ namespace xClient.Core.Helper
 
         public static void StartUserIdleCheckThread()
         {
-            new Thread(UserIdleThread).Start();
+            new Thread(UserIdleThread) {IsBackground = true}.Start();
         }
 
         static void UserIdleThread()

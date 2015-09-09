@@ -120,16 +120,6 @@ namespace xServer.Core.Networking
             return this.Equals(obj as Client);
         }
 
-        public static bool operator ==(Client lhs, Client rhs)
-        {
-            return ReferenceEquals(lhs, null) ? ReferenceEquals(rhs, null) : lhs.Equals(rhs);
-        }
-
-        public static bool operator !=(Client lhs, Client rhs)
-        {
-            return !(lhs == rhs);
-        }
-
         /// <summary>
         /// Returns the hashcode for this instance.
         /// </summary>
@@ -268,7 +258,7 @@ namespace xServer.Core.Networking
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
                 OnClientState(true);
             }
-            catch
+            catch (Exception)
             {
                 Disconnect();
             }
@@ -282,54 +272,55 @@ namespace xServer.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
+            int bytesTransferred;
+
             try
             {
-                int bytesTransferred;
+                bytesTransferred = _handle.EndReceive(result);
 
-                try
-                {
-                    bytesTransferred = _handle.EndReceive(result);
-
-                    if (bytesTransferred <= 0)
-                    {
-                        Disconnect();
-                        return;
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    return;
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    return;
-                }
-
-                _parentServer.BytesReceived += bytesTransferred;
-
-                byte[] received = new byte[bytesTransferred];
-                Array.Copy(_readBuffer, received, received.Length);
-                lock (_readBuffers)
-                {
-                    _readBuffers.Enqueue(received);
-                }
-
-                lock (_readingPacketsLock)
-                {
-                    if (!_readingPackets)
-                    {
-                        _readingPackets = true;
-                        ThreadPool.QueueUserWorkItem(AsyncReceive);
-                    }
-                }
+                if (bytesTransferred <= 0)
+                    throw new Exception("no bytes transferred");
             }
-            catch
+            catch (NullReferenceException)
             {
+                return;
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+            catch (Exception)
+            {
+                Disconnect();
+                return;
+            }
+
+            _parentServer.BytesReceived += bytesTransferred;
+
+            byte[] received = new byte[bytesTransferred];
+
+            try
+            {
+                Array.Copy(_readBuffer, received, received.Length);
+            }
+            catch (Exception)
+            {
+                Disconnect();
+                return;
+            }
+
+            lock (_readBuffers)
+            {
+                _readBuffers.Enqueue(received);
+            }
+
+            lock (_readingPacketsLock)
+            {
+                if (!_readingPackets)
+                {
+                    _readingPackets = true;
+                    ThreadPool.QueueUserWorkItem(AsyncReceive);
+                }
             }
 
             try
@@ -339,7 +330,7 @@ namespace xServer.Core.Networking
             catch (ObjectDisposedException)
             {
             }
-            catch
+            catch (Exception)
             {
                 Disconnect();
             }
@@ -542,33 +533,35 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet to be send.</param>
         public void Send<T>(T packet) where T : IPacket
         {
-            if (!Connected) return;
+            if (!Connected || packet == null) return;
 
             lock (_sendBuffers)
             {
-                try
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    try
                     {
                         _parentServer.Serializer.Serialize(ms, packet);
-
-                        byte[] payload = ms.ToArray();
-
-                        _sendBuffers.Enqueue(payload);
-
-                        OnClientWrite(packet, payload.LongLength, payload);
-
-                        lock (_sendingPacketsLock)
-                        {
-                            if (_sendingPackets) return;
-
-                            _sendingPackets = true;
-                        }
-                        ThreadPool.QueueUserWorkItem(Send);
                     }
-                }
-                catch
-                {
+                    catch (Exception)
+                    {
+                        Disconnect();
+                        return;
+                    }
+
+                    byte[] payload = ms.ToArray();
+
+                    _sendBuffers.Enqueue(payload);
+
+                    OnClientWrite(packet, payload.LongLength, payload);
+
+                    lock (_sendingPacketsLock)
+                    {
+                        if (_sendingPackets) return;
+
+                        _sendingPackets = true;
+                    }
+                    ThreadPool.QueueUserWorkItem(Send);
                 }
             }
         }

