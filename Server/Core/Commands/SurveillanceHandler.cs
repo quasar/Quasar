@@ -91,6 +91,9 @@ namespace xServer.Core.Commands
 
                 for (int i = 0; i < packet.Processes.Length; i++)
                 {
+                    if (packet.IDs[i] == 0 || packet.Processes[i] == "System.exe")
+                        continue;
+
                     if (client.Value == null || client.Value.FrmTm == null)
                         break;
                     
