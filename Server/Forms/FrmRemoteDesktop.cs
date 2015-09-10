@@ -70,6 +70,7 @@ namespace xServer.Forms
             _mEvents.MouseWheel -= OnMouseWheelMove;
             _mEvents.KeyDown -= OnKeyDown;
             _mEvents.KeyUp -= OnKeyUp;
+            _mEvents.Dispose();
         }
 
         private void UnsubscribeMonoEvents()
