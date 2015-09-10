@@ -224,7 +224,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// Determines if the server is currently processing Disconnect method. 
         /// </summary>
-        private bool _processing;
+        protected bool ProcessingDisconnect { get; set; }
 
         /// <summary>
         /// Constructor of the server, initializes variables.
@@ -256,7 +256,7 @@ namespace xServer.Core.Networking
                     _handle.Bind(new IPEndPoint(IPAddress.Any, port));
                     _handle.Listen(1000);
 
-                    _processing = false;
+                    ProcessingDisconnect = false;
 
                     OnServerState(true);
 
@@ -356,7 +356,7 @@ namespace xServer.Core.Networking
         /// <param name="client">The client to remove.</param>
         private void RemoveClient(Client client)
         {
-            if (_processing) return;
+            if (ProcessingDisconnect) return;
 
             lock (_clientsLock)
             {
@@ -373,8 +373,8 @@ namespace xServer.Core.Networking
         /// </summary>
         public void Disconnect()
         {
-            if (_processing) return;
-            _processing = true;
+            if (ProcessingDisconnect) return;
+            ProcessingDisconnect = true;
 
             if (_handle != null)
             {
@@ -406,7 +406,7 @@ namespace xServer.Core.Networking
                 }
             }
 
-            _processing = false;
+            ProcessingDisconnect = false;
             OnServerState(false);
         }
     }

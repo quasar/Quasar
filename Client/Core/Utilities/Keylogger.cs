@@ -99,7 +99,6 @@ namespace xClient.Core.Utilities
         private void Unsubscribe()
         {
             if (_mEvents == null) return;
-
             _mEvents.KeyDown -= OnKeyDown;
             _mEvents.KeyUp -= OnKeyUp;
             _mEvents.KeyPress -= OnKeyPress;

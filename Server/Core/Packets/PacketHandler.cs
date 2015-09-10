@@ -8,7 +8,7 @@ namespace xServer.Core.Packets
     {
         public static void HandlePacket(Client client, IPacket packet)
         {
-            if (client == null || !client.Authenticated || client.Value == null)
+            if (client == null || client.Value == null)
                 return;
 
             var type = packet.GetType();

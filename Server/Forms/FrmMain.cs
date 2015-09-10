@@ -24,8 +24,11 @@ namespace xServer.Forms
         private const int STATUS_ID = 4;
         private const int USERSTATUS_ID = 5;
 
-        private readonly object _lockClients = new object();
         private bool _titleUpdateRunning;
+        private bool _processingClientConnections;
+        private readonly Queue<KeyValuePair<Client, bool>> _clientConnections = new Queue<KeyValuePair<Client, bool>>();
+        private readonly object _processingClientConnectionsLock = new object();
+        private readonly object _lockClients = new object(); // lock for clients-listview
 
         private void ShowTermsOfService()
         {
@@ -129,6 +132,8 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker) delegate
                 {
+                    if (!listening)
+                        lstClients.Items.Clear();
                     listenToolStripStatusLabel.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
                 UpdateWindowTitle();
@@ -140,28 +145,95 @@ namespace xServer.Forms
 
         private void ClientConnected(Client client)
         {
-            AddClientToListview(client);
-            if (Settings.ShowPopup)
-                ShowPopup(client);
+            lock (_clientConnections)
+            {
+                if (!ListenServer.Listening) return;
+                _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, true));
+            }
+
+            lock (_processingClientConnectionsLock)
+            {
+                if (!_processingClientConnections)
+                {
+                    _processingClientConnections = true;
+                    ThreadPool.QueueUserWorkItem(ProcessClientConnections);
+                }
+            }
         }
 
         private void ClientDisconnected(Client client)
         {
-            RemoveClientFromListview(client);
+            lock (_clientConnections)
+            {
+                if (!ListenServer.Listening) return;
+                _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, false));
+            }
+
+            lock (_processingClientConnectionsLock)
+            {
+                if (!_processingClientConnections)
+                {
+                    _processingClientConnections = true;
+                    ThreadPool.QueueUserWorkItem(ProcessClientConnections);
+                }
+            }
+        }
+
+        private void ProcessClientConnections(object state)
+        {
+            while (true)
+            {
+                KeyValuePair<Client, bool> client;
+                lock (_clientConnections)
+                {
+                    if (!ListenServer.Listening)
+                    {
+                        _clientConnections.Clear();
+                    }
+
+                    if (_clientConnections.Count == 0)
+                    {
+                        lock (_processingClientConnectionsLock)
+                        {
+                            _processingClientConnections = false;
+                        }
+                        return;
+                    }
+
+                    client = _clientConnections.Dequeue();
+                }
+
+                if (client.Key != null)
+                {
+                    switch (client.Value)
+                    {
+                        case true:
+                            AddClientToListview(client.Key);
+                            if (Settings.ShowPopup)
+                                ShowPopup(client.Key);
+                            break;
+                        case false:
+                            RemoveClientFromListview(client.Key);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Sets the tooltip text of the listview item of a client.
         /// </summary>
-        /// <param name="c">The client on which the change is performed.</param>
+        /// <param name="client">The client on which the change is performed.</param>
         /// <param name="text">The new tooltip text.</param>
-        public void SetToolTipText(Client c, string text)
+        public void SetToolTipText(Client client, string text)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.ToolTipText = text;
                 });
@@ -177,7 +249,7 @@ namespace xServer.Forms
         /// <param name="client">The client to add.</param>
         private void AddClientToListview(Client client)
         {
-            if (client == null || !client.Authenticated) return;
+            if (client == null) return;
 
             try
             {
@@ -207,9 +279,11 @@ namespace xServer.Forms
         /// <summary>
         /// Removes a connected client from the Listview.
         /// </summary>
-        /// <param name="c">The client to remove.</param>
-        private void RemoveClientFromListview(Client c)
+        /// <param name="client">The client to remove.</param>
+        private void RemoveClientFromListview(Client client)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
@@ -217,7 +291,7 @@ namespace xServer.Forms
                     lock (_lockClients)
                     {
                         foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && c.Equals(lvi.Tag)))
+                            .Where(lvi => lvi != null && client.Equals(lvi.Tag)))
                         {
                             lvi.Remove();
                             break;
@@ -234,15 +308,17 @@ namespace xServer.Forms
         /// <summary>
         /// Sets the status of a client.
         /// </summary>
-        /// <param name="c">The client to update the status of.</param>
+        /// <param name="client">The client to update the status of.</param>
         /// <param name="text">The new status.</param>
-        public void SetStatusByClient(Client c, string text)
+        public void SetStatusByClient(Client client, string text)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.SubItems[STATUS_ID].Text = text;
                 });
@@ -255,18 +331,17 @@ namespace xServer.Forms
         /// <summary>
         /// Sets the user status of a client.
         /// </summary>
-        /// <remarks>
-        /// Can be "Active" or "Idle".
-        /// </remarks>
-        /// <param name="c">The client to update the user status of.</param>
+        /// <param name="client">The client to update the user status of.</param>
         /// <param name="userStatus">The new user status.</param>
-        public void SetUserStatusByClient(Client c, UserStatus userStatus)
+        public void SetUserStatusByClient(Client client, UserStatus userStatus)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
                 });
@@ -279,16 +354,18 @@ namespace xServer.Forms
         /// <summary>
         /// Gets the Listview item which belongs to the client. 
         /// </summary>
-        /// <param name="c">The client to get the Listview item of.</param>
+        /// <param name="client">The client to get the Listview item of.</param>
         /// <returns>Listview item of the client.</returns>
-        private ListViewItem GetListViewItemByClient(Client c)
+        private ListViewItem GetListViewItemByClient(Client client)
         {
+            if (client == null) return null;
+
             ListViewItem itemClient = null;
 
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && c.Equals(lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && client.Equals(lvi.Tag));
             });
 
             return itemClient;
@@ -309,8 +386,8 @@ namespace xServer.Forms
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && lvi.Tag is Client)
-                            .Select(lvi => (Client)lvi.Tag));
+                            .Where(lvi => lvi != null)
+                            .Select(lvi => lvi.Tag as Client));
                 }
             });
 

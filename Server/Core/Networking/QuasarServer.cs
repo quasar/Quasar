@@ -33,6 +33,7 @@ namespace xServer.Core.Networking
         /// <param name="client">The connected client.</param>
         private void OnClientConnected(Client client)
         {
+            if (ProcessingDisconnect || !Listening) return;
             var handler = ClientConnected;
             if (handler != null)
             {
@@ -57,6 +58,7 @@ namespace xServer.Core.Networking
         /// <param name="client">The disconnected client.</param>
         private void OnClientDisconnected(Client client)
         {
+            if (ProcessingDisconnect || !Listening) return;
             var handler = ClientDisconnected;
             if (handler != null)
             {

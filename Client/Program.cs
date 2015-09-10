@@ -74,6 +74,7 @@ namespace xClient
             if (_msgLoop != null)
             {
                 _msgLoop.ExitThread();
+                _msgLoop.Dispose();
                 _msgLoop = null;
             }
             MutexHelper.CloseMutex();
