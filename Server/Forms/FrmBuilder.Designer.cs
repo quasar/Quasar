@@ -32,6 +32,10 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmBuilder));
             this.btnBuild = new System.Windows.Forms.Button();
             this.tooltip = new System.Windows.Forms.ToolTip(this.components);
+            this.picUAC2 = new System.Windows.Forms.PictureBox();
+            this.picUAC1 = new System.Windows.Forms.PictureBox();
+            this.rbSystem = new System.Windows.Forms.RadioButton();
+            this.rbProgramFiles = new System.Windows.Forms.RadioButton();
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeHostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -73,12 +77,8 @@
             this.label10 = new System.Windows.Forms.Label();
             this.line4 = new xServer.Controls.Line();
             this.label5 = new System.Windows.Forms.Label();
-            this.picUAC2 = new System.Windows.Forms.PictureBox();
-            this.picUAC1 = new System.Windows.Forms.PictureBox();
             this.chkInstall = new System.Windows.Forms.CheckBox();
-            this.rbSystem = new System.Windows.Forms.RadioButton();
             this.lblInstallname = new System.Windows.Forms.Label();
-            this.rbProgramFiles = new System.Windows.Forms.RadioButton();
             this.txtInstallname = new System.Windows.Forms.TextBox();
             this.txtRegistryKeyName = new System.Windows.Forms.TextBox();
             this.lblExtension = new System.Windows.Forms.Label();
@@ -92,6 +92,7 @@
             this.txtInstallsub = new System.Windows.Forms.TextBox();
             this.txtPreviewPath = new System.Windows.Forms.TextBox();
             this.assemblyPage = new System.Windows.Forms.TabPage();
+            this.iconPreview = new System.Windows.Forms.PictureBox();
             this.btnBrowseIcon = new System.Windows.Forms.Button();
             this.txtIconPath = new System.Windows.Forms.TextBox();
             this.line8 = new xServer.Controls.Line();
@@ -120,17 +121,16 @@
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.iconPreview = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.contextMenuStrip.SuspendLayout();
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.connectionPage.SuspendLayout();
             this.installationPage.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).BeginInit();
             this.assemblyPage.SuspendLayout();
-            this.surveillanceTab.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).BeginInit();
+            this.surveillanceTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBuild
@@ -142,6 +142,54 @@
             this.btnBuild.Text = "Build Client";
             this.btnBuild.UseVisualStyleBackColor = true;
             this.btnBuild.Click += new System.EventHandler(this.btnBuild_Click);
+            // 
+            // picUAC2
+            // 
+            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC2.Location = new System.Drawing.Point(363, 88);
+            this.picUAC2.Name = "picUAC2";
+            this.picUAC2.Size = new System.Drawing.Size(16, 20);
+            this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picUAC2.TabIndex = 32;
+            this.picUAC2.TabStop = false;
+            this.tooltip.SetToolTip(this.picUAC2, "Administrator Privileges are required to install the client in System.");
+            // 
+            // picUAC1
+            // 
+            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC1.Location = new System.Drawing.Point(363, 68);
+            this.picUAC1.Name = "picUAC1";
+            this.picUAC1.Size = new System.Drawing.Size(16, 20);
+            this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
+            this.picUAC1.TabIndex = 31;
+            this.picUAC1.TabStop = false;
+            this.tooltip.SetToolTip(this.picUAC1, "Administrator Privileges are required to install the client in Program Files.");
+            // 
+            // rbSystem
+            // 
+            this.rbSystem.AutoSize = true;
+            this.rbSystem.Location = new System.Drawing.Point(241, 91);
+            this.rbSystem.Name = "rbSystem";
+            this.rbSystem.Size = new System.Drawing.Size(60, 17);
+            this.rbSystem.TabIndex = 5;
+            this.rbSystem.TabStop = true;
+            this.rbSystem.Text = "System";
+            this.tooltip.SetToolTip(this.rbSystem, "Administrator Privileges are required to install the client in System.");
+            this.rbSystem.UseVisualStyleBackColor = true;
+            this.rbSystem.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
+            // 
+            // rbProgramFiles
+            // 
+            this.rbProgramFiles.AutoSize = true;
+            this.rbProgramFiles.Location = new System.Drawing.Point(241, 68);
+            this.rbProgramFiles.Name = "rbProgramFiles";
+            this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
+            this.rbProgramFiles.TabIndex = 4;
+            this.rbProgramFiles.TabStop = true;
+            this.rbProgramFiles.Text = "Program Files";
+            this.tooltip.SetToolTip(this.rbProgramFiles, "Administrator Privileges are required to install the client in Program Files.");
+            this.rbProgramFiles.UseVisualStyleBackColor = true;
+            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // contextMenuStrip
             // 
@@ -247,9 +295,9 @@
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(17, 20);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(324, 13);
+            this.label7.Size = new System.Drawing.Size(232, 13);
             this.label7.TabIndex = 1;
-            this.label7.Text = "You can choose a tag which helps you to identify your clients.";
+            this.label7.Text = "You can choose a tag to identify your client.";
             // 
             // lblTag
             // 
@@ -581,28 +629,6 @@
             this.label5.TabIndex = 0;
             this.label5.Text = "Installation Location";
             // 
-            // picUAC2
-            // 
-            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC2.Location = new System.Drawing.Point(363, 88);
-            this.picUAC2.Name = "picUAC2";
-            this.picUAC2.Size = new System.Drawing.Size(16, 20);
-            this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picUAC2.TabIndex = 32;
-            this.picUAC2.TabStop = false;
-            this.tooltip.SetToolTip(this.picUAC2, "Administrator Privileges are required to install the client in System.");
-            // 
-            // picUAC1
-            // 
-            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC1.Location = new System.Drawing.Point(363, 68);
-            this.picUAC1.Name = "picUAC1";
-            this.picUAC1.Size = new System.Drawing.Size(16, 20);
-            this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
-            this.picUAC1.TabIndex = 31;
-            this.picUAC1.TabStop = false;
-            this.tooltip.SetToolTip(this.picUAC1, "Administrator Privileges are required to install the client in Program Files.");
-            // 
             // chkInstall
             // 
             this.chkInstall.AutoSize = true;
@@ -614,19 +640,6 @@
             this.chkInstall.UseVisualStyleBackColor = true;
             this.chkInstall.CheckedChanged += new System.EventHandler(this.chkInstall_CheckedChanged);
             // 
-            // rbSystem
-            // 
-            this.rbSystem.AutoSize = true;
-            this.rbSystem.Location = new System.Drawing.Point(241, 91);
-            this.rbSystem.Name = "rbSystem";
-            this.rbSystem.Size = new System.Drawing.Size(60, 17);
-            this.rbSystem.TabIndex = 5;
-            this.rbSystem.TabStop = true;
-            this.rbSystem.Text = "System";
-            this.tooltip.SetToolTip(this.rbSystem, "Administrator Privileges are required to install the client in System.");
-            this.rbSystem.UseVisualStyleBackColor = true;
-            this.rbSystem.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
-            // 
             // lblInstallname
             // 
             this.lblInstallname.AutoSize = true;
@@ -635,19 +648,6 @@
             this.lblInstallname.Size = new System.Drawing.Size(73, 13);
             this.lblInstallname.TabIndex = 8;
             this.lblInstallname.Text = "Install Name:";
-            // 
-            // rbProgramFiles
-            // 
-            this.rbProgramFiles.AutoSize = true;
-            this.rbProgramFiles.Location = new System.Drawing.Point(241, 68);
-            this.rbProgramFiles.Name = "rbProgramFiles";
-            this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
-            this.rbProgramFiles.TabIndex = 4;
-            this.rbProgramFiles.TabStop = true;
-            this.rbProgramFiles.Text = "Program Files";
-            this.tooltip.SetToolTip(this.rbProgramFiles, "Administrator Privileges are required to install the client in Program Files.");
-            this.rbProgramFiles.UseVisualStyleBackColor = true;
-            this.rbProgramFiles.CheckedChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             // 
             // txtInstallname
             // 
@@ -797,6 +797,15 @@
             this.assemblyPage.Size = new System.Drawing.Size(391, 376);
             this.assemblyPage.TabIndex = 2;
             this.assemblyPage.Text = "Assembly Settings";
+            // 
+            // iconPreview
+            // 
+            this.iconPreview.Location = new System.Drawing.Point(319, 302);
+            this.iconPreview.Name = "iconPreview";
+            this.iconPreview.Size = new System.Drawing.Size(64, 64);
+            this.iconPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
+            this.iconPreview.TabIndex = 42;
+            this.iconPreview.TabStop = false;
             // 
             // btnBrowseIcon
             // 
@@ -1050,15 +1059,6 @@
             this.chkKeylogger.UseVisualStyleBackColor = true;
             this.chkKeylogger.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
             // 
-            // iconPreview
-            // 
-            this.iconPreview.Location = new System.Drawing.Point(319, 302);
-            this.iconPreview.Name = "iconPreview";
-            this.iconPreview.Size = new System.Drawing.Size(64, 64);
-            this.iconPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
-            this.iconPreview.TabIndex = 42;
-            this.iconPreview.TabStop = false;
-            // 
             // FrmBuilder
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1077,6 +1077,8 @@
             this.Text = "Client Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.contextMenuStrip.ResumeLayout(false);
             this.builderTabs.ResumeLayout(false);
             this.generalPage.ResumeLayout(false);
@@ -1085,13 +1087,11 @@
             this.connectionPage.PerformLayout();
             this.installationPage.ResumeLayout(false);
             this.installationPage.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.picUAC1)).EndInit();
             this.assemblyPage.ResumeLayout(false);
             this.assemblyPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).EndInit();
             this.surveillanceTab.ResumeLayout(false);
             this.surveillanceTab.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).EndInit();
             this.ResumeLayout(false);
 
         }
