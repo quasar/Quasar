@@ -13,6 +13,10 @@ namespace xClient.Core.Networking
 {
     public class QuasarClient : Client
     {
+        /// <summary>
+        /// When Exiting is true, stop all running threads and exit.
+        /// </summary>
+        public static bool Exiting { get; private set; }
         public bool Authenticated { get; private set; }
         private readonly HostsManager _hosts;
 
@@ -81,7 +85,7 @@ namespace xClient.Core.Networking
 
         public void Connect()
         {
-            while (!ClientData.Disconnect) // Main Connect Loop
+            while (!Exiting) // Main Connect Loop
             {
                 if (!Connected)
                 {
@@ -102,7 +106,7 @@ namespace xClient.Core.Networking
                     Thread.Sleep(2500);
                 }
 
-                if (ClientData.Disconnect)
+                if (Exiting)
                 {
                     Disconnect();
                     return;
@@ -142,13 +146,19 @@ namespace xClient.Core.Networking
         {
             Authenticated = false; // always reset authentication
 
-            if (!connected && !ClientData.Disconnect)
+            if (!connected && !Exiting)
                 LostConnection();
         }
 
         private void LostConnection()
         {
             CommandHandler.CloseShell();
+        }
+
+        public void Exit()
+        {
+            Exiting = true;
+            Disconnect();
         }
     }
 }

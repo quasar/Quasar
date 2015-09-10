@@ -1,5 +1,4 @@
 ﻿using xClient.Core.Commands;
-using xClient.Core.Data;
 using xClient.Core.Networking;
 using xClient.Core.ReverseProxy;
 
@@ -22,12 +21,11 @@ namespace xClient.Core.Packets
             }
             else if (type == typeof(ServerPackets.DoClientDisconnect))
             {
-                ClientData.Disconnect = true;
-                client.Disconnect();
+                Program.ConnectClient.Exit();
             }
             else if (type == typeof(ServerPackets.DoClientReconnect))
             {
-                client.Disconnect();
+                Program.ConnectClient.Disconnect();
             }
             else if (type == typeof(ServerPackets.DoClientUninstall))
             {

@@ -24,7 +24,6 @@ namespace xClient.Core.Installation
                 }
                 catch (Exception)
                 {
-                    ClientData.Disconnect = true;
                     return;
                 }
             }
@@ -63,7 +62,6 @@ namespace xClient.Core.Installation
             }
             catch (Exception)
             {
-                ClientData.Disconnect = true;
                 return;
             }
 
@@ -101,7 +99,6 @@ namespace xClient.Core.Installation
             catch (Exception)
             {
             }
-            ClientData.Disconnect = true;
         }
     }
 }

