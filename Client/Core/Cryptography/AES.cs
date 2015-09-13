@@ -39,7 +39,7 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var rd = new RijndaelManaged { Key = _key })
+                    using (var rd = new AesManaged { Key = _key })
                     {
                         rd.GenerateIV();
 
@@ -75,7 +75,7 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var rd = new RijndaelManaged { Key = key })
+                    using (var rd = new AesManaged { Key = key })
                     {
                         rd.GenerateIV();
 
@@ -111,7 +111,7 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream(input))
                 {
-                    using (var rd = new RijndaelManaged { Key = _key })
+                    using (var rd = new AesManaged { Key = _key })
                     {
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
