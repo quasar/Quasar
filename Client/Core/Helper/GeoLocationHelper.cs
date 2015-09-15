@@ -139,6 +139,7 @@ namespace xClient.Core.Helper
                             string xmlCountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
                             string xmlRegion = doc.SelectSingleNode("Response//RegionName").InnerXml;
                             string xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
+                            string timeZone = doc.SelectSingleNode("Response//TimeZone").InnerXml;
 
                             GeoInfo.ip = (!string.IsNullOrEmpty(xmlIp))
                                 ? xmlIp
@@ -155,6 +156,11 @@ namespace xClient.Core.Helper
                             GeoInfo.city = (!string.IsNullOrEmpty(xmlCity))
                                 ? xmlCity
                                 : "Unknown";
+                            GeoInfo.timezone = (!string.IsNullOrEmpty(timeZone))
+                                ? timeZone
+                                : "Unknown";
+
+                            GeoInfo.isp = "Unknown"; // freegeoip does not support ISP detection
                         }
                     }
                 }
