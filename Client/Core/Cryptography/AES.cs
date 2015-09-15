@@ -5,6 +5,7 @@ using System.Text;
 
 namespace xClient.Core.Cryptography
 {
+    // ReSharper disable once InconsistentNaming
     public static class AES
     {
         private const int IVLENGTH = 16;
@@ -39,13 +40,13 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var rd = new AesManaged { Key = _key })
+                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _key })
                     {
-                        rd.GenerateIV();
+                        aesProvider.GenerateIV();
 
-                        using (var cs = new CryptoStream(ms, rd.CreateEncryptor(), CryptoStreamMode.Write))
+                        using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
                         {
-                            ms.Write(rd.IV, 0, rd.IV.Length); // write first 16 bytes IV, followed by encrypted message
+                            ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write first 16 bytes IV, followed by encrypted message
                             cs.Write(data, 0, data.Length);
                         }
                     }
@@ -62,7 +63,6 @@ namespace xClient.Core.Cryptography
         public static byte[] Encrypt(byte[] input, byte[] key)
         {
             if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
-            if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
             using (var md5 = new MD5CryptoServiceProvider())
             {
@@ -75,13 +75,13 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var rd = new AesManaged { Key = key })
+                    using (var aesProvider = new AesCryptoServiceProvider() { Key = key })
                     {
-                        rd.GenerateIV();
+                        aesProvider.GenerateIV();
 
-                        using (var cs = new CryptoStream(ms, rd.CreateEncryptor(), CryptoStreamMode.Write))
+                        using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
                         {
-                            ms.Write(rd.IV, 0, rd.IV.Length); // write first 16 bytes IV, followed by encrypted message
+                            ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write first 16 bytes IV, followed by encrypted message
                             cs.Write(data, 0, data.Length);
                         }
                     }
@@ -111,13 +111,13 @@ namespace xClient.Core.Cryptography
             {
                 using (var ms = new MemoryStream(input))
                 {
-                    using (var rd = new AesManaged { Key = _key })
+                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _key })
                     {
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
-                        rd.IV = iv;
+                        aesProvider.IV = iv;
 
-                        using (var cs = new CryptoStream(ms, rd.CreateDecryptor(), CryptoStreamMode.Read))
+                        using (var cs = new CryptoStream(ms, aesProvider.CreateDecryptor(), CryptoStreamMode.Read))
                         {
                             byte[] temp = new byte[ms.Length - IVLENGTH + 1];
                             data = new byte[cs.Read(temp, 0, temp.Length)];
