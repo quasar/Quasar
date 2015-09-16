@@ -34,7 +34,7 @@ namespace xClient.Core.Helper
 
             Name = Regex.Replace(Name, "^.*(?=Windows)", "").TrimEnd().TrimStart(); // Remove everything before first match "Windows" and trim end & start
             Is64Bit = Environment.Is64BitOperatingSystem;
-            FullName = string.Format("{0} {1} Bit", Name, Is64Bit ? (ushort)64 : (ushort)32);
+            FullName = string.Format("{0} {1} Bit", Name, Is64Bit ? 64 : 32);
         }
 
         /// <summary>
