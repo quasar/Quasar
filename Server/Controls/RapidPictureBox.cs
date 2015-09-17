@@ -151,8 +151,6 @@ namespace xServer.Controls
         public RapidPictureBox()
         {
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-
-            _frameCounter = new FrameCounter();
         }
 
         protected override CreateParams CreateParams

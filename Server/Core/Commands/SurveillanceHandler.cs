@@ -41,7 +41,10 @@ namespace xServer.Core.Commands
         }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
-            if (client.Value == null || client.Value.FrmRdp == null)
+            if (client.Value == null 
+                || client.Value.FrmRdp == null 
+                || client.Value.FrmRdp.IsDisposed 
+                || client.Value.FrmRdp.Disposing)
                 return;
 
             if (packet.Image == null)
