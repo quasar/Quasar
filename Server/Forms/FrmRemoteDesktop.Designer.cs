@@ -230,9 +230,9 @@
         private System.Windows.Forms.Panel panelTop;
         private System.Windows.Forms.Button btnHide;
         private System.Windows.Forms.Button btnShow;
-        private xServer.Controls.RapidPictureBox picDesktop;
         private System.Windows.Forms.ComboBox cbMonitors;
         private System.Windows.Forms.Button btnKeyboard;
         private System.Windows.Forms.ToolTip toolTipButtons;
+        private Controls.RapidPictureBox picDesktop;
     }
 }

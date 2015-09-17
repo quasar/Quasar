@@ -44,12 +44,8 @@ namespace xServer.Core.MouseKeyHook.WinApi
         ///         </item>
         ///     </list>
         /// </remarks>
-#if IS_X64
-        [FieldOffset(0x22)]
-#else
-        [FieldOffset(0x16)]
-#endif
-            public Int16 MouseData;
+        [FieldOffset(0x16)] public Int16 MouseData_x86;
+        [FieldOffset(0x22)] public Int16 MouseData_x64;
 
         /// <summary>
         ///     Converts the current <see cref="AppMouseStruct" /> into a <see cref="MouseStruct" />.
@@ -62,7 +58,7 @@ namespace xServer.Core.MouseKeyHook.WinApi
         {
             MouseStruct tmp = new MouseStruct();
             tmp.Point = Point;
-            tmp.MouseData = MouseData;
+            tmp.MouseData = (IntPtr.Size == 4) ? MouseData_x86 : MouseData_x64;
             tmp.Timestamp = Environment.TickCount;
             return tmp;
         }

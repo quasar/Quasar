@@ -92,8 +92,6 @@ namespace xServer.Controls
         /// </summary>
         public void Start()
         {
-            _frameCounter = new FrameCounter();
-
             _sWatch = Stopwatch.StartNew();
 
             Running = true;
