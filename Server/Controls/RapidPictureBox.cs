@@ -92,6 +92,8 @@ namespace xServer.Controls
         /// </summary>
         public void Start()
         {
+            _frameCounter = new FrameCounter();
+
             _sWatch = Stopwatch.StartNew();
 
             Running = true;
@@ -149,8 +151,6 @@ namespace xServer.Controls
         public RapidPictureBox()
         {
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
-
-            _frameCounter = new FrameCounter();
         }
 
         protected override CreateParams CreateParams
