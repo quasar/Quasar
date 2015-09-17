@@ -66,7 +66,12 @@ namespace xServer.Forms
 
         private void UnsubscribeEvents()
         {
-            if (_keyboardHook != null && _mouseHook != null)
+            if (PlatformHelper.RunningOnMono)
+            {
+                this.KeyDown -= OnKeyDown;
+                this.KeyUp -= OnKeyUp;
+            }
+            else if (_keyboardHook != null && _mouseHook != null)
             {
                 _keyboardHook.KeyDown -= OnKeyDown;
                 _keyboardHook.KeyUp -= OnKeyUp;
@@ -75,9 +80,6 @@ namespace xServer.Forms
                 _mouseHook.Dispose();
                 _keyboardHook.Dispose();
             }
-
-            this.KeyDown -= OnKeyDown;
-            this.KeyUp -= OnKeyUp;
         }
 
         public void AddMonitors(int monitors)
