@@ -46,14 +46,17 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
+        /// <summary>
+        /// Subscribes the local mouse and keyboard hooks.
+        /// </summary>
         private void SubscribeEvents()
         {
-            if (PlatformHelper.RunningOnMono)
+            if (PlatformHelper.RunningOnMono) // Mono/Linux
             {
                 this.KeyDown += OnKeyDown;
                 this.KeyUp += OnKeyUp;
             }
-            else
+            else // Windows
             {
                 _keyboardHook = Hook.GlobalEvents();
                 _keyboardHook.KeyDown += OnKeyDown;
@@ -64,21 +67,29 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Unsubscribes the local mouse and keyboard hooks.
+        /// </summary>
         private void UnsubscribeEvents()
         {
-            if (PlatformHelper.RunningOnMono)
+            if (PlatformHelper.RunningOnMono) // Mono/Linux
             {
                 this.KeyDown -= OnKeyDown;
                 this.KeyUp -= OnKeyUp;
             }
-            else if (_keyboardHook != null && _mouseHook != null)
+            else // Windows
             {
-                _keyboardHook.KeyDown -= OnKeyDown;
-                _keyboardHook.KeyUp -= OnKeyUp;
-                _mouseHook.MouseWheel -= OnMouseWheelMove;
-
-                _mouseHook.Dispose();
-                _keyboardHook.Dispose();
+                if (_keyboardHook != null)
+                {
+                    _keyboardHook.KeyDown -= OnKeyDown;
+                    _keyboardHook.KeyUp -= OnKeyUp;
+                    _keyboardHook.Dispose();
+                }
+                if (_mouseHook != null)
+                {
+                    _mouseHook.MouseWheel -= OnMouseWheelMove;
+                    _mouseHook.Dispose();
+                }
             }
         }
 
