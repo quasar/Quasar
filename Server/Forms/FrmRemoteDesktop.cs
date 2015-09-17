@@ -8,7 +8,6 @@ using xServer.Core.Utilities;
 using xServer.Core.MouseKeyHook;
 using xServer.Enums;
 
-
 namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
@@ -38,7 +37,7 @@ namespace xServer.Forms
 
             btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
 
-            btnShow.Location = new System.Drawing.Point(377, 0);
+            btnShow.Location = new Point(377, 0);
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
             _keysPressed = new List<Keys>();
@@ -97,7 +96,7 @@ namespace xServer.Forms
             }
         }
 
-        public void UpdateImage(System.Drawing.Bitmap bmp, bool cloneBitmap = false)
+        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
             picDesktop.UpdateImage(bmp, cloneBitmap);
         }
