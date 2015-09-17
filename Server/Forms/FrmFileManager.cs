@@ -240,24 +240,24 @@ namespace xServer.Forms
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            int count = lstDirectory.SelectedItems.Count;
+            if (count == 0) return;
+            if (MessageBox.Show(string.Format("Are you sure you want to delete {0} file(s)?", count),
+                "Delete Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                PathType type = (PathType)files.Tag;
-
-                switch (type)
+                foreach (ListViewItem files in lstDirectory.SelectedItems)
                 {
-                    case PathType.Directory:
-                    case PathType.File:
-                        string path = GetAbsolutePath(files.SubItems[0].Text);
-                        string text = string.Format("Are you sure you want to delete this {0}?", type);
+                    PathType type = (PathType)files.Tag;
 
-                        if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                            DialogResult.Yes)
-                        {
+                    switch (type)
+                    {
+                        case PathType.Directory:
+                        case PathType.File:
+                            string path = GetAbsolutePath(files.SubItems[0].Text);
                             if (_connectClient != null)
                                 new Core.Packets.ServerPackets.DoPathDelete(path, type).Execute(_connectClient);
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
         }
