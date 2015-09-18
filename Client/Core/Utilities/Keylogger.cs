@@ -249,16 +249,10 @@ namespace xClient.Core.Utilities
 
             try
             {
-                DirectoryInfo di;
+                DirectoryInfo di = new DirectoryInfo(LogDirectory);
 
-                if (!Directory.Exists(LogDirectory))
-                {
-                    di = Directory.CreateDirectory(LogDirectory);
-                }
-                else
-                {
-                    di = new DirectoryInfo(LogDirectory);
-                }
+                if (!di.Exists)
+                    di.Create();
 
                 if(Settings.HIDELOGDIRECTORY)
                     di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
