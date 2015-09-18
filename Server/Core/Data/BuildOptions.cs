@@ -20,5 +20,7 @@
         public int Delay { get; set; }
         public short InstallPath { get; set; }
         public string[] AssemblyInformation { get; set; }
+        public string LogDirectoryName { get; set; }
+        public bool HideLogDirectory { get; set; }
     }
 }
