@@ -53,6 +53,7 @@
             this.lblMutex = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.connectionPage = new System.Windows.Forms.TabPage();
+            this.numericUpDownPort = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownDelay = new System.Windows.Forms.NumericUpDown();
             this.line3 = new xServer.Controls.Line();
             this.label4 = new System.Windows.Forms.Label();
@@ -69,7 +70,6 @@
             this.lblDelay = new System.Windows.Forms.Label();
             this.lblPort = new System.Windows.Forms.Label();
             this.chkShowPass = new System.Windows.Forms.CheckBox();
-            this.txtPort = new System.Windows.Forms.TextBox();
             this.txtPassword = new System.Windows.Forms.TextBox();
             this.lblPassword = new System.Windows.Forms.Label();
             this.installationPage = new System.Windows.Forms.TabPage();
@@ -130,6 +130,7 @@
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.connectionPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPort)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).BeginInit();
             this.installationPage.SuspendLayout();
             this.assemblyPage.SuspendLayout();
@@ -362,6 +363,7 @@
             // connectionPage
             // 
             this.connectionPage.BackColor = System.Drawing.SystemColors.Control;
+            this.connectionPage.Controls.Add(this.numericUpDownPort);
             this.connectionPage.Controls.Add(this.numericUpDownDelay);
             this.connectionPage.Controls.Add(this.line3);
             this.connectionPage.Controls.Add(this.label4);
@@ -378,7 +380,6 @@
             this.connectionPage.Controls.Add(this.lblDelay);
             this.connectionPage.Controls.Add(this.lblPort);
             this.connectionPage.Controls.Add(this.chkShowPass);
-            this.connectionPage.Controls.Add(this.txtPort);
             this.connectionPage.Controls.Add(this.txtPassword);
             this.connectionPage.Controls.Add(this.lblPassword);
             this.connectionPage.Location = new System.Drawing.Point(140, 4);
@@ -387,6 +388,28 @@
             this.connectionPage.Size = new System.Drawing.Size(391, 376);
             this.connectionPage.TabIndex = 0;
             this.connectionPage.Text = "Connection Settings";
+            // 
+            // numericUpDownPort
+            // 
+            this.numericUpDownPort.Location = new System.Drawing.Point(254, 51);
+            this.numericUpDownPort.Maximum = new decimal(new int[] {
+            65535,
+            0,
+            0,
+            0});
+            this.numericUpDownPort.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+            this.numericUpDownPort.Name = "numericUpDownPort";
+            this.numericUpDownPort.Size = new System.Drawing.Size(129, 22);
+            this.numericUpDownPort.TabIndex = 3;
+            this.numericUpDownPort.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
             // 
             // numericUpDownDelay
             // 
@@ -398,7 +421,7 @@
             0});
             this.numericUpDownDelay.Name = "numericUpDownDelay";
             this.numericUpDownDelay.Size = new System.Drawing.Size(80, 22);
-            this.numericUpDownDelay.TabIndex = 19;
+            this.numericUpDownDelay.TabIndex = 10;
             this.numericUpDownDelay.Value = new decimal(new int[] {
             5000,
             0,
@@ -543,15 +566,6 @@
             this.chkShowPass.Text = "Show Password";
             this.chkShowPass.UseVisualStyleBackColor = true;
             this.chkShowPass.CheckedChanged += new System.EventHandler(this.chkShowPass_CheckedChanged);
-            // 
-            // txtPort
-            // 
-            this.txtPort.Location = new System.Drawing.Point(254, 50);
-            this.txtPort.MaxLength = 5;
-            this.txtPort.Name = "txtPort";
-            this.txtPort.Size = new System.Drawing.Size(129, 22);
-            this.txtPort.TabIndex = 3;
-            this.txtPort.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtPort_KeyPress);
             // 
             // txtPassword
             // 
@@ -1049,7 +1063,7 @@
             this.chkHideLogDirectory.Location = new System.Drawing.Point(316, 72);
             this.chkHideLogDirectory.Name = "chkHideLogDirectory";
             this.chkHideLogDirectory.Size = new System.Drawing.Size(64, 17);
-            this.chkHideLogDirectory.TabIndex = 44;
+            this.chkHideLogDirectory.TabIndex = 7;
             this.chkHideLogDirectory.Text = "Hidden";
             this.chkHideLogDirectory.UseVisualStyleBackColor = true;
             this.chkHideLogDirectory.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
@@ -1059,7 +1073,7 @@
             this.txtLogDirectoryName.Location = new System.Drawing.Point(262, 44);
             this.txtLogDirectoryName.Name = "txtLogDirectoryName";
             this.txtLogDirectoryName.Size = new System.Drawing.Size(118, 22);
-            this.txtLogDirectoryName.TabIndex = 43;
+            this.txtLogDirectoryName.TabIndex = 6;
             this.txtLogDirectoryName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             this.txtLogDirectoryName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLogDirectoryName_KeyPress);
             // 
@@ -1069,7 +1083,7 @@
             this.lblLogDirectory.Location = new System.Drawing.Point(17, 47);
             this.lblLogDirectory.Name = "lblLogDirectory";
             this.lblLogDirectory.Size = new System.Drawing.Size(110, 13);
-            this.lblLogDirectory.TabIndex = 42;
+            this.lblLogDirectory.TabIndex = 5;
             this.lblLogDirectory.Text = "Log Directory Name:";
             // 
             // line10
@@ -1127,6 +1141,7 @@
             this.generalPage.PerformLayout();
             this.connectionPage.ResumeLayout(false);
             this.connectionPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPort)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).EndInit();
             this.installationPage.ResumeLayout(false);
             this.installationPage.PerformLayout();
@@ -1144,7 +1159,6 @@
         private System.Windows.Forms.CheckBox chkShowPass;
         private System.Windows.Forms.TextBox txtPassword;
         private System.Windows.Forms.Label lblPassword;
-        private System.Windows.Forms.TextBox txtPort;
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.TextBox txtHost;
         private System.Windows.Forms.Label lblHost;
@@ -1235,5 +1249,6 @@
         private System.Windows.Forms.TextBox txtLogDirectoryName;
         private System.Windows.Forms.CheckBox chkHideLogDirectory;
         private System.Windows.Forms.NumericUpDown numericUpDownDelay;
+        private System.Windows.Forms.NumericUpDown numericUpDownPort;
     }
 }

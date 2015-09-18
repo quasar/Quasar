@@ -95,7 +95,7 @@ namespace xServer.Forms
         {
             LoadProfile("Default");
 
-            txtPort.Text = Settings.ListenPort.ToString();
+            numericUpDownPort.Value = Settings.ListenPort;
 
             UpdateInstallationControlStates();
             UpdateStartupControlStates();
@@ -115,22 +115,15 @@ namespace xServer.Forms
 
         private void btnAddHost_Click(object sender, EventArgs e)
         {
-            if (txtHost.Text.Length < 1 || txtPort.Text.Length < 1) return;
+            if (txtHost.Text.Length < 1) return;
 
             HasChanged();
 
             var host = txtHost.Text;
-            ushort port;
-            if (!ushort.TryParse(txtPort.Text, out port))
-            {
-                MessageBox.Show("Please enter a valid port.", "Builder",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
-                return;
-            }
+            ushort port = (ushort)numericUpDownDelay.Value;
 
             _hosts.Add(new Host {Hostname = host, Port = port});
             txtHost.Text = "";
-            txtPort.Text = "";
         }
 
         #region "Context Menu"
@@ -165,16 +158,6 @@ namespace xServer.Forms
         private void chkShowPass_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
-        }
-
-        private void txtPort_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
-        }
-
-        private void txtDelay_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            e.Handled = (!char.IsControl(e.KeyChar) && !char.IsDigit(e.KeyChar));
         }
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
