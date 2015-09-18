@@ -56,7 +56,7 @@ namespace xClient.Config
         public static bool Initialize()
         {
             if (string.IsNullOrEmpty(VERSION)) return false;
-            AES.PreHashKey(ENCRYPTIONKEY);
+            AES.SetDefaultKey(ENCRYPTIONKEY);
             TAG = AES.Decrypt(TAG);
             VERSION = AES.Decrypt(VERSION);
             HOSTS = AES.Decrypt(HOSTS);
