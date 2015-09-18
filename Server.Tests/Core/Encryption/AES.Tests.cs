@@ -14,7 +14,7 @@ namespace xServer.Tests.Core.Encryption
             var input = FileHelper.GetRandomFilename(100);
             var password = FileHelper.GetRandomFilename(50);
 
-            AES.PreHashKey(password);
+            AES.SetDefaultKey(password);
 
             var encrypted = AES.Encrypt(input);
 
@@ -33,7 +33,7 @@ namespace xServer.Tests.Core.Encryption
             var inputByte = Encoding.UTF8.GetBytes(input);
             var password = FileHelper.GetRandomFilename(50);
 
-            AES.PreHashKey(password);
+            AES.SetDefaultKey(password);
 
             var encryptedByte = AES.Encrypt(inputByte);
 

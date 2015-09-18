@@ -9,13 +9,13 @@ namespace xServer.Core.Cryptography
     public static class AES
     {
         private const int IVLENGTH = 16;
-        private static byte[] _key;
+        private static byte[] _defaultKey;
 
-        public static void PreHashKey(string key)
+        public static void SetDefaultKey(string key)
         {
             using (var md5 = new MD5CryptoServiceProvider())
             {
-                _key = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
+                _defaultKey = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
             }
         }
 
@@ -31,7 +31,7 @@ namespace xServer.Core.Cryptography
 
         public static byte[] Encrypt(byte[] input)
         {
-            if (_key == null || _key.Length == 0) throw new Exception("Key can not be empty.");
+            if (_defaultKey == null || _defaultKey.Length == 0) throw new Exception("Key can not be empty.");
             if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
             byte[] data = input, encdata = new byte[0];
@@ -40,7 +40,7 @@ namespace xServer.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _key })
+                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _defaultKey })
                     {
                         aesProvider.GenerateIV();
 
@@ -102,7 +102,7 @@ namespace xServer.Core.Cryptography
 
         public static byte[] Decrypt(byte[] input)
         {
-            if (_key == null || _key.Length == 0) throw new Exception("Key can not be empty.");
+            if (_defaultKey == null || _defaultKey.Length == 0) throw new Exception("Key can not be empty.");
             if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
             byte[] data = new byte[0];
@@ -111,7 +111,7 @@ namespace xServer.Core.Cryptography
             {
                 using (var ms = new MemoryStream(input))
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _key })
+                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _defaultKey })
                     {
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message

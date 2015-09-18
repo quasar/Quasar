@@ -73,7 +73,7 @@ namespace xServer.Forms
             {
                 try
                 {
-                    AES.PreHashKey(password);
+                    AES.SetDefaultKey(password);
 
                     if (chkUseUpnp.Checked)
                     {
@@ -143,7 +143,7 @@ namespace xServer.Forms
             Settings.AutoListen = chkAutoListen.Checked;
             Settings.ShowPopup = chkPopup.Checked;
             if (password != Settings.Password)
-                AES.PreHashKey(password);
+                AES.SetDefaultKey(password);
             Settings.Password = password;
             Settings.UseUPnP = chkUseUpnp.Checked;
             Settings.ShowToolTip = chkShowTooltip.Checked;

@@ -43,7 +43,7 @@ namespace xServer.Forms
         {
             Instance = this;
 
-            AES.PreHashKey(Settings.Password);
+            AES.SetDefaultKey(Settings.Password);
 
 #if !DEBUG
             if (Settings.ShowToU)
