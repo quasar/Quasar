@@ -53,6 +53,7 @@
             this.lblMutex = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.connectionPage = new System.Windows.Forms.TabPage();
+            this.numericUpDownDelay = new System.Windows.Forms.NumericUpDown();
             this.line3 = new xServer.Controls.Line();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -64,7 +65,6 @@
             this.btnAddHost = new System.Windows.Forms.Button();
             this.lblMS = new System.Windows.Forms.Label();
             this.lblHost = new System.Windows.Forms.Label();
-            this.txtDelay = new System.Windows.Forms.TextBox();
             this.txtHost = new System.Windows.Forms.TextBox();
             this.lblDelay = new System.Windows.Forms.Label();
             this.lblPort = new System.Windows.Forms.Label();
@@ -130,6 +130,7 @@
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
             this.connectionPage.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).BeginInit();
             this.installationPage.SuspendLayout();
             this.assemblyPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).BeginInit();
@@ -361,6 +362,7 @@
             // connectionPage
             // 
             this.connectionPage.BackColor = System.Drawing.SystemColors.Control;
+            this.connectionPage.Controls.Add(this.numericUpDownDelay);
             this.connectionPage.Controls.Add(this.line3);
             this.connectionPage.Controls.Add(this.label4);
             this.connectionPage.Controls.Add(this.label3);
@@ -372,7 +374,6 @@
             this.connectionPage.Controls.Add(this.btnAddHost);
             this.connectionPage.Controls.Add(this.lblMS);
             this.connectionPage.Controls.Add(this.lblHost);
-            this.connectionPage.Controls.Add(this.txtDelay);
             this.connectionPage.Controls.Add(this.txtHost);
             this.connectionPage.Controls.Add(this.lblDelay);
             this.connectionPage.Controls.Add(this.lblPort);
@@ -386,6 +387,24 @@
             this.connectionPage.Size = new System.Drawing.Size(391, 376);
             this.connectionPage.TabIndex = 0;
             this.connectionPage.Text = "Connection Settings";
+            // 
+            // numericUpDownDelay
+            // 
+            this.numericUpDownDelay.Location = new System.Drawing.Point(276, 282);
+            this.numericUpDownDelay.Maximum = new decimal(new int[] {
+            600000,
+            0,
+            0,
+            0});
+            this.numericUpDownDelay.Name = "numericUpDownDelay";
+            this.numericUpDownDelay.Size = new System.Drawing.Size(80, 22);
+            this.numericUpDownDelay.TabIndex = 19;
+            this.numericUpDownDelay.Value = new decimal(new int[] {
+            5000,
+            0,
+            0,
+            0});
+            this.numericUpDownDelay.ValueChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // line3
             // 
@@ -488,18 +507,6 @@
             this.lblHost.Size = new System.Drawing.Size(75, 13);
             this.lblHost.TabIndex = 0;
             this.lblHost.Text = "IP/Hostname:";
-            // 
-            // txtDelay
-            // 
-            this.txtDelay.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtDelay.Location = new System.Drawing.Point(310, 282);
-            this.txtDelay.MaxLength = 6;
-            this.txtDelay.Name = "txtDelay";
-            this.txtDelay.Size = new System.Drawing.Size(46, 22);
-            this.txtDelay.TabIndex = 10;
-            this.txtDelay.Text = "5000";
-            this.txtDelay.TextChanged += new System.EventHandler(this.HasChangedSetting);
-            this.txtDelay.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtDelay_KeyPress);
             // 
             // txtHost
             // 
@@ -1053,8 +1060,8 @@
             this.txtLogDirectoryName.Name = "txtLogDirectoryName";
             this.txtLogDirectoryName.Size = new System.Drawing.Size(118, 22);
             this.txtLogDirectoryName.TabIndex = 43;
-            this.txtLogDirectoryName.Text = "Logs";
             this.txtLogDirectoryName.TextChanged += new System.EventHandler(this.HasChangedSetting);
+            this.txtLogDirectoryName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLogDirectoryName_KeyPress);
             // 
             // lblLogDirectory
             // 
@@ -1120,6 +1127,7 @@
             this.generalPage.PerformLayout();
             this.connectionPage.ResumeLayout(false);
             this.connectionPage.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDownDelay)).EndInit();
             this.installationPage.ResumeLayout(false);
             this.installationPage.PerformLayout();
             this.assemblyPage.ResumeLayout(false);
@@ -1140,7 +1148,6 @@
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.TextBox txtHost;
         private System.Windows.Forms.Label lblHost;
-        private System.Windows.Forms.TextBox txtDelay;
         private System.Windows.Forms.Label lblDelay;
         private System.Windows.Forms.CheckBox chkInstall;
         private System.Windows.Forms.TextBox txtInstallname;
@@ -1227,5 +1234,6 @@
         private System.Windows.Forms.Label lblLogDirectory;
         private System.Windows.Forms.TextBox txtLogDirectoryName;
         private System.Windows.Forms.CheckBox chkHideLogDirectory;
+        private System.Windows.Forms.NumericUpDown numericUpDownDelay;
     }
 }

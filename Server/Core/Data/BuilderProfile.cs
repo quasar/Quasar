@@ -207,7 +207,7 @@ namespace xServer.Core.Data
         {
             get
             {
-                return ReadValueSafe("LogDirectoryName");
+                return ReadValueSafe("LogDirectoryName", "Logs");
             }
             set
             {
