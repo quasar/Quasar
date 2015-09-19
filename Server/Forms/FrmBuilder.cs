@@ -120,7 +120,7 @@ namespace xServer.Forms
             HasChanged();
 
             var host = txtHost.Text;
-            ushort port = (ushort)numericUpDownDelay.Value;
+            ushort port = (ushort)numericUpDownPort.Value;
 
             _hosts.Add(new Host {Hostname = host, Port = port});
             txtHost.Text = "";
