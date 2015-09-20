@@ -55,7 +55,7 @@ namespace xServer.Forms
                 req.Execute(client);
         }
 
-        public void AddPasswords(RecoveredAccount[] logins, string identification)
+        public void AddPasswords(RecoveredAccount[] accounts, string identification)
         {
             try
             {
@@ -63,19 +63,19 @@ namespace xServer.Forms
                 {
                     var items = new List<ListViewItem>();
 
-                    foreach (var login in logins)
+                    foreach (var acc in accounts)
                     {
-                        var lvi = new ListViewItem { Tag = login, Text = identification };
+                        var lvi = new ListViewItem { Tag = acc, Text = identification };
 
-                        lvi.SubItems.Add(login.URL); // URL
-                        lvi.SubItems.Add(login.Username); // User
-                        lvi.SubItems.Add(login.Password); // Pass
+                        lvi.SubItems.Add(acc.URL); // URL
+                        lvi.SubItems.Add(acc.Username); // User
+                        lvi.SubItems.Add(acc.Password); // Pass
 
-                        var lvg = GetGroupFromApplication(login.Application);
+                        var lvg = GetGroupFromApplication(acc.Application);
 
                         if (lvg == null) //Create new group
                         {
-                            lvg = new ListViewGroup { Name = login.Application.Replace(" ", string.Empty), Header = login.Application };
+                            lvg = new ListViewGroup { Name = acc.Application.Replace(" ", string.Empty), Header = acc.Application };
                             this.Invoke(new MethodInvoker(() => lstPasswords.Groups.Add(lvg))); //Add the new group
                         }
 
@@ -87,7 +87,7 @@ namespace xServer.Forms
                     UpdateRecoveryCount();
                 }
 
-                if (logins.Length == 0)
+                if (accounts.Length == 0)
                     MessageBox.Show("Could not recover anything!", "Password Recovery", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
             catch
