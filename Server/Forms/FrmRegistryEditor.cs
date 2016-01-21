@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using xServer.Controls;
 using xServer.Core.Networking;
 using xServer.Core.Registry;
 
@@ -196,6 +197,26 @@ namespace xServer.Forms
 
         #endregion
 
+        #region ListView Helpfunctions
+
+        public void PopulateLstRegistryKeys(List<RegValueData> values)
+        {
+            lstRegistryKeys.Items.Clear();
+
+            // If the array is not null, we have usable data.
+            if (values != null && values.Count > 0)
+            {
+                foreach (var value in values)
+                {
+                    // To-Do: Use a custom ListViewItem for a better style. (Maybe add the imageList to it?)
+                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
+                    lstRegistryKeys.Items.Add(item);
+                }
+            }
+        }
+
+        #endregion
+
         #region tvRegistryDirectory Action
 
         private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -223,6 +244,29 @@ namespace xServer.Forms
                 }
                 //Cancel expand
                 e.Cancel = true;
+            }
+        }
+
+        private void tvRegistryDirectory_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
+        {
+            if ((e.Node.Tag != null))
+            {
+                selectedStripStatusLabel.Text = e.Node.FullPath;
+                tvRegistryDirectory.SelectedNode = e.Node;
+
+                List<RegValueData> ValuesFromNode = null;
+                if (e.Node.Tag.GetType() == typeof(List<RegValueData>))
+                {
+                    ValuesFromNode = (List<RegValueData>)e.Node.Tag;
+                }
+
+                PopulateLstRegistryKeys(ValuesFromNode);
+            }
+            else
+            {
+                // It is likely that the user clicked on either an empty direction or an invalid RegistryKey.
+                // Clear the ListView.
+                PopulateLstRegistryKeys(null);
             }
         }
 
