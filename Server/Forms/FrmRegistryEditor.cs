@@ -268,6 +268,16 @@ namespace xServer.Forms
                 // Clear the ListView.
                 PopulateLstRegistryKeys(null);
             }
+
+            /* Enable delete and rename if not root node */
+            this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+            this.renameToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+
+            if (e.Button == MouseButtons.Right)
+            {
+                Point pos = new Point(e.X, e.Y);
+                contextMenuStrip.Show(tvRegistryDirectory, pos);
+            }
         }
 
         #endregion
