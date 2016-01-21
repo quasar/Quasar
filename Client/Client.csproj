@@ -94,8 +94,11 @@
     <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
