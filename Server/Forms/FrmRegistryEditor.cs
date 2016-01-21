@@ -120,6 +120,67 @@ namespace xServer.Forms
             }
         }
 
+        public void AddKeyToTree(string rootKey, RegSeekerMatch match)
+        {
+            TreeNode parent = GetParentTreeNode(rootKey);
+
+            tvRegistryDirectory.Invoke((MethodInvoker)delegate
+            {
+                //This will execute in the form thread
+                TreeNode node = CreateNode(match.Key, match.Key, match.Data);
+                if (match.HasSubKeys)
+                {
+                    node.Nodes.Add(new TreeNode());
+                }
+                parent.Nodes.Add(node);
+                if (!parent.IsExpanded)
+                {
+                    tvRegistryDirectory.SelectedNode = parent;
+                    tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.specialCreateRegistryKey_AfterExpand);
+                    parent.Expand();
+                }
+                else
+                {
+                    tvRegistryDirectory.SelectedNode = node;
+                    tvRegistryDirectory.LabelEdit = true;
+                    node.BeginEdit();
+                }
+            });
+        }
+
+        public void RemoveKeyFromTree(string rootKey, string subKey)
+        {
+            TreeNode parent = GetParentTreeNode(rootKey);
+
+            //Error key does not exists
+            if (!parent.Nodes.ContainsKey(subKey))
+                return;
+
+            tvRegistryDirectory.Invoke((MethodInvoker)delegate
+            {
+                parent.Nodes.RemoveByKey(subKey);
+            });
+
+        }
+
+        public void RenameKeyFromTree(string rootKey, string oldName, string newName)
+        {
+            TreeNode parent = GetParentTreeNode(rootKey);
+
+            //Error the key does not exist
+            if (!parent.Nodes.ContainsKey(oldName))
+                return;
+
+            int index = parent.Nodes.IndexOfKey(oldName);
+
+            //Temp - Should not be neccesary (only need to confirm the add)
+            tvRegistryDirectory.Invoke((MethodInvoker)delegate
+            {
+                parent.Nodes[index].Text = newName;
+                parent.Nodes[index].Name = newName;
+            });
+        }
+
         /// <summary>
         /// Using the RegSeekerMatch's name, obtain the parent TreeNode of the match, creating
         /// the TreeNodes if necessary.
@@ -197,6 +258,19 @@ namespace xServer.Forms
 
         #endregion
 
+        #region Popup actions
+
+        public void ShowErrorMessage(string errorMsg)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            });
+
+        }
+
+        #endregion
+
         #region ListView Helpfunctions
 
         public void PopulateLstRegistryKeys(List<RegValueData> values)
@@ -219,6 +293,43 @@ namespace xServer.Forms
 
         #region tvRegistryDirectory Action
 
+        private void tvRegistryDirectory_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
+        {
+            //No need to edit if it is null
+            if (e.Label != null)
+            {
+                //Prevent the change of the label
+                e.CancelEdit = true;
+
+                if (e.Label.Length > 0)
+                {
+                    foreach (TreeNode node in e.Node.Parent.Nodes)
+                    {
+                        if (node.Text == e.Label && node != e.Node)
+                        {
+                            //Prompt error
+                            MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                            e.Node.BeginEdit();
+                            return;
+                        }
+                    }
+
+                    //Normal rename action
+                    //Perform Rename action
+                    new xServer.Core.Packets.ServerPackets.DoRenameRegistryKey(e.Node.Parent.FullPath, e.Node.Name, e.Label).Execute(_connectClient);
+
+                    tvRegistryDirectory.LabelEdit = false;
+                }
+                else
+                {
+                    //Prompt error
+                    MessageBox.Show("Invalid label. \nThe label cannot be blank.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    e.Node.BeginEdit();
+
+                }
+            }
+        }
+
         private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
             // Before expansion of the node, prepare the first node with RegistryKeys.
@@ -230,13 +341,10 @@ namespace xServer.Forms
                 try
                 {
                     tvRegistryDirectory.SuspendLayout();
-
                     parentNode.Nodes.Clear();
 
                     // Send a packet to retrieve the data to use for the nodes.
-
                     new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(parentNode.FullPath).Execute(_connectClient);
-
                 }
                 finally
                 {
@@ -281,5 +389,87 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        #region ContextMenu
+
+        private void createNewRegistryKey_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                if (!(tvRegistryDirectory.SelectedNode.IsExpanded) && tvRegistryDirectory.SelectedNode.Nodes.Count > 0)
+                {
+                    //Subscribe
+                    tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
+                    tvRegistryDirectory.SelectedNode.Expand();
+                }
+                else
+                {
+                    //Try to create a new subkey
+                    new xServer.Core.Packets.ServerPackets.DoCreateRegistryKey(tvRegistryDirectory.SelectedNode.FullPath).Execute(_connectClient);
+                }
+            }
+        }
+
+        private void deleteRegistryKey_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null && tvRegistryDirectory.SelectedNode.Parent != null)
+            {
+                //Prompt user to confirm delete
+                string msg = "Are you sure you want to permanently delete this key and all of its subkeys?";
+                string caption = "Confirm Key Delete";
+                var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (answer == DialogResult.Yes)
+                {
+                    string parentPath = tvRegistryDirectory.SelectedNode.Parent.FullPath;
+
+                    new xServer.Core.Packets.ServerPackets.DoDeleteRegistryKey(parentPath, tvRegistryDirectory.SelectedNode.Name).Execute(_connectClient);
+                }
+            }
+        }
+
+        private void renameRegistryKey_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                tvRegistryDirectory.LabelEdit = true;
+                tvRegistryDirectory.SelectedNode.BeginEdit();
+            }
+        }
+
+        #endregion
+
+        #region Handlers
+
+        private void createRegistryKey_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node == tvRegistryDirectory.SelectedNode)
+            {
+                //Trigger a click
+                createNewRegistryKey_Click(this, e);
+
+                //Unsubscribe
+                tvRegistryDirectory.AfterExpand -= new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
+            }
+        }
+
+        ////A special case for when the node was empty and add was performed before expand
+        private void specialCreateRegistryKey_AfterExpand(object sender, TreeViewEventArgs e)
+        {
+            if (e.Node == tvRegistryDirectory.SelectedNode)
+            {
+                tvRegistryDirectory.SelectedNode = tvRegistryDirectory.SelectedNode.FirstNode;
+                tvRegistryDirectory.LabelEdit = true;
+
+                tvRegistryDirectory.SelectedNode.BeginEdit();
+
+                //Unsubscribe
+                tvRegistryDirectory.AfterExpand -= new System.Windows.Forms.TreeViewEventHandler(this.specialCreateRegistryKey_AfterExpand);
+            }
+        }
+
+        #endregion
+
+
     }
 }

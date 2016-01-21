@@ -81,6 +81,174 @@ namespace xClient.Core.Extensions
         }
 
         /// <summary>
+        /// Attempts to create a writable sub key from the key provided using the specified
+        /// name. This method assumes the caller will dispose of the key when done using it.
+        /// </summary>
+        /// <param name="key">The key of which the sub key is to be created from.</param>
+        /// <param name="name">The name of the sub-key.</param>
+        /// <returns>Returns the sub-key that was created for the key and name provided; Returns null if
+        /// unable to create a sub-key.</returns>
+        public static RegistryKey CreateSubKeySafe(this RegistryKey key, string name)
+        {
+            try
+            {
+                return key.CreateSubKey(name);
+            }
+            catch
+            {
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to delete a sub-key and its children from the key provided using the specified
+        /// name.
+        /// </summary>
+        /// <param name="key">The key of which the sub-key is to be deleted from.</param>
+        /// <param name="name">The name of the sub-key.</param>
+        /// <returns>Returns boolean value if the action succeded or failed
+        /// </returns>
+        public static bool DeleteSubKeyTreeSafe(this RegistryKey key, string name)
+        {
+            try
+            {
+                key.DeleteSubKeyTree(name, false);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #region Rename
+
+        /*
+        * Derived and Adapted from drdandle's article, 
+        * Copy and Rename Registry Keys at Code project.
+        * Copy and Rename Registry Keys (Post Date: November 11, 2006)
+        * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * This is a work that is not of the original. It
+        * has been modified to suit the needs of another
+        * application.
+        * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * First Modified by StingRaptor on January 21, 2016
+        * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        * Original Source:
+        * http://www.codeproject.com/Articles/16343/Copy-and-Rename-Registry-Keys
+        */
+
+        /// <summary>
+        /// Attempts to rename a sub-key to the key provided using the specified old
+        /// name and new name.
+        /// </summary>
+        /// <param name="key">The key of which the subkey is to be renamed from.</param>
+        /// <param name="oldName">The old name of the sub-key.</param>
+        /// <param name="newName">The new name of the sub-key.</param>
+        /// <returns>Returns boolean value if the action succeded or failed; Returns 
+        /// </returns>
+        public static bool RenameSubKeySafe(this RegistryKey key, string oldName, string newName)
+        {
+            try
+            {
+                //Copy from old to new
+                key.CopyKey(oldName, newName);
+                //Despose of the old key
+                key.DeleteSubKeyTree(oldName);
+                return true;
+            }
+            catch
+            {
+                //Try to despose of the newKey (The rename failed)
+                key.DeleteSubKeyTreeSafe(newName);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to copy a old subkey to a new subkey for the key 
+        /// provided using the specified old name and new name. (throws exceptions)
+        /// </summary>
+        /// <param name="key">The key of which the subkey is to be deleted from.</param>
+        /// <param name="oldName">The old name of the sub-key.</param>
+        /// <param name="newName">The new name of the sub-key.</param>
+        /// <returns>Returns nothing 
+        /// </returns>
+        public static void CopyKey(this RegistryKey key, string oldName, string newName)
+        {
+            //Create a new key
+            using (RegistryKey newKey = key.CreateSubKey(newName))
+            {
+
+                //Open old key
+                using (RegistryKey oldKey = key.OpenSubKey(oldName, true))
+                {
+
+                    //Copy from old to new
+                    RecursiveCopyKey(oldKey, newKey);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Attempts to rename a sub-key to the key provided using the specified old
+        /// name and new name.
+        /// </summary>
+        /// <param name="sourceKey">The source key to copy from.</param>
+        /// <param name="destKey">The destination key to copy to.</param>
+        /// <returns>Returns nothing 
+        /// </returns>
+        private static void RecursiveCopyKey(RegistryKey sourceKey, RegistryKey destKey)
+        {
+
+            //Copy all of the registry values
+            foreach (string valueName in sourceKey.GetValueNames())
+            {
+                object valueObj = sourceKey.GetValue(valueName);
+                RegistryValueKind valueKind = sourceKey.GetValueKind(valueName);
+                destKey.SetValue(valueName, valueObj, valueKind);
+            }
+
+            //Copy all of the subkeys
+            foreach (string subKeyName in sourceKey.GetSubKeyNames())
+            {
+                using (RegistryKey sourceSubkey = sourceKey.OpenSubKey(subKeyName))
+                {
+                    using (RegistryKey destSubKey = destKey.CreateSubKey(subKeyName))
+                    {
+                        //Recursive call to copy the sub key data
+                        RecursiveCopyKey(sourceSubkey, destSubKey);
+                    }
+                }
+            }
+        }
+
+        #endregion
+
+        #region FindKey
+
+        /// <summary>
+        /// Checks if the specified subkey exists in the key
+        /// </summary>
+        /// <param name="key">The key of which to search.</param>
+        /// <param name="name">The name of the sub-key to find.</param>
+        /// <returns>Returns boolean value if the action succeded or failed
+        /// </returns>
+        public static bool ContainsSubKey(this RegistryKey key, string name)
+        {
+            foreach (string subkey in key.GetSubKeyNames())
+            {
+                if (subkey == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        #endregion
+
+        /// <summary>
         /// Gets all of the value names associated with the registry key and returns
         /// formatted strings of the filtered values.
         /// </summary>

