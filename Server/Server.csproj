@@ -76,6 +76,7 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
     <Compile Include="Core\Data\DownloadAndExecute.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\GenericSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
@@ -145,6 +147,8 @@
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
+    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
+    <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
