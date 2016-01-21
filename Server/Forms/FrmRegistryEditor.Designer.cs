@@ -92,6 +92,7 @@
             this.tvRegistryDirectory.SelectedImageIndex = 0;
             this.tvRegistryDirectory.Size = new System.Drawing.Size(411, 664);
             this.tvRegistryDirectory.TabIndex = 0;
+            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
             // 
             // statusStrip
             // 

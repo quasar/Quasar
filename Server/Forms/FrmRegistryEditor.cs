@@ -195,5 +195,37 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        #region tvRegistryDirectory Action
+
+        private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
+        {
+            // Before expansion of the node, prepare the first node with RegistryKeys.
+            TreeNode parentNode = e.Node;
+
+            // If nothing is there (yet).
+            if (String.IsNullOrEmpty(parentNode.FirstNode.Name))
+            {
+                try
+                {
+                    tvRegistryDirectory.SuspendLayout();
+
+                    parentNode.Nodes.Clear();
+
+                    // Send a packet to retrieve the data to use for the nodes.
+
+                    new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(parentNode.FullPath).Execute(_connectClient);
+
+                }
+                finally
+                {
+                    tvRegistryDirectory.ResumeLayout();
+                }
+                //Cancel expand
+                e.Cancel = true;
+            }
+        }
+
+        #endregion
     }
 }
