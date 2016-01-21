@@ -139,7 +139,11 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
