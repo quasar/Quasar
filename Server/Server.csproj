@@ -141,6 +141,7 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />

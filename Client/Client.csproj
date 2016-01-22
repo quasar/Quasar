@@ -95,6 +95,7 @@
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />

