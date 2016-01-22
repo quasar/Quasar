@@ -318,7 +318,8 @@ namespace xClient.Core.Registry
                 case "HKEY_CURRENT_CONFIG":
                     return Microsoft.Win32.Registry.CurrentConfig;
                 default:
-                    return null;
+                    /* If none of the above then the key must be invalid */
+                    throw new Exception("Invalid rootkey, could not be found");
             }
         }
 
