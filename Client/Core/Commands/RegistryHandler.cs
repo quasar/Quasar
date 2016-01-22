@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using xClient.Core.Networking;
 using xClient.Core.Registry;
+using xClient.Core.Extensions;
 
 namespace xClient.Core.Commands
 {
@@ -23,6 +24,7 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */
     public static partial class CommandHandler
     {
+
         public static void HandleGetRegistryKey(xClient.Core.Packets.ServerPackets.DoLoadRegistryKey packet, Client client)
         {
             try
@@ -53,6 +55,8 @@ namespace xClient.Core.Commands
             catch
             { }
         }
+
+        #region Registry Key Edit
 
         public static void HandleCreateRegistryKey(xClient.Core.Packets.ServerPackets.DoCreateRegistryKey packet, Client client)
         {
@@ -116,5 +120,33 @@ namespace xClient.Core.Commands
 
             responsePacket.Execute(client);
         }
+
+        #endregion
+
+        #region RegistryValue Edit
+
+        public static void HandleCreateRegistryValue(xClient.Core.Packets.ServerPackets.DoCreateRegistryValue packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetCreateRegistryValueResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryValueResponse();
+            string errorMsg = "";
+            string newKeyName = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.CreateRegistryValue(packet.KeyPath, packet.Kind, out newKeyName, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+
+            responsePacket.Value = new RegValueData(newKeyName, packet.Kind.RegistryTypeToString(), null);
+            responsePacket.KeyPath = packet.KeyPath;
+
+            responsePacket.Execute(client);
+        }
+
+        #endregion
     }
 }

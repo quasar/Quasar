@@ -81,7 +81,7 @@ namespace xClient.Core.Extensions
         }
 
         /// <summary>
-        /// Attempts to create a writable sub key from the key provided using the specified
+        /// Attempts to create a sub key from the key provided using the specified
         /// name. This method assumes the caller will dispose of the key when done using it.
         /// </summary>
         /// <param name="key">The key of which the sub key is to be created from.</param>
@@ -225,7 +225,31 @@ namespace xClient.Core.Extensions
 
         #endregion
 
-        #region FindKey
+        #region Region Value
+
+        /// <summary>
+        /// Attempts to create a registry value for the key provided using the specified
+        /// name.
+        /// </summary>
+        /// <param name="key">The key of which the value is to be created for.</param>
+        /// <param name="name">The name of the value.</param>
+        /// <returns>Returns a boolean value if the action succeded or failed.</returns>
+        public static bool CreateValueSafe(this RegistryKey key, string name, object data, RegistryValueKind kind)
+        {
+            try
+            {
+                key.SetValue(name, data, kind);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Find
 
         /// <summary>
         /// Checks if the specified subkey exists in the key
@@ -239,6 +263,25 @@ namespace xClient.Core.Extensions
             foreach (string subkey in key.GetSubKeyNames())
             {
                 if (subkey == name)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
+        /// Checks if the specified registry value exists in the key
+        /// </summary>
+        /// <param name="key">The key of which to search.</param>
+        /// <param name="name">The name of the registry value to find.</param>
+        /// <returns>Returns boolean value if the action succeded or failed
+        /// </returns>
+        public static bool ContainsValue(this RegistryKey key, string name)
+        {
+            foreach (string value in key.GetValueNames())
+            {
+                if (value == name)
                 {
                     return true;
                 }

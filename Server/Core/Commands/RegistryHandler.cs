@@ -27,6 +27,8 @@ namespace xServer.Core.Commands
             { }
         }
 
+        #region Registry Key Edit
+
         public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)
         {
             try
@@ -86,5 +88,31 @@ namespace xServer.Core.Commands
             }
             catch { }
         }
+
+        #endregion
+
+        #region Registry Value Edit
+
+        public static void HandleCreateRegistryValue(xServer.Core.Packets.ClientPackets.GetCreateRegistryValueResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.AddValueToList(packet.KeyPath, packet.Value);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
+        #endregion
     }
 }

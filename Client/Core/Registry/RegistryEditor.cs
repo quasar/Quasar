@@ -9,11 +9,13 @@ namespace xClient.Core.Registry
 {
     public class RegistryEditor
     {
+
+        #region RegistryKey
         /// <summary>
         /// Attempts to create the desired sub key to the specified parent.
         /// </summary>
         /// <param name="parentPath">The path to the parent for which to create the sub-key on.</param>
-        /// /// <param name="name">output parameter that holds the name of the sub-key that was create.</param>
+        /// <param name="name">output parameter that holds the name of the sub-key that was create.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns boolean value for if the operation failed or succeded.</returns>
         public static bool CreateRegistryKey(string parentPath, out string name, out string errorMsg)
@@ -162,5 +164,65 @@ namespace xClient.Core.Registry
                 return false;
             }
         }
+
+        #endregion
+
+        #region RegistryValue
+
+        /// <summary>
+        /// Attempts to create the desired value for the specified parent.
+        /// </summary>
+        /// <param name="parentPath">The path to the parent for which to create the sub-key on.</param>
+        /// <param name="kind">The type of the registry value to create.</param>
+        /// <param name="name">output parameter that holds the name of the registry value that was create.</param>
+        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <returns>Returns boolean value for if the operation failed or succeded.</returns>
+        public static bool CreateRegistryValue(string keyPath, RegistryValueKind kind, out string name, out string errorMsg)
+        {
+            name = "";
+            try
+            {
+                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+
+                //Invalid can not open parent
+                if (key == null)
+                {
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    return false;
+                }
+
+                //Try to find available names
+                int i = 1;
+                string testName = String.Format("New Key #{0}", i);
+
+                while (key.ContainsValue(testName))
+                {
+                    i++;
+                    testName = String.Format("New Key #{0}", i);
+                }
+                name = testName;
+
+                bool success = key.CreateValueSafe(name, "", kind);
+
+                //Child could not be created
+                if (!success)
+                {
+                    errorMsg = "Cannot create value: Error writing to the registry";
+                    return false;
+                }
+
+                //Child was successfully created
+                errorMsg = "";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMsg = ex.Message;
+                return false;
+            }
+
+        }
+
+        #endregion
     }
 }

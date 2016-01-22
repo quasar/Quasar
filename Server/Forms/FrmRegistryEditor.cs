@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -273,6 +274,44 @@ namespace xServer.Forms
 
         #region ListView Helpfunctions
 
+        public void AddValueToList(string keyPath, RegValueData value)
+        {
+            TreeNode key = GetParentTreeNode(keyPath);
+
+            if (key != null )
+            {
+                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                {
+                    List<RegValueData> ValuesFromNode = null;
+                    if (key.Tag != null) {
+                        if (key.Tag.GetType() == typeof(List<RegValueData>))
+                        {
+                            ValuesFromNode = (List<RegValueData>)key.Tag;
+                            ValuesFromNode.Add(value);
+                        }
+                        else { return; }
+                    }
+                    else
+                    {
+                        ValuesFromNode = new List<RegValueData>();
+                        ValuesFromNode.Add(value);
+                    }
+
+                    if (tvRegistryDirectory.SelectedNode == key)
+                    {
+                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
+                        item.ImageIndex = GetRegistryValueImgIndex(value.Type);
+                        lstRegistryKeys.Items.Add(item);
+                    }
+                    else
+                    {
+                        tvRegistryDirectory.SelectedNode = key.FirstNode;
+                        PopulateLstRegistryKeys(ValuesFromNode);
+                    }
+                });
+            }
+        }
+
         public void PopulateLstRegistryKeys(List<RegValueData> values)
         {
             lstRegistryKeys.Items.Clear();
@@ -437,6 +476,19 @@ namespace xServer.Forms
                 tvRegistryDirectory.SelectedNode.BeginEdit();
             }
         }
+
+        #region New Registry Value
+
+        private void createStringRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_SZ
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.String).Execute(_connectClient);
+            }
+        }
+
+        #endregion
 
         #endregion
 

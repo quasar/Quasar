@@ -38,12 +38,19 @@
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.selectedStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.newToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.stringToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.binaryValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.dWORD32bitValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.qWORD64bitValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.multiStringValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.expandableStringValueToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -140,6 +147,13 @@
             this.hValue.Text = "Value";
             this.hValue.Width = 384;
             // 
+            // imageRegistryKeyTypeList
+            // 
+            this.imageRegistryKeyTypeList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageRegistryKeyTypeList.ImageStream")));
+            this.imageRegistryKeyTypeList.TransparentColor = System.Drawing.Color.Transparent;
+            this.imageRegistryKeyTypeList.Images.SetKeyName(0, "reg_string.png");
+            this.imageRegistryKeyTypeList.Images.SetKeyName(1, "reg_binary.png");
+            // 
             // statusStrip
             // 
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -155,13 +169,6 @@
             this.selectedStripStatusLabel.Name = "selectedStripStatusLabel";
             this.selectedStripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // imageRegistryKeyTypeList
-            // 
-            this.imageRegistryKeyTypeList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageRegistryKeyTypeList.ImageStream")));
-            this.imageRegistryKeyTypeList.TransparentColor = System.Drawing.Color.Transparent;
-            this.imageRegistryKeyTypeList.Images.SetKeyName(0, "reg_string.png");
-            this.imageRegistryKeyTypeList.Images.SetKeyName(1, "reg_binary.png");
-            // 
             // contextMenuStrip
             // 
             this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -175,7 +182,14 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.keyToolStripMenuItem});
+            this.keyToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.stringToolStripMenuItem,
+            this.binaryValueToolStripMenuItem,
+            this.dWORD32bitValueToolStripMenuItem,
+            this.qWORD64bitValueToolStripMenuItem,
+            this.multiStringValueToolStripMenuItem,
+            this.expandableStringValueToolStripMenuItem});
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
             this.newToolStripMenuItem.Size = new System.Drawing.Size(117, 22);
             this.newToolStripMenuItem.Text = "New";
@@ -183,9 +197,51 @@
             // keyToolStripMenuItem
             // 
             this.keyToolStripMenuItem.Name = "keyToolStripMenuItem";
-            this.keyToolStripMenuItem.Size = new System.Drawing.Size(93, 22);
+            this.keyToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.keyToolStripMenuItem.Text = "Key";
             this.keyToolStripMenuItem.Click += new System.EventHandler(this.createNewRegistryKey_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(196, 6);
+            // 
+            // stringToolStripMenuItem
+            // 
+            this.stringToolStripMenuItem.Name = "stringToolStripMenuItem";
+            this.stringToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.stringToolStripMenuItem.Text = "String Value";
+            this.stringToolStripMenuItem.Click += new System.EventHandler(this.createStringRegistryValue_Click);
+            // 
+            // binaryValueToolStripMenuItem
+            // 
+            this.binaryValueToolStripMenuItem.Name = "binaryValueToolStripMenuItem";
+            this.binaryValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.binaryValueToolStripMenuItem.Text = "Binary Value";
+            // 
+            // dWORD32bitValueToolStripMenuItem
+            // 
+            this.dWORD32bitValueToolStripMenuItem.Name = "dWORD32bitValueToolStripMenuItem";
+            this.dWORD32bitValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.dWORD32bitValueToolStripMenuItem.Text = "DWORD (32-bit) Value";
+            // 
+            // qWORD64bitValueToolStripMenuItem
+            // 
+            this.qWORD64bitValueToolStripMenuItem.Name = "qWORD64bitValueToolStripMenuItem";
+            this.qWORD64bitValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.qWORD64bitValueToolStripMenuItem.Text = "QWORD (64-bit) Value";
+            // 
+            // multiStringValueToolStripMenuItem
+            // 
+            this.multiStringValueToolStripMenuItem.Name = "multiStringValueToolStripMenuItem";
+            this.multiStringValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.multiStringValueToolStripMenuItem.Text = "Multi-String Value";
+            // 
+            // expandableStringValueToolStripMenuItem
+            // 
+            this.expandableStringValueToolStripMenuItem.Name = "expandableStringValueToolStripMenuItem";
+            this.expandableStringValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
+            this.expandableStringValueToolStripMenuItem.Text = "Expandable String Value";
             // 
             // toolStripSeparator1
             // 
@@ -219,6 +275,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmRegistryEditor";
             this.Text = "Registry Editor";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRegistryEditor_FormClosing);
             this.Load += new System.EventHandler(this.FrmRegistryEditor_Load);
             this.tableLayoutPanel.ResumeLayout(false);
             this.tableLayoutPanel.PerformLayout();
@@ -252,5 +309,12 @@
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem renameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem stringToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem binaryValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem dWORD32bitValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem qWORD64bitValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem multiStringValueToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem expandableStringValueToolStripMenuItem;
     }
 }
