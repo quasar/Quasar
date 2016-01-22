@@ -193,16 +193,16 @@ namespace xClient.Core.Registry
 
                 //Try to find available names
                 int i = 1;
-                string testName = String.Format("New Key #{0}", i);
+                string testName = String.Format("New Value #{0}", i);
 
                 while (key.ContainsValue(testName))
                 {
                     i++;
-                    testName = String.Format("New Key #{0}", i);
+                    testName = String.Format("New Value #{0}", i);
                 }
                 name = testName;
 
-                bool success = key.CreateValueSafe(name, "", kind);
+                bool success = key.CreateValueSafe(name, kind.GetDefault(), kind);
 
                 //Child could not be created
                 if (!success)
