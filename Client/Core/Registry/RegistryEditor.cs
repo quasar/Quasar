@@ -10,6 +10,26 @@ namespace xClient.Core.Registry
     public class RegistryEditor
     {
 
+        #region CONSTANTS
+
+        #region RegistryKey
+
+        private static const string REGISTRY_KEY_CREATE_ERROR = "Cannot create key: Error writing to the registry";
+
+        private static const string REGISTRY_KEY_DELETE_ERROR = "Cannot delete key: Error writing to the registry";
+
+        private static const string REGISTRY_KEY_RENAME_ERROR = "Cannot rename key: Error writing to the registry";
+
+        #endregion
+
+        #region RegistryValue
+
+        private static const string REGISTRY_VALUE_CREATE_ERROR = "Cannot create value: Error writing to the registry";
+
+        #endregion
+
+        #endregion
+
         #region RegistryKey
         /// <summary>
         /// Attempts to create the desired sub key to the specified parent.
@@ -49,7 +69,7 @@ namespace xClient.Core.Registry
                     //Child could not be created
                     if (child == null)
                     {
-                        errorMsg = "Cannot create key: Error writing to the registry";
+                        errorMsg = REGISTRY_KEY_CREATE_ERROR;
                         return false;
                     }
                 }
@@ -99,7 +119,7 @@ namespace xClient.Core.Registry
                 //Child could not be deleted
                 if (!success)
                 {
-                    errorMsg = "Cannot delete key: Error writing to the registry";
+                    errorMsg = REGISTRY_KEY_DELETE_ERROR;
                     return false;
                 }
 
@@ -149,7 +169,7 @@ namespace xClient.Core.Registry
                 //Child could not be deleted
                 if (!success)
                 {
-                    errorMsg = "Cannot rename key: Error writing to the registry";
+                    errorMsg = REGISTRY_KEY_RENAME_ERROR;
                     return false;
                 }
 
@@ -207,7 +227,7 @@ namespace xClient.Core.Registry
                 //Child could not be created
                 if (!success)
                 {
-                    errorMsg = "Cannot create value: Error writing to the registry";
+                    errorMsg = REGISTRY_VALUE_CREATE_ERROR;
                     return false;
                 }
 
