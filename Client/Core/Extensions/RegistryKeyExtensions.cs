@@ -312,13 +312,13 @@ namespace xClient.Core.Extensions
             switch (valueKind)
             {
                 case RegistryValueKind.Binary:
-                    return BitConverter.ToString((byte[])valueData).Replace("-", " ").ToLower();
+                    return ((byte[])valueData).Length > 0 ? BitConverter.ToString((byte[])valueData).Replace("-", " ").ToLower() : "(zero-length binary value)";
                 case RegistryValueKind.MultiString:
                     return string.Join(" ", (string[])valueData);
                 case RegistryValueKind.DWord:   //Convert with hexadecimal before int
                     return String.Format("0x{0} ({1})", ((uint)((int)valueData)).ToString("X8").ToLower(), ((uint)((int)valueData)).ToString());
                 case RegistryValueKind.QWord:
-                    return ((ulong)((long)valueData)).ToString();
+                    return String.Format("0x{0} ({1})", ((ulong)((long)valueData)).ToString("X8").ToLower(), ((ulong)((long)valueData)).ToString());
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
                     return valueData.ToString();
@@ -348,6 +348,26 @@ namespace xClient.Core.Extensions
                     return "(Unknown)";
                 default:
                     return "REG_NONE";
+            }
+        }
+
+        public static object GetDefault(this RegistryValueKind valueKind)
+        {
+            switch (valueKind)
+            {
+                case RegistryValueKind.Binary:
+                    return new byte[] {};
+                case RegistryValueKind.MultiString:
+                    return new string[] {};
+                case RegistryValueKind.DWord:
+                    return 0;
+                case RegistryValueKind.QWord:
+                    return (long)0;
+                case RegistryValueKind.String:
+                case RegistryValueKind.ExpandString:
+                    return "";
+                default:
+                    return null;
             }
         }
     }
