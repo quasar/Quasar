@@ -14,17 +14,17 @@ namespace xClient.Core.Registry
 
         #region RegistryKey
 
-        private static const string REGISTRY_KEY_CREATE_ERROR = "Cannot create key: Error writing to the registry";
+        private const string REGISTRY_KEY_CREATE_ERROR = "Cannot create key: Error writing to the registry";
 
-        private static const string REGISTRY_KEY_DELETE_ERROR = "Cannot delete key: Error writing to the registry";
+        private const string REGISTRY_KEY_DELETE_ERROR = "Cannot delete key: Error writing to the registry";
 
-        private static const string REGISTRY_KEY_RENAME_ERROR = "Cannot rename key: Error writing to the registry";
+        private const string REGISTRY_KEY_RENAME_ERROR = "Cannot rename key: Error writing to the registry";
 
         #endregion
 
         #region RegistryValue
 
-        private static const string REGISTRY_VALUE_CREATE_ERROR = "Cannot create value: Error writing to the registry";
+        private const string REGISTRY_VALUE_CREATE_ERROR = "Cannot create value: Error writing to the registry";
 
         #endregion
 
