@@ -54,7 +54,7 @@ namespace xServer.Forms
 
         #region TreeView Helperfunctions
 
-        public void AddRootKey(RegSeekerMatch match)
+        private void AddRootKey(RegSeekerMatch match)
         {
             tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
@@ -179,6 +179,10 @@ namespace xServer.Forms
             {
                 parent.Nodes[index].Text = newName;
                 parent.Nodes[index].Name = newName;
+
+                //Make sure that the newly renamed node is selected
+                tvRegistryDirectory.SelectedNode = null;
+                tvRegistryDirectory.SelectedNode = parent.Nodes[index];
             });
         }
 
@@ -295,6 +299,7 @@ namespace xServer.Forms
                     {
                         ValuesFromNode = new List<RegValueData>();
                         ValuesFromNode.Add(value);
+                        key.Tag = ValuesFromNode;
                     }
 
                     if (tvRegistryDirectory.SelectedNode == key)
@@ -305,14 +310,26 @@ namespace xServer.Forms
                     }
                     else
                     {
-                        tvRegistryDirectory.SelectedNode = key.FirstNode;
-                        PopulateLstRegistryKeys(ValuesFromNode);
+                        tvRegistryDirectory.SelectedNode = key;
                     }
                 });
             }
         }
 
-        public void PopulateLstRegistryKeys(List<RegValueData> values)
+        private void UpdateLstRegistryKeys(TreeNode node)
+        {
+            selectedStripStatusLabel.Text = node.FullPath;
+
+            List<RegValueData> ValuesFromNode = null;
+            if (node.Tag != null && node.Tag.GetType() == typeof(List<RegValueData>))
+            {
+                ValuesFromNode = (List<RegValueData>)node.Tag;
+            }
+
+            PopulateLstRegistryKeys(ValuesFromNode);
+        }
+
+        private void PopulateLstRegistryKeys(List<RegValueData> values)
         {
             lstRegistryKeys.Items.Clear();
 
@@ -397,25 +414,8 @@ namespace xServer.Forms
 
         private void tvRegistryDirectory_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if ((e.Node.Tag != null))
-            {
-                selectedStripStatusLabel.Text = e.Node.FullPath;
-                tvRegistryDirectory.SelectedNode = e.Node;
-
-                List<RegValueData> ValuesFromNode = null;
-                if (e.Node.Tag.GetType() == typeof(List<RegValueData>))
-                {
-                    ValuesFromNode = (List<RegValueData>)e.Node.Tag;
-                }
-
-                PopulateLstRegistryKeys(ValuesFromNode);
-            }
-            else
-            {
-                // It is likely that the user clicked on either an empty direction or an invalid RegistryKey.
-                // Clear the ListView.
-                PopulateLstRegistryKeys(null);
-            }
+            //Select the clicked node
+            tvRegistryDirectory.SelectedNode = e.Node;
 
             /* Enable delete and rename if not root node */
             this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
@@ -425,6 +425,14 @@ namespace xServer.Forms
             {
                 Point pos = new Point(e.X, e.Y);
                 contextMenuStrip.Show(tvRegistryDirectory, pos);
+            }
+        }
+
+        private void tvRegistryDirectory_BeforeSelect(object sender, TreeViewCancelEventArgs e)
+        {
+            if (e.Node != null)
+            {
+                UpdateLstRegistryKeys(e.Node);
             }
         }
 
