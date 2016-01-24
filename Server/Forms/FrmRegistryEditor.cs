@@ -302,6 +302,9 @@ namespace xServer.Forms
                         key.Tag = ValuesFromNode;
                     }
 
+                    //Deactivate sorting
+                    lstRegistryKeys.ListViewItemSorter = null;
+
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
@@ -416,6 +419,8 @@ namespace xServer.Forms
         {
             //Select the clicked node
             tvRegistryDirectory.SelectedNode = e.Node;
+            //Activate sorting
+            lstRegistryKeys.ListViewItemSorter = new RegistryValueListItemComparer();
 
             /* Enable delete and rename if not root node */
             this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
@@ -424,7 +429,7 @@ namespace xServer.Forms
             if (e.Button == MouseButtons.Right)
             {
                 Point pos = new Point(e.X, e.Y);
-                contextMenuStrip.Show(tvRegistryDirectory, pos);
+                tv_ContextMenuStrip.Show(tvRegistryDirectory, pos);
             }
         }
 
@@ -433,6 +438,29 @@ namespace xServer.Forms
             if (e.Node != null)
             {
                 UpdateLstRegistryKeys(e.Node);
+            }
+        }
+
+        #endregion
+
+        #region lstRegistryKeys action
+
+        private void lstRegistryKeys_MouseClick(object sender, MouseEventArgs e)
+        {
+            if (e.Button == MouseButtons.Right)
+            {
+                Point pos = new Point(e.X, e.Y);
+                //Try to check if a item was clicked
+                if (lstRegistryKeys.GetItemAt(pos.X, pos.Y) == null)
+                {
+                    //Not on a item
+                    lst_ContextMenuStrip.Show(lstRegistryKeys, pos);
+                }
+                else
+                {
+                    //Clicked on a item
+                    selectedItem_ContextMenuStrip.Show(lstRegistryKeys, pos);
+                }
             }
         }
 
@@ -540,6 +568,12 @@ namespace xServer.Forms
                 new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.ExpandString).Execute(_connectClient);
             }
         }
+
+        #endregion
+
+        #region Registry Value edit
+
+
 
         #endregion
 
