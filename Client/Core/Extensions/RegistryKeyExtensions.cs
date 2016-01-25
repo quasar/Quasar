@@ -121,7 +121,7 @@ namespace xClient.Core.Extensions
             }
         }
 
-        #region Rename
+        #region Rename Key
 
         /*
         * Derived and Adapted from drdandle's article, 
@@ -266,6 +266,54 @@ namespace xClient.Core.Extensions
                 return false;
             }
         }
+
+        #region Rename Value
+
+        /// <summary>
+        /// Attempts to rename a registry value to the key provided using the specified old
+        /// name and new name.
+        /// </summary>
+        /// <param name="key">The key of which the registry value is to be renamed from.</param>
+        /// <param name="oldName">The old name of the registry value.</param>
+        /// <param name="newName">The new name of the registry value.</param>
+        /// <returns>Returns boolean value if the action succeded or failed; Returns 
+        /// </returns>
+        public static bool RenameValueSafe(this RegistryKey key, string oldName, string newName)
+        {
+            try
+            {
+                //Copy from old to new
+                key.CopyValue(oldName, newName);
+                //Despose of the old value
+                key.DeleteValue(oldName);
+                return true;
+            }
+            catch
+            {
+                //Try to despose of the newKey (The rename failed)
+                key.DeleteValueSafe(newName);
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to copy a old registry value to a new registry value for the key 
+        /// provided using the specified old name and new name. (throws exceptions)
+        /// </summary>
+        /// <param name="key">The key of which the registry value is to be copied.</param>
+        /// <param name="oldName">The old name of the registry value.</param>
+        /// <param name="newName">The new name of the registry value.</param>
+        /// <returns>Returns nothing 
+        /// </returns>
+        public static void CopyValue(this RegistryKey key, string oldName, string newName)
+        {
+            RegistryValueKind valueKind = key.GetValueKind(oldName);
+            object valueData = key.GetValue(oldName);
+
+            key.SetValue(newName, valueData, valueKind);
+        }
+
+        #endregion
 
         #endregion
 

@@ -28,6 +28,8 @@ namespace xClient.Core.Registry
 
         private const string REGISTRY_VALUE_DELETE_ERROR = "Cannot delete value: Error writing to the registry";
 
+        private const string REGISTRY_VALUE_RENAME_ERROR = "Cannot rename value: Error writing to the registry";
+
         #endregion
 
         #endregion
@@ -162,20 +164,19 @@ namespace xClient.Core.Registry
                 if (!parent.ContainsSubKey(oldName))
                 {
                     errorMsg = "The registry: " + oldName + " does not exist in: " + parentPath;
-                    //If child does not exists then the action has already succeded
                     return false;
                 }
 
                 bool success = parent.RenameSubKeySafe(oldName, newName);
 
-                //Child could not be deleted
+                //Child could not be renamed
                 if (!success)
                 {
                     errorMsg = REGISTRY_KEY_RENAME_ERROR;
                     return false;
                 }
 
-                //Child was successfully deleted
+                //Child was successfully renamed
                 errorMsg = "";
                 return true;
 
@@ -206,7 +207,7 @@ namespace xClient.Core.Registry
             {
                 RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
 
-                //Invalid can not open parent
+                //Invalid can not open key
                 if (key == null)
                 {
                     errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
@@ -226,14 +227,14 @@ namespace xClient.Core.Registry
 
                 bool success = key.CreateValueSafe(name, kind.GetDefault(), kind);
 
-                //Child could not be created
+                //Value could not be created
                 if (!success)
                 {
                     errorMsg = REGISTRY_VALUE_CREATE_ERROR;
                     return false;
                 }
 
-                //Child was successfully created
+                //Value was successfully created
                 errorMsg = "";
                 return true;
             }
@@ -256,24 +257,24 @@ namespace xClient.Core.Registry
         {
             try
             {
-                RegistryKey parent = RegistrySeeker.GetWritableRegistryKey(keyPath);
+                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
 
-                //Invalid can not open parent
-                if (parent == null)
+                //Invalid can not open key
+                if (key == null)
                 {
                     errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
                     return false;
                 }
 
                 //Value does not exist
-                if (!parent.ContainsValue(name))
+                if (!key.ContainsValue(name))
                 {
-                    errorMsg = "The registry: " + name + " does not exist in: " + keyPath;
+                    errorMsg = "The value: " + name + " does not exist in: " + keyPath;
                     //If value does not exists then the action has already succeded
                     return true;
                 }
 
-                bool success = parent.DeleteValueSafe(name);
+                bool success = key.DeleteValueSafe(name);
 
                 //Value could not be deleted
                 if (!success)
@@ -285,6 +286,56 @@ namespace xClient.Core.Registry
                 //Value was successfully deleted
                 errorMsg = "";
                 return true;
+            }
+            catch (Exception ex)
+            {
+                errorMsg = ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Attempts to rename the desired registry value.
+        /// </summary>
+        /// <param name="oldName">The name of the registry value to rename.</param>
+        /// <param name="newName">The name to use for renaming.</param>
+        /// <param name="keyPath">The path of the key for which to rename the registry value.</param>
+        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <returns>Returns boolean value for if the operation failed or succeded.</returns>
+        public static bool RenameRegistryValue(string oldName, string newName, string keyPath, out string errorMsg)
+        {
+            try
+            {
+
+                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+
+                //Invalid can not open key
+                if (key == null)
+                {
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    return false;
+                }
+
+                //Value does not exist
+                if (!key.ContainsValue(oldName))
+                {
+                    errorMsg = "The value: " + oldName + " does not exist in: " + keyPath;
+                    return false;
+                }
+
+                bool success = key.RenameValueSafe(oldName, newName);
+
+                //Value could not be renamed
+                if (!success)
+                {
+                    errorMsg = REGISTRY_VALUE_RENAME_ERROR;
+                    return false;
+                }
+
+                //Value was successfully renamed
+                errorMsg = "";
+                return true;
+
             }
             catch (Exception ex)
             {

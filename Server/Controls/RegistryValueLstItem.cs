@@ -25,9 +25,9 @@ namespace xServer.Controls
     internal class RegistryValueLstItem : ListViewItem
     {
 
-        public string RegName { get; private set; }
-        public string Type { get; private set; }
-        public string Data { get; private set; }
+        public string RegName { get; set; }
+        public string Type { get; set; }
+        public string Data { get; set; }
 
         public RegistryValueLstItem(string name, string type, string data) :
             base(name)

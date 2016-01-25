@@ -303,13 +303,15 @@ namespace xServer.Forms
                     }
 
                     //Deactivate sorting
-                    lstRegistryKeys.ListViewItemSorter = null;
+                    lstRegistryKeys.Sorting = SortOrder.None;
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
                         item.ImageIndex = GetRegistryValueImgIndex(value.Type);
                         lstRegistryKeys.Items.Add(item);
+                        lstRegistryKeys.LabelEdit = true;
+                        item.BeginEdit();
                     }
                     else
                     {
@@ -341,6 +343,43 @@ namespace xServer.Forms
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         lstRegistryKeys.Items.RemoveByKey(valueName);
+                    }
+                    else
+                    {
+                        tvRegistryDirectory.SelectedNode = key;
+                    }
+
+                });
+            }
+        }
+
+        public void RenameValueFromList(string keyPath, string oldName, string newName)
+        {
+            TreeNode key = GetParentTreeNode(keyPath);
+
+            if (key != null)
+            {
+                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                {
+                    List<RegValueData> ValuesFromNode = null;
+                    if (key.Tag != null)
+                    {
+                        if (key.Tag.GetType() == typeof(List<RegValueData>))
+                        {
+                            ValuesFromNode = (List<RegValueData>)key.Tag;
+                            var value = ValuesFromNode.Find(item => item.Name == oldName);
+                            value.Name = newName;
+                        }
+                        else { return; }
+                    }
+
+                    if (tvRegistryDirectory.SelectedNode == key)
+                    {
+                        var index = lstRegistryKeys.Items.IndexOfKey(oldName);
+                        RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
+                        valueItem.RegName = newName;
+                        valueItem.Name = newName;
+                        valueItem.Text = newName;
                     }
                     else
                     {
@@ -452,7 +491,7 @@ namespace xServer.Forms
             //Select the clicked node
             tvRegistryDirectory.SelectedNode = e.Node;
             //Activate sorting
-            lstRegistryKeys.ListViewItemSorter = new RegistryValueListItemComparer();
+            lstRegistryKeys.Sorting = SortOrder.Ascending;
 
             /* Enable delete and rename if not root node */
             this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
@@ -492,6 +531,40 @@ namespace xServer.Forms
                 {
                     //Clicked on a item
                     selectedItem_ContextMenuStrip.Show(lstRegistryKeys, pos);
+                }
+            }
+        }
+
+        private void lstRegistryKeys_AfterLabelEdit(object sender, LabelEditEventArgs e)
+        {
+            if (e.Label != null && tvRegistryDirectory.SelectedNode != null)
+            {
+                //Prevent the change of the label
+                e.CancelEdit = true;
+                int index = e.Item;
+
+                if (e.Label.Length > 0)
+                {
+                    if (lstRegistryKeys.Items.ContainsKey(e.Label))
+                    {
+                        //Prompt error
+                        MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        lstRegistryKeys.Items[index].BeginEdit();
+                        return;
+                    }
+
+                    //Normal rename action
+                    //Perform Rename action
+                    new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryKeys.Items[index].Name, e.Label).Execute(_connectClient);
+
+                    tvRegistryDirectory.LabelEdit = false;
+                }
+                else
+                {
+                    //Prompt error
+                    MessageBox.Show("Invalid label. \nThe label cannot be blank.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                    lstRegistryKeys.Items[index].BeginEdit();
+
                 }
             }
         }
@@ -625,6 +698,15 @@ namespace xServer.Forms
                         }
                     }
                 }
+            }
+        }
+
+        private void renameRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
+            {
+                lstRegistryKeys.LabelEdit = true;
+                lstRegistryKeys.SelectedItems[0].BeginEdit();
             }
         }
 

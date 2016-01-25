@@ -8,9 +8,9 @@ namespace xServer.Core.Registry
     [Serializable]
     public class RegValueData : IEquatable<RegValueData>
     {
-        public string Name { get; private set; }
-        public string Type { get; private set; }
-        public string Data { get; private set; }
+        public string Name { get; set; }
+        public string Type { get; set; }
+        public string Data { get; set; }
 
         public RegValueData(string name, string type, string data)
         {
