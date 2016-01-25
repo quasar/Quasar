@@ -95,13 +95,7 @@ namespace xServer.Forms
 
                 TreeNode parent = GetParentTreeNode(rootName);
 
-                // If the parent is null, it should be a root node.
-                if (parent == null)
-                {
-                    //Error incorrect format
-                    return;
-                }
-                else
+                if (parent != null)
                 {
                     tvRegistryDirectory.Invoke((MethodInvoker)delegate
                     {
@@ -309,6 +303,8 @@ namespace xServer.Forms
                     {
                         RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
                         item.ImageIndex = GetRegistryValueImgIndex(value.Type);
+                        //unselect all
+                        lstRegistryKeys.SelectedIndices.Clear();
                         lstRegistryKeys.Items.Add(item);
                         lstRegistryKeys.LabelEdit = true;
                         item.BeginEdit();
@@ -434,17 +430,13 @@ namespace xServer.Forms
 
                 if (e.Label.Length > 0)
                 {
-                    foreach (TreeNode node in e.Node.Parent.Nodes)
+                    if (e.Node.Parent.Nodes.ContainsKey(e.Label))
                     {
-                        if (node.Text == e.Label && node != e.Node)
-                        {
-                            //Prompt error
-                            MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                            e.Node.BeginEdit();
-                            return;
-                        }
+                        //Prompt error
+                        MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                        e.Node.BeginEdit();
+                        return;
                     }
-
                     //Normal rename action
                     //Perform Rename action
                     new xServer.Core.Packets.ServerPackets.DoRenameRegistryKey(e.Node.Parent.FullPath, e.Node.Name, e.Label).Execute(_connectClient);
@@ -456,7 +448,6 @@ namespace xServer.Forms
                     //Prompt error
                     MessageBox.Show("Invalid label. \nThe label cannot be blank.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     e.Node.BeginEdit();
-
                 }
             }
         }
@@ -488,14 +479,19 @@ namespace xServer.Forms
 
         private void tvRegistryDirectory_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            //Select the clicked node
-            tvRegistryDirectory.SelectedNode = e.Node;
-            //Activate sorting
-            lstRegistryKeys.Sorting = SortOrder.Ascending;
+            if (tvRegistryDirectory.SelectedNode != e.Node)
+            {
+                //Select the clicked node
+                tvRegistryDirectory.SelectedNode = e.Node;
+                //Activate sorting
+                lstRegistryKeys.Sorting = SortOrder.Ascending;
+            }
 
             /* Enable delete and rename if not root node */
             this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
             this.renameToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+            this.deleteToolStripMenuItem2.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+            this.renameToolStripMenuItem2.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
 
             if (e.Button == MouseButtons.Right)
             {
@@ -616,7 +612,7 @@ namespace xServer.Forms
 
         private void renameRegistryKey_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null)
+            if (tvRegistryDirectory.SelectedNode != null && tvRegistryDirectory.SelectedNode.Parent != null)
             {
                 tvRegistryDirectory.LabelEdit = true;
                 tvRegistryDirectory.SelectedNode.BeginEdit();
