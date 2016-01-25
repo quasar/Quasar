@@ -157,6 +157,7 @@ namespace xServer.Forms
             this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
             this.lstRegistryKeys.View = System.Windows.Forms.View.Details;
             this.lstRegistryKeys.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
+            this.lstRegistryKeys.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstRegistryKeys_ItemSelectionChanged);
             this.lstRegistryKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
             this.lstRegistryKeys.ListViewItemSorter = new RegistryValueListItemComparer();
             // 

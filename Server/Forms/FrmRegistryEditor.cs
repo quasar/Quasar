@@ -569,6 +569,11 @@ namespace xServer.Forms
             }
         }
 
+        private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
+        {
+            renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+        }
+
         #endregion
 
         #region ContextMenu
