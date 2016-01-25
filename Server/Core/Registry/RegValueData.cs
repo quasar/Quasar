@@ -6,7 +6,7 @@ using System.Text;
 namespace xServer.Core.Registry
 {
     [Serializable]
-    public class RegValueData
+    public class RegValueData : IEquatable<RegValueData>
     {
         public string Name { get; private set; }
         public string Type { get; private set; }
@@ -19,9 +19,24 @@ namespace xServer.Core.Registry
             Data = data;
         }
 
+        public override bool Equals(object obj)
+        {
+            if (obj != null && obj.GetType() == typeof(RegValueData))
+            {
+                return this.Equals((RegValueData)obj);
+            }
+
+            return false;
+        }
+
         public override string ToString()
         {
             return string.Format("({0}:{1}:{2})", Name, Type, Data);
+        }
+
+        public bool Equals(RegValueData value)
+        {
+            return this.Name == value.Name;
         }
     }
 }

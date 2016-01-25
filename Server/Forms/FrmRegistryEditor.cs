@@ -319,6 +319,38 @@ namespace xServer.Forms
             }
         }
 
+        public void DeleteValueFromList(string keyPath, string valueName)
+        {
+            TreeNode key = GetParentTreeNode(keyPath);
+
+            if (key != null)
+            {
+                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                {
+                    List<RegValueData> ValuesFromNode = null;
+                    if (key.Tag != null)
+                    {
+                        if (key.Tag.GetType() == typeof(List<RegValueData>))
+                        {
+                            ValuesFromNode = (List<RegValueData>)key.Tag;
+                            ValuesFromNode.Remove(new RegValueData(valueName, null, null));
+                        }
+                        else { return; }
+                    }
+
+                    if (tvRegistryDirectory.SelectedNode == key)
+                    {
+                        lstRegistryKeys.Items.RemoveByKey(valueName);
+                    }
+                    else
+                    {
+                        tvRegistryDirectory.SelectedNode = key;
+                    }
+
+                });
+            }
+        }
+
         private void UpdateLstRegistryKeys(TreeNode node)
         {
             selectedStripStatusLabel.Text = node.FullPath;
@@ -573,7 +605,28 @@ namespace xServer.Forms
 
         #region Registry Value edit
 
+        private void deleteRegistryValue_Click(object sender, EventArgs e)
+        {
+            if(tvRegistryDirectory.SelectedNode != null) {
 
+                //Prompt user to confirm delete
+                string msg = "Deleting certain registry values could cause system instability. Are you sure you want to permanently delete this value?";
+                string caption = "Confirm Value Delete";
+                var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+                if (answer == DialogResult.Yes)
+                {
+                    foreach (var item in lstRegistryKeys.SelectedItems)
+                    {
+                        if (item.GetType() == typeof(RegistryValueLstItem))
+                        {
+                            RegistryValueLstItem registyValue = (RegistryValueLstItem)item;
+                            new xServer.Core.Packets.ServerPackets.DoDeleteRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, registyValue.RegName).Execute(_connectClient);
+                        }
+                    }
+                }
+            }
+        }
 
         #endregion
 

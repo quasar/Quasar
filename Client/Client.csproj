@@ -97,6 +97,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
@@ -104,6 +105,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />

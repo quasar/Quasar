@@ -26,6 +26,8 @@ namespace xClient.Core.Registry
 
         private const string REGISTRY_VALUE_CREATE_ERROR = "Cannot create value: Error writing to the registry";
 
+        private const string REGISTRY_VALUE_DELETE_ERROR = "Cannot delete value: Error writing to the registry";
+
         #endregion
 
         #endregion
@@ -241,6 +243,54 @@ namespace xClient.Core.Registry
                 return false;
             }
 
+        }
+
+        /// <summary>
+        /// Attempts to delete the desired registry value from the specified key.
+        /// </summary>
+        /// <param name="keyPath">The path to the key for which to delete the registry value on.</param>
+        /// /// <param name="name">The name of the registry value to delete.</param>
+        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <returns>Returns boolean value for if the operation failed or succeded.</returns>
+        public static bool DeleteRegistryValue(string keyPath, string name, out string errorMsg)
+        {
+            try
+            {
+                RegistryKey parent = RegistrySeeker.GetWritableRegistryKey(keyPath);
+
+                //Invalid can not open parent
+                if (parent == null)
+                {
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    return false;
+                }
+
+                //Value does not exist
+                if (!parent.ContainsValue(name))
+                {
+                    errorMsg = "The registry: " + name + " does not exist in: " + keyPath;
+                    //If value does not exists then the action has already succeded
+                    return true;
+                }
+
+                bool success = parent.DeleteValueSafe(name);
+
+                //Value could not be deleted
+                if (!success)
+                {
+                    errorMsg = REGISTRY_VALUE_DELETE_ERROR;
+                    return false;
+                }
+
+                //Value was successfully deleted
+                errorMsg = "";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMsg = ex.Message;
+                return false;
+            }
         }
 
         #endregion

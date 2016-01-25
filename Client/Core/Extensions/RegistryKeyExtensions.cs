@@ -247,6 +247,26 @@ namespace xClient.Core.Extensions
             }
         }
 
+        /// <summary>
+        /// Attempts to delete a registry value for the key provided using the specified
+        /// name.
+        /// </summary>
+        /// <param name="key">The key of which the value is to be delete from.</param>
+        /// <param name="name">The name of the value.</param>
+        /// <returns>Returns a boolean value if the action succeded or failed.</returns>
+        public static bool DeleteValueSafe(this RegistryKey key, string name)
+        {
+            try
+            {
+                key.DeleteValue(name);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
         #endregion
 
         #region Find

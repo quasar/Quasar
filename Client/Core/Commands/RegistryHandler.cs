@@ -147,6 +147,26 @@ namespace xClient.Core.Commands
             responsePacket.Execute(client);
         }
 
+        public static void HandleDeleteRegistryValue(xClient.Core.Packets.ServerPackets.DoDeleteRegistryValue packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetDeleteRegistryValueResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryValueResponse();
+            string errorMsg = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.DeleteRegistryValue(packet.KeyPath, packet.ValueName, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+            responsePacket.ValueName = packet.ValueName;
+            responsePacket.KeyPath = packet.KeyPath;
+
+            responsePacket.Execute(client);
+        }
+
         #endregion
     }
 }

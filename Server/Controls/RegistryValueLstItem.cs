@@ -33,6 +33,7 @@ namespace xServer.Controls
             base(name)
         {
             RegName = name;
+            this.Name = name;
             this.SubItems.Add(type);
             Type = type;
             this.SubItems.Add(data);
