@@ -350,8 +350,6 @@ namespace xServer.Forms
                             var index = lstRegistryKeys.Items.IndexOfKey(oldName);
                             RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
                             valueItem.RegName = newName;
-                            valueItem.Name = newName;
-                            valueItem.Text = newName;
                         }
                         else
                         {
@@ -488,7 +486,7 @@ namespace xServer.Forms
 
         #endregion
 
-        #region ToolStrip Actions
+        #region ToolStrip Helpfunctions
 
         public void setDeleteAndRename(bool enable)
         {
@@ -496,6 +494,36 @@ namespace xServer.Forms
             this.renameToolStripMenuItem.Enabled = enable;
             this.deleteToolStripMenuItem2.Enabled = enable;
             this.renameToolStripMenuItem2.Enabled = enable;
+        }
+
+        #endregion
+
+        #region MenuStrip Action
+
+        private void menuStripExit_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
+        private void menuStripDelete_Click(object sender, EventArgs e) {
+            if(tvRegistryDirectory.Focused) {
+                deleteRegistryKey_Click(this, e);
+            }
+            else if (lstRegistryKeys.Focused) {
+                deleteRegistryValue_Click(this, e);
+            }
+        }
+
+        private void menuStripRename_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.Focused)
+            {
+                renameRegistryKey_Click(this, e);
+            }
+            else if (lstRegistryKeys.Focused)
+            {
+                renameRegistryValue_Click(this, e);
+            }
         }
 
         #endregion
@@ -558,6 +586,8 @@ namespace xServer.Forms
         private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+            renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+            deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
         }
 
         private void lstRegistryKeys_KeyUp(object sender, KeyEventArgs e)

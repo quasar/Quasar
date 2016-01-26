@@ -34,14 +34,10 @@
             this.splitContainer = new System.Windows.Forms.SplitContainer();
             this.tvRegistryDirectory = new System.Windows.Forms.TreeView();
             this.imageRegistryDirectoryList = new System.Windows.Forms.ImageList(this.components);
-            this.lstRegistryKeys = new xServer.Controls.AeroListView();
-            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.selectedStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.menuStrip1 = new System.Windows.Forms.MenuStrip();
+            this.menuStrip = new System.Windows.Forms.MenuStrip();
             this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -91,13 +87,17 @@
             this.qWORD64bitValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.multiStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.expandableStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.lstRegistryKeys = new xServer.Controls.AeroListView();
+            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
             this.splitContainer.Panel2.SuspendLayout();
             this.splitContainer.SuspendLayout();
             this.statusStrip.SuspendLayout();
-            this.menuStrip1.SuspendLayout();
+            this.menuStrip.SuspendLayout();
             this.tv_ContextMenuStrip.SuspendLayout();
             this.selectedItem_ContextMenuStrip.SuspendLayout();
             this.lst_ContextMenuStrip.SuspendLayout();
@@ -109,7 +109,7 @@
             this.tableLayoutPanel.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.Controls.Add(this.splitContainer, 0, 1);
             this.tableLayoutPanel.Controls.Add(this.statusStrip, 0, 2);
-            this.tableLayoutPanel.Controls.Add(this.menuStrip1, 0, 0);
+            this.tableLayoutPanel.Controls.Add(this.menuStrip, 0, 0);
             this.tableLayoutPanel.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel.GrowStyle = System.Windows.Forms.TableLayoutPanelGrowStyle.FixedSize;
             this.tableLayoutPanel.Location = new System.Drawing.Point(0, 0);
@@ -161,43 +161,6 @@
             this.imageRegistryDirectoryList.TransparentColor = System.Drawing.Color.Transparent;
             this.imageRegistryDirectoryList.Images.SetKeyName(0, "folder.png");
             // 
-            // lstRegistryKeys
-            // 
-            this.lstRegistryKeys.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hName,
-            this.hType,
-            this.hValue});
-            this.lstRegistryKeys.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstRegistryKeys.FullRowSelect = true;
-            this.lstRegistryKeys.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstRegistryKeys.HideSelection = false;
-            this.lstRegistryKeys.Location = new System.Drawing.Point(0, 0);
-            this.lstRegistryKeys.Name = "lstRegistryKeys";
-            this.lstRegistryKeys.Size = new System.Drawing.Size(818, 671);
-            this.lstRegistryKeys.SmallImageList = this.imageRegistryKeyTypeList;
-            this.lstRegistryKeys.TabIndex = 0;
-            this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
-            this.lstRegistryKeys.View = System.Windows.Forms.View.Details;
-            this.lstRegistryKeys.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
-            this.lstRegistryKeys.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstRegistryKeys_ItemSelectionChanged);
-            this.lstRegistryKeys.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
-            this.lstRegistryKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
-            // 
-            // hName
-            // 
-            this.hName.Text = "Name";
-            this.hName.Width = 203;
-            // 
-            // hType
-            // 
-            this.hType.Text = "Type";
-            this.hType.Width = 149;
-            // 
-            // hValue
-            // 
-            this.hValue.Text = "Value";
-            this.hValue.Width = 384;
-            // 
             // imageRegistryKeyTypeList
             // 
             this.imageRegistryKeyTypeList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageRegistryKeyTypeList.ImageStream")));
@@ -221,17 +184,17 @@
             this.selectedStripStatusLabel.Name = "selectedStripStatusLabel";
             this.selectedStripStatusLabel.Size = new System.Drawing.Size(0, 17);
             // 
-            // menuStrip1
+            // menuStrip
             // 
-            this.menuStrip1.Dock = System.Windows.Forms.DockStyle.None;
-            this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
+            this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fileToolStripMenuItem,
             this.editToolStripMenuItem,
             this.viewToolStripMenuItem});
-            this.menuStrip1.Location = new System.Drawing.Point(0, 0);
-            this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(128, 24);
-            this.menuStrip1.TabIndex = 2;
+            this.menuStrip.Location = new System.Drawing.Point(0, 0);
+            this.menuStrip.Name = "menuStrip";
+            this.menuStrip.Size = new System.Drawing.Size(220, 24);
+            this.menuStrip.TabIndex = 2;
             // 
             // fileToolStripMenuItem
             // 
@@ -244,8 +207,9 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.exitToolStripMenuItem.Text = "Exit";
+            this.exitToolStripMenuItem.Click += new System.EventHandler(this.menuStripExit_Click);
             // 
             // editToolStripMenuItem
             // 
@@ -362,7 +326,7 @@
             this.deleteToolStripMenuItem2.ShortcutKeyDisplayString = "Del";
             this.deleteToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             this.deleteToolStripMenuItem2.Text = "Delete";
-            this.deleteToolStripMenuItem2.Click += new System.EventHandler(this.deleteRegistryKey_Click);
+            this.deleteToolStripMenuItem2.Click += new System.EventHandler(this.menuStripDelete_Click);
             // 
             // renameToolStripMenuItem2
             // 
@@ -370,7 +334,7 @@
             this.renameToolStripMenuItem2.Name = "renameToolStripMenuItem2";
             this.renameToolStripMenuItem2.Size = new System.Drawing.Size(184, 22);
             this.renameToolStripMenuItem2.Text = "Rename";
-            this.renameToolStripMenuItem2.Click += new System.EventHandler(this.renameRegistryKey_Click);
+            this.renameToolStripMenuItem2.Click += new System.EventHandler(this.menuStripRename_Click);
             // 
             // viewToolStripMenuItem
             // 
@@ -384,7 +348,7 @@
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.ShortcutKeyDisplayString = "F5";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             // 
             // tv_ContextMenuStrip
@@ -608,6 +572,43 @@
             this.expandableStringValueToolStripMenuItem1.Text = "Expandable String Value";
             this.expandableStringValueToolStripMenuItem1.Click += new System.EventHandler(this.createExpandStringRegistryValue_Click);
             // 
+            // lstRegistryKeys
+            // 
+            this.lstRegistryKeys.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hName,
+            this.hType,
+            this.hValue});
+            this.lstRegistryKeys.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstRegistryKeys.FullRowSelect = true;
+            this.lstRegistryKeys.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstRegistryKeys.HideSelection = false;
+            this.lstRegistryKeys.Location = new System.Drawing.Point(0, 0);
+            this.lstRegistryKeys.Name = "lstRegistryKeys";
+            this.lstRegistryKeys.Size = new System.Drawing.Size(818, 671);
+            this.lstRegistryKeys.SmallImageList = this.imageRegistryKeyTypeList;
+            this.lstRegistryKeys.TabIndex = 0;
+            this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
+            this.lstRegistryKeys.View = System.Windows.Forms.View.Details;
+            this.lstRegistryKeys.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
+            this.lstRegistryKeys.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstRegistryKeys_ItemSelectionChanged);
+            this.lstRegistryKeys.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
+            this.lstRegistryKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
+            // 
+            // hName
+            // 
+            this.hName.Text = "Name";
+            this.hName.Width = 203;
+            // 
+            // hType
+            // 
+            this.hType.Text = "Type";
+            this.hType.Width = 149;
+            // 
+            // hValue
+            // 
+            this.hValue.Text = "Value";
+            this.hValue.Width = 384;
+            // 
             // FrmRegistryEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -617,7 +618,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.MainMenuStrip = this.menuStrip1;
+            this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmRegistryEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Registry Editor";
@@ -631,8 +632,8 @@
             this.splitContainer.ResumeLayout(false);
             this.statusStrip.ResumeLayout(false);
             this.statusStrip.PerformLayout();
-            this.menuStrip1.ResumeLayout(false);
-            this.menuStrip1.PerformLayout();
+            this.menuStrip.ResumeLayout(false);
+            this.menuStrip.PerformLayout();
             this.tv_ContextMenuStrip.ResumeLayout(false);
             this.selectedItem_ContextMenuStrip.ResumeLayout(false);
             this.lst_ContextMenuStrip.ResumeLayout(false);
@@ -682,7 +683,7 @@
         private System.Windows.Forms.ToolStripMenuItem multiStringValueToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem expandableStringValueToolStripMenuItem1;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator4;
-        private System.Windows.Forms.MenuStrip menuStrip1;
+        private System.Windows.Forms.MenuStrip menuStrip;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
