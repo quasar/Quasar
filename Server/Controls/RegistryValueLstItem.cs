@@ -24,16 +24,24 @@ namespace xServer.Controls
 
     internal class RegistryValueLstItem : ListViewItem
     {
+        private string _regName { get; set; }
 
-        public string RegName { get; set; }
+        public string RegName {
+            get { return _regName; }
+            set
+            {
+                _regName = value;
+                this.Name = value;
+                this.Text = value;
+            }
+        }
         public string Type { get; set; }
         public string Data { get; set; }
 
         public RegistryValueLstItem(string name, string type, string data) :
-            base(name)
+            base()
         {
             RegName = name;
-            this.Name = name;
             this.SubItems.Add(type);
             Type = type;
             this.SubItems.Add(data);
