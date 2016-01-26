@@ -25,6 +25,7 @@ namespace xServer.Controls
     internal class RegistryValueLstItem : ListViewItem
     {
         private string _regName { get; set; }
+        private string _type { get; set; }
 
         public string RegName {
             get { return _regName; }
@@ -35,7 +36,15 @@ namespace xServer.Controls
                 this.Text = value;
             }
         }
-        public string Type { get; set; }
+        public string Type {
+            get { return _type; }
+            set
+            {
+                _type = value;
+                this.ImageIndex = GetRegistryValueImgIndex(value);
+            }
+        }
+
         public string Data { get; set; }
 
         public RegistryValueLstItem(string name, string type, string data) :
@@ -46,6 +55,22 @@ namespace xServer.Controls
             Type = type;
             this.SubItems.Add(data);
             Data = data;
+        }
+
+        private int GetRegistryValueImgIndex(string type)
+        {
+            switch (type)
+            {
+                case "REG_MULTI_SZ":
+                case "REG_SZ":
+                case "REG_EXPAND_SZ":
+                    return 0;
+                case "REG_BINARY":
+                case "REG_DWORD":
+                case "REG_QWORD":
+                default:
+                    return 1;
+            }
         }
     }
 }

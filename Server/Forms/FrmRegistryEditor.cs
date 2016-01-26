@@ -281,7 +281,6 @@ namespace xServer.Forms
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
-                        item.ImageIndex = GetRegistryValueImgIndex(value.Type);
                         //unselect all
                         lstRegistryKeys.SelectedIndices.Clear();
                         lstRegistryKeys.Items.Add(item);
@@ -385,7 +384,6 @@ namespace xServer.Forms
                 {
                     // To-Do: Use a custom ListViewItem for a better style. (Maybe add the imageList to it?)
                     RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
-                    item.ImageIndex = GetRegistryValueImgIndex(value.Type);
                     lstRegistryKeys.Items.Add(item);
                 }
             }
@@ -773,24 +771,5 @@ namespace xServer.Forms
 
         #endregion
 
-        #region HelpFunctions
-
-        private int GetRegistryValueImgIndex(string type)
-        {
-            switch (type)
-            {
-                case "REG_MULTI_SZ":
-                case "REG_SZ":
-                case "REG_EXPAND_SZ":
-                    return 0;
-                case "REG_BINARY":
-                case "REG_DWORD":
-                case "REG_QWORD":
-                default:
-                    return 1;
-            }
-        }
-
-        #endregion
     }
 }
