@@ -827,6 +827,9 @@ namespace xServer.Forms
             {
                 case RegistryValueKind.String:
                     return new FrmRegValueEditString(keyPath, value, _connectClient);
+                case RegistryValueKind.DWord:
+                case RegistryValueKind.QWord:
+                    return new FrmRegValueEditWord(keyPath, value, _connectClient);
                 default:
                     return null;
             }
