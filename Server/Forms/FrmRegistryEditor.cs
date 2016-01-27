@@ -597,7 +597,7 @@ namespace xServer.Forms
                     //Perform Rename action
                     new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryKeys.Items[index].Name, e.Label).Execute(_connectClient);
 
-                    tvRegistryDirectory.LabelEdit = false;
+                    lstRegistryKeys.LabelEdit = false;
                 }
                 else
                 {
