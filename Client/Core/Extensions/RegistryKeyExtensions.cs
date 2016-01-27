@@ -228,13 +228,15 @@ namespace xClient.Core.Extensions
         #region Region Value
 
         /// <summary>
-        /// Attempts to create a registry value for the key provided using the specified
-        /// name.
+        /// Attempts to set a registry value for the key provided using the specified
+        /// name, data and kind. If the registry value does not exist it will be created
         /// </summary>
-        /// <param name="key">The key of which the value is to be created for.</param>
+        /// <param name="key">The key of which the value is to be set for.</param>
         /// <param name="name">The name of the value.</param>
+        /// <param name="data">The data of the value</param>
+        /// <param name="kind">The value kind of the value</param>
         /// <returns>Returns a boolean value if the action succeded or failed.</returns>
-        public static bool CreateValueSafe(this RegistryKey key, string name, object data, RegistryValueKind kind)
+        public static bool SetValueSafe(this RegistryKey key, string name, object data, RegistryValueKind kind)
         {
             try
             {

