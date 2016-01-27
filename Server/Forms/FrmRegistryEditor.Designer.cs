@@ -193,7 +193,7 @@
             this.viewToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(220, 24);
+            this.menuStrip.Size = new System.Drawing.Size(128, 24);
             this.menuStrip.TabIndex = 2;
             // 
             // fileToolStripMenuItem
@@ -348,7 +348,7 @@
             // 
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.ShortcutKeyDisplayString = "F5";
-            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.refreshToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
             // 
             // tv_ContextMenuStrip
@@ -460,7 +460,7 @@
             this.deleteToolStripMenuItem1,
             this.renameToolStripMenuItem1});
             this.selectedItem_ContextMenuStrip.Name = "selectedItem_ContextMenuStrip";
-            this.selectedItem_ContextMenuStrip.Size = new System.Drawing.Size(185, 98);
+            this.selectedItem_ContextMenuStrip.Size = new System.Drawing.Size(185, 120);
             // 
             // modifyToolStripMenuItem
             // 
@@ -469,6 +469,7 @@
             this.modifyToolStripMenuItem.Name = "modifyToolStripMenuItem";
             this.modifyToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.modifyToolStripMenuItem.Text = "Modify...";
+            this.modifyToolStripMenuItem.Click += new System.EventHandler(this.modifyRegistryValue_Click);
             // 
             // modifyBinaryDataToolStripMenuItem
             // 

@@ -280,7 +280,7 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
+                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.GetKindAsString(), value.GetDataAsString());
                         //unselect all
                         lstRegistryKeys.SelectedIndices.Clear();
                         lstRegistryKeys.Items.Add(item);
@@ -307,7 +307,7 @@ namespace xServer.Forms
                     if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
                     {
                         ValuesFromNode = (List<RegValueData>)key.Tag;
-                        ValuesFromNode.Remove(new RegValueData(valueName, null, null));
+                        ValuesFromNode.RemoveAll(value => value.Name == valueName);
                     }
                     else
                     {
@@ -336,11 +336,10 @@ namespace xServer.Forms
             {
                 lstRegistryKeys.Invoke((MethodInvoker)delegate
                 {
-                    List<RegValueData> ValuesFromNode = null;
                     //Can only rename if the value exists in the tag
                     if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
                     {
-                        ValuesFromNode = (List<RegValueData>)key.Tag;
+                        List<RegValueData> ValuesFromNode = (List<RegValueData>)key.Tag;
                         var value = ValuesFromNode.Find(item => item.Name == oldName);
                         value.Name = newName;
 
@@ -355,7 +354,36 @@ namespace xServer.Forms
                             tvRegistryDirectory.SelectedNode = key;
                         }
                     }
+                });
+            }
+        }
 
+        public void ChangeValueFromList(string keyPath, RegValueData value)
+        {
+            TreeNode key = GetTreeNode(keyPath);
+
+            if (key != null)
+            {
+                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                {
+                    //Can only change if the value exists in the tag
+                    if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
+                    {
+                        List<RegValueData> ValuesFromNode = (List<RegValueData>)key.Tag;
+                        var regValue = ValuesFromNode.Find(item => item.Name == value.Name);
+                        regValue.Data = value.Data;
+
+                        if (tvRegistryDirectory.SelectedNode == key)
+                        {
+                            var index = lstRegistryKeys.Items.IndexOfKey(value.Name);
+                            RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
+                            valueItem.Data = value.GetDataAsString();
+                        }
+                        else
+                        {
+                            tvRegistryDirectory.SelectedNode = key;
+                        }
+                    }
                 });
             }
         }
@@ -383,7 +411,7 @@ namespace xServer.Forms
                 foreach (var value in values)
                 {
                     // To-Do: Use a custom ListViewItem for a better style. (Maybe add the imageList to it?)
-                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.Type, value.Data);
+                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.GetKindAsString(), value.GetDataAsString());
                     lstRegistryKeys.Items.Add(item);
                 }
             }
@@ -583,6 +611,7 @@ namespace xServer.Forms
 
         private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
+            modifyToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
@@ -736,6 +765,25 @@ namespace xServer.Forms
             }
         }
 
+        private void modifyRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
+            {
+                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
+                {
+                    string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
+                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
+
+                    //Temp solution need to add different types of values
+                    using (var frm = GetEditForm(keyPath, value))
+                    {
+                        if(frm != null)
+                            frm.ShowDialog();
+                    }
+                }
+            }
+        }
+
         #endregion
 
         #endregion
@@ -766,6 +814,21 @@ namespace xServer.Forms
 
                 //Unsubscribe
                 tvRegistryDirectory.AfterExpand -= new System.Windows.Forms.TreeViewEventHandler(this.specialCreateRegistryKey_AfterExpand);
+            }
+        }
+
+        #endregion
+
+        #region Help function
+
+        private Form GetEditForm(string keyPath, RegValueData value)
+        {
+            switch (value.Kind)
+            {
+                case RegistryValueKind.String:
+                    return new FrmRegValueEditString(keyPath, value, _connectClient);
+                default:
+                    return null;
             }
         }
 
