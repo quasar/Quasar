@@ -26,6 +26,7 @@ namespace xServer.Controls
     {
         private string _regName { get; set; }
         private string _type { get; set; }
+        private string _data { get; set; }
 
         public string RegName {
             get { return _regName; }
@@ -45,7 +46,15 @@ namespace xServer.Controls
             }
         }
 
-        public string Data { get; set; }
+        public string Data {
+            get { return _data; }
+            set
+            {
+                //Temp solution
+                this.SubItems[2].Text = value;
+                _data = value;
+            }
+        }
 
         public RegistryValueLstItem(string name, string type, string data) :
             base()
