@@ -826,10 +826,15 @@ namespace xServer.Forms
             switch (value.Kind)
             {
                 case RegistryValueKind.String:
+                case RegistryValueKind.ExpandString:
                     return new FrmRegValueEditString(keyPath, value, _connectClient);
                 case RegistryValueKind.DWord:
                 case RegistryValueKind.QWord:
                     return new FrmRegValueEditWord(keyPath, value, _connectClient);
+                case RegistryValueKind.MultiString:
+                    return new FrmRegValueEditMultiString(keyPath, value, _connectClient);
+                case RegistryValueKind.Binary:
+
                 default:
                     return null;
             }

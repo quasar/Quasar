@@ -307,6 +307,12 @@
     <Compile Include="Forms\FrmRegistryEditor.Designer.cs">
       <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.Designer.cs">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRegValueEditString.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -427,6 +433,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRegistryEditor.resx">
       <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditMultiString.resx">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRegValueEditString.resx">
       <DependentUpon>FrmRegValueEditString.cs</DependentUpon>
