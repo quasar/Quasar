@@ -32,12 +32,37 @@ namespace xServer.Forms
 
             if (value.Kind == Microsoft.Win32.RegistryValueKind.Binary)
             {
-                //TODO Adding code for displaying binary data
+                hexEditor.HexTable = (byte[])value.Data;
             }
-
         }
 
         private void FrmRegValueEditBinary_Load(object sender, EventArgs e)
+        {
+            hexEditor.Select();
+            hexEditor.Focus();
+        }
+
+        private void okButton_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                if (hexEditor.HexTable != null)
+                {
+                    if (_value.Kind == Microsoft.Win32.RegistryValueKind.Binary)
+                    {
+                        byte[] binaryValue = (hexEditor.HexTable);
+                        object valueData = binaryValue;
+
+                        new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
+                    }
+
+                    this.Close();
+                }
+            }
+            catch { }
+        }
+
+        private void cancelButton_Click(object sender, EventArgs e)
         {
 
         }
