@@ -834,7 +834,7 @@ namespace xServer.Forms
                 case RegistryValueKind.MultiString:
                     return new FrmRegValueEditMultiString(keyPath, value, _connectClient);
                 case RegistryValueKind.Binary:
-
+                    return new FrmRegValueEditBinary(keyPath, value, _connectClient);
                 default:
                     return null;
             }
