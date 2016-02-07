@@ -69,6 +69,15 @@
     <Compile Include="Controls\DotNetBarTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\HexEditor\ByteCollection.cs" />
+    <Compile Include="Controls\HexEditor\Caret.cs" />
+    <Compile Include="Controls\HexEditor\EditView.cs" />
+    <Compile Include="Controls\HexEditor\HexEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HexEditor\HexViewHandler.cs" />
+    <Compile Include="Controls\HexEditor\IKeyMouseEventHandler.cs" />
+    <Compile Include="Controls\HexEditor\StringViewHandler.cs" />
     <Compile Include="Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
