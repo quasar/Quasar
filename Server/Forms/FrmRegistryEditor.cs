@@ -452,6 +452,10 @@ namespace xServer.Forms
                     e.Node.BeginEdit();
                 }
             }
+            else
+            {
+                tvRegistryDirectory.LabelEdit = false;
+            }
         }
 
         private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
@@ -596,7 +600,7 @@ namespace xServer.Forms
                     //Normal rename action
                     //Perform Rename action
                     new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryKeys.Items[index].Name, e.Label).Execute(_connectClient);
-
+                    
                     lstRegistryKeys.LabelEdit = false;
                 }
                 else
@@ -606,6 +610,10 @@ namespace xServer.Forms
                     lstRegistryKeys.Items[index].BeginEdit();
 
                 }
+            }
+            else
+            {
+                lstRegistryKeys.LabelEdit = false;
             }
         }
 
