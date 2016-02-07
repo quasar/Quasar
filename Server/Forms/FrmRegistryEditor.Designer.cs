@@ -193,7 +193,7 @@
             this.viewToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(128, 24);
+            this.menuStrip.Size = new System.Drawing.Size(220, 24);
             this.menuStrip.TabIndex = 2;
             // 
             // fileToolStripMenuItem
@@ -207,7 +207,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.menuStripExit_Click);
             // 
@@ -232,6 +232,7 @@
             this.modifyToolStripMenuItem1.Name = "modifyToolStripMenuItem1";
             this.modifyToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             this.modifyToolStripMenuItem1.Text = "Modify...";
+            this.modifyToolStripMenuItem1.Click += new System.EventHandler(this.modifyRegistryValue_Click);
             // 
             // modifyBinaryDataToolStripMenuItem1
             // 
@@ -239,6 +240,7 @@
             this.modifyBinaryDataToolStripMenuItem1.Name = "modifyBinaryDataToolStripMenuItem1";
             this.modifyBinaryDataToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             this.modifyBinaryDataToolStripMenuItem1.Text = "Modify Binary Data...";
+            this.modifyBinaryDataToolStripMenuItem1.Click += new System.EventHandler(this.modifyBinaryDataRegistryValue_Click);
             // 
             // toolStripSeparator5
             // 
@@ -460,7 +462,7 @@
             this.deleteToolStripMenuItem1,
             this.renameToolStripMenuItem1});
             this.selectedItem_ContextMenuStrip.Name = "selectedItem_ContextMenuStrip";
-            this.selectedItem_ContextMenuStrip.Size = new System.Drawing.Size(185, 120);
+            this.selectedItem_ContextMenuStrip.Size = new System.Drawing.Size(185, 98);
             // 
             // modifyToolStripMenuItem
             // 
@@ -477,6 +479,7 @@
             this.modifyBinaryDataToolStripMenuItem.Name = "modifyBinaryDataToolStripMenuItem";
             this.modifyBinaryDataToolStripMenuItem.Size = new System.Drawing.Size(184, 22);
             this.modifyBinaryDataToolStripMenuItem.Text = "Modify Binary Data...";
+            this.modifyBinaryDataToolStripMenuItem.Click += new System.EventHandler(this.modifyBinaryDataRegistryValue_Click);
             // 
             // toolStripSeparator3
             // 

@@ -120,15 +120,15 @@
             this.hexEditor.Margin = new System.Windows.Forms.Padding(0, 2, 3, 3);
             this.hexEditor.Name = "hexEditor";
             this.hexEditor.Size = new System.Drawing.Size(341, 196);
-            this.hexEditor.TabIndex = 9;
+            this.hexEditor.TabIndex = 6;
             this.hexEditor.VScrollBarVisisble = true;
             // 
             // FrmRegValueEditBinary
             // 
-            this.AcceptButton = this.cancelButton;
+            this.AcceptButton = this.okButton;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.CancelButton = this.okButton;
+            this.CancelButton = this.cancelButton;
             this.ClientSize = new System.Drawing.Size(365, 304);
             this.Controls.Add(this.hexEditor);
             this.Controls.Add(this.flowLayoutPanel1);

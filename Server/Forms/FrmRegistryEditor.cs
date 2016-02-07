@@ -612,6 +612,7 @@ namespace xServer.Forms
         private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             modifyToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+            modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
@@ -775,9 +776,28 @@ namespace xServer.Forms
                     RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
 
                     //Temp solution need to add different types of values
-                    using (var frm = GetEditForm(keyPath, value))
+                    using (var frm = GetEditForm(keyPath, value, value.Kind))
                     {
                         if(frm != null)
+                            frm.ShowDialog();
+                    }
+                }
+            }
+        }
+
+        private void modifyBinaryDataRegistryValue_Click(object sender, EventArgs e)
+        {
+            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
+            {
+                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
+                {
+                    string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
+                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
+
+                    //Temp solution need to add different types of values
+                    using (var frm = GetEditForm(keyPath, value, RegistryValueKind.Binary))
+                    {
+                        if (frm != null)
                             frm.ShowDialog();
                     }
                 }
@@ -821,9 +841,9 @@ namespace xServer.Forms
 
         #region Help function
 
-        private Form GetEditForm(string keyPath, RegValueData value)
+        private Form GetEditForm(string keyPath, RegValueData value, RegistryValueKind valueKind)
         {
-            switch (value.Kind)
+            switch (valueKind)
             {
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
