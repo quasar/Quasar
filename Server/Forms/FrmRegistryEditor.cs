@@ -620,7 +620,9 @@ namespace xServer.Forms
         private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
         {
             modifyToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+            modifyToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+            modifyBinaryDataToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
