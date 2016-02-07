@@ -164,20 +164,22 @@ namespace xServer.Forms
             string text = GetDataAsString(DEC_BASE);
             if (text != null)
             {
-                //Make sure not same as before
-                if (text != ((uint)_value.Data).ToString())
+                if (_value.Kind == RegistryValueKind.DWord)
                 {
-                    if (_value.Kind == RegistryValueKind.DWord)
+                    if (text != ((uint)(int)_value.Data).ToString())
                     {
                         uint unsignedValue = Convert.ToUInt32(text);
                         object valueData = (int)(unsignedValue);
 
                         new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
                     }
-                    else if (_value.Kind == RegistryValueKind.QWord)
+                }
+                else if (_value.Kind == RegistryValueKind.QWord)
+                {
+                    if (text != ((ulong)(long)_value.Data).ToString())
                     {
                         ulong unsignedValue = Convert.ToUInt64(text);
-                        object valueData = (int)(unsignedValue);
+                        object valueData = (long)(unsignedValue);
 
                         new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
                     }
