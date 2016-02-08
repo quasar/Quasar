@@ -1252,7 +1252,7 @@ namespace xServer.Controls.HexEditor
             SetStyle(ControlStyles.ResizeRedraw, true);
 
             //Enable double buffering
-            SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
+            SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
 
             //Enable selectable
             SetStyle(ControlStyles.Selectable, true);

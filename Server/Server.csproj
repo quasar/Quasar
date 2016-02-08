@@ -84,6 +84,9 @@
     <Compile Include="Controls\RapidPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\RegistryTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Controls\RegistryValueLstItem.cs" />
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />

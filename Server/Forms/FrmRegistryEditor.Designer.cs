@@ -32,7 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRegistryEditor));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.tvRegistryDirectory = new System.Windows.Forms.TreeView();
+            this.tvRegistryDirectory = new Controls.RegistryTreeView();
             this.imageRegistryDirectoryList = new System.Windows.Forms.ImageList(this.components);
             this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
@@ -649,7 +649,7 @@
 
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel;
         private System.Windows.Forms.SplitContainer splitContainer;
-        private System.Windows.Forms.TreeView tvRegistryDirectory;
+        private Controls.RegistryTreeView tvRegistryDirectory;
         private Controls.AeroListView lstRegistryKeys;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel selectedStripStatusLabel;
