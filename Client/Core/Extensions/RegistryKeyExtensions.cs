@@ -347,10 +347,6 @@ namespace xClient.Core.Extensions
         /// </returns>
         public static bool ContainsValue(this RegistryKey key, string name)
         {
-            //This is a default registry value and it probably exists
-            if (String.IsNullOrEmpty(name))
-                return true;
-
             foreach (string value in key.GetValueNames())
             {
                 if (value == name)
