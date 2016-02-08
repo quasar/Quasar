@@ -179,11 +179,9 @@ namespace xClient.Core.Extensions
             //Create a new key
             using (RegistryKey newKey = key.CreateSubKey(newName))
             {
-
                 //Open old key
                 using (RegistryKey oldKey = key.OpenSubKey(oldName, true))
                 {
-
                     //Copy from old to new
                     RecursiveCopyKey(oldKey, newKey);
                 }

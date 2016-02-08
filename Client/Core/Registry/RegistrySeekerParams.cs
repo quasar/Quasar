@@ -22,31 +22,11 @@ namespace xClient.Core.Registry
 
     public class RegistrySeekerParams
     {
-        public bool GatherKeyValues { get; private set; }
-
         public RegistryKey RootKey { get; set; }
 
-        public RegistrySeekerParams(RegistryKey registryKey, RegistrySearchAction keyAnalyzeDepth)
+        public RegistrySeekerParams(RegistryKey registryKey)
         {
             this.RootKey = registryKey;
-            this.searchValueTypes = keyAnalyzeDepth;
-        }
-
-        private RegistrySearchAction searchValueTypes
-        {
-            get
-            {
-                RegistrySearchAction action = RegistrySearchAction.Keys;
-
-                if (GatherKeyValues)
-                    action |= RegistrySearchAction.Values;
-
-                return action;
-            }
-            set
-            {
-                GatherKeyValues = (value & RegistrySearchAction.Values) == RegistrySearchAction.Values;
-            }
         }
     }
 }
