@@ -23,6 +23,8 @@ namespace xServer.Forms
 
         private const string PRIVILEGE_WARNING = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete my not work properly!";
 
+        private const string DEFAULT_REG_VALUE = "(Default)";
+
         #endregion
 
         public FrmRegistryEditor(Client c)
@@ -323,6 +325,7 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
+                        valueName = String.IsNullOrEmpty(valueName) ? DEFAULT_REG_VALUE : valueName; 
                         lstRegistryKeys.Items.RemoveByKey(valueName);
                     }
                     else
@@ -352,8 +355,11 @@ namespace xServer.Forms
                         if (tvRegistryDirectory.SelectedNode == key)
                         {
                             var index = lstRegistryKeys.Items.IndexOfKey(oldName);
-                            RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
-                            valueItem.RegName = newName;
+                            if (index != -1)
+                            {
+                                RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
+                                valueItem.RegName = newName;
+                            }
                         }
                         else
                         {
@@ -381,9 +387,14 @@ namespace xServer.Forms
 
                         if (tvRegistryDirectory.SelectedNode == key)
                         {
-                            var index = lstRegistryKeys.Items.IndexOfKey(value.Name);
-                            RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
-                            valueItem.Data = value.GetDataAsString();
+                            //Make sure if it is a default value
+                            string name = String.IsNullOrEmpty(value.Name) ? DEFAULT_REG_VALUE : value.Name;
+                            var index = lstRegistryKeys.Items.IndexOfKey(name);
+                            if (index != -1)
+                            {
+                                RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
+                                valueItem.Data = value.GetDataAsString();
+                            }
                         }
                         else
                         {
@@ -630,8 +641,11 @@ namespace xServer.Forms
             modifyToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
             modifyBinaryDataToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-            renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-            renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
+
+            //Make sure that only one item selected and that the item is not a default 
+            renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1 && e.Item.Name != DEFAULT_REG_VALUE;
+            renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1 && e.Item.Name != DEFAULT_REG_VALUE;
+
             deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
         }
 
@@ -778,8 +792,13 @@ namespace xServer.Forms
         {
             if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
             {
-                lstRegistryKeys.LabelEdit = true;
-                lstRegistryKeys.SelectedItems[0].BeginEdit();
+                //Before edit make sure that it is not a default registry value
+                if (lstRegistryKeys.SelectedItems[0].Name != DEFAULT_REG_VALUE)
+                {
+                    lstRegistryKeys.LabelEdit = true;
+                    lstRegistryKeys.SelectedItems[0].BeginEdit();
+                }
+                
             }
         }
 
@@ -790,7 +809,8 @@ namespace xServer.Forms
                 if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
                 {
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
-                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
+                    string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
+                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == name);
 
                     //Initialize the right form to allow editing
                     using (var frm = GetEditForm(keyPath, value, value.Kind))
@@ -809,7 +829,8 @@ namespace xServer.Forms
                 if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
                 {
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
-                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
+                    string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
+                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == name);
 
                     //Initialize binary editor
                     using (var frm = GetEditForm(keyPath, value, RegistryValueKind.Binary))

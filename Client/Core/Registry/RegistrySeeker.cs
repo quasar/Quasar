@@ -251,8 +251,7 @@ namespace xClient.Core.Registry
                 {
                     RegistryValueKind valueType = key.GetValueKind(valueName);
                     object valueData = key.GetValue(valueName);
-                    string actualValueName = String.IsNullOrEmpty(valueName) ? "(Default)" : valueName;
-                    values.Add(new RegValueData(actualValueName, valueType, valueData));
+                    values.Add(new RegValueData(valueName, valueType, valueData));
                 }
 
                 AddMatch(keyName, values, key.SubKeyCount);

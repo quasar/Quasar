@@ -35,8 +35,10 @@ namespace xServer.Controls
             set
             {
                 _regName = value;
-                this.Name = value;
-                this.Text = value;
+                //Handle if the given value is for a null registry value (default value)
+                //Display (Default) not empty string
+                this.Name = String.IsNullOrEmpty(value) ? "(Default)" : value;
+                this.Text = String.IsNullOrEmpty(value) ? "(Default)" : value;
             }
         }
         public string Type {
