@@ -38,7 +38,7 @@ namespace xServer.Forms
             this.valueDataTxtBox.Focus();
         }
 
-        private void btnOk_Click(object sender, EventArgs e)
+        private void okButton_Click(object sender, EventArgs e)
         {
             if (valueDataTxtBox.Text != _value.Data.ToString())
             {
@@ -48,7 +48,7 @@ namespace xServer.Forms
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
+        private void cancelButton_Click(object sender, EventArgs e)
         {
             this.Close();
         }

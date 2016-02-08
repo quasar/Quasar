@@ -13,19 +13,19 @@ namespace xServer.Controls.HexEditor
 
         /// <summary>
         /// Contains the start index
-        /// where the cursor started
+        /// where the caret started
         /// </summary>
         int _startIndex;
 
         /// <summary>
         /// Contains the end index
-        /// where the cursor is 
+        /// where the caret is 
         /// currently located
         /// </summary>
         int _endIndex;
 
         /// <summary>
-        /// Tells if the given cursor
+        /// Tells if the given caret
         /// is active in the controller
         /// (control is in focus)
         /// </summary>
@@ -33,15 +33,15 @@ namespace xServer.Controls.HexEditor
 
 
         /// <summary>
-        /// Tells if the cursor is 
+        /// Tells if the caret is 
         /// currently hidden or 
-        /// not
+        /// not (out of view)
         /// </summary>
         bool _isCaretHidden;
 
         /// <summary>
         /// Holds the actual position
-        /// of the cursor
+        /// of the caret
         /// </summary>
         Point _location;
 

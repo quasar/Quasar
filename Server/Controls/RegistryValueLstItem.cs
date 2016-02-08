@@ -8,6 +8,7 @@ using System.Windows.Forms;
 namespace xServer.Controls
 {
     //Comparer for comparing registry values (listview)
+    //Used to sort the elements in the listview according to the RegName property
     public class RegistryValueListItemComparer : IComparer
     {
         public RegistryValueListItemComparer() { }
@@ -16,6 +17,7 @@ namespace xServer.Controls
         {
             if (x.GetType() == typeof(RegistryValueLstItem) && y.GetType() == typeof(RegistryValueLstItem))
             {
+                //Compare if the names are the same
                 return String.Compare(((RegistryValueLstItem)x).RegName, ((RegistryValueLstItem)y).RegName);
             }
             return -1;
@@ -50,9 +52,12 @@ namespace xServer.Controls
             get { return _data; }
             set
             {
-                //Temp solution
-                this.SubItems[2].Text = value;
-                _data = value;
+                //Hardcoded that the data is the second column
+                if (this.SubItems.Count == 3)
+                {
+                    this.SubItems[2].Text = value;
+                    _data = value;
+                }
             }
         }
 

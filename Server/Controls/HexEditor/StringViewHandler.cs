@@ -12,15 +12,15 @@ namespace xServer.Controls.HexEditor
         #region Field
 
         /// <summary>
-        /// Contains the boundary for one line
-        /// int the string view for the
-        /// controller
+        /// Contains the boundary of
+        /// a single line
         /// </summary>
         Rectangle _recStringView;
 
         /// <summary>
-        /// Contains the format of the hexadecimal
-        /// strings that are presented in this control
+        /// Contains the format of the 
+        /// string to be used in the
+        /// string view
         /// </summary>
         StringFormat _stringFormat;
 
@@ -69,6 +69,7 @@ namespace xServer.Controls.HexEditor
             {
                 if (_editor.SelectionLength > 0)
                 {
+                    //Remove the selected bytes
                     HandleUserRemove();
                     int index = _editor.CaretIndex;
                     Point newLocation = GetCaretLocation(index);
@@ -76,12 +77,14 @@ namespace xServer.Controls.HexEditor
                 }
                 else if (_editor.CaretIndex < _editor.LastVisibleByte && e.KeyCode == Keys.Delete)
                 {
+                    //Remove the byte after the caret
                     _editor.RemoveByteAt(_editor.CaretIndex);
                     Point newLocation = GetCaretLocation(_editor.CaretIndex);
                     _editor.SetCaretStart(_editor.CaretIndex, newLocation);
                 }
                 else if (_editor.CaretIndex > 0 && e.KeyCode == Keys.Back)
                 {
+                    //Remove byte before the caret
                     int index = _editor.CaretIndex - 1;
                     _editor.RemoveByteAt(index);
                     Point newLocation = GetCaretLocation(index);
@@ -92,12 +95,15 @@ namespace xServer.Controls.HexEditor
             {
                 int index = _editor.CaretIndex - _editor.BytesPerLine;
 
+                //Check ig caret is att the end of the line
                 if (index % _editor.BytesPerLine == 0 && _editor.CaretPosX >= _recStringView.X + _recStringView.Width)
                 {
                     Point position = new Point(_editor.CaretPosX, _editor.CaretPosY - _recStringView.Height);
 
+                    //check that this is not the last row (nothing above)
                     if (index == 0)
                     {
+                        //Last row do not change index and position
                         position = new Point(_editor.CaretPosX, _editor.CaretPosY);
                         index = _editor.BytesPerLine;
                     }
@@ -167,8 +173,10 @@ namespace xServer.Controls.HexEditor
             iY = iY > _editor.MaxBytesV ? _editor.MaxBytesV : iY;
             iY = iY < 0 ? 0 : iY;
 
+            //Make sure values are withing the given bounds
             if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
             {
+                //Check that column is not greater than max
                 if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
                 {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
@@ -176,6 +184,7 @@ namespace xServer.Controls.HexEditor
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
             }
 
+            //Get the smallest possible location (do not want to exceed the max)
             int index = Math.Min(_editor.LastVisibleByte, _editor.FirstVisibleByte + iX + iY * _editor.BytesPerLine);
 
             int xPos = (iX * (int)_editor.CharSize.Width) + _recStringView.X;
@@ -203,8 +212,10 @@ namespace xServer.Controls.HexEditor
                 iY = iY < 0 ? 0 : iY;
             }
 
+            //Make sure values are withing the given bounds
             if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
             {
+                //Check that column is not greater than max
                 if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
                 {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
@@ -212,6 +223,7 @@ namespace xServer.Controls.HexEditor
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
             }
 
+            //Get the smallest possible location (do not want to exceed the max)
             int index = Math.Min(_editor.LastVisibleByte, _editor.FirstVisibleByte + iX + iY * _editor.BytesPerLine);
 
             int xPos = (iX * (int)_editor.CharSize.Width) + _recStringView.X;
@@ -318,8 +330,10 @@ namespace xServer.Controls.HexEditor
 
         private void HandleUserRemove()
         {
+            //Calculate where to position the caret after the removal
             int index = _editor.SelectionStart;
             Point position = GetCaretLocation(index);
+            //Remove all of the selected bytes
             _editor.RemoveSelectedBytes();
 
             //Set the new position of the caret

@@ -17,9 +17,9 @@ namespace xServer.Core.Extensions
                 case RegistryValueKind.MultiString:
                     return string.Join(" ", (string[])valueData);
                 case RegistryValueKind.DWord:   //Convert with hexadecimal before int
-                    return String.Format("0x{0} ({1})", ((uint)((int)valueData)).ToString("X8").ToLower(), ((uint)((int)valueData)).ToString());
+                    return String.Format("0x{0} ({1})", ((uint)((int)valueData)).ToString("x8"), ((uint)((int)valueData)).ToString());
                 case RegistryValueKind.QWord:
-                    return String.Format("0x{0} ({1})", ((ulong)((long)valueData)).ToString("X8").ToLower(), ((ulong)((long)valueData)).ToString());
+                    return String.Format("0x{0} ({1})", ((ulong)((long)valueData)).ToString("x8"), ((ulong)((long)valueData)).ToString());
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
                     return valueData.ToString();

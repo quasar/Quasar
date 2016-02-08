@@ -19,6 +19,12 @@ namespace xServer.Forms
 
         private readonly object locker = new object();
 
+        #region Constants
+
+        private const string PRIVILEGE_WARNING = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete my not work properly!";
+
+        #endregion
+
         public FrmRegistryEditor(Client c)
         {
             _connectClient = c;
@@ -34,8 +40,8 @@ namespace xServer.Forms
             //Check if user is not currently running as administrator
             if (_connectClient.Value.AccountType != "Admin")
             {
-                //Prompt user of not being admin, probably change need clearer statement (TODO)
-                string msg = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete my not work properly!";
+                //Prompt user of not being admin
+                string msg = PRIVILEGE_WARNING;
                 string caption = "Alert!";
                 MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
@@ -131,6 +137,7 @@ namespace xServer.Forms
                 TreeNode node = CreateNode(match.Key, match.Key, match.Data);
                 if (match.HasSubKeys)
                     node.Nodes.Add(new TreeNode());
+
                 parent.Nodes.Add(node);
 
                 if (!parent.IsExpanded)
@@ -170,13 +177,13 @@ namespace xServer.Forms
             {
                 int index = parent.Nodes.IndexOfKey(oldName);
 
-                //Temp - Should not be neccesary (only need to confirm the add)
                 tvRegistryDirectory.Invoke((MethodInvoker)delegate
                 {
                     parent.Nodes[index].Text = newName;
                     parent.Nodes[index].Name = newName;
 
                     //Make sure that the newly renamed node is selected
+                    //To allow update in the listview
                     if (tvRegistryDirectory.SelectedNode == parent.Nodes[index])
                         tvRegistryDirectory.SelectedNode = null;
 
@@ -189,13 +196,12 @@ namespace xServer.Forms
         /// Trys to find the desired TreeNode given the fullpath to it.
         /// </summary>
         /// <param name="path">The fullpath to the TreeNode.</param>
-        /// <returns>Null if an invalid name is passed; The TreeNode represented by the fullpath;</returns>
+        /// <returns>Null if an invalid name is passed or the TreeNode could not be found; The TreeNode represented by the fullpath;</returns>
         private TreeNode GetTreeNode(string path)
         {
             string[] nodePath = null;
             if (path.Contains("\\"))
             {
-                // It might not be a root node.
                 nodePath = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
 
                 // Only one valid node. Probably malformed
@@ -405,12 +411,11 @@ namespace xServer.Forms
         {
             lstRegistryKeys.Items.Clear();
 
-            // If the array is not null, we have usable data.
+            // Make sure that the passed values are usable
             if (values != null && values.Count > 0)
             {
                 foreach (var value in values)
                 {
-                    // To-Do: Use a custom ListViewItem for a better style. (Maybe add the imageList to it?)
                     RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.GetKindAsString(), value.GetDataAsString());
                     lstRegistryKeys.Items.Add(item);
                 }
@@ -454,6 +459,7 @@ namespace xServer.Forms
             }
             else
             {
+                //Stop editing if no changes where made
                 tvRegistryDirectory.LabelEdit = false;
             }
         }
@@ -491,6 +497,7 @@ namespace xServer.Forms
             /* Enable delete and rename if not root node */
             setDeleteAndRename(tvRegistryDirectory.SelectedNode.Parent != null);
 
+            //Check if right click, and if so provide the contrext menu
             if (e.Button == MouseButtons.Right)
             {
                 Point pos = new Point(e.X, e.Y);
@@ -646,7 +653,7 @@ namespace xServer.Forms
             {
                 if (!(tvRegistryDirectory.SelectedNode.IsExpanded) && tvRegistryDirectory.SelectedNode.Nodes.Count > 0)
                 {
-                    //Subscribe
+                    //Subscribe (wait for node to expand)
                     tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
                     tvRegistryDirectory.SelectedNode.Expand();
                 }
@@ -785,7 +792,7 @@ namespace xServer.Forms
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
                     RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
 
-                    //Temp solution need to add different types of values
+                    //Initialize the right form to allow editing
                     using (var frm = GetEditForm(keyPath, value, value.Kind))
                     {
                         if(frm != null)
@@ -804,7 +811,7 @@ namespace xServer.Forms
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
                     RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == lstRegistryKeys.SelectedItems[0].Name);
 
-                    //Temp solution need to add different types of values
+                    //Initialize binary editor
                     using (var frm = GetEditForm(keyPath, value, RegistryValueKind.Binary))
                     {
                         if (frm != null)
@@ -832,7 +839,7 @@ namespace xServer.Forms
             }
         }
 
-        ////A special case for when the node was empty and add was performed before expand
+        //A special case for when the node was empty and add was performed before expand
         private void specialCreateRegistryKey_AfterExpand(object sender, TreeViewEventArgs e)
         {
             if (e.Node == tvRegistryDirectory.SelectedNode)

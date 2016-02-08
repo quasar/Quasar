@@ -21,7 +21,7 @@ namespace xServer.Forms
 
         #region Constants
 
-        private const string WARNING_MSG = "Data of type REG_MULTI_SZ cannot contain empty strings Registry Editor will remove the empty string found.";
+        private const string WARNING_MSG = "Data of type REG_MULTI_SZ cannot contain empty strings Registry Editor will remove the empty strings found.";
 
         #endregion
 
@@ -43,6 +43,8 @@ namespace xServer.Forms
             this.valueDataTxtBox.Focus();
         }
 
+        #region Ok and Cancel button
+
         private void okButton_Click(object sender, EventArgs e)
         {
             string[] lines = valueDataTxtBox.Lines;
@@ -62,6 +64,8 @@ namespace xServer.Forms
         {
             this.Close();
         }
+
+        #endregion
 
         private string[] GetSanitizedStrings(string[] strs)
         {

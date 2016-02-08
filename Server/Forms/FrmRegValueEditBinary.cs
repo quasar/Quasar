@@ -51,6 +51,7 @@ namespace xServer.Forms
             }
             else if (value.Kind == Microsoft.Win32.RegistryValueKind.String || value.Kind == Microsoft.Win32.RegistryValueKind.ExpandString)
             {
+                //Convert string to bytes
                 byte[] bytes = new byte[value.Data.ToString().Length * sizeof(char)];
                 Buffer.BlockCopy(value.Data.ToString().ToCharArray(), 0, bytes, 0, bytes.Length);
                 hexEditor.HexTable = bytes;
@@ -67,6 +68,8 @@ namespace xServer.Forms
             hexEditor.Select();
             hexEditor.Focus();
         }
+
+        #region Help function
 
         private object GetData()
         {
@@ -113,6 +116,10 @@ namespace xServer.Forms
             return null;
         }
 
+        #endregion
+
+        #region Ok and Cancel button
+
         private void okButton_Click(object sender, EventArgs e)
         {
             object valueData = GetData();
@@ -128,6 +135,8 @@ namespace xServer.Forms
         {
             this.Close();
         }
+
+        #endregion
 
         #region Misc
 

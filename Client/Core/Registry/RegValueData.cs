@@ -33,7 +33,7 @@ namespace xClient.Core.Registry
 
         public override string ToString()
         {
-            return string.Format("({0}:{1}:{2})", Name, GetKindAsString(), GetKindAsString());
+            return string.Format("({0}:{1}:{2})", Name, GetKindAsString(), GetDataAsString());
         }
     }
 }

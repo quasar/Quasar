@@ -22,14 +22,13 @@ namespace xServer.Controls.HexEditor
 
         /// <summary>
         /// Contains the boundary for one single
-        /// hexa value that is visable in the 
-        /// control
+        /// hexa value that is visible
         /// </summary>
         Rectangle _recHexValue;
 
         /// <summary>
         /// Contains the format of the hexadecimal
-        /// strings that are presented in this control
+        /// strings that are presented
         /// </summary>
         StringFormat _stringFormat;
 
@@ -78,6 +77,7 @@ namespace xServer.Controls.HexEditor
             {
                 if (_editor.SelectionLength > 0)
                 {
+                    //Remove the selected bytes
                     HandleUserRemove();
                     int index = _editor.CaretIndex;
                     Point newLocation = GetCaretLocation(index);
@@ -85,15 +85,18 @@ namespace xServer.Controls.HexEditor
                 }
                 else if (_editor.CaretIndex < _editor.LastVisibleByte && e.KeyCode == Keys.Delete)
                 {
+                    //Remove the byte after the caret
                     _editor.RemoveByteAt(_editor.CaretIndex);
                     Point newLocation = GetCaretLocation(_editor.CaretIndex);
                     _editor.SetCaretStart(_editor.CaretIndex, newLocation);
                 }
                 else if (_editor.CaretIndex > 0 && e.KeyCode == Keys.Back)
                 {
+                    //Remove byte before the caret
                     int index = _editor.CaretIndex - 1;
                     if (_isEditing)
                     {
+                        //Remove the byte that is being edited
                         index = _editor.CaretIndex;
                     }
                     _editor.RemoveByteAt(index);
@@ -106,12 +109,15 @@ namespace xServer.Controls.HexEditor
             {
                 int index = _editor.CaretIndex - _editor.BytesPerLine;
 
+                //Check ig caret is att the end of the line
                 if (index % _editor.BytesPerLine == 0 && _editor.CaretPosX >= _recHexValue.X + _recHexValue.Width * _editor.BytesPerLine)
                 {
                     Point position = new Point(_editor.CaretPosX, _editor.CaretPosY - _recHexValue.Height);
 
+                    //check that this is not the last row (nothing above)
                     if (index == 0)
                     {
+                        //Last row do not change index and position
                         position = new Point(_editor.CaretPosX, _editor.CaretPosY);
                         index = _editor.BytesPerLine;
                     }
@@ -185,8 +191,10 @@ namespace xServer.Controls.HexEditor
             iY = iY > _editor.MaxBytesV ? _editor.MaxBytesV : iY;
             iY = iY < 0 ? 0 : iY;
 
+            //Make sure values are withing the given bounds
             if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
             {
+                //Check that column is not greater than max
                 if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
                 {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
@@ -194,6 +202,7 @@ namespace xServer.Controls.HexEditor
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
             }
 
+            //Get the smallest possible location (do not want to exceed the max)
             int index = Math.Min(_editor.LastVisibleByte, _editor.FirstVisibleByte + iX + (iY * _editor.BytesPerLine));
 
             int xPos = (iX * _recHexValue.Width) + _recHexValue.X;
@@ -222,8 +231,10 @@ namespace xServer.Controls.HexEditor
                 iY = iY < 0 ? 0 : iY;
             }
 
+            //Make sure values are withing the given bounds
             if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
             {
+                //Check that column is not greater than max
                 if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
                 {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
@@ -231,6 +242,7 @@ namespace xServer.Controls.HexEditor
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
             }
 
+            //Get the smallest possible location (do not want to exceed the max)
             int index = Math.Min(_editor.LastVisibleByte, _editor.FirstVisibleByte + iX + (iY * _editor.BytesPerLine));
 
             int xPos = (iX * _recHexValue.Width) + _recHexValue.X;
@@ -343,8 +355,10 @@ namespace xServer.Controls.HexEditor
 
         private void HandleUserRemove()
         {
+            //Calculate where to position the caret after the removal
             int index = _editor.SelectionStart;
             Point position = GetCaretLocation(index);
+            //Remove all of the selected bytes
             _editor.RemoveSelectedBytes();
 
             //Set the new position of the caret
@@ -356,14 +370,19 @@ namespace xServer.Controls.HexEditor
             if (!_editor.CaretFocused)
                 return;
 
+            //Perform overwrite
             HandleUserRemove();
 
             if (_isEditing)
             {
+                //Editing has already started, should change the second nibble
                 _isEditing = false;
+                //Load old bytes to allow change
                 byte oldByte = _editor.GetByte(_editor.CaretIndex);
+                //Append the new nibble
                 oldByte += Convert.ToByte(key.ToString(), 16);
                 _editor.SetByte(_editor.CaretIndex, oldByte);
+                //Relocate the caret
                 int index = _editor.CaretIndex + 1;
                 Point newLocation = GetCaretLocation(index);
                 _editor.SetCaretStart(index, newLocation);
@@ -371,6 +390,7 @@ namespace xServer.Controls.HexEditor
             }
             else
             {
+                //Begin new edit phase
                 _isEditing = true;
                 string hexByte = key.ToString() + "0";
                 byte newByte = Convert.ToByte(hexByte, 16);
@@ -384,6 +404,7 @@ namespace xServer.Controls.HexEditor
                     _editor.InsertByte(_editor.CaretIndex, newByte);
                 }
 
+                //Relocate the caret to the middle of the hex value (provide illusion of editing the second value)
                 int xPos = (_recHexValue.X + (_recHexValue.Width * ((_editor.CaretIndex) % _editor.BytesPerLine)) + (_recHexValue.Width / 2));
                 int yPos = _recHexValue.Y + (_recHexValue.Height * ((_editor.CaretIndex - (_editor.FirstVisibleByte + _editor.CaretIndex % _editor.BytesPerLine)) / _editor.BytesPerLine));
 

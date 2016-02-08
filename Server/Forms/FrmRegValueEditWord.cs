@@ -87,7 +87,7 @@ namespace xServer.Forms
                         if (_value.Kind == RegistryValueKind.DWord)
                             return UInt32.MaxValue.ToString(returnType);
                         else
-                            return UInt32.MaxValue.ToString(returnType);
+                            return UInt64.MaxValue.ToString(returnType);
                     }
                 }
             }

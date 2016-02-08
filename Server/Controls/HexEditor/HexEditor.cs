@@ -120,8 +120,8 @@ namespace xServer.Controls.HexEditor
         #region String Format
 
         /// <summary>
-        /// Contains the format of the hexadecimal
-        /// strings that are presented in this control
+        /// Contains the format of the line count
+        /// string that is presented in this control
         /// </summary>
         StringFormat _stringFormat;
 
@@ -229,6 +229,7 @@ namespace xServer.Controls.HexEditor
 
         #region Overriden
 
+        //Override font to trigger update on font change
         public override Font Font
         {
             set
@@ -523,7 +524,6 @@ namespace xServer.Controls.HexEditor
                 Invalidate();
             }
         }bool _isVScrollVisible = false;
-
 
         #endregion
 
@@ -1056,6 +1056,7 @@ namespace xServer.Controls.HexEditor
         {
             if (position.Y < 0)
             {
+                //Need to scroll up until caret is visible
                 _vScrollPos -= Math.Abs((position.Y - _recContent.Y) / _recLineCount.Height) * _vScrollSmall;
                 UpdateVisibleByteIndex();
                 UpdateScrollValues();
@@ -1065,8 +1066,9 @@ namespace xServer.Controls.HexEditor
                     position.Y = _recContent.Y;
                 }
             }
-            else if ((caretIndex - _firstByte) / _maxBytesH > (_maxVisibleBytesV - 1) && position.Y > _maxVisibleBytesV * _recLineCount.Height)
+            else if (position.Y > _maxVisibleBytesV * _recLineCount.Height)
             {
+                //Need to scroll down until caret is visible
                 _vScrollPos += ((position.Y) / _recLineCount.Height - (_maxVisibleBytesV - 1)) * _vScrollSmall;
 
                 if (_vScrollPos > (_vScrollMax - (_vScrollLarge - 1)))
@@ -1100,12 +1102,14 @@ namespace xServer.Controls.HexEditor
             }
             CharSize = new SizeF((float)Math.Ceiling(charSize.Width), (float)Math.Ceiling(charSize.Height));
 
+            //Set the main content bounds (remove margins)
             _recContent = ClientRectangle;
             _recContent.X += Margin.Left;
             _recContent.Y += Margin.Top;
             _recContent.Width -= Margin.Right;
             _recContent.Height -= Margin.Bottom;
 
+            //Check if the border is active and decrease the bounds
             if (BorderStyle == BorderStyle.Fixed3D)
             {
                 _recContent.X += 2;
@@ -1121,6 +1125,7 @@ namespace xServer.Controls.HexEditor
                 _recContent.Height -= 1;
             }
 
+            //Handle if the scrollbar is visible
             if (!VScrollBarHidden)
             {
                 _recContent.Width -= _vScrollBarWidth;
@@ -1182,7 +1187,7 @@ namespace xServer.Controls.HexEditor
             {
                 //Holds the size of a page (number of rows per page)
                 int largeScroll = _maxVisibleBytesV;
-                //Holds the row (1)
+                //Holds the row size (1)
                 int smallScroll = 1;
                 //Holds the minimum value of the scrollbar
                 int minScroll = 0;
@@ -1236,6 +1241,7 @@ namespace xServer.Controls.HexEditor
             _stringFormat.Alignment = StringAlignment.Center;
             _stringFormat.LineAlignment = StringAlignment.Center;
 
+            //Set the provided byte collection
             _hexTable = collection;
 
             //Set the vertical scrollbar
@@ -1248,9 +1254,10 @@ namespace xServer.Controls.HexEditor
             //Enable double buffering
             SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
 
+            //Enable selectable
             SetStyle(ControlStyles.Selectable, true);
 
-            //Handle initialization of Cursor
+            //Handle initialization of Caret
             _caret = new Caret(this);
             _caret.SelectionStartChanged += new EventHandler(CaretSelectionStartChanged);
             _caret.SelectionLengthChanged += new EventHandler(CaretSelectionLengthChanged);
@@ -1265,7 +1272,7 @@ namespace xServer.Controls.HexEditor
 
         #endregion
 
-        #region Boundary Calculators
+        #region Boundary Calculator
 
         private RectangleF GetLineCountBound(int index)
         {
@@ -1289,18 +1296,16 @@ namespace xServer.Controls.HexEditor
             if (BorderStyle == BorderStyle.Fixed3D)
             {
                 SolidBrush brush = new SolidBrush(BackColor);
-                ControlPaint.DrawBorder3D(pevent.Graphics, ClientRectangle, Border3DStyle.Sunken);
                 Rectangle rect = ClientRectangle;
-                rect.Inflate(-2, -2);
                 pevent.Graphics.FillRectangle(brush, rect);
+                ControlPaint.DrawBorder3D(pevent.Graphics, ClientRectangle, Border3DStyle.Sunken);
             }
             else if (BorderStyle == BorderStyle.FixedSingle)
             {
                 SolidBrush brush = new SolidBrush(BackColor);
-                ControlPaint.DrawBorder(pevent.Graphics, ClientRectangle, BorderColor, ButtonBorderStyle.Solid);
                 Rectangle rect = ClientRectangle;
-                rect.Inflate(-1, -1);
                 pevent.Graphics.FillRectangle(brush, rect);
+                ControlPaint.DrawBorder(pevent.Graphics, ClientRectangle, BorderColor, ButtonBorderStyle.Solid);
             }
             else
             {
