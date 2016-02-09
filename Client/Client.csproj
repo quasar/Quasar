@@ -53,6 +53,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Data\ClientData.cs" />
     <Compile Include="Core\Data\GeoInformation.cs" />
     <Compile Include="Core\Helper\MutexHelper.cs" />
@@ -93,13 +94,34 @@
     <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
+    <Compile Include="Core\Registry\RegistryEditor.cs" />
+    <Compile Include="Core\Registry\RegistrySeeker.cs" />
+    <Compile Include="Core\Registry\RegistrySeekerParams.cs" />
+    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
+    <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
@@ -212,6 +234,7 @@
     <Compile Include="Core\Utilities\Keylogger.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\RegistrySearchAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />

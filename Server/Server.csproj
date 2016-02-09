@@ -69,13 +69,27 @@
     <Compile Include="Controls\DotNetBarTabControl.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\HexEditor\ByteCollection.cs" />
+    <Compile Include="Controls\HexEditor\Caret.cs" />
+    <Compile Include="Controls\HexEditor\EditView.cs" />
+    <Compile Include="Controls\HexEditor\HexEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HexEditor\HexViewHandler.cs" />
+    <Compile Include="Controls\HexEditor\IKeyMouseEventHandler.cs" />
+    <Compile Include="Controls\HexEditor\StringViewHandler.cs" />
     <Compile Include="Controls\Line.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\RapidPictureBox.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Controls\RegistryTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RegistryValueLstItem.cs" />
     <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
     <Compile Include="Core\Data\DownloadAndExecute.cs" />
@@ -83,6 +97,7 @@
     <Compile Include="Core\Data\Update.cs" />
     <Compile Include="Core\Data\UploadAndExecute.cs" />
     <Compile Include="Core\Data\VisitWebsite.cs" />
+    <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\ClipboardHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
@@ -138,9 +153,27 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\GenericSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
+    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
+    <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
@@ -280,6 +313,36 @@
     <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.Designer.cs">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditBinary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditBinary.Designer.cs">
+      <DependentUpon>FrmRegValueEditBinary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.Designer.cs">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditString.Designer.cs">
+      <DependentUpon>FrmRegValueEditString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditWord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditWord.Designer.cs">
+      <DependentUpon>FrmRegValueEditWord.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteDesktop.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -385,6 +448,21 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
       <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegistryEditor.resx">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditBinary.resx">
+      <DependentUpon>FrmRegValueEditBinary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditMultiString.resx">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditString.resx">
+      <DependentUpon>FrmRegValueEditString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditWord.resx">
+      <DependentUpon>FrmRegValueEditWord.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
       <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>

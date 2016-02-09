@@ -101,6 +101,7 @@ namespace xServer.Forms
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
             this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
+            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // connectionToolStripMenuItem
             // 
@@ -118,7 +119,7 @@ namespace xServer.Forms
             // 
             this.updateToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("updateToolStripMenuItem.Image")));
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.updateToolStripMenuItem.Text = "Update";
             this.updateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
             // 
@@ -126,7 +127,7 @@ namespace xServer.Forms
             // 
             this.reconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("reconnectToolStripMenuItem.Image")));
             this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
-            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.reconnectToolStripMenuItem.Text = "Reconnect";
             this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
             // 
@@ -134,7 +135,7 @@ namespace xServer.Forms
             // 
             this.disconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("disconnectToolStripMenuItem.Image")));
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
@@ -142,7 +143,7 @@ namespace xServer.Forms
             // 
             this.uninstallToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uninstallToolStripMenuItem.Image")));
             this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
-            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
             this.uninstallToolStripMenuItem.Text = "Uninstall";
             this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
             // 
@@ -213,7 +214,6 @@ namespace xServer.Forms
             // 
             // registryEditorToolStripMenuItem
             // 
-            this.registryEditorToolStripMenuItem.Enabled = false;
             this.registryEditorToolStripMenuItem.Image = global::xServer.Properties.Resources.registry;
             this.registryEditorToolStripMenuItem.Name = "registryEditorToolStripMenuItem";
             this.registryEditorToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
@@ -240,7 +240,7 @@ namespace xServer.Forms
             // 
             this.shutdownToolStripMenuItem.Image = global::xServer.Properties.Resources.shutdown;
             this.shutdownToolStripMenuItem.Name = "shutdownToolStripMenuItem";
-            this.shutdownToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.shutdownToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.shutdownToolStripMenuItem.Text = "Shutdown";
             this.shutdownToolStripMenuItem.Click += new System.EventHandler(this.shutdownToolStripMenuItem_Click);
             // 
@@ -248,7 +248,7 @@ namespace xServer.Forms
             // 
             this.restartToolStripMenuItem.Image = global::xServer.Properties.Resources.restart;
             this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
-            this.restartToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.restartToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.restartToolStripMenuItem.Text = "Restart";
             this.restartToolStripMenuItem.Click += new System.EventHandler(this.restartToolStripMenuItem_Click);
             // 
@@ -256,7 +256,7 @@ namespace xServer.Forms
             // 
             this.standbyToolStripMenuItem.Image = global::xServer.Properties.Resources.standby;
             this.standbyToolStripMenuItem.Name = "standbyToolStripMenuItem";
-            this.standbyToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.standbyToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.standbyToolStripMenuItem.Text = "Standby";
             this.standbyToolStripMenuItem.Click += new System.EventHandler(this.standbyToolStripMenuItem_Click);
             // 
@@ -320,7 +320,7 @@ namespace xServer.Forms
             // 
             this.localFileToolStripMenuItem.Image = global::xServer.Properties.Resources.drive_go;
             this.localFileToolStripMenuItem.Name = "localFileToolStripMenuItem";
-            this.localFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.localFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.localFileToolStripMenuItem.Text = "Local File...";
             this.localFileToolStripMenuItem.Click += new System.EventHandler(this.localFileToolStripMenuItem_Click);
             // 
@@ -328,7 +328,7 @@ namespace xServer.Forms
             // 
             this.webFileToolStripMenuItem.Image = global::xServer.Properties.Resources.world_go;
             this.webFileToolStripMenuItem.Name = "webFileToolStripMenuItem";
-            this.webFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.webFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.webFileToolStripMenuItem.Text = "Web File...";
             this.webFileToolStripMenuItem.Click += new System.EventHandler(this.webFileToolStripMenuItem_Click);
             // 
