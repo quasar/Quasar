@@ -21,7 +21,7 @@ namespace xServer.Forms
 
         #region Constants
 
-        private const string WARNING_MSG = "Data of type REG_MULTI_SZ cannot contain empty strings Registry Editor will remove the empty strings found.";
+        private const string WARNING_MSG = "Data of type REG_MULTI_SZ cannot contain empty strings. Registry Editor will remove the empty strings found.";
 
         #endregion
 
