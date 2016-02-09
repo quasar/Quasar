@@ -506,7 +506,7 @@ namespace xServer.Forms
             }
 
             /* Enable delete and rename if not root node */
-            setDeleteAndRename(tvRegistryDirectory.SelectedNode.Parent != null);
+            SetDeleteAndRename(tvRegistryDirectory.SelectedNode.Parent != null);
 
             //Check if right click, and if so provide the contrext menu
             if (e.Button == MouseButtons.Right)
@@ -536,7 +536,7 @@ namespace xServer.Forms
 
         #region ToolStrip Helpfunctions
 
-        public void setDeleteAndRename(bool enable)
+        public void SetDeleteAndRename(bool enable)
         {
             this.deleteToolStripMenuItem.Enabled = enable;
             this.renameToolStripMenuItem.Enabled = enable;
