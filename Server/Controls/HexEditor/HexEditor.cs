@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
@@ -593,8 +592,6 @@ namespace xServer.Controls.HexEditor
 
         protected override void OnGotFocus(EventArgs e)
         {
-            Debug.WriteLine("HexEditor Got Focus...");
-
             if (_handler != null)
                 _handler.OnGotFocus(e);
 
@@ -605,8 +602,6 @@ namespace xServer.Controls.HexEditor
 
         protected override void OnLostFocus(EventArgs e)
         {
-            Debug.WriteLine("HexEditor Lost Focus...");
-
             _dragging = false;
             DestroyCaret();
             base.OnLostFocus(e);
