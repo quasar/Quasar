@@ -292,6 +292,7 @@ namespace xServer.Forms
                         //unselect all
                         lstRegistryKeys.SelectedIndices.Clear();
                         lstRegistryKeys.Items.Add(item);
+                        item.Selected = true;
                         lstRegistryKeys.LabelEdit = true;
                         item.BeginEdit();
                     }
