@@ -28,6 +28,7 @@ Features
 * Keylogger (Unicode Support)
 * Reverse Proxy (SOCKS5)
 * Password Recovery (Common Browsers and FTP Clients)
+* Registry Editor
 
 Requirements
 ---
@@ -60,7 +61,6 @@ Building a client
 
 ToDo
 ---
-* Registry Editor ([#108](https://github.com/quasar/QuasarRAT/issues/108))
 * [Open Issues](https://github.com/quasar/QuasarRAT/issues)
 
 Contributing
