@@ -1,4 +1,4 @@
-BlackHoleRAT - Fork of QuasarRAT
+QuasarRAT
 =========
 <a href="https://ci.appveyor.com/project/MaxXor/quasarrat"><image src="https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true" height="18"></a> [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
 
