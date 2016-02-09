@@ -657,6 +657,24 @@ namespace xServer.Forms
             }
         }
 
+        private void lstRegistryKeys_Enter(object sender, EventArgs e)
+        {
+            /* Make the modifers visible */
+            modifyNewtoolStripSeparator.Visible = true;
+
+            modifyToolStripMenuItem1.Visible = true;
+            modifyBinaryDataToolStripMenuItem1.Visible = true;
+        }
+
+        private void lstRegistryKeys_Leave(object sender, EventArgs e)
+        {
+            /* Disable the modify functions (only avaliable for registry values) */
+            modifyNewtoolStripSeparator.Visible = false;
+
+            modifyToolStripMenuItem1.Visible = false;
+            modifyBinaryDataToolStripMenuItem1.Visible = false;
+        }
+
         #endregion
 
         #region ContextMenu

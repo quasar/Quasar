@@ -32,12 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRegistryEditor));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.tvRegistryDirectory = new xServer.Controls.RegistryTreeView();
             this.imageRegistryDirectoryList = new System.Windows.Forms.ImageList(this.components);
-            this.lstRegistryKeys = new xServer.Controls.AeroListView();
-            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.selectedStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -47,7 +42,7 @@
             this.editToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.modifyBinaryDataToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.toolStripSeparator5 = new System.Windows.Forms.ToolStripSeparator();
+            this.modifyNewtoolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.newToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.keyToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator7 = new System.Windows.Forms.ToolStripSeparator();
@@ -89,6 +84,11 @@
             this.qWORD64bitValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.multiStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.expandableStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvRegistryDirectory = new xServer.Controls.RegistryTreeView();
+            this.lstRegistryKeys = new xServer.Controls.AeroListView();
+            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -136,65 +136,11 @@
             this.splitContainer.SplitterDistance = 411;
             this.splitContainer.TabIndex = 0;
             // 
-            // tvRegistryDirectory
-            // 
-            this.tvRegistryDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvRegistryDirectory.HideSelection = false;
-            this.tvRegistryDirectory.ImageIndex = 0;
-            this.tvRegistryDirectory.ImageList = this.imageRegistryDirectoryList;
-            this.tvRegistryDirectory.Location = new System.Drawing.Point(0, 0);
-            this.tvRegistryDirectory.Name = "tvRegistryDirectory";
-            this.tvRegistryDirectory.SelectedImageIndex = 0;
-            this.tvRegistryDirectory.Size = new System.Drawing.Size(411, 671);
-            this.tvRegistryDirectory.TabIndex = 0;
-            this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
-            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
-            this.tvRegistryDirectory.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeSelect);
-            this.tvRegistryDirectory.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvRegistryDirectory_NodeMouseClick);
-            this.tvRegistryDirectory.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvRegistryDirectory_KeyUp);
-            // 
             // imageRegistryDirectoryList
             // 
             this.imageRegistryDirectoryList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageRegistryDirectoryList.ImageStream")));
             this.imageRegistryDirectoryList.TransparentColor = System.Drawing.Color.Transparent;
             this.imageRegistryDirectoryList.Images.SetKeyName(0, "folder.png");
-            // 
-            // lstRegistryKeys
-            // 
-            this.lstRegistryKeys.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hName,
-            this.hType,
-            this.hValue});
-            this.lstRegistryKeys.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstRegistryKeys.FullRowSelect = true;
-            this.lstRegistryKeys.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstRegistryKeys.HideSelection = false;
-            this.lstRegistryKeys.Location = new System.Drawing.Point(0, 0);
-            this.lstRegistryKeys.Name = "lstRegistryKeys";
-            this.lstRegistryKeys.Size = new System.Drawing.Size(818, 671);
-            this.lstRegistryKeys.SmallImageList = this.imageRegistryKeyTypeList;
-            this.lstRegistryKeys.TabIndex = 0;
-            this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
-            this.lstRegistryKeys.View = System.Windows.Forms.View.Details;
-            this.lstRegistryKeys.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
-            this.lstRegistryKeys.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstRegistryKeys_ItemSelectionChanged);
-            this.lstRegistryKeys.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
-            this.lstRegistryKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
-            // 
-            // hName
-            // 
-            this.hName.Text = "Name";
-            this.hName.Width = 203;
-            // 
-            // hType
-            // 
-            this.hType.Text = "Type";
-            this.hType.Width = 149;
-            // 
-            // hValue
-            // 
-            this.hValue.Text = "Value";
-            this.hValue.Width = 384;
             // 
             // imageRegistryKeyTypeList
             // 
@@ -241,7 +187,7 @@
             // exitToolStripMenuItem
             // 
             this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.exitToolStripMenuItem.Size = new System.Drawing.Size(92, 22);
             this.exitToolStripMenuItem.Text = "Exit";
             this.exitToolStripMenuItem.Click += new System.EventHandler(this.menuStripExit_Click);
             // 
@@ -250,7 +196,7 @@
             this.editToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.modifyToolStripMenuItem1,
             this.modifyBinaryDataToolStripMenuItem1,
-            this.toolStripSeparator5,
+            this.modifyNewtoolStripSeparator,
             this.newToolStripMenuItem2,
             this.toolStripSeparator6,
             this.deleteToolStripMenuItem2,
@@ -266,6 +212,7 @@
             this.modifyToolStripMenuItem1.Name = "modifyToolStripMenuItem1";
             this.modifyToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             this.modifyToolStripMenuItem1.Text = "Modify...";
+            this.modifyToolStripMenuItem1.Visible = false;
             this.modifyToolStripMenuItem1.Click += new System.EventHandler(this.modifyRegistryValue_Click);
             // 
             // modifyBinaryDataToolStripMenuItem1
@@ -274,12 +221,14 @@
             this.modifyBinaryDataToolStripMenuItem1.Name = "modifyBinaryDataToolStripMenuItem1";
             this.modifyBinaryDataToolStripMenuItem1.Size = new System.Drawing.Size(184, 22);
             this.modifyBinaryDataToolStripMenuItem1.Text = "Modify Binary Data...";
+            this.modifyBinaryDataToolStripMenuItem1.Visible = false;
             this.modifyBinaryDataToolStripMenuItem1.Click += new System.EventHandler(this.modifyBinaryDataRegistryValue_Click);
             // 
-            // toolStripSeparator5
+            // modifyNewtoolStripSeparator
             // 
-            this.toolStripSeparator5.Name = "toolStripSeparator5";
-            this.toolStripSeparator5.Size = new System.Drawing.Size(181, 6);
+            this.modifyNewtoolStripSeparator.Name = "modifyNewtoolStripSeparator";
+            this.modifyNewtoolStripSeparator.Size = new System.Drawing.Size(181, 6);
+            this.modifyNewtoolStripSeparator.Visible = false;
             // 
             // newToolStripMenuItem2
             // 
@@ -595,6 +544,62 @@
             this.expandableStringValueToolStripMenuItem1.Text = "Expandable String Value";
             this.expandableStringValueToolStripMenuItem1.Click += new System.EventHandler(this.createExpandStringRegistryValue_Click);
             // 
+            // tvRegistryDirectory
+            // 
+            this.tvRegistryDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvRegistryDirectory.HideSelection = false;
+            this.tvRegistryDirectory.ImageIndex = 0;
+            this.tvRegistryDirectory.ImageList = this.imageRegistryDirectoryList;
+            this.tvRegistryDirectory.Location = new System.Drawing.Point(0, 0);
+            this.tvRegistryDirectory.Name = "tvRegistryDirectory";
+            this.tvRegistryDirectory.SelectedImageIndex = 0;
+            this.tvRegistryDirectory.Size = new System.Drawing.Size(411, 671);
+            this.tvRegistryDirectory.TabIndex = 0;
+            this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
+            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
+            this.tvRegistryDirectory.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeSelect);
+            this.tvRegistryDirectory.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvRegistryDirectory_NodeMouseClick);
+            this.tvRegistryDirectory.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvRegistryDirectory_KeyUp);
+            // 
+            // lstRegistryKeys
+            // 
+            this.lstRegistryKeys.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hName,
+            this.hType,
+            this.hValue});
+            this.lstRegistryKeys.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstRegistryKeys.FullRowSelect = true;
+            this.lstRegistryKeys.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstRegistryKeys.HideSelection = false;
+            this.lstRegistryKeys.Location = new System.Drawing.Point(0, 0);
+            this.lstRegistryKeys.Name = "lstRegistryKeys";
+            this.lstRegistryKeys.Size = new System.Drawing.Size(818, 671);
+            this.lstRegistryKeys.SmallImageList = this.imageRegistryKeyTypeList;
+            this.lstRegistryKeys.TabIndex = 0;
+            this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
+            this.lstRegistryKeys.View = System.Windows.Forms.View.Details;
+            this.lstRegistryKeys.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
+            this.lstRegistryKeys.ItemSelectionChanged += new System.Windows.Forms.ListViewItemSelectionChangedEventHandler(this.lstRegistryKeys_ItemSelectionChanged);
+            this.lstRegistryKeys.Enter += new System.EventHandler(this.lstRegistryKeys_Enter);
+            this.lstRegistryKeys.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
+            this.lstRegistryKeys.Leave += new System.EventHandler(this.lstRegistryKeys_Leave);
+            this.lstRegistryKeys.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
+            // 
+            // hName
+            // 
+            this.hName.Text = "Name";
+            this.hName.Width = 203;
+            // 
+            // hType
+            // 
+            this.hType.Text = "Type";
+            this.hType.Width = 149;
+            // 
+            // hValue
+            // 
+            this.hValue.Text = "Value";
+            this.hValue.Width = 384;
+            // 
             // FrmRegistryEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -675,7 +680,7 @@
         private System.Windows.Forms.ToolStripMenuItem editToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem modifyToolStripMenuItem1;
         private System.Windows.Forms.ToolStripMenuItem modifyBinaryDataToolStripMenuItem1;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator5;
+        private System.Windows.Forms.ToolStripSeparator modifyNewtoolStripSeparator;
         private System.Windows.Forms.ToolStripMenuItem newToolStripMenuItem2;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator6;
         private System.Windows.Forms.ToolStripMenuItem deleteToolStripMenuItem2;
