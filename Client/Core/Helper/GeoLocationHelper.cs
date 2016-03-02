@@ -85,7 +85,7 @@ namespace xClient.Core.Helper
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
-                request.Timeout = 5000;
+                request.Timeout = 10000;
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
@@ -121,7 +121,7 @@ namespace xClient.Core.Helper
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
                 request.Proxy = null;
-                request.Timeout = 5000;
+                request.Timeout = 10000;
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
@@ -139,6 +139,7 @@ namespace xClient.Core.Helper
                             string xmlCountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
                             string xmlRegion = doc.SelectSingleNode("Response//RegionName").InnerXml;
                             string xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
+                            string timeZone = doc.SelectSingleNode("Response//TimeZone").InnerXml;
 
                             GeoInfo.ip = (!string.IsNullOrEmpty(xmlIp))
                                 ? xmlIp
@@ -155,6 +156,11 @@ namespace xClient.Core.Helper
                             GeoInfo.city = (!string.IsNullOrEmpty(xmlCity))
                                 ? xmlCity
                                 : "Unknown";
+                            GeoInfo.timezone = (!string.IsNullOrEmpty(timeZone))
+                                ? timeZone
+                                : "Unknown";
+
+                            GeoInfo.isp = "Unknown"; // freegeoip does not support ISP detection
                         }
                     }
                 }
@@ -168,6 +174,8 @@ namespace xClient.Core.Helper
                 GeoInfo.country_code = "-";
                 GeoInfo.region = "Unknown";
                 GeoInfo.city = "Unknown";
+                GeoInfo.timezone = "Unknown";
+                GeoInfo.isp = "Unknown";
                 LocationCompleted = false;
             }
 

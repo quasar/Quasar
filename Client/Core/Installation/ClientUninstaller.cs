@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using xClient.Config;
 using xClient.Core.Data;
@@ -12,39 +13,34 @@ namespace xClient.Core.Installation
     {
         public static void Uninstall(Client client)
         {
-            if (!Settings.INSTALL)
-            {
-                new Packets.ClientPackets.SetStatus("Uninstallation failed: Installation is not enabled").Execute(client);
-                return;
-            }
-
-            RemoveExistingLogs();
-
-            if (Settings.STARTUP)
-                Startup.RemoveFromStartup();
-
             try
             {
+                RemoveExistingLogs();
+
+                if (Settings.STARTUP)
+                    Startup.RemoveFromStartup();
+
                 if (!FileHelper.ClearReadOnly(ClientData.CurrentPath))
-                    new Packets.ClientPackets.SetStatus("Uninstallation failed: File is read-only").Execute(client);
+                    throw new Exception("Could not clear read-only attribute");
 
                 string batchFile = FileHelper.CreateUninstallBatch(Settings.INSTALL && Settings.HIDEFILE);
 
-                if (string.IsNullOrEmpty(batchFile)) return;
+                if (string.IsNullOrEmpty(batchFile))
+                    throw new Exception("Could not create uninstall-batch file");
 
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     WindowStyle = ProcessWindowStyle.Hidden,
-                    CreateNoWindow = true,
                     UseShellExecute = true,
                     FileName = batchFile
                 };
                 Process.Start(startInfo);
+
+                Program.ConnectClient.Exit();
             }
-            finally
+            catch (Exception ex)
             {
-                ClientData.Disconnect = true;
-                client.Disconnect();
+                new Packets.ClientPackets.SetStatus(string.Format("Uninstallation failed: {0}", ex.Message)).Execute(client);
             }
         }
 

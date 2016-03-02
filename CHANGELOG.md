@@ -1,5 +1,19 @@
 #QuasarRAT Changelog
 
+##Quasar v1.2.0.0 [12.10.2015]
+* Added Client restart on unhandled exceptions
+* Added additional settings to Keylogger (set/hide log-directory)
+* Added encrypted Keylogger logs
+* Improved Client Builder
+* Improved System Information
+* Improved File Manager behaviour when loading directories with many files
+* Improved Remote Shell (scrolls now correctly to the bottom when new text received)
+* Improved compatibility with many connected clients (1k+)
+* Improved AES encryption/decryption speed (if available, makes use of hardware accelerated AES)
+* Fixed Client not setting file attribute correctly on startup
+* Fixed Remote Desktop lagging with mouse input and maximized window
+* Some minor improvements
+
 ##Quasar v1.1.0.0 [30.08.2015]
 * **Changed Target Framework to .NET Framework 4.0 Client Profile**
 * Added deletion of ZoneIdentifier file when installing

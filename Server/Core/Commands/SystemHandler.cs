@@ -7,7 +7,6 @@ using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
-using xServer.Core.Utilities;
 using xServer.Enums;
 using xServer.Forms;
 
@@ -47,52 +46,34 @@ namespace xServer.Core.Commands
                 client.Value.ProcessingDirectory = true;
 
                 client.Value.FrmFm.ClearFileBrowser();
+                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0);
 
-                ListViewItem lviBack = new ListViewItem(new string[] { "..", "", "" })
-                {
-                    Tag = PathType.Back,
-                    ImageIndex = 0
-                };
-
-                client.Value.FrmFm.AddItemToFileBrowser(lviBack);
-
-                if (packet.Folders != null && packet.Folders.Length != 0)
+                if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
                 {
                     for (int i = 0; i < packet.Folders.Length; i++)
                     {
                         if (packet.Folders[i] != DELIMITER)
                         {
-                            ListViewItem lvi = new ListViewItem(new string[] { packet.Folders[i], "", PathType.Directory.ToString() })
-                            {
-                                Tag = PathType.Directory,
-                                ImageIndex = 1
-                            };
-
-                            if (client.Value == null || client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
+                            client.Value.FrmFm.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1);
                         }
                     }
                 }
 
-                if (packet.Files != null && packet.Files.Length != 0)
+                if (packet.Files != null && packet.Files.Length != 0 && client.Value.ProcessingDirectory)
                 {
                     for (int i = 0; i < packet.Files.Length; i++)
                     {
                         if (packet.Files[i] != DELIMITER)
                         {
-                            ListViewItem lvi =
-                                new ListViewItem(new string[] { packet.Files[i], FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File.ToString() })
-                                {
-                                    Tag = PathType.File,
-                                    ImageIndex = FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i]))
-                                };
-
-                            if (client.Value == null || client.Value.FrmFm == null)
+                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(lvi);
+                            client.Value.FrmFm.AddItemToFileBrowser(packet.Files[i],
+                                FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
+                                FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])));
                         }
                     }
                 }

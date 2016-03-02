@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
-using xClient.Core.Data;
+using xClient.Core.Networking;
 using xClient.Enums;
 
 namespace xClient.Core.Helper
@@ -38,12 +38,12 @@ namespace xClient.Core.Helper
 
         public static void StartUserIdleCheckThread()
         {
-            new Thread(UserIdleThread).Start();
+            new Thread(UserIdleThread) {IsBackground = true}.Start();
         }
 
         static void UserIdleThread()
         {
-            while (!ClientData.Disconnect)
+            while (!QuasarClient.Exiting)
             {
                 Thread.Sleep(5000);
                 if (IsUserIdle())

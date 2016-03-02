@@ -1,6 +1,6 @@
 QuasarRAT
 =========
-<a href="https://ci.appveyor.com/project/MaxXor/quasarrat"><image src="https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true" height="18"></a> [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
+[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
 
 **Free, Open-Source Remote Administration Tool for Windows**
 
@@ -28,6 +28,7 @@ Features
 * Keylogger (Unicode Support)
 * Reverse Proxy (SOCKS5)
 * Password Recovery (Common Browsers and FTP Clients)
+* Registry Editor
 
 Requirements
 ---
@@ -60,7 +61,6 @@ Building a client
 
 ToDo
 ---
-* Registry Editor ([#108](https://github.com/quasar/QuasarRAT/issues/108))
 * [Open Issues](https://github.com/quasar/QuasarRAT/issues)
 
 Contributing

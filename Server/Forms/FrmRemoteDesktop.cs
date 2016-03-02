@@ -10,14 +10,14 @@ using xServer.Enums;
 
 namespace xServer.Forms
 {
-    //TODO: Fix Alt + Tab
     public partial class FrmRemoteDesktop : Form
     {
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
         private bool _enableMouseInput;
         private bool _enableKeyboardInput;
-        private IKeyboardMouseEvents _mEvents;
+        private IKeyboardMouseEvents _keyboardHook;
+        private IKeyboardMouseEvents _mouseHook;
         private List<Keys> _keysPressed;
 
         public FrmRemoteDesktop(Client c)
@@ -25,11 +25,7 @@ namespace xServer.Forms
             _connectClient = c;
             _connectClient.Value.FrmRdp = this;
 
-            if (PlatformHelper.RunningOnMono)
-                SubscribeMonoEvents();
-            else
-                SubscribeWindowsHookEvents();
-
+            SubscribeEvents();
             InitializeComponent();
         }
 
@@ -50,32 +46,51 @@ namespace xServer.Forms
                 new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
         }
 
-        private void SubscribeWindowsHookEvents()
+        /// <summary>
+        /// Subscribes the local mouse and keyboard hooks.
+        /// </summary>
+        private void SubscribeEvents()
         {
-            _mEvents = Hook.GlobalEvents();
-            _mEvents.MouseWheel += OnMouseWheelMove;
-            _mEvents.KeyDown += OnKeyDown;
-            _mEvents.KeyUp += OnKeyUp;
+            if (PlatformHelper.RunningOnMono) // Mono/Linux
+            {
+                this.KeyDown += OnKeyDown;
+                this.KeyUp += OnKeyUp;
+            }
+            else // Windows
+            {
+                _keyboardHook = Hook.GlobalEvents();
+                _keyboardHook.KeyDown += OnKeyDown;
+                _keyboardHook.KeyUp += OnKeyUp;
+
+                _mouseHook = Hook.AppEvents();
+                _mouseHook.MouseWheel += OnMouseWheelMove;
+            }
         }
 
-        private void SubscribeMonoEvents()
+        /// <summary>
+        /// Unsubscribes the local mouse and keyboard hooks.
+        /// </summary>
+        private void UnsubscribeEvents()
         {
-            this.KeyDown += OnKeyDown;
-            this.KeyUp += OnKeyUp;
-        }
-
-        private void UnsubscribeWindowsHookEvents()
-        {
-            if (_mEvents == null) return;
-            _mEvents.MouseWheel -= OnMouseWheelMove;
-            _mEvents.KeyDown -= OnKeyDown;
-            _mEvents.KeyUp -= OnKeyUp;
-        }
-
-        private void UnsubscribeMonoEvents()
-        {
-            this.KeyDown -= OnKeyDown;
-            this.KeyUp -= OnKeyUp;
+            if (PlatformHelper.RunningOnMono) // Mono/Linux
+            {
+                this.KeyDown -= OnKeyDown;
+                this.KeyUp -= OnKeyUp;
+            }
+            else // Windows
+            {
+                if (_keyboardHook != null)
+                {
+                    _keyboardHook.KeyDown -= OnKeyDown;
+                    _keyboardHook.KeyUp -= OnKeyUp;
+                    _keyboardHook.Dispose();
+                }
+                if (_mouseHook != null)
+                {
+                    _mouseHook.MouseWheel -= OnMouseWheelMove;
+                    _mouseHook.Dispose();
+                }
+            }
         }
 
         public void AddMonitors(int monitors)
@@ -137,8 +152,7 @@ namespace xServer.Forms
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRdp = null;
 
-            UnsubscribeWindowsHookEvents();
-            UnsubscribeMonoEvents();
+            UnsubscribeEvents();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)

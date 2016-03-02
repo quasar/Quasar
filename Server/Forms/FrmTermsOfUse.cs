@@ -18,7 +18,7 @@ namespace xServer.Forms
         private void FrmTermsOfUse_Load(object sender, EventArgs e)
         {
             lblToU.Left = (this.Width/2) - (lblToU.Width/2);
-            Thread t = new Thread(Wait20Sec);
+            Thread t = new Thread(Wait20Sec) {IsBackground = true};
             t.Start();
         }
 

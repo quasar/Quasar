@@ -22,6 +22,10 @@ namespace xServer.Forms
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
         public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
 
+        private const int TRANSFER_ID = 0;
+        private const int TRANSFER_TYPE = 1;
+        private const int TRANSFER_STATUS = 2;
+
         public FrmFileManager(Client c)
         {
             _connectClient = c;
@@ -51,7 +55,7 @@ namespace xServer.Forms
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_connectClient != null && _connectClient.Value != null && _connectClient.Value.ReceivedLastDirectory)
+            if (_connectClient != null && _connectClient.Value != null)
             {
                 SetCurrentDir(cmbDrives.SelectedValue.ToString());
                 RefreshDirectory();
@@ -67,14 +71,10 @@ namespace xServer.Forms
                 switch (type)
                 {
                     case PathType.Back:
-                        if (!_connectClient.Value.ReceivedLastDirectory) return;
-
                         SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
                         RefreshDirectory();
                         break;
                     case PathType.Directory:
-                        if (!_connectClient.Value.ReceivedLastDirectory) return;
-
                         SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
                         RefreshDirectory();
                         break;
@@ -98,7 +98,7 @@ namespace xServer.Forms
                     {
                         new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
 
-                        AddTransfer(id, "Downloading...", files.SubItems[0].Text);
+                        AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
                     }
                 }
             }
@@ -126,7 +126,7 @@ namespace xServer.Forms
 
                             if (string.IsNullOrEmpty(path)) return;
 
-                            AddTransfer(id, "Uploading...", Path.GetFileName(path));
+                            AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
 
                             int index = GetTransferIndex(id);
                             if (index < 0)
@@ -155,6 +155,13 @@ namespace xServer.Forms
                                 if (CanceledUploads.ContainsKey(id))
                                 {
                                     UpdateTransferStatus(index, "Canceled", 0);
+                                    _limitThreads.Release();
+                                    return;
+                                }
+
+                                index = GetTransferIndex(id);
+                                if (index < 0)
+                                {
                                     _limitThreads.Release();
                                     return;
                                 }
@@ -233,24 +240,24 @@ namespace xServer.Forms
 
         private void deleteToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem files in lstDirectory.SelectedItems)
+            int count = lstDirectory.SelectedItems.Count;
+            if (count == 0) return;
+            if (MessageBox.Show(string.Format("Are you sure you want to delete {0} file(s)?", count),
+                "Delete Confirmation", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
-                PathType type = (PathType)files.Tag;
-
-                switch (type)
+                foreach (ListViewItem files in lstDirectory.SelectedItems)
                 {
-                    case PathType.Directory:
-                    case PathType.File:
-                        string path = GetAbsolutePath(files.SubItems[0].Text);
-                        string text = string.Format("Are you sure you want to delete this {0}?", type);
+                    PathType type = (PathType)files.Tag;
 
-                        if (MessageBox.Show(text, "Are you sure?", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                            DialogResult.Yes)
-                        {
+                    switch (type)
+                    {
+                        case PathType.Directory:
+                        case PathType.File:
+                            string path = GetAbsolutePath(files.SubItems[0].Text);
                             if (_connectClient != null)
                                 new Core.Packets.ServerPackets.DoPathDelete(path, type).Execute(_connectClient);
-                        }
-                        break;
+                            break;
+                    }
                 }
             }
         }
@@ -315,42 +322,48 @@ namespace xServer.Forms
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
         {
-            if (Directory.Exists(_connectClient.Value.DownloadDirectory))
-                Process.Start(_connectClient.Value.DownloadDirectory);
-            else
-                MessageBox.Show("No files downloaded yet!", "File Manager", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+            if (!Directory.Exists(_connectClient.Value.DownloadDirectory))
+                Directory.CreateDirectory(_connectClient.Value.DownloadDirectory);
+            
+            Process.Start(_connectClient.Value.DownloadDirectory);
         }
 
         private void cancelToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (transfer.SubItems[1].Text.StartsWith("Downloading"))
+                if (!transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") &&
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") &&
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+
+                int id = int.Parse(transfer.SubItems[TRANSFER_ID].Text);
+
+                if (transfer.SubItems[TRANSFER_TYPE].Text == "Download")
                 {
-                    int id = int.Parse(transfer.SubItems[0].Text);
+                    if (_connectClient != null)
+                        new Core.Packets.ServerPackets.DoDownloadFileCancel(id).Execute(_connectClient);
                     if (!CommandHandler.CanceledDownloads.ContainsKey(id))
                         CommandHandler.CanceledDownloads.Add(id, "canceled");
-                    if (_connectClient != null)
-                        new Core.Packets.ServerPackets.DoDownloadFileCancel(int.Parse(transfer.Text)).Execute(
-                            _connectClient);
-                    CommandHandler.RenamedFiles.Remove(id);
+                    if (CommandHandler.RenamedFiles.ContainsKey(id))
+                        CommandHandler.RenamedFiles.Remove(id);
                     UpdateTransferStatus(transfer.Index, "Canceled", 0);
                 }
-                else if (transfer.SubItems[1].Text.StartsWith("Uploading"))
+                else if (transfer.SubItems[TRANSFER_TYPE].Text == "Upload")
                 {
-                    int id = int.Parse(transfer.SubItems[0].Text);
                     if (!CanceledUploads.ContainsKey(id))
                         CanceledUploads.Add(id, "canceled");
+                    UpdateTransferStatus(transfer.Index, "Canceled", 0);
                 }
             }
         }
 
-        private void removeToolStripMenuItem_Click(object sender, EventArgs e)
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (ListViewItem transfer in lstTransfers.SelectedItems)
+            foreach (ListViewItem transfer in lstTransfers.Items)
             {
-                if (transfer.SubItems[1].Text.StartsWith("Downloading") || transfer.SubItems[1].Text.StartsWith("Uploading")) continue;
+                if (transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") ||
+                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") ||
+                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
                 transfer.Remove();
             }
         }
@@ -378,7 +391,7 @@ namespace xServer.Forms
 
                         if (string.IsNullOrEmpty(path)) return;
 
-                        AddTransfer(id, "Uploading...", Path.GetFileName(path));
+                        AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
 
                         int index = GetTransferIndex(id);
                         if (index < 0)
@@ -407,6 +420,13 @@ namespace xServer.Forms
                             if (CanceledUploads.ContainsKey(id))
                             {
                                 UpdateTransferStatus(index, "Canceled", 0);
+                                _limitThreads.Release();
+                                return;
+                            }
+
+                            index = GetTransferIndex(id);
+                            if (index < 0)
+                            {
                                 _limitThreads.Release();
                                 return;
                             }
@@ -486,10 +506,16 @@ namespace xServer.Forms
             }
         }
 
-        public void AddItemToFileBrowser(ListViewItem lvi)
+        public void AddItemToFileBrowser(string name, string size, PathType type, int imageIndex)
         {
             try
             {
+                ListViewItem lvi = new ListViewItem(new string[] { name, size, (type != PathType.Back) ? type.ToString() : string.Empty })
+                {
+                    Tag = type,
+                    ImageIndex = imageIndex
+                };
+
                 lstDirectory.Invoke((MethodInvoker)delegate
                 {
                     lstDirectory.Items.Add(lvi);
@@ -500,14 +526,15 @@ namespace xServer.Forms
             }
         }
 
-        public void AddTransfer(int id, string status, string filename)
+        public void AddTransfer(int id, string type, string status, string filename)
         {
             try
             {
+                ListViewItem lvi =
+                    new ListViewItem(new string[] {id.ToString(), type, status, filename});
+
                 lstDirectory.Invoke((MethodInvoker)delegate
                 {
-                    ListViewItem lvi =
-                        new ListViewItem(new string[] { id.ToString(), status, filename });
                     lstTransfers.Items.Add(lvi);
                 });
             }
@@ -525,7 +552,7 @@ namespace xServer.Forms
             {
                 lstTransfers.Invoke((MethodInvoker)delegate
                 {
-                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && strId.Equals(lvi.SubItems[0].Text)))
+                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && strId.Equals(lvi.SubItems[TRANSFER_ID].Text)))
                     {
                         index = lvi.Index;
                         break;
@@ -544,14 +571,17 @@ namespace xServer.Forms
         {
             try
             {
-                lstTransfers.Invoke((MethodInvoker)delegate
+                lstTransfers.Invoke((MethodInvoker) delegate
                 {
-                    lstTransfers.Items[index].SubItems[1].Text = status;
+                    lstTransfers.Items[index].SubItems[TRANSFER_STATUS].Text = status;
                     if (imageIndex >= 0)
                         lstTransfers.Items[index].ImageIndex = imageIndex;
                 });
             }
             catch (InvalidOperationException)
+            {
+            }
+            catch (Exception)
             {
             }
         }
@@ -601,7 +631,11 @@ namespace xServer.Forms
 
         private void RefreshDirectory()
         {
-            if (_connectClient == null || _connectClient.Value == null || _connectClient.Value.ReceivedLastDirectory == false) return;
+            if (_connectClient == null || _connectClient.Value == null) return;
+
+            if (!_connectClient.Value.ReceivedLastDirectory)
+                _connectClient.Value.ProcessingDirectory = false;
+
             new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
             SetStatus("Loading directory content...");
             _connectClient.Value.ReceivedLastDirectory = false;

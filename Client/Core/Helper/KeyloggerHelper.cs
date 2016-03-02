@@ -82,6 +82,11 @@ namespace xClient.Core.Helper
             return key.ToString();
         }
 
+        public static string Filter(string input)
+        {
+            return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
+        }
+
         public static string GetDisplayName(Keys key, bool altGr = false)
         {
             string name = key.ToString();

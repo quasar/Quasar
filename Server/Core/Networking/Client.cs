@@ -7,12 +7,11 @@ using System.Threading;
 using xServer.Core.Compression;
 using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
-using xServer.Core.NetSerializer;
 using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class Client
+    public class Client : IEquatable<Client>
     {
         /// <summary>
         /// Occurs when the state of the client changes.
@@ -36,9 +35,10 @@ namespace xServer.Core.Networking
 
             Connected = connected;
 
-            if (ClientState != null)
+            var handler = ClientState;
+            if (handler != null)
             {
-                ClientState(this, connected);
+                handler(this, connected);
             }
         }
 
@@ -61,9 +61,10 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that received by the client.</param>
         private void OnClientRead(IPacket packet)
         {
-            if (ClientRead != null)
+            var handler = ClientRead;
+            if (handler != null)
             {
-                ClientRead(this, packet);
+                handler(this, packet);
             }
         }
 
@@ -89,9 +90,10 @@ namespace xServer.Core.Networking
         /// <param name="rawData">The packet in raw bytes.</param>
         private void OnClientWrite(IPacket packet, long length, byte[] rawData)
         {
-            if (ClientWrite != null)
+            var handler = ClientWrite;
+            if (handler != null)
             {
-                ClientWrite(this, packet, length, rawData);
+                handler(this, packet, length, rawData);
             }
         }
 
@@ -99,18 +101,33 @@ namespace xServer.Core.Networking
         /// Checks whether the clients are equal.
         /// </summary>
         /// <param name="c">Client to compare with.</param>
-        /// <returns></returns>
+        /// <returns>True if equal, else False.</returns>
         public bool Equals(Client c)
         {
             try
             {
-                return this.EndPoint.Port == c.EndPoint.Port; // this port is always unique for each client
+                // the port is always unique for each client
+                return this.EndPoint.Port.Equals(c.EndPoint.Port);
             }
             catch (Exception)
             {
                 return false;
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            return this.Equals(obj as Client);
+        }
+
+        /// <summary>
+        /// Returns the hashcode for this instance.
+        /// </summary>
+        /// <returns>A hash code for the current instance.</returns>
+        public override int GetHashCode()
+        {
+            return this.EndPoint.Port.GetHashCode();
+        }  
 
         /// <summary>
         /// The type of the packet received.
@@ -219,29 +236,17 @@ namespace xServer.Core.Networking
         /// </summary>
         private bool _appendHeader;
 
-        /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        private Serializer _serializer;
-
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        public Client()
-        {
-        }
-
-        internal Client(Server server, Socket sock, Type[] packets)
+        public Client(Server parentServer, Socket socket)
         {
             try
             {
-                _parentServer = server;
-                _parentServer.AddClient(this);
-                AddTypesToSerializer(packets);
-                if (_serializer == null) throw new Exception("Serializer not initialized");
+                _parentServer = parentServer;
                 Initialize();
 
-                _handle = sock;
+                _handle = socket;
                 _handle.SetKeepAliveEx(_parentServer.KEEP_ALIVE_INTERVAL, _parentServer.KEEP_ALIVE_TIME);
 
                 EndPoint = (IPEndPoint)_handle.RemoteEndPoint;
@@ -253,7 +258,7 @@ namespace xServer.Core.Networking
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
                 OnClientState(true);
             }
-            catch
+            catch (Exception)
             {
                 Disconnect();
             }
@@ -267,54 +272,55 @@ namespace xServer.Core.Networking
 
         private void AsyncReceive(IAsyncResult result)
         {
+            int bytesTransferred;
+
             try
             {
-                int bytesTransferred;
+                bytesTransferred = _handle.EndReceive(result);
 
-                try
-                {
-                    bytesTransferred = _handle.EndReceive(result);
-
-                    if (bytesTransferred <= 0)
-                    {
-                        Disconnect();
-                        return;
-                    }
-                }
-                catch (NullReferenceException)
-                {
-                    return;
-                }
-                catch (ObjectDisposedException)
-                {
-                    return;
-                }
-                catch (Exception)
-                {
-                    Disconnect();
-                    return;
-                }
-
-                _parentServer.BytesReceived += bytesTransferred;
-
-                byte[] received = new byte[bytesTransferred];
-                Array.Copy(_readBuffer, received, received.Length);
-                lock (_readBuffers)
-                {
-                    _readBuffers.Enqueue(received);
-                }
-
-                lock (_readingPacketsLock)
-                {
-                    if (!_readingPackets)
-                    {
-                        _readingPackets = true;
-                        ThreadPool.QueueUserWorkItem(AsyncReceive);
-                    }
-                }
+                if (bytesTransferred <= 0)
+                    throw new Exception("no bytes transferred");
             }
-            catch
+            catch (NullReferenceException)
             {
+                return;
+            }
+            catch (ObjectDisposedException)
+            {
+                return;
+            }
+            catch (Exception)
+            {
+                Disconnect();
+                return;
+            }
+
+            _parentServer.BytesReceived += bytesTransferred;
+
+            byte[] received = new byte[bytesTransferred];
+
+            try
+            {
+                Array.Copy(_readBuffer, received, received.Length);
+            }
+            catch (Exception)
+            {
+                Disconnect();
+                return;
+            }
+
+            lock (_readBuffers)
+            {
+                _readBuffers.Enqueue(received);
+            }
+
+            lock (_readingPacketsLock)
+            {
+                if (!_readingPackets)
+                {
+                    _readingPackets = true;
+                    ThreadPool.QueueUserWorkItem(AsyncReceive);
+                }
             }
 
             try
@@ -324,7 +330,7 @@ namespace xServer.Core.Networking
             catch (ObjectDisposedException)
             {
             }
-            catch
+            catch (Exception)
             {
                 Disconnect();
             }
@@ -485,7 +491,7 @@ namespace xServer.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)_serializer.Deserialize(deserialized);
+                                            IPacket packet = (IPacket)_parentServer.Serializer.Deserialize(deserialized);
 
                                             OnClientRead(packet);
                                         }
@@ -527,33 +533,35 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet to be send.</param>
         public void Send<T>(T packet) where T : IPacket
         {
-            if (!Connected) return;
+            if (!Connected || packet == null) return;
 
             lock (_sendBuffers)
             {
-                try
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    using (MemoryStream ms = new MemoryStream())
+                    try
                     {
-                        _serializer.Serialize(ms, packet);
-
-                        byte[] payload = ms.ToArray();
-
-                        _sendBuffers.Enqueue(payload);
-
-                        OnClientWrite(packet, payload.LongLength, payload);
-
-                        lock (_sendingPacketsLock)
-                        {
-                            if (_sendingPackets) return;
-
-                            _sendingPackets = true;
-                        }
-                        ThreadPool.QueueUserWorkItem(Send);
+                        _parentServer.Serializer.Serialize(ms, packet);
                     }
-                }
-                catch
-                {
+                    catch (Exception)
+                    {
+                        Disconnect();
+                        return;
+                    }
+
+                    byte[] payload = ms.ToArray();
+
+                    _sendBuffers.Enqueue(payload);
+
+                    OnClientWrite(packet, payload.LongLength, payload);
+
+                    lock (_sendingPacketsLock)
+                    {
+                        if (_sendingPackets) return;
+
+                        _sendingPackets = true;
+                    }
+                    ThreadPool.QueueUserWorkItem(Send);
                 }
             }
         }
@@ -662,23 +670,11 @@ namespace xServer.Core.Networking
                     Value.Dispose();
                     Value = null;
                 }
-
-                if (_parentServer.BufferManager != null)
-                    _parentServer.BufferManager.ReturnBuffer(_readBuffer);
+                
+                _parentServer.BufferManager.ReturnBuffer(_readBuffer);
             }
 
-            _parentServer.RemoveClient(this);
-
             OnClientState(false);
-        }
-
-        /// <summary>
-        /// Adds Types to the serializer.
-        /// </summary>
-        /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type[] types)
-        {
-            _serializer = new Serializer(types);
         }
     }
 }
