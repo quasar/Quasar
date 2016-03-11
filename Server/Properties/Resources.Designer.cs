@@ -283,6 +283,16 @@ namespace xServer.Properties {
         /// <summary>
         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Quasar_Server {
+            get {
+                object obj = ResourceManager.GetObject("Quasar_Server", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap refresh {
             get {
                 object obj = ResourceManager.GetObject("refresh", resourceCulture);
@@ -442,7 +452,7 @@ namespace xServer.Properties {
         
         /// <summary>
         ///   Sucht eine lokalisierte Zeichenfolge, die     Quasar - Remote Administration Tool
-        ///    Copyright (C) 2015 MaxX0r
+        ///    Copyright (C) 2016 MaxX0r
         ///
         ///    Quasar is free software: you can redistribute it and/or modify
         ///    it under the terms of the GNU General Public License as published by
@@ -505,16 +515,6 @@ namespace xServer.Properties {
         internal static System.Drawing.Bitmap world_link {
             get {
                 object obj = ResourceManager.GetObject("world_link", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
-        /// </summary>
-        internal static System.Drawing.Bitmap Quasar_Server {
-            get {
-                object obj = ResourceManager.GetObject("Quasar_Server", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
