@@ -112,7 +112,7 @@ namespace xClient.Core.Extensions
         {
             try
             {
-                key.DeleteSubKeyTree(name, false);
+                key.DeleteSubKeyTree(name, true);
                 return true;
             }
             catch
