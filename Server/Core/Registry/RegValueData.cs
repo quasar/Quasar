@@ -21,19 +21,9 @@ namespace xServer.Core.Registry
             Data = data;
         }
 
-        public string GetDataAsString()
-        {
-            return Kind.RegistryTypeToString(Data);
-        }
-
-        public string GetKindAsString()
-        {
-            return Kind.RegistryTypeToString();
-        }
-
         public override string ToString()
         {
-            return string.Format("({0}:{1}:{2})", Name, GetKindAsString(), GetDataAsString());
+            return string.Format("({0}:{1}:{2})", Name, Kind, Data);
         }
     }
 }

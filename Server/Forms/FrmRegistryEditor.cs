@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using xServer.Controls;
 using xServer.Core.Networking;
 using xServer.Core.Registry;
+using xServer.Core.Extensions;
 
 namespace xServer.Forms
 {
@@ -288,7 +289,9 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.GetKindAsString(), value.GetDataAsString());
+                        string kind = value.Kind.RegistryTypeToString();
+                        string data = value.Kind.RegistryTypeToString(value.Data);
+                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
                         //unselect all
                         lstRegistryKeys.SelectedIndices.Clear();
                         lstRegistryKeys.Items.Add(item);
@@ -394,7 +397,7 @@ namespace xServer.Forms
                             if (index != -1)
                             {
                                 RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
-                                valueItem.Data = value.GetDataAsString();
+                                valueItem.Data = value.Kind.RegistryTypeToString(value.Data);;
                             }
                         }
                         else
@@ -428,7 +431,9 @@ namespace xServer.Forms
             {
                 foreach (var value in values)
                 {
-                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, value.GetKindAsString(), value.GetDataAsString());
+                    string kind = value.Kind.RegistryTypeToString();
+                    string data = value.Kind.RegistryTypeToString(value.Data);
+                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
                     lstRegistryKeys.Items.Add(item);
                 }
             }
