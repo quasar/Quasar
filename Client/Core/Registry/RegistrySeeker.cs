@@ -64,109 +64,65 @@ namespace xClient.Core.Registry
         #region Fields
 
         /// <summary>
-        /// Fired when the RegistrySeeker has finished searching through the registry.
-        /// </summary>
-        public event EventHandler<SearchCompletedEventArgs> SearchComplete;
-
-        /// <summary>
-        /// Fired when a RegistryKey is found.
-        /// </summary>
-        public event EventHandler<MatchFoundEventArgs> MatchFound;
-
-        /// <summary>
-        /// The worker thread that does the searching/traversal through the registry.
-        /// </summary>
-        private BackgroundWorker searcher;
-
-        /// <summary>
         /// The lock used to ensure thread safety.
         /// </summary>
         private readonly object locker = new object();
-
-        /// <summary>
-        /// The search arguments to use for customizable registry searching.
-        /// </summary>
-        public RegistrySeekerParams searchArgs;
 
         /// <summary>
         /// The list containing the matches found during the search.
         /// </summary>
         private List<RegSeekerMatch> matches;
 
-        /// <summary>
-        /// The queue of registry key paths to analyze further.
-        /// </summary>
-        private Queue<string> pendingKeys;
+        public RegSeekerMatch[] Matches
+        {
+            get
+            {
+                if (matches != null)
+                    return matches.ToArray();
+                return null;
+            }
+        }
 
         #endregion
 
         public RegistrySeeker()
         {
-            searcher = new BackgroundWorker() { WorkerSupportsCancellation = true, WorkerReportsProgress = true };
-
-            searcher.DoWork += new DoWorkEventHandler(worker_DoWork);
-            searcher.RunWorkerCompleted += new RunWorkerCompletedEventHandler(worker_RunWorkerCompleted);
-            searcher.ProgressChanged += new ProgressChangedEventHandler(worker_ProgressChanged);
+            matches = new List<RegSeekerMatch>();
         }
 
-        public void Start(string rootKeyName)
+        public void BeginSeeking(string rootKeyName)
         {
-            if (rootKeyName != null && rootKeyName.Length > 0)
+            if (!String.IsNullOrEmpty(rootKeyName))
             {
-                RegistryKey root = GetRootKey(rootKeyName);
-
-                if (root != null)
+                using(RegistryKey root = GetRootKey(rootKeyName))
                 {
                     //Check if this is a root key or not
-                    if (root.Name != rootKeyName)
+                    if (root != null && root.Name != rootKeyName)
                     {
-                        //Must get the subKey name by removing root and '\\'
+                        //Must get the subKey name by removing root and '\'
                         string subKeyName = rootKeyName.Substring(root.Name.Length + 1);
-                        root = root.OpenReadonlySubKeySafe(subKeyName);
+                        using(RegistryKey subroot = root.OpenReadonlySubKeySafe(subKeyName))
+                        {
+                            if(subroot != null)
+                                Seek(subroot);
+                        } 
+                    }
+                    else
+                    {
+                        Seek(root);
                     }
                 }
-
-                // Make sure that a root was found
-                if (root != null)
-                    Start(new RegistrySeekerParams(root));
             }
-        }
-
-        public void Start(RegistrySeekerParams args)
-        {
-            searchArgs = args;
-
-            matches = new List<RegSeekerMatch>();
-            searcher.RunWorkerAsync();
-        }
-
-        void worker_ProgressChanged(object sender, ProgressChangedEventArgs e)
-        {
-            MatchFound(this, new MatchFoundEventArgs((RegSeekerMatch)e.UserState));
-        }
-
-        public void Stop()
-        {
-            if (searcher.IsBusy)
+            else
             {
-                lock (locker)
-                {
-                    searcher.CancelAsync();
-                    // Wait until it is done... Similar to synchronous stop.
-                    Monitor.Wait(locker);
-                }
+                Seek(null);
             }
         }
 
-        void worker_RunWorkerCompleted(object sender, RunWorkerCompletedEventArgs e)
-        {
-            SearchComplete(this, new SearchCompletedEventArgs(matches));
-        }
-
-        void worker_DoWork(object sender, DoWorkEventArgs e)
+        private void Seek(RegistryKey rootKey)
         {
             // Get root registrys
-            if (searchArgs.RootKey == null)
+            if (rootKey == null)
             {
                 foreach (RegistryKey key in RegistrySeeker.ROOT_KEYS)
                     //Just need root key so process it
@@ -175,73 +131,20 @@ namespace xClient.Core.Registry
             else
             {
                 //searching for subkeys to root key
-                Search(searchArgs.RootKey);
+                Search(rootKey);
             }
         }
 
-        void Search(string rootKeyName)
+        private void Search(RegistryKey rootKey)
         {
-            try
+            foreach(string subKeyName in rootKey.GetSubKeyNames())
             {
-                using (RegistryKey key = GetRootKey(rootKeyName).OpenReadonlySubKeySafe(rootKeyName))
-                {
-                    if (key != null)
-                    {
-                        Search(key);
-                    }
-                }
-            }
-            catch
-            { }
-        }
-
-        void Search(RegistryKey rootKey)
-        {
-            string rootKeyName = rootKey.Name.Substring(rootKey.Name.LastIndexOf('\\') + 1);
-
-            RegistryKey subKey = null;
-            string keyName;
-            int cropIndex = rootKey.Name.Length + 1;
-            pendingKeys = new Queue<string>(rootKey.GetSubKeyNames());
-
-            while (pendingKeys.Count > 0)
-            {
-                if (searcher.CancellationPending)
-                {
-                    lock (locker)
-                    {
-                        // Allow for a synchronous stop.
-                        Monitor.Pulse(locker);
-                        return;
-                    }
-                }
-
-                keyName = pendingKeys.Dequeue();
-
-                try
-                {
-                    subKey = rootKey.OpenSubKey(keyName);
-                }
-                catch (SecurityException)
-                {
-                    subKey = null;
-                }
-                finally
-                {
-                    ProcessKey(subKey, keyName);
-                }
+                RegistryKey subKey = rootKey.OpenReadonlySubKeySafe(subKeyName);
+                ProcessKey(subKey, subKeyName);
             }
         }
 
         private void ProcessKey(RegistryKey key, string keyName)
-        {
-            if (searcher.CancellationPending)
-                return;
-
-            MatchData(key, keyName);
-        }
-
-        private void MatchData(RegistryKey key, string keyName)
         {
             if (key != null)
             {
@@ -267,11 +170,7 @@ namespace xClient.Core.Registry
         {
             RegSeekerMatch match = new RegSeekerMatch(key, values, subkeycount);
 
-            if (MatchFound != null)
-                searcher.ReportProgress(0, match);
-
             matches.Add(match);
-
         }
 
         public static RegistryKey GetRootKey(string subkey_fullpath)
@@ -294,11 +193,6 @@ namespace xClient.Core.Registry
                     /* If none of the above then the key must be invalid */
                     throw new Exception("Invalid rootkey, could not be found");
             }
-        }
-
-        public bool IsBusy
-        {
-            get { return searcher.IsBusy; }
         }
     }
 }
