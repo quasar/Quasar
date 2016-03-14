@@ -56,7 +56,8 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.Contains("NetSerializer") || typeDef.HasInterfaces)
+            if (typeDef.Namespace.Contains("NetSerializer") 
+                || typeDef.Namespace.Contains("Registry") || typeDef.HasInterfaces)
                 return;
 
             _typeOverloader.GiveName(typeDef);
