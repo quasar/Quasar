@@ -272,16 +272,17 @@ namespace xServer.Forms
                 lstRegistryKeys.Invoke((MethodInvoker)delegate
                 {
                     List<RegValueData> ValuesFromNode = null;
-                    if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>)) {
-                        ValuesFromNode = (List<RegValueData>)key.Tag;
+                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[])) {
+                        ValuesFromNode = ((RegValueData[])key.Tag).ToList();
                         ValuesFromNode.Add(value);
+                        key.Tag = ValuesFromNode.ToArray();
                     }
                     else
                     {
                         //The tag has a incorrect element or is missing data
                         ValuesFromNode = new List<RegValueData>();
                         ValuesFromNode.Add(value);
-                        key.Tag = ValuesFromNode;
+                        key.Tag = ValuesFromNode.ToArray();
                     }
 
                     //Deactivate sorting
@@ -316,15 +317,16 @@ namespace xServer.Forms
                 lstRegistryKeys.Invoke((MethodInvoker)delegate
                 {
                     List<RegValueData> ValuesFromNode = null;
-                    if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
+                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
                     {
-                        ValuesFromNode = (List<RegValueData>)key.Tag;
+                        ValuesFromNode = ((RegValueData[])key.Tag).ToList();
                         ValuesFromNode.RemoveAll(value => value.Name == valueName);
+                        key.Tag = ValuesFromNode.ToArray();
                     }
                     else
                     {
                         //Tag has incorrect element or is missing data
-                        key.Tag = new List<RegValueData>();
+                        key.Tag = new RegValueData[] {};
                     }
 
                     if (tvRegistryDirectory.SelectedNode == key)
@@ -350,9 +352,9 @@ namespace xServer.Forms
                 lstRegistryKeys.Invoke((MethodInvoker)delegate
                 {
                     //Can only rename if the value exists in the tag
-                    if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
+                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
                     {
-                        List<RegValueData> ValuesFromNode = (List<RegValueData>)key.Tag;
+                        List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
                         var value = ValuesFromNode.Find(item => item.Name == oldName);
                         value.Name = newName;
 
@@ -383,9 +385,9 @@ namespace xServer.Forms
                 lstRegistryKeys.Invoke((MethodInvoker)delegate
                 {
                     //Can only change if the value exists in the tag
-                    if (key.Tag != null && key.Tag.GetType() == typeof(List<RegValueData>))
+                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
                     {
-                        List<RegValueData> ValuesFromNode = (List<RegValueData>)key.Tag;
+                        List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
                         var regValue = ValuesFromNode.Find(item => item.Name == value.Name);
                         regValue.Data = value.Data;
 
@@ -413,21 +415,21 @@ namespace xServer.Forms
         {
             selectedStripStatusLabel.Text = node.FullPath;
 
-            List<RegValueData> ValuesFromNode = null;
-            if (node.Tag != null && node.Tag.GetType() == typeof(List<RegValueData>))
+            RegValueData[] ValuesFromNode = null;
+            if (node.Tag != null && node.Tag.GetType() == typeof(RegValueData[]))
             {
-                ValuesFromNode = (List<RegValueData>)node.Tag;
+                ValuesFromNode = (RegValueData[])node.Tag;
             }
 
             PopulateLstRegistryKeys(ValuesFromNode);
         }
 
-        private void PopulateLstRegistryKeys(List<RegValueData> values)
+        private void PopulateLstRegistryKeys(RegValueData[] values)
         {
             lstRegistryKeys.Items.Clear();
 
             // Make sure that the passed values are usable
-            if (values != null && values.Count > 0)
+            if (values != null && values.Length > 0)
             {
                 foreach (var value in values)
                 {
@@ -830,11 +832,11 @@ namespace xServer.Forms
         {
             if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
             {
-                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
+                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(RegValueData[]))
                 {
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
                     string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
-                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == name);
+                    RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
 
                     //Initialize the right form to allow editing
                     using (var frm = GetEditForm(keyPath, value, value.Kind))
@@ -850,11 +852,11 @@ namespace xServer.Forms
         {
             if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
             {
-                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(List<RegValueData>))
+                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(RegValueData[]))
                 {
                     string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
                     string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
-                    RegValueData value = ((List<RegValueData>)tvRegistryDirectory.SelectedNode.Tag).Find(item => item.Name == name);
+                    RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
 
                     //Initialize binary editor
                     using (var frm = GetEditForm(keyPath, value, RegistryValueKind.Binary))

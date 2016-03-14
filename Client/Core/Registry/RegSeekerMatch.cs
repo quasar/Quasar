@@ -22,10 +22,10 @@ namespace xClient.Core.Registry
     public class RegSeekerMatch
     {
         public string Key { get; private set; }
-        public List<RegValueData> Data { get; private set; }
+        public RegValueData[] Data { get; private set; }
         public bool HasSubKeys { get; private set; }
 
-        public RegSeekerMatch(string key, List<RegValueData> data, int subkeycount)
+        public RegSeekerMatch(string key, RegValueData[] data, int subkeycount)
         {
             Key = key;
             Data = data;
