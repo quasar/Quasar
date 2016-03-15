@@ -9,6 +9,10 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */
     public static partial class CommandHandler
     {
+        
+
+        #region Registry Key
+        
         public static void HandleLoadRegistryKey(xServer.Core.Packets.ClientPackets.GetRegistryKeysResponse packet, Client client)
         {
             try
@@ -26,8 +30,6 @@ namespace xServer.Core.Commands
             catch
             { }
         }
-
-        #region Registry Key Edit
 
         public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)
         {
@@ -91,7 +93,7 @@ namespace xServer.Core.Commands
 
         #endregion
 
-        #region Registry Value Edit
+        #region Registry Value
 
         public static void HandleCreateRegistryValue(xServer.Core.Packets.ClientPackets.GetCreateRegistryValueResponse packet, Client client)
         {

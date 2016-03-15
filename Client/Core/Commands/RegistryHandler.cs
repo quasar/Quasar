@@ -18,9 +18,8 @@ namespace xClient.Core.Commands
      * modified partially.
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * Modified by StingRaptor on January 21, 2016
+     * Modified by StingRaptor on March 15, 2016
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     * Original Source:
-     * https://github.com/quasar/QuasarRAT/blob/regedit/Client/Core/Commands/RegistryHandler.cs
      */
 
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */

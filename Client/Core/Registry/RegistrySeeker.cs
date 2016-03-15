@@ -16,32 +16,13 @@ namespace xClient.Core.Registry
     * has been modified to suit the needs of another
     * application.
     * (This has been taken from Justin Yanke's branch)
-    * First Modified by Justin Yanke on August 15, 2015
-    * Second Modified by StingRaptor on January 21, 2016
+    * Modified by Justin Yanke on August 15, 2015
+    * Modified by StingRaptor on January 21, 2016
+    * Modified by StingRaptor on March 15, 2016
     * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
     * Unmodified Source:
     * https://regexplore.codeplex.com/SourceControl/latest#Registry/RegSearcher.cs
     */
-
-    public class MatchFoundEventArgs : EventArgs
-    {
-        public RegSeekerMatch Match { get; private set; }
-
-        public MatchFoundEventArgs(RegSeekerMatch match)
-        {
-            Match = match;
-        }
-    }
-
-    public class SearchCompletedEventArgs : EventArgs
-    {
-        public List<RegSeekerMatch> Matches { get; private set; }
-
-        public SearchCompletedEventArgs(List<RegSeekerMatch> matches)
-        {
-            Matches = matches;
-        }
-    }
 
     public class RegistrySeeker
     {
