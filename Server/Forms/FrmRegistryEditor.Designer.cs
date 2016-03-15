@@ -116,7 +116,7 @@
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 25F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 22F));
-            this.tableLayoutPanel.Size = new System.Drawing.Size(1239, 724);
+            this.tableLayoutPanel.Size = new System.Drawing.Size(784, 561);
             this.tableLayoutPanel.TabIndex = 0;
             // 
             // splitContainer
@@ -132,8 +132,8 @@
             // splitContainer.Panel2
             // 
             this.splitContainer.Panel2.Controls.Add(this.lstRegistryKeys);
-            this.splitContainer.Size = new System.Drawing.Size(1233, 671);
-            this.splitContainer.SplitterDistance = 411;
+            this.splitContainer.Size = new System.Drawing.Size(778, 508);
+            this.splitContainer.SplitterDistance = 259;
             this.splitContainer.TabIndex = 0;
             // 
             // imageRegistryDirectoryList
@@ -154,9 +154,9 @@
             this.statusStrip.Dock = System.Windows.Forms.DockStyle.Fill;
             this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.selectedStripStatusLabel});
-            this.statusStrip.Location = new System.Drawing.Point(0, 702);
+            this.statusStrip.Location = new System.Drawing.Point(0, 539);
             this.statusStrip.Name = "statusStrip";
-            this.statusStrip.Size = new System.Drawing.Size(1239, 22);
+            this.statusStrip.Size = new System.Drawing.Size(784, 22);
             this.statusStrip.TabIndex = 1;
             this.statusStrip.Text = "statusStrip";
             // 
@@ -553,7 +553,7 @@
             this.tvRegistryDirectory.Location = new System.Drawing.Point(0, 0);
             this.tvRegistryDirectory.Name = "tvRegistryDirectory";
             this.tvRegistryDirectory.SelectedImageIndex = 0;
-            this.tvRegistryDirectory.Size = new System.Drawing.Size(411, 671);
+            this.tvRegistryDirectory.Size = new System.Drawing.Size(259, 508);
             this.tvRegistryDirectory.TabIndex = 0;
             this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
             this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
@@ -573,7 +573,7 @@
             this.lstRegistryKeys.HideSelection = false;
             this.lstRegistryKeys.Location = new System.Drawing.Point(0, 0);
             this.lstRegistryKeys.Name = "lstRegistryKeys";
-            this.lstRegistryKeys.Size = new System.Drawing.Size(818, 671);
+            this.lstRegistryKeys.Size = new System.Drawing.Size(515, 508);
             this.lstRegistryKeys.SmallImageList = this.imageRegistryKeyTypeList;
             this.lstRegistryKeys.TabIndex = 0;
             this.lstRegistryKeys.UseCompatibleStateImageBehavior = false;
@@ -588,23 +588,23 @@
             // hName
             // 
             this.hName.Text = "Name";
-            this.hName.Width = 203;
+            this.hName.Width = 173;
             // 
             // hType
             // 
             this.hType.Text = "Type";
-            this.hType.Width = 149;
+            this.hType.Width = 104;
             // 
             // hValue
             // 
             this.hValue.Text = "Value";
-            this.hValue.Width = 384;
+            this.hValue.Width = 214;
             // 
             // FrmRegistryEditor
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1239, 724);
+            this.ClientSize = new System.Drawing.Size(784, 561);
             this.Controls.Add(this.tableLayoutPanel);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.ForeColor = System.Drawing.Color.Black;
@@ -612,7 +612,7 @@
             this.MainMenuStrip = this.menuStrip;
             this.Name = "FrmRegistryEditor";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Registry Editor";
+            this.Text = "Registry Editor []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRegistryEditor_FormClosing);
             this.Load += new System.EventHandler(this.FrmRegistryEditor_Load);
             this.tableLayoutPanel.ResumeLayout(false);

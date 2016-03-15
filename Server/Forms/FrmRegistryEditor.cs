@@ -11,6 +11,7 @@ using xServer.Controls;
 using xServer.Core.Networking;
 using xServer.Core.Registry;
 using xServer.Core.Extensions;
+using xServer.Core.Helper;
 
 namespace xServer.Forms
 {
@@ -54,6 +55,9 @@ namespace xServer.Forms
 
             // Set the ListSorter for the listView
             this.lstRegistryKeys.ListViewItemSorter = new RegistryValueListItemComparer();
+
+            if (_connectClient != null)
+                this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
         }
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
