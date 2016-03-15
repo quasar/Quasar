@@ -73,7 +73,7 @@ See [LICENSE.md](/LICENSE.md)
 
 Donate
 ---
-BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
+Bitcoin: `1M18ncC8yGRXG6vRTfj2hJENLfx46ipw2d`
 
 Credits
 ---
