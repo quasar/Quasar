@@ -63,6 +63,27 @@ namespace xServer.Forms
         }
 
         #endregion
+        
+        #region Helperfunctions
+
+        public void ShowErrorMessage(string errorMsg)
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            });
+
+        }
+
+        public void PerformClose()
+        {
+            this.Invoke((MethodInvoker)delegate
+            {
+                this.Close();
+            });
+        }
+
+        #endregion
 
         #region TreeView Helperfunctions
 
@@ -248,18 +269,7 @@ namespace xServer.Forms
 
         #endregion
 
-        #region Popup actions
-
-        public void ShowErrorMessage(string errorMsg)
-        {
-            this.Invoke((MethodInvoker)delegate
-            {
-                MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            });
-
-        }
-
-        #endregion
+        
 
         #region ListView Helpfunctions
 

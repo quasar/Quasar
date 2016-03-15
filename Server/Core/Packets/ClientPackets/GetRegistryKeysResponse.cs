@@ -14,18 +14,11 @@ namespace xServer.Core.Packets.ClientPackets
 
         public string RootKey { get; set; }
 
+        public bool IsError { get; set; }
+        public string ErrorMsg { get; set; }
+
         public GetRegistryKeysResponse()
         { }
-
-        public GetRegistryKeysResponse(RegSeekerMatch match, string rootKey = null)
-            : this(new RegSeekerMatch[] { match }, rootKey)
-        { }
-
-        public GetRegistryKeysResponse(RegSeekerMatch[] matches, string rootKey = null)
-        {
-            Matches = matches;
-            RootKey = rootKey;
-        }
 
         public void Execute(Client client)
         {

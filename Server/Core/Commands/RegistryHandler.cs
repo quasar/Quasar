@@ -17,18 +17,26 @@ namespace xServer.Core.Commands
         {
             try
             {
-                // Make sure that we can use the packet.
-                if (packet.Matches != null && packet.Matches.Length > 0)
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
                 {
-                    // Make sure that the client is in the correct state to handle the packet appropriately.
-                    if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                    if (!packet.IsError)
                     {
                         client.Value.FrmRe.AddKeysToTree(packet.RootKey, packet.Matches);
                     }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                        //If root keys failed to load then close the form
+                        if (packet.RootKey == null)
+                        {
+                            //Invoke a closing of the form
+                            client.Value.FrmRe.PerformClose();
+                        }
+                    }
                 }
             }
-            catch
-            { }
+            catch { }
         }
 
         public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)

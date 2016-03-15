@@ -26,21 +26,6 @@ namespace xClient.Core.Registry
 
     public class RegistrySeeker
     {
-        #region CONSTANTS
-
-        /// <summary>
-        /// An array containing all of the root keys for the registry.
-        /// </summary>
-        public static readonly RegistryKey[] ROOT_KEYS = new RegistryKey[]
-        {
-            Microsoft.Win32.Registry.ClassesRoot,
-            Microsoft.Win32.Registry.CurrentUser,
-            Microsoft.Win32.Registry.LocalMachine,
-            Microsoft.Win32.Registry.Users,
-            Microsoft.Win32.Registry.CurrentConfig
-        };
-
-        #endregion
 
         #region Fields
 
@@ -105,7 +90,7 @@ namespace xClient.Core.Registry
             // Get root registrys
             if (rootKey == null)
             {
-                foreach (RegistryKey key in RegistrySeeker.ROOT_KEYS)
+                foreach (RegistryKey key in GetRootKeys())
                     //Just need root key so process it
                     ProcessKey(key, key.Name);
             }
@@ -157,23 +142,56 @@ namespace xClient.Core.Registry
         public static RegistryKey GetRootKey(string subkey_fullpath)
         {
             string[] path = subkey_fullpath.Split('\\');
-
-            switch (path[0]) // <== root;
+            try
             {
-                case "HKEY_CLASSES_ROOT":
-                    return Microsoft.Win32.Registry.ClassesRoot;
-                case "HKEY_CURRENT_USER":
-                    return Microsoft.Win32.Registry.CurrentUser;
-                case "HKEY_LOCAL_MACHINE":
-                    return Microsoft.Win32.Registry.LocalMachine;
-                case "HKEY_USERS":
-                    return Microsoft.Win32.Registry.Users;
-                case "HKEY_CURRENT_CONFIG":
-                    return Microsoft.Win32.Registry.CurrentConfig;
-                default:
-                    /* If none of the above then the key must be invalid */
-                    throw new Exception("Invalid rootkey, could not be found");
+                switch (path[0]) // <== root;
+                {
+                    case "HKEY_CLASSES_ROOT":
+                        return RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry64);
+                    case "HKEY_CURRENT_USER":
+                        return RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64);
+                    case "HKEY_LOCAL_MACHINE":
+                        return RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64);
+                    case "HKEY_USERS":
+                        return RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView.Registry64);
+                    case "HKEY_CURRENT_CONFIG":
+                        return RegistryKey.OpenBaseKey(RegistryHive.CurrentConfig, RegistryView.Registry64);
+                    default:
+                        /* If none of the above then the key must be invalid */
+                        throw new Exception("Invalid rootkey, could not be found.");
+                }
             }
+            catch (SystemException)
+            {
+                throw new Exception("Unable to open root registry key, you do not have the needed permissions.");
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static List<RegistryKey> GetRootKeys()
+        {
+            List<RegistryKey> rootKeys = new List<RegistryKey>();
+            try
+            {
+                rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry64));
+                rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64));
+                rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64));
+                rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView.Registry64));
+                rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.CurrentConfig, RegistryView.Registry64));
+            }
+            catch (SystemException)
+            {
+                throw new Exception("Could not open root registry keys, you may not have the needed permission");
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+            return rootKeys;
         }
     }
 }
