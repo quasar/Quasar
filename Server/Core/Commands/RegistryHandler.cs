@@ -9,25 +9,35 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */
     public static partial class CommandHandler
     {
+        
+
+        #region Registry Key
+        
         public static void HandleLoadRegistryKey(xServer.Core.Packets.ClientPackets.GetRegistryKeysResponse packet, Client client)
         {
             try
             {
-                // Make sure that we can use the packet.
-                if (packet.Matches != null && packet.Matches.Length > 0)
+                // Make sure that the client is in the correct state to handle the packet appropriately.
+                if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
                 {
-                    // Make sure that the client is in the correct state to handle the packet appropriately.
-                    if (client != null && client.Value.FrmRe != null && !client.Value.FrmRe.IsDisposed || !client.Value.FrmRe.Disposing)
+                    if (!packet.IsError)
                     {
                         client.Value.FrmRe.AddKeysToTree(packet.RootKey, packet.Matches);
                     }
+                    else
+                    {
+                        client.Value.FrmRe.ShowErrorMessage(packet.ErrorMsg);
+                        //If root keys failed to load then close the form
+                        if (packet.RootKey == null)
+                        {
+                            //Invoke a closing of the form
+                            client.Value.FrmRe.PerformClose();
+                        }
+                    }
                 }
             }
-            catch
-            { }
+            catch { }
         }
-
-        #region Registry Key Edit
 
         public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)
         {
@@ -91,7 +101,7 @@ namespace xServer.Core.Commands
 
         #endregion
 
-        #region Registry Value Edit
+        #region Registry Value
 
         public static void HandleCreateRegistryValue(xServer.Core.Packets.ClientPackets.GetCreateRegistryValueResponse packet, Client client)
         {

@@ -3,7 +3,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using xServer.Core.Extensions;
 
 namespace xServer.Core.Registry
 {
@@ -21,19 +20,9 @@ namespace xServer.Core.Registry
             Data = data;
         }
 
-        public string GetDataAsString()
-        {
-            return Kind.RegistryTypeToString(Data);
-        }
-
-        public string GetKindAsString()
-        {
-            return Kind.RegistryTypeToString();
-        }
-
         public override string ToString()
         {
-            return string.Format("({0}:{1}:{2})", Name, GetKindAsString(), GetDataAsString());
+            return string.Format("({0}:{1}:{2})", Name, Kind, Data);
         }
     }
 }

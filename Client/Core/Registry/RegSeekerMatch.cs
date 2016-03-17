@@ -13,19 +13,18 @@ namespace xClient.Core.Registry
      * modified partially.
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * Modified by StingRaptor on January 21, 2016
+     * Modified by StingRaptor on March 15, 2016
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     * Original Source:
-     * https://github.com/quasar/QuasarRAT/blob/regedit/Client/Core/Registry/RegSeekerMatch.cs
      */
 
     [Serializable]
     public class RegSeekerMatch
     {
         public string Key { get; private set; }
-        public List<RegValueData> Data { get; private set; }
+        public RegValueData[] Data { get; private set; }
         public bool HasSubKeys { get; private set; }
 
-        public RegSeekerMatch(string key, List<RegValueData> data, int subkeycount)
+        public RegSeekerMatch(string key, RegValueData[] data, int subkeycount)
         {
             Key = key;
             Data = data;

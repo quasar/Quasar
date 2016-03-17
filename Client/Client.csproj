@@ -119,7 +119,6 @@
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Registry\RegistryEditor.cs" />
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
-    <Compile Include="Core\Registry\RegistrySeekerParams.cs" />
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
@@ -234,7 +233,6 @@
     <Compile Include="Core\Utilities\Keylogger.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
-    <Compile Include="Enums\RegistrySearchAction.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />
