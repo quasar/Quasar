@@ -466,7 +466,6 @@ namespace xClient.Core.Commands
             }
         }
         
-
         public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
         {
             string input = command.Command;
