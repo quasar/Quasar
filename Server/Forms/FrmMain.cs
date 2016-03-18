@@ -628,6 +628,14 @@ namespace xServer.Forms
             }
         }
 
+        private void askForElevationToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                new Core.Packets.ServerPackets.DoAskElevate().Execute(c);
+            }
+        }
+
         private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
