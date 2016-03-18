@@ -6,12 +6,12 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using xClient.Config;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
-using xClient.Core.Helper;
 
 namespace xClient.Core.Commands
 {
@@ -448,6 +448,7 @@ namespace xClient.Core.Commands
                 proc.WorkingDirectory = Environment.CurrentDirectory;
                 proc.FileName = Application.ExecutablePath;
                 proc.Verb = "runas";
+                MutexHelper.CloseMutex();  //Close the mutex so our new process will run
 
                 try
                 {
@@ -456,9 +457,10 @@ namespace xClient.Core.Commands
                 catch
                 {
                     new Packets.ClientPackets.SetStatus("User refused the elevation request").Execute(client);
+                    MutexHelper.CreateMutex(Settings.MUTEX);  //Re-grab the mutex
                     return;
                 }
-                Application.Exit();
+                Program.ConnectClient.Exit();
             }
             else
             {
