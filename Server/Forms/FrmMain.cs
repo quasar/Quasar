@@ -868,9 +868,18 @@ namespace xServer.Forms
 
         #endregion
 
-        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        private void connectionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
+            foreach (Client c in GetSelectedClients())
+            {
+                if (c.Value.FrmCon != null)
+                {
+                    c.Value.FrmCon.Focus();
+                    return;
+                }
+                FrmConnections frmCON = new FrmConnections(c);
+                frmCON.Show();
+            }
         }
     }
 }

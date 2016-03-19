@@ -66,6 +66,8 @@ namespace xClient.Core.Networking
                 typeof (Packets.ServerPackets.DoRenameRegistryValue),
                 typeof (Packets.ServerPackets.DoChangeRegistryValue),
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
+                typeof (Packets.ServerPackets.GetConnections),
+                typeof (Packets.ServerPackets.DoCloseConnection),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),
@@ -92,7 +94,9 @@ namespace xClient.Core.Networking
                 typeof (ReverseProxy.Packets.ReverseProxyConnect),
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
-                typeof (ReverseProxy.Packets.ReverseProxyDisconnect)
+                typeof (ReverseProxy.Packets.ReverseProxyDisconnect),
+                typeof (Packets.ClientPackets.GetConnectionsResponse)
+
             });
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;

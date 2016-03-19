@@ -44,6 +44,7 @@ namespace xServer.Forms
             this.startupManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.taskManagerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteShellToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.connectionsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.reverseProxyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.registryEditorToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
@@ -101,7 +102,6 @@ namespace xServer.Forms
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
             this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
-            this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // connectionToolStripMenuItem
             // 
@@ -155,6 +155,7 @@ namespace xServer.Forms
             this.startupManagerToolStripMenuItem,
             this.taskManagerToolStripMenuItem,
             this.remoteShellToolStripMenuItem,
+            this.connectionsToolStripMenuItem,
             this.reverseProxyToolStripMenuItem,
             this.registryEditorToolStripMenuItem,
             this.ctxtLine,
@@ -203,6 +204,13 @@ namespace xServer.Forms
             this.remoteShellToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.remoteShellToolStripMenuItem.Text = "Remote Shell";
             this.remoteShellToolStripMenuItem.Click += new System.EventHandler(this.remoteShellToolStripMenuItem_Click);
+            // 
+            // connectionsToolStripMenuItem
+            // 
+            this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
+            this.connectionsToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.connectionsToolStripMenuItem.Text = "TCP Connections";
+            this.connectionsToolStripMenuItem.Click += new System.EventHandler(this.connectionsToolStripMenuItem_Click);
             // 
             // reverseProxyToolStripMenuItem
             // 
@@ -856,6 +864,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem aboutToolStripMenuItem;
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel listenToolStripStatusLabel;
+        private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
     }
 }
 
