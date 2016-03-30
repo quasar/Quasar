@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmConnections));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -121,9 +122,11 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(555, 411);
             this.Controls.Add(this.lstConnections);
+            this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmConnections";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Connections";
+            this.Text = "Connections []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmConnections_FormClosing);
             this.Load += new System.EventHandler(this.FrmConnections_Load);
             this.contextMenuStrip.ResumeLayout(false);
