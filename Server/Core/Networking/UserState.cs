@@ -34,6 +34,8 @@ namespace xServer.Core.Networking
         public FrmKeylogger FrmKl { get; set; }
         public FrmReverseProxy FrmProxy { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
+        public FrmConnections FrmCon { get; set; }
+
 
         public bool ReceivedLastDirectory { get; set; }
         public UnsafeStreamCodec StreamCodec { get; set; }
@@ -97,6 +99,8 @@ namespace xServer.Core.Networking
                         FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
                     if (FrmPass != null)
                         FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
+                    if (FrmCon != null)
+                        FrmCon.Invoke((MethodInvoker)delegate { FrmCon.Close(); });
                 }
                 catch (InvalidOperationException)
                 {
