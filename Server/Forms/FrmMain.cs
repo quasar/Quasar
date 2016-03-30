@@ -628,7 +628,7 @@ namespace xServer.Forms
             }
         }
 
-        private void askForElevationToolStripMenuItem_Click(object sender, EventArgs e)
+        private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {

