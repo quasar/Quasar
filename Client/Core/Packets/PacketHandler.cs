@@ -175,6 +175,14 @@ namespace xClient.Core.Packets
             {
                 ReverseProxyCommandHandler.HandleCommand(client, packet);
             }
+            else if (type == typeof(ServerPackets.GetConnections))
+            {
+                CommandHandler.HandleGetConnections(client, (ServerPackets.GetConnections)packet);
+            }
+            else if (type == typeof(ServerPackets.DoCloseConnection))
+            {
+                CommandHandler.HandleDoCloseConnection(client, (ServerPackets.DoCloseConnection)packet);
+            }
         }
     }
 }

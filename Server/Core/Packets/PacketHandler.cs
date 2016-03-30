@@ -112,6 +112,10 @@ namespace xServer.Core.Packets
             {
                 ReverseProxyCommandHandler.HandleCommand(client, packet);
             }
+            else if (type == typeof(ClientPackets.GetConnectionsResponse))
+            {
+                CommandHandler.HandleGetConnectionsResponse(client, (ClientPackets.GetConnectionsResponse)packet);
+            }
         }
     }
 }
