@@ -25,8 +25,6 @@ namespace xServer.Forms
 
         private const string PRIVILEGE_WARNING = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete may not work properly!";
 
-        private const string DEFAULT_REG_VALUE = "(Default)";
-
         #endregion
 
         public FrmRegistryEditor(Client c)
@@ -247,9 +245,7 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        string kind = value.Kind.RegistryTypeToString();
-                        string data = value.Kind.RegistryTypeToString(value.Data);
-                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
+                        RegistryValueLstItem item = new RegistryValueLstItem(value);
                         lstRegistryValues.Items.Add(item);
                         //Unselect all
                         lstRegistryValues.SelectedIndices.Clear();
@@ -273,18 +269,33 @@ namespace xServer.Forms
             {
                 lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
-                    //Remove the values that have the specified name
-                    key.Tag = ((RegValueData[])key.Tag).Where(value => value.Name != valueName).ToArray();
+                    if (!RegValueHelper.IsDefaultValue(valueName))
+                    {
+                        //Remove the values that have the specified name
+                        key.Tag = ((RegValueData[])key.Tag).Where(value => value.Name != valueName).ToArray();
 
-                    if (tvRegistryDirectory.SelectedNode == key)
-                    {
-                        valueName = String.IsNullOrEmpty(valueName) ? DEFAULT_REG_VALUE : valueName; 
-                        lstRegistryValues.Items.RemoveByKey(valueName);
+                        if (tvRegistryDirectory.SelectedNode == key)
+                        {
+                            lstRegistryValues.Items.RemoveByKey(valueName);
+                        }
                     }
-                    else
+                    else //Handle delete of default value
                     {
-                        tvRegistryDirectory.SelectedNode = key;
+                        var regValue = ((RegValueData[])key.Tag).First(item => item.Name == valueName);
+                        regValue.Data = null;
+
+                        if(tvRegistryDirectory.SelectedNode == key)
+                        {
+                            var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == valueName);
+                            if (valueItem != null)
+                            {
+                                valueItem.Data = regValue.Kind.RegistryTypeToString(null);
+                            }
+                        }
                     }
+
+                    tvRegistryDirectory.SelectedNode = key;
 
                 });
             }
@@ -303,7 +314,8 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        var valueItem = lstRegistryValues.Items[oldName] as RegistryValueLstItem;
+                        var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == oldName);              
                         if (valueItem != null)
                         {
                             valueItem.RegName = newName;
@@ -330,12 +342,11 @@ namespace xServer.Forms
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        //Make sure if it is a default value
-                        string name = String.IsNullOrEmpty(value.Name) ? DEFAULT_REG_VALUE : value.Name;
-                        var valueItem = lstRegistryValues.Items[name] as RegistryValueLstItem;
+                        var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == value.Name);
                         if (valueItem != null)
                         {
-                            valueItem.Data = value.Kind.RegistryTypeToString(value.Data);;
+                            valueItem.Data = value.Kind.RegistryTypeToString(value.Data);
                         }
                     }
                     else
@@ -357,6 +368,7 @@ namespace xServer.Forms
 
         private void PopulateLstRegistryValues(RegValueData[] values)
         {
+            lstRegistryValues.BeginUpdate();
             lstRegistryValues.Items.Clear();
 
             // Make sure that the passed values are usable
@@ -364,12 +376,11 @@ namespace xServer.Forms
             {
                 foreach (var value in values)
                 {
-                    string kind = value.Kind.RegistryTypeToString();
-                    string data = value.Kind.RegistryTypeToString(value.Data);
-                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
+                    RegistryValueLstItem item = new RegistryValueLstItem(value);
                     lstRegistryValues.Items.Add(item);
                 }
             }
+            lstRegistryValues.EndUpdate();
         }
 
         #endregion
@@ -488,7 +499,7 @@ namespace xServer.Forms
             this.modifyToolStripMenuItem.Enabled =
                 this.modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryValues.SelectedItems.Count == 1;
 
-            this.renameToolStripMenuItem1.Enabled = lstRegistryValues.SelectedItems.Count == 1 && !lstRegistryValues.SelectedItems.ContainsKey(DEFAULT_REG_VALUE);
+            this.renameToolStripMenuItem1.Enabled = lstRegistryValues.SelectedItems.Count == 1 && !RegValueHelper.IsDefaultValue(lstRegistryValues.SelectedItems[0].Name);
 
             this.deleteToolStripMenuItem1.Enabled = tvRegistryDirectory.SelectedNode != null && lstRegistryValues.SelectedItems.Count > 0;
         }
@@ -763,7 +774,7 @@ namespace xServer.Forms
         private bool GetRenameState()
         {
             if (lstRegistryValues.Focused)
-                return lstRegistryValues.SelectedItems.Count == 1 && !lstRegistryValues.SelectedItems.ContainsKey(DEFAULT_REG_VALUE);
+                return lstRegistryValues.SelectedItems.Count == 1 && !RegValueHelper.IsDefaultValue(lstRegistryValues.SelectedItems[0].Name);
             else if (tvRegistryDirectory.Focused && tvRegistryDirectory.SelectedNode != null)
                 return tvRegistryDirectory.SelectedNode.Parent != null;
             return false;
@@ -791,7 +802,7 @@ namespace xServer.Forms
         private void CreateModifyForm(bool isBinary)
         {
             string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
-            string name = lstRegistryValues.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryValues.SelectedItems[0].Name;
+            string name = lstRegistryValues.SelectedItems[0].Name;
             RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
 
             RegistryValueKind kind = isBinary ? RegistryValueKind.Binary : value.Kind;

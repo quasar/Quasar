@@ -34,9 +34,12 @@ namespace xServer.Forms
 
             InitializeComponent();
 
-            this.valueNameTxtBox.Text = value.Name;
+            this.valueNameTxtBox.Text = RegValueHelper.GetName(value.Name);
 
-            if (value.Kind == Microsoft.Win32.RegistryValueKind.Binary)
+            if (value.Data == null){
+                hexEditor.HexTable = new byte[] { };
+            }
+            else if (value.Kind == Microsoft.Win32.RegistryValueKind.Binary)
             {
                 hexEditor.HexTable = (byte[])value.Data;
             }
