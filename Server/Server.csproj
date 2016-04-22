@@ -88,6 +88,12 @@
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="Controls\RegistryValueLstItem.cs" />
+    <Compile Include="Controls\WordTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WordTextBox.Designer.cs">
+      <DependentUpon>WordTextBox.cs</DependentUpon>
+    </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
@@ -267,6 +273,7 @@
     <Compile Include="Enums\PathType.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
+    <Compile Include="Enums\WordType.cs" />
     <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
