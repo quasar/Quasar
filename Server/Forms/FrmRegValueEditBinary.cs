@@ -36,7 +36,6 @@ namespace xServer.Forms
 
             this.valueNameTxtBox.Text = value.Name;
 
-
             if (value.Kind == Microsoft.Win32.RegistryValueKind.Binary)
             {
                 hexEditor.HexTable = (byte[])value.Data;
@@ -63,18 +62,12 @@ namespace xServer.Forms
             }
         }
 
-        private void FrmRegValueEditBinary_Load(object sender, EventArgs e)
-        {
-            hexEditor.Select();
-            hexEditor.Focus();
-        }
-
         #region Help function
 
         private object GetData()
         {
             byte[] bytes = hexEditor.HexTable;
-            if (bytes != null && bytes.Length > 0)
+            if (bytes != null)
             {
                 try
                 {
@@ -126,14 +119,11 @@ namespace xServer.Forms
             if (valueData != null)
             {
                 new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
-
-                this.Close();
             }
-        }
-
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
+            else
+            {
+                DialogResult = DialogResult.None;
+            }
         }
 
         #endregion
