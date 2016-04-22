@@ -24,7 +24,7 @@ namespace xServer.Controls
         }
     }
 
-    internal class RegistryValueLstItem : ListViewItem
+    public class RegistryValueLstItem : ListViewItem
     {
         private string _regName { get; set; }
         private string _type { get; set; }

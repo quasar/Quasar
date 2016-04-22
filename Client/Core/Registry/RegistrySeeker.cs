@@ -127,7 +127,7 @@ namespace xClient.Core.Registry
             }
             else
             {
-                AddMatch(keyName, null, 0);
+                AddMatch(keyName, new RegValueData[]{}, 0);
             }
 
         }
