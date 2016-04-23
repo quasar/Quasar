@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -53,7 +53,7 @@ namespace xServer.Forms
             InitializeComponent();
         }
 
-        public void UpdateWindowTitle()
+        public void UpdateStripStatus()
         {
             if (_titleUpdateRunning) return;
             _titleUpdateRunning = true;
@@ -62,10 +62,21 @@ namespace xServer.Forms
                 this.Invoke((MethodInvoker) delegate
                 {
                     int selected = lstClients.SelectedItems.Count;
-                    this.Text = (selected > 0)
-                        ? string.Format("Quasar - Connected: {0} [Selected: {1}]", ListenServer.ConnectedClients.Length,
-                            selected)
-                        : string.Format("Quasar - Connected: {0}", ListenServer.ConnectedClients.Length);
+                    if (selected > 0)
+                    {
+                        statusStripStatusLabel1.Text = string.Format("Connected: {0} (Selected: {1})", ListenServer.ConnectedClients.Length, selected);
+                    }
+                    else
+                    {
+                        if(ListenServer.ConnectedClients.Length > 0)
+                        {
+                            statusStripStatusLabel1.Text = string.Format("Connected: {0}", ListenServer.ConnectedClients.Length);
+                        }
+                        else
+                        {
+                            statusStripStatusLabel1.Text = "No clients.";
+                        }
+                    }
                 });
             }
             catch (Exception)
@@ -123,7 +134,7 @@ namespace xServer.Forms
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
         {
-            UpdateWindowTitle();
+            UpdateStripStatus();
         }
 
         private void ServerState(Server server, bool listening, ushort port)
@@ -136,7 +147,7 @@ namespace xServer.Forms
                         lstClients.Items.Clear();
                     listenToolStripStatusLabel.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
-                UpdateWindowTitle();
+                UpdateStripStatus();
             }
             catch (InvalidOperationException)
             {
@@ -269,7 +280,7 @@ namespace xServer.Forms
                     }
                 });
 
-                UpdateWindowTitle();
+                UpdateStripStatus();
             }
             catch (InvalidOperationException)
             {
@@ -298,7 +309,7 @@ namespace xServer.Forms
                         }
                     }
                 });
-                UpdateWindowTitle();
+                UpdateStripStatus();
             }
             catch (InvalidOperationException)
             {
@@ -415,7 +426,7 @@ namespace xServer.Forms
                 {
                     if (c == null || c.Value == null) return;
                     
-                    notifyIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                    notifyIcon.ShowBalloonTip(30, string.Format("Client {0} connected from {1}!", c.Value.UserAtPc, c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
                 });
@@ -890,5 +901,14 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        private void contextMenuStrip_Opening(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            int selected = lstClients.SelectedItems.Count;
+            if (selected == 0)
+            {
+                e.Cancel = true;
+            }
+        }
     }
 }
