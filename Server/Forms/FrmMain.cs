@@ -911,5 +911,37 @@ namespace xServer.Forms
                 contextMenuStripNoClient.Show(Cursor.Position);
             }
         }
+
+        private void iPAddressToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                Clipboard.SetText(c.EndPoint.Address.ToString());
+            }
+        }
+
+        private void computerNameToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                Clipboard.SetText(c.Value.UserAtPc);
+            }
+        }
+
+        private void operatingSystemToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                Clipboard.SetText(c.Value.OperatingSystem);
+            }
+        }
+
+        private void statusToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                Clipboard.SetText(c.Value.Country);
+            }
+        }
     }
 }
