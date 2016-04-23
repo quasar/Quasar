@@ -908,6 +908,7 @@ namespace xServer.Forms
             if (selected == 0)
             {
                 e.Cancel = true;
+                contextMenuStripNoClient.Show(Cursor.Position);
             }
         }
     }
