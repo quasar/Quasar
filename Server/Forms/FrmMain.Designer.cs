@@ -63,6 +63,10 @@ namespace xServer.Forms
             this.webFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showMessageboxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.copyToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.iPAddressToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.computerNameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.operatingSystemToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.selectAllToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgFlags = new System.Windows.Forms.ImageList(this.components);
@@ -103,10 +107,11 @@ namespace xServer.Forms
             this.systemToolStripMenuItem,
             this.surveillanceToolStripMenuItem,
             this.miscellaneousToolStripMenuItem,
+            this.copyToClipboardToolStripMenuItem,
             this.lineToolStripMenuItem,
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
-            this.contextMenuStrip.Size = new System.Drawing.Size(150, 120);
+            this.contextMenuStrip.Size = new System.Drawing.Size(172, 142);
             this.contextMenuStrip.Opening += new System.ComponentModel.CancelEventHandler(this.contextMenuStrip_Opening);
             // 
             // connectionToolStripMenuItem
@@ -118,7 +123,7 @@ namespace xServer.Forms
             this.uninstallToolStripMenuItem});
             this.connectionToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("connectionToolStripMenuItem.Image")));
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
-            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.connectionToolStripMenuItem.Text = "Connection";
             // 
             // updateToolStripMenuItem
@@ -169,7 +174,7 @@ namespace xServer.Forms
             this.actionsToolStripMenuItem});
             this.systemToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemToolStripMenuItem.Image")));
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // systemInformationToolStripMenuItem
@@ -214,6 +219,7 @@ namespace xServer.Forms
             // 
             // connectionsToolStripMenuItem
             // 
+            this.connectionsToolStripMenuItem.Image = global::xServer.Properties.Resources._17_16;
             this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
             this.connectionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.connectionsToolStripMenuItem.Text = "TCP Connections";
@@ -291,7 +297,7 @@ namespace xServer.Forms
             this.keyloggerToolStripMenuItem});
             this.surveillanceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("surveillanceToolStripMenuItem.Image")));
             this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
-            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.surveillanceToolStripMenuItem.Text = "Surveillance";
             // 
             // remoteDesktopToolStripMenuItem
@@ -326,7 +332,7 @@ namespace xServer.Forms
             this.showMessageboxToolStripMenuItem});
             this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
             this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
-            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
             // 
             // remoteExecuteToolStripMenuItem
@@ -371,15 +377,50 @@ namespace xServer.Forms
             this.showMessageboxToolStripMenuItem.Text = "Show Messagebox";
             this.showMessageboxToolStripMenuItem.Click += new System.EventHandler(this.showMessageboxToolStripMenuItem_Click);
             // 
+            // copyToClipboardToolStripMenuItem
+            // 
+            this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.iPAddressToolStripMenuItem,
+            this.computerNameToolStripMenuItem,
+            this.operatingSystemToolStripMenuItem});
+            this.copyToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
+            this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
+            this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.copyToClipboardToolStripMenuItem.Text = "Copy to Clipboard";
+            // 
+            // iPAddressToolStripMenuItem
+            // 
+            this.iPAddressToolStripMenuItem.Image = global::xServer.Properties.Resources.ip;
+            this.iPAddressToolStripMenuItem.Name = "iPAddressToolStripMenuItem";
+            this.iPAddressToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.iPAddressToolStripMenuItem.Text = "IP Address";
+            this.iPAddressToolStripMenuItem.Click += new System.EventHandler(this.iPAddressToolStripMenuItem_Click);
+            // 
+            // computerNameToolStripMenuItem
+            // 
+            this.computerNameToolStripMenuItem.Image = global::xServer.Properties.Resources.at;
+            this.computerNameToolStripMenuItem.Name = "computerNameToolStripMenuItem";
+            this.computerNameToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.computerNameToolStripMenuItem.Text = "User@PC";
+            this.computerNameToolStripMenuItem.Click += new System.EventHandler(this.computerNameToolStripMenuItem_Click);
+            // 
+            // operatingSystemToolStripMenuItem
+            // 
+            this.operatingSystemToolStripMenuItem.Image = global::xServer.Properties.Resources.computer;
+            this.operatingSystemToolStripMenuItem.Name = "operatingSystemToolStripMenuItem";
+            this.operatingSystemToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
+            this.operatingSystemToolStripMenuItem.Text = "Operating System";
+            this.operatingSystemToolStripMenuItem.Click += new System.EventHandler(this.operatingSystemToolStripMenuItem_Click);
+            // 
             // lineToolStripMenuItem
             // 
             this.lineToolStripMenuItem.Name = "lineToolStripMenuItem";
-            this.lineToolStripMenuItem.Size = new System.Drawing.Size(146, 6);
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(168, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
@@ -909,6 +950,10 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripStatusLabel statusStripStatusLabel1;
         private System.Windows.Forms.ContextMenuStrip contextMenuStripNoClient;
         private System.Windows.Forms.ToolStripMenuItem noClientSelectedToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem copyToClipboardToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem iPAddressToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem computerNameToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem operatingSystemToolStripMenuItem;
     }
 }
 
