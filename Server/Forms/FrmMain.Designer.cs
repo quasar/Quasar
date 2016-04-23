@@ -130,7 +130,7 @@ namespace xServer.Forms
             // 
             this.updateToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("updateToolStripMenuItem.Image")));
             this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
-            this.updateToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.updateToolStripMenuItem.Text = "Update";
             this.updateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
             // 
@@ -138,7 +138,7 @@ namespace xServer.Forms
             // 
             this.reconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("reconnectToolStripMenuItem.Image")));
             this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
-            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.reconnectToolStripMenuItem.Text = "Reconnect";
             this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
             // 
@@ -146,7 +146,7 @@ namespace xServer.Forms
             // 
             this.disconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("disconnectToolStripMenuItem.Image")));
             this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
-            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.disconnectToolStripMenuItem.Text = "Disconnect";
             this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
             // 
@@ -154,7 +154,7 @@ namespace xServer.Forms
             // 
             this.uninstallToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uninstallToolStripMenuItem.Image")));
             this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
-            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.uninstallToolStripMenuItem.Text = "Uninstall";
             this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
             // 
@@ -349,7 +349,7 @@ namespace xServer.Forms
             // 
             this.localFileToolStripMenuItem.Image = global::xServer.Properties.Resources.drive_go;
             this.localFileToolStripMenuItem.Name = "localFileToolStripMenuItem";
-            this.localFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.localFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.localFileToolStripMenuItem.Text = "Local File...";
             this.localFileToolStripMenuItem.Click += new System.EventHandler(this.localFileToolStripMenuItem_Click);
             // 
@@ -357,7 +357,7 @@ namespace xServer.Forms
             // 
             this.webFileToolStripMenuItem.Image = global::xServer.Properties.Resources.world_go;
             this.webFileToolStripMenuItem.Name = "webFileToolStripMenuItem";
-            this.webFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
+            this.webFileToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.webFileToolStripMenuItem.Text = "Web File...";
             this.webFileToolStripMenuItem.Click += new System.EventHandler(this.webFileToolStripMenuItem_Click);
             // 
@@ -419,6 +419,7 @@ namespace xServer.Forms
             // 
             // selectAllToolStripMenuItem
             // 
+            this.selectAllToolStripMenuItem.Image = global::xServer.Properties.Resources.select_all;
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
@@ -718,15 +719,15 @@ namespace xServer.Forms
             // statusStripStatusLabel1
             // 
             this.statusStripStatusLabel1.Name = "statusStripStatusLabel1";
-            this.statusStripStatusLabel1.Size = new System.Drawing.Size(80, 17);
-            this.statusStripStatusLabel1.Text = "Connected : 0";
+            this.statusStripStatusLabel1.Size = new System.Drawing.Size(63, 17);
+            this.statusStripStatusLabel1.Text = "No clients.";
             // 
             // listenToolStripStatusLabel
             // 
             this.listenToolStripStatusLabel.Name = "listenToolStripStatusLabel";
-            this.listenToolStripStatusLabel.Size = new System.Drawing.Size(927, 17);
+            this.listenToolStripStatusLabel.Size = new System.Drawing.Size(944, 17);
             this.listenToolStripStatusLabel.Spring = true;
-            this.listenToolStripStatusLabel.Text = "Listening: False";
+            this.listenToolStripStatusLabel.Text = "Not listening.";
             this.listenToolStripStatusLabel.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
             // 
             // lstClients
@@ -803,7 +804,6 @@ namespace xServer.Forms
             // 
             this.menuStrip.Dock = System.Windows.Forms.DockStyle.None;
             this.menuStrip.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.menuStrip.ImageScalingSize = new System.Drawing.Size(24, 24);
             this.menuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.fIleToolStripMenuItem,
             this.settingsToolStripMenuItem,
@@ -811,7 +811,7 @@ namespace xServer.Forms
             this.aboutToolStripMenuItem});
             this.menuStrip.Location = new System.Drawing.Point(0, 0);
             this.menuStrip.Name = "menuStrip";
-            this.menuStrip.Size = new System.Drawing.Size(216, 25);
+            this.menuStrip.Size = new System.Drawing.Size(280, 25);
             this.menuStrip.TabIndex = 2;
             // 
             // fIleToolStripMenuItem
@@ -819,8 +819,9 @@ namespace xServer.Forms
             this.fIleToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.closeToolStripMenuItem});
             this.fIleToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.fIleToolStripMenuItem.Image = global::xServer.Properties.Resources.file;
             this.fIleToolStripMenuItem.Name = "fIleToolStripMenuItem";
-            this.fIleToolStripMenuItem.Size = new System.Drawing.Size(39, 21);
+            this.fIleToolStripMenuItem.Size = new System.Drawing.Size(55, 21);
             this.fIleToolStripMenuItem.Text = "File";
             // 
             // closeToolStripMenuItem
@@ -832,22 +833,25 @@ namespace xServer.Forms
             // 
             // settingsToolStripMenuItem
             // 
+            this.settingsToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("settingsToolStripMenuItem.Image")));
             this.settingsToolStripMenuItem.Name = "settingsToolStripMenuItem";
-            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(61, 21);
+            this.settingsToolStripMenuItem.Size = new System.Drawing.Size(77, 21);
             this.settingsToolStripMenuItem.Text = "Settings";
             this.settingsToolStripMenuItem.Click += new System.EventHandler(this.settingsToolStripMenuItem_Click);
             // 
             // builderToolStripMenuItem
             // 
+            this.builderToolStripMenuItem.Image = global::xServer.Properties.Resources.build;
             this.builderToolStripMenuItem.Name = "builderToolStripMenuItem";
-            this.builderToolStripMenuItem.Size = new System.Drawing.Size(56, 21);
+            this.builderToolStripMenuItem.Size = new System.Drawing.Size(72, 21);
             this.builderToolStripMenuItem.Text = "Builder";
             this.builderToolStripMenuItem.Click += new System.EventHandler(this.builderToolStripMenuItem_Click);
             // 
             // aboutToolStripMenuItem
             // 
+            this.aboutToolStripMenuItem.Image = global::xServer.Properties.Resources.information;
             this.aboutToolStripMenuItem.Name = "aboutToolStripMenuItem";
-            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 21);
+            this.aboutToolStripMenuItem.Size = new System.Drawing.Size(68, 21);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
