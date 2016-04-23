@@ -219,7 +219,7 @@ namespace xServer.Forms
             // 
             // connectionsToolStripMenuItem
             // 
-            this.connectionsToolStripMenuItem.Image = global::xServer.Properties.Resources._17_16;
+            this.connectionsToolStripMenuItem.Image = global::xServer.Properties.Resources.tcp;
             this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
             this.connectionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.connectionsToolStripMenuItem.Text = "TCP Connections";
