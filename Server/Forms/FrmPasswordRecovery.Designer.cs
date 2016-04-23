@@ -1,4 +1,4 @@
-﻿namespace xServer.Forms
+namespace xServer.Forms
 {
     partial class FrmPasswordRecovery
     {
@@ -43,14 +43,14 @@
             this.clearSelectedToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.lblInfo = new System.Windows.Forms.Label();
-            this.txtFormat = new System.Windows.Forms.TextBox();
             this.lstPasswords = new xServer.Controls.AeroListView();
             this.hIdentification = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPass = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.lblInfo = new System.Windows.Forms.Label();
+            this.txtFormat = new System.Windows.Forms.TextBox();
             this.contextMenuStrip.SuspendLayout();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -70,8 +70,8 @@
             // saveToFileToolStripMenuItem
             // 
             this.saveToFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.saveAllToolStripMenuItem,
-            this.saveSelectedToolStripMenuItem});
+            this.saveSelectedToolStripMenuItem,
+            this.saveAllToolStripMenuItem});
             this.saveToFileToolStripMenuItem.Image = global::xServer.Properties.Resources.save;
             this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
             this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
@@ -94,8 +94,8 @@
             // copyToClipboardToolStripMenuItem
             // 
             this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyAllToolStripMenuItem,
-            this.copySelectedToolStripMenuItem});
+            this.copySelectedToolStripMenuItem,
+            this.copyAllToolStripMenuItem});
             this.copyToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
             this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
             this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
@@ -123,8 +123,8 @@
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.clearAllToolStripMenuItem,
-            this.clearSelectedToolStripMenuItem});
+            this.clearSelectedToolStripMenuItem,
+            this.clearAllToolStripMenuItem});
             this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
@@ -165,42 +165,6 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Recovered Accounts";
             // 
-            // groupBox2
-            // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.lblInfo);
-            this.groupBox2.Controls.Add(this.txtFormat);
-            this.groupBox2.Location = new System.Drawing.Point(12, 343);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(549, 90);
-            this.groupBox2.TabIndex = 2;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "Custom Saving/Copying Format";
-            // 
-            // lblInfo
-            // 
-            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblInfo.Location = new System.Drawing.Point(35, 50);
-            this.lblInfo.Name = "lblInfo";
-            this.lblInfo.Size = new System.Drawing.Size(467, 26);
-            this.lblInfo.TabIndex = 1;
-            this.lblInfo.Text = "You can change the way the accounts are saved by adjusting the format in the box " +
-    "above.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
-            this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
-            // txtFormat
-            // 
-            this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtFormat.Location = new System.Drawing.Point(6, 19);
-            this.txtFormat.Name = "txtFormat";
-            this.txtFormat.Size = new System.Drawing.Size(537, 22);
-            this.txtFormat.TabIndex = 0;
-            this.txtFormat.Text = "APP - URL - USER:PASS";
-            this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
-            // 
             // lstPasswords
             // 
             this.lstPasswords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -240,6 +204,42 @@
             // 
             this.hPass.Text = "Password";
             this.hPass.Width = 130;
+            // 
+            // groupBox2
+            // 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.lblInfo);
+            this.groupBox2.Controls.Add(this.txtFormat);
+            this.groupBox2.Location = new System.Drawing.Point(12, 343);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(549, 90);
+            this.groupBox2.TabIndex = 2;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Custom Saving/Copying Format";
+            // 
+            // lblInfo
+            // 
+            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblInfo.Location = new System.Drawing.Point(35, 50);
+            this.lblInfo.Name = "lblInfo";
+            this.lblInfo.Size = new System.Drawing.Size(467, 26);
+            this.lblInfo.TabIndex = 1;
+            this.lblInfo.Text = "You can change the way the accounts are saved by adjusting the format in the box " +
+    "above.\r\nAvailable variables: APP, URL, USER, PASS\r\n";
+            this.lblInfo.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
+            // txtFormat
+            // 
+            this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtFormat.Location = new System.Drawing.Point(6, 19);
+            this.txtFormat.Name = "txtFormat";
+            this.txtFormat.Size = new System.Drawing.Size(537, 22);
+            this.txtFormat.TabIndex = 0;
+            this.txtFormat.Text = "APP - URL - USER:PASS";
+            this.txtFormat.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             // 
             // FrmPasswordRecovery
             // 
