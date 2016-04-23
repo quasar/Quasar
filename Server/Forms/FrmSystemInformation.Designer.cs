@@ -1,4 +1,4 @@
-﻿using xServer.Controls;
+using xServer.Controls;
 
 namespace xServer.Forms
 {
@@ -84,8 +84,8 @@ namespace xServer.Forms
             // copyToClipboardToolStripMenuItem
             // 
             this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.copyAllToolStripMenuItem,
-            this.copySelectedToolStripMenuItem});
+            this.copySelectedToolStripMenuItem,
+            this.copyAllToolStripMenuItem});
             this.copyToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
             this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
             this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);

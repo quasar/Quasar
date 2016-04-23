@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <root>
   <!-- 
     Microsoft ResX Schema 
@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <metadata name="contextMenuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>223, 17</value>
+    <value>378, 17</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="updateToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
@@ -398,14 +398,14 @@
 </value>
   </data>
   <metadata name="imgFlags.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>123, 17</value>
+    <value>278, 17</value>
   </metadata>
   <data name="imgFlags.ImageStream" mimetype="application/x-microsoft.net.object.binary.base64">
     <value>
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADY
-        sQAAAk1TRnQBSQFMAgEB+AEAAaABCAGgAQgBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+        sQAAAk1TRnQBSQFMAgEB+AEAAdQBCQHUAQkBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
         AwABQAMAAbUBAgIAAQEBAAEIBQABQAGtGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHA
         AdwBwAEAAfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANC
         AQADOQEAAYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/
@@ -1167,7 +1167,7 @@
 </value>
   </data>
   <metadata name="notifyIcon.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>17, 17</value>
+    <value>172, 17</value>
   </metadata>
   <data name="notifyIcon.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
@@ -1708,10 +1708,26 @@
 </value>
   </data>
   <metadata name="statusStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>480, 17</value>
+    <value>635, 17</value>
   </metadata>
   <metadata name="menuStrip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
-    <value>372, 17</value>
+    <value>527, 17</value>
+  </metadata>
+  <data name="settingsToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAG3SURBVDhPdZJNy3FRFIbXr5VSysBAUicDA4mUkigyIF+lKKLIgCgDIfL1W9a7r9U+T3p7nsHd
+        vs5a97322bsttVrtLwVO6gX/5hGpVqvy+XxYA6c17L/VrSbPYX2N17NIpVJBgZMeDgftdDo6n8+N3++3
+        vl4vY2r0YLw+I1Iul9F6u93abvf7XeHpdGqMYGowHpgMWSkWi/ZrrVZLr9erPh4Pvd1utvIH6LuGBy8Z
+        spLP523AaDTS1Wqll8tFn8+nttttjUQiJpgaPTx4yZCVXC4XOOlisdBer2c7cdZ4PP5zoTA1enjwkiEr
+        2WzWznU+n3W329lOqVTKdvgWNXp48JIhK5lMRjebzY8wMf3/AdTofXvJMjlg+mAw0Hq9rqfTSWezmd1y
+        GIap0cODlwxZSSaTZuKxdLtdm8xZl8tl+AqNqdHDEz4sspJIJGwA55lMJrrf7+2mj8ejnRPB1Ojh8fdm
+        WW7YbrnZbJp5PB4rXCqVjBFMDcYDkyErsVgMBU7aaDQ0nU5roVAwHg6HJpgaPRivz4hEo1Hp9/usgdMa
+        9t/qVpPnsL7G61nEvbS/FDiFrxH+xRORf8EKn0YVMiLOAAAAAElFTkSuQmCC
+</value>
+  </data>
+  <metadata name="contextMenuStripNoClient.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
   </metadata>
   <data name="$this.Icon" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
