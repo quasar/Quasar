@@ -9,23 +9,6 @@ using xServer.Core.Registry;
 
 namespace xServer.Controls
 {
-    //Comparer for comparing registry values (listview)
-    //Used to sort the elements in the listview according to the RegName property
-    public class RegistryValueListItemComparer : IComparer
-    {
-        public RegistryValueListItemComparer() { }
-
-        public int Compare(object x, object y)
-        {
-            if (x.GetType() == typeof(RegistryValueLstItem) && y.GetType() == typeof(RegistryValueLstItem))
-            {
-                //Compare if the names are the same
-                return String.Compare(((RegistryValueLstItem)x).RegName, ((RegistryValueLstItem)y).RegName);
-            }
-            return -1;
-        }
-    }
-
     public class RegistryValueLstItem : ListViewItem
     {
         private string _type { get; set; }

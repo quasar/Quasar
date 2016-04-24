@@ -32,12 +32,7 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRegistryEditor));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.splitContainer = new System.Windows.Forms.SplitContainer();
-            this.tvRegistryDirectory = new xServer.Controls.RegistryTreeView();
             this.imageRegistryDirectoryList = new System.Windows.Forms.ImageList(this.components);
-            this.lstRegistryValues = new xServer.Controls.AeroListView();
-            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.imageRegistryKeyTypeList = new System.Windows.Forms.ImageList(this.components);
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.selectedStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
@@ -89,6 +84,11 @@
             this.qWORD64bitValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.multiStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.expandableStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
+            this.tvRegistryDirectory = new xServer.Controls.RegistryTreeView();
+            this.lstRegistryValues = new xServer.Controls.AeroListView();
+            this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tableLayoutPanel.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer)).BeginInit();
             this.splitContainer.Panel1.SuspendLayout();
@@ -136,64 +136,11 @@
             this.splitContainer.SplitterDistance = 259;
             this.splitContainer.TabIndex = 0;
             // 
-            // tvRegistryDirectory
-            // 
-            this.tvRegistryDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.tvRegistryDirectory.HideSelection = false;
-            this.tvRegistryDirectory.ImageIndex = 0;
-            this.tvRegistryDirectory.ImageList = this.imageRegistryDirectoryList;
-            this.tvRegistryDirectory.Location = new System.Drawing.Point(0, 0);
-            this.tvRegistryDirectory.Name = "tvRegistryDirectory";
-            this.tvRegistryDirectory.SelectedImageIndex = 0;
-            this.tvRegistryDirectory.Size = new System.Drawing.Size(259, 508);
-            this.tvRegistryDirectory.TabIndex = 0;
-            this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
-            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
-            this.tvRegistryDirectory.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeSelect);
-            this.tvRegistryDirectory.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvRegistryDirectory_NodeMouseClick);
-            this.tvRegistryDirectory.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvRegistryDirectory_KeyUp);
-            // 
             // imageRegistryDirectoryList
             // 
             this.imageRegistryDirectoryList.ImageStream = ((System.Windows.Forms.ImageListStreamer)(resources.GetObject("imageRegistryDirectoryList.ImageStream")));
             this.imageRegistryDirectoryList.TransparentColor = System.Drawing.Color.Transparent;
             this.imageRegistryDirectoryList.Images.SetKeyName(0, "folder.png");
-            // 
-            // lstRegistryValues
-            // 
-            this.lstRegistryValues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
-            this.hName,
-            this.hType,
-            this.hValue});
-            this.lstRegistryValues.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.lstRegistryValues.FullRowSelect = true;
-            this.lstRegistryValues.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-            this.lstRegistryValues.HideSelection = false;
-            this.lstRegistryValues.Location = new System.Drawing.Point(0, 0);
-            this.lstRegistryValues.Name = "lstRegistryValues";
-            this.lstRegistryValues.Size = new System.Drawing.Size(515, 508);
-            this.lstRegistryValues.SmallImageList = this.imageRegistryKeyTypeList;
-            this.lstRegistryValues.TabIndex = 0;
-            this.lstRegistryValues.UseCompatibleStateImageBehavior = false;
-            this.lstRegistryValues.View = System.Windows.Forms.View.Details;
-            this.lstRegistryValues.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
-            this.lstRegistryValues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
-            this.lstRegistryValues.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
-            // 
-            // hName
-            // 
-            this.hName.Text = "Name";
-            this.hName.Width = 173;
-            // 
-            // hType
-            // 
-            this.hType.Text = "Type";
-            this.hType.Width = 104;
-            // 
-            // hValue
-            // 
-            this.hValue.Text = "Value";
-            this.hValue.Width = 214;
             // 
             // imageRegistryKeyTypeList
             // 
@@ -527,7 +474,7 @@
             this.lst_ContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.newToolStripMenuItem1});
             this.lst_ContextMenuStrip.Name = "lst_ContextMenuStrip";
-            this.lst_ContextMenuStrip.Size = new System.Drawing.Size(153, 48);
+            this.lst_ContextMenuStrip.Size = new System.Drawing.Size(99, 26);
             // 
             // newToolStripMenuItem1
             // 
@@ -541,7 +488,7 @@
             this.multiStringValueToolStripMenuItem1,
             this.expandableStringValueToolStripMenuItem1});
             this.newToolStripMenuItem1.Name = "newToolStripMenuItem1";
-            this.newToolStripMenuItem1.Size = new System.Drawing.Size(152, 22);
+            this.newToolStripMenuItem1.Size = new System.Drawing.Size(98, 22);
             this.newToolStripMenuItem1.Text = "New";
             // 
             // keyToolStripMenuItem1
@@ -597,6 +544,59 @@
             this.expandableStringValueToolStripMenuItem1.Size = new System.Drawing.Size(199, 22);
             this.expandableStringValueToolStripMenuItem1.Text = "Expandable String Value";
             this.expandableStringValueToolStripMenuItem1.Click += new System.EventHandler(this.createExpandStringRegistryValue_Click);
+            // 
+            // tvRegistryDirectory
+            // 
+            this.tvRegistryDirectory.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.tvRegistryDirectory.HideSelection = false;
+            this.tvRegistryDirectory.ImageIndex = 0;
+            this.tvRegistryDirectory.ImageList = this.imageRegistryDirectoryList;
+            this.tvRegistryDirectory.Location = new System.Drawing.Point(0, 0);
+            this.tvRegistryDirectory.Name = "tvRegistryDirectory";
+            this.tvRegistryDirectory.SelectedImageIndex = 0;
+            this.tvRegistryDirectory.Size = new System.Drawing.Size(259, 508);
+            this.tvRegistryDirectory.TabIndex = 0;
+            this.tvRegistryDirectory.AfterLabelEdit += new System.Windows.Forms.NodeLabelEditEventHandler(this.tvRegistryDirectory_AfterLabelEdit);
+            this.tvRegistryDirectory.BeforeExpand += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeExpand);
+            this.tvRegistryDirectory.BeforeSelect += new System.Windows.Forms.TreeViewCancelEventHandler(this.tvRegistryDirectory_BeforeSelect);
+            this.tvRegistryDirectory.NodeMouseClick += new System.Windows.Forms.TreeNodeMouseClickEventHandler(this.tvRegistryDirectory_NodeMouseClick);
+            this.tvRegistryDirectory.KeyUp += new System.Windows.Forms.KeyEventHandler(this.tvRegistryDirectory_KeyUp);
+            // 
+            // lstRegistryValues
+            // 
+            this.lstRegistryValues.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
+            this.hName,
+            this.hType,
+            this.hValue});
+            this.lstRegistryValues.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.lstRegistryValues.FullRowSelect = true;
+            this.lstRegistryValues.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
+            this.lstRegistryValues.HideSelection = false;
+            this.lstRegistryValues.Location = new System.Drawing.Point(0, 0);
+            this.lstRegistryValues.Name = "lstRegistryValues";
+            this.lstRegistryValues.Size = new System.Drawing.Size(515, 508);
+            this.lstRegistryValues.SmallImageList = this.imageRegistryKeyTypeList;
+            this.lstRegistryValues.TabIndex = 0;
+            this.lstRegistryValues.UseCompatibleStateImageBehavior = false;
+            this.lstRegistryValues.View = System.Windows.Forms.View.Details;
+            this.lstRegistryValues.AfterLabelEdit += new System.Windows.Forms.LabelEditEventHandler(this.lstRegistryKeys_AfterLabelEdit);
+            this.lstRegistryValues.KeyUp += new System.Windows.Forms.KeyEventHandler(this.lstRegistryKeys_KeyUp);
+            this.lstRegistryValues.MouseUp += new System.Windows.Forms.MouseEventHandler(this.lstRegistryKeys_MouseClick);
+            // 
+            // hName
+            // 
+            this.hName.Text = "Name";
+            this.hName.Width = 173;
+            // 
+            // hType
+            // 
+            this.hType.Text = "Type";
+            this.hType.Width = 104;
+            // 
+            // hValue
+            // 
+            this.hValue.Text = "Value";
+            this.hValue.Width = 214;
             // 
             // FrmRegistryEditor
             // 

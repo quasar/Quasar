@@ -52,17 +52,6 @@ namespace xServer.Forms
             }
         }
 
-        #region Helpfunctions
-        
-        private DialogResult ShowWarning(string msg, string caption)
-        {
-            return MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
-        }
-
-        #endregion
-
-        #region RadioButton Actions
-
         private void radioHex_CheckboxChanged(object sender, EventArgs e)
         {
             if (valueDataTxtBox.IsHexNumber == radioHexa.Checked)
@@ -73,10 +62,6 @@ namespace xServer.Forms
             else
                 radioDecimal.Checked = true;
         }
-
-        #endregion
-
-        #region OK and Cancel Buttons
 
         private void okButton_Click(object sender, EventArgs e)
         {
@@ -97,7 +82,10 @@ namespace xServer.Forms
             }
         }
 
-        #endregion
+        private DialogResult ShowWarning(string msg, string caption)
+        {
+            return MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+        }
 
         private bool IsOverridePossible()
         {

@@ -31,8 +31,6 @@ namespace xServer.Forms
             this.valueDataTxtBox.Text = String.Join("\r\n",((string[])value.Data));
         }
 
-        #region Ok and Cancel button
-
         private void okButton_Click(object sender, EventArgs e)
         {
             string[] valueData = valueDataTxtBox.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
@@ -40,6 +38,5 @@ namespace xServer.Forms
             new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
         }
 
-        #endregion
     }
 }

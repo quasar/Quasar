@@ -40,20 +40,13 @@ namespace xServer.Forms
         private void FrmRegistryEditor_Load(object sender, EventArgs e)
         {
             if (_connectClient.Value.AccountType != "Admin")
-            {
-                //Prompt user of not being admin
-                string msg = PRIVILEGE_WARNING;
-                string caption = "Alert!";
-                MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+                MessageBox.Show(PRIVILEGE_WARNING, "Alert!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            
+            if (_connectClient != null)
+                this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
 
             // Signal client to retrive the root nodes (indicated by null)
             new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(null).Execute(_connectClient);
-
-            this.lstRegistryValues.ListViewItemSorter = new RegistryValueListItemComparer();
-
-            if (_connectClient != null)
-                this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
         }
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -121,9 +114,7 @@ namespace xServer.Forms
                     tvRegistryDirectory.BeginUpdate();
 
                     foreach (var match in matches)
-                    {
                         AddRootKey(match);
-                    }
 
                     tvRegistryDirectory.SelectedNode = tvRegistryDirectory.Nodes[0];
 
@@ -141,10 +132,8 @@ namespace xServer.Forms
                     {
                         tvRegistryDirectory.BeginUpdate();
 
-                        foreach (RegSeekerMatch match in matches)
-                        {
+                        foreach (var match in matches)
                             AddKeyToTree(parent, match);
-                        }
 
                         parent.Expand();
                         tvRegistryDirectory.EndUpdate();
@@ -193,10 +182,6 @@ namespace xServer.Forms
                     parent.Nodes[oldName].Text = newName;
                     parent.Nodes[oldName].Name = newName;
 
-                    //Make sure to reselect the node
-                    if (tvRegistryDirectory.SelectedNode == parent.Nodes[newName])
-                        tvRegistryDirectory.SelectedNode = null;
-
                     tvRegistryDirectory.SelectedNode = parent.Nodes[newName];
                 });
             }
@@ -240,9 +225,6 @@ namespace xServer.Forms
                     ValuesFromNode.Add(value);
                     key.Tag = ValuesFromNode.ToArray();
 
-                    //Deactivate sorting (prevent sorting of new value)
-                    lstRegistryValues.Sorting = SortOrder.None;
-
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         RegistryValueLstItem item = new RegistryValueLstItem(value);
@@ -253,10 +235,8 @@ namespace xServer.Forms
                         lstRegistryValues.LabelEdit = true;
                         item.BeginEdit();
                     }
-                    else
-                    {
-                        tvRegistryDirectory.SelectedNode = key;
-                    }
+
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
@@ -275,9 +255,7 @@ namespace xServer.Forms
                         key.Tag = ((RegValueData[])key.Tag).Where(value => value.Name != valueName).ToArray();
 
                         if (tvRegistryDirectory.SelectedNode == key)
-                        {
                             lstRegistryValues.Items.RemoveByKey(valueName);
-                        }
                     }
                     else //Handle delete of default value
                     {
@@ -289,9 +267,7 @@ namespace xServer.Forms
                             var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
                                                          .SingleOrDefault(item => item.Name == valueName);
                             if (valueItem != null)
-                            {
                                 valueItem.Data = regValue.Kind.RegistryTypeToString(null);
-                            }
                         }
                     }
 
@@ -317,14 +293,10 @@ namespace xServer.Forms
                         var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
                                                          .SingleOrDefault(item => item.Name == oldName);              
                         if (valueItem != null)
-                        {
                             valueItem.RegName = newName;
-                        }
                     }
-                    else
-                    {
-                        tvRegistryDirectory.SelectedNode = key;
-                    }
+
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
@@ -345,14 +317,10 @@ namespace xServer.Forms
                         var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
                                                          .SingleOrDefault(item => item.Name == value.Name);
                         if (valueItem != null)
-                        {
                             valueItem.Data = value.Kind.RegistryTypeToString(value.Data);
-                        }
                     }
-                    else
-                    {
-                        tvRegistryDirectory.SelectedNode = key;
-                    }
+
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
@@ -371,15 +339,19 @@ namespace xServer.Forms
             lstRegistryValues.BeginUpdate();
             lstRegistryValues.Items.Clear();
 
-            // Make sure that the passed values are usable
-            if (values != null && values.Length > 0)
+            //Sort values
+            values = (
+                from value in values
+                orderby value.Name ascending
+                select value
+                ).ToArray();
+
+            foreach (var value in values)
             {
-                foreach (var value in values)
-                {
-                    RegistryValueLstItem item = new RegistryValueLstItem(value);
-                    lstRegistryValues.Items.Add(item);
-                }
+                RegistryValueLstItem item = new RegistryValueLstItem(value);
+                lstRegistryValues.Items.Add(item);
             }
+
             lstRegistryValues.EndUpdate();
         }
 
@@ -453,21 +425,13 @@ namespace xServer.Forms
 
         private void tvRegistryDirectory_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node != null)
-            {
-                //Activate sorting (Make sure to sort values correctly)
-                lstRegistryValues.Sorting = SortOrder.Ascending;
-
-                UpdateLstRegistryValues(e.Node);
-            }
+            UpdateLstRegistryValues(e.Node);
         }
 
         private void tvRegistryDirectory_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete && GetDeleteState())
-            {
                 deleteRegistryKey_Click(this, e);
-            }
         }
 
         #endregion
@@ -602,9 +566,7 @@ namespace xServer.Forms
         private void lstRegistryKeys_KeyUp(object sender, KeyEventArgs e)
         {
             if (e.KeyCode == Keys.Delete && GetDeleteState())
-            {
                 deleteRegistryValue_Click(this, e);
-            }
         }
 
         #endregion
