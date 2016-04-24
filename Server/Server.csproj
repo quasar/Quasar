@@ -186,6 +186,7 @@
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Registry\RegValueHelper.cs" />
+    <Compile Include="Core\Utilities\ByteConverter.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />
