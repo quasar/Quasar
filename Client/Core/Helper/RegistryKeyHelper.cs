@@ -97,7 +97,7 @@ namespace xClient.Core.Helper
         /// Adds the default value to the list of values and returns them as an array. 
         /// If default value already exists this function will only return the list as an array.
         /// </summary>
-        /// <param name="values">The list with the values for with the default value should be added to</param>
+        /// <param name="values">The list with the values for which the default value should be added to</param>
         /// <returns>Array with all of the values including the default value</returns>
         public static RegValueData[] AddDefaultValue(List<RegValueData> values)
         {
