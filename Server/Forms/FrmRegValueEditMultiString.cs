@@ -19,12 +19,6 @@ namespace xServer.Forms
 
         private readonly string _keyPath;
 
-        #region Constants
-
-        private const string WARNING_MSG = "Data of type REG_MULTI_SZ cannot contain empty strings. Registry Editor will remove the empty strings found.";
-
-        #endregion
-
         public FrmRegValueEditMultiString(string keyPath, RegValueData value, Client c)
         {
             _connectClient = c;
@@ -34,55 +28,15 @@ namespace xServer.Forms
             InitializeComponent();
 
             this.valueNameTxtBox.Text = value.Name;
-            this.valueDataTxtBox.Lines = (string[])value.Data;
+            this.valueDataTxtBox.Text = String.Join("\r\n",((string[])value.Data));
         }
-
-        private void FrmRegValueEditMultiString_Load(object sender, EventArgs e)
-        {
-            this.valueDataTxtBox.Select();
-            this.valueDataTxtBox.Focus();
-        }
-
-        #region Ok and Cancel button
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            string[] lines = valueDataTxtBox.Lines;
-            if (lines.Length > 0)
-            {
-                string[] valueData = GetSanitizedStrings(lines);
-                if (valueData.Length != lines.Length)
-                {
-                    ShowWarning();
-                }
-                new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
-            }
-            this.Close();
+            string[] valueData = valueDataTxtBox.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+
+            new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
         }
 
-        private void cancelButton_Click(object sender, EventArgs e)
-        {
-            this.Close();
-        }
-
-        #endregion
-
-        private string[] GetSanitizedStrings(string[] strs)
-        {
-            List<string> sanitized = new List<string>();
-            foreach (string str in strs)
-            {
-                if (!String.IsNullOrWhiteSpace(str) && !String.IsNullOrEmpty(str))
-                {
-                    sanitized.Add(str);
-                }
-            }
-            return sanitized.ToArray();
-        }
-
-        private void ShowWarning()
-        {
-            MessageBox.Show(WARNING_MSG, "Warning", MessageBoxButtons.OK, MessageBoxIcon.Error);
-        }
     }
 }

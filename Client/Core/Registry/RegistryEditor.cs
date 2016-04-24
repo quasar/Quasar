@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Registry
 {
@@ -308,7 +309,6 @@ namespace xClient.Core.Registry
         {
             try
             {
-
                 RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
@@ -369,8 +369,8 @@ namespace xClient.Core.Registry
                     return false;
                 }
                 
-                //Value does not exist
-                if (!key.ContainsValue(value.Name))
+                //Is not default value and does not exist
+                if (!RegistryKeyHelper.IsDefaultValue(value.Name) && !key.ContainsValue(value.Name))
                 {
                     errorMsg = "The value: " + value.Name + " does not exist in: " + keyPath;
                     return false;

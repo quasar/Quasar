@@ -23,9 +23,7 @@ namespace xServer.Forms
 
         #region Constants
 
-        private const string PRIVILEGE_WARNING = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete my not work properly!";
-
-        private const string DEFAULT_REG_VALUE = "(Default)";
+        private const string PRIVILEGE_WARNING = "The client software is not running as administrator and therefore some functionality like Update, Create, Open and Delete may not work properly!";
 
         #endregion
 
@@ -41,23 +39,14 @@ namespace xServer.Forms
 
         private void FrmRegistryEditor_Load(object sender, EventArgs e)
         {
-            //Check if user is not currently running as administrator
             if (_connectClient.Value.AccountType != "Admin")
-            {
-                //Prompt user of not being admin
-                string msg = PRIVILEGE_WARNING;
-                string caption = "Alert!";
-                MessageBox.Show(msg, caption, MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
+                MessageBox.Show(PRIVILEGE_WARNING, "Alert!", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            
+            if (_connectClient != null)
+                this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
 
             // Signal client to retrive the root nodes (indicated by null)
             new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(null).Execute(_connectClient);
-
-            // Set the ListSorter for the listView
-            this.lstRegistryKeys.ListViewItemSorter = new RegistryValueListItemComparer();
-
-            if (_connectClient != null)
-                this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
         }
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -76,7 +65,6 @@ namespace xServer.Forms
             {
                 MessageBox.Show(errorMsg, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             });
-
         }
 
         public void PerformClose()
@@ -98,6 +86,15 @@ namespace xServer.Forms
             tvRegistryDirectory.Nodes.Add(node);
         }
 
+        private TreeNode AddKeyToTree(TreeNode parent, RegSeekerMatch subKey)
+        {
+            TreeNode node = CreateNode(subKey.Key, subKey.Key, subKey.Data);
+            parent.Nodes.Add(node);
+            if (subKey.HasSubKeys)
+                node.Nodes.Add(new TreeNode());
+            return node;
+        }
+
         private TreeNode CreateNode(string key, string text, object tag)
         {
             return new TreeNode()
@@ -108,7 +105,7 @@ namespace xServer.Forms
             };
         }
 
-        public void AddKeysToTree(string rootName, RegSeekerMatch[] matches)
+        public void AddKeys(string rootName, RegSeekerMatch[] matches)
         {
             if (string.IsNullOrEmpty(rootName))
             {
@@ -117,9 +114,7 @@ namespace xServer.Forms
                     tvRegistryDirectory.BeginUpdate();
 
                     foreach (var match in matches)
-                    {
                         AddRootKey(match);
-                    }
 
                     tvRegistryDirectory.SelectedNode = tvRegistryDirectory.Nodes[0];
 
@@ -129,7 +124,6 @@ namespace xServer.Forms
             }
             else
             {
-
                 TreeNode parent = GetTreeNode(rootName);
 
                 if (parent != null)
@@ -139,14 +133,7 @@ namespace xServer.Forms
                         tvRegistryDirectory.BeginUpdate();
 
                         foreach (var match in matches)
-                        {
-                            //This will execute in the form thread
-                            TreeNode node = CreateNode(match.Key, match.Key, match.Data);
-                            if (match.HasSubKeys)
-                                node.Nodes.Add(new TreeNode());
-
-                            parent.Nodes.Add(node);
-                        }
+                            AddKeyToTree(parent, match);
 
                         parent.Expand();
                         tvRegistryDirectory.EndUpdate();
@@ -155,39 +142,27 @@ namespace xServer.Forms
             }
         }
 
-        public void AddKeyToTree(string rootKey, RegSeekerMatch match)
+        public void CreateNewKey(string rootKey, RegSeekerMatch match)
         {
             TreeNode parent = GetTreeNode(rootKey);
 
             tvRegistryDirectory.Invoke((MethodInvoker)delegate
             {
-                //This will execute in the form thread
-                TreeNode node = CreateNode(match.Key, match.Key, match.Data);
-                if (match.HasSubKeys)
-                    node.Nodes.Add(new TreeNode());
+                TreeNode node = AddKeyToTree(parent, match);
 
-                parent.Nodes.Add(node);
+                node.EnsureVisible();
 
-                if (!parent.IsExpanded)
-                {
-                    tvRegistryDirectory.SelectedNode = parent;
-                    tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.specialCreateRegistryKey_AfterExpand);
-                    parent.Expand();
-                }
-                else
-                {
-                    tvRegistryDirectory.SelectedNode = node;
-                    tvRegistryDirectory.LabelEdit = true;
-                    node.BeginEdit();
-                }
+                tvRegistryDirectory.SelectedNode = node;
+                node.Expand();
+                tvRegistryDirectory.LabelEdit = true;
+                node.BeginEdit();
             });
         }
 
-        public void RemoveKeyFromTree(string rootKey, string subKey)
+        public void RemoveKey(string rootKey, string subKey)
         {
             TreeNode parent = GetTreeNode(rootKey);
 
-            //Make sure the key does exist
             if (parent.Nodes.ContainsKey(subKey)) {
                 tvRegistryDirectory.Invoke((MethodInvoker)delegate
                 {
@@ -196,26 +171,18 @@ namespace xServer.Forms
             }
         }
 
-        public void RenameKeyFromTree(string rootKey, string oldName, string newName)
+        public void RenameKey(string rootKey, string oldName, string newName)
         {
             TreeNode parent = GetTreeNode(rootKey);
 
-            //Make sure the key does exist
             if (parent.Nodes.ContainsKey(oldName))
             {
-                int index = parent.Nodes.IndexOfKey(oldName);
-
                 tvRegistryDirectory.Invoke((MethodInvoker)delegate
                 {
-                    parent.Nodes[index].Text = newName;
-                    parent.Nodes[index].Name = newName;
+                    parent.Nodes[oldName].Text = newName;
+                    parent.Nodes[oldName].Name = newName;
 
-                    //Make sure that the newly renamed node is selected
-                    //To allow update in the listview
-                    if (tvRegistryDirectory.SelectedNode == parent.Nodes[index])
-                        tvRegistryDirectory.SelectedNode = null;
-
-                    tvRegistryDirectory.SelectedNode = parent.Nodes[index];
+                    tvRegistryDirectory.SelectedNode = parent.Nodes[newName];
                 });
             }
         }
@@ -227,232 +194,165 @@ namespace xServer.Forms
         /// <returns>Null if an invalid name is passed or the TreeNode could not be found; The TreeNode represented by the fullpath;</returns>
         private TreeNode GetTreeNode(string path)
         {
-            string[] nodePath = null;
-            if (path.Contains("\\"))
-            {
-                nodePath = path.Split(new char[] { '\\' }, StringSplitOptions.RemoveEmptyEntries);
+            string[] nodePath = path.Split(new char[] { '\\' });
 
-                // Only one valid node. Probably malformed
-                if (nodePath.Length < 2)
-                    return null;
-            }
-            else
-            {
-                //Is a root node
-                nodePath = new string[] { path };
-            }
-
-            // Keep track of the last node to reference for traversal.
-            TreeNode lastNode = null;
-
-            if (tvRegistryDirectory.Nodes.ContainsKey(nodePath[0]))
-            {
-                lastNode = tvRegistryDirectory.Nodes[nodePath[0]];
-            }
-            else
-            {
-                //Node is missing
+            TreeNode lastNode = tvRegistryDirectory.Nodes[nodePath[0]];
+            if (lastNode == null)
                 return null;
-            }
 
-            // Go through the rest of the node path.
             for (int i = 1; i < nodePath.Length; i++)
             {
-                if (lastNode.Nodes.ContainsKey(nodePath[i]))
-                {
-                    lastNode = lastNode.Nodes[nodePath[i]];
-                }
-                else
-                {
-                    //Node is missing
+                lastNode = lastNode.Nodes[nodePath[i]];
+                if (lastNode == null)
                     return null;
-                }
             }
             return lastNode;
         }
 
         #endregion
 
-        
-
         #region ListView Helpfunctions
 
-        public void AddValueToList(string keyPath, RegValueData value)
+        public void CreateValue(string keyPath, RegValueData value)
         {
             TreeNode key = GetTreeNode(keyPath);
 
             if (key != null )
             {
-                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
-                    List<RegValueData> ValuesFromNode = null;
-                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[])) {
-                        ValuesFromNode = ((RegValueData[])key.Tag).ToList();
-                        ValuesFromNode.Add(value);
-                        key.Tag = ValuesFromNode.ToArray();
-                    }
-                    else
-                    {
-                        //The tag has a incorrect element or is missing data
-                        ValuesFromNode = new List<RegValueData>();
-                        ValuesFromNode.Add(value);
-                        key.Tag = ValuesFromNode.ToArray();
-                    }
-
-                    //Deactivate sorting
-                    lstRegistryKeys.Sorting = SortOrder.None;
+                    List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
+                    ValuesFromNode.Add(value);
+                    key.Tag = ValuesFromNode.ToArray();
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        string kind = value.Kind.RegistryTypeToString();
-                        string data = value.Kind.RegistryTypeToString(value.Data);
-                        RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
-                        //unselect all
-                        lstRegistryKeys.SelectedIndices.Clear();
-                        lstRegistryKeys.Items.Add(item);
+                        RegistryValueLstItem item = new RegistryValueLstItem(value);
+                        lstRegistryValues.Items.Add(item);
+                        //Unselect all
+                        lstRegistryValues.SelectedIndices.Clear();
                         item.Selected = true;
-                        lstRegistryKeys.LabelEdit = true;
+                        lstRegistryValues.LabelEdit = true;
                         item.BeginEdit();
                     }
-                    else
-                    {
-                        tvRegistryDirectory.SelectedNode = key;
-                    }
+
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
 
-        public void DeleteValueFromList(string keyPath, string valueName)
+        public void DeleteValue(string keyPath, string valueName)
         {
             TreeNode key = GetTreeNode(keyPath);
 
             if (key != null)
             {
-                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
-                    List<RegValueData> ValuesFromNode = null;
-                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
+                    if (!RegValueHelper.IsDefaultValue(valueName))
                     {
-                        ValuesFromNode = ((RegValueData[])key.Tag).ToList();
-                        ValuesFromNode.RemoveAll(value => value.Name == valueName);
-                        key.Tag = ValuesFromNode.ToArray();
+                        //Remove the values that have the specified name
+                        key.Tag = ((RegValueData[])key.Tag).Where(value => value.Name != valueName).ToArray();
+
+                        if (tvRegistryDirectory.SelectedNode == key)
+                            lstRegistryValues.Items.RemoveByKey(valueName);
                     }
-                    else
+                    else //Handle delete of default value
                     {
-                        //Tag has incorrect element or is missing data
-                        key.Tag = new RegValueData[] {};
+                        var regValue = ((RegValueData[])key.Tag).First(item => item.Name == valueName);
+                        regValue.Data = null;
+
+                        if(tvRegistryDirectory.SelectedNode == key)
+                        {
+                            var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == valueName);
+                            if (valueItem != null)
+                                valueItem.Data = regValue.Kind.RegistryTypeToString(null);
+                        }
                     }
+
+                    tvRegistryDirectory.SelectedNode = key;
+
+                });
+            }
+        }
+
+        public void RenameValue(string keyPath, string oldName, string newName)
+        {
+            TreeNode key = GetTreeNode(keyPath);
+
+            if (key != null)
+            {
+                lstRegistryValues.Invoke((MethodInvoker)delegate
+                {
+                    var value = ((RegValueData[])key.Tag).First(item => item.Name == oldName);
+                    value.Name = newName;
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
-                        valueName = String.IsNullOrEmpty(valueName) ? DEFAULT_REG_VALUE : valueName; 
-                        lstRegistryKeys.Items.RemoveByKey(valueName);
-                    }
-                    else
-                    {
-                        tvRegistryDirectory.SelectedNode = key;
+                        var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == oldName);              
+                        if (valueItem != null)
+                            valueItem.RegName = newName;
                     }
 
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
 
-        public void RenameValueFromList(string keyPath, string oldName, string newName)
+        public void ChangeValue(string keyPath, RegValueData value)
         {
             TreeNode key = GetTreeNode(keyPath);
 
             if (key != null)
             {
-                lstRegistryKeys.Invoke((MethodInvoker)delegate
+                lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
-                    //Can only rename if the value exists in the tag
-                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
-                    {
-                        List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
-                        var value = ValuesFromNode.Find(item => item.Name == oldName);
-                        value.Name = newName;
+                    var regValue = ((RegValueData[])key.Tag).First(item => item.Name == value.Name);
+                    regValue.Data = value.Data;
 
-                        if (tvRegistryDirectory.SelectedNode == key)
-                        {
-                            var index = lstRegistryKeys.Items.IndexOfKey(oldName);
-                            if (index != -1)
-                            {
-                                RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
-                                valueItem.RegName = newName;
-                            }
-                        }
-                        else
-                        {
-                            tvRegistryDirectory.SelectedNode = key;
-                        }
+                    if (tvRegistryDirectory.SelectedNode == key)
+                    {
+                        var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
+                                                         .SingleOrDefault(item => item.Name == value.Name);
+                        if (valueItem != null)
+                            valueItem.Data = value.Kind.RegistryTypeToString(value.Data);
                     }
+
+                    tvRegistryDirectory.SelectedNode = key;
                 });
             }
         }
 
-        public void ChangeValueFromList(string keyPath, RegValueData value)
-        {
-            TreeNode key = GetTreeNode(keyPath);
-
-            if (key != null)
-            {
-                lstRegistryKeys.Invoke((MethodInvoker)delegate
-                {
-                    //Can only change if the value exists in the tag
-                    if (key.Tag != null && key.Tag.GetType() == typeof(RegValueData[]))
-                    {
-                        List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
-                        var regValue = ValuesFromNode.Find(item => item.Name == value.Name);
-                        regValue.Data = value.Data;
-
-                        if (tvRegistryDirectory.SelectedNode == key)
-                        {
-                            //Make sure if it is a default value
-                            string name = String.IsNullOrEmpty(value.Name) ? DEFAULT_REG_VALUE : value.Name;
-                            var index = lstRegistryKeys.Items.IndexOfKey(name);
-                            if (index != -1)
-                            {
-                                RegistryValueLstItem valueItem = (RegistryValueLstItem)lstRegistryKeys.Items[index];
-                                valueItem.Data = value.Kind.RegistryTypeToString(value.Data);;
-                            }
-                        }
-                        else
-                        {
-                            tvRegistryDirectory.SelectedNode = key;
-                        }
-                    }
-                });
-            }
-        }
-
-        private void UpdateLstRegistryKeys(TreeNode node)
+        private void UpdateLstRegistryValues(TreeNode node)
         {
             selectedStripStatusLabel.Text = node.FullPath;
 
-            RegValueData[] ValuesFromNode = null;
-            if (node.Tag != null && node.Tag.GetType() == typeof(RegValueData[]))
-            {
-                ValuesFromNode = (RegValueData[])node.Tag;
-            }
+            RegValueData[] ValuesFromNode = (RegValueData[])node.Tag;
 
-            PopulateLstRegistryKeys(ValuesFromNode);
+            PopulateLstRegistryValues(ValuesFromNode);
         }
 
-        private void PopulateLstRegistryKeys(RegValueData[] values)
+        private void PopulateLstRegistryValues(RegValueData[] values)
         {
-            lstRegistryKeys.Items.Clear();
+            lstRegistryValues.BeginUpdate();
+            lstRegistryValues.Items.Clear();
 
-            // Make sure that the passed values are usable
-            if (values != null && values.Length > 0)
+            //Sort values
+            values = (
+                from value in values
+                orderby value.Name ascending
+                select value
+                ).ToArray();
+
+            foreach (var value in values)
             {
-                foreach (var value in values)
-                {
-                    string kind = value.Kind.RegistryTypeToString();
-                    string data = value.Kind.RegistryTypeToString(value.Data);
-                    RegistryValueLstItem item = new RegistryValueLstItem(value.Name, kind, data);
-                    lstRegistryKeys.Items.Add(item);
-                }
+                RegistryValueLstItem item = new RegistryValueLstItem(value);
+                lstRegistryValues.Items.Add(item);
             }
+
+            lstRegistryValues.EndUpdate();
         }
 
         #endregion
@@ -461,31 +361,25 @@ namespace xServer.Forms
 
         private void tvRegistryDirectory_AfterLabelEdit(object sender, NodeLabelEditEventArgs e)
         {
-            //No need to edit if it is null
             if (e.Label != null)
             {
-                //Prevent the change of the label
                 e.CancelEdit = true;
 
                 if (e.Label.Length > 0)
                 {
                     if (e.Node.Parent.Nodes.ContainsKey(e.Label))
                     {
-                        //Prompt error
                         MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                         e.Node.BeginEdit();
                     }
                     else
                     {
-                        //Normal rename action
-                        //Perform Rename action
                         new xServer.Core.Packets.ServerPackets.DoRenameRegistryKey(e.Node.Parent.FullPath, e.Node.Name, e.Label).Execute(_connectClient);
                         tvRegistryDirectory.LabelEdit = false;
                     }
                 }
                 else
                 {
-                    //Prompt error
                     MessageBox.Show("Invalid label. \nThe label cannot be blank.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                     e.Node.BeginEdit();
                 }
@@ -499,7 +393,6 @@ namespace xServer.Forms
 
         private void tvRegistryDirectory_BeforeExpand(object sender, TreeViewCancelEventArgs e)
         {
-            // Before expansion of the node, prepare the first node with RegistryKeys.
             TreeNode parentNode = e.Node;
 
             // If nothing is there (yet).
@@ -508,67 +401,81 @@ namespace xServer.Forms
                 tvRegistryDirectory.SuspendLayout();
                 parentNode.Nodes.Clear();
 
-                // Send a packet to retrieve the data to use for the nodes.
                 new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(parentNode.FullPath).Execute(_connectClient);
 
                 tvRegistryDirectory.ResumeLayout();
-                //Cancel expand
+
                 e.Cancel = true;
             }
         }
 
         private void tvRegistryDirectory_NodeMouseClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != e.Node)
-            {
-                //Select the clicked node
-                tvRegistryDirectory.SelectedNode = e.Node;
-                //Activate sorting
-                lstRegistryKeys.Sorting = SortOrder.Ascending;
-            }
-
-            /* Enable delete and rename if not root node */
-            SetDeleteAndRename(tvRegistryDirectory.SelectedNode.Parent != null);
-
-            //Check if right click, and if so provide the contrext menu
             if (e.Button == MouseButtons.Right)
             {
+                //Bug fix with rightclick not working for selectednode
+                tvRegistryDirectory.SelectedNode = e.Node;
+
+                //Display the context menu
                 Point pos = new Point(e.X, e.Y);
+                CreateTreeViewMenuStrip();
                 tv_ContextMenuStrip.Show(tvRegistryDirectory, pos);
             }
         }
 
         private void tvRegistryDirectory_BeforeSelect(object sender, TreeViewCancelEventArgs e)
         {
-            if (e.Node != null)
-            {
-                UpdateLstRegistryKeys(e.Node);
-            }
+            UpdateLstRegistryValues(e.Node);
         }
 
         private void tvRegistryDirectory_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
-            {
+            if (e.KeyCode == Keys.Delete && GetDeleteState())
                 deleteRegistryKey_Click(this, e);
-            }
         }
 
         #endregion
 
-        #region ToolStrip Helpfunctions
+        #region ToolStrip and Contextmenu Helpfunctions
 
-        public void SetDeleteAndRename(bool enable)
+        private void CreateEditToolStrip()
         {
-            this.deleteToolStripMenuItem.Enabled = enable;
-            this.renameToolStripMenuItem.Enabled = enable;
-            this.deleteToolStripMenuItem2.Enabled = enable;
-            this.renameToolStripMenuItem2.Enabled = enable;
+            this.modifyToolStripMenuItem1.Visible =
+                this.modifyBinaryDataToolStripMenuItem1.Visible =
+                    this.modifyNewtoolStripSeparator.Visible = lstRegistryValues.Focused;
+
+            this.modifyToolStripMenuItem1.Enabled =
+                this.modifyBinaryDataToolStripMenuItem1.Enabled = lstRegistryValues.SelectedItems.Count == 1;
+
+            this.renameToolStripMenuItem2.Enabled = GetRenameState();
+            this.deleteToolStripMenuItem2.Enabled = GetDeleteState();
+        }
+
+        private void  CreateTreeViewMenuStrip()
+        {
+            this.renameToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+
+            this.deleteToolStripMenuItem.Enabled = tvRegistryDirectory.SelectedNode.Parent != null;
+        }
+
+        private void CreateListViewMenuStrip()
+        {
+            this.modifyToolStripMenuItem.Enabled =
+                this.modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryValues.SelectedItems.Count == 1;
+
+            this.renameToolStripMenuItem1.Enabled = lstRegistryValues.SelectedItems.Count == 1 && !RegValueHelper.IsDefaultValue(lstRegistryValues.SelectedItems[0].Name);
+
+            this.deleteToolStripMenuItem1.Enabled = tvRegistryDirectory.SelectedNode != null && lstRegistryValues.SelectedItems.Count > 0;
         }
 
         #endregion
 
         #region MenuStrip Action
+
+        private void editToolStripMenuItem_DropDownOpening(object sender, EventArgs e)
+        {
+            CreateEditToolStrip();
+        }
 
         private void menuStripExit_Click(object sender, EventArgs e)
         {
@@ -576,10 +483,12 @@ namespace xServer.Forms
         }
 
         private void menuStripDelete_Click(object sender, EventArgs e) {
-            if(tvRegistryDirectory.Focused) {
+            if(tvRegistryDirectory.Focused)
+            {
                 deleteRegistryKey_Click(this, e);
             }
-            else if (lstRegistryKeys.Focused) {
+            else if (lstRegistryValues.Focused) 
+            {
                 deleteRegistryValue_Click(this, e);
             }
         }
@@ -590,7 +499,7 @@ namespace xServer.Forms
             {
                 renameRegistryKey_Click(this, e);
             }
-            else if (lstRegistryKeys.Focused)
+            else if (lstRegistryValues.Focused)
             {
                 renameRegistryValue_Click(this, e);
             }
@@ -605,16 +514,18 @@ namespace xServer.Forms
             if (e.Button == MouseButtons.Right)
             {
                 Point pos = new Point(e.X, e.Y);
+
                 //Try to check if a item was clicked
-                if (lstRegistryKeys.GetItemAt(pos.X, pos.Y) == null)
+                if (lstRegistryValues.GetItemAt(pos.X, pos.Y) == null)
                 {
                     //Not on a item
-                    lst_ContextMenuStrip.Show(lstRegistryKeys, pos);
+                    lst_ContextMenuStrip.Show(lstRegistryValues, pos);
                 }
                 else
                 {
                     //Clicked on a item
-                    selectedItem_ContextMenuStrip.Show(lstRegistryKeys, pos);
+                    CreateListViewMenuStrip();
+                    selectedItem_ContextMenuStrip.Show(lstRegistryValues, pos);
                 }
             }
         }
@@ -623,78 +534,39 @@ namespace xServer.Forms
         {
             if (e.Label != null && tvRegistryDirectory.SelectedNode != null)
             {
-                //Prevent the change of the label
                 e.CancelEdit = true;
                 int index = e.Item;
 
                 if (e.Label.Length > 0)
                 {
-                    if (lstRegistryKeys.Items.ContainsKey(e.Label))
+                    if (lstRegistryValues.Items.ContainsKey(e.Label))
                     {
-                        //Prompt error
                         MessageBox.Show("Invalid label. \nA node with that label already exists.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                        lstRegistryKeys.Items[index].BeginEdit();
+                        lstRegistryValues.Items[index].BeginEdit();
                         return;
                     }
 
-                    //Normal rename action
-                    //Perform Rename action
-                    new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryKeys.Items[index].Name, e.Label).Execute(_connectClient);
+                    new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryValues.Items[index].Name, e.Label).Execute(_connectClient);
                     
-                    lstRegistryKeys.LabelEdit = false;
+                    lstRegistryValues.LabelEdit = false;
                 }
                 else
                 {
-                    //Prompt error
                     MessageBox.Show("Invalid label. \nThe label cannot be blank.", "Warning", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                    lstRegistryKeys.Items[index].BeginEdit();
+                    lstRegistryValues.Items[index].BeginEdit();
 
                 }
             }
             else
             {
-                lstRegistryKeys.LabelEdit = false;
+                lstRegistryValues.LabelEdit = false;
             }
-        }
-
-        private void lstRegistryKeys_ItemSelectionChanged(object sender, ListViewItemSelectionChangedEventArgs e)
-        {
-            modifyToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-            modifyToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-            modifyBinaryDataToolStripMenuItem.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-            modifyBinaryDataToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1;
-
-            //Make sure that only one item selected and that the item is not a default 
-            renameToolStripMenuItem1.Enabled = lstRegistryKeys.SelectedItems.Count == 1 && e.Item.Name != DEFAULT_REG_VALUE;
-            renameToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count == 1 && e.Item.Name != DEFAULT_REG_VALUE;
-
-            deleteToolStripMenuItem2.Enabled = lstRegistryKeys.SelectedItems.Count > 0;
         }
 
         private void lstRegistryKeys_KeyUp(object sender, KeyEventArgs e)
         {
-            if (e.KeyCode == Keys.Delete)
-            {
+            if (e.KeyCode == Keys.Delete && GetDeleteState())
                 deleteRegistryValue_Click(this, e);
-            }
-        }
-
-        private void lstRegistryKeys_Enter(object sender, EventArgs e)
-        {
-            /* Make the modifers visible */
-            modifyNewtoolStripSeparator.Visible = true;
-
-            modifyToolStripMenuItem1.Visible = true;
-            modifyBinaryDataToolStripMenuItem1.Visible = true;
-        }
-
-        private void lstRegistryKeys_Leave(object sender, EventArgs e)
-        {
-            /* Disable the modify functions (only avaliable for registry values) */
-            modifyNewtoolStripSeparator.Visible = false;
-
-            modifyToolStripMenuItem1.Visible = false;
-            modifyBinaryDataToolStripMenuItem1.Visible = false;
         }
 
         #endregion
@@ -703,47 +575,37 @@ namespace xServer.Forms
 
         private void createNewRegistryKey_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null)
+            if (!(tvRegistryDirectory.SelectedNode.IsExpanded) && tvRegistryDirectory.SelectedNode.Nodes.Count > 0)
             {
-                if (!(tvRegistryDirectory.SelectedNode.IsExpanded) && tvRegistryDirectory.SelectedNode.Nodes.Count > 0)
-                {
-                    //Subscribe (wait for node to expand)
-                    tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
-                    tvRegistryDirectory.SelectedNode.Expand();
-                }
-                else
-                {
-                    //Try to create a new subkey
-                    new xServer.Core.Packets.ServerPackets.DoCreateRegistryKey(tvRegistryDirectory.SelectedNode.FullPath).Execute(_connectClient);
-                }
+                //Subscribe (wait for node to expand)
+                tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
+                tvRegistryDirectory.SelectedNode.Expand();
+            }
+            else
+            {
+                new xServer.Core.Packets.ServerPackets.DoCreateRegistryKey(tvRegistryDirectory.SelectedNode.FullPath).Execute(_connectClient);
             }
         }
 
         private void deleteRegistryKey_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null && tvRegistryDirectory.SelectedNode.Parent != null)
+            //Prompt user to confirm delete
+            string msg = "Are you sure you want to permanently delete this key and all of its subkeys?";
+            string caption = "Confirm Key Delete";
+            var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+
+            if (answer == DialogResult.Yes)
             {
-                //Prompt user to confirm delete
-                string msg = "Are you sure you want to permanently delete this key and all of its subkeys?";
-                string caption = "Confirm Key Delete";
-                var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+                string parentPath = tvRegistryDirectory.SelectedNode.Parent.FullPath;
 
-                if (answer == DialogResult.Yes)
-                {
-                    string parentPath = tvRegistryDirectory.SelectedNode.Parent.FullPath;
-
-                    new xServer.Core.Packets.ServerPackets.DoDeleteRegistryKey(parentPath, tvRegistryDirectory.SelectedNode.Name).Execute(_connectClient);
-                }
+                new xServer.Core.Packets.ServerPackets.DoDeleteRegistryKey(parentPath, tvRegistryDirectory.SelectedNode.Name).Execute(_connectClient);
             }
         }
 
         private void renameRegistryKey_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null && tvRegistryDirectory.SelectedNode.Parent != null)
-            {
-                tvRegistryDirectory.LabelEdit = true;
-                tvRegistryDirectory.SelectedNode.BeginEdit();
-            }
+            tvRegistryDirectory.LabelEdit = true;
+            tvRegistryDirectory.SelectedNode.BeginEdit();
         }
 
         #region New Registry Value
@@ -808,21 +670,19 @@ namespace xServer.Forms
 
         private void deleteRegistryValue_Click(object sender, EventArgs e)
         {
-            if(tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count > 0) {
-                //Prompt user to confirm delete
-                string msg = "Deleting certain registry values could cause system instability. Are you sure you want to permanently delete " + (lstRegistryKeys.SelectedItems.Count == 1 ? "this value?": "these values?");
-                string caption = "Confirm Value Delete";
-                var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            //Prompt user to confirm delete
+            string msg = "Deleting certain registry values could cause system instability. Are you sure you want to permanently delete " + (lstRegistryValues.SelectedItems.Count == 1 ? "this value?": "these values?");
+            string caption = "Confirm Value Delete";
+            var answer = MessageBox.Show(msg, caption, MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
 
-                if (answer == DialogResult.Yes)
+            if (answer == DialogResult.Yes)
+            {
+                foreach (var item in lstRegistryValues.SelectedItems)
                 {
-                    foreach (var item in lstRegistryKeys.SelectedItems)
+                    if (item.GetType() == typeof(RegistryValueLstItem))
                     {
-                        if (item.GetType() == typeof(RegistryValueLstItem))
-                        {
-                            RegistryValueLstItem registyValue = (RegistryValueLstItem)item;
-                            new xServer.Core.Packets.ServerPackets.DoDeleteRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, registyValue.RegName).Execute(_connectClient);
-                        }
+                        RegistryValueLstItem registyValue = (RegistryValueLstItem)item;
+                        new xServer.Core.Packets.ServerPackets.DoDeleteRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, registyValue.RegName).Execute(_connectClient);
                     }
                 }
             }
@@ -830,56 +690,18 @@ namespace xServer.Forms
 
         private void renameRegistryValue_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
-            {
-                //Before edit make sure that it is not a default registry value
-                if (lstRegistryKeys.SelectedItems[0].Name != DEFAULT_REG_VALUE)
-                {
-                    lstRegistryKeys.LabelEdit = true;
-                    lstRegistryKeys.SelectedItems[0].BeginEdit();
-                }
-                
-            }
+		    lstRegistryValues.LabelEdit = true;
+		    lstRegistryValues.SelectedItems[0].BeginEdit();
         }
 
         private void modifyRegistryValue_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
-            {
-                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(RegValueData[]))
-                {
-                    string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
-                    string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
-                    RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
-
-                    //Initialize the right form to allow editing
-                    using (var frm = GetEditForm(keyPath, value, value.Kind))
-                    {
-                        if(frm != null)
-                            frm.ShowDialog();
-                    }
-                }
-            }
+            CreateModifyForm(false);
         }
 
         private void modifyBinaryDataRegistryValue_Click(object sender, EventArgs e)
         {
-            if (tvRegistryDirectory.SelectedNode != null && lstRegistryKeys.SelectedItems.Count == 1)
-            {
-                if (tvRegistryDirectory.SelectedNode.Tag != null && tvRegistryDirectory.SelectedNode.Tag.GetType() == typeof(RegValueData[]))
-                {
-                    string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
-                    string name = lstRegistryKeys.SelectedItems[0].Name == DEFAULT_REG_VALUE ? "" : lstRegistryKeys.SelectedItems[0].Name;
-                    RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
-
-                    //Initialize binary editor
-                    using (var frm = GetEditForm(keyPath, value, RegistryValueKind.Binary))
-                    {
-                        if (frm != null)
-                            frm.ShowDialog();
-                    }
-                }
-            }
+            CreateModifyForm(true);
         }
 
         #endregion
@@ -892,32 +714,33 @@ namespace xServer.Forms
         {
             if (e.Node == tvRegistryDirectory.SelectedNode)
             {
-                //Trigger a click
                 createNewRegistryKey_Click(this, e);
 
-                //Unsubscribe
                 tvRegistryDirectory.AfterExpand -= new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
-            }
-        }
-
-        //A special case for when the node was empty and add was performed before expand
-        private void specialCreateRegistryKey_AfterExpand(object sender, TreeViewEventArgs e)
-        {
-            if (e.Node == tvRegistryDirectory.SelectedNode)
-            {
-                tvRegistryDirectory.SelectedNode = tvRegistryDirectory.SelectedNode.FirstNode;
-                tvRegistryDirectory.LabelEdit = true;
-
-                tvRegistryDirectory.SelectedNode.BeginEdit();
-
-                //Unsubscribe
-                tvRegistryDirectory.AfterExpand -= new System.Windows.Forms.TreeViewEventHandler(this.specialCreateRegistryKey_AfterExpand);
             }
         }
 
         #endregion
 
         #region Help function
+
+        private bool GetDeleteState()
+        {
+            if (lstRegistryValues.Focused)
+                return lstRegistryValues.SelectedItems.Count > 0;
+            else if (tvRegistryDirectory.Focused && tvRegistryDirectory.SelectedNode != null)
+                return tvRegistryDirectory.SelectedNode.Parent != null;
+            return false;
+        }
+
+        private bool GetRenameState()
+        {
+            if (lstRegistryValues.Focused)
+                return lstRegistryValues.SelectedItems.Count == 1 && !RegValueHelper.IsDefaultValue(lstRegistryValues.SelectedItems[0].Name);
+            else if (tvRegistryDirectory.Focused && tvRegistryDirectory.SelectedNode != null)
+                return tvRegistryDirectory.SelectedNode.Parent != null;
+            return false;
+        }
 
         private Form GetEditForm(string keyPath, RegValueData value, RegistryValueKind valueKind)
         {
@@ -935,6 +758,21 @@ namespace xServer.Forms
                     return new FrmRegValueEditBinary(keyPath, value, _connectClient);
                 default:
                     return null;
+            }
+        }
+
+        private void CreateModifyForm(bool isBinary)
+        {
+            string keyPath = tvRegistryDirectory.SelectedNode.FullPath;
+            string name = lstRegistryValues.SelectedItems[0].Name;
+            RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
+
+            RegistryValueKind kind = isBinary ? RegistryValueKind.Binary : value.Kind;
+
+            using (var frm = GetEditForm(keyPath, value, kind))
+            {
+                if (frm != null)
+                    frm.ShowDialog();
             }
         }
 

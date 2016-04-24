@@ -22,7 +22,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.AddKeysToTree(packet.RootKey, packet.Matches);
+                        client.Value.FrmRe.AddKeys(packet.RootKey, packet.Matches);
                     }
                     else
                     {
@@ -48,7 +48,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.AddKeyToTree(packet.ParentPath, packet.Match);
+                        client.Value.FrmRe.CreateNewKey(packet.ParentPath, packet.Match);
                     }
                     else
                     {
@@ -68,7 +68,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.RemoveKeyFromTree(packet.ParentPath, packet.KeyName);
+                        client.Value.FrmRe.RemoveKey(packet.ParentPath, packet.KeyName);
                     }
                     else
                     {
@@ -88,7 +88,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.RenameKeyFromTree(packet.ParentPath, packet.OldKeyName, packet.NewKeyName);
+                        client.Value.FrmRe.RenameKey(packet.ParentPath, packet.OldKeyName, packet.NewKeyName);
                     }
                     else
                     {
@@ -112,7 +112,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.AddValueToList(packet.KeyPath, packet.Value);
+                        client.Value.FrmRe.CreateValue(packet.KeyPath, packet.Value);
                     }
                     else
                     {
@@ -132,7 +132,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.DeleteValueFromList(packet.KeyPath, packet.ValueName);
+                        client.Value.FrmRe.DeleteValue(packet.KeyPath, packet.ValueName);
                     }
                     else
                     {
@@ -152,7 +152,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.RenameValueFromList(packet.KeyPath, packet.OldValueName, packet.NewValueName);
+                        client.Value.FrmRe.RenameValue(packet.KeyPath, packet.OldValueName, packet.NewValueName);
                     }
                     else
                     {
@@ -172,7 +172,7 @@ namespace xServer.Core.Commands
                 {
                     if (!packet.IsError)
                     {
-                        client.Value.FrmRe.ChangeValueFromList(packet.KeyPath, packet.Value);
+                        client.Value.FrmRe.ChangeValue(packet.KeyPath, packet.Value);
                     }
                     else
                     {

