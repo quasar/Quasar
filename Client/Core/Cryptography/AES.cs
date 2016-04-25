@@ -13,9 +13,9 @@ namespace xClient.Core.Cryptography
 
         public static void SetDefaultKey(string key)
         {
-            using (var md5 = new MD5CryptoServiceProvider())
+            using (var sha256 = new SHA256CryptoServiceProvider())
             {
-                _defaultKey = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
+                _defaultKey = sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
             }
         }
 
@@ -50,7 +50,6 @@ namespace xClient.Core.Cryptography
                             cs.Write(data, 0, data.Length);
                         }
                     }
-
                     encdata = ms.ToArray();
                 }
             }
@@ -64,9 +63,9 @@ namespace xClient.Core.Cryptography
         {
             if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
 
-            using (var md5 = new MD5CryptoServiceProvider())
+            using (var sha256 = new SHA256CryptoServiceProvider())
             {
-                key = md5.ComputeHash(key);
+                key = sha256.ComputeHash(key);
             }
 
             byte[] data = input, encdata = new byte[0];
