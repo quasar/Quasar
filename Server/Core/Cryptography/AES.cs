@@ -13,9 +13,9 @@ namespace xServer.Core.Cryptography
 
         public static void SetDefaultKey(string key)
         {
-            using (var md5 = new MD5CryptoServiceProvider())
+            using (var sha256 = new SHA256CryptoServiceProvider())
             {
-                _defaultKey = md5.ComputeHash(Encoding.UTF8.GetBytes(key));
+                _defaultKey = sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
             }
         }
 
@@ -40,8 +40,13 @@ namespace xServer.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _defaultKey })
+                    using (var aesProvider = new AesCryptoServiceProvider())
                     {
+                        aesProvider.KeySize = 256;
+                        aesProvider.BlockSize = 128;
+                        aesProvider.Padding = PaddingMode.PKCS7;
+                        aesProvider.Mode = CipherMode.CBC;
+                        aesProvider.Key = _defaultKey;
                         aesProvider.GenerateIV();
 
                         using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
@@ -64,9 +69,9 @@ namespace xServer.Core.Cryptography
         {
             if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
 
-            using (var md5 = new MD5CryptoServiceProvider())
+            using (var sha256 = new SHA256CryptoServiceProvider())
             {
-                key = md5.ComputeHash(key);
+                key = sha256.ComputeHash(key);
             }
 
             byte[] data = input, encdata = new byte[0];
@@ -75,8 +80,13 @@ namespace xServer.Core.Cryptography
             {
                 using (var ms = new MemoryStream())
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider() { Key = key })
+                    using (var aesProvider = new AesCryptoServiceProvider())
                     {
+                        aesProvider.KeySize = 256;
+                        aesProvider.BlockSize = 128;
+                        aesProvider.Padding = PaddingMode.PKCS7;
+                        aesProvider.Mode = CipherMode.CBC;
+                        aesProvider.Key = _defaultKey;
                         aesProvider.GenerateIV();
 
                         using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
@@ -111,10 +121,15 @@ namespace xServer.Core.Cryptography
             {
                 using (var ms = new MemoryStream(input))
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider() { Key = _defaultKey })
+                    using (var aesProvider = new AesCryptoServiceProvider())
                     {
                         byte[] iv = new byte[IVLENGTH];
                         ms.Read(iv, 0, IVLENGTH); // read first 16 bytes for IV, followed by encrypted message
+                        aesProvider.KeySize = 256;
+                        aesProvider.BlockSize = 128;
+                        aesProvider.Padding = PaddingMode.PKCS7;
+                        aesProvider.Mode = CipherMode.CBC;
+                        aesProvider.Key = _defaultKey;
                         aesProvider.IV = iv;
 
                         using (var cs = new CryptoStream(ms, aesProvider.CreateDecryptor(), CryptoStreamMode.Read))
