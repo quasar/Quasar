@@ -57,6 +57,7 @@
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
     <Compile Include="Core\Data\ClientData.cs" />
     <Compile Include="Core\Data\GeoInformation.cs" />
+    <Compile Include="Core\Helper\CryptographyHelper.cs" />
     <Compile Include="Core\Helper\MutexHelper.cs" />
     <Compile Include="Core\Helper\WindowsAccountHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />

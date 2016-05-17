@@ -106,6 +106,7 @@
     <Compile Include="Core\Data\VisitWebsite.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\ClipboardHelper.cs" />
+    <Compile Include="Core\Helper\CryptographyHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />

@@ -2,6 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using xClient.Core.Helper;
 
 namespace xClient.Core.Cryptography
 {
@@ -170,13 +171,8 @@ namespace xClient.Core.Cryptography
                             byte[] receivedHash = new byte[HmacSha256Length];
                             ms.Read(receivedHash, 0, receivedHash.Length);
 
-                            for (int i = 0; i < hash.Length; i++)
-                            {
-                                if (receivedHash[i] != hash[i])
-                                {
-                                    return data;
-                                }
-                            }
+                            if (!CryptographyHelper.AreEqual(hash, receivedHash))
+                                return data;
                         }
 
                         byte[] iv = new byte[IvLength];
