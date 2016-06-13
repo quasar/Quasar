@@ -692,7 +692,19 @@ namespace xServer.Forms
                 frmRDP.Show();
             }
         }
-
+        private void remoteWebcamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                if (c.Value.FrmWebcam != null)
+                {
+                    c.Value.FrmWebcam.Focus();
+                    return;
+                }
+                FrmRemoteWebcam FrmWebcam = new FrmRemoteWebcam(c);
+                FrmWebcam.Show();
+            }
+        }
         private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
@@ -835,10 +847,7 @@ namespace xServer.Forms
 
         #endregion
 
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            lstClients.SelectAllItems();
-        }
+
 
         #endregion
 
@@ -890,5 +899,7 @@ namespace xServer.Forms
         }
 
         #endregion
+
+
     }
 }

