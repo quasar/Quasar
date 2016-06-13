@@ -54,7 +54,6 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AForge\Video.DirectShow\CameraControlProperty.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\FileVideoSource.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\FilterInfo.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\FilterInfoCollection.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IAMCameraControl.cs" />
@@ -66,23 +65,18 @@
     <Compile Include="Core\AForge\Video.DirectShow\Internals\ICreateDevEnum.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IEnumFilters.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IEnumPins.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\Internals\IFileSourceFilter.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IFilterGraph.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IFilterGraph2.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IGraphBuilder.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IMediaControl.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IMediaEventEx.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\Internals\IMediaFilter.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\Internals\IPersist.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IPin.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IPropertyBag.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\IReferenceClock.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\ISampleGrabber.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\ISampleGrabberCB.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\ISpecifyPropertyPages.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\Internals\IVideoWindow.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\Structures.cs" />
-    <Compile Include="Core\AForge\Video.DirectShow\Internals\Tools.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\Uuids.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\Internals\Win32.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\PhysicalConnectorType.cs" />
@@ -90,14 +84,7 @@
     <Compile Include="Core\AForge\Video.DirectShow\VideoCapabilities.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\VideoCaptureDevice.cs" />
     <Compile Include="Core\AForge\Video.DirectShow\VideoInput.cs" />
-    <Compile Include="Core\AForge\Video\AsyncVideoSource.cs" />
-    <Compile Include="Core\AForge\Video\ByteArrayUtils.cs" />
-    <Compile Include="Core\AForge\Video\Exceptions.cs" />
     <Compile Include="Core\AForge\Video\IVideoSource.cs" />
-    <Compile Include="Core\AForge\Video\JPEGStream.cs" />
-    <Compile Include="Core\AForge\Video\MJPEGStream.cs" />
-    <Compile Include="Core\AForge\Video\ScreenCaptureStream.cs" />
-    <Compile Include="Core\AForge\Video\SystemTools.cs" />
     <Compile Include="Core\AForge\Video\VideoEvents.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
