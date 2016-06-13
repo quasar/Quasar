@@ -100,6 +100,8 @@ namespace xServer.Forms
 
         private void FrmRemoteWebcam_FormClosing(object sender, FormClosingEventArgs e)
         {
+            new Core.Packets.ServerPackets.DoWebcamStop().Execute(_connectClient);
+
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmWebcam = null;
         }
