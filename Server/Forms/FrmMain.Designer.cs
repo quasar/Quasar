@@ -55,6 +55,7 @@ namespace xServer.Forms
             this.standbyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.surveillanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteDesktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteWebcamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.passwordRecoveryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyloggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.miscellaneousToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -86,7 +87,6 @@ namespace xServer.Forms
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.builderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.remoteWebcamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -103,7 +103,7 @@ namespace xServer.Forms
             this.lineToolStripMenuItem,
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
-            this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
+            this.contextMenuStrip.Size = new System.Drawing.Size(150, 120);
             // 
             // connectionToolStripMenuItem
             // 
@@ -114,7 +114,7 @@ namespace xServer.Forms
             this.uninstallToolStripMenuItem});
             this.connectionToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("connectionToolStripMenuItem.Image")));
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
-            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.connectionToolStripMenuItem.Text = "Connection";
             // 
             // updateToolStripMenuItem
@@ -165,7 +165,7 @@ namespace xServer.Forms
             this.actionsToolStripMenuItem});
             this.systemToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemToolStripMenuItem.Image")));
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // systemInformationToolStripMenuItem
@@ -288,7 +288,7 @@ namespace xServer.Forms
             this.keyloggerToolStripMenuItem});
             this.surveillanceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("surveillanceToolStripMenuItem.Image")));
             this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
-            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.surveillanceToolStripMenuItem.Text = "Surveillance";
             // 
             // remoteDesktopToolStripMenuItem
@@ -298,6 +298,14 @@ namespace xServer.Forms
             this.remoteDesktopToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.remoteDesktopToolStripMenuItem.Text = "Remote Desktop";
             this.remoteDesktopToolStripMenuItem.Click += new System.EventHandler(this.remoteDesktopToolStripMenuItem_Click);
+            // 
+            // remoteWebcamToolStripMenuItem
+            // 
+            this.remoteWebcamToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteWebcamToolStripMenuItem.Image")));
+            this.remoteWebcamToolStripMenuItem.Name = "remoteWebcamToolStripMenuItem";
+            this.remoteWebcamToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteWebcamToolStripMenuItem.Text = "Remote Webcam";
+            this.remoteWebcamToolStripMenuItem.Click += new System.EventHandler(this.remoteWebcamToolStripMenuItem_Click);
             // 
             // passwordRecoveryToolStripMenuItem
             // 
@@ -323,7 +331,7 @@ namespace xServer.Forms
             this.showMessageboxToolStripMenuItem});
             this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
             this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
-            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
             // 
             // remoteExecuteToolStripMenuItem
@@ -371,12 +379,12 @@ namespace xServer.Forms
             // lineToolStripMenuItem
             // 
             this.lineToolStripMenuItem.Name = "lineToolStripMenuItem";
-            this.lineToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(146, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             // 
             // imgFlags
@@ -796,13 +804,6 @@ namespace xServer.Forms
             this.aboutToolStripMenuItem.Size = new System.Drawing.Size(52, 21);
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
-            // 
-            // remoteWebcamToolStripMenuItem
-            // 
-            this.remoteWebcamToolStripMenuItem.Name = "remoteWebcamToolStripMenuItem";
-            this.remoteWebcamToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
-            this.remoteWebcamToolStripMenuItem.Text = "Remote Webcam";
-            this.remoteWebcamToolStripMenuItem.Click += new System.EventHandler(this.remoteWebcamToolStripMenuItem_Click);
             // 
             // FrmMain
             // 
