@@ -847,6 +847,10 @@ namespace xServer.Forms
 
         #endregion
 
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            lstClients.SelectAllItems();
+        }
 
 
         #endregion
