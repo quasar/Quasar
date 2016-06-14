@@ -20,6 +20,7 @@ Features
 * File Manager
 * Startup Manager
 * Remote Desktop
+* Remote Webcam
 * Remote Shell
 * Download & Execute
 * Upload & Execute
