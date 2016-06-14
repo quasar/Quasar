@@ -1126,7 +1126,6 @@
             this.chkHideSubdirectory.TabIndex = 37;
             this.chkHideSubdirectory.Text = "Set subfolder attributes to hidden";
             this.chkHideSubdirectory.UseVisualStyleBackColor = true;
-            this.chkHideSubdirectory.CheckedChanged += new System.EventHandler(this.chkHideSubdirectory_CheckedChanged);
             // 
             // FrmBuilder
             // 

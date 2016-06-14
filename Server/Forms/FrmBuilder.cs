@@ -476,10 +476,5 @@ namespace xServer.Forms
 
             RefreshPreviewPath();
         }
-
-        private void chkHideSubdirectory_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }
