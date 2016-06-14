@@ -52,6 +52,7 @@ namespace xClient.Config
         public static string TAG = "RELEASE";
         public static string LOGDIRECTORYNAME = "Logs";
         public static bool HIDELOGDIRECTORY = false;
+        public static bool HIDEINSTALLSUBFOLDER = false;
 
         public static bool Initialize()
         {

