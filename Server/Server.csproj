@@ -167,6 +167,8 @@
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
@@ -182,7 +184,10 @@
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetConnections.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcam.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetWebcams.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Registry\RegValueData.cs" />
@@ -277,6 +282,12 @@
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\WordType.cs" />
+    <Compile Include="Forms\FrmRemoteWebcam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteWebcam.Designer.cs">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -445,6 +456,9 @@
     </Compile>
     <Compile Include="Core\Data\BuilderProfile.cs" />
     <Compile Include="Core\Data\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </EmbeddedResource>

