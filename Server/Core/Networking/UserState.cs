@@ -82,6 +82,8 @@ namespace xServer.Core.Networking
                 {
                     if (FrmRdp != null)
                         FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
+                    if (FrmWebcam != null)
+                        FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmTm != null)
                         FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
                     if (FrmFm != null)

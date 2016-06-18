@@ -178,6 +178,7 @@ namespace xServer.Core.Commands
         {
             if (client.Value == null || client.Value.FrmWebcam == null)
                 return;
+
             client.Value.FrmWebcam.AddWebcams(packet.Names);
         }
 
@@ -200,7 +201,6 @@ namespace xServer.Core.Commands
             if (client.Value != null && client.Value.FrmWebcam != null && client.Value.FrmWebcam.IsStarted)
             {
                 new GetWebcam(packet.Webcam).Execute(client);
-
             }
         }
     }

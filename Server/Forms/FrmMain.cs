@@ -701,8 +701,8 @@ namespace xServer.Forms
                     c.Value.FrmWebcam.Focus();
                     return;
                 }
-                FrmRemoteWebcam FrmWebcam = new FrmRemoteWebcam(c);
-                FrmWebcam.Show();
+                FrmRemoteWebcam frmWebcam = new FrmRemoteWebcam(c);
+                frmWebcam.Show();
             }
         }
         private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
@@ -852,7 +852,6 @@ namespace xServer.Forms
             lstClients.SelectAllItems();
         }
 
-
         #endregion
 
         #region "MenuStrip"
@@ -903,7 +902,5 @@ namespace xServer.Forms
         }
 
         #endregion
-
-
     }
 }
