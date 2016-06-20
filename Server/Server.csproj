@@ -172,6 +172,9 @@
     <Compile Include="Core\Packets\PacketRegistery.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatMessage.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStart.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCloseConnection.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
@@ -297,6 +300,12 @@
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\WordType.cs" />
+    <Compile Include="Forms\FrmRemoteChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteChat.Designer.cs">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteWebcam.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -466,6 +475,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Data\BuilderProfile.cs" />
     <Compile Include="Core\Data\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmRemoteChat.resx">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
       <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
     </EmbeddedResource>

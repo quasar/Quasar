@@ -62,6 +62,7 @@ namespace xServer.Forms
             this.remoteExecuteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.localFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.webFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteChatToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.visitWebsiteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showMessageboxToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -328,9 +329,10 @@ namespace xServer.Forms
             // 
             this.miscellaneousToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.remoteExecuteToolStripMenuItem,
+            this.remoteChatToolStripMenuItem,
             this.visitWebsiteToolStripMenuItem,
             this.showMessageboxToolStripMenuItem});
-            this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
+            this.miscellaneousToolStripMenuItem.Image = global::xServer.Properties.Resources.bricks;
             this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
             this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
@@ -360,6 +362,14 @@ namespace xServer.Forms
             this.webFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.webFileToolStripMenuItem.Text = "Web File...";
             this.webFileToolStripMenuItem.Click += new System.EventHandler(this.webFileToolStripMenuItem_Click);
+            // 
+            // remoteChatToolStripMenuItem
+            // 
+            this.remoteChatToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteChatToolStripMenuItem.Image")));
+            this.remoteChatToolStripMenuItem.Name = "remoteChatToolStripMenuItem";
+            this.remoteChatToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
+            this.remoteChatToolStripMenuItem.Text = "Remote Chat";
+            this.remoteChatToolStripMenuItem.Click += new System.EventHandler(this.remoteChatToolStripMenuItem_Click);
             // 
             // visitWebsiteToolStripMenuItem
             // 
@@ -890,6 +900,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripMenuItem elevateClientPermissionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem remoteWebcamToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem remoteChatToolStripMenuItem;
     }
 }
 
