@@ -179,15 +179,16 @@ namespace xClient.Core.Commands
         public static void HandleDoChatStop(Client client, Packets.ServerPackets.DoChatStop packet)
         {
             var frmChat = (xClient.Forms.FrmRemoteChat)Application.OpenForms["FrmRemoteChat"];
-            if(frmChat != null)
-                frmChat.Close();
+            if (frmChat != null)
+                CloseChatForm();
         }
 
         public static void CloseChatForm()
         {
-            var frmChat = Application.OpenForms["FrmRemoteChat"];
+            var frmChat = (xClient.Forms.FrmRemoteChat)Application.OpenForms["FrmRemoteChat"];
             if(frmChat != null)
             {
+                frmChat.Active = false;
                 frmChat.Close();
             }
         }

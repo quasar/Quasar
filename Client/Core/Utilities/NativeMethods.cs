@@ -110,10 +110,17 @@ namespace xClient.Core.Utilities
             IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern bool IsWindowVisible(
-            IntPtr hWnd);
+        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
         [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
+
+        [DllImport("Kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
+
+        [DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
     }
 }
