@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteChat));
             this.txtMessages = new System.Windows.Forms.TextBox();
             this.txtMessage = new System.Windows.Forms.TextBox();
             this.btnSend = new System.Windows.Forms.Button();
@@ -39,21 +40,21 @@
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtMessages.BackColor = System.Drawing.Color.White;
-            this.txtMessages.Location = new System.Drawing.Point(0, 0);
+            this.txtMessages.Location = new System.Drawing.Point(12, 12);
             this.txtMessages.Multiline = true;
             this.txtMessages.Name = "txtMessages";
             this.txtMessages.ReadOnly = true;
             this.txtMessages.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtMessages.Size = new System.Drawing.Size(310, 300);
+            this.txtMessages.Size = new System.Drawing.Size(286, 288);
             this.txtMessages.TabIndex = 0;
             // 
             // txtMessage
             // 
             this.txtMessage.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtMessage.Location = new System.Drawing.Point(0, 305);
+            this.txtMessage.Location = new System.Drawing.Point(12, 305);
             this.txtMessage.Name = "txtMessage";
-            this.txtMessage.Size = new System.Drawing.Size(238, 20);
+            this.txtMessage.Size = new System.Drawing.Size(226, 20);
             this.txtMessage.TabIndex = 1;
             // 
             // btnSend
@@ -76,6 +77,7 @@
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtMessage);
             this.Controls.Add(this.txtMessages);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(326, 368);
             this.Name = "FrmRemoteChat";
             this.Text = "Remote Chat []";

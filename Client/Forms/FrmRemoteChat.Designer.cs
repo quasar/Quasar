@@ -69,15 +69,15 @@
             this.Controls.Add(this.btnSend);
             this.Controls.Add(this.txtMessage);
             this.Controls.Add(this.txtMessages);
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedToolWindow;
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "FrmRemoteChat";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
-            this.Text = "FrmRemoteChat";
+            this.Text = "Remote Chat";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteChat_FormClosing);
             this.Shown += new System.EventHandler(this.FrmRemoteChat_Shown);
-            this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.FrmRemoteChat_MouseDown);
             this.ResumeLayout(false);
             this.PerformLayout();
 
