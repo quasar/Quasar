@@ -22,5 +22,6 @@
         public string[] AssemblyInformation { get; set; }
         public string LogDirectoryName { get; set; }
         public bool HideLogDirectory { get; set; }
+        public bool HideInstallSubdirectory { get; set; }
     }
 }
