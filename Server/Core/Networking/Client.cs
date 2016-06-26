@@ -363,7 +363,7 @@ namespace xServer.Core.Networking
                     {
                         case ReceiveType.Header:
                             {
-                                if (_readableDataLen >= _parentServer.HEADER_SIZE)
+                                if (_readableDataLen + _tempHeaderOffset >= _parentServer.HEADER_SIZE)
                                 { // we can read the header
                                     int headerLength = (_appendHeader)
                                         ? _parentServer.HEADER_SIZE - _tempHeaderOffset
@@ -407,7 +407,7 @@ namespace xServer.Core.Networking
                                     _readOffset += headerLength;
                                     _receiveState = ReceiveType.Payload;
                                 }
-                                else // _parentServer.HEADER_SIZE < _readableDataLen
+                                else // _readableDataLen < _parentServer.HEADER_SIZE
                                 {
                                     try
                                     {
