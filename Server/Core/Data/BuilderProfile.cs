@@ -131,6 +131,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public bool HideSubDirectory
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("HideSubDirectory", "False"));
+            }
+            set
+            {
+                WriteValue("HideSubDirectory", value.ToString());
+            }
+        }
+
         public bool AddStartup
         {
             get
