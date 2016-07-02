@@ -42,7 +42,7 @@ namespace xServer.Forms
             Messagebox.Caption = txtCaption.Text;
             Messagebox.Text = txtText.Text;
             Messagebox.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
-            Messagebox.Icon = GetMessageBoxIcon(cmbMsgButtons.SelectedIndex);
+            Messagebox.Icon = GetMessageBoxIcon(cmbMsgIcon.SelectedIndex);
 
             this.DialogResult = DialogResult.OK;
             this.Close();
