@@ -15,14 +15,15 @@ namespace xClient.Core.Helper
 
             var hosts = rawHosts.Split(';');
 
-            foreach (var hostPart in from host in hosts where (!string.IsNullOrEmpty(host) && host.Contains(':')) select host.Split(':'))
+            foreach (var host in hosts)
             {
-                if (hostPart.Length != 2 || hostPart[0].Length < 1 || hostPart[1].Length < 1) continue; // invalid, ignore host
+                // invalid host, ignore
+                if ((string.IsNullOrEmpty(host) || !host.Contains(':'))) continue;
 
                 ushort port;
-                if (!ushort.TryParse(hostPart[1], out port)) continue; // invalid, ignore host
+                if (!ushort.TryParse(host.Substring(host.LastIndexOf(':') + 1), out port)) continue; // invalid, ignore host
 
-                hostsList.Add(new Host { Hostname = hostPart[0], Port = port });
+                hostsList.Add(new Host {Hostname = host.Substring(0, host.LastIndexOf(':')), Port = port});
             }
 
             return hostsList;
