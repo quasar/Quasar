@@ -239,7 +239,8 @@ namespace xServer.Core.Networking
         /// Begins listening for clients.
         /// </summary>
         /// <param name="port">Port to listen for clients on.</param>
-        public void Listen(ushort port)
+        /// <param name="ipv6">If set to true, use a dual-stack socket to allow IPv4/6 connections. Otherwise use IPv4-only socket.</param>
+        public void Listen(ushort port, bool ipv6)
         {
             this.Port = port;
             try
@@ -252,8 +253,17 @@ namespace xServer.Core.Networking
                         _handle = null;
                     }
 
-                    _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                    _handle.Bind(new IPEndPoint(IPAddress.Any, port));
+                    if (Socket.OSSupportsIPv6 && ipv6)
+                    {
+                        _handle = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                        _handle.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, false);
+                        _handle.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
+                    }
+                    else
+                    {
+                        _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                        _handle.Bind(new IPEndPoint(IPAddress.Any, port));
+                    }
                     _handle.Listen(1000);
 
                     ProcessingDisconnect = false;

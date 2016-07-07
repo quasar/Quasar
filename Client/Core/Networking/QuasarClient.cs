@@ -119,7 +119,7 @@ namespace xClient.Core.Networking
 
                     Host host = _hosts.GetNextHost();
 
-                    base.Connect(host.Hostname, host.Port);
+                    base.Connect(host.IpAddress, host.Port);
 
                     Thread.Sleep(200);
 

@@ -23,6 +23,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public static bool IPv6Support
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("IPv6Support", "False"));
+            }
+            set
+            {
+                WriteValue("IPv6Support", value.ToString());
+            }
+        }
+
         public static bool ShowToU
         {
             get

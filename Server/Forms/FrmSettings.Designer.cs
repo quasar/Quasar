@@ -48,15 +48,16 @@
             this.txtNoIPUser = new System.Windows.Forms.TextBox();
             this.txtNoIPHost = new System.Windows.Forms.TextBox();
             this.chkShowPassword = new System.Windows.Forms.CheckBox();
+            this.chkIPv6Support = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(227, 273);
+            this.btnSave.Location = new System.Drawing.Point(227, 296);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 18;
+            this.btnSave.TabIndex = 19;
             this.btnSave.Text = "&Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -95,20 +96,20 @@
             // chkAutoListen
             // 
             this.chkAutoListen.AutoSize = true;
-            this.chkAutoListen.Location = new System.Drawing.Point(15, 63);
+            this.chkAutoListen.Location = new System.Drawing.Point(15, 86);
             this.chkAutoListen.Name = "chkAutoListen";
             this.chkAutoListen.Size = new System.Drawing.Size(222, 17);
-            this.chkAutoListen.TabIndex = 5;
+            this.chkAutoListen.TabIndex = 6;
             this.chkAutoListen.Text = "Listen for new connections on startup";
             this.chkAutoListen.UseVisualStyleBackColor = true;
             // 
             // chkPopup
             // 
             this.chkPopup.AutoSize = true;
-            this.chkPopup.Location = new System.Drawing.Point(15, 86);
+            this.chkPopup.Location = new System.Drawing.Point(15, 109);
             this.chkPopup.Name = "chkPopup";
             this.chkPopup.Size = new System.Drawing.Size(259, 17);
-            this.chkPopup.TabIndex = 6;
+            this.chkPopup.TabIndex = 7;
             this.chkPopup.Text = "Show popup notification on new connection";
             this.chkPopup.UseVisualStyleBackColor = true;
             // 
@@ -124,10 +125,10 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(146, 273);
+            this.btnCancel.Location = new System.Drawing.Point(146, 296);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
-            this.btnCancel.TabIndex = 17;
+            this.btnCancel.TabIndex = 18;
             this.btnCancel.Text = "&Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             this.btnCancel.Click += new System.EventHandler(this.btnCancel_Click);
@@ -151,30 +152,30 @@
             // chkUseUpnp
             // 
             this.chkUseUpnp.AutoSize = true;
-            this.chkUseUpnp.Location = new System.Drawing.Point(15, 109);
+            this.chkUseUpnp.Location = new System.Drawing.Point(15, 132);
             this.chkUseUpnp.Name = "chkUseUpnp";
             this.chkUseUpnp.Size = new System.Drawing.Size(230, 17);
-            this.chkUseUpnp.TabIndex = 7;
+            this.chkUseUpnp.TabIndex = 8;
             this.chkUseUpnp.Text = "Try to automatically port forward (UPnP)";
             this.chkUseUpnp.UseVisualStyleBackColor = true;
             // 
             // chkShowTooltip
             // 
             this.chkShowTooltip.AutoSize = true;
-            this.chkShowTooltip.Location = new System.Drawing.Point(15, 132);
+            this.chkShowTooltip.Location = new System.Drawing.Point(15, 155);
             this.chkShowTooltip.Name = "chkShowTooltip";
             this.chkShowTooltip.Size = new System.Drawing.Size(268, 17);
-            this.chkShowTooltip.TabIndex = 8;
+            this.chkShowTooltip.TabIndex = 9;
             this.chkShowTooltip.Text = "Show tooltip on client with system information";
             this.chkShowTooltip.UseVisualStyleBackColor = true;
             // 
             // chkNoIPIntegration
             // 
             this.chkNoIPIntegration.AutoSize = true;
-            this.chkNoIPIntegration.Location = new System.Drawing.Point(15, 155);
+            this.chkNoIPIntegration.Location = new System.Drawing.Point(15, 178);
             this.chkNoIPIntegration.Name = "chkNoIPIntegration";
             this.chkNoIPIntegration.Size = new System.Drawing.Size(192, 17);
-            this.chkNoIPIntegration.TabIndex = 9;
+            this.chkNoIPIntegration.TabIndex = 10;
             this.chkNoIPIntegration.Text = "Activate No-Ip.com DNS Updater";
             this.chkNoIPIntegration.UseVisualStyleBackColor = true;
             this.chkNoIPIntegration.CheckedChanged += new System.EventHandler(this.chkNoIPIntegration_CheckedChanged);
@@ -183,73 +184,85 @@
             // 
             this.lblHost.AutoSize = true;
             this.lblHost.Enabled = false;
-            this.lblHost.Location = new System.Drawing.Point(33, 181);
+            this.lblHost.Location = new System.Drawing.Point(33, 204);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(34, 13);
-            this.lblHost.TabIndex = 10;
+            this.lblHost.TabIndex = 11;
             this.lblHost.Text = "Host:";
             // 
             // lblPass
             // 
             this.lblPass.AutoSize = true;
             this.lblPass.Enabled = false;
-            this.lblPass.Location = new System.Drawing.Point(170, 209);
+            this.lblPass.Location = new System.Drawing.Point(170, 232);
             this.lblPass.Name = "lblPass";
             this.lblPass.Size = new System.Drawing.Size(32, 13);
-            this.lblPass.TabIndex = 14;
+            this.lblPass.TabIndex = 15;
             this.lblPass.Text = "Pass:";
             // 
             // lblUser
             // 
             this.lblUser.AutoSize = true;
             this.lblUser.Enabled = false;
-            this.lblUser.Location = new System.Drawing.Point(33, 209);
+            this.lblUser.Location = new System.Drawing.Point(33, 232);
             this.lblUser.Name = "lblUser";
             this.lblUser.Size = new System.Drawing.Size(32, 13);
-            this.lblUser.TabIndex = 12;
+            this.lblUser.TabIndex = 13;
             this.lblUser.Text = "Mail:";
             // 
             // txtNoIPPass
             // 
             this.txtNoIPPass.Enabled = false;
-            this.txtNoIPPass.Location = new System.Drawing.Point(202, 206);
+            this.txtNoIPPass.Location = new System.Drawing.Point(202, 229);
             this.txtNoIPPass.Name = "txtNoIPPass";
             this.txtNoIPPass.Size = new System.Drawing.Size(100, 22);
-            this.txtNoIPPass.TabIndex = 15;
+            this.txtNoIPPass.TabIndex = 16;
             // 
             // txtNoIPUser
             // 
             this.txtNoIPUser.Enabled = false;
-            this.txtNoIPUser.Location = new System.Drawing.Point(73, 206);
+            this.txtNoIPUser.Location = new System.Drawing.Point(73, 229);
             this.txtNoIPUser.Name = "txtNoIPUser";
             this.txtNoIPUser.Size = new System.Drawing.Size(91, 22);
-            this.txtNoIPUser.TabIndex = 13;
+            this.txtNoIPUser.TabIndex = 14;
             // 
             // txtNoIPHost
             // 
             this.txtNoIPHost.Enabled = false;
-            this.txtNoIPHost.Location = new System.Drawing.Point(73, 178);
+            this.txtNoIPHost.Location = new System.Drawing.Point(73, 201);
             this.txtNoIPHost.Name = "txtNoIPHost";
             this.txtNoIPHost.Size = new System.Drawing.Size(229, 22);
-            this.txtNoIPHost.TabIndex = 11;
+            this.txtNoIPHost.TabIndex = 12;
             // 
             // chkShowPassword
             // 
             this.chkShowPassword.AutoSize = true;
             this.chkShowPassword.Enabled = false;
-            this.chkShowPassword.Location = new System.Drawing.Point(195, 234);
+            this.chkShowPassword.Location = new System.Drawing.Point(195, 257);
             this.chkShowPassword.Name = "chkShowPassword";
             this.chkShowPassword.Size = new System.Drawing.Size(107, 17);
-            this.chkShowPassword.TabIndex = 16;
+            this.chkShowPassword.TabIndex = 17;
             this.chkShowPassword.Text = "Show Password";
             this.chkShowPassword.UseVisualStyleBackColor = true;
             this.chkShowPassword.CheckedChanged += new System.EventHandler(this.chkShowPassword_CheckedChanged);
+            // 
+            // chkIPv6Support
+            // 
+            this.chkIPv6Support.AutoSize = true;
+            this.chkIPv6Support.Location = new System.Drawing.Point(15, 63);
+            this.chkIPv6Support.Name = "chkIPv6Support";
+            this.chkIPv6Support.Size = new System.Drawing.Size(128, 17);
+            this.chkIPv6Support.TabIndex = 5;
+            this.chkIPv6Support.Text = "Enable IPv6 support";
+            this.chkIPv6Support.UseVisualStyleBackColor = true;
+            this.chkIPv6Support.CheckedChanged += new System.EventHandler(this.chkIPv6Support_CheckedChanged);
             // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(314, 308);
+            this.ClientSize = new System.Drawing.Size(314, 333);
+            this.Controls.Add(this.chkIPv6Support);
             this.Controls.Add(this.chkShowPassword);
             this.Controls.Add(this.txtNoIPHost);
             this.Controls.Add(this.txtNoIPUser);
@@ -305,5 +318,6 @@
         private System.Windows.Forms.TextBox txtNoIPUser;
         private System.Windows.Forms.TextBox txtNoIPHost;
         private System.Windows.Forms.CheckBox chkShowPassword;
+        private System.Windows.Forms.CheckBox chkIPv6Support;
     }
 }

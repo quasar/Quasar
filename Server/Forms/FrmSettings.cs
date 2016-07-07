@@ -24,6 +24,7 @@ namespace xServer.Forms
                 btnListen.Text = "Stop listening";
                 ncPort.Enabled = false;
                 txtPassword.Enabled = false;
+                chkIPv6Support.Enabled = false;
             }
 
             ShowPassword(false);
@@ -32,6 +33,7 @@ namespace xServer.Forms
         private void FrmSettings_Load(object sender, EventArgs e)
         {
             ncPort.Value = Settings.ListenPort;
+            chkIPv6Support.Checked = Settings.IPv6Support;
             chkAutoListen.Checked = Settings.AutoListen;
             chkPopup.Checked = Settings.ShowPopup;
             txtPassword.Text = Settings.Password;
@@ -95,13 +97,14 @@ namespace xServer.Forms
                     }
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
-                    _listenServer.Listen(port);
+                    _listenServer.Listen(port, chkIPv6Support.Checked);
                 }
                 finally
                 {
                     btnListen.Text = "Stop listening";
                     ncPort.Enabled = false;
                     txtPassword.Enabled = false;
+                    chkIPv6Support.Enabled = false;
                 }
             }
             else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
@@ -116,6 +119,7 @@ namespace xServer.Forms
                     btnListen.Text = "Start listening";
                     ncPort.Enabled = true;
                     txtPassword.Enabled = true;
+                    chkIPv6Support.Enabled = true;
                 }
             }
         }
@@ -140,6 +144,7 @@ namespace xServer.Forms
             }
 
             Settings.ListenPort = port;
+            Settings.IPv6Support = chkIPv6Support.Checked;
             Settings.AutoListen = chkAutoListen.Checked;
             Settings.ShowPopup = chkPopup.Checked;
             if (password != Settings.Password)
@@ -185,6 +190,11 @@ namespace xServer.Forms
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
         {
             ShowPassword(chkShowPassword.Checked);
+        }
+
+        private void chkIPv6Support_CheckedChanged(object sender, EventArgs e)
+        {
+
         }
     }
 }

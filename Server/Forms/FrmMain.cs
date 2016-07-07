@@ -88,12 +88,12 @@ namespace xServer.Forms
             if (Settings.AutoListen && Settings.UseUPnP)
             {
                 UPnP.Initialize(Settings.ListenPort);
-                ListenServer.Listen(Settings.ListenPort);
+                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
             }
             else if (Settings.AutoListen)
             {
                 UPnP.Initialize();
-                ListenServer.Listen(Settings.ListenPort);
+                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
             }
             else
             {
