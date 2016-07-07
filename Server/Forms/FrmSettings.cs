@@ -191,10 +191,5 @@ namespace xServer.Forms
         {
             ShowPassword(chkShowPassword.Checked);
         }
-
-        private void chkIPv6Support_CheckedChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

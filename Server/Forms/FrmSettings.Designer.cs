@@ -255,7 +255,6 @@
             this.chkIPv6Support.TabIndex = 5;
             this.chkIPv6Support.Text = "Enable IPv6 support";
             this.chkIPv6Support.UseVisualStyleBackColor = true;
-            this.chkIPv6Support.CheckedChanged += new System.EventHandler(this.chkIPv6Support_CheckedChanged);
             // 
             // FrmSettings
             // 
