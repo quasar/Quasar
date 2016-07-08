@@ -13,7 +13,7 @@ namespace xServer.Core.Cryptography
         private static byte[] _defaultKey;
         private static byte[] _defaultAuthKey;
 
-        private static readonly byte[] Salt =
+        public static readonly byte[] Salt =
         {
             0xBF, 0xEB, 0x1E, 0x56, 0xFB, 0xCD, 0x97, 0x3B, 0xB2, 0x19, 0x2, 0x24, 0x30, 0xA5, 0x78, 0x43, 0x0, 0x3D, 0x56,
             0x44, 0xD2, 0x1E, 0x62, 0xB9, 0xD4, 0xF1, 0x80, 0xE7, 0xE6, 0xC3, 0x39, 0x41
@@ -21,7 +21,7 @@ namespace xServer.Core.Cryptography
 
         public static void SetDefaultKey(string key)
         {
-            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(key, Salt, 2000))
+            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(key, Salt, 50000))
             {
                 _defaultKey = derive.GetBytes(16);
                 _defaultAuthKey = derive.GetBytes(64);
@@ -94,7 +94,7 @@ namespace xServer.Core.Cryptography
             if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
 
             byte[] authKey;
-            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(key, Salt, 2000))
+            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(key, Salt, 50000))
             {
                 key = derive.GetBytes(16);
                 authKey = derive.GetBytes(64);

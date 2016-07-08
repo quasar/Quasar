@@ -1,4 +1,7 @@
-﻿using System.Runtime.CompilerServices;
+﻿using System;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using xServer.Core.Cryptography;
 
 namespace xServer.Core.Helper
 {
@@ -24,6 +27,15 @@ namespace xServer.Core.Helper
                     result = false;
             }
             return result;
+        }
+
+        public static void DeriveKeys(string password, out string key, out string authKey)
+        {
+            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(password, AES.Salt, 50000))
+            {
+                key = Convert.ToBase64String(derive.GetBytes(16));
+                authKey = Convert.ToBase64String(derive.GetBytes(64));
+            }
         }
     }
 }

