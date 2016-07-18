@@ -70,7 +70,7 @@ namespace xServer.Core.Networking.Utilities
                 Mapping mapping = new Mapping(Protocol.Tcp, port, port);
 
                 for (int i = 0; i < 3; i++)
-                    _device.CreatePortMap(mapping);
+                    _device.CreatePortMapAsync(mapping);
 
                 if (_mappings.ContainsKey(mapping.PrivatePort))
                     _mappings[mapping.PrivatePort] = mapping;
@@ -102,7 +102,7 @@ namespace xServer.Core.Networking.Utilities
                 try
                 {
                     for (int i = 0; i < 3; i++)
-                        _device.DeletePortMap(mapping);
+                        _device.DeletePortMapAsync(mapping);
                 }
                 catch (MappingException)
                 {
