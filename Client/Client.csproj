@@ -311,7 +311,7 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
-	<PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">\cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
+	<PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
