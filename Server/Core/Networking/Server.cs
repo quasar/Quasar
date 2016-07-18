@@ -256,7 +256,9 @@ namespace xServer.Core.Networking
                     if (Socket.OSSupportsIPv6 && ipv6)
                     {
                         _handle = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                        _handle.SetSocketOption(SocketOptionLevel.IPv6, (SocketOptionName)27, 0);
+                        // fix for mono compatibility, SocketOptionName.IPv6Only
+                        SocketOptionName ipv6only = (SocketOptionName)27;
+                        _handle.SetSocketOption(SocketOptionLevel.IPv6, ipv6only, 0);
                         _handle.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
                     }
                     else
