@@ -24,8 +24,9 @@ namespace xServer.Core.Networking.Utilities
         /// <param name="e">The event arguments.</param>
         protected virtual void OnNewBufferAllocated(EventArgs e)
         {
-            if (NewBufferAllocated != null)
-                NewBufferAllocated(this, e);
+            var handler = NewBufferAllocated;
+            if (handler != null)
+                handler(this, e);
         }
 
         /// <summary>
@@ -38,8 +39,9 @@ namespace xServer.Core.Networking.Utilities
         /// <param name="e">The event arguments.</param>
         protected virtual void OnBufferRequested(EventArgs e)
         {
-            if (BufferRequested != null)
-                BufferRequested(this, e);
+            var handler =BufferRequested;
+            if (handler != null)
+                handler(this, e);
         }
 
         /// <summary>
@@ -52,8 +54,9 @@ namespace xServer.Core.Networking.Utilities
         /// <param name="e">The event arguments.</param>
         protected virtual void OnBufferReturned(EventArgs e)
         {
-            if (BufferReturned != null)
-                BufferReturned(this, e);
+            var handler = BufferReturned; 
+            if (handler != null)
+                handler(this, e);
         }
         #endregion
 
