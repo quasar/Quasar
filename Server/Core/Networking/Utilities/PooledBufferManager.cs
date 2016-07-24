@@ -236,9 +236,10 @@ namespace xServer.Core.Networking.Utilities
                 {
                     _buffers.Pop();
                     numRemoved++;
+                    _bufferCount--;
                 }
             }
-
+            
             return numRemoved;
         }
         #endregion
