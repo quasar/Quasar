@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace xServer.Core.Networking.Utilities
 {
@@ -147,7 +148,7 @@ namespace xServer.Core.Networking.Utilities
         private byte[] AllocateNewBuffer()
         {
             byte[] newBuffer = new byte[_bufferLength];
-            _bufferCount++;
+            Interlocked.Increment(ref _bufferCount);
             OnNewBufferAllocated(EventArgs.Empty);
 
             return newBuffer;
