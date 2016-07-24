@@ -172,12 +172,7 @@ namespace xServer.Core.Networking.Utilities
                 return false;
 
             if (ClearOnReturn)
-            {
-                for (int i = 0; i < _bufferLength; i++)
-                {
-                    buffer[i] = 0;
-                }
-            }
+                Array.Clear(buffer, 0, buffer.Length);
 
             lock (_buffers)
             {
