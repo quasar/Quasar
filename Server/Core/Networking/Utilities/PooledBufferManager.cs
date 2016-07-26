@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Threading;
 
 namespace xServer.Core.Networking.Utilities
 {
@@ -148,7 +147,7 @@ namespace xServer.Core.Networking.Utilities
         private byte[] AllocateNewBuffer()
         {
             byte[] newBuffer = new byte[_bufferLength];
-            Interlocked.Increment(ref _bufferCount);
+            _bufferCount++;
             OnNewBufferAllocated(EventArgs.Empty);
 
             return newBuffer;
@@ -239,7 +238,7 @@ namespace xServer.Core.Networking.Utilities
                     _bufferCount--;
                 }
             }
-            
+
             return numRemoved;
         }
         #endregion
