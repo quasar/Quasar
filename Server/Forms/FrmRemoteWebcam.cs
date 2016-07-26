@@ -99,7 +99,7 @@ namespace xServer.Forms
         {
             IsStarted = !state;
 
-            cbWebcams.Enabled = btnStart.Enabled = state;
+            cbWebcams.Enabled = cbResolutions.Enabled = btnStart.Enabled = state;
             btnStop.Enabled = !state;
         }
 
