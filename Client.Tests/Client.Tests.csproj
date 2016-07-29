@@ -46,7 +46,9 @@
     </When>
     <Otherwise>
       <ItemGroup>
-        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+        <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework">
+          <Private>False</Private>
+        </Reference>
       </ItemGroup>
     </Otherwise>
   </Choose>
@@ -56,6 +58,7 @@
     <Compile Include="Core\Compression\SafeQuickLZ.Tests.cs" />
     <Compile Include="Core\Encryption\AES.Tests.cs" />
     <Compile Include="Core\Encryption\SHA256.Tests.cs" />
+    <Compile Include="Core\Packet\Packet.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
