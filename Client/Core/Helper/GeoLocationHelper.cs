@@ -12,30 +12,30 @@ namespace xClient.Core.Helper
     {
         public static readonly string[] ImageList =
         {
-            "ad.png", "ae.png", "af.png", "ag.png", "ai.png", "al.png",
-            "am.png", "an.png", "ao.png", "ar.png", "as.png", "at.png", "au.png", "aw.png", "ax.png", "az.png", "ba.png",
-            "bb.png", "bd.png", "be.png", "bf.png", "bg.png", "bh.png", "bi.png", "bj.png", "bm.png", "bn.png", "bo.png",
-            "br.png", "bs.png", "bt.png", "bv.png", "bw.png", "by.png", "bz.png", "ca.png", "catalonia.png", "cc.png",
-            "cd.png", "cf.png", "cg.png", "ch.png", "ci.png", "ck.png", "cl.png", "cm.png", "cn.png", "co.png", "cr.png",
-            "cs.png", "cu.png", "cv.png", "cx.png", "cy.png", "cz.png", "de.png", "dj.png", "dk.png", "dm.png", "do.png",
-            "dz.png", "ec.png", "ee.png", "eg.png", "eh.png", "england.png", "er.png", "es.png", "et.png",
-            "europeanunion.png", "fam.png", "fi.png", "fj.png", "fk.png", "fm.png", "fo.png", "fr.png", "ga.png",
-            "gb.png", "gd.png", "ge.png", "gf.png", "gh.png", "gi.png", "gl.png", "gm.png", "gn.png", "gp.png", "gq.png",
-            "gr.png", "gs.png", "gt.png", "gu.png", "gw.png", "gy.png", "hk.png", "hm.png", "hn.png", "hr.png", "ht.png",
-            "hu.png", "id.png", "ie.png", "il.png", "in.png", "io.png", "iq.png", "ir.png", "is.png", "it.png", "jm.png",
-            "jo.png", "jp.png", "ke.png", "kg.png", "kh.png", "ki.png", "km.png", "kn.png", "kp.png", "kr.png", "kw.png",
-            "ky.png", "kz.png", "la.png", "lb.png", "lc.png", "li.png", "lk.png", "lr.png", "ls.png", "lt.png", "lu.png",
-            "lv.png", "ly.png", "ma.png", "mc.png", "md.png", "me.png", "mg.png", "mh.png", "mk.png", "ml.png", "mm.png",
-            "mn.png", "mo.png", "mp.png", "mq.png", "mr.png", "ms.png", "mt.png", "mu.png", "mv.png", "mw.png", "mx.png",
-            "my.png", "mz.png", "na.png", "nc.png", "ne.png", "nf.png", "ng.png", "ni.png", "nl.png", "no.png", "np.png",
-            "nr.png", "nu.png", "nz.png", "om.png", "pa.png", "pe.png", "pf.png", "pg.png", "ph.png", "pk.png", "pl.png",
-            "pm.png", "pn.png", "pr.png", "ps.png", "pt.png", "pw.png", "py.png", "qa.png", "re.png", "ro.png", "rs.png",
-            "ru.png", "rw.png", "sa.png", "sb.png", "sc.png", "scotland.png", "sd.png", "se.png", "sg.png", "sh.png",
-            "si.png", "sj.png", "sk.png", "sl.png", "sm.png", "sn.png", "so.png", "sr.png", "st.png", "sv.png", "sy.png",
-            "sz.png", "tc.png", "td.png", "tf.png", "tg.png", "th.png", "tj.png", "tk.png", "tl.png", "tm.png", "tn.png",
-            "to.png", "tr.png", "tt.png", "tv.png", "tw.png", "tz.png", "ua.png", "ug.png", "um.png", "us.png", "uy.png",
-            "uz.png", "va.png", "vc.png", "ve.png", "vg.png", "vi.png", "vn.png", "vu.png", "wales.png", "wf.png",
-            "ws.png", "ye.png", "yt.png", "za.png", "zm.png", "zw.png"
+            "ad", "ae", "af", "ag", "ai", "al",
+            "am", "an", "ao", "ar", "as", "at", "au", "aw", "ax", "az", "ba",
+            "bb", "bd", "be", "bf", "bg", "bh", "bi", "bj", "bm", "bn", "bo",
+            "br", "bs", "bt", "bv", "bw", "by", "bz", "ca", "catalonia", "cc",
+            "cd", "cf", "cg", "ch", "ci", "ck", "cl", "cm", "cn", "co", "cr",
+            "cs", "cu", "cv", "cx", "cy", "cz", "de", "dj", "dk", "dm", "do",
+            "dz", "ec", "ee", "eg", "eh", "england", "er", "es", "et",
+            "europeanunion", "fam", "fi", "fj", "fk", "fm", "fo", "fr", "ga",
+            "gb", "gd", "ge", "gf", "gh", "gi", "gl", "gm", "gn", "gp", "gq",
+            "gr", "gs", "gt", "gu", "gw", "gy", "hk", "hm", "hn", "hr", "ht",
+            "hu", "id", "ie", "il", "in", "io", "iq", "ir", "is", "it", "jm",
+            "jo", "jp", "ke", "kg", "kh", "ki", "km", "kn", "kp", "kr", "kw",
+            "ky", "kz", "la", "lb", "lc", "li", "lk", "lr", "ls", "lt", "lu",
+            "lv", "ly", "ma", "mc", "md", "me", "mg", "mh", "mk", "ml", "mm",
+            "mn", "mo", "mp", "mq", "mr", "ms", "mt", "mu", "mv", "mw", "mx",
+            "my", "mz", "na", "nc", "ne", "nf", "ng", "ni", "nl", "no", "np",
+            "nr", "nu", "nz", "om", "pa", "pe", "pf", "pg", "ph", "pk", "pl",
+            "pm", "pn", "pr", "ps", "pt", "pw", "py", "qa", "re", "ro", "rs",
+            "ru", "rw", "sa", "sb", "sc", "scotland", "sd", "se", "sg", "sh",
+            "si", "sj", "sk", "sl", "sm", "sn", "so", "sr", "st", "sv", "sy",
+            "sz", "tc", "td", "tf", "tg", "th", "tj", "tk", "tl", "tm", "tn",
+            "to", "tr", "tt", "tv", "tw", "tz", "ua", "ug", "um", "us", "uy",
+            "uz", "va", "vc", "ve", "vg", "vi", "vn", "vu", "wales", "wf",
+            "ws", "ye", "yt", "za", "zm", "zw"
         };
 
         public static int ImageIndex { get; set; }
@@ -57,7 +57,7 @@ namespace xClient.Core.Helper
             {
                 TryLocate();
 
-                if (GeoInfo.country_code == "-" || GeoInfo.country == "Unknown")
+                if (string.IsNullOrEmpty(GeoInfo.CountryCode) || string.IsNullOrEmpty(GeoInfo.Country))
                 {
                     ImageIndex = 247; // question icon
                     return;
@@ -65,7 +65,7 @@ namespace xClient.Core.Helper
 
                 for (int i = 0; i < ImageList.Length; i++)
                 {
-                    if (ImageList[i].Contains(GeoInfo.country_code.ToLower()))
+                    if (ImageList[i] == GeoInfo.CountryCode.ToLower())
                     {
                         ImageIndex = i;
                         break;
@@ -82,8 +82,8 @@ namespace xClient.Core.Helper
             {
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
 
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://telize.com/geoip");
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://ip-api.com/json/");
+                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
                 request.Timeout = 10000;
 
@@ -119,7 +119,7 @@ namespace xClient.Core.Helper
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
+                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
                 request.Timeout = 10000;
 
@@ -141,26 +141,26 @@ namespace xClient.Core.Helper
                             string xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
                             string timeZone = doc.SelectSingleNode("Response//TimeZone").InnerXml;
 
-                            GeoInfo.ip = (!string.IsNullOrEmpty(xmlIp))
+                            GeoInfo.Ip = (!string.IsNullOrEmpty(xmlIp))
                                 ? xmlIp
                                 : "-";
-                            GeoInfo.country = (!string.IsNullOrEmpty(xmlCountry))
+                            GeoInfo.Country = (!string.IsNullOrEmpty(xmlCountry))
                                 ? xmlCountry
                                 : "Unknown";
-                            GeoInfo.country_code = (!string.IsNullOrEmpty(xmlCountryCode))
+                            GeoInfo.CountryCode = (!string.IsNullOrEmpty(xmlCountryCode))
                                 ? xmlCountryCode
                                 : "-";
-                            GeoInfo.region = (!string.IsNullOrEmpty(xmlRegion))
+                            GeoInfo.Region = (!string.IsNullOrEmpty(xmlRegion))
                                 ? xmlRegion
                                 : "Unknown";
-                            GeoInfo.city = (!string.IsNullOrEmpty(xmlCity))
+                            GeoInfo.City = (!string.IsNullOrEmpty(xmlCity))
                                 ? xmlCity
                                 : "Unknown";
-                            GeoInfo.timezone = (!string.IsNullOrEmpty(timeZone))
+                            GeoInfo.Timezone = (!string.IsNullOrEmpty(timeZone))
                                 ? timeZone
                                 : "Unknown";
 
-                            GeoInfo.isp = "Unknown"; // freegeoip does not support ISP detection
+                            GeoInfo.Isp = "Unknown"; // freegeoip does not support ISP detection
                         }
                     }
                 }
@@ -170,16 +170,16 @@ namespace xClient.Core.Helper
             }
             catch
             {
-                GeoInfo.country = "Unknown";
-                GeoInfo.country_code = "-";
-                GeoInfo.region = "Unknown";
-                GeoInfo.city = "Unknown";
-                GeoInfo.timezone = "Unknown";
-                GeoInfo.isp = "Unknown";
+                GeoInfo.Country = "Unknown";
+                GeoInfo.CountryCode = "-";
+                GeoInfo.Region = "Unknown";
+                GeoInfo.City = "Unknown";
+                GeoInfo.Timezone = "Unknown";
+                GeoInfo.Isp = "Unknown";
                 LocationCompleted = false;
             }
 
-            if (string.IsNullOrEmpty(GeoInfo.ip))
+            if (string.IsNullOrEmpty(GeoInfo.Ip))
                 TryGetWanIp();
         }
 
@@ -190,7 +190,7 @@ namespace xClient.Core.Helper
             try
             {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.ipify.org/");
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:36.0) Gecko/20100101 Firefox/36.0";
+                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
 
@@ -209,7 +209,7 @@ namespace xClient.Core.Helper
             {
             }
 
-            GeoInfo.ip = wanIp;
+            GeoInfo.Ip = wanIp;
         }
     }
 }

