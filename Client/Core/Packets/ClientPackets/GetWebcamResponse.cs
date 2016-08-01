@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Drawing;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Packets.ClientPackets
@@ -9,15 +8,17 @@ namespace xClient.Core.Packets.ClientPackets
     {
         public byte[] Image { get; set; }
         public int Webcam { get; set; }
+        public int Resolution { get; set; }
 
         public GetWebcamResponse()
         {
         }
 
-        public GetWebcamResponse(byte[] image, int webcam)
+        public GetWebcamResponse(byte[] image, int webcam, int resolution)
         {
             this.Image = image;
             this.Webcam = webcam;
+            this.Resolution = resolution;
         }
 
         public void Execute(Client client)
