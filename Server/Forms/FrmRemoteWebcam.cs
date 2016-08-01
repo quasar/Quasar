@@ -1,22 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Drawing;
+using System.Linq;
 using System.Windows.Forms;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
-using xServer.Enums;
+
 namespace xServer.Forms
 {
-    using System.Linq;
-
     public partial class FrmRemoteWebcam : Form
     {
 
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
-        private Dictionary<string, List<Size>> Webcams;
+        private Dictionary<string, List<Size>> _webcams;
 
         public FrmRemoteWebcam(Client c)
         {
@@ -58,7 +55,7 @@ namespace xServer.Forms
         }
         public void AddWebcams(Dictionary<string, List<Size>> webcams)
         {
-            this.Webcams = webcams;
+            this._webcams = webcams;
             try
             {
                 cbWebcams.Invoke((MethodInvoker)delegate
@@ -130,7 +127,7 @@ namespace xServer.Forms
             cbResolutions.Invoke((MethodInvoker)delegate
             {
                 cbResolutions.Items.Clear();
-                foreach (var resolution in this.Webcams.ElementAt(cbWebcams.SelectedIndex).Value)
+                foreach (var resolution in this._webcams.ElementAt(cbWebcams.SelectedIndex).Value)
                 {
                     cbResolutions.Items.Add(string.Format("{0} x {1}", resolution.Width, resolution.Height));
                 }
