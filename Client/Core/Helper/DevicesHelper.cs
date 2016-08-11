@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
@@ -143,17 +144,21 @@ namespace xClient.Core.Helper
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
-                if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
-                    ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet &&
-                    ni.OperationalStatus == OperationalStatus.Up)
+                GatewayIPAddressInformation gatewayAddress = ni.GetIPProperties().GatewayAddresses.FirstOrDefault();
+                if (gatewayAddress != null) //exclude virtual physical nic with no default gateway
                 {
-                    foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                    if (ni.NetworkInterfaceType == NetworkInterfaceType.Wireless80211 ||
+                        ni.NetworkInterfaceType == NetworkInterfaceType.Ethernet &&
+                        ni.OperationalStatus == OperationalStatus.Up)
                     {
-                        if (ip.Address.AddressFamily != AddressFamily.InterNetwork ||
-                            ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
-                            continue;
+                        foreach (UnicastIPAddressInformation ip in ni.GetIPProperties().UnicastAddresses)
+                        {
+                            if (ip.Address.AddressFamily != AddressFamily.InterNetwork ||
+                                ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
+                                continue;
 
-                        return ip.Address.ToString();
+                            return ip.Address.ToString();
+                        }
                     }
                 }
             }
