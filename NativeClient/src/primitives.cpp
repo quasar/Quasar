@@ -27,7 +27,7 @@ uint32_t primitives::read_varint32(memstream& stream) {
 	return 0;
 }
 
-void primitives::write_string(vector<char>& payloadBuf, string value) {
+void primitives::write_string(vector<char> &payloadBuf, string value) {
 	if(value.empty()) {
 		write_varint32(payloadBuf, 1);
 	}
@@ -40,4 +40,12 @@ void primitives::write_string(vector<char>& payloadBuf, string value) {
 	for (string::const_iterator it = value.begin(); it != value.end(); ++it) {
 		payloadBuf.push_back(*it);
 	}
+}
+
+void primitives::write_int32(std::vector<char> &payloadBuf, int32_t value) {
+	write_varint32(payloadBuf, encode_zigzag32(value));
+}
+
+uint32_t primitives::encode_zigzag32(int32_t value) {
+	return static_cast<uint32_t>((value << 1) ^ (value >> 31));
 }

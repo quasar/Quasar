@@ -18,6 +18,9 @@ public:
 	void send(boost::shared_ptr<quasar_packet> packet);
 
 	bool is_connected() const;
+	bool get_compress() const;
+
+	void set_compress(const bool value);
 	
 	/* events */
 	boost::signals2::signal<void()> msig_on_disconnected;
@@ -28,6 +31,7 @@ private:
 	/* use a statically sized buffer for header size since it's always sizeof(int)==4 */
 	boost::array<char, 4> m_hdr_buf;
 	bool m_connected;
+	bool m_compress;
 
 	void connect_handler(const boost::system::error_code &ec);
 	void read_header();

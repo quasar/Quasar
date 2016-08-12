@@ -16,7 +16,11 @@ boost::shared_ptr<quasar_packet> packet_factory::create_packet(vector<char> &pay
 
 	switch (static_cast<QuasarPacketId>(packetId)) {
 	case PACKET_GET_AUTHENTICATION:
-		packet = boost::static_pointer_cast<quasar_packet>(
+		packet = boost::dynamic_pointer_cast<quasar_packet>(
+			boost::make_shared<get_authentication_packet>());
+		break;
+	case PACKET_GET_AUTHENTICATION_RESPONSE: 
+		packet = boost::dynamic_pointer_cast<quasar_packet>(
 			boost::make_shared<get_authentication_response_packet>());
 		break;
 	case PACKET_UNKNOWN:
@@ -24,6 +28,9 @@ boost::shared_ptr<quasar_packet> packet_factory::create_packet(vector<char> &pay
 	default: break;
 	}
 
-	packet->deserialize_packet(stream);
+	// can be null because of dynamic ptr cast
+	if (packet != nullptr) {
+		packet->deserialize_packet(stream);
+	}
 	return packet;
 }

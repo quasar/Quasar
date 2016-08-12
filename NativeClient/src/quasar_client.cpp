@@ -2,6 +2,8 @@
 #include "quasar_client.h"
 #include "boost/bind.hpp"
 #include "packet_factory.h"
+#include "command_handler.h"
+#include "quicklz.h"
 
 using namespace std;
 using namespace boost::asio::ip;
@@ -10,7 +12,8 @@ quasar_client::quasar_client(boost::asio::io_service& io_srvc) :
 	m_sock(io_srvc),
 	m_resolver(io_srvc),
 	m_hdr_buf(boost::array<char, 4>()),
-	m_connected(false){
+	m_connected(false),
+	m_compress(true){
 
 }
 
@@ -27,9 +30,44 @@ void quasar_client::connect(string hostname, string port) {
 
 void quasar_client::send(boost::shared_ptr<quasar_packet> packet) {
 	vector<char> payloadBuf;
+	quasar_packet::begin_serialization(payloadBuf, packet->get_id());
 	packet->serialize_packet(payloadBuf);
-	
-	//async_write(m_sock, boost::asio::buffer(payloadBuf), )
+
+	if (m_compress) {
+		auto state_compress = static_cast<qlz_state_compress*>(malloc(sizeof(qlz_state_compress)));
+
+		char *buf = new char[payloadBuf.size()];
+		int32_t finalSize = qlz_compress(&payloadBuf[0], buf, payloadBuf.size(), state_compress);
+		vector<char> tmpBuf(finalSize);
+
+		memcpy(&tmpBuf[0], buf, finalSize);
+		//delete[] buf;
+
+		quasar_packet::finalize_serialization(tmpBuf);
+		boost::asio::async_write(m_sock, boost::asio::buffer(&tmpBuf[0], tmpBuf.size()),
+			[this](boost::system::error_code ec, std::size_t len)
+		{
+
+
+		});
+	} else {
+		quasar_packet::finalize_serialization(payloadBuf);
+		boost::asio::async_write(m_sock, boost::asio::buffer(&payloadBuf[0], payloadBuf.size()),
+			[this](boost::system::error_code ec, std::size_t len)
+		{
+
+
+		});
+	}
+
+}
+
+bool quasar_client::get_compress() const {
+	return m_compress;
+}
+
+void quasar_client::set_compress(const bool value) {
+	m_compress = value;
 }
 
 bool quasar_client::is_connected() const {
@@ -86,11 +124,25 @@ void quasar_client::read_payload() {
 			msig_on_disconnected();
 		}
 
-		auto parsedPacket = packet_factory::create_packet(m_payload_buf);
+		boost::shared_ptr<quasar_packet> parsedPacket;
+
+		if (m_compress) {
+			int32_t finalSize = qlz_size_decompressed(&m_payload_buf[0]);
+			vector<char> tmpBuf(finalSize);
+			auto state_decompress = static_cast<qlz_state_decompress*>(malloc(sizeof(qlz_state_decompress)));
+
+			qlz_decompress(&m_payload_buf[0], &tmpBuf[0], state_decompress);
+			parsedPacket = packet_factory::create_packet(tmpBuf);
+		}
+		else {
+			parsedPacket = packet_factory::create_packet(m_payload_buf);
+		}
 
 		if(quasar_packet::is_unknown(parsedPacket)) {
 			// skip this packet
 			read_header();
+		} else {
+			command_handler::handle_packet(this, parsedPacket);
 		}
 	});
 }
