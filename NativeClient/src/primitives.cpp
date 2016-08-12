@@ -1,0 +1,43 @@
+#include "stdafx.h"
+#include "primitives.h"
+
+using namespace std;
+
+void primitives::write_varint32(std::vector<char>& payloadBuf, uint32_t value) {
+	for (; value >= 0x80u; value >>= 7) {
+		payloadBuf.push_back(static_cast<char>(value | 0x80u));
+	}
+	payloadBuf.push_back(static_cast<char>(value));
+}
+
+uint32_t primitives::read_varint32(memstream& stream) {
+	int32_t result = 0;
+	int32_t offset = 0;
+
+	for (; offset < 32; offset += 7)
+	{
+		char b;
+		stream.read(&b, sizeof(char));
+
+		result |= (b & 0x7f) << offset;
+
+		if ((b & 0x80) == 0)
+			return static_cast<uint32_t>(result);
+	}
+	return 0;
+}
+
+void primitives::write_string(vector<char>& payloadBuf, string value) {
+	if(value.empty()) {
+		write_varint32(payloadBuf, 1);
+	}
+
+	int32_t totalBytes = value.size();
+
+	write_varint32(payloadBuf, totalBytes + 1);
+	write_varint32(payloadBuf, totalBytes);
+
+	for (string::const_iterator it = value.begin(); it != value.end(); ++it) {
+		payloadBuf.push_back(*it);
+	}
+}
