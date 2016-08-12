@@ -35,6 +35,16 @@ namespace xServer.Forms
             InitializeComponent();
         }
 
+        protected override CreateParams CreateParams
+        {
+            get
+            {
+                CreateParams cp = base.CreateParams;
+                cp.ExStyle |= 0x02000000; //WS_EX_COMPOSITED
+                return cp;
+            }
+        }
+
         #region Main Form
 
         private void FrmRegistryEditor_Load(object sender, EventArgs e)
