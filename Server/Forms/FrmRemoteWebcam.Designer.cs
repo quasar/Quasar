@@ -31,11 +31,11 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRemoteWebcam));
             this.btnShow = new System.Windows.Forms.Button();
             this.panelTop = new System.Windows.Forms.Panel();
+            this.cbResolutions = new System.Windows.Forms.ComboBox();
             this.cbWebcams = new System.Windows.Forms.ComboBox();
             this.btnHide = new System.Windows.Forms.Button();
             this.btnStart = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
-            this.cbResolutions = new System.Windows.Forms.ComboBox();
             this.picWebcam = new xServer.Controls.RapidPictureBox();
             this.panelTop.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.picWebcam)).BeginInit();
@@ -65,6 +65,16 @@
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(181, 109);
             this.panelTop.TabIndex = 9;
+            // 
+            // cbResolutions
+            // 
+            this.cbResolutions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cbResolutions.FormattingEnabled = true;
+            this.cbResolutions.Location = new System.Drawing.Point(15, 57);
+            this.cbResolutions.Name = "cbResolutions";
+            this.cbResolutions.Size = new System.Drawing.Size(149, 21);
+            this.cbResolutions.TabIndex = 9;
+            this.cbResolutions.TabStop = false;
             // 
             // cbWebcams
             // 
@@ -111,16 +121,6 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
-            // cbResolutions
-            // 
-            this.cbResolutions.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cbResolutions.FormattingEnabled = true;
-            this.cbResolutions.Location = new System.Drawing.Point(15, 57);
-            this.cbResolutions.Name = "cbResolutions";
-            this.cbResolutions.Size = new System.Drawing.Size(149, 21);
-            this.cbResolutions.TabIndex = 9;
-            this.cbResolutions.TabStop = false;
-            // 
             // picWebcam
             // 
             this.picWebcam.BackColor = System.Drawing.Color.Black;
@@ -147,6 +147,7 @@
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MinimumSize = new System.Drawing.Size(480, 320);
             this.Name = "FrmRemoteWebcam";
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "FrmRemoteWebcam []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmRemoteWebcam_FormClosing);
             this.Load += new System.EventHandler(this.FrmRemoteWebcam_Load);
