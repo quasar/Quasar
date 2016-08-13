@@ -45,6 +45,12 @@
     <ClCompile Include="src\quicklz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\client_packets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_packets.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\stdafx.h">
@@ -80,10 +86,16 @@
     <ClInclude Include="include\helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="serializer.h">
+    <ClInclude Include="include\server_packets.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="deserializer.h">
+    <ClInclude Include="include\client_packets.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\deserializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\serializer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

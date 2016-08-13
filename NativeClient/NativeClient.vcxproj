@@ -145,6 +145,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\client_packets.cpp" />
     <ClCompile Include="src\command_handler.cpp" />
     <ClCompile Include="src\NativeClient.cpp" />
     <ClCompile Include="src\packet.cpp" />
@@ -152,14 +153,16 @@
     <ClCompile Include="src\primitives.cpp" />
     <ClCompile Include="src\quasar_client.cpp" />
     <ClCompile Include="src\quicklz.cpp" />
+    <ClCompile Include="src\server_packets.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\win_helper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="deserializer.h" />
+    <ClInclude Include="include\client_packets.h" />
     <ClInclude Include="include\command_handler.h" />
+    <ClInclude Include="include\deserializer.h" />
     <ClInclude Include="include\helpers.h" />
     <ClInclude Include="include\membuf.h" />
     <ClInclude Include="include\packet.h" />
@@ -167,10 +170,11 @@
     <ClInclude Include="include\primitives.h" />
     <ClInclude Include="include\quasar_client.h" />
     <ClInclude Include="include\quicklz.h" />
+    <ClInclude Include="include\serializer.h" />
+    <ClInclude Include="include\server_packets.h" />
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\targetver.h" />
     <ClInclude Include="include\win_helper.h" />
-    <ClInclude Include="serializer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

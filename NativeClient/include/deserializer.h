@@ -1,6 +1,6 @@
 #pragma once
 #include <vector>
-#include "include/primitives.h"
+#include "primitives.h"
 
 // ReSharper disable CppExplicitSpecializationInNonNamespaceScope
 class quasar_deserializer {

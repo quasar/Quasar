@@ -3,8 +3,9 @@
 #include <boost/smart_ptr/make_shared.hpp>
 #include <helpers.h>
 #include <thread>
+#include <client_packets.h>
 
-void command_handler::handle_packet(quasar_client *client, boost::shared_ptr<quasar_packet> packet) {
+void command_handler::handle_packet(quasar_client *client, boost::shared_ptr<quasar_server_packet> packet) {
 	switch(packet->get_id()) {
 
 	case PACKET_UNKNOWN: break;

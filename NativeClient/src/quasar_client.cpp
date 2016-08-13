@@ -28,7 +28,7 @@ void quasar_client::connect(string hostname, string port) {
 		this, boost::asio::placeholders::error));
 }
 
-void quasar_client::send(boost::shared_ptr<quasar_packet> packet) {
+void quasar_client::send(boost::shared_ptr<quasar_client_packet> packet) {
 	
 	//quasar_packet::begin_serialization(payloadBuf, packet->get_id());
 	vector<char> payloadBuf = packet->serialize_packet();
@@ -133,7 +133,7 @@ void quasar_client::read_payload() {
 			msig_on_disconnected();
 		}
 
-		boost::shared_ptr<quasar_packet> parsedPacket;
+		boost::shared_ptr<quasar_server_packet> parsedPacket;
 
 		if (m_compress) {
 			int32_t finalSize = qlz_size_decompressed(&m_payload_buf[0]);

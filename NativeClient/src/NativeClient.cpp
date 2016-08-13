@@ -5,7 +5,7 @@
 #include "quasar_client.h"
 #include <cstdlib>
 #include <iostream>
-#include "../serializer.h"
+#include "serializer.h"
 
 struct HelloWorld
 {

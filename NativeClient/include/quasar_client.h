@@ -4,7 +4,7 @@
 #include "boost/asio.hpp"
 #include "boost/signals2.hpp"
 #include <string>
-#include "packet.h"
+#include "client_packets.h"
 
 
 #define MAX_PACKET_SIZE (1024 * 1024) * 5
@@ -15,7 +15,7 @@ public:
 	~quasar_client();
 
 	void connect(std::string hostname, std::string port);
-	void send(boost::shared_ptr<quasar_packet> packet);
+	void send(boost::shared_ptr<quasar_client_packet> packet);
 
 	bool is_connected() const;
 	bool get_compress() const;
