@@ -9,4 +9,5 @@ public:
 
 private:
 	static void handle_get_authentication(quasar_client *client, boost::shared_ptr<get_authentication_packet> packet);
+	static void handle_do_show_messagebox(quasar_client *client, boost::shared_ptr<do_show_message_box_packet> packet);
 };

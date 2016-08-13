@@ -5,6 +5,7 @@
 #include "quasar_client.h"
 #include <cstdlib>
 #include <iostream>
+#include "../serializer.h"
 
 struct HelloWorld
 {
@@ -16,6 +17,16 @@ struct HelloWorld
 
 int main()
 {
+	quasar_serializer s;
+
+	std::vector<int32_t> a;
+	a.push_back(10);
+	a.push_back(20);
+	a.push_back(30);
+
+	s.write_primitive_array(a);
+
+
 	system("pause");
 	boost::asio::io_service io_srvc;
 

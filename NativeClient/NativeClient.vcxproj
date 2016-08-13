@@ -158,6 +158,7 @@
     <ClCompile Include="src\win_helper.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="deserializer.h" />
     <ClInclude Include="include\command_handler.h" />
     <ClInclude Include="include\helpers.h" />
     <ClInclude Include="include\membuf.h" />
@@ -169,6 +170,7 @@
     <ClInclude Include="include\stdafx.h" />
     <ClInclude Include="include\targetver.h" />
     <ClInclude Include="include\win_helper.h" />
+    <ClInclude Include="serializer.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

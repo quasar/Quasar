@@ -26,6 +26,12 @@ boost::shared_ptr<quasar_packet> packet_factory::create_packet(vector<char> &pay
 	case PACKET_UNKNOWN:
 		break;
 	default: break;
+	case PACKET_GET_PROCESSES: break;
+	case PACKET_GET_PROCESSES_RESPONSE: break;
+	case PACKET_DO_SHOW_MESSAGEBOX: 
+		packet = boost::dynamic_pointer_cast<quasar_packet>(
+			boost::make_shared<do_show_message_box_packet>());
+		break;
 	}
 
 	// can be null because of dynamic ptr cast

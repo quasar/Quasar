@@ -262,7 +262,7 @@ namespace xClient.Core.Networking
         protected Serializer Serializer { get; set; }
 
         private const bool encryptionEnabled = false;
-        private const bool compressionEnabled = false;
+        private const bool compressionEnabled = true;
 
         protected Client()
         {

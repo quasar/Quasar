@@ -80,5 +80,11 @@
     <ClInclude Include="include\helpers.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="serializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="deserializer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
