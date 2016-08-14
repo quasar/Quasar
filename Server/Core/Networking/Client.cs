@@ -456,7 +456,7 @@ namespace xServer.Core.Networking
 
                                     if (!isError)
                                     {
-                                       // if (encryptionEnabled)
+                                        if (encryptionEnabled)
                                             _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
                                         isError = _payloadBuffer.Length == 0; // check if payload decryption failed
