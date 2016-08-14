@@ -1,10 +1,8 @@
 #pragma once
-#include "membuf.h"
 #include "boost/shared_ptr.hpp"
 #include <vector>
 #include "serializer.h"
 #include "deserializer.h"
-#include <map>
 
 enum QuasarPacketId {
 	PACKET_UNKNOWN = 0,
@@ -49,5 +47,5 @@ protected:
 private:
 	QuasarPacketId m_id;
 
-	void write_header(std::vector<char> &payloadBuf) const;
+	void write_header(std::vector<unsigned char> &payloadBuf) const;
 };

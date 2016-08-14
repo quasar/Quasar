@@ -7,7 +7,7 @@ public:
 		quasar_packet(id) {
 	}
 
-	virtual std::vector<char> serialize_packet() = 0;
+	virtual std::vector<unsigned char> serialize_packet() = 0;
 };
 
 
@@ -15,7 +15,7 @@ class get_authentication_response_packet : public quasar_client_packet {
 public:
 	get_authentication_response_packet();
 
-	std::vector<char> serialize_packet() override;
+	std::vector<unsigned char> serialize_packet() override;
 
 private:
 	std::string m_account_type;
@@ -38,7 +38,7 @@ class get_processes_response_packet : public quasar_client_packet {
 public:
 	get_processes_response_packet();
 
-	std::vector<char> serialize_packet() override;
+	std::vector<unsigned char> serialize_packet() override;
 
 private:
 	std::vector<int> m_pids;
@@ -53,7 +53,7 @@ public:
 
 	void set_status(std::string value);
 
-	std::vector<char> serialize_packet() override;
+	std::vector<unsigned char> serialize_packet() override;
 
 private:
 	std::string m_status;

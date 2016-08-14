@@ -5,6 +5,7 @@
 #include "boost/signals2.hpp"
 #include <string>
 #include "client_packets.h"
+#include "aes_crypt.h"
 
 
 #define MAX_PACKET_SIZE (1024 * 1024) * 5
@@ -27,11 +28,13 @@ public:
 private:
 	boost::asio::ip::tcp::socket m_sock;
 	boost::asio::ip::tcp::resolver m_resolver;
-	std::vector<char> m_payload_buf;
+	std::vector<unsigned char> m_payload_buf;
 	/* use a statically sized buffer for header size since it's always sizeof(int)==4 */
-	boost::array<char, 4> m_hdr_buf;
+	boost::array<unsigned char, 4> m_hdr_buf;
 	bool m_connected;
 	bool m_compress;
+	bool m_encrypt;
+	aes_crypt m_aes;
 
 	void connect_handler(const boost::system::error_code &ec);
 	void read_header();

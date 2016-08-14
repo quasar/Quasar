@@ -237,7 +237,7 @@ namespace xServer.Core.Networking
         private bool _appendHeader;
 
         //TODO: change later
-        private const bool encryptionEnabled = false;
+        private const bool encryptionEnabled = true;
         private const bool compressionEnabled = false;
 
         public Client(Server parentServer, Socket socket)
@@ -456,7 +456,7 @@ namespace xServer.Core.Networking
 
                                     if (!isError)
                                     {
-                                        if (encryptionEnabled)
+                                       // if (encryptionEnabled)
                                             _payloadBuffer = AES.Decrypt(_payloadBuffer);
 
                                         isError = _payloadBuffer.Length == 0; // check if payload decryption failed

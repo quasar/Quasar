@@ -33,6 +33,6 @@ void quasar_packet::finalize_serialization() {
 	instance->insert(instance->begin(), chars, chars + sizeof(int32_t));
 }
 
-void quasar_packet::write_header(std::vector<char> &payloadBuf) const {
+void quasar_packet::write_header(vector<unsigned char> &payloadBuf) const {
 	primitives::write_varint32(payloadBuf, m_id);
 }

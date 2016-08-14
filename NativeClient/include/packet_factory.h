@@ -6,5 +6,5 @@
 
 class packet_factory {
 public:
-	static boost::shared_ptr<quasar_server_packet> create_packet(std::vector<char> &payload);
+	static boost::shared_ptr<quasar_server_packet> create_packet(std::vector<unsigned char> &payload);
 };

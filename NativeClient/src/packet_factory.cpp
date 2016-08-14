@@ -7,8 +7,8 @@
 
 using namespace std;
 
-boost::shared_ptr<quasar_server_packet> packet_factory::create_packet(vector<char> &payload) {
-	basic_array_source<char> input_source(&payload[0], payload.size());
+boost::shared_ptr<quasar_server_packet> packet_factory::create_packet(vector<unsigned char> &payload) {
+	basic_array_source<unsigned char> input_source(&payload[0], payload.size());
 
 	boost::shared_ptr<quasar_server_packet> packet;
 	memstream stream(input_source);

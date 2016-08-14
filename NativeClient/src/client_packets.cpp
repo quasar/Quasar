@@ -3,6 +3,9 @@
 #include <vector>
 #include <helpers.h>
 #include <win_helper.h>
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/pwdbased.h"
+#include "cryptopp/sha.h"
 
 using namespace std;
 
@@ -19,7 +22,7 @@ void set_status_packet::set_status(string value) {
 	m_status = value;
 }
 
-vector<char> set_status_packet::serialize_packet() {
+vector<unsigned char> set_status_packet::serialize_packet() {
 	begin_serialization();
 	m_serializer.write_primitive(m_status);
 	finalize_serialization();
@@ -30,7 +33,7 @@ get_processes_response_packet::get_processes_response_packet() :
 	quasar_client_packet(PACKET_GET_AUTHENTICATION_RESPONSE) {
 }
 
-vector<char> get_processes_response_packet::serialize_packet() {
+vector<unsigned char> get_processes_response_packet::serialize_packet() {
 	begin_serialization();
 	finalize_serialization();
 	return m_serializer.get_serializer_data();
@@ -41,7 +44,7 @@ get_authentication_response_packet::get_authentication_response_packet() :
 	initialize_values();
 }
 
-vector<char> get_authentication_response_packet::serialize_packet() {
+vector<unsigned char> get_authentication_response_packet::serialize_packet() {
 	begin_serialization();
 	m_serializer.write_primitive(m_account_type);
 	m_serializer.write_primitive(m_city);
@@ -77,7 +80,7 @@ void get_authentication_response_packet::initialize_values() {
 		username = L"";
 	}
 
-	m_city = "secret";
+	m_city = "secreat";
 	m_country = "Sweden";
 	m_country_code = "SE";
 	m_id = "AEB06EC90268D849910326C067314FD8EE2B93D4F6EC3752D4970A9EFC45AF21";

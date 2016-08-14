@@ -6,14 +6,14 @@
 class quasar_serializer {
 public:
 	quasar_serializer() :
-		m_stream(std::vector<char>()) {
+		m_stream(std::vector<unsigned char>()) {
 	}
 
-	std::vector<char>* get_serializer_instance() {
+	std::vector<unsigned char>* get_serializer_instance() {
 		return &m_stream;
 	}
 
-	std::vector<char> get_serializer_data() const {
+	std::vector<unsigned char> get_serializer_data() const {
 		return m_stream;
 	}
 
@@ -67,5 +67,5 @@ public:
 	}
 
 private:
-	std::vector<char> m_stream;
+	std::vector<unsigned char> m_stream;
 };

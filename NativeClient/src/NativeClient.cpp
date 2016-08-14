@@ -6,6 +6,10 @@
 #include <cstdlib>
 #include <iostream>
 #include "serializer.h"
+#include "cryptopp/cryptlib.h"
+#include "cryptopp/modes.h"
+#include "cryptopp/aes.h"
+#include <aes_crypt.h>
 
 struct HelloWorld
 {
@@ -17,16 +21,6 @@ struct HelloWorld
 
 int main()
 {
-	quasar_serializer s;
-
-	std::vector<int32_t> a;
-	a.push_back(10);
-	a.push_back(20);
-	a.push_back(30);
-
-	s.write_primitive_array(a);
-
-
 	system("pause");
 	boost::asio::io_service io_srvc;
 
@@ -35,7 +29,7 @@ int main()
 	quasar_client c(io_srvc);
 	c.msig_on_disconnected.connect(h);
 
-	c.connect("127.0.0.1", "4782");
+	c.connect("192.168.1.21", "4782");
 	io_srvc.run();
 
 	for(;;){}

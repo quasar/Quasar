@@ -25,9 +25,9 @@ public:
 		// skip totalchars
 		primitives::read_varint32(stream);
 		int32_t streamBytesLeft = totalBytes;
-		std::vector<char> buf(totalBytes);
+		std::vector<unsigned char> buf(totalBytes);
 
 		stream.read(&buf[0], totalBytes);
-		return std::string(&buf[0], buf.size());
+		return std::string(reinterpret_cast<char*>(&buf[0]), buf.size());
 	}
 };

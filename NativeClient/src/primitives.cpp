@@ -3,7 +3,7 @@
 
 using namespace std;
 
-void primitives::write_varint32(std::vector<char>& payloadBuf, uint32_t value) {
+void primitives::write_varint32(vector<unsigned char>& payloadBuf, uint32_t value) {
 	for (; value >= 0x80u; value >>= 7) {
 		payloadBuf.push_back(static_cast<char>(value | 0x80u));
 	}
@@ -16,7 +16,7 @@ uint32_t primitives::read_varint32(memstream& stream) {
 
 	for (; offset < 32; offset += 7)
 	{
-		char b;
+		unsigned char b;
 		stream.read(&b, sizeof(char));
 
 		result |= (b & 0x7f) << offset;
@@ -27,7 +27,7 @@ uint32_t primitives::read_varint32(memstream& stream) {
 	return 0;
 }
 
-void primitives::write_string(vector<char> &payloadBuf, string value) {
+void primitives::write_string(vector<unsigned char> &payloadBuf, string value) {
 	if(value.empty()) {
 		write_varint32(payloadBuf, 1);
 	}
@@ -42,7 +42,7 @@ void primitives::write_string(vector<char> &payloadBuf, string value) {
 	}
 }
 
-void primitives::write_int32(std::vector<char> &payloadBuf, int32_t value) {
+void primitives::write_int32(vector<unsigned char> &payloadBuf, int32_t value) {
 	write_varint32(payloadBuf, encode_zigzag32(value));
 }
 

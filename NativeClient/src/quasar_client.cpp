@@ -4,6 +4,7 @@
 #include "packet_factory.h"
 #include "command_handler.h"
 #include "quicklz.h"
+#include <aes_crypt.h>
 
 using namespace std;
 using namespace boost::asio::ip;
@@ -11,10 +12,11 @@ using namespace boost::asio::ip;
 quasar_client::quasar_client(boost::asio::io_service& io_srvc) :
 	m_sock(io_srvc),
 	m_resolver(io_srvc),
-	m_hdr_buf(boost::array<char, 4>()),
+	m_hdr_buf(boost::array<unsigned char, 4>()),
 	m_connected(false),
-	m_compress(false){
-
+	m_compress(false),
+	m_encrypt(true),
+	m_aes("1WvgEMPjdwfqIMeM9MclyQ==", "NcFtjbDOcsw7Evd3coMC0y4koy/SRZGydhNmno81ZOWOvdfg7sv0Cj5ad2ROUfX4QMscAIjYJdjrrs41+qcQwg==") {
 }
 
 quasar_client::~quasar_client() {
@@ -29,14 +31,21 @@ void quasar_client::connect(string hostname, string port) {
 }
 
 void quasar_client::send(boost::shared_ptr<quasar_client_packet> packet) {
-	
-	//quasar_packet::begin_serialization(payloadBuf, packet->get_id());
-	vector<char> payloadBuf = packet->serialize_packet();
+	vector<byte> payloadBuf = packet->serialize_packet();
+	if (m_encrypt) {
+		auto slicedBuf = vector<byte>(payloadBuf.begin() + 4, payloadBuf.end());
+		m_aes.encrypt(slicedBuf);
+
+		int32_t payloadSize = slicedBuf.size();
+		char *chars = reinterpret_cast<char*>(&payloadSize);
+		slicedBuf.insert(slicedBuf.begin(), chars, chars + sizeof(int32_t));
+		payloadBuf.swap(slicedBuf);
+	}
 
 	if (m_compress) {
 		auto state_compress = static_cast<qlz_state_compress*>(malloc(sizeof(qlz_state_compress)));
 		int32_t origSize = *reinterpret_cast<int32_t*>(&payloadBuf[0]);
-		payloadBuf = vector<char>(payloadBuf.begin() + sizeof(int32_t), payloadBuf.end());
+		payloadBuf = vector<byte>(payloadBuf.begin() + sizeof(int32_t), payloadBuf.end());
 		char *buf = new char[payloadBuf.size()];
 		int32_t finalSize = qlz_compress(&payloadBuf[0], buf, payloadBuf.size(), state_compress);
 		vector<char> tmpBuf(finalSize+sizeof(int32_t));
@@ -133,14 +142,18 @@ void quasar_client::read_payload() {
 			msig_on_disconnected();
 		}
 
+		if (m_encrypt) {
+			m_aes.decrypt(m_payload_buf);
+		}
+
 		boost::shared_ptr<quasar_server_packet> parsedPacket;
 
 		if (m_compress) {
-			int32_t finalSize = qlz_size_decompressed(&m_payload_buf[0]);
-			vector<char> tmpBuf(finalSize);
+			int32_t finalSize = qlz_size_decompressed(reinterpret_cast<char*>(&m_payload_buf[0]));
+			vector<unsigned char> tmpBuf(finalSize);
 			auto state_decompress = static_cast<qlz_state_decompress*>(malloc(sizeof(qlz_state_decompress)));
 
-			qlz_decompress(&m_payload_buf[0], &tmpBuf[0], state_decompress);
+			qlz_decompress(reinterpret_cast<char*>(&m_payload_buf[0]), &tmpBuf[0], state_decompress);
 			parsedPacket = packet_factory::create_packet(tmpBuf);
 		}
 		else {
