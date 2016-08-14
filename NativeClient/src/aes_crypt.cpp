@@ -122,11 +122,12 @@ void aes_crypt::decrypt(vector<byte> &data) {
 	auto pData = reinterpret_cast<byte*>(&data[0]);
 	// includes padding
 	uint32_t payloadSize = data.size() - (SHA256::DIGESTSIZE + AES::BLOCKSIZE);
+	vector<byte> decrypted(payloadSize);
 
 	memcpy(m_iv, &data[SHA256::DIGESTSIZE], AES::BLOCKSIZE);
 	CBC_Mode<AES>::Decryption dec(&m_key[0], sizeof m_key, m_iv);
-	dec.ProcessData(pData, pData + SHA256::DIGESTSIZE + AES::BLOCKSIZE, payloadSize);
-	data.resize(payloadSize);
+	dec.ProcessData(&decrypted[0], pData + SHA256::DIGESTSIZE + AES::BLOCKSIZE, payloadSize);
+	data.swap(decrypted);
 }
 
 byte* aes_crypt::decode_b64_data(const string data) {
