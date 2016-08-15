@@ -238,7 +238,7 @@ namespace xServer.Core.Networking
 
         //TODO: change later
         private const bool encryptionEnabled = true;
-        private const bool compressionEnabled = false;
+        private const bool compressionEnabled = true;
 
         public Client(Server parentServer, Socket socket)
         {

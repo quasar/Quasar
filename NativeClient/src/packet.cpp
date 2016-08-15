@@ -26,11 +26,9 @@ void quasar_packet::begin_serialization() {
 }
 
 void quasar_packet::finalize_serialization() {
+	return;
 	auto instance = m_serializer.get_serializer_instance();
-	int32_t payloadSize = instance->size();
-	char *chars = reinterpret_cast<char*>(&payloadSize);
-
-	instance->insert(instance->begin(), chars, chars + sizeof(int32_t));
+	prefix_vector_length(*instance);
 }
 
 void quasar_packet::write_header(vector<unsigned char> &payloadBuf) const {

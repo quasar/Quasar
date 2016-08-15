@@ -152,6 +152,7 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\quicklz_helper.cpp" />
     <ClCompile Include="src\aes_crypt.cpp" />
     <ClCompile Include="src\client_packets.cpp" />
     <ClCompile Include="src\command_handler.cpp" />
@@ -179,6 +180,7 @@
     <ClInclude Include="include\primitives.h" />
     <ClInclude Include="include\quasar_client.h" />
     <ClInclude Include="include\quicklz.h" />
+    <ClInclude Include="include\quicklz_helper.h" />
     <ClInclude Include="include\serializer.h" />
     <ClInclude Include="include\server_packets.h" />
     <ClInclude Include="include\stdafx.h" />

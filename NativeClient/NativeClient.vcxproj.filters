@@ -54,6 +54,9 @@
     <ClCompile Include="src\aes_crypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="include\quicklz_helper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\stdafx.h">
@@ -102,6 +105,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\aes_crypt.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="include\quicklz_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

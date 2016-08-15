@@ -37,8 +37,8 @@ void primitives::write_string(vector<unsigned char> &payloadBuf, string value) {
 	write_varint32(payloadBuf, totalBytes + 1);
 	write_varint32(payloadBuf, totalBytes);
 
-	for (string::const_iterator it = value.begin(); it != value.end(); ++it) {
-		payloadBuf.push_back(*it);
+	for (auto const chr : value) {
+		payloadBuf.push_back(chr);
 	}
 }
 

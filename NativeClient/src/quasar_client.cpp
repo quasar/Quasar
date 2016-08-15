@@ -5,6 +5,8 @@
 #include "command_handler.h"
 #include "quicklz.h"
 #include <aes_crypt.h>
+#include <helpers.h>
+#include <quicklz_helper.h>
 
 using namespace std;
 using namespace boost::asio::ip;
@@ -14,7 +16,7 @@ quasar_client::quasar_client(boost::asio::io_service& io_srvc) :
 	m_resolver(io_srvc),
 	m_hdr_buf(boost::array<unsigned char, 4>()),
 	m_connected(false),
-	m_compress(false),
+	m_compress(true),
 	m_encrypt(true),
 	m_aes("1WvgEMPjdwfqIMeM9MclyQ==", "NcFtjbDOcsw7Evd3coMC0y4koy/SRZGydhNmno81ZOWOvdfg7sv0Cj5ad2ROUfX4QMscAIjYJdjrrs41+qcQwg==") {
 }
@@ -32,52 +34,22 @@ void quasar_client::connect(string hostname, string port) {
 
 void quasar_client::send(boost::shared_ptr<quasar_client_packet> packet) {
 	vector<byte> payloadBuf = packet->serialize_packet();
-	if (m_encrypt) {
-		auto slicedBuf = vector<byte>(payloadBuf.begin() + 4, payloadBuf.end());
-		m_aes.encrypt(slicedBuf);
-
-		int32_t payloadSize = slicedBuf.size();
-		char *chars = reinterpret_cast<char*>(&payloadSize);
-		slicedBuf.insert(slicedBuf.begin(), chars, chars + sizeof(int32_t));
-		payloadBuf.swap(slicedBuf);
-	}
 
 	if (m_compress) {
-		auto state_compress = static_cast<qlz_state_compress*>(malloc(sizeof(qlz_state_compress)));
-		int32_t origSize = *reinterpret_cast<int32_t*>(&payloadBuf[0]);
-		payloadBuf = vector<byte>(payloadBuf.begin() + sizeof(int32_t), payloadBuf.end());
-		char *buf = new char[payloadBuf.size()];
-		int32_t finalSize = qlz_compress(&payloadBuf[0], buf, payloadBuf.size(), state_compress);
-		vector<char> tmpBuf(finalSize+sizeof(int32_t));
-
-		memcpy(&tmpBuf[0], reinterpret_cast<char*>(&origSize), sizeof(int32_t));
-		memcpy(&tmpBuf[sizeof(int32_t)], buf, finalSize);
-		//delete[] buf;
-
-	/*	auto state_compress = static_cast<qlz_state_compress*>(malloc(sizeof(qlz_state_compress)));
-		char *buf = new char[payloadBuf.size()];
-		int32_t finalSize = qlz_compress(&payloadBuf[0], buf, payloadBuf.size(), state_compress);
-		vector<char> tmpBuf(finalSize);
-
-		memcpy(&tmpBuf[0], buf, finalSize);
-*/
-		//quasar_packet::finalize_serialization(tmpBuf);
-		boost::asio::async_write(m_sock, boost::asio::buffer(&tmpBuf[0], tmpBuf.size()),
-			[this](boost::system::error_code ec, std::size_t len)
-		{
-
-
-		});
-	} else {
-		//quasar_packet::finalize_serialization(payloadBuf);
-		boost::asio::async_write(m_sock, boost::asio::buffer(&payloadBuf[0], payloadBuf.size()),
-			[this](boost::system::error_code ec, std::size_t len)
-		{
-
-
-		});
+		quicklz_helper::compress_data(payloadBuf);
 	}
 
+	if (m_encrypt) {
+		m_aes.encrypt(payloadBuf);
+	}
+
+	prefix_vector_length(payloadBuf);
+
+	boost::asio::async_write(m_sock, boost::asio::buffer(&payloadBuf[0], payloadBuf.size()),
+		[this](boost::system::error_code ec, std::size_t len) {
+
+
+	});
 }
 
 bool quasar_client::get_compress() const {
@@ -128,8 +100,8 @@ void quasar_client::read_payload() {
 	async_read(m_sock, boost::asio::buffer(m_payload_buf),
 		[this](boost::system::error_code ec, std::size_t len)
 	{
-		if(ec) {
-			if(ec == boost::asio::error::eof
+		if (ec) {
+			if (ec == boost::asio::error::eof
 				|| ec == boost::asio::error::connection_reset) {
 				msig_on_disconnected();
 			}
@@ -137,7 +109,7 @@ void quasar_client::read_payload() {
 			read_header();
 		}
 
-		if(len != m_payload_buf.size()) {
+		if (len != m_payload_buf.size()) {
 			//TODO: fix this later
 			msig_on_disconnected();
 		}
@@ -149,21 +121,21 @@ void quasar_client::read_payload() {
 		boost::shared_ptr<quasar_server_packet> parsedPacket;
 
 		if (m_compress) {
-			int32_t finalSize = qlz_size_decompressed(reinterpret_cast<char*>(&m_payload_buf[0]));
-			vector<unsigned char> tmpBuf(finalSize);
-			auto state_decompress = static_cast<qlz_state_decompress*>(malloc(sizeof(qlz_state_decompress)));
-
-			qlz_decompress(reinterpret_cast<char*>(&m_payload_buf[0]), &tmpBuf[0], state_decompress);
-			parsedPacket = packet_factory::create_packet(tmpBuf);
+			quicklz_helper::decompress_data(m_payload_buf);
 		}
-		else {
+
+		try {
 			parsedPacket = packet_factory::create_packet(m_payload_buf);
 		}
+		catch (...) {
+			parsedPacket = nullptr;
+		}
 
-		if(quasar_packet::is_unknown(parsedPacket)) {
+		if (quasar_packet::is_unknown(parsedPacket)) {
 			// skip this packet
 			read_header();
-		} else {
+		}
+		else {
 			command_handler::handle_packet(this, parsedPacket);
 			read_header();
 		}

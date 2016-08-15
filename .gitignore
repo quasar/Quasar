@@ -37,6 +37,9 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+#quasar related
+QuasarRAT.VC.VC.opendb
+
 # DNX
 project.lock.json
 artifacts/

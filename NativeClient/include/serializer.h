@@ -19,36 +19,36 @@ public:
 
 	template<typename T>
 	void write_primitive_array(const std::vector<T> &val) {
-		throw 0;
+		throw std::runtime_error("Unsupported primitive type");
 	}
 
 	template <> 
 	void write_primitive_array<std::string>(const std::vector<std::string> &val) {
 		write_primitive(static_cast<uint32_t>(val.size() + 1));
-		for (std::vector<std::string>::const_iterator it = val.begin(); it != val.end(); ++it) {
-			write_primitive(*it);
+		for (auto const str : val) {
+			write_primitive(str);
 		}
 	}
 
 	template <> 
 	void write_primitive_array<int32_t>(const std::vector<int32_t> &val) {
 		write_primitive(static_cast<uint32_t>(val.size() + 1));
-		for (std::vector<int32_t>::const_iterator it = val.begin(); it != val.end(); ++it) {
-			write_primitive(*it);
+		for (auto const curVal : val) {
+			write_primitive(curVal);
 		}
 	}
 
 	template <> 
 	void write_primitive_array<uint32_t>(const std::vector<uint32_t> &val) {
 		write_primitive(static_cast<uint32_t>(val.size() + 1));
-		for (std::vector<uint32_t>::const_iterator it = val.begin(); it != val.end(); ++it) {
-			write_primitive(*it);
+		for (auto const curVal : val) {
+			write_primitive(curVal);
 		}
 	}
 
 	template<typename T>
 	void write_primitive(const T &val) {
-		throw 0;
+		throw std::runtime_error("Unsupported primitive type");
 	}
 
 	template <> 
