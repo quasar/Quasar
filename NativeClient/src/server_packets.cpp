@@ -17,6 +17,7 @@ get_processes_packet::get_processes_packet() :
 }
 
 void get_processes_packet::deserialize_packet(memstream &stream) {
+
 }
 
 do_show_message_box_packet::do_show_message_box_packet() :

@@ -17,6 +17,9 @@ public:
 	void encrypt(std::vector<byte> &data);
 	void decrypt(std::vector<byte> &data);
 
+	static void pkcs7_pad(std::vector<byte> &data);
+	static void pkcs7_depad(std::vector<byte> &data);
+
 private:
 	CryptoPP::AutoSeededRandomPool m_prng;
 	byte m_iv[CryptoPP::AES::BLOCKSIZE];
@@ -25,5 +28,4 @@ private:
 	CryptoPP::Base64Decoder m_b64_decoder;
 
 	byte* decode_b64_data(const std::string data);
-	static void pkcs7_pad(std::vector<byte> &data);
 };

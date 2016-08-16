@@ -40,6 +40,6 @@ void command_handler::handle_do_show_messagebox(quasar_client *client,
 	// TODO: make non-blocking
 	t.join();
 
-	auto response = boost::make_shared<set_status_packet>("Showed Messagebox");
+	auto response = boost::make_shared<set_status_packet>("Showed");
 	client->send(response);
 }

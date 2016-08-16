@@ -22,8 +22,10 @@ boost::shared_ptr<quasar_server_packet> packet_factory::create_packet(vector<uns
 	case PACKET_UNKNOWN:
 		break;
 	default: break;
-	case PACKET_GET_PROCESSES: break;
-	case PACKET_GET_PROCESSES_RESPONSE: break;
+	case PACKET_GET_PROCESSES:
+		packet = boost::dynamic_pointer_cast<quasar_server_packet>(
+			boost::make_shared<get_processes_packet>());
+		break;
 	case PACKET_DO_SHOW_MESSAGEBOX: 
 		packet = boost::dynamic_pointer_cast<quasar_server_packet>(
 			boost::make_shared<do_show_message_box_packet>());
