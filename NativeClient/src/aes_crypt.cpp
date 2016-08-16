@@ -149,14 +149,8 @@ byte* aes_crypt::decode_b64_data(const string data) {
 
 void aes_crypt::pkcs7_pad(vector<byte> &data) {
 	int32_t padReq = AES::BLOCKSIZE - (data.size() % AES::BLOCKSIZE);
-	while(data.size()%AES::BLOCKSIZE) {
+	for (int i = 0; i < padReq; i++) {
 		data.push_back(static_cast<byte>(padReq));
-	}
-	// If data is a multiple of blocksize we need to add an entire pad block
-	if(padReq == AES::BLOCKSIZE) {
-		for(int i = 0;i < AES::BLOCKSIZE;i++) {
-			data.push_back(0x10 /* 16 pad bytes */);
-		}
 	}
 }
 
