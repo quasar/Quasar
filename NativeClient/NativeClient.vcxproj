@@ -154,7 +154,9 @@
   <ItemGroup>
     <ClCompile Include="include\quicklz_helper.cpp" />
     <ClCompile Include="src\aes_crypt.cpp" />
-    <ClCompile Include="src\client_packets.cpp" />
+    <ClCompile Include="src\client_packets\get_authentication_response.cpp" />
+    <ClCompile Include="src\client_packets\set_status.cpp" />
+    <ClCompile Include="src\client_packets\get_processes_response.cpp" />
     <ClCompile Include="src\command_handler.cpp" />
     <ClCompile Include="src\NativeClient.cpp" />
     <ClCompile Include="src\packet.cpp" />
@@ -162,7 +164,9 @@
     <ClCompile Include="src\primitives.cpp" />
     <ClCompile Include="src\quasar_client.cpp" />
     <ClCompile Include="src\quicklz.cpp" />
-    <ClCompile Include="src\server_packets.cpp" />
+    <ClCompile Include="src\server_packets\do_show_message_box.cpp" />
+    <ClCompile Include="src\server_packets\get_authentication.cpp" />
+    <ClCompile Include="src\server_packets\get_processes.cpp" />
     <ClCompile Include="src\stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
     </ClCompile>

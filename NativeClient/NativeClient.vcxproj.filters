@@ -13,6 +13,15 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\packets">
+      <UniqueIdentifier>{fba92004-e9e5-4736-9b7d-adc7a51f5e7b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packets\client">
+      <UniqueIdentifier>{68398606-8642-4410-86b9-4b89315815c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\packets\server">
+      <UniqueIdentifier>{06d7a01a-42f2-4646-86aa-059da8cdcf70}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -45,17 +54,29 @@
     <ClCompile Include="src\quicklz.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\client_packets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\server_packets.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\aes_crypt.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="include\quicklz_helper.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_packets\get_authentication_response.cpp">
+      <Filter>Source Files\packets\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_packets\set_status.cpp">
+      <Filter>Source Files\packets\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\client_packets\get_processes_response.cpp">
+      <Filter>Source Files\packets\client</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_packets\get_authentication.cpp">
+      <Filter>Source Files\packets\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_packets\get_processes.cpp">
+      <Filter>Source Files\packets\server</Filter>
+    </ClCompile>
+    <ClCompile Include="src\server_packets\do_show_message_box.cpp">
+      <Filter>Source Files\packets\server</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

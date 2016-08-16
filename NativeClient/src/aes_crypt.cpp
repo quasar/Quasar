@@ -162,7 +162,5 @@ void aes_crypt::pkcs7_depad(std::vector<byte> &data) {
 		// invalid padding
 		return;
 	}
-	for(int i = 0;i < padSize;i++) {
-		data.pop_back();
-	}
+	data.erase(data.end() - padSize, data.end());
 }

@@ -3,23 +3,6 @@
 
 using namespace std;
 
-get_authentication_packet::get_authentication_packet() :
-	quasar_server_packet(PACKET_GET_AUTHENTICATION) {
-
-}
-
-void get_authentication_packet::deserialize_packet(memstream &stream) {
-
-}
-
-get_processes_packet::get_processes_packet() :
-	quasar_server_packet(PACKET_GET_PROCESSES) {
-}
-
-void get_processes_packet::deserialize_packet(memstream &stream) {
-
-}
-
 do_show_message_box_packet::do_show_message_box_packet() :
 	quasar_server_packet(PACKET_DO_SHOW_MESSAGEBOX) {
 }
