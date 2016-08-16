@@ -127,6 +127,8 @@ void aes_crypt::decrypt(vector<byte> &data) {
 	memcpy(m_iv, &data[SHA256::DIGESTSIZE], AES::BLOCKSIZE);
 	CBC_Mode<AES>::Decryption dec(&m_key[0], sizeof m_key, m_iv);
 	dec.ProcessData(&decrypted[0], pData + SHA256::DIGESTSIZE + AES::BLOCKSIZE, payloadSize);
+
+	pkcs7_depad(decrypted);
 	data.swap(decrypted);
 }
 
