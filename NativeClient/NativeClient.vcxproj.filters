@@ -24,9 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="src\NativeClient.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -43,9 +40,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\quasar_client.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\command_handler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\win_helper.cpp">
@@ -78,6 +72,9 @@
     <ClCompile Include="src\server_packets\do_show_message_box.cpp">
       <Filter>Source Files\packets\server</Filter>
     </ClCompile>
+    <ClCompile Include="src\quasar_client_win.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\stdafx.h">
@@ -99,9 +96,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\membuf.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\command_handler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\win_helper.h">
@@ -131,5 +125,11 @@
     <ClInclude Include="include\quicklz_helper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\quasar_client_win.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

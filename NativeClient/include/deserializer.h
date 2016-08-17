@@ -9,12 +9,12 @@ public:
 	}
 
 	template<typename T>
-	T read_primitive(memstream &stream) {
+	T read_primitive(mem_istream &stream) {
 		throw 0;
 	};
 
 	template <>
-	std::string read_primitive<std::string>(memstream &stream) {
+	std::string read_primitive<std::string>(mem_istream &stream) {
 		uint32_t totalBytes = primitives::read_varint32(stream);
 
 		if(totalBytes == 0 || totalBytes == 1) {

@@ -1,22 +1,20 @@
 #pragma once
+#ifdef USE_BOOST
 #include <vector>
 #include "boost/array.hpp"
 #include "boost/asio.hpp"
-#include "boost/signals2.hpp"
 #include <string>
-#include "client_packets.h"
+#include "packet.h"
 #include "aes_crypt.h"
+#include "client_packets.h"
 
-
-#define MAX_PACKET_SIZE (1024 * 1024) * 5
-
-class quasar_client {
+class quasar_client_multi {
 public:
-	quasar_client(boost::asio::io_service &io_srvc);
-	~quasar_client();
+	quasar_client_multi(boost::asio::io_service &io_srvc);
+	~quasar_client_multi();
 
-	void connect(std::string hostname, std::string port);
-	void send(boost::shared_ptr<quasar_client_packet> packet);
+	void q_connect(std::string hostname, std::string port);
+	void q_send(std::shared_ptr<quasar_client_packet> packet);
 
 	bool is_connected() const;
 	bool get_compress() const;
@@ -24,7 +22,7 @@ public:
 	void set_compress(const bool value);
 	
 	/* events */
-	boost::signals2::signal<void()> msig_on_disconnected;
+	//boost::signals2::signal<void()> msig_on_disconnected;
 private:
 	boost::asio::ip::tcp::socket m_sock;
 	boost::asio::ip::tcp::resolver m_resolver;
@@ -41,3 +39,4 @@ private:
 	void read_payload();
 
 };
+#endif

@@ -79,7 +79,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\mattias\Documents\QuasarRAT\NativeClient\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\mattias\Documents\QuasarRAT\NativeClient\thirdparty;C:\Users\mattias\Documents\QuasarRAT\NativeClient\include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Users\mattias\Documents\QuasarRAT\NativeClient\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -97,7 +97,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cryptlib-debug.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -121,7 +121,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <DebugInformationFormat>None</DebugInformationFormat>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -129,7 +129,10 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>false</GenerateDebugInformation>
-      <AdditionalDependencies>cryptlib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>cryptlib-release.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <StripPrivateSymbols>
+      </StripPrivateSymbols>
+      <AdditionalOptions>/Z7 %(AdditionalOptions)</AdditionalOptions>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -149,20 +152,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="include\quicklz_helper.cpp" />
     <ClCompile Include="src\aes_crypt.cpp" />
     <ClCompile Include="src\client_packets\get_authentication_response.cpp" />
     <ClCompile Include="src\client_packets\set_status.cpp" />
     <ClCompile Include="src\client_packets\get_processes_response.cpp" />
-    <ClCompile Include="src\command_handler.cpp" />
     <ClCompile Include="src\NativeClient.cpp" />
     <ClCompile Include="src\packet.cpp" />
     <ClCompile Include="src\packet_factory.cpp" />
     <ClCompile Include="src\primitives.cpp" />
     <ClCompile Include="src\quasar_client.cpp" />
+    <ClCompile Include="src\quasar_client_win.cpp" />
     <ClCompile Include="src\quicklz.cpp" />
     <ClCompile Include="src\server_packets\do_show_message_box.cpp" />
     <ClCompile Include="src\server_packets\get_authentication.cpp" />
@@ -175,7 +175,6 @@
   <ItemGroup>
     <ClInclude Include="include\aes_crypt.h" />
     <ClInclude Include="include\client_packets.h" />
-    <ClInclude Include="include\command_handler.h" />
     <ClInclude Include="include\deserializer.h" />
     <ClInclude Include="include\helpers.h" />
     <ClInclude Include="include\membuf.h" />
@@ -183,6 +182,7 @@
     <ClInclude Include="include\packet_factory.h" />
     <ClInclude Include="include\primitives.h" />
     <ClInclude Include="include\quasar_client.h" />
+    <ClInclude Include="include\quasar_client_win.h" />
     <ClInclude Include="include\quicklz.h" />
     <ClInclude Include="include\quicklz_helper.h" />
     <ClInclude Include="include\serializer.h" />
@@ -191,8 +191,12 @@
     <ClInclude Include="include\targetver.h" />
     <ClInclude Include="include\win_helper.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
+    <!-- <Import Project="..\packages\boost_random-vc140.1.61.0.0\build\native\boost_random-vc140.targets" Condition="Exists('..\packages\boost_random-vc140.1.61.0.0\build\native\boost_random-vc140.targets')" /> -->
     <Import Project="..\packages\boost.1.61.0.0\build\native\boost.targets" Condition="Exists('..\packages\boost.1.61.0.0\build\native\boost.targets')" />
     <Import Project="..\packages\boost_atomic-vc140.1.61.0.0\build\native\boost_atomic-vc140.targets" Condition="Exists('..\packages\boost_atomic-vc140.1.61.0.0\build\native\boost_atomic-vc140.targets')" />
     <Import Project="..\packages\boost_chrono-vc140.1.61.0.0\build\native\boost_chrono-vc140.targets" Condition="Exists('..\packages\boost_chrono-vc140.1.61.0.0\build\native\boost_chrono-vc140.targets')" />
@@ -268,5 +272,6 @@
     <Error Condition="!Exists('..\packages\boost_wave-vc140.1.61.0.0\build\native\boost_wave-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_wave-vc140.1.61.0.0\build\native\boost_wave-vc140.targets'))" />
     <Error Condition="!Exists('..\packages\boost_wserialization-vc140.1.61.0.0\build\native\boost_wserialization-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_wserialization-vc140.1.61.0.0\build\native\boost_wserialization-vc140.targets'))" />
     <Error Condition="!Exists('..\packages\boost-vc140.1.61.0.0\build\native\boost-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost-vc140.1.61.0.0\build\native\boost-vc140.targets'))" />
+    <!-- <Error Condition="!Exists('..\packages\boost_random-vc140.1.61.0.0\build\native\boost_random-vc140.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\boost_random-vc140.1.61.0.0\build\native\boost_random-vc140.targets'))" /> -->
   </Target>
 </Project>

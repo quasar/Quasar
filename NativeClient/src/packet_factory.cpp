@@ -1,34 +1,32 @@
 #include "stdafx.h"
 #include "packet_factory.h"
 #include <membuf.h>
-#include <istream>
-#include <boost/make_shared.hpp>
 #include <primitives.h>
 
 using namespace std;
 
-boost::shared_ptr<quasar_server_packet> packet_factory::create_packet(vector<unsigned char> &payload) {
-	basic_array_source<unsigned char> input_source(&payload[0], payload.size());
+std::shared_ptr<quasar_server_packet> packet_factory::create_packet(vector<unsigned char> &payload) {
+	//basic_array_source<unsigned char> input_source(&payload[0], payload.size());
 
-	boost::shared_ptr<quasar_server_packet> packet;
-	memstream stream(input_source);
+	std::shared_ptr<quasar_server_packet> packet;
+	mem_istream stream(&payload[0], payload.size());
 	char packetId = primitives::read_varint32(stream);
 
 	switch (static_cast<QuasarPacketId>(packetId)) {
 	case PACKET_GET_AUTHENTICATION:
-		packet = boost::dynamic_pointer_cast<quasar_server_packet>(
-			boost::make_shared<get_authentication_packet>());
+		packet = std::dynamic_pointer_cast<quasar_server_packet>(
+			std::make_shared<get_authentication_packet>());
 		break;
 	case PACKET_UNKNOWN:
 		break;
 	default: break;
 	case PACKET_GET_PROCESSES:
-		packet = boost::dynamic_pointer_cast<quasar_server_packet>(
-			boost::make_shared<get_processes_packet>());
+		packet = std::dynamic_pointer_cast<quasar_server_packet>(
+			std::make_shared<get_processes_packet>());
 		break;
-	case PACKET_DO_SHOW_MESSAGEBOX: 
-		packet = boost::dynamic_pointer_cast<quasar_server_packet>(
-			boost::make_shared<do_show_message_box_packet>());
+	case PACKET_DO_SHOW_MESSAGEBOX:
+		packet = std::dynamic_pointer_cast<quasar_server_packet>(
+			std::make_shared<do_show_message_box_packet>());
 		break;
 	}
 

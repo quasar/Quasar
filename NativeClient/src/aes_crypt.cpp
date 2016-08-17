@@ -12,12 +12,12 @@ aes_crypt::aes_crypt() {
 	
 }
 
-aes_crypt::aes_crypt(std::string b64key, std::string b64authKey) :
-	m_b64_decoder(),
+aes_crypt::aes_crypt(std::string b64key, std::string b64authKey) : 
 	m_prng(),
 	m_key(),
-	m_auth_key() {
-	byte *tmp = decode_b64_data(b64key);
+	m_auth_key(),
+	m_b64_decoder() {
+	unsigned char *tmp = decode_b64_data(b64key);
 	if (tmp != nullptr) {
 		memcpy(&m_key[0], tmp, AES::DEFAULT_KEYLENGTH);
 	}
@@ -30,28 +30,28 @@ aes_crypt::aes_crypt(std::string b64key, std::string b64authKey) :
 }
 
 void aes_crypt::set_key(string b64key) {
-	byte *tmp = decode_b64_data(b64key);
+	unsigned char *tmp = decode_b64_data(b64key);
 	if (tmp != nullptr) {
 		memcpy(&m_key[0], tmp, AES::DEFAULT_KEYLENGTH);
 	}
 	delete[] tmp;
 }
 
-void aes_crypt::set_key(vector<byte> key) {
+void aes_crypt::set_key(vector<unsigned char> key) {
 	if(key.size() >= sizeof m_key) {
 		memcpy(&m_key[0], &key[0], sizeof m_key);
 	}
 }
 
 void aes_crypt::set_auth_key(string b64authKey) {
-	byte *tmp = decode_b64_data(b64authKey);
+	unsigned char *tmp = decode_b64_data(b64authKey);
 	if (tmp != nullptr) {
 		memcpy(&m_auth_key[0], tmp, 64);
 	}
 	delete[] tmp;
 }
 
-void aes_crypt::set_auth_key(std::vector<byte> authKey) {
+void aes_crypt::set_auth_key(std::vector<unsigned char> authKey) {
 	if (authKey.size() >= sizeof m_auth_key) {
 		memcpy(&m_auth_key[0], &authKey[0], sizeof m_auth_key);
 	}
@@ -64,7 +64,7 @@ void aes_crypt::set_auth_key(std::vector<byte> authKey) {
 *     32 bytes    16 bytes
 */
 
-void aes_crypt::encrypt(vector<byte> &data) {
+void aes_crypt::encrypt(vector<unsigned char> &data) {
 	char testBlock1[16], testBlock2[64];
 #ifdef WIN32
 	ZeroMemory(testBlock1, 16);
@@ -80,20 +80,20 @@ void aes_crypt::encrypt(vector<byte> &data) {
 	}
 
 	pkcs7_pad(data);
-	vector<byte> finalBuff(data.size() + sizeof m_key + 32);
+	vector<unsigned char> finalBuff(data.size() + sizeof m_key + 32);
 
 	m_prng.GenerateBlock(m_iv, sizeof m_iv);
 	memcpy(&finalBuff[SHA256::DIGESTSIZE], m_iv, sizeof m_iv);
 
-	auto pData = reinterpret_cast<byte*>(&data[0]);
+	auto pData = reinterpret_cast<unsigned char*>(&data[0]);
 
 	CBC_Mode<AES>::Encryption enc(&m_key[0], sizeof m_key, m_iv);
 	enc.ProcessData(pData, pData, data.size());
 	memcpy(&finalBuff[SHA256::DIGESTSIZE+AES::BLOCKSIZE], pData, data.size());
 
-	byte digest[SHA256::DIGESTSIZE];
+	unsigned char digest[SHA256::DIGESTSIZE];
 	HMAC<SHA256> hmac(&m_auth_key[0], sizeof m_auth_key);
-	hmac.CalculateDigest(digest, reinterpret_cast<byte*>(&finalBuff[SHA256::DIGESTSIZE]), finalBuff.size()- SHA256::DIGESTSIZE);
+	hmac.CalculateDigest(digest, reinterpret_cast<unsigned char*>(&finalBuff[SHA256::DIGESTSIZE]), finalBuff.size()- SHA256::DIGESTSIZE);
 	memcpy(&finalBuff[0], digest, SHA256::DIGESTSIZE);
 
 	data.clear();
@@ -101,13 +101,13 @@ void aes_crypt::encrypt(vector<byte> &data) {
 	memcpy(&data[0], &finalBuff[0], finalBuff.size());
 }
 
-void aes_crypt::decrypt(vector<byte> &data) {
+void aes_crypt::decrypt(vector<unsigned char> &data) {
 	if(data.size() <= SHA256::DIGESTSIZE+AES::BLOCKSIZE) {
 		return;
 	}
 	
-	byte receivedHash[SHA256::DIGESTSIZE];
-	byte calculatedHash[SHA256::DIGESTSIZE];
+	unsigned char receivedHash[SHA256::DIGESTSIZE];
+	unsigned char calculatedHash[SHA256::DIGESTSIZE];
 
 	memcpy(receivedHash, &data[0], sizeof receivedHash);
 
@@ -119,10 +119,10 @@ void aes_crypt::decrypt(vector<byte> &data) {
 		return;
 	}
 
-	auto pData = reinterpret_cast<byte*>(&data[0]);
+	auto pData = reinterpret_cast<unsigned char*>(&data[0]);
 	// includes padding
 	uint32_t payloadSize = data.size() - (SHA256::DIGESTSIZE + AES::BLOCKSIZE);
-	vector<byte> decrypted(payloadSize);
+	vector<unsigned char> decrypted(payloadSize);
 
 	memcpy(m_iv, &data[SHA256::DIGESTSIZE], AES::BLOCKSIZE);
 	CBC_Mode<AES>::Decryption dec(&m_key[0], sizeof m_key, m_iv);
@@ -132,32 +132,32 @@ void aes_crypt::decrypt(vector<byte> &data) {
 	data.swap(decrypted);
 }
 
-byte* aes_crypt::decode_b64_data(const string data) {
+unsigned char* aes_crypt::decode_b64_data(const string data) {
 	// TODO: make real instance reusable...
 	Base64Decoder decoder;
-	decoder.Put(reinterpret_cast<const byte*>(data.c_str()), data.size(), true);
+	decoder.Put(reinterpret_cast<const unsigned char*>(data.c_str()), data.size(), true);
 	decoder.MessageEnd();
 
 	auto size = decoder.MaxRetrievable();
-	byte *decoded = nullptr;
+	unsigned char *decoded = nullptr;
 
 	if (size && size <= SIZE_MAX) {
-		decoded = new byte[size];
+		decoded = new unsigned char[size];
 		decoder.Get(decoded, size);
 	}
 
 	return decoded;
 }
 
-void aes_crypt::pkcs7_pad(vector<byte> &data) {
+void aes_crypt::pkcs7_pad(vector<unsigned char> &data) {
 	int32_t padReq = AES::BLOCKSIZE - (data.size() % AES::BLOCKSIZE);
 	for (int i = 0; i < padReq; i++) {
-		data.push_back(static_cast<byte>(padReq));
+		data.push_back(static_cast<unsigned char>(padReq));
 	}
 }
 
-void aes_crypt::pkcs7_depad(std::vector<byte> &data) {
-	byte padSize = data.back();
+void aes_crypt::pkcs7_depad(std::vector<unsigned char> &data) {
+	unsigned char padSize = data.back();
 	if(data.size() < padSize) {
 		// invalid padding
 		return;

@@ -10,7 +10,7 @@ void primitives::write_varint32(vector<unsigned char>& payloadBuf, uint32_t valu
 	payloadBuf.push_back(static_cast<char>(value));
 }
 
-uint32_t primitives::read_varint32(memstream& stream) {
+uint32_t primitives::read_varint32(mem_istream& stream) {
 	int32_t result = 0;
 	int32_t offset = 0;
 

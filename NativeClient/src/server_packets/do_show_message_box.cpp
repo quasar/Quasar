@@ -1,5 +1,7 @@
 #include "stdafx.h"
 #include "server_packets.h"
+#include <thread>
+#include <helpers.h>
 
 using namespace std;
 
@@ -7,11 +9,23 @@ do_show_message_box_packet::do_show_message_box_packet() :
 	quasar_server_packet(PACKET_DO_SHOW_MESSAGEBOX) {
 }
 
-void do_show_message_box_packet::deserialize_packet(memstream &stream) {
+void do_show_message_box_packet::deserialize_packet(mem_istream &stream) {
 	m_caption = m_deserializer.read_primitive<string>(stream);
 	m_btn = m_deserializer.read_primitive<string>(stream);
 	m_icon = m_deserializer.read_primitive<string>(stream);
 	m_text = m_deserializer.read_primitive<string>(stream);
+}
+
+void do_show_message_box_packet::execute(quasar_client &client) {
+	std::thread t([this] {
+		MessageBoxW(nullptr, s2ws(get_text()).c_str(), s2ws(get_caption()).c_str(),
+			get_icon_value(m_icon) | get_button_value(m_btn));
+	});
+	// TODO: make non-blocking
+	t.join();
+
+	auto response = std::make_shared<set_status_packet>("Showed Messagebox");
+	client.q_send(response);
 }
 
 string do_show_message_box_packet::get_caption() const {

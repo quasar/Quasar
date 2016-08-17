@@ -1,5 +1,4 @@
 #pragma once
-#include "boost/shared_ptr.hpp"
 #include <vector>
 #include "serializer.h"
 #include "deserializer.h"
@@ -24,14 +23,11 @@ public:
 
 	QuasarPacketId get_id() const;
 
-	//virtual std::vector<char> serialize_packet() = 0;
-	//virtual void deserialize_packet(memstream &stream) = 0;
-
 	static bool is_unknown(const quasar_packet &packet) {
 		return packet.get_id() == PACKET_UNKNOWN;
 	}
 
-	static bool is_unknown(const boost::shared_ptr<quasar_packet> packet) {
+	static bool is_unknown(const std::shared_ptr<quasar_packet> packet) {
 		return packet == nullptr || packet->get_id() == PACKET_UNKNOWN;
 	}
 
