@@ -16,8 +16,8 @@ namespace xClient.Config
         public static string KEY = "1WvgEMPjdwfqIMeM9MclyQ==";
         public static string AUTHKEY = "NcFtjbDOcsw7Evd3coMC0y4koy/SRZGydhNmno81ZOWOvdfg7sv0Cj5ad2ROUfX4QMscAIjYJdjrrs41+qcQwg==";
         public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
-        public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
-        public static string SUBFOLDER = "Test";
+        public static string DIRECTORY = Environment.GetFolderPath(SPECIALFOLDER);
+        public static string SUBDIRECTORY = "Test";
         public static string INSTALLNAME = "test.exe";
         public static bool INSTALL = false;
         public static bool STARTUP = false;
@@ -28,7 +28,7 @@ namespace xClient.Config
         public static string TAG = "DEBUG";
         public static string LOGDIRECTORYNAME = "Logs";
         public static bool HIDELOGDIRECTORY = false;
-        public static bool HIDEINSTALLSUBFOLDER = false;
+        public static bool HIDEINSTALLSUBDIRECTORY = false;
 
         public static bool Initialize()
         {
@@ -42,8 +42,8 @@ namespace xClient.Config
         public static string KEY = "";
         public static string AUTHKEY = "";
         public static Environment.SpecialFolder SPECIALFOLDER = Environment.SpecialFolder.ApplicationData;
-        public static string DIR = Environment.GetFolderPath(SPECIALFOLDER);
-        public static string SUBFOLDER = "";
+        public static string DIRECTORY = Environment.GetFolderPath(SPECIALFOLDER);
+        public static string SUBDIRECTORY = "";
         public static string INSTALLNAME = "";
         public static bool INSTALL = false;
         public static bool STARTUP = false;
@@ -55,7 +55,7 @@ namespace xClient.Config
         public static string TAG = "";
         public static string LOGDIRECTORYNAME = "";
         public static bool HIDELOGDIRECTORY = false;
-        public static bool HIDEINSTALLSUBFOLDER = false;
+        public static bool HIDEINSTALLSUBDIRECTORY = false;
 
         public static bool Initialize()
         {
@@ -64,7 +64,7 @@ namespace xClient.Config
             TAG = AES.Decrypt(TAG);
             VERSION = AES.Decrypt(VERSION);
             HOSTS = AES.Decrypt(HOSTS);
-            SUBFOLDER = AES.Decrypt(SUBFOLDER);
+            SUBDIRECTORY = AES.Decrypt(SUBDIRECTORY);
             INSTALLNAME = AES.Decrypt(INSTALLNAME);
             MUTEX = AES.Decrypt(MUTEX);
             STARTUPKEY = AES.Decrypt(STARTUPKEY);
@@ -89,7 +89,7 @@ namespace xClient.Config
                     break;
             }
 
-            DIR = Environment.GetFolderPath(SPECIALFOLDER);
+            DIRECTORY = Environment.GetFolderPath(SPECIALFOLDER);
         }
     }
 }

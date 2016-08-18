@@ -91,7 +91,7 @@ namespace xClient
                 return false;
 
             AES.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
-            ClientData.InstallPath = Path.Combine(Settings.DIR, ((!string.IsNullOrEmpty(Settings.SUBFOLDER)) ? Settings.SUBFOLDER + @"\" : "") + Settings.INSTALLNAME);
+            ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
             
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
@@ -116,7 +116,7 @@ namespace xClient
                     {
                     }
                 }
-                if (Settings.INSTALL && Settings.HIDEINSTALLSUBFOLDER && !string.IsNullOrEmpty(Settings.SUBFOLDER))
+                if (Settings.INSTALL && Settings.HIDEINSTALLSUBDIRECTORY && !string.IsNullOrEmpty(Settings.SUBDIRECTORY))
                 {
                     try
                     {

