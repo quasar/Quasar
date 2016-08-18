@@ -1,5 +1,23 @@
 #QuasarRAT Changelog
 
+##Quasar v1.3.0.0 [TBA]
+* Added Registry Editor
+* Added Remote Webcam
+* Added Windows DPI scaling support
+* Added IPv6 support
+* Added ability to elevate Client
+* Added full Unicode support
+* Added Remote TCP Connections Viewer
+* Added option to hide sub directory of installation path
+* Improved cryptography
+* Fixed XSS vulnerability in Keylogger Logs
+* Fixed Remote Messagebox having wrong icon
+* Fixed FileZilla Recovery base64 decoding
+* Fixed UPnP discovery freezing in some cases
+* Fixed IP Geolocation
+* Fixed Client loses Administrator privileges on restart
+* Some minor improvements
+
 ##Quasar v1.2.0.0 [12.10.2015]
 * Added Client restart on unhandled exceptions
 * Added additional settings to Keylogger (set/hide log-directory)
