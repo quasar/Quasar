@@ -40,8 +40,8 @@ namespace xServer.Forms
 
             return Path.GetFullPath(Path.Combine(_currentDir, item));
         }
-		
-		private void NavigateUp()
+
+        private void NavigateUp()
         {
             if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
             {
