@@ -35,7 +35,24 @@ namespace xServer.Forms
 
         private string GetAbsolutePath(string item)
         {
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
+                    return Path.Combine(_currentDir, item + '/');
+
             return Path.GetFullPath(Path.Combine(_currentDir, item));
+        }
+		
+		private void NavigateUp()
+        {
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
+            {
+                if (_currentDir.LastIndexOf('/') > 0)
+                {
+                    _currentDir = _currentDir.TrimEnd('/');
+                    SetCurrentDir(_currentDir.Remove(_currentDir.LastIndexOf('/') + 1));
+                }
+            }
+            else
+                SetCurrentDir(GetAbsolutePath(@"..\"));
         }
 
         private void FrmFileManager_Load(object sender, EventArgs e)
@@ -71,7 +88,7 @@ namespace xServer.Forms
                 switch (type)
                 {
                     case PathType.Back:
-                        SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
+                        NavigateUp();
                         RefreshDirectory();
                         break;
                     case PathType.Directory:
