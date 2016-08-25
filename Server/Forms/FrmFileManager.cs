@@ -36,7 +36,10 @@ namespace xServer.Forms
         private string GetAbsolutePath(string item)
         {
             if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
-                    return Path.Combine(_currentDir, item + '/');
+                if (_currentDir.Length == 1)
+                    return Path.Combine(_currentDir, item);
+                else
+                    return Path.Combine(_currentDir + '/', item);
 
             return Path.GetFullPath(Path.Combine(_currentDir, item));
         }
@@ -47,9 +50,13 @@ namespace xServer.Forms
             {
                 if (_currentDir.LastIndexOf('/') > 0)
                 {
+                    _currentDir = _currentDir.Remove(_currentDir.LastIndexOf('/') + 1);
                     _currentDir = _currentDir.TrimEnd('/');
-                    SetCurrentDir(_currentDir.Remove(_currentDir.LastIndexOf('/') + 1));
                 }
+                else
+                    _currentDir = "/";
+
+                SetCurrentDir(_currentDir);
             }
             else
                 SetCurrentDir(GetAbsolutePath(@"..\"));
