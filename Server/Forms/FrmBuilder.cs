@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Windows.Forms;
 using xServer.Core.Build;
 using xServer.Core.Data;
@@ -67,7 +68,7 @@ namespace xServer.Forms
             profile.Tag = txtTag.Text;
             profile.Hosts = HostHelper.GetRawHosts(_hosts);
             profile.Password = txtPassword.Text;
-            profile.Delay = (int)numericUpDownDelay.Value;
+            profile.Delay = (int) numericUpDownDelay.Value;
             profile.Mutex = txtMutex.Text;
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallName.Text;
@@ -123,13 +124,14 @@ namespace xServer.Forms
             HasChanged();
 
             var host = txtHost.Text;
-            ushort port = (ushort)numericUpDownPort.Value;
+            ushort port = (ushort) numericUpDownPort.Value;
 
             _hosts.Add(new Host {Hostname = host, Port = port});
             txtHost.Text = "";
         }
 
         #region "Context Menu"
+
         private void removeHostToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HasChanged();
@@ -155,9 +157,11 @@ namespace xServer.Forms
 
             _hosts.Clear();
         }
+
         #endregion
 
         #region "Misc"
+
         private void chkShowPass_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
@@ -237,14 +241,18 @@ namespace xServer.Forms
 
             UpdateIconControlStates();
         }
+
         #endregion
 
         private bool CheckForEmptyInput()
         {
-            return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
-                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
-                 (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) && // Installation
-                 (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
+            return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) &&
+                    // General Settings
+                    _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
+                    (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) &&
+                    // Installation
+                    (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text))));
+                // Installation
         }
 
         private BuildOptions ValidateInput()
@@ -261,7 +269,7 @@ namespace xServer.Forms
             options.Mutex = txtMutex.Text;
             options.RawHosts = HostHelper.GetRawHosts(_hosts);
             options.Password = txtPassword.Text;
-            options.Delay = (int)numericUpDownDelay.Value;
+            options.Delay = (int) numericUpDownDelay.Value;
             options.IconPath = txtIconPath.Text;
             options.Version = Application.ProductVersion;
             options.InstallPath = GetInstallPath();
@@ -366,12 +374,40 @@ namespace xServer.Forms
             if (!options.ValidationSuccess)
                 return;
 
+            SetBuildState(false);
+            Thread t = new Thread(BuildClient);
+            t.Start(options);
+        }
+
+        private void SetBuildState(bool state)
+        {
             try
             {
+                this.Invoke((MethodInvoker)delegate
+                {
+                    btnBuild.Text = (state) ? "Build" : "Building...";
+                    btnBuild.Enabled = state;
+                });
+            }
+            catch (InvalidOperationException)
+            {
+            }
+        }
+
+        private void BuildClient(object o)
+        {
+            try
+            {
+                BuildOptions options = (BuildOptions) o;
+
                 ClientBuilder.Build(options);
 
-                MessageBox.Show("Successfully built client!\nSaved to: " + options.OutputPath, "Build Success", MessageBoxButtons.OK,
-                    MessageBoxIcon.Information);
+                MessageBox.Show(
+                    "Successfully built client!\nSaved to: " + options.OutputPath +
+                    "\n\nOnly install it on computers where you have the permission to do so!", "Build Success",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+                SetBuildState(true);
             }
             catch (Exception ex)
             {
