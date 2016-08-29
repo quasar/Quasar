@@ -131,7 +131,6 @@ namespace xServer.Forms
         }
 
         #region "Context Menu"
-
         private void removeHostToolStripMenuItem_Click(object sender, EventArgs e)
         {
             HasChanged();
@@ -157,11 +156,9 @@ namespace xServer.Forms
 
             _hosts.Clear();
         }
-
         #endregion
 
         #region "Misc"
-
         private void chkShowPass_CheckedChanged(object sender, EventArgs e)
         {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
@@ -241,18 +238,14 @@ namespace xServer.Forms
 
             UpdateIconControlStates();
         }
-
         #endregion
 
         private bool CheckForEmptyInput()
         {
-            return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) &&
-                    // General Settings
-                    _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
-                    (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) &&
-                    // Installation
-                    (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text))));
-                // Installation
+            return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
+                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
+                 (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) && // Installation
+                 (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
         }
 
         private BuildOptions ValidateInput()
@@ -375,6 +368,7 @@ namespace xServer.Forms
                 return;
 
             SetBuildState(false);
+
             Thread t = new Thread(BuildClient);
             t.Start(options);
         }
