@@ -35,18 +35,20 @@ namespace xServer.Forms
 
         private string GetAbsolutePath(string item)
         {
-            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
+            {
                 if (_currentDir.Length == 1)
                     return Path.Combine(_currentDir, item);
                 else
                     return Path.Combine(_currentDir + '/', item);
+            }
 
             return Path.GetFullPath(Path.Combine(_currentDir, item));
         }
 
         private void NavigateUp()
         {
-            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/')
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
             {
                 if (_currentDir.LastIndexOf('/') > 0)
                 {
