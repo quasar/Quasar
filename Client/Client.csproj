@@ -150,6 +150,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoChatMessage.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChatStart.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChatStop.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRemoteDesktopProtocol.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
