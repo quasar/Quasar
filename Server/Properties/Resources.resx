@@ -122,7 +122,7 @@
     <value>..\Resources\restart.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="server_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\server-add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\server_add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="startup_programs" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\startup_programs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -137,7 +137,7 @@
     <value>..\images\mouse_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="task_manager" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\task-manager.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\task_manager.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="actions" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\actions.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -147,6 +147,9 @@
   </data>
   <data name="world_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\world_go.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="run" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\run.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="terminal" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -173,13 +176,16 @@
     <value>..\Resources\textfield_rename.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="uac_shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\uac-shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\uac_shield.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="server_link" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\server_link.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="broom" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\broom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="server_uninstall" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\server-uninstall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\server_uninstall.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="computer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\computer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -188,7 +194,7 @@
     <value>..\images\monitor.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="server_reconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\server-reconnect.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\server_reconnect.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="application_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\application_add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -230,9 +236,6 @@
   <data name="mouse_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\mouse_add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="Quasar_Server" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\icons\Quasar_Server.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -242,23 +245,23 @@
   <data name="save" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\save.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="application_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\application_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="keyboard_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\keyboard_add.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Quasar_Server" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\icons\Quasar_Server.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="logger" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\logger.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="run" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\run.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="application_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\application_delete.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="registry" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\registry.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="server_disconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\server-disconnect.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+    <value>..\images\server_disconnect.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
   <data name="server" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\server.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
@@ -266,7 +269,7 @@
   <data name="information" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\images\information.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="broom" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\images\broom.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  <data name="transmit_blue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\images\transmit_blue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

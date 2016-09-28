@@ -81,7 +81,7 @@
             this.lstConnections.FullRowSelect = true;
             this.lstConnections.Location = new System.Drawing.Point(0, 0);
             this.lstConnections.Name = "lstConnections";
-            this.lstConnections.Size = new System.Drawing.Size(555, 411);
+            this.lstConnections.Size = new System.Drawing.Size(703, 421);
             this.lstConnections.TabIndex = 0;
             this.lstConnections.UseCompatibleStateImageBehavior = false;
             this.lstConnections.View = System.Windows.Forms.View.Details;
@@ -89,7 +89,7 @@
             // columnHeader1
             // 
             this.columnHeader1.Text = "Process";
-            this.columnHeader1.Width = 100;
+            this.columnHeader1.Width = 179;
             // 
             // columnHeader2
             // 
@@ -120,7 +120,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(555, 411);
+            this.ClientSize = new System.Drawing.Size(703, 421);
             this.Controls.Add(this.lstConnections);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));

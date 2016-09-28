@@ -103,7 +103,7 @@ namespace xServer.Forms
             this.lineToolStripMenuItem,
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
-            this.contextMenuStrip.Size = new System.Drawing.Size(150, 120);
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
             // 
             // connectionToolStripMenuItem
             // 
@@ -114,7 +114,7 @@ namespace xServer.Forms
             this.uninstallToolStripMenuItem});
             this.connectionToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("connectionToolStripMenuItem.Image")));
             this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
-            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.connectionToolStripMenuItem.Text = "Connection";
             // 
             // updateToolStripMenuItem
@@ -165,7 +165,7 @@ namespace xServer.Forms
             this.actionsToolStripMenuItem});
             this.systemToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("systemToolStripMenuItem.Image")));
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
-            this.systemToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.systemToolStripMenuItem.Text = "System";
             // 
             // systemInformationToolStripMenuItem
@@ -210,6 +210,7 @@ namespace xServer.Forms
             // 
             // connectionsToolStripMenuItem
             // 
+            this.connectionsToolStripMenuItem.Image = global::xServer.Properties.Resources.transmit_blue;
             this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
             this.connectionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.connectionsToolStripMenuItem.Text = "TCP Connections";
@@ -288,7 +289,7 @@ namespace xServer.Forms
             this.keyloggerToolStripMenuItem});
             this.surveillanceToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("surveillanceToolStripMenuItem.Image")));
             this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
-            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.surveillanceToolStripMenuItem.Text = "Surveillance";
             // 
             // remoteDesktopToolStripMenuItem
@@ -331,7 +332,7 @@ namespace xServer.Forms
             this.showMessageboxToolStripMenuItem});
             this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
             this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
-            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
             // 
             // remoteExecuteToolStripMenuItem
@@ -379,12 +380,12 @@ namespace xServer.Forms
             // lineToolStripMenuItem
             // 
             this.lineToolStripMenuItem.Name = "lineToolStripMenuItem";
-            this.lineToolStripMenuItem.Size = new System.Drawing.Size(146, 6);
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
-            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
