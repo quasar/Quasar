@@ -1,6 +1,6 @@
 #QuasarRAT Changelog
 
-##Quasar v1.3.0.0 [TBA]
+##Quasar v1.3.0.0 [28.09.2016]
 * Added Registry Editor
 * Added Remote Webcam
 * Added Windows DPI scaling support
