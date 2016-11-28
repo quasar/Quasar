@@ -32,6 +32,7 @@
             this.btnStop = new System.Windows.Forms.Button();
             this.cbSampleRate = new System.Windows.Forms.ComboBox();
             this.label2 = new System.Windows.Forms.Label();
+            this.btnSpeak = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnCapture
@@ -49,6 +50,7 @@
             // 
             // cbAudioDevices
             // 
+            this.cbAudioDevices.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbAudioDevices.FormattingEnabled = true;
             this.cbAudioDevices.Location = new System.Drawing.Point(89, 12);
             this.cbAudioDevices.Name = "cbAudioDevices";
@@ -66,6 +68,7 @@
             // 
             // cbChannels
             // 
+            this.cbChannels.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbChannels.FormattingEnabled = true;
             this.cbChannels.Location = new System.Drawing.Point(89, 70);
             this.cbChannels.Name = "cbChannels";
@@ -94,6 +97,7 @@
             // 
             // cbSampleRate
             // 
+            this.cbSampleRate.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.cbSampleRate.FormattingEnabled = true;
             this.cbSampleRate.Items.AddRange(new object[] {
             "8000",
@@ -117,11 +121,24 @@
             this.label2.TabIndex = 10;
             this.label2.Text = "Samplerate:";
             // 
+            // btnSpeak
+            // 
+            this.btnSpeak.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnSpeak.Location = new System.Drawing.Point(12, 102);
+            this.btnSpeak.Name = "btnSpeak";
+            this.btnSpeak.Size = new System.Drawing.Size(86, 29);
+            this.btnSpeak.TabIndex = 11;
+            this.btnSpeak.Text = "Hold to Speak";
+            this.btnSpeak.UseVisualStyleBackColor = true;
+            this.btnSpeak.MouseDown += new System.Windows.Forms.MouseEventHandler(this.btnSpeak_MouseDown);
+            this.btnSpeak.MouseUp += new System.Windows.Forms.MouseEventHandler(this.btnSpeak_MouseUp);
+            // 
             // FrmMicrophone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(305, 143);
+            this.Controls.Add(this.btnSpeak);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbSampleRate);
             this.Controls.Add(this.btnStop);
@@ -154,5 +171,6 @@
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ComboBox cbSampleRate;
         private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Button btnSpeak;
     }
 }

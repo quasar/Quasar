@@ -234,6 +234,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoSpeak.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetAudioDevices.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetAudioStream.cs" />

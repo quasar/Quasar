@@ -3,9 +3,12 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Windows.Forms;
 using NAudio.Wave;
+using xServer.Core.NAudio.Wave;
 using xServer.Core.NAudio.Wave.WaveFormats;
+using xServer.Core.NAudio.Wave.WaveInputs;
 using xServer.Core.NAudio.Wave.WaveOutputs;
 using xServer.Core.Networking;
+using xServer.Core.Packets.ClientPackets;
 
 namespace xServer.Forms {
     public partial class FrmMicrophone : Form {
@@ -22,6 +25,14 @@ namespace xServer.Forms {
 
         private WaveOut WaveOut { get; set; }
 
+        public WaveFormat WaveFormat { get; set; }
+
+        public WaveInEvent WaveInEvent { get; set; }
+
+        public int Device { get; set; }
+
+        public byte[] SpokenData { get; set; }
+
         private BufferedWaveProvider waveProvider { get; set; }
         #endregion 
 
@@ -37,6 +48,18 @@ namespace xServer.Forms {
             WaveOut = new WaveOut();
             waveProvider = new BufferedWaveProvider(new WaveFormat());
             WaveOut.Init(waveProvider);
+
+            Device = WaveIn.DeviceCount;
+            if (Device == 0) {
+                return;
+            }
+
+            WaveFormat = new WaveFormat(44100, 2);
+            WaveInEvent = new WaveInEvent {
+                BufferMilliseconds = 50,
+                DeviceNumber = 0,
+                WaveFormat = WaveFormat
+            };
         }
 
         private void FrmMicrophone_Load(object sender, EventArgs e) {
@@ -88,8 +111,8 @@ namespace xServer.Forms {
                 return;
             }
 
-            var selectedChannel = Convert.ToInt32(cbChannels.Text);
-            var selectedSampleRate = Convert.ToInt32(cbSampleRate.Text);
+            int selectedChannel = Convert.ToInt32(cbChannels.Text);
+            int selectedSampleRate = Convert.ToInt32(cbSampleRate.Text);
             new Core.Packets.ServerPackets.GetAudioStream(cbAudioDevices.SelectedIndex,
                 selectedChannel, selectedSampleRate).Execute(_connectClient);
         }
@@ -108,6 +131,25 @@ namespace xServer.Forms {
             }
             if(_connectClient.Value != null)
                 _connectClient.Value.FrmMic = null;
+        }
+
+        private void btnSpeak_MouseDown(object sender, MouseEventArgs e) {
+            if (Device == 0) {
+                MessageBox.Show("No Microphone found!", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            WaveInEvent.StartRecording();
+            WaveInEvent.DataAvailable += (s, args) => {
+                SpokenData = args.Buffer;
+            };
+        }
+
+        private void btnSpeak_MouseUp(object sender, MouseEventArgs e) {
+            WaveInEvent.StopRecording();
+
+            if (SpokenData.Length != 0) {
+                new Core.Packets.ServerPackets.DoSpeak(SpokenData).Execute(_connectClient);
+            }
+            WaveInEvent.Dispose();
         }
     }
 }
