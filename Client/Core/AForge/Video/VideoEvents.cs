@@ -6,10 +6,10 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video
-{
-    using System;
+using System;
 
+namespace xClient.Core.AForge.Video
+{
     /// <summary>
     /// Delegate for new frame event handler.
     /// </summary>

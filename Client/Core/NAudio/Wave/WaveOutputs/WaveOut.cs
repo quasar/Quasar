@@ -2,11 +2,11 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
-using xServer.Core.NAudio.Wave.MmeInterop;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveStreams;
+using xClient.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveStreams;
 
-namespace xServer.Core.NAudio.Wave.WaveOutputs 
+namespace xClient.Core.NAudio.Wave.WaveOutputs 
 {
     /// <summary>
     /// Represents a wave out device
@@ -408,7 +408,7 @@ namespace xServer.Core.NAudio.Wave.WaveOutputs
                 }
                 if (queuedBuffers == 0)
                 {
-                    if (callbackInfo.Strategy == WaveCallbackStrategy.FunctionCallback && playbackState == global::xServer.Core.NAudio.Wave.WaveOutputs.PlaybackState.Stopped)
+                    if (callbackInfo.Strategy == WaveCallbackStrategy.FunctionCallback && playbackState == global::xClient.Core.NAudio.Wave.WaveOutputs.PlaybackState.Stopped)
                     {
                         // the user has pressed stop
                         // DO NOT raise the playback stopped event from here

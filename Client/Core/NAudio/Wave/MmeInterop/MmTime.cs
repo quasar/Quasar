@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     // http://msdn.microsoft.com/en-us/library/dd757347(v=VS.85).aspx
     [StructLayout(LayoutKind.Explicit)]

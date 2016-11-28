@@ -1,4 +1,4 @@
-namespace xServer.Core.NAudio.Wave.WaveFormats
+namespace xClient.Core.NAudio.Wave.WaveFormats
 {
     /// <summary>
     /// Summary description for WaveFormatEncoding.

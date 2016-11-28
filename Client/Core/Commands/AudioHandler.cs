@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using xClient.Core.NAudio.Wave;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveInputs;
 using xClient.Core.Networking;
 using xClient.Core.Packets.ClientPackets;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveInputs;
 
 namespace xClient.Core.Commands {
 

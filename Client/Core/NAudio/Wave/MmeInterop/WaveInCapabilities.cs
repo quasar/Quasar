@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     /// <summary>
     /// WaveInCapabilities structure (based on WAVEINCAPS2 from mmsystem.h)

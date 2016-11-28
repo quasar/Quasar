@@ -5,11 +5,10 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// Enumerates pins on a filter.
     /// </summary>

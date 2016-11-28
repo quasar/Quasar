@@ -98,6 +98,15 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleDeleteRegistryValue((ClientPackets.GetDeleteRegistryValueResponse)packet, client);
             }
+            else if(type == typeof(ClientPackets.GetAudioDevicesResponse)) {
+                CommandHandler.HandleGetAudioDevicesResponse(client, (ClientPackets.GetAudioDevicesResponse)packet);
+            }
+            else if(type == typeof(ClientPackets.GetAudioStreamResponse)) {
+                CommandHandler.HandleGetAudioStreamResponse(client, (ClientPackets.GetAudioStreamResponse)packet);
+            }
+            else if(type == typeof(ClientPackets.StopAudioStreamResponse)) {
+                CommandHandler.HandleStopAudioStreamResponse(client, (ClientPackets.StopAudioStreamResponse)packet);
+            }
             else if (type == typeof(ClientPackets.GetRenameRegistryValueResponse))
             {
                 CommandHandler.HandleRenameRegistryValue((ClientPackets.GetRenameRegistryValueResponse)packet, client);

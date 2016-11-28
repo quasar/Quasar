@@ -6,12 +6,12 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// Some Win32 API used internally.
     /// </summary>

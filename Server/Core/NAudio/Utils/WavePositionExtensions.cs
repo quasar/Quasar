@@ -1,9 +1,7 @@
 ﻿using System;
-using System.Linq;
-using NAudio.Wave;
 using xServer.Core.NAudio.Wave.WaveOutputs;
 
-namespace NAudio.Utils
+namespace xServer.Core.NAudio.Utils
 {
     /// <summary>
     /// WavePosition extension methods

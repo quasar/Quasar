@@ -2,7 +2,7 @@
 
 using System;
 
-namespace xServer.Core.NAudio.Mixer
+namespace xClient.Core.NAudio.Mixer
 {
 	/// <summary>
 	/// Custom Mixer control

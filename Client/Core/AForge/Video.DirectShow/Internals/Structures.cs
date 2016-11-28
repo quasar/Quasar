@@ -6,12 +6,12 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Drawing;
+using System;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     // PIN_DIRECTION
 
     /// <summary>

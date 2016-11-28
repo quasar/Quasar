@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     class WaveWindowNative : System.Windows.Forms.NativeWindow
     {

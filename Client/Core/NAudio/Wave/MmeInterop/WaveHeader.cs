@@ -1,7 +1,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     /// <summary>
     /// WaveHeader interop structure (WAVEHDR)

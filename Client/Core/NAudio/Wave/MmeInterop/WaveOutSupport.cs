@@ -1,6 +1,6 @@
 using System;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
 	/// <summary>
 	/// Flags indicating what features this WaveOut device supports

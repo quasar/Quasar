@@ -6,7 +6,7 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow
+namespace xClient.Core.AForge.Video.DirectShow
 {
     /// <summary>
     /// Specifies the physical type of pin (audio or video).

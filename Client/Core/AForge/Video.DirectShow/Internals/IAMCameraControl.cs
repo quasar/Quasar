@@ -6,11 +6,10 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// The IAMCameraControl interface controls camera settings such as zoom, pan, aperture adjustment,
     /// or shutter speed. To obtain this interface, query the filter that controls the camera.

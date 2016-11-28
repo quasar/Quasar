@@ -1,6 +1,6 @@
-﻿using xServer.Core.NAudio.Wave.WaveFormats;
+﻿using xClient.Core.NAudio.Wave.WaveFormats;
 
-namespace xServer.Core.NAudio.Wave.WaveOutputs
+namespace xClient.Core.NAudio.Wave.WaveOutputs
 {
     /// <summary>
     /// Like IWaveProvider, but makes it much simpler to put together a 32 bit floating

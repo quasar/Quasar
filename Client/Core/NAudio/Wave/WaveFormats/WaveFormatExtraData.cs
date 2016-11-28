@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.NAudio.Wave.WaveFormats
+namespace xClient.Core.NAudio.Wave.WaveFormats
 {
     /// <summary>
     /// This class used for marshalling from unmanaged code

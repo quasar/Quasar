@@ -2,10 +2,8 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using NAudio.Wave;
-using xServer.Core.NAudio.Utils;
 
-namespace xServer.Core.NAudio.Wave.WaveFormats
+namespace xClient.Core.NAudio.Wave.WaveFormats
 {
     /// <summary>
     /// Represents a Wave file format

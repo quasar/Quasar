@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using xServer.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveFormats;
 
 namespace xClient.Core.Utilities {
     public interface INetworkChatCodec : IDisposable {

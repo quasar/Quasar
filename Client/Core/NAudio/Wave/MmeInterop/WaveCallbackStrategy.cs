@@ -1,4 +1,4 @@
-﻿namespace xServer.Core.NAudio.Wave.MmeInterop
+﻿namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     /// <summary>
     /// Wave Callback Strategy

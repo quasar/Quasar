@@ -5,11 +5,11 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// The interface inherits contains methods for retrieving event notifications and for overriding the
     /// filter graph's default handling of events.

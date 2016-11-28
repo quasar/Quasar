@@ -5,12 +5,12 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// The <b>ICreateDevEnum</b> interface creates an enumerator for devices within a particular category,
     /// such as video capture devices, audio capture devices, video compressors, and so forth.

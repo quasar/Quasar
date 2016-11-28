@@ -9,11 +9,11 @@
 // kidjan@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// The IReferenceClock interface provides the reference time for the filter graph.
     ///

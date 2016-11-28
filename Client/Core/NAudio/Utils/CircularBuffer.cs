@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace xServer.Core.NAudio.Utils
+namespace xClient.Core.NAudio.Utils
 {
     /// <summary>
     /// A very basic circular buffer implementation

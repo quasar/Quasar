@@ -1,7 +1,7 @@
 ﻿using System;
-using xServer.Core.NAudio.Utils;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveOutputs;
+using xClient.Core.NAudio.Utils;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveOutputs;
 
 // ReSharper disable once CheckNamespace
 namespace NAudio.Wave

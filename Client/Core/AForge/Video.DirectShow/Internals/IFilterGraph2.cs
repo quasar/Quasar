@@ -5,12 +5,12 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
-    using System.Runtime.InteropServices.ComTypes;
+using System;
+using System.Runtime.InteropServices;
+using System.Runtime.InteropServices.ComTypes;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// This interface extends the <see cref="IFilterGraph"/> and <see cref="IGraphBuilder"/>
     /// interfaces, which contain methods for building filter graphs.

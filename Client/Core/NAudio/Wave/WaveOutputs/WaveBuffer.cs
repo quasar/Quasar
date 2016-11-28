@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.NAudio.Wave.WaveOutputs
+namespace xClient.Core.NAudio.Wave.WaveOutputs
 {
     /// <summary>
     /// WaveBuffer class use to store wave datas. Data can be manipulated with arrays

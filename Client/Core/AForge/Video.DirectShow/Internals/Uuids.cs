@@ -6,12 +6,12 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System;
+using System.Runtime.InteropServices;
 
-	/// <summary>
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
+    /// <summary>
 	/// DirectShow class IDs.
 	/// </summary>
     [ComVisible( false )]

@@ -2,10 +2,10 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.MmeInterop;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveOutputs;
-using xServer.Core.NAudio.Wave.WaveStreams;
+using xClient.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveOutputs;
+using xClient.Core.NAudio.Wave.WaveStreams;
 
 // ReSharper disable once CheckNamespace
 namespace NAudio.Wave

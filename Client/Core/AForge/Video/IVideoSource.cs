@@ -6,10 +6,8 @@
 // andrew.kirillov@aforgenet.com
 //
 
-namespace AForge.Video
+namespace xClient.Core.AForge.Video
 {
-    using System;
-
     /// <summary>
     /// Video source interface.
     /// </summary>

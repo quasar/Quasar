@@ -6,10 +6,8 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow
+namespace xClient.Core.AForge.Video.DirectShow
 {
-    using System;
-
     /// <summary>
     /// Video input of a capture board.
     /// </summary>

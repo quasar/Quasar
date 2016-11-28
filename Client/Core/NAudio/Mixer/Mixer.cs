@@ -1,9 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.MmeInterop;
 
-namespace xServer.Core.NAudio.Mixer
+namespace xClient.Core.NAudio.Mixer
 {
 	/// <summary>Represents a Windows mixer device</summary>
 	public class Mixer 

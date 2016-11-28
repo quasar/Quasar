@@ -6,16 +6,14 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Runtime.InteropServices;
+using xClient.Core.AForge.Video.DirectShow.Internals;
+
+namespace xClient.Core.AForge.Video.DirectShow
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Runtime.InteropServices;
-
-    using AForge.Video;
-    using AForge.Video.DirectShow.Internals;
-
     /// <summary>
     /// Capabilities of video device such as frame size and frame rate.
     /// </summary>

@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.MmeInterop;
 
-namespace xServer.Core.NAudio.Wave.WaveStreams
+namespace xClient.Core.NAudio.Wave.WaveStreams
 {
     /// <summary>
     /// A buffer of Wave samples

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace xServer.Core.NAudio.Wave.WaveOutputs
+namespace xClient.Core.NAudio.Wave.WaveOutputs
 {
     /// <summary>
     /// Stopped Event Args

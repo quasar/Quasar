@@ -2,7 +2,6 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
-using NAudio.Wave;
 using xServer.Core.NAudio.Utils;
 
 namespace xServer.Core.NAudio.Wave.WaveFormats

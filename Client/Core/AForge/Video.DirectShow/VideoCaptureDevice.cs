@@ -6,18 +6,16 @@
 // contacts@aforgenet.com
 //
 
-namespace AForge.Video.DirectShow
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.Runtime.InteropServices;
+using System.Threading;
+using xClient.Core.AForge.Video.DirectShow.Internals;
+
+namespace xClient.Core.AForge.Video.DirectShow
 {
-    using System;
-    using System.Collections.Generic;
-    using System.Drawing;
-    using System.Drawing.Imaging;
-    using System.Threading;
-    using System.Runtime.InteropServices;
-
-    using AForge.Video;
-    using AForge.Video.DirectShow.Internals;
-
     /// <summary>
     /// Video source for local video capture device (for example USB webcam).
     /// </summary>

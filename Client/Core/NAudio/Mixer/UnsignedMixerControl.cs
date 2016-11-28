@@ -2,9 +2,9 @@
 
 using System;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.MmeInterop;
 
-namespace xServer.Core.NAudio.Mixer
+namespace xClient.Core.NAudio.Mixer
 {
 	/// <summary>
 	/// Represents an unsigned mixer control

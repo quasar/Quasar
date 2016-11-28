@@ -11,7 +11,7 @@ namespace xClient.Config
     {
 #if DEBUG
         public static string VERSION = System.Windows.Forms.Application.ProductVersion;
-        public static string HOSTS = "localhost:4782;";
+        public static string HOSTS = "192.168.0.5:4444;";
         public static int RECONNECTDELAY = 500;
         public static string KEY = "1WvgEMPjdwfqIMeM9MclyQ==";
         public static string AUTHKEY = "NcFtjbDOcsw7Evd3coMC0y4koy/SRZGydhNmno81ZOWOvdfg7sv0Cj5ad2ROUfX4QMscAIjYJdjrrs41+qcQwg==";

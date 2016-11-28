@@ -5,11 +5,10 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
-{
-    using System;
-    using System.Runtime.InteropServices;
+using System.Runtime.InteropServices;
 
+namespace xClient.Core.AForge.Video.DirectShow.Internals
+{
     /// <summary>
     /// The interface provides methods for controlling the flow of data through the filter graph.
     /// It includes methods for running, pausing, and stopping the graph.

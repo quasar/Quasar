@@ -2,11 +2,11 @@
 
 using System;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.MmeInterop;
 
 // TODO: add function help from MSDN
 // TODO: Create enums for flags parameters
-namespace xServer.Core.NAudio.Mixer
+namespace xClient.Core.NAudio.Mixer
 {
     class MixerInterop
     {

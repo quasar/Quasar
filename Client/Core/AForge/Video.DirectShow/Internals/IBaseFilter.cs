@@ -5,11 +5,11 @@
 // andrew.kirillov@gmail.com
 //
 
-namespace AForge.Video.DirectShow.Internals
+using System;
+using System.Runtime.InteropServices;
+
+namespace xClient.Core.AForge.Video.DirectShow.Internals
 {
-    using System;
-    using System.Runtime.InteropServices;
-    
     /// <summary>
     /// The IBaseFilter interface provides methods for controlling a filter.
     /// All DirectShow filters expose this interface

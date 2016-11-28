@@ -734,6 +734,17 @@ namespace xServer.Forms
             }
         }
 
+        private void remoteMicrophoneToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach(Client c in GetSelectedClients()) {
+                if(c.Value.FrmMic != null) {
+                    c.Value.FrmMic.Focus();
+                    return;
+                }
+                FrmMicrophone frmMic = new FrmMicrophone(c);
+                frmMic.Show();
+            }
+        }
+
         #endregion
 
         #region "Miscellaneous"
@@ -902,5 +913,7 @@ namespace xServer.Forms
         }
 
         #endregion
+
+        
     }
 }

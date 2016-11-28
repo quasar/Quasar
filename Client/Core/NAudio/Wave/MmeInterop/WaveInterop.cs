@@ -1,8 +1,8 @@
 using System;
 using System.Runtime.InteropServices;
-using xServer.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveFormats;
 
-namespace xServer.Core.NAudio.Wave.MmeInterop
+namespace xClient.Core.NAudio.Wave.MmeInterop
 {
     /// <summary>
     /// MME Wave function interop

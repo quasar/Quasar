@@ -1,4 +1,4 @@
-﻿namespace xServer.Core.NAudio.Mixer
+﻿namespace xClient.Core.NAudio.Mixer
 {
     /// <summary>
     /// Mixer Line Component type enumeration

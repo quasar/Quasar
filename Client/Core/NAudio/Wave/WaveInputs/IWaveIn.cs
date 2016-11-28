@@ -1,9 +1,9 @@
 ﻿using System;
-using xServer.Core.NAudio.Wave.MmeInterop;
-using xServer.Core.NAudio.Wave.WaveFormats;
-using xServer.Core.NAudio.Wave.WaveOutputs;
+using xClient.Core.NAudio.Wave.MmeInterop;
+using xClient.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveOutputs;
 
-namespace xServer.Core.NAudio.Wave.WaveInputs
+namespace xClient.Core.NAudio.Wave.WaveInputs
 {
     /// <summary>
     /// Generic interface for wave recording

@@ -1,7 +1,7 @@
 using System;
-using xServer.Core.NAudio.Wave.WaveFormats;
+using xClient.Core.NAudio.Wave.WaveFormats;
 
-namespace xServer.Core.NAudio.Wave.WaveOutputs
+namespace xClient.Core.NAudio.Wave.WaveOutputs
 {
     /// <summary>
     /// Represents the interface to a device that can play a WaveFile

@@ -2,8 +2,8 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using AForge.Video;
-using AForge.Video.DirectShow;
+using xClient.Core.AForge.Video;
+using xClient.Core.AForge.Video.DirectShow;
 using xClient.Core.Networking;
 using xClient.Core.Packets.ClientPackets;
 using xClient.Core.Packets.ServerPackets;
