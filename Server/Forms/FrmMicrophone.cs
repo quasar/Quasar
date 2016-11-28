@@ -54,6 +54,7 @@ namespace xServer.Forms {
                     }
                     cbAudioDevices.SelectedIndex = 0;
                     cbChannels.SelectedIndex = 0;
+                    cbSampleRate.SelectedIndex = 5;
                 });
             }
             catch(InvalidOperationException) {
@@ -87,9 +88,10 @@ namespace xServer.Forms {
                 return;
             }
 
-            var selectedValue = Convert.ToInt32(cbChannels.Text);
+            var selectedChannel = Convert.ToInt32(cbChannels.Text);
+            var selectedSampleRate = Convert.ToInt32(cbSampleRate.Text);
             new Core.Packets.ServerPackets.GetAudioStream(cbAudioDevices.SelectedIndex,
-                selectedValue).Execute(_connectClient);
+                selectedChannel, selectedSampleRate).Execute(_connectClient);
         }
 
         private void btnStop_Click(object sender, EventArgs e) {

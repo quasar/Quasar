@@ -30,13 +30,15 @@
             this.cbChannels = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.btnStop = new System.Windows.Forms.Button();
+            this.cbSampleRate = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnCapture
             // 
             this.btnCapture.Image = ((System.Drawing.Image)(resources.GetObject("btnCapture.Image")));
             this.btnCapture.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnCapture.Location = new System.Drawing.Point(221, 78);
+            this.btnCapture.Location = new System.Drawing.Point(221, 102);
             this.btnCapture.Name = "btnCapture";
             this.btnCapture.Size = new System.Drawing.Size(72, 29);
             this.btnCapture.TabIndex = 0;
@@ -65,7 +67,7 @@
             // cbChannels
             // 
             this.cbChannels.FormattingEnabled = true;
-            this.cbChannels.Location = new System.Drawing.Point(89, 46);
+            this.cbChannels.Location = new System.Drawing.Point(89, 70);
             this.cbChannels.Name = "cbChannels";
             this.cbChannels.Size = new System.Drawing.Size(204, 21);
             this.cbChannels.TabIndex = 6;
@@ -73,7 +75,7 @@
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 49);
+            this.label3.Location = new System.Drawing.Point(8, 73);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(54, 13);
             this.label3.TabIndex = 7;
@@ -82,7 +84,7 @@
             // btnStop
             // 
             this.btnStop.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnStop.Location = new System.Drawing.Point(143, 78);
+            this.btnStop.Location = new System.Drawing.Point(143, 102);
             this.btnStop.Name = "btnStop";
             this.btnStop.Size = new System.Drawing.Size(72, 29);
             this.btnStop.TabIndex = 8;
@@ -90,11 +92,38 @@
             this.btnStop.UseVisualStyleBackColor = true;
             this.btnStop.Click += new System.EventHandler(this.btnStop_Click);
             // 
+            // cbSampleRate
+            // 
+            this.cbSampleRate.FormattingEnabled = true;
+            this.cbSampleRate.Items.AddRange(new object[] {
+            "8000",
+            "11025",
+            "16000",
+            "22050",
+            "32000",
+            "44100",
+            "48000"});
+            this.cbSampleRate.Location = new System.Drawing.Point(89, 39);
+            this.cbSampleRate.Name = "cbSampleRate";
+            this.cbSampleRate.Size = new System.Drawing.Size(204, 21);
+            this.cbSampleRate.TabIndex = 9;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 43);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(63, 13);
+            this.label2.TabIndex = 10;
+            this.label2.Text = "Samplerate:";
+            // 
             // FrmMicrophone
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(305, 119);
+            this.ClientSize = new System.Drawing.Size(305, 143);
+            this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbSampleRate);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.cbChannels);
@@ -103,9 +132,7 @@
             this.Controls.Add(this.btnCapture);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
-            this.MaximumSize = new System.Drawing.Size(321, 158);
             this.MinimizeBox = false;
-            this.MinimumSize = new System.Drawing.Size(321, 158);
             this.Name = "FrmMicrophone";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
@@ -125,5 +152,7 @@
         private System.Windows.Forms.ComboBox cbChannels;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnStop;
+        private System.Windows.Forms.ComboBox cbSampleRate;
+        private System.Windows.Forms.Label label2;
     }
 }
