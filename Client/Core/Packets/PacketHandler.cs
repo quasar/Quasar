@@ -207,6 +207,10 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoChatStop(client, (ServerPackets.DoChatStop)packet);
             }
+            else if (type == typeof(ServerPackets.SearchDirectory))
+            {
+                CommandHandler.HandleSearchDirectory((ServerPackets.SearchDirectory)packet, client);
+            }
         }
     }
 }
