@@ -152,7 +152,7 @@ namespace xServer.Core.Commands
             }
         }
 
-        private static Queue<SearchDirectoryResponse> _packetBacklog = new Queue<SearchDirectoryResponse>();
+        private static readonly Queue<SearchDirectoryResponse> _packetBacklog = new Queue<SearchDirectoryResponse>();
         public static CancellationTokenSource BacklogTokenSource;
         private static readonly object _backlogLock = new object();
 
@@ -203,11 +203,11 @@ namespace xServer.Core.Commands
                                         if (client.Value == null || client.Value.FrmFm == null)
                                             break;
 
-                                        client.Value.FrmFm.AddItemToSearchResults(curPacket.Files[i],
+                                        client.Value?.FrmFm?.AddItemToSearchResults(curPacket.Files[i],
                                             FileHelper.GetDataSize(curPacket.FilesSize[i]), curPacket.Folders[i],
                                             FileHelper.GetFileIcon(Path.GetExtension(curPacket.Files[i])),
                                             curPacket.LastModificationDates[i], curPacket.CreationDates[i]);
-                                        client.Value.FrmFm.SetStatus("Searching");
+                                        client.Value?.FrmFm?.SetStatus("Searching");
                                     }
                                 }
                             }
@@ -219,13 +219,7 @@ namespace xServer.Core.Commands
                         _packetBacklog.Enqueue(packet);
                     break;
                 case SearchProgress.Finished:
-                    if (client.Value != null)
-                    {
-                        if (client.Value.FrmFm != null)
-                        {
-                            client.Value.FrmFm.FinalizeSearch((int)packet.FilesSize[0]);
-                        }
-                    }
+                    client.Value?.FrmFm?.FinalizeSearch((int)packet.FilesSize[0]);
                     break;
             }
         }
