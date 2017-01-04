@@ -48,7 +48,7 @@ namespace xServer.Core.Commands
                 client.Value.ProcessingDirectory = true;
 
                 client.Value.FrmFm.ClearFileBrowser();
-                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0);
+                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0, DateTime.MinValue, DateTime.MinValue);
 
                 if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
                 {

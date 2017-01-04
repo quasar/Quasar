@@ -556,20 +556,35 @@ namespace xServer.Forms
         }
 
         public void AddItemToFileBrowser(string name, string size, PathType type, int imageIndex,
-            DateTime? lastModificationDate = null, DateTime? creationDate = null)
+            DateTime lastModificationDate , DateTime creationDate)
         {
             try
             {
-                ListViewItem lvi =
-                    new ListViewItem(new string[]
+                ListViewItem lvi = null;
+                if (lastModificationDate == DateTime.MinValue)
+                {
+                    lvi = new ListViewItem(new string[]
                     {
                         name, size, (type != PathType.Back) ? type.ToString() : string.Empty,
-                        lastModificationDate?.ToString(), creationDate?.ToString()
+                        null, null
                     })
                     {
                         Tag = type,
                         ImageIndex = imageIndex
                     };
+                }
+                else
+                {
+                    lvi = new ListViewItem(new string[]
+                    {
+                        name, size, (type != PathType.Back) ? type.ToString() : string.Empty,
+                        lastModificationDate.ToString(), creationDate.ToString()
+                    })
+                    {
+                        Tag = type,
+                        ImageIndex = imageIndex
+                    };
+                }
 
                 lstDirectory.Invoke((MethodInvoker) delegate
                 {
@@ -582,17 +597,29 @@ namespace xServer.Forms
         }
 
         public void AddItemToSearchResults(string name, string size, string parentDirectory, int imageIndex,
-            DateTime? lastModificationDate = null, DateTime? creationDate = null)
+            DateTime lastModificationDate, DateTime creationDate)
         {
             try
             {
-                ListViewItem lvi =
-                    new ListViewItem(new string[]
-                        {name, size, lastModificationDate?.ToString(), creationDate?.ToString()})
+                ListViewItem lvi = null;
+                if (lastModificationDate == DateTime.MinValue)
+                {
+                    lvi = new ListViewItem(new string[]
+                    {name, size, null, null})
                     {
                         Tag = parentDirectory,
                         ImageIndex = imageIndex
                     };
+                }
+                else
+                {
+                    lvi = new ListViewItem(new string[]
+                    {name, size, lastModificationDate.ToString(), creationDate.ToString()})
+                    {
+                        Tag = parentDirectory,
+                        ImageIndex = imageIndex
+                    };
+                }
 
                 lstSearchResults.Invoke((MethodInvoker) delegate
                 {
