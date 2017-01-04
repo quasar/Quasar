@@ -352,7 +352,7 @@ namespace xClient.Core.Commands
                 case TimeoutType.Minutes:
                     return timeout < -1 ? -1 : timeout * 60000;
                 default:
-                    throw new ArgumentOutOfRangeException(nameof(type), type, null);
+                    return -1;
             }
         }
     }

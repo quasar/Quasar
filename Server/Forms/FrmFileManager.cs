@@ -602,11 +602,11 @@ namespace xServer.Forms
 
                 statusStrip.Invoke((MethodInvoker) delegate
                 {
-                    stripLblFilesFound.Text = $"Found {lstSearchResults.Items.Count} items...";
+                    stripLblFilesFound.Text = string.Format("Found {0} items...", lstSearchResults.Items.Count);
                     if (!_searching.Item1 && lstSearchResults.Items.Count < _searching.Item2)
                     {
                         stripProgressSearch.Value = (int)((double)lstSearchResults.Items.Count / _searching.Item2 * 100);
-                        stripLblFilesFound.Text += $" (processing item backlog {lstSearchResults.Items.Count}/{_searching.Item2})";
+                        stripLblFilesFound.Text += string.Format(" (processing item backlog {0}/{1})", lstSearchResults.Items.Count, _searching.Item2);
                     }
                     else if (!_searching.Item1 && lstSearchResults.Items.Count >= _searching.Item2)
                     {

@@ -18,15 +18,18 @@ namespace xServer.Forms
 
     public partial class frmSearchWarning : Form
     {
-        public WarningChoice Choice { get; set; } = WarningChoice.Cancel;
+        public WarningChoice Choice { get; set; }
 
-        public int Timeout { get; set; } = -1;
+        public int Timeout { get; set; }
 
-        public TimeoutType Type { get; set; } = TimeoutType.Milliseconds;
+        public TimeoutType Type { get; set; }
 
         public frmSearchWarning()
         {
             InitializeComponent();
+            Choice = WarningChoice.Cancel;
+            Timeout = -1;
+            Type = TimeoutType.Milliseconds;
         }
 
         private void frmSearchWarning_Load(object sender, EventArgs e)
