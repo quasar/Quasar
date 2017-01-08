@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class frmSearchWarning
+    partial class FrmSearchWarning
     {
         /// <summary>
         /// Required designer variable.

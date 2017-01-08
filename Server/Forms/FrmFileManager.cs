@@ -773,7 +773,7 @@ namespace xServer.Forms
         {
             if (_connectClient == null || _connectClient.Value == null) return;
 
-            var warningFrm = new frmSearchWarning();
+            var warningFrm = new FrmSearchWarning();
 
             if (cbRecursive.Checked && txtSearch.Text.Split(',').Any(x => x.Contains("*.*")))
             {
