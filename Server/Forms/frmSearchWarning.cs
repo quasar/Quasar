@@ -16,7 +16,7 @@ namespace xServer.Forms
         Search
     }
 
-    public partial class frmSearchWarning : Form
+    public partial class FrmSearchWarning : Form
     {
         public WarningChoice Choice { get; set; }
 
@@ -24,7 +24,7 @@ namespace xServer.Forms
 
         public TimeoutType Type { get; set; }
 
-        public frmSearchWarning()
+        public FrmSearchWarning()
         {
             InitializeComponent();
             Choice = WarningChoice.Cancel;

@@ -223,7 +223,6 @@ namespace xServer.Core.Commands
                     {
                         if (client.Value.FrmFm != null)
                         {
-
                             client.Value.FrmFm.FinalizeSearch((int) packet.FilesSize[0]);
                         }
                     }

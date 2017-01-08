@@ -12,8 +12,7 @@
     <AssemblyName>Quasar</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup>
     <StartupObject>xServer.Program</StartupObject>
@@ -215,9 +214,6 @@
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
-    <Compile Include="Core\Utilities\PerformanceListview.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Controls\InputBox.cs" />
@@ -400,11 +396,11 @@
     <Compile Include="Forms\FrmReverseProxy.Designer.cs">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\frmSearchWarning.cs">
+    <Compile Include="Forms\FrmSearchWarning.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\frmSearchWarning.Designer.cs">
-      <DependentUpon>frmSearchWarning.cs</DependentUpon>
+    <Compile Include="Forms\FrmSearchWarning.Designer.cs">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmSettings.cs">
       <SubType>Form</SubType>
@@ -520,8 +516,8 @@
     <EmbeddedResource Include="Forms\FrmReverseProxy.resx">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\frmSearchWarning.resx">
-      <DependentUpon>frmSearchWarning.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmSearchWarning.resx">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>
@@ -556,7 +552,6 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
-    <None Include="app.config" />
     <None Include="app.manifest" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
