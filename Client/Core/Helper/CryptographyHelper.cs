@@ -1,4 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace xClient.Core.Helper
 {

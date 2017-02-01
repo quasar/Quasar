@@ -128,6 +128,11 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleSearchDirectoryResponse(client, (ClientPackets.SearchDirectoryResponse) packet);
             }
+            else if (type == typeof(ClientPackets.DoVerifyUnfinishedTransferResponse))
+            {
+                CommandHandler.HandleVerifyUnfinishedTransferResponse(client,
+                    (ClientPackets.DoVerifyUnfinishedTransferResponse) packet);
+            }
         }
     }
 }

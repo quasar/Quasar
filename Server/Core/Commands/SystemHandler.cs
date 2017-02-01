@@ -47,8 +47,12 @@ namespace xServer.Core.Commands
                 if (client.Value.ProcessingDirectory) return;
                 client.Value.ProcessingDirectory = true;
 
-                client.Value.FrmFm.ClearFileBrowser();
-                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0, DateTime.MinValue, DateTime.MinValue);
+                if (packet.Detail == InformationDetail.Standard)
+                {
+                    client.Value.FrmFm.ClearFileBrowser();
+                    client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0, DateTime.MinValue,
+                        DateTime.MinValue);
+                }
 
                 if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
                 {
@@ -59,7 +63,14 @@ namespace xServer.Core.Commands
                             if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1, packet.LastModificationDates[i + packet.Files.Length], packet.CreationDates[i + packet.Files.Length]);
+                            if (packet.Detail == InformationDetail.Standard)
+                                client.Value.FrmFm.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1,
+                                    packet.LastModificationDates[i + packet.Files.Length],
+                                    packet.CreationDates[i + packet.Files.Length]);
+                            else
+                                client.Value.FrmFldr.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1,
+                                    packet.LastModificationDates[i + packet.Files.Length],
+                                    packet.CreationDates[i + packet.Files.Length]);
                         }
                     }
                 }
@@ -73,9 +84,16 @@ namespace xServer.Core.Commands
                             if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
                                 break;
 
-                            client.Value.FrmFm.AddItemToFileBrowser(packet.Files[i],
-                                FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
-                                FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])), packet.LastModificationDates[i], packet.CreationDates[i]);
+                            if (packet.Detail == InformationDetail.Standard)
+                                client.Value.FrmFm.AddItemToFileBrowser(packet.Files[i],
+                                    FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
+                                    FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])),
+                                    packet.LastModificationDates[i], packet.CreationDates[i]);
+                            else
+                                client.Value.FrmFldr.AddItemToFileBrowser(packet.Files[i],
+                                    FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
+                                    FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])),
+                                    packet.LastModificationDates[i], packet.CreationDates[i]);
                         }
                     }
                 }

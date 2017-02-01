@@ -5,6 +5,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using xServer.Controls;
@@ -24,18 +26,25 @@ namespace xServer.Forms
         private readonly Client _connectClient;
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
         public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
-        private readonly List<ListViewItem> _searchResultCache = new List<ListViewItem>();
+        public Dictionary<int, MetaFile> UnfinishedTransfers = new Dictionary<int, MetaFile>();
+
         private Tuple<bool, int> _searching; // (stillSearch, itemsFound)
+        private Dictionary<int, TransferCalculator> _transferEstimates = new Dictionary<int, TransferCalculator>();
 
         private const int TRANSFER_ID = 0;
         private const int TRANSFER_TYPE = 1;
         private const int TRANSFER_STATUS = 2;
+        private const int TRANSFER_SPEED = 4;
+        private const int TRANSFER_EST = 5;
 
         public FrmFileManager(Client c)
         {
             _connectClient = c;
             _connectClient.Value.FrmFm = this;
             InitializeComponent();
+
+            ProcessUnfinishedTransfers();
+            _connectClient.Value.FrmFldr = new FrmDownloadFolder();
         }
 
         private string GetAbsolutePath(string item)
@@ -118,22 +127,55 @@ namespace xServer.Forms
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
                 PathType type = (PathType) files.Tag;
+                string path = GetAbsolutePath(files.SubItems[0].Text);
+                int id = FileHelper.GetNewTransferId(files.Index);
 
                 if (type == PathType.File)
                 {
-                    string path = GetAbsolutePath(files.SubItems[0].Text);
+                    if (_connectClient != null)
+                    {
+                        new Core.Packets.ServerPackets.DoDownloadFile(path, id, 0).Execute(_connectClient);
+                        AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
+                    }
+                }
+                else if (type == PathType.Directory)
+                {
+                    _connectClient.Value.FrmFldr.RootName = path;
+                    new GetDirectory(path, InformationDetail.Simple).Execute(_connectClient);
+                    _connectClient.Value.FrmFldr.ShowDialog();
 
-                    int id = FileHelper.GetNewTransferId(files.Index);
+                    if (_connectClient.Value.FrmFldr.Cancelled)
+                        return;
+
+                    var items = _connectClient.Value.FrmFldr.SelectedItems;
+                    var itemOptions = new List<ItemOption>();
+
+                    if(items != null)
+                        for (int i = 0; i < items.Length; i++)
+                        {
+                            var itm = items[i];
+                            if (itm.EndsWith("(ZIP)"))
+                            {
+                                itemOptions.Add(ItemOption.Compress);
+                                items[i] = itm.Substring(0, itm.Length - 6);
+                            }
+                            else
+                                itemOptions.Add(ItemOption.None);
+                        }
 
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
-
+                        if (items != null && items.Length > 0)
+                            new Core.Packets.ServerPackets.DoDownloadDirectory(path, id, 0, items, itemOptions.ToArray(),
+                                DownloadType.Selective).Execute(_connectClient);
+                        else
+                            new Core.Packets.ServerPackets.DoDownloadDirectory(path, id, 0).Execute(_connectClient);
                         AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
                     }
                 }
             }
         }
+
 
         private void uploadToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -145,85 +187,12 @@ namespace xServer.Forms
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    var remoteDir = _currentDir;
                     foreach (var filePath in ofd.FileNames)
                     {
-                        if (!File.Exists(filePath)) continue;
+                        if (!File.Exists(filePath))
+                            continue;
 
-                        string path = filePath;
-                        new Thread(() =>
-                        {
-                            int id = FileHelper.GetNewTransferId();
-
-                            if (string.IsNullOrEmpty(path)) return;
-
-                            AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
-
-                            int index = GetTransferIndex(id);
-                            if (index < 0)
-                                return;
-
-                            FileSplit srcFile = new FileSplit(path);
-                            if (srcFile.MaxBlocks < 0)
-                            {
-                                UpdateTransferStatus(index, "Error reading file", 0);
-                                return;
-                            }
-
-                            string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
-
-                            if (string.IsNullOrEmpty(remotePath)) return;
-
-                            _limitThreads.WaitOne();
-                            for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                            {
-                                if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
-                                {
-                                    _limitThreads.Release();
-                                    return; // abort upload when from is closed or client disconnected
-                                }
-
-                                if (CanceledUploads.ContainsKey(id))
-                                {
-                                    UpdateTransferStatus(index, "Canceled", 0);
-                                    _limitThreads.Release();
-                                    return;
-                                }
-
-                                index = GetTransferIndex(id);
-                                if (index < 0)
-                                {
-                                    _limitThreads.Release();
-                                    return;
-                                }
-
-                                decimal progress =
-                                    Math.Round(
-                                        (decimal) ((double) (currentBlock + 1) / (double) srcFile.MaxBlocks * 100.0), 2);
-
-                                UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
-
-                                byte[] block;
-                                if (srcFile.ReadBlock(currentBlock, out block))
-                                {
-                                    new Core.Packets.ServerPackets.DoUploadFile(id,
-                                        remotePath, block, srcFile.MaxBlocks,
-                                        currentBlock).Execute(_connectClient);
-                                }
-                                else
-                                {
-                                    UpdateTransferStatus(index, "Error reading file", 0);
-                                    _limitThreads.Release();
-                                    return;
-                                }
-                            }
-                            _limitThreads.Release();
-
-                            if (remoteDir == _currentDir)
-                                RefreshDirectory();
-
-                            UpdateTransferStatus(index, "Completed", 1);
-                        }).Start();
+                        new Thread(UploadItem).Start(new UploadInformation(filePath, null, true));
                     }
                 }
             }
@@ -368,7 +337,8 @@ namespace xServer.Forms
             {
                 if (!transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") &&
                     !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") &&
-                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending") &&
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Paused")) continue;
 
                 int id = int.Parse(transfer.SubItems[TRANSFER_ID].Text);
 
@@ -397,7 +367,8 @@ namespace xServer.Forms
             {
                 if (transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") ||
                     transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") ||
-                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending") ||
+                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Paused")) continue;
                 transfer.Remove();
             }
         }
@@ -413,85 +384,12 @@ namespace xServer.Forms
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[]) e.Data.GetData(DataFormats.FileDrop);
-                var remoteDir = _currentDir;
                 foreach (string filePath in files)
                 {
-                    if (!File.Exists(filePath)) continue;
-
-                    string path = filePath;
-                    new Thread(() =>
-                    {
-                        int id = FileHelper.GetNewTransferId();
-
-                        if (string.IsNullOrEmpty(path)) return;
-
-                        AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
-
-                        int index = GetTransferIndex(id);
-                        if (index < 0)
-                            return;
-
-                        FileSplit srcFile = new FileSplit(path);
-                        if (srcFile.MaxBlocks < 0)
-                        {
-                            UpdateTransferStatus(index, "Error reading file", 0);
-                            return;
-                        }
-
-                        string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
-
-                        if (string.IsNullOrEmpty(remotePath)) return;
-
-                        _limitThreads.WaitOne();
-                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                        {
-                            if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
-                            {
-                                _limitThreads.Release();
-                                return; // abort upload when from is closed or client disconnected
-                            }
-
-                            if (CanceledUploads.ContainsKey(id))
-                            {
-                                UpdateTransferStatus(index, "Canceled", 0);
-                                _limitThreads.Release();
-                                return;
-                            }
-
-                            index = GetTransferIndex(id);
-                            if (index < 0)
-                            {
-                                _limitThreads.Release();
-                                return;
-                            }
-
-                            decimal progress =
-                                Math.Round(
-                                    (decimal) ((double) (currentBlock + 1) / (double) srcFile.MaxBlocks * 100.0), 2);
-
-                            UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
-
-                            byte[] block;
-                            if (srcFile.ReadBlock(currentBlock, out block))
-                            {
-                                new Core.Packets.ServerPackets.DoUploadFile(id,
-                                    remotePath, block, srcFile.MaxBlocks,
-                                    currentBlock).Execute(_connectClient);
-                            }
-                            else
-                            {
-                                UpdateTransferStatus(index, "Error reading file", 0);
-                                _limitThreads.Release();
-                                return;
-                            }
-                        }
-                        _limitThreads.Release();
-
-                        if (remoteDir == _currentDir)
-                            RefreshDirectory();
-
-                        UpdateTransferStatus(index, "Completed", 1);
-                    }).Start();
+                    if (!File.Exists(filePath))
+                        continue;
+                    string remotePath = Path.Combine(_currentDir, Path.GetFileName(filePath));
+                    new Thread(UploadItem).Start(new UploadInformation(filePath, remotePath, true));
                 }
             }
         }
@@ -651,12 +549,19 @@ namespace xServer.Forms
             try
             {
                 ListViewItem lvi =
-                    new ListViewItem(new string[] {id.ToString(), type, status, filename});
+                    new ListViewItem(new string[] {id.ToString(), type, status, filename, "", ""});
 
-                lstDirectory.Invoke((MethodInvoker) delegate
+                if (lstDirectory.InvokeRequired)
+                {
+                    lstDirectory.Invoke((MethodInvoker) delegate
+                    {
+                        lstTransfers.Items.Add(lvi);
+                    });
+                }
+                else
                 {
                     lstTransfers.Items.Add(lvi);
-                });
+                }
             }
             catch (InvalidOperationException)
             {
@@ -690,16 +595,66 @@ namespace xServer.Forms
             return index;
         }
 
-        public void UpdateTransferStatus(int index, string status, int imageIndex)
+        public void UpdateTransferStatus(int index, string status, int imageIndex, decimal speed = 0)
+        {
+            UpdateTransferStatus(index, status, imageIndex, TimeSpan.Zero, speed);
+        }
+
+        public void UpdateTransferStatus(int index, string status, int imageIndex, TimeSpan est, decimal speed = 0)
         {
             try
             {
-                lstTransfers.Invoke((MethodInvoker) delegate
+                if (lstTransfers.InvokeRequired)
                 {
+                    lstTransfers.Invoke((MethodInvoker) delegate
+                    {
+                        int speedAvg = 0, timeEstAvg = 0;
+                        int id = int.Parse(lstTransfers.Items[index].Text);
+
+                        if (_transferEstimates.ContainsKey(id))
+                        {
+                            _transferEstimates[id].AddSpeed((int) speed);
+                            _transferEstimates[id].AddTimeLeft(est.Seconds);
+
+                            speedAvg = _transferEstimates[id].AverageSpeed;
+                            timeEstAvg = _transferEstimates[id].AverageTimeLeft;
+                        }
+                        else
+                            _transferEstimates.Add(id, new TransferCalculator());
+
+                        lstTransfers.Items[index].SubItems[TRANSFER_STATUS].Text = status;
+                        lstTransfers.Items[index].SubItems[TRANSFER_SPEED].Text = speedAvg == 0
+                            ? "n/a"
+                            : TransferCalculator.GetSizeSuffix((long) speed);
+                        lstTransfers.Items[index].SubItems[TRANSFER_EST].Text = TimeSpan.FromSeconds(timeEstAvg).ToString();
+                        if (imageIndex >= 0 || imageIndex == -1)
+                            lstTransfers.Items[index].ImageIndex = imageIndex;
+                    });
+                }
+                else
+                {
+                    int speedAvg = 0, timeEstAvg = 0;
+                    int id = int.Parse(lstTransfers.Items[index].Text);
+
+                    if (_transferEstimates.ContainsKey(id))
+                    {
+                        _transferEstimates[id].AddSpeed((int)speed);
+                        _transferEstimates[id].AddTimeLeft(est.Seconds);
+
+                        speedAvg = _transferEstimates[id].AverageSpeed;
+                        timeEstAvg = _transferEstimates[id].AverageTimeLeft;
+                    }
+                    else
+                        _transferEstimates.Add(id, new TransferCalculator());
+
                     lstTransfers.Items[index].SubItems[TRANSFER_STATUS].Text = status;
-                    if (imageIndex >= 0)
+                    lstTransfers.Items[index].SubItems[TRANSFER_SPEED].Text = speedAvg == 0
+                        ? "n/a"
+                        : TransferCalculator.GetSizeSuffix((long)speed);
+                    lstTransfers.Items[index].SubItems[TRANSFER_EST].Text = TimeSpan.FromSeconds(timeEstAvg).ToString();
+                    if (imageIndex >= 0 || imageIndex == -1)
                         lstTransfers.Items[index].ImageIndex = imageIndex;
-                });
+                }
             }
             catch (InvalidOperationException)
             {
@@ -764,7 +719,7 @@ namespace xServer.Forms
             if (!_connectClient.Value.ReceivedLastDirectory)
                 _connectClient.Value.ProcessingDirectory = false;
 
-            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+            new Core.Packets.ServerPackets.GetDirectory(_currentDir, InformationDetail.Standard).Execute(_connectClient);
             SetStatus("Loading directory content...");
             _connectClient.Value.ReceivedLastDirectory = false;
         }
@@ -945,8 +900,6 @@ namespace xServer.Forms
                     stripBtnCancel.Visible = false;
                 }
             });
-
-            _searchResultCache.Clear();
         }
 
         private void TabControlFileManager_SelectedIndexChanged(object sender, EventArgs e)
@@ -986,11 +939,352 @@ namespace xServer.Forms
 
                 if (_connectClient != null)
                 {
-                    new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
+                    var metaPath = Path.Combine(_connectClient.Value.DownloadDirectory, "temp");
+                    foreach (var metaFile in Directory.GetFiles(metaPath))
+                    {
+                        var metadata = File.ReadAllBytes(metaFile);
+                        if (Encoding.Default.GetString(metadata, 12, metadata.Length - 12) == path)
+                        {
+                            return;
+                        }
+                    }
+
+                    new Core.Packets.ServerPackets.DoDownloadFile(path, id, 0).Execute(_connectClient);
 
                     AddTransfer(id, "Download", "Pending...", file.SubItems[0].Text);
                 }
 
+            }
+        }
+
+        private void createFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var folderCreationForm = new FrmCreateFolder();
+            folderCreationForm.ShowDialog();
+
+            if (folderCreationForm.FolderName != null)
+            {
+                new DoCreateDirectory(folderCreationForm.FolderName, _currentDir).Execute(_connectClient);
+            }
+        }
+
+        private void ProcessUnfinishedTransfers()
+        {
+            var metaPath = Path.Combine(_connectClient.Value.DownloadDirectory, "temp");
+
+            if (!Directory.Exists(metaPath))
+            {
+                try
+                {
+                    Directory.CreateDirectory(metaPath);
+                }
+                catch
+                {
+                    return;
+                }
+            }
+
+            var remotePaths = new List<string>();
+            var remoteSampleHashes = new List<byte>();
+            var remoteTransferIds = new List<int>();
+
+            foreach (var file1 in Directory.GetFiles(metaPath))
+            {
+                var metaFile = new MetaFile(File.ReadAllBytes(file1));
+
+                if (metaFile.Type == TransferType.Download)
+                {
+                    foreach (var file2 in Directory.GetFiles(_connectClient.Value.DownloadDirectory))
+                    {
+                        if (new FileInfo(file1).Length < 32)
+                            continue;
+
+                        byte[] hashSample = new byte[FileSplit.MAX_BLOCK_SIZE];
+                        byte[] hash;
+
+                        using (var fs = new FileStream(file2, FileMode.Open))
+                        {
+                            fs.Seek(-FileSplit.MAX_BLOCK_SIZE, SeekOrigin.End);
+                            fs.Read(hashSample, 0, FileSplit.MAX_BLOCK_SIZE);
+                        }
+                        using (var md5 = MD5.Create())
+                            hash = md5.ComputeHash(hashSample);
+
+                        if (CryptographyHelper.AreEqual(metaFile.PrevHash, hash))
+                        {
+                            metaFile.CurrentBlock--;
+                            metaFile.Save(file1);
+                            metaFile = new MetaFile(File.ReadAllBytes(file1));
+                        }
+
+                        if (!CryptographyHelper.AreEqual(metaFile.CurHash, hash))
+                            return;
+
+                        AddTransfer(metaFile.TransferId, "Download", string.Format("Paused ({0}%)", metaFile.Progress),
+                            Path.GetFileName(file2));
+                        UnfinishedTransfers.Add(metaFile.TransferId, metaFile);
+                        UpdateTransferStatus(lstTransfers.Items.Count - 1,
+                            string.Format("Paused ({0}%)", metaFile.Progress), 2);
+                    }
+                }
+                else
+                {
+                    remotePaths.Add(metaFile.RemotePath);
+                    remoteSampleHashes.AddRange(metaFile.CurHash);
+                    remoteTransferIds.Add(metaFile.TransferId);
+                }
+            }
+
+            if (remoteSampleHashes.Count % 16 != 0)
+                return;
+
+            if (remotePaths.Count + remoteSampleHashes.Count/16 != remoteTransferIds.Count*2
+                || remotePaths.Count == 0)
+                return;
+
+            new DoVerifyUnfinishedTransfers(remotePaths.ToArray(), remoteSampleHashes.ToArray(),
+                remoteTransferIds.ToArray()).Execute(_connectClient);
+        }
+
+        private void resumeTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem lvi in lstTransfers.SelectedItems)
+            {
+                var transferId = int.Parse(lvi.SubItems[0].Text);
+
+                if (CommandHandler.PausedDownloads.ContainsKey(transferId))
+                {
+                    if (CommandHandler.PausedDownloads[transferId].Type == TransferType.Download)
+                    {
+                        new Core.Packets.ServerPackets.DoDownloadFile(
+                            CommandHandler.PausedDownloads[transferId].RemotePath, transferId,
+                            CommandHandler.PausedDownloads[transferId].CurrentBlock, true).Execute(_connectClient);
+                        CommandHandler.PausedDownloads.Remove(transferId);
+                    }
+                }
+                else if (CommandHandler.PausedUploads.ContainsKey(transferId))
+                {
+                    var info = new UploadInformation(CommandHandler.PausedUploads[transferId].LocalPath,
+                        CommandHandler.PausedUploads[transferId].RemotePath,
+                        false, CommandHandler.PausedUploads[transferId].CurrentBlock, transferId);
+                    CommandHandler.PausedUploads.Remove(transferId);
+
+                    new Thread(UploadItem).Start(info);
+                }
+                else if(UnfinishedTransfers.ContainsKey(transferId))
+                {
+                    if (UnfinishedTransfers[transferId].Type == TransferType.Download)
+                    {
+                        if ((UnfinishedTransfers[transferId].Type & TransferType.Folder) == TransferType.Folder)
+                        {
+                            new Core.Packets.ServerPackets.DoDownloadDirectory(UnfinishedTransfers[transferId].RemotePath,
+                             transferId,
+                             UnfinishedTransfers[transferId].CurrentBlock).Execute(_connectClient);
+                        }
+                        else
+                        {
+                            new Core.Packets.ServerPackets.DoDownloadFile(UnfinishedTransfers[transferId].RemotePath,
+                                transferId,
+                                UnfinishedTransfers[transferId].CurrentBlock, true).Execute(_connectClient);
+                        }
+                        UnfinishedTransfers.Remove(transferId);
+                    }
+                    else
+                    {
+                        new Thread(UploadItem).Start(new UploadInformation(UnfinishedTransfers[transferId].LocalPath,
+                            UnfinishedTransfers[transferId].RemotePath,
+                            false, UnfinishedTransfers[transferId].CurrentBlock, transferId));
+                    }
+                }
+            }
+        }
+
+        private struct UploadInformation
+        {
+            public string LocalPath { get; private set; }
+            public string RemotePath { get; private set; }
+            public bool IsFile { get; private set; }
+            public int StartBlock { get; private set; }
+            public int TransferId { get; private set; }
+
+            public UploadInformation(string localPath, string remotePath, bool isFile, int startBlock = 0, int transferId = 0)
+            {
+                LocalPath = localPath;
+                RemotePath = remotePath;
+                IsFile = isFile;
+                StartBlock = startBlock;
+                TransferId = transferId;
+            }
+        }
+        private void UploadItem(object data)
+        {
+            var isFile = ((UploadInformation)data).IsFile;
+            var path = ((UploadInformation)data).LocalPath;
+            var startBlock = ((UploadInformation) data).StartBlock;
+            var remotePath = ((UploadInformation) data).RemotePath;
+            var transferId = ((UploadInformation) data).TransferId;
+
+            FileSplit srcFile;
+            if (!isFile)
+                srcFile = new FileSplit(new VirtualDirectory(path));
+            else
+                srcFile = new FileSplit(path);
+
+            var remoteDir = _currentDir;
+            var startTime = DateTime.Now;
+            int id;
+            if (transferId == 0)
+                id = FileHelper.GetNewTransferId();
+            else
+                id = transferId;
+
+            string metaFilePath = Path.Combine(_connectClient.Value.DownloadDirectory, "temp", id + ".meta");
+
+            if(transferId == 0)
+                AddTransfer(id, "Upload", "Pending...", string.Concat(new DirectoryInfo(path).Name, " (Folder)"));
+
+            int index = GetTransferIndex(id);
+            if (index < 0)
+                return;
+
+           // FileSplit srcFile = new FileSplit(vDir);
+            if (srcFile.MaxBlocks < 0)
+            {
+                UpdateTransferStatus(index, "Error reading file", 0);
+                return;
+            }
+
+            if (string.IsNullOrEmpty(remotePath)) return;
+
+            _limitThreads.WaitOne();
+            for (int currentBlock = startBlock; currentBlock < srcFile.MaxBlocks; currentBlock++)
+            {
+                if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
+                {
+                    _limitThreads.Release();
+                    return; // abort upload when from is closed or client disconnected
+                }
+
+                if (CanceledUploads.ContainsKey(id))
+                {
+                    UpdateTransferStatus(index, "Canceled", 0);
+                    _limitThreads.Release();
+                    return;
+                }
+
+                if (CommandHandler.PausedUploads.ContainsKey(id))
+                {
+                    UpdateTransferStatus(index, string.Format("Paused ({0}%)", CommandHandler.PausedUploads[id].Progress), 2);
+                    _limitThreads.Release();
+                    return;
+                }
+
+                index = GetTransferIndex(id);
+                if (index < 0)
+                {
+                    _limitThreads.Release();
+                    return;
+                }
+
+                decimal progress =
+                    Math.Round(
+                        (decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
+
+                decimal speed;
+                int timeLeft = 0;
+                try
+                {
+                    speed = Math.Round((decimal)(currentBlock * FileSplit.MAX_BLOCK_SIZE) /
+                                       (DateTime.Now - startTime).Seconds, 0);
+                    timeLeft = (int)(((FileSplit.MAX_BLOCK_SIZE * (srcFile.MaxBlocks - currentBlock)) / 1000) / (speed / 1000));
+                }
+                catch (DivideByZeroException)
+                {
+                    speed = 0;
+                }
+
+                UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1, TimeSpan.FromSeconds(timeLeft), speed);
+
+                byte[] block;
+                if (srcFile.ReadBlock(currentBlock, out block))
+                {
+                    new Core.Packets.ServerPackets.DoUploadDirectory(id,
+                        remotePath, block, srcFile.MaxBlocks,
+                        currentBlock).Execute(_connectClient);
+                }
+                else
+                {
+                    UpdateTransferStatus(index, "Error reading file", 0);
+                    _limitThreads.Release();
+                    return;
+                }
+
+                byte[] hashSample = new byte[16];
+                using (var md5 = MD5.Create())
+                    hashSample = md5.ComputeHash(block);
+
+                var metaFile = new MetaFile(currentBlock, id, progress, hashSample, hashSample, remotePath, path,
+                    TransferType.Upload);
+                metaFile.Save(metaFilePath);
+
+            }
+            _limitThreads.Release();
+
+            if (remoteDir == _currentDir)
+                RefreshDirectory();
+
+            if (_transferEstimates.ContainsKey(id))
+                _transferEstimates.Remove(id);
+            UpdateTransferStatus(index, "Completed", 1);
+        }
+
+        private void uploadFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            using (var fbd = new FolderBrowserDialog())
+            {
+                if (fbd.ShowDialog() == DialogResult.OK)
+                {
+                    string remotePath = Path.Combine(_currentDir, Path.GetFileName(fbd.SelectedPath));
+                    new Thread(UploadItem).Start(new UploadInformation(fbd.SelectedPath, remotePath,
+                        false));
+                }
+            }
+        }
+
+        private void pauseTransferToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (ListViewItem transfer in lstTransfers.SelectedItems)
+            {
+                if (!transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") &&
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") &&
+                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+
+                int id = int.Parse(transfer.SubItems[TRANSFER_ID].Text);
+
+                if (transfer.SubItems[TRANSFER_TYPE].Text == "Download")
+                {
+                    if (_connectClient != null)
+                        new Core.Packets.ServerPackets.DoDownloadFilePause(id).Execute(_connectClient);
+                    if (!CommandHandler.PausedDownloads.ContainsKey(id))
+                        CommandHandler.PausedDownloads.Add(id,
+                            new MetaFile(
+                                File.ReadAllBytes(Path.Combine(_connectClient.Value.DownloadDirectory, "temp", id + ".meta"))));
+                    if (CommandHandler.RenamedFiles.ContainsKey(id))
+                        CommandHandler.RenamedFiles.Remove(id);
+                    _transferEstimates[id].Reset();
+
+                    UpdateTransferStatus(transfer.Index, string.Format("Paused ({0}%)", CommandHandler.PausedDownloads[id].Progress), 2);
+                }
+                else if (transfer.SubItems[TRANSFER_TYPE].Text == "Upload")
+                {
+                    if (!CommandHandler.PausedUploads.ContainsKey(id))
+                        CommandHandler.PausedUploads.Add(id,
+                            new MetaFile(
+                                File.ReadAllBytes(Path.Combine(_connectClient.Value.DownloadDirectory, "temp", id + ".meta"))));
+                    _transferEstimates[id].Reset();
+
+                    UpdateTransferStatus(transfer.Index, string.Format("Paused ({0}%)", CommandHandler.PausedUploads[id].Progress), 2);
+                }
             }
         }
     }

@@ -88,7 +88,13 @@ namespace xServer.Core.Packets
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect),
                 typeof (Packets.ClientPackets.GetConnectionsResponse),
                 typeof (Packets.ServerPackets.SearchDirectory),
-                typeof (Packets.ClientPackets.SearchDirectoryResponse)
+                typeof (Packets.ClientPackets.SearchDirectoryResponse),
+                typeof(Packets.ServerPackets.DoCreateDirectory),
+                typeof(Packets.ServerPackets.DoDownloadDirectory),
+                typeof(Packets.ServerPackets.DoUploadDirectory),
+                typeof(Packets.ServerPackets.DoDownloadFilePause),
+                typeof(Packets.ServerPackets.DoVerifyUnfinishedTransfers),
+                typeof(Packets.ClientPackets.DoVerifyUnfinishedTransferResponse)
 
             };
         }

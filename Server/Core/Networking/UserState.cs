@@ -36,6 +36,7 @@ namespace xServer.Core.Networking
         public FrmReverseProxy FrmProxy { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
         public FrmConnections FrmCon { get; set; }
+        public FrmDownloadFolder FrmFldr { get; set; }
 
 
         public bool ReceivedLastDirectory { get; set; }
@@ -104,6 +105,8 @@ namespace xServer.Core.Networking
                         FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
                     if (FrmCon != null)
                         FrmCon.Invoke((MethodInvoker)delegate { FrmCon.Close(); });
+                    if (FrmFldr != null)
+                        FrmFldr.Invoke((MethodInvoker) delegate { FrmFldr.Close(); });
                 }
                 catch (InvalidOperationException)
                 {

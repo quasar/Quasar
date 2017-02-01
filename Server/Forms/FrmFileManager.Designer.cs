@@ -35,8 +35,10 @@ namespace xServer.Forms
             this.contextMenuStripDirectory = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.downloadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.uploadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.uploadFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.createFolderToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.line2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -52,6 +54,9 @@ namespace xServer.Forms
             this.stripBtnCancel = new System.Windows.Forms.ToolStripSplitButton();
             this.contextMenuStripTransfers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
+            this.resumeTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.pauseTransferToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
@@ -61,6 +66,7 @@ namespace xServer.Forms
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearSearchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolTipSearchPattern = new System.Windows.Forms.ToolTip(this.components);
+            this.txtSearch = new System.Windows.Forms.TextBox();
             this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.lstDirectory = new xServer.Controls.AeroListView();
@@ -76,7 +82,6 @@ namespace xServer.Forms
             this.txtSearchDirectory = new System.Windows.Forms.TextBox();
             this.lblSearchPath = new System.Windows.Forms.Label();
             this.lblSearchString = new System.Windows.Forms.Label();
-            this.txtSearch = new System.Windows.Forms.TextBox();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.lblPath = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
@@ -89,12 +94,14 @@ namespace xServer.Forms
             this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hSpeed = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.tabSearchResults = new System.Windows.Forms.TabPage();
             this.lstSearchResults = new xServer.Controls.AeroListView();
             this.hsName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hsSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hsModified = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hsCreated = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.hEst = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStripDirectory.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextMenuStripTransfers.SuspendLayout();
@@ -110,8 +117,10 @@ namespace xServer.Forms
             this.contextMenuStripDirectory.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.downloadToolStripMenuItem,
             this.uploadToolStripMenuItem,
+            this.uploadFolderToolStripMenuItem,
             this.lineToolStripMenuItem,
             this.executeToolStripMenuItem,
+            this.createFolderToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.line2ToolStripMenuItem,
@@ -120,7 +129,7 @@ namespace xServer.Forms
             this.refreshToolStripMenuItem,
             this.openDirectoryInShellToolStripMenuItem});
             this.contextMenuStripDirectory.Name = "ctxtMenu";
-            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 198);
+            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 242);
             // 
             // downloadToolStripMenuItem
             // 
@@ -136,8 +145,16 @@ namespace xServer.Forms
             this.uploadToolStripMenuItem.Image = global::xServer.Properties.Resources.upload;
             this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
             this.uploadToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.uploadToolStripMenuItem.Text = "Upload";
+            this.uploadToolStripMenuItem.Text = "Upload file";
             this.uploadToolStripMenuItem.Click += new System.EventHandler(this.uploadToolStripMenuItem_Click);
+            // 
+            // uploadFolderToolStripMenuItem
+            // 
+            this.uploadFolderToolStripMenuItem.Image = global::xServer.Properties.Resources.folder_go;
+            this.uploadFolderToolStripMenuItem.Name = "uploadFolderToolStripMenuItem";
+            this.uploadFolderToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.uploadFolderToolStripMenuItem.Text = "Upload folder";
+            this.uploadFolderToolStripMenuItem.Click += new System.EventHandler(this.uploadFolderToolStripMenuItem_Click);
             // 
             // lineToolStripMenuItem
             // 
@@ -151,6 +168,14 @@ namespace xServer.Forms
             this.executeToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.executeToolStripMenuItem.Text = "Execute";
             this.executeToolStripMenuItem.Click += new System.EventHandler(this.executeToolStripMenuItem_Click);
+            // 
+            // createFolderToolStripMenuItem
+            // 
+            this.createFolderToolStripMenuItem.Image = global::xServer.Properties.Resources.folder;
+            this.createFolderToolStripMenuItem.Name = "createFolderToolStripMenuItem";
+            this.createFolderToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.createFolderToolStripMenuItem.Text = "Create folder";
+            this.createFolderToolStripMenuItem.Click += new System.EventHandler(this.createFolderToolStripMenuItem_Click);
             // 
             // renameToolStripMenuItem
             // 
@@ -264,29 +289,53 @@ namespace xServer.Forms
             // 
             this.contextMenuStripTransfers.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.cancelToolStripMenuItem,
+            this.toolStripSeparator2,
+            this.resumeTransferToolStripMenuItem,
+            this.pauseTransferToolStripMenuItem,
             this.toolStripMenuItem1,
             this.clearToolStripMenuItem});
             this.contextMenuStripTransfers.Name = "ctxtMenu2";
-            this.contextMenuStripTransfers.Size = new System.Drawing.Size(150, 54);
+            this.contextMenuStripTransfers.Size = new System.Drawing.Size(160, 104);
             // 
             // cancelToolStripMenuItem
             // 
             this.cancelToolStripMenuItem.Image = global::xServer.Properties.Resources.cancel;
             this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
-            this.cancelToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.cancelToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.cancelToolStripMenuItem.Text = "Cancel";
             this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
+            // 
+            // toolStripSeparator2
+            // 
+            this.toolStripSeparator2.Name = "toolStripSeparator2";
+            this.toolStripSeparator2.Size = new System.Drawing.Size(156, 6);
+            // 
+            // resumeTransferToolStripMenuItem
+            // 
+            this.resumeTransferToolStripMenuItem.Image = global::xServer.Properties.Resources.control_play;
+            this.resumeTransferToolStripMenuItem.Name = "resumeTransferToolStripMenuItem";
+            this.resumeTransferToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.resumeTransferToolStripMenuItem.Text = "Resume transfer";
+            this.resumeTransferToolStripMenuItem.Click += new System.EventHandler(this.resumeTransferToolStripMenuItem_Click);
+            // 
+            // pauseTransferToolStripMenuItem
+            // 
+            this.pauseTransferToolStripMenuItem.Image = global::xServer.Properties.Resources.control_pause;
+            this.pauseTransferToolStripMenuItem.Name = "pauseTransferToolStripMenuItem";
+            this.pauseTransferToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
+            this.pauseTransferToolStripMenuItem.Text = "Pause transfer";
+            this.pauseTransferToolStripMenuItem.Click += new System.EventHandler(this.pauseTransferToolStripMenuItem_Click);
             // 
             // toolStripMenuItem1
             // 
             this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(146, 6);
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(156, 6);
             // 
             // clearToolStripMenuItem
             // 
             this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.broom;
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
-            this.clearToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.clearToolStripMenuItem.Size = new System.Drawing.Size(159, 22);
             this.clearToolStripMenuItem.Text = "Clear transfers";
             this.clearToolStripMenuItem.Click += new System.EventHandler(this.clearToolStripMenuItem_Click);
             // 
@@ -296,6 +345,7 @@ namespace xServer.Forms
             this.imgListTransfers.TransparentColor = System.Drawing.Color.Transparent;
             this.imgListTransfers.Images.SetKeyName(0, "cancel.png");
             this.imgListTransfers.Images.SetKeyName(1, "done.png");
+            this.imgListTransfers.Images.SetKeyName(2, "paused.png");
             // 
             // contextMenuStripSearch
             // 
@@ -340,6 +390,18 @@ namespace xServer.Forms
             // 
             this.toolTipSearchPattern.ToolTipIcon = System.Windows.Forms.ToolTipIcon.Info;
             this.toolTipSearchPattern.ToolTipTitle = "Search pattern";
+            // 
+            // txtSearch
+            // 
+            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.txtSearch.Location = new System.Drawing.Point(87, 38);
+            this.txtSearch.Name = "txtSearch";
+            this.txtSearch.Size = new System.Drawing.Size(175, 22);
+            this.txtSearch.TabIndex = 7;
+            this.txtSearch.Text = "*.*";
+            this.toolTipSearchPattern.SetToolTip(this.txtSearch, "To use multiple patterns, separate them with \",\".");
             // 
             // TabControlFileManager
             // 
@@ -510,18 +572,6 @@ namespace xServer.Forms
             this.lblSearchString.TabIndex = 8;
             this.lblSearchString.Text = "Search string:";
             // 
-            // txtSearch
-            // 
-            this.txtSearch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtSearch.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.txtSearch.Location = new System.Drawing.Point(87, 38);
-            this.txtSearch.Name = "txtSearch";
-            this.txtSearch.Size = new System.Drawing.Size(175, 22);
-            this.txtSearch.TabIndex = 7;
-            this.txtSearch.Text = "*.*";
-            this.toolTipSearchPattern.SetToolTip(this.txtSearch, "To use multiple patterns, separate them with \",\".");
-            // 
             // btnRefresh
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -606,7 +656,9 @@ namespace xServer.Forms
             this.hID,
             this.hTransferType,
             this.hStatus,
-            this.hFilename});
+            this.hFilename,
+            this.hSpeed,
+            this.hEst});
             this.lstTransfers.ContextMenuStrip = this.contextMenuStripTransfers;
             this.lstTransfers.FullRowSelect = true;
             this.lstTransfers.GridLines = true;
@@ -631,12 +683,17 @@ namespace xServer.Forms
             // hStatus
             // 
             this.hStatus.Text = "Status";
-            this.hStatus.Width = 173;
+            this.hStatus.Width = 126;
             // 
             // hFilename
             // 
             this.hFilename.Text = "Filename";
-            this.hFilename.Width = 289;
+            this.hFilename.Width = 159;
+            // 
+            // hSpeed
+            // 
+            this.hSpeed.Text = "Speed";
+            this.hSpeed.Width = 96;
             // 
             // tabSearchResults
             // 
@@ -692,6 +749,11 @@ namespace xServer.Forms
             // 
             this.hsCreated.Text = "Created";
             this.hsCreated.Width = 112;
+            // 
+            // hEst
+            // 
+            this.hEst.Text = "Est.";
+            this.hEst.Width = 92;
             // 
             // FrmFileManager
             // 
@@ -789,5 +851,12 @@ namespace xServer.Forms
         private System.Windows.Forms.ColumnHeader hsModified;
         private System.Windows.Forms.ColumnHeader hsCreated;
         private System.Windows.Forms.ToolStripMenuItem downloadToolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem createFolderToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem resumeTransferToolStripMenuItem;
+        private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
+        private System.Windows.Forms.ToolStripMenuItem pauseTransferToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader hSpeed;
+        private System.Windows.Forms.ToolStripMenuItem uploadFolderToolStripMenuItem;
+        private System.Windows.Forms.ColumnHeader hEst;
     }
 }
