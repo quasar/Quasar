@@ -228,6 +228,7 @@ namespace xClient.Core.Utilities
                         ZipOutputStream outZip;
                         zip.CreateZip(ms, Path.Combine(_rootPath, dir), true, null, null, out outZip);
 
+                        outZip.Finish();
                         // IMPORTANT! outZip must be closed after use here
                         Files.Add(VirtualFile.Create(ms.Length, new DirectoryInfo(dir).Name + ".zip", ms.ToArray(), true));
                         outZip.Close();

@@ -15,7 +15,7 @@ namespace xServer.Core.Utilities
         Folder = 8
     }
 
-    public struct MetaFile
+    public class MetaFile
     {
         public int CurrentBlock { get; set; }
         public int TransferId { get; set; }

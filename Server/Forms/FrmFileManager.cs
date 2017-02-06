@@ -990,15 +990,29 @@ namespace xServer.Forms
 
             foreach (var file1 in Directory.GetFiles(metaPath))
             {
-                var metaFile = new MetaFile(File.ReadAllBytes(file1));
+                MetaFile metaFile;
+
+                try
+                {
+                    metaFile = new MetaFile(File.ReadAllBytes(file1));
+                }
+                catch
+                {
+                    try
+                    {
+                        File.Delete(file1);
+                    }
+                    catch
+                    {
+                        
+                    }
+                    continue;
+                }
 
                 if (metaFile.Type == TransferType.Download)
                 {
                     foreach (var file2 in Directory.GetFiles(_connectClient.Value.DownloadDirectory))
                     {
-                        if (new FileInfo(file1).Length < 32)
-                            continue;
-
                         byte[] hashSample = new byte[FileSplit.MAX_BLOCK_SIZE];
                         byte[] hash;
 
