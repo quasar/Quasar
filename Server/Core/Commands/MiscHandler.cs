@@ -50,10 +50,31 @@ namespace xServer.Core.Commands
                     RenamedFiles.Add(packet.ID, newFileName);
                     break;
                 }
+            } else if (packet.CurrentBlock == 0 && Directory.Exists(downloadPath))
+            {
+                for (int i = 1; i < 100; i++)
+                {
+                    var newFileName = string.Format("{0} ({1})", downloadPath, i);
+                    if (Directory.Exists(Path.Combine(client.Value.DownloadDirectory, newFileName))) continue;
+
+                    downloadPath = Path.Combine(client.Value.DownloadDirectory, newFileName);
+                    RenamedFiles.Add(packet.ID, newFileName);
+                    break;
+                }
             }
-            else if (packet.CurrentBlock > 0 && File.Exists(downloadPath) && RenamedFiles.ContainsKey(packet.ID))
+            else if (packet.CurrentBlock > 0 && (File.Exists(downloadPath) || Directory.Exists(downloadPath)) && RenamedFiles.ContainsKey(packet.ID))
             {
                 downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.ID]);
+            }
+
+            // Handle crashed renamed files too
+            if (packet.CurrentBlock > 0 && File.Exists(metaFilePath))
+            {
+                var tmpMeta = new MetaFile(File.ReadAllBytes(metaFilePath));
+                if (tmpMeta.LocalPath != downloadPath && tmpMeta.LocalPath != "")
+                {
+                    downloadPath = tmpMeta.LocalPath;
+                }
             }
 
             if (client.Value == null || client.Value.FrmFm == null)
@@ -127,7 +148,25 @@ namespace xServer.Core.Commands
             }
 
 
-            var metaFile = new MetaFile(packet.CurrentBlock + 1, packet.ID, progress, prevHash, curHash, packet.RemotePath, "", TransferType.Download);
+            MetaFile metaFile;
+            // Paused/crashed folder downloads require this
+            if (File.Exists(metaFilePath))
+            {
+                metaFile = new MetaFile(File.ReadAllBytes(metaFilePath));
+                metaFile.CurrentBlock++;
+                metaFile.TransferId = packet.ID;
+                metaFile.Progress = progress;
+                metaFile.PrevHash = prevHash;
+                metaFile.CurHash = curHash;
+                metaFile.RemotePath = packet.RemotePath;
+                metaFile.LocalPath = downloadPath;
+                metaFile.Type = TransferType.Download;
+            }
+            else
+            {
+                metaFile = new MetaFile(packet.CurrentBlock + 1, packet.ID, progress, prevHash, curHash, packet.RemotePath, downloadPath, TransferType.Download);
+            }
+
             metaFile.Save(metaFilePath);
 
             if (client.Value == null || client.Value.FrmFm == null)

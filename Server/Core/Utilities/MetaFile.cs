@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using xServer.Core.Packets.ServerPackets;
 
 namespace xServer.Core.Utilities
 {
@@ -25,6 +26,8 @@ namespace xServer.Core.Utilities
         public string RemotePath { get; set; }
         public string LocalPath { get; set; }
         public TransferType Type { get; set; }
+        public string[] FolderItems { get; set; }
+        public ItemOption[] FolderItemOptions { get; set; }
 
         public MetaFile(int currentBlock, int transferId, decimal progress, byte[] prevHash, byte[] curHash, string remotePath, string localPath, TransferType type)
         {
@@ -51,7 +54,18 @@ namespace xServer.Core.Utilities
                 CurHash = br.ReadBytes(16);
                 RemotePath = br.ReadString();
                 LocalPath = br.ReadString();
+                if (br.ReadBoolean())
+                {
+                    var count = br.ReadInt32();
+                    FolderItems = new string[count];
+                    for (int i = 0; i < count; i++)
+                        FolderItems[i] = br.ReadString();
 
+                    count = br.ReadInt32();
+                    FolderItemOptions = new ItemOption[count];
+                    for (int i = 0; i < count; i++)
+                        FolderItemOptions[i] = (ItemOption)br.ReadByte();
+                }
             }
             //int idx = 0;
 
@@ -86,6 +100,19 @@ namespace xServer.Core.Utilities
                 bw.Write(CurHash);
                 bw.Write(RemotePath);
                 bw.Write(LocalPath);
+                if (FolderItems != null && FolderItems.Length > 0)
+                {
+                    bw.Write(true);
+                    bw.Write(FolderItems.Length);
+                    foreach (var fi in FolderItems)
+                        bw.Write(fi);
+
+                    bw.Write(FolderItemOptions.Length);
+                    foreach (var fio in FolderItemOptions)
+                        bw.Write((byte) fio);
+                }
+                else
+                    bw.Write(false);
             }
             //    var data = new List<byte>();
             //data.Add((byte)Type);

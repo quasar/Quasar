@@ -14,6 +14,10 @@ namespace xClient.Core.Packets.ServerPackets
         
         public bool Resumed { get; set; }
 
+        public string[] FolderItems { get; set; }
+
+        public ItemOption[] FolderItemOptions { get; set; }
+
         public DoDownloadFile()
         {
         }
@@ -24,6 +28,8 @@ namespace xClient.Core.Packets.ServerPackets
             this.ID = id;
             this.StartBlock = startBlock;
             this.Resumed = resumed;
+            this.FolderItems = new string[1];
+            this.FolderItemOptions = new ItemOption[1];
         }
 
         public void Execute(Client client)

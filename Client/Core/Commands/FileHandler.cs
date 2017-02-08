@@ -123,9 +123,9 @@ namespace xClient.Core.Commands
                     ID = command.ID,
                     Type = DownloadType.Full,
                     RemotePath = command.RemotePath,
-                    ItemOptions = null,
+                    ItemOptions = command.FolderItemOptions,
                     StartBlock = command.StartBlock,
-                    Items = null
+                    Items = command.FolderItems
                 }, client);
                 return;
             }

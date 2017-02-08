@@ -165,6 +165,11 @@ namespace xServer.Forms
 
                     if (_connectClient != null)
                     {
+                        var metaFile = new MetaFile(0, id, 0, new byte[16], new byte[16], "", "", TransferType.Folder);
+                        metaFile.FolderItems = items;
+                        metaFile.FolderItemOptions = itemOptions.ToArray();
+                        metaFile.Save(Path.Combine(_connectClient.Value.DownloadDirectory, "temp", id + ".meta"));
+
                         if (items != null && items.Length > 0)
                             new Core.Packets.ServerPackets.DoDownloadDirectory(path, id, 0, items, itemOptions.ToArray(),
                                 DownloadType.Selective).Execute(_connectClient);
@@ -1072,7 +1077,11 @@ namespace xServer.Forms
                     {
                         new Core.Packets.ServerPackets.DoDownloadFile(
                             CommandHandler.PausedDownloads[transferId].RemotePath, transferId,
-                            CommandHandler.PausedDownloads[transferId].CurrentBlock, true).Execute(_connectClient);
+                            CommandHandler.PausedDownloads[transferId].CurrentBlock, true)
+                        {
+                            FolderItems = CommandHandler.PausedDownloads[transferId].FolderItems,
+                            FolderItemOptions = CommandHandler.PausedDownloads[transferId].FolderItemOptions
+                        }.Execute(_connectClient);
                         CommandHandler.PausedDownloads.Remove(transferId);
                     }
                 }
@@ -1099,7 +1108,11 @@ namespace xServer.Forms
                         {
                             new Core.Packets.ServerPackets.DoDownloadFile(UnfinishedTransfers[transferId].RemotePath,
                                 transferId,
-                                UnfinishedTransfers[transferId].CurrentBlock, true).Execute(_connectClient);
+                                UnfinishedTransfers[transferId].CurrentBlock, true)
+                            {
+                                FolderItems = UnfinishedTransfers[transferId].FolderItems,
+                                FolderItemOptions = UnfinishedTransfers[transferId].FolderItemOptions
+                            }.Execute(_connectClient);
                         }
                         UnfinishedTransfers.Remove(transferId);
                     }
