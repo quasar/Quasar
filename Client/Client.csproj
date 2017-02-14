@@ -214,6 +214,7 @@
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Recovery\Other\Outlook.cs" />
+    <Compile Include="Core\Recovery\Other\Thunderbird.cs" />
     <Compile Include="Core\Registry\RegistryEditor.cs" />
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />

