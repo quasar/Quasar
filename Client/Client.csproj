@@ -51,6 +51,9 @@
     <Reference Include="System.Security" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
+    <Reference Include="Windows.Security">
+      <HintPath>..\..\..\..\..\..\..\Windows\System32\WinMetadata\Windows.Security.winmd</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Core\AForge\Video.DirectShow\CameraControlProperty.cs" />

