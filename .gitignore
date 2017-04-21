@@ -203,3 +203,4 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 Client/Config/Settings.cs
+Client/Config/Settings.cs
