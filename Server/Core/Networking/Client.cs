@@ -236,6 +236,7 @@ namespace xServer.Core.Networking
         /// </summary>
         private bool _appendHeader;
 
+        //TODO: change later
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 

@@ -37,6 +37,9 @@ TestResult.xml
 [Rr]eleasePS/
 dlldata.c
 
+#quasar related
+QuasarRAT.VC.VC.opendb
+
 # DNX
 project.lock.json
 artifacts/
@@ -65,6 +68,9 @@ artifacts/
 *.pidb
 *.svclog
 *.scc
+
+
+QuasarRAT.VC.db
 
 # Chutzpah Test files
 _Chutzpah*
