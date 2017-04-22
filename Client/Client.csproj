@@ -130,6 +130,16 @@
     <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
+	<Compile Include="Core\Networking\Proxy\HttpsHandler.cs" />
+	<Compile Include="Core\Networking\Proxy\IAsyncProxyResult.cs" />
+	<Compile Include="Core\Networking\Proxy\ProxyException.cs" />
+	<Compile Include="Core\Networking\Proxy\ProxySocket.cs" />
+	<Compile Include="Core\Networking\Proxy\Socks4Handler.cs" />
+	<Compile Include="Core\Networking\Proxy\Socks5Handler.cs" />
+	<Compile Include="Core\Networking\Proxy\SocksHandler.cs" />
+	<Compile Include="Core\Networking\Proxy\Authentication\AuthMethod.cs" />
+	<Compile Include="Core\Networking\Proxy\Authentication\AuthNone.cs" />
+	<Compile Include="Core\Networking\Proxy\Authentication\AuthUserPass.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetConnectionsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
@@ -308,7 +318,9 @@
   <ItemGroup>
     <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="Core\Networking\Proxy\Authentication\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
