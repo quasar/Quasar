@@ -141,9 +141,10 @@
             // 
             // btnBuild
             // 
-            this.btnBuild.Location = new System.Drawing.Point(402, 390);
+            this.btnBuild.Font = new System.Drawing.Font("Segoe UI Semibold", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.btnBuild.Location = new System.Drawing.Point(390, 389);
             this.btnBuild.Name = "btnBuild";
-            this.btnBuild.Size = new System.Drawing.Size(121, 23);
+            this.btnBuild.Size = new System.Drawing.Size(140, 31);
             this.btnBuild.TabIndex = 1;
             this.btnBuild.Text = "Build Client";
             this.btnBuild.UseVisualStyleBackColor = true;
@@ -152,7 +153,7 @@
             // picUAC2
             // 
             this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC2.Location = new System.Drawing.Point(363, 88);
+            this.picUAC2.Location = new System.Drawing.Point(363, 93);
             this.picUAC2.Name = "picUAC2";
             this.picUAC2.Size = new System.Drawing.Size(16, 20);
             this.picUAC2.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -163,7 +164,7 @@
             // picUAC1
             // 
             this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
-            this.picUAC1.Location = new System.Drawing.Point(363, 68);
+            this.picUAC1.Location = new System.Drawing.Point(363, 73);
             this.picUAC1.Name = "picUAC1";
             this.picUAC1.Size = new System.Drawing.Size(16, 20);
             this.picUAC1.SizeMode = System.Windows.Forms.PictureBoxSizeMode.AutoSize;
@@ -174,7 +175,7 @@
             // rbSystem
             // 
             this.rbSystem.AutoSize = true;
-            this.rbSystem.Location = new System.Drawing.Point(241, 91);
+            this.rbSystem.Location = new System.Drawing.Point(241, 96);
             this.rbSystem.Name = "rbSystem";
             this.rbSystem.Size = new System.Drawing.Size(60, 17);
             this.rbSystem.TabIndex = 5;
@@ -187,7 +188,7 @@
             // rbProgramFiles
             // 
             this.rbProgramFiles.AutoSize = true;
-            this.rbProgramFiles.Location = new System.Drawing.Point(241, 68);
+            this.rbProgramFiles.Location = new System.Drawing.Point(241, 73);
             this.rbProgramFiles.Name = "rbProgramFiles";
             this.rbProgramFiles.Size = new System.Drawing.Size(94, 17);
             this.rbProgramFiles.TabIndex = 4;
@@ -235,7 +236,7 @@
             this.builderTabs.Multiline = true;
             this.builderTabs.Name = "builderTabs";
             this.builderTabs.SelectedIndex = 0;
-            this.builderTabs.Size = new System.Drawing.Size(535, 384);
+            this.builderTabs.Size = new System.Drawing.Size(534, 384);
             this.builderTabs.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
             this.builderTabs.TabIndex = 0;
             // 
@@ -256,14 +257,14 @@
             this.generalPage.Location = new System.Drawing.Point(140, 4);
             this.generalPage.Name = "generalPage";
             this.generalPage.Padding = new System.Windows.Forms.Padding(3);
-            this.generalPage.Size = new System.Drawing.Size(391, 376);
+            this.generalPage.Size = new System.Drawing.Size(390, 376);
             this.generalPage.TabIndex = 4;
             this.generalPage.Text = "Basic Settings";
             // 
             // label9
             // 
             this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(17, 94);
+            this.label9.Location = new System.Drawing.Point(17, 123);
             this.label9.Name = "label9";
             this.label9.Size = new System.Drawing.Size(370, 26);
             this.label9.TabIndex = 5;
@@ -273,61 +274,62 @@
             // line6
             // 
             this.line6.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line6.Location = new System.Drawing.Point(83, 78);
+            this.line6.Location = new System.Drawing.Point(109, 100);
             this.line6.Name = "line6";
-            this.line6.Size = new System.Drawing.Size(300, 13);
+            this.line6.Size = new System.Drawing.Size(274, 13);
             this.line6.TabIndex = 20;
             this.line6.TabStop = false;
             // 
             // label8
             // 
             this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(6, 78);
+            this.label8.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label8.Location = new System.Drawing.Point(6, 96);
             this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(80, 13);
+            this.label8.Size = new System.Drawing.Size(97, 17);
             this.label8.TabIndex = 4;
             this.label8.Text = "Process Mutex";
             // 
             // txtTag
             // 
-            this.txtTag.Location = new System.Drawing.Point(182, 40);
+            this.txtTag.Location = new System.Drawing.Point(182, 52);
             this.txtTag.Name = "txtTag";
-            this.txtTag.Size = new System.Drawing.Size(203, 22);
+            this.txtTag.Size = new System.Drawing.Size(200, 22);
             this.txtTag.TabIndex = 3;
             this.txtTag.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(17, 20);
+            this.label7.Location = new System.Drawing.Point(17, 32);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(232, 13);
+            this.label7.Size = new System.Drawing.Size(231, 13);
             this.label7.TabIndex = 1;
             this.label7.Text = "You can choose a tag to identify your client.";
             // 
             // lblTag
             // 
             this.lblTag.AutoSize = true;
-            this.lblTag.Location = new System.Drawing.Point(17, 43);
+            this.lblTag.Location = new System.Drawing.Point(17, 55);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(61, 13);
+            this.lblTag.Size = new System.Drawing.Size(60, 13);
             this.lblTag.TabIndex = 2;
             this.lblTag.Text = "Client Tag:";
             // 
             // txtMutex
             // 
-            this.txtMutex.Location = new System.Drawing.Point(182, 130);
+            this.txtMutex.Location = new System.Drawing.Point(182, 159);
             this.txtMutex.MaxLength = 64;
             this.txtMutex.Name = "txtMutex";
-            this.txtMutex.Size = new System.Drawing.Size(201, 22);
+            this.txtMutex.Size = new System.Drawing.Size(200, 22);
             this.txtMutex.TabIndex = 7;
             this.txtMutex.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // btnMutex
             // 
-            this.btnMutex.Location = new System.Drawing.Point(262, 158);
+            this.btnMutex.Location = new System.Drawing.Point(281, 187);
             this.btnMutex.Name = "btnMutex";
-            this.btnMutex.Size = new System.Drawing.Size(121, 23);
+            this.btnMutex.Size = new System.Drawing.Size(101, 23);
             this.btnMutex.TabIndex = 8;
             this.btnMutex.Text = "Random Mutex";
             this.btnMutex.UseVisualStyleBackColor = true;
@@ -336,16 +338,16 @@
             // line5
             // 
             this.line5.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line5.Location = new System.Drawing.Point(112, 5);
+            this.line5.Location = new System.Drawing.Point(143, 9);
             this.line5.Name = "line5";
-            this.line5.Size = new System.Drawing.Size(271, 13);
+            this.line5.Size = new System.Drawing.Size(240, 13);
             this.line5.TabIndex = 15;
             this.line5.TabStop = false;
             // 
             // lblMutex
             // 
             this.lblMutex.AutoSize = true;
-            this.lblMutex.Location = new System.Drawing.Point(17, 133);
+            this.lblMutex.Location = new System.Drawing.Point(17, 162);
             this.lblMutex.Name = "lblMutex";
             this.lblMutex.Size = new System.Drawing.Size(42, 13);
             this.lblMutex.TabIndex = 6;
@@ -354,9 +356,10 @@
             // label6
             // 
             this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label6.Location = new System.Drawing.Point(6, 5);
             this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(109, 13);
+            this.label6.Size = new System.Drawing.Size(131, 17);
             this.label6.TabIndex = 0;
             this.label6.Text = "Client Identification";
             // 
@@ -385,13 +388,13 @@
             this.connectionPage.Location = new System.Drawing.Point(140, 4);
             this.connectionPage.Name = "connectionPage";
             this.connectionPage.Padding = new System.Windows.Forms.Padding(3);
-            this.connectionPage.Size = new System.Drawing.Size(391, 376);
+            this.connectionPage.Size = new System.Drawing.Size(390, 376);
             this.connectionPage.TabIndex = 0;
             this.connectionPage.Text = "Connection Settings";
             // 
             // numericUpDownPort
             // 
-            this.numericUpDownPort.Location = new System.Drawing.Point(254, 51);
+            this.numericUpDownPort.Location = new System.Drawing.Point(254, 62);
             this.numericUpDownPort.Maximum = new decimal(new int[] {
             65535,
             0,
@@ -403,7 +406,7 @@
             0,
             0});
             this.numericUpDownPort.Name = "numericUpDownPort";
-            this.numericUpDownPort.Size = new System.Drawing.Size(129, 22);
+            this.numericUpDownPort.Size = new System.Drawing.Size(128, 22);
             this.numericUpDownPort.TabIndex = 3;
             this.numericUpDownPort.Value = new decimal(new int[] {
             1,
@@ -413,7 +416,7 @@
             // 
             // numericUpDownDelay
             // 
-            this.numericUpDownDelay.Location = new System.Drawing.Point(276, 282);
+            this.numericUpDownDelay.Location = new System.Drawing.Point(274, 312);
             this.numericUpDownDelay.Maximum = new decimal(new int[] {
             600000,
             0,
@@ -432,26 +435,28 @@
             // line3
             // 
             this.line3.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line3.Location = new System.Drawing.Point(95, 263);
+            this.line3.Location = new System.Drawing.Point(122, 293);
             this.line3.Name = "line3";
-            this.line3.Size = new System.Drawing.Size(290, 13);
+            this.line3.Size = new System.Drawing.Size(261, 13);
             this.line3.TabIndex = 18;
             this.line3.TabStop = false;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 263);
+            this.label4.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label4.Location = new System.Drawing.Point(6, 289);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(92, 13);
+            this.label4.Size = new System.Drawing.Size(110, 17);
             this.label4.TabIndex = 17;
             this.label4.Text = "Reconnect Delay";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
+            this.label3.Font = new System.Drawing.Font("Segoe UI", 8.25F);
             this.label3.ForeColor = System.Drawing.Color.SteelBlue;
-            this.label3.Location = new System.Drawing.Point(17, 179);
+            this.label3.Location = new System.Drawing.Point(17, 206);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(318, 13);
             this.label3.TabIndex = 16;
@@ -460,36 +465,38 @@
             // line2
             // 
             this.line2.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line2.Location = new System.Drawing.Point(123, 161);
+            this.line2.Location = new System.Drawing.Point(156, 184);
             this.line2.Name = "line2";
-            this.line2.Size = new System.Drawing.Size(260, 13);
+            this.line2.Size = new System.Drawing.Size(227, 13);
             this.line2.TabIndex = 15;
             this.line2.TabStop = false;
             // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 161);
+            this.label2.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label2.Location = new System.Drawing.Point(6, 180);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(121, 13);
+            this.label2.Size = new System.Drawing.Size(144, 17);
             this.label2.TabIndex = 14;
             this.label2.Text = "Encrypted Connection";
             // 
             // line1
             // 
             this.line1.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line1.Location = new System.Drawing.Point(104, 5);
+            this.line1.Location = new System.Drawing.Point(129, 9);
             this.line1.Name = "line1";
-            this.line1.Size = new System.Drawing.Size(281, 13);
+            this.line1.Size = new System.Drawing.Size(254, 13);
             this.line1.TabIndex = 13;
             this.line1.TabStop = false;
             // 
             // label1
             // 
             this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label1.Location = new System.Drawing.Point(6, 5);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(99, 13);
+            this.label1.Size = new System.Drawing.Size(117, 17);
             this.label1.TabIndex = 14;
             this.label1.Text = "Connection Hosts";
             // 
@@ -497,7 +504,7 @@
             // 
             this.lstHosts.ContextMenuStrip = this.contextMenuStrip;
             this.lstHosts.FormattingEnabled = true;
-            this.lstHosts.Location = new System.Drawing.Point(20, 21);
+            this.lstHosts.Location = new System.Drawing.Point(20, 32);
             this.lstHosts.Name = "lstHosts";
             this.lstHosts.Size = new System.Drawing.Size(149, 121);
             this.lstHosts.TabIndex = 5;
@@ -505,7 +512,7 @@
             // 
             // btnAddHost
             // 
-            this.btnAddHost.Location = new System.Drawing.Point(254, 78);
+            this.btnAddHost.Location = new System.Drawing.Point(254, 89);
             this.btnAddHost.Name = "btnAddHost";
             this.btnAddHost.Size = new System.Drawing.Size(129, 22);
             this.btnAddHost.TabIndex = 4;
@@ -516,7 +523,7 @@
             // lblMS
             // 
             this.lblMS.AutoSize = true;
-            this.lblMS.Location = new System.Drawing.Point(356, 287);
+            this.lblMS.Location = new System.Drawing.Point(358, 317);
             this.lblMS.Name = "lblMS";
             this.lblMS.Size = new System.Drawing.Size(21, 13);
             this.lblMS.TabIndex = 11;
@@ -525,7 +532,7 @@
             // lblHost
             // 
             this.lblHost.AutoSize = true;
-            this.lblHost.Location = new System.Drawing.Point(175, 25);
+            this.lblHost.Location = new System.Drawing.Point(175, 36);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(75, 13);
             this.lblHost.TabIndex = 0;
@@ -533,15 +540,15 @@
             // 
             // txtHost
             // 
-            this.txtHost.Location = new System.Drawing.Point(254, 22);
+            this.txtHost.Location = new System.Drawing.Point(254, 33);
             this.txtHost.Name = "txtHost";
-            this.txtHost.Size = new System.Drawing.Size(129, 22);
+            this.txtHost.Size = new System.Drawing.Size(128, 22);
             this.txtHost.TabIndex = 1;
             // 
             // lblDelay
             // 
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(17, 286);
+            this.lblDelay.Location = new System.Drawing.Point(17, 314);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(199, 13);
             this.lblDelay.TabIndex = 9;
@@ -550,7 +557,7 @@
             // lblPort
             // 
             this.lblPort.AutoSize = true;
-            this.lblPort.Location = new System.Drawing.Point(175, 53);
+            this.lblPort.Location = new System.Drawing.Point(175, 64);
             this.lblPort.Name = "lblPort";
             this.lblPort.Size = new System.Drawing.Size(31, 13);
             this.lblPort.TabIndex = 2;
@@ -559,7 +566,7 @@
             // chkShowPass
             // 
             this.chkShowPass.AutoSize = true;
-            this.chkShowPass.Location = new System.Drawing.Point(276, 228);
+            this.chkShowPass.Location = new System.Drawing.Point(275, 254);
             this.chkShowPass.Name = "chkShowPass";
             this.chkShowPass.Size = new System.Drawing.Size(107, 17);
             this.chkShowPass.TabIndex = 8;
@@ -569,17 +576,17 @@
             // 
             // txtPassword
             // 
-            this.txtPassword.Location = new System.Drawing.Point(182, 200);
+            this.txtPassword.Location = new System.Drawing.Point(182, 226);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '•';
-            this.txtPassword.Size = new System.Drawing.Size(201, 22);
+            this.txtPassword.Size = new System.Drawing.Size(200, 22);
             this.txtPassword.TabIndex = 7;
             this.txtPassword.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblPassword
             // 
             this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(17, 203);
+            this.lblPassword.Location = new System.Drawing.Point(17, 229);
             this.lblPassword.Name = "lblPassword";
             this.lblPassword.Size = new System.Drawing.Size(59, 13);
             this.lblPassword.TabIndex = 6;
@@ -614,14 +621,14 @@
             this.installationPage.Location = new System.Drawing.Point(140, 4);
             this.installationPage.Name = "installationPage";
             this.installationPage.Padding = new System.Windows.Forms.Padding(3);
-            this.installationPage.Size = new System.Drawing.Size(391, 376);
+            this.installationPage.Size = new System.Drawing.Size(390, 376);
             this.installationPage.TabIndex = 1;
             this.installationPage.Text = "Installation Settings";
             // 
             // chkHideSubDirectory
             // 
             this.chkHideSubDirectory.AutoSize = true;
-            this.chkHideSubDirectory.Location = new System.Drawing.Point(186, 185);
+            this.chkHideSubDirectory.Location = new System.Drawing.Point(193, 183);
             this.chkHideSubDirectory.Name = "chkHideSubDirectory";
             this.chkHideSubDirectory.Size = new System.Drawing.Size(185, 17);
             this.chkHideSubDirectory.TabIndex = 37;
@@ -631,43 +638,45 @@
             // line7
             // 
             this.line7.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line7.Location = new System.Drawing.Point(60, 274);
+            this.line7.Location = new System.Drawing.Point(79, 278);
             this.line7.Name = "line7";
-            this.line7.Size = new System.Drawing.Size(323, 13);
+            this.line7.Size = new System.Drawing.Size(304, 13);
             this.line7.TabIndex = 36;
             this.line7.TabStop = false;
             // 
             // label10
             // 
             this.label10.AutoSize = true;
+            this.label10.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label10.Location = new System.Drawing.Point(7, 274);
             this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(55, 13);
+            this.label10.Size = new System.Drawing.Size(66, 17);
             this.label10.TabIndex = 14;
             this.label10.Text = "Autostart";
             // 
             // line4
             // 
             this.line4.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line4.Location = new System.Drawing.Point(117, 5);
+            this.line4.Location = new System.Drawing.Point(147, 9);
             this.line4.Name = "line4";
-            this.line4.Size = new System.Drawing.Size(266, 13);
+            this.line4.Size = new System.Drawing.Size(236, 13);
             this.line4.TabIndex = 34;
             this.line4.TabStop = false;
             // 
             // label5
             // 
             this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label5.Location = new System.Drawing.Point(6, 5);
             this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(112, 13);
+            this.label5.Size = new System.Drawing.Size(135, 17);
             this.label5.TabIndex = 0;
             this.label5.Text = "Installation Location";
             // 
             // chkInstall
             // 
             this.chkInstall.AutoSize = true;
-            this.chkInstall.Location = new System.Drawing.Point(20, 21);
+            this.chkInstall.Location = new System.Drawing.Point(17, 25);
             this.chkInstall.Name = "chkInstall";
             this.chkInstall.Size = new System.Drawing.Size(90, 17);
             this.chkInstall.TabIndex = 1;
@@ -678,7 +687,7 @@
             // lblInstallName
             // 
             this.lblInstallName.AutoSize = true;
-            this.lblInstallName.Location = new System.Drawing.Point(17, 156);
+            this.lblInstallName.Location = new System.Drawing.Point(17, 157);
             this.lblInstallName.Name = "lblInstallName";
             this.lblInstallName.Size = new System.Drawing.Size(73, 13);
             this.lblInstallName.TabIndex = 8;
@@ -686,25 +695,25 @@
             // 
             // txtInstallName
             // 
-            this.txtInstallName.Location = new System.Drawing.Point(182, 153);
+            this.txtInstallName.Location = new System.Drawing.Point(182, 152);
             this.txtInstallName.Name = "txtInstallName";
-            this.txtInstallName.Size = new System.Drawing.Size(170, 22);
+            this.txtInstallName.Size = new System.Drawing.Size(163, 22);
             this.txtInstallName.TabIndex = 9;
             this.txtInstallName.TextChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             this.txtInstallName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInstallname_KeyPress);
             // 
             // txtRegistryKeyName
             // 
-            this.txtRegistryKeyName.Location = new System.Drawing.Point(182, 324);
+            this.txtRegistryKeyName.Location = new System.Drawing.Point(182, 318);
             this.txtRegistryKeyName.Name = "txtRegistryKeyName";
-            this.txtRegistryKeyName.Size = new System.Drawing.Size(201, 22);
+            this.txtRegistryKeyName.Size = new System.Drawing.Size(196, 22);
             this.txtRegistryKeyName.TabIndex = 17;
             this.txtRegistryKeyName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblExtension
             // 
             this.lblExtension.AutoSize = true;
-            this.lblExtension.Location = new System.Drawing.Point(352, 159);
+            this.lblExtension.Location = new System.Drawing.Point(351, 157);
             this.lblExtension.Name = "lblExtension";
             this.lblExtension.Size = new System.Drawing.Size(27, 13);
             this.lblExtension.TabIndex = 10;
@@ -713,7 +722,7 @@
             // lblRegistryKeyName
             // 
             this.lblRegistryKeyName.AutoSize = true;
-            this.lblRegistryKeyName.Location = new System.Drawing.Point(17, 327);
+            this.lblRegistryKeyName.Location = new System.Drawing.Point(17, 321);
             this.lblRegistryKeyName.Name = "lblRegistryKeyName";
             this.lblRegistryKeyName.Size = new System.Drawing.Size(80, 13);
             this.lblRegistryKeyName.TabIndex = 16;
@@ -722,7 +731,7 @@
             // chkStartup
             // 
             this.chkStartup.AutoSize = true;
-            this.chkStartup.Location = new System.Drawing.Point(20, 298);
+            this.chkStartup.Location = new System.Drawing.Point(17, 294);
             this.chkStartup.Name = "chkStartup";
             this.chkStartup.Size = new System.Drawing.Size(215, 17);
             this.chkStartup.TabIndex = 15;
@@ -734,7 +743,7 @@
             // 
             this.rbAppdata.AutoSize = true;
             this.rbAppdata.Checked = true;
-            this.rbAppdata.Location = new System.Drawing.Point(241, 45);
+            this.rbAppdata.Location = new System.Drawing.Point(241, 50);
             this.rbAppdata.Name = "rbAppdata";
             this.rbAppdata.Size = new System.Drawing.Size(137, 17);
             this.rbAppdata.TabIndex = 3;
@@ -746,7 +755,7 @@
             // chkHide
             // 
             this.chkHide.AutoSize = true;
-            this.chkHide.Location = new System.Drawing.Point(20, 185);
+            this.chkHide.Location = new System.Drawing.Point(20, 183);
             this.chkHide.Name = "chkHide";
             this.chkHide.Size = new System.Drawing.Size(168, 17);
             this.chkHide.TabIndex = 11;
@@ -757,7 +766,7 @@
             // lblInstallDirectory
             // 
             this.lblInstallDirectory.AutoSize = true;
-            this.lblInstallDirectory.Location = new System.Drawing.Point(17, 47);
+            this.lblInstallDirectory.Location = new System.Drawing.Point(17, 52);
             this.lblInstallDirectory.Name = "lblInstallDirectory";
             this.lblInstallDirectory.Size = new System.Drawing.Size(90, 13);
             this.lblInstallDirectory.TabIndex = 2;
@@ -766,7 +775,7 @@
             // lblInstallSubDirectory
             // 
             this.lblInstallSubDirectory.AutoSize = true;
-            this.lblInstallSubDirectory.Location = new System.Drawing.Point(17, 126);
+            this.lblInstallSubDirectory.Location = new System.Drawing.Point(17, 127);
             this.lblInstallSubDirectory.Name = "lblInstallSubDirectory";
             this.lblInstallSubDirectory.Size = new System.Drawing.Size(109, 13);
             this.lblInstallSubDirectory.TabIndex = 6;
@@ -775,7 +784,7 @@
             // lblPreviewPath
             // 
             this.lblPreviewPath.AutoSize = true;
-            this.lblPreviewPath.Location = new System.Drawing.Point(17, 218);
+            this.lblPreviewPath.Location = new System.Drawing.Point(17, 214);
             this.lblPreviewPath.Name = "lblPreviewPath";
             this.lblPreviewPath.Size = new System.Drawing.Size(157, 13);
             this.lblPreviewPath.TabIndex = 12;
@@ -783,19 +792,19 @@
             // 
             // txtInstallSubDirectory
             // 
-            this.txtInstallSubDirectory.Location = new System.Drawing.Point(182, 123);
+            this.txtInstallSubDirectory.Location = new System.Drawing.Point(182, 124);
             this.txtInstallSubDirectory.Name = "txtInstallSubDirectory";
-            this.txtInstallSubDirectory.Size = new System.Drawing.Size(201, 22);
+            this.txtInstallSubDirectory.Size = new System.Drawing.Size(196, 22);
             this.txtInstallSubDirectory.TabIndex = 7;
             this.txtInstallSubDirectory.TextChanged += new System.EventHandler(this.HasChangedSettingAndFilePath);
             this.txtInstallSubDirectory.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtInstallsub_KeyPress);
             // 
             // txtPreviewPath
             // 
-            this.txtPreviewPath.Location = new System.Drawing.Point(20, 234);
+            this.txtPreviewPath.Location = new System.Drawing.Point(20, 230);
             this.txtPreviewPath.Name = "txtPreviewPath";
             this.txtPreviewPath.ReadOnly = true;
-            this.txtPreviewPath.Size = new System.Drawing.Size(363, 22);
+            this.txtPreviewPath.Size = new System.Drawing.Size(358, 22);
             this.txtPreviewPath.TabIndex = 13;
             this.txtPreviewPath.TabStop = false;
             // 
@@ -829,13 +838,13 @@
             this.assemblyPage.Controls.Add(this.txtCopyright);
             this.assemblyPage.Location = new System.Drawing.Point(140, 4);
             this.assemblyPage.Name = "assemblyPage";
-            this.assemblyPage.Size = new System.Drawing.Size(391, 376);
+            this.assemblyPage.Size = new System.Drawing.Size(390, 376);
             this.assemblyPage.TabIndex = 2;
             this.assemblyPage.Text = "Assembly Settings";
             // 
             // iconPreview
             // 
-            this.iconPreview.Location = new System.Drawing.Point(319, 302);
+            this.iconPreview.Location = new System.Drawing.Point(318, 302);
             this.iconPreview.Name = "iconPreview";
             this.iconPreview.Size = new System.Drawing.Size(64, 64);
             this.iconPreview.SizeMode = System.Windows.Forms.PictureBoxSizeMode.StretchImage;
@@ -862,25 +871,26 @@
             // line8
             // 
             this.line8.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line8.Location = new System.Drawing.Point(122, 5);
+            this.line8.Location = new System.Drawing.Point(157, 9);
             this.line8.Name = "line8";
-            this.line8.Size = new System.Drawing.Size(261, 13);
+            this.line8.Size = new System.Drawing.Size(226, 13);
             this.line8.TabIndex = 36;
             this.line8.TabStop = false;
             // 
             // label11
             // 
             this.label11.AutoSize = true;
+            this.label11.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label11.Location = new System.Drawing.Point(6, 5);
             this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(118, 13);
+            this.label11.Size = new System.Drawing.Size(145, 17);
             this.label11.TabIndex = 35;
             this.label11.Text = "Assembly Information";
             // 
             // chkChangeAsmInfo
             // 
             this.chkChangeAsmInfo.AutoSize = true;
-            this.chkChangeAsmInfo.Location = new System.Drawing.Point(20, 21);
+            this.chkChangeAsmInfo.Location = new System.Drawing.Point(17, 25);
             this.chkChangeAsmInfo.Name = "chkChangeAsmInfo";
             this.chkChangeAsmInfo.Size = new System.Drawing.Size(180, 17);
             this.chkChangeAsmInfo.TabIndex = 0;
@@ -890,25 +900,25 @@
             // 
             // txtFileVersion
             // 
-            this.txtFileVersion.Location = new System.Drawing.Point(182, 240);
+            this.txtFileVersion.Location = new System.Drawing.Point(182, 243);
             this.txtFileVersion.Name = "txtFileVersion";
-            this.txtFileVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtFileVersion.Size = new System.Drawing.Size(200, 22);
             this.txtFileVersion.TabIndex = 16;
             this.txtFileVersion.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // line9
             // 
             this.line9.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line9.Location = new System.Drawing.Point(83, 276);
+            this.line9.Location = new System.Drawing.Point(109, 274);
             this.line9.Name = "line9";
-            this.line9.Size = new System.Drawing.Size(300, 13);
+            this.line9.Size = new System.Drawing.Size(274, 13);
             this.line9.TabIndex = 38;
             this.line9.TabStop = false;
             // 
             // lblProductName
             // 
             this.lblProductName.AutoSize = true;
-            this.lblProductName.Location = new System.Drawing.Point(17, 47);
+            this.lblProductName.Location = new System.Drawing.Point(17, 50);
             this.lblProductName.Name = "lblProductName";
             this.lblProductName.Size = new System.Drawing.Size(82, 13);
             this.lblProductName.TabIndex = 1;
@@ -917,16 +927,17 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(6, 276);
+            this.label12.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label12.Location = new System.Drawing.Point(6, 270);
             this.label12.Name = "label12";
-            this.label12.Size = new System.Drawing.Size(79, 13);
+            this.label12.Size = new System.Drawing.Size(97, 17);
             this.label12.TabIndex = 0;
             this.label12.Text = "Assembly Icon";
             // 
             // chkChangeIcon
             // 
             this.chkChangeIcon.AutoSize = true;
-            this.chkChangeIcon.Location = new System.Drawing.Point(20, 294);
+            this.chkChangeIcon.Location = new System.Drawing.Point(17, 290);
             this.chkChangeIcon.Name = "chkChangeIcon";
             this.chkChangeIcon.Size = new System.Drawing.Size(141, 17);
             this.chkChangeIcon.TabIndex = 2;
@@ -937,32 +948,32 @@
             // lblFileVersion
             // 
             this.lblFileVersion.AutoSize = true;
-            this.lblFileVersion.Location = new System.Drawing.Point(17, 243);
+            this.lblFileVersion.Location = new System.Drawing.Point(17, 246);
             this.lblFileVersion.Name = "lblFileVersion";
-            this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
+            this.lblFileVersion.Size = new System.Drawing.Size(69, 13);
             this.lblFileVersion.TabIndex = 15;
             this.lblFileVersion.Text = "File Version:";
             // 
             // txtProductName
             // 
-            this.txtProductName.Location = new System.Drawing.Point(182, 44);
+            this.txtProductName.Location = new System.Drawing.Point(182, 47);
             this.txtProductName.Name = "txtProductName";
-            this.txtProductName.Size = new System.Drawing.Size(201, 22);
+            this.txtProductName.Size = new System.Drawing.Size(200, 22);
             this.txtProductName.TabIndex = 2;
             this.txtProductName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // txtProductVersion
             // 
-            this.txtProductVersion.Location = new System.Drawing.Point(182, 212);
+            this.txtProductVersion.Location = new System.Drawing.Point(182, 215);
             this.txtProductVersion.Name = "txtProductVersion";
-            this.txtProductVersion.Size = new System.Drawing.Size(201, 22);
+            this.txtProductVersion.Size = new System.Drawing.Size(200, 22);
             this.txtProductVersion.TabIndex = 14;
             this.txtProductVersion.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblDescription
             // 
             this.lblDescription.AutoSize = true;
-            this.lblDescription.Location = new System.Drawing.Point(17, 75);
+            this.lblDescription.Location = new System.Drawing.Point(17, 78);
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(69, 13);
             this.lblDescription.TabIndex = 3;
@@ -971,32 +982,32 @@
             // lblProductVersion
             // 
             this.lblProductVersion.AutoSize = true;
-            this.lblProductVersion.Location = new System.Drawing.Point(17, 215);
+            this.lblProductVersion.Location = new System.Drawing.Point(17, 218);
             this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
+            this.lblProductVersion.Size = new System.Drawing.Size(91, 13);
             this.lblProductVersion.TabIndex = 13;
             this.lblProductVersion.Text = "Product Version:";
             // 
             // txtDescription
             // 
-            this.txtDescription.Location = new System.Drawing.Point(182, 72);
+            this.txtDescription.Location = new System.Drawing.Point(182, 75);
             this.txtDescription.Name = "txtDescription";
-            this.txtDescription.Size = new System.Drawing.Size(201, 22);
+            this.txtDescription.Size = new System.Drawing.Size(200, 22);
             this.txtDescription.TabIndex = 4;
             this.txtDescription.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // txtOriginalFilename
             // 
-            this.txtOriginalFilename.Location = new System.Drawing.Point(182, 184);
+            this.txtOriginalFilename.Location = new System.Drawing.Point(182, 187);
             this.txtOriginalFilename.Name = "txtOriginalFilename";
-            this.txtOriginalFilename.Size = new System.Drawing.Size(201, 22);
+            this.txtOriginalFilename.Size = new System.Drawing.Size(200, 22);
             this.txtOriginalFilename.TabIndex = 12;
             this.txtOriginalFilename.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblCompanyName
             // 
             this.lblCompanyName.AutoSize = true;
-            this.lblCompanyName.Location = new System.Drawing.Point(17, 103);
+            this.lblCompanyName.Location = new System.Drawing.Point(17, 106);
             this.lblCompanyName.Name = "lblCompanyName";
             this.lblCompanyName.Size = new System.Drawing.Size(90, 13);
             this.lblCompanyName.TabIndex = 5;
@@ -1005,7 +1016,7 @@
             // lblOriginalFilename
             // 
             this.lblOriginalFilename.AutoSize = true;
-            this.lblOriginalFilename.Location = new System.Drawing.Point(17, 187);
+            this.lblOriginalFilename.Location = new System.Drawing.Point(17, 190);
             this.lblOriginalFilename.Name = "lblOriginalFilename";
             this.lblOriginalFilename.Size = new System.Drawing.Size(101, 13);
             this.lblOriginalFilename.TabIndex = 11;
@@ -1013,24 +1024,24 @@
             // 
             // txtCompanyName
             // 
-            this.txtCompanyName.Location = new System.Drawing.Point(182, 100);
+            this.txtCompanyName.Location = new System.Drawing.Point(182, 103);
             this.txtCompanyName.Name = "txtCompanyName";
-            this.txtCompanyName.Size = new System.Drawing.Size(201, 22);
+            this.txtCompanyName.Size = new System.Drawing.Size(200, 22);
             this.txtCompanyName.TabIndex = 6;
             this.txtCompanyName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // txtTrademarks
             // 
-            this.txtTrademarks.Location = new System.Drawing.Point(182, 156);
+            this.txtTrademarks.Location = new System.Drawing.Point(182, 159);
             this.txtTrademarks.Name = "txtTrademarks";
-            this.txtTrademarks.Size = new System.Drawing.Size(201, 22);
+            this.txtTrademarks.Size = new System.Drawing.Size(200, 22);
             this.txtTrademarks.TabIndex = 10;
             this.txtTrademarks.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
             // lblCopyright
             // 
             this.lblCopyright.AutoSize = true;
-            this.lblCopyright.Location = new System.Drawing.Point(17, 131);
+            this.lblCopyright.Location = new System.Drawing.Point(17, 134);
             this.lblCopyright.Name = "lblCopyright";
             this.lblCopyright.Size = new System.Drawing.Size(61, 13);
             this.lblCopyright.TabIndex = 7;
@@ -1039,17 +1050,17 @@
             // lblTrademarks
             // 
             this.lblTrademarks.AutoSize = true;
-            this.lblTrademarks.Location = new System.Drawing.Point(17, 159);
+            this.lblTrademarks.Location = new System.Drawing.Point(17, 162);
             this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.Size = new System.Drawing.Size(67, 13);
             this.lblTrademarks.TabIndex = 9;
             this.lblTrademarks.Text = "Trademarks:";
             // 
             // txtCopyright
             // 
-            this.txtCopyright.Location = new System.Drawing.Point(182, 128);
+            this.txtCopyright.Location = new System.Drawing.Point(182, 131);
             this.txtCopyright.Name = "txtCopyright";
-            this.txtCopyright.Size = new System.Drawing.Size(201, 22);
+            this.txtCopyright.Size = new System.Drawing.Size(200, 22);
             this.txtCopyright.TabIndex = 8;
             this.txtCopyright.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
@@ -1064,14 +1075,14 @@
             this.surveillanceTab.Controls.Add(this.chkKeylogger);
             this.surveillanceTab.Location = new System.Drawing.Point(140, 4);
             this.surveillanceTab.Name = "surveillanceTab";
-            this.surveillanceTab.Size = new System.Drawing.Size(391, 376);
+            this.surveillanceTab.Size = new System.Drawing.Size(390, 376);
             this.surveillanceTab.TabIndex = 3;
             this.surveillanceTab.Text = "Surveillance Settings";
             // 
             // chkHideLogDirectory
             // 
             this.chkHideLogDirectory.AutoSize = true;
-            this.chkHideLogDirectory.Location = new System.Drawing.Point(20, 72);
+            this.chkHideLogDirectory.Location = new System.Drawing.Point(20, 76);
             this.chkHideLogDirectory.Name = "chkHideLogDirectory";
             this.chkHideLogDirectory.Size = new System.Drawing.Size(197, 17);
             this.chkHideLogDirectory.TabIndex = 7;
@@ -1081,9 +1092,9 @@
             // 
             // txtLogDirectoryName
             // 
-            this.txtLogDirectoryName.Location = new System.Drawing.Point(262, 44);
+            this.txtLogDirectoryName.Location = new System.Drawing.Point(250, 51);
             this.txtLogDirectoryName.Name = "txtLogDirectoryName";
-            this.txtLogDirectoryName.Size = new System.Drawing.Size(118, 22);
+            this.txtLogDirectoryName.Size = new System.Drawing.Size(132, 22);
             this.txtLogDirectoryName.TabIndex = 6;
             this.txtLogDirectoryName.TextChanged += new System.EventHandler(this.HasChangedSetting);
             this.txtLogDirectoryName.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtLogDirectoryName_KeyPress);
@@ -1091,7 +1102,7 @@
             // lblLogDirectory
             // 
             this.lblLogDirectory.AutoSize = true;
-            this.lblLogDirectory.Location = new System.Drawing.Point(17, 47);
+            this.lblLogDirectory.Location = new System.Drawing.Point(17, 54);
             this.lblLogDirectory.Name = "lblLogDirectory";
             this.lblLogDirectory.Size = new System.Drawing.Size(110, 13);
             this.lblLogDirectory.TabIndex = 5;
@@ -1100,25 +1111,26 @@
             // line10
             // 
             this.line10.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
-            this.line10.Location = new System.Drawing.Point(72, 5);
+            this.line10.Location = new System.Drawing.Point(95, 9);
             this.line10.Name = "line10";
-            this.line10.Size = new System.Drawing.Size(308, 13);
+            this.line10.Size = new System.Drawing.Size(288, 13);
             this.line10.TabIndex = 41;
             this.line10.TabStop = false;
             // 
             // label14
             // 
             this.label14.AutoSize = true;
+            this.label14.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.label14.Location = new System.Drawing.Point(6, 5);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(68, 13);
+            this.label14.Size = new System.Drawing.Size(83, 17);
             this.label14.TabIndex = 3;
             this.label14.Text = "Surveillance";
             // 
             // chkKeylogger
             // 
             this.chkKeylogger.AutoSize = true;
-            this.chkKeylogger.Location = new System.Drawing.Point(20, 21);
+            this.chkKeylogger.Location = new System.Drawing.Point(17, 25);
             this.chkKeylogger.Name = "chkKeylogger";
             this.chkKeylogger.Size = new System.Drawing.Size(156, 17);
             this.chkKeylogger.TabIndex = 4;
@@ -1131,7 +1143,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.BackColor = System.Drawing.SystemColors.Control;
-            this.ClientSize = new System.Drawing.Size(535, 424);
+            this.ClientSize = new System.Drawing.Size(534, 425);
             this.Controls.Add(this.builderTabs);
             this.Controls.Add(this.btnBuild);
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
@@ -1140,7 +1152,7 @@
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmBuilder";
-            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+            this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Client Builder";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmBuilder_FormClosing);
             this.Load += new System.EventHandler(this.FrmBuilder_Load);
