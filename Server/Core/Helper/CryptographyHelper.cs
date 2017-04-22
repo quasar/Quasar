@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
+using System.Text;
 using xServer.Core.Cryptography;
 
 namespace xServer.Core.Helper
@@ -36,6 +37,20 @@ namespace xServer.Core.Helper
                 key = Convert.ToBase64String(derive.GetBytes(16));
                 authKey = Convert.ToBase64String(derive.GetBytes(64));
             }
+        }
+
+        public static string CalculateMd5Checksum(byte[] data)
+        {
+            byte[] hash;
+            using (var md5 = MD5.Create())
+                hash = md5.ComputeHash(data);
+
+            var sb = new StringBuilder();
+
+            for (int i = 0; i < 16; i++)
+                sb.Append(hash[i].ToString("x2"));
+
+            return sb.ToString();
         }
     }
 }

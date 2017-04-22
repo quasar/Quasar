@@ -161,12 +161,14 @@
     <Compile Include="Core\NetSerializer\TypeSerializers\GenericSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
     <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
+    <Compile Include="Core\Packets\ClientPackets\DoVerifyUnfinishedTransferResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetConnectionsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
@@ -174,6 +176,12 @@
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\PacketRegistery.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoCreateDirectory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDownloadDirectory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoDownloadFilePause.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoUploadDirectory.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoVerifyUnfinishedTransfers.cs" />
+    <Compile Include="Core\Packets\ServerPackets\SearchDirectory.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCloseConnection.cs" />
@@ -200,6 +208,7 @@
     <Compile Include="Core\Helper\RemoteDesktopHelper.cs" />
     <Compile Include="Core\Helper\WindowHelper.cs" />
     <Compile Include="Core\Data\Host.cs" />
+    <Compile Include="Core\Utilities\MetaFile.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
     <Compile Include="Core\Data\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
@@ -212,6 +221,7 @@
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
+    <Compile Include="Core\Utilities\TransferCalculator.cs" />
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Controls\InputBox.cs" />
@@ -224,7 +234,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\SearchDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetKeyloggerLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
@@ -278,11 +288,24 @@
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Networking\Server.cs" />
     <Compile Include="Core\Networking\UserState.cs" />
+    <Compile Include="Core\Utilities\VirtualDirectory.cs" />
     <Compile Include="Enums\MouseAction.cs" />
     <Compile Include="Enums\PathType.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\WordType.cs" />
+    <Compile Include="Forms\FrmCreateFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmCreateFolder.Designer.cs">
+      <DependentUpon>FrmCreateFolder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmDownloadFolder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmDownloadFolder.Designer.cs">
+      <DependentUpon>FrmDownloadFolder.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteWebcam.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -394,6 +417,12 @@
     <Compile Include="Forms\FrmReverseProxy.Designer.cs">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmSearchWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmSearchWarning.Designer.cs">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -452,6 +481,12 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Data\BuilderProfile.cs" />
     <Compile Include="Core\Data\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmCreateFolder.resx">
+      <DependentUpon>FrmCreateFolder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmDownloadFolder.resx">
+      <DependentUpon>FrmDownloadFolder.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
       <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
     </EmbeddedResource>
@@ -508,6 +543,9 @@
     <EmbeddedResource Include="Forms\FrmReverseProxy.resx">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmSearchWarning.resx">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,7 +597,14 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
+    <None Include="images\drive_magnify.png" />
+    <None Include="images\control_pause.png" />
+    <None Include="images\control_play.png" />
+    <None Include="images\folder_go.png" />
+    <None Include="images\add.png" />
+    <None Include="images\archive.png" />
     <Content Include="Quasar_Server.ico" />
+    <None Include="Resources\search.bmp" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

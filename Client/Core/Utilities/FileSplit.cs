@@ -7,9 +7,12 @@ namespace xClient.Core.Utilities
     {
         private int _maxBlocks;
         private readonly object _fileStreamLock = new object();
-        private const int MAX_BLOCK_SIZE = 65535;
+        public const int MAX_BLOCK_SIZE = 65535;
         public string Path { get; private set; }
         public string LastError { get; private set; }
+
+        private VirtualDirectory _vPath;
+        private bool _virtualMode;
 
         public int MaxBlocks
         {
@@ -17,28 +20,36 @@ namespace xClient.Core.Utilities
             {
                 if (this._maxBlocks > 0 || this._maxBlocks == -1)
                     return this._maxBlocks;
-                try
+
+                if (!_virtualMode)
                 {
-                    FileInfo fInfo = new FileInfo(this.Path);
+                    try
+                    {
+                        FileInfo fInfo = new FileInfo(this.Path);
 
-                    if (!fInfo.Exists)
-                        throw new FileNotFoundException();
+                        if (!fInfo.Exists)
+                            throw new FileNotFoundException();
 
-                    this._maxBlocks = (int)Math.Ceiling(fInfo.Length / (double)MAX_BLOCK_SIZE);
+                        this._maxBlocks = (int) Math.Ceiling(fInfo.Length/(double) MAX_BLOCK_SIZE);
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        this._maxBlocks = -1;
+                        this.LastError = "Access denied";
+                    }
+                    catch (IOException ex)
+                    {
+                        this._maxBlocks = -1;
+
+                        if (ex is FileNotFoundException)
+                            this.LastError = "File not found";
+                        if (ex is PathTooLongException)
+                            this.LastError = "Path is too long";
+                    }
                 }
-                catch (UnauthorizedAccessException)
+                else
                 {
-                    this._maxBlocks = -1;
-                    this.LastError = "Access denied";
-                }
-                catch (IOException ex)
-                {
-                    this._maxBlocks = -1;
-
-                    if (ex is FileNotFoundException)
-                        this.LastError = "File not found";
-                    if (ex is PathTooLongException)
-                        this.LastError = "Path is too long";
+                    this._maxBlocks = (int)Math.Ceiling(_vPath.Size / (double)MAX_BLOCK_SIZE);
                 }
 
                 return this._maxBlocks;
@@ -48,6 +59,12 @@ namespace xClient.Core.Utilities
         public FileSplit(string path)
         {
             this.Path = path;
+        }
+
+        public FileSplit(VirtualDirectory virtualPath)
+        {
+            _vPath = virtualPath;
+            _virtualMode = true;
         }
 
         private int GetSize(long length)
@@ -62,27 +79,54 @@ namespace xClient.Core.Utilities
                 if (blockNumber > this.MaxBlocks)
                     throw new ArgumentOutOfRangeException();
 
-                lock (_fileStreamLock)
+                if (!_virtualMode)
                 {
-                    using (FileStream fStream = File.OpenRead(this.Path))
+                    lock (_fileStreamLock)
+                    {
+                        using (FileStream fStream = File.OpenRead(this.Path))
+                        {
+                            if (blockNumber == 0)
+                            {
+                                fStream.Seek(0, SeekOrigin.Begin);
+                                var length = fStream.Length - fStream.Position;
+                                if (length < 0)
+                                    throw new IOException("negative length");
+                                readBytes = new byte[this.GetSize(length)];
+                                fStream.Read(readBytes, 0, readBytes.Length);
+                            }
+                            else
+                            {
+                                fStream.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                                var length = fStream.Length - fStream.Position;
+                                if (length < 0)
+                                    throw new IOException("negative length");
+                                readBytes = new byte[this.GetSize(length)];
+                                fStream.Read(readBytes, 0, readBytes.Length);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    using (var ms = new MemoryStream(_vPath.Serialize()))
                     {
                         if (blockNumber == 0)
                         {
-                            fStream.Seek(0, SeekOrigin.Begin);
-                            var length = fStream.Length - fStream.Position;
+                            ms.Seek(0, SeekOrigin.Begin);
+                            var length = ms.Length - ms.Position;
                             if (length < 0)
                                 throw new IOException("negative length");
                             readBytes = new byte[this.GetSize(length)];
-                            fStream.Read(readBytes, 0, readBytes.Length);
+                            ms.Read(readBytes, 0, readBytes.Length);
                         }
                         else
                         {
-                            fStream.Seek(blockNumber * MAX_BLOCK_SIZE, SeekOrigin.Begin);
-                            var length = fStream.Length - fStream.Position;
+                            ms.Seek(blockNumber*MAX_BLOCK_SIZE, SeekOrigin.Begin);
+                            var length = ms.Length - ms.Position;
                             if (length < 0)
                                 throw new IOException("negative length");
                             readBytes = new byte[this.GetSize(length)];
-                            fStream.Read(readBytes, 0, readBytes.Length);
+                            ms.Read(readBytes, 0, readBytes.Length);
                         }
                     }
                 }

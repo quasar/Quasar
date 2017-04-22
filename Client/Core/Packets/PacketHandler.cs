@@ -195,6 +195,31 @@ namespace xClient.Core.Packets
             {
                 CommandHandler.HandleDoCloseConnection(client, (ServerPackets.DoCloseConnection)packet);
             }
+            else if (type == typeof(ServerPackets.SearchDirectory))
+            {
+                CommandHandler.HandleSearchDirectory((ServerPackets.SearchDirectory)packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoCreateDirectory))
+            {
+                CommandHandler.HandleCreateDirectory((ServerPackets.DoCreateDirectory) packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDownloadDirectory))
+            {
+                CommandHandler.HandleDownloadDirectory((ServerPackets.DoDownloadDirectory) packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoUploadDirectory))
+            {
+                CommandHandler.HandleUploadDirectory((ServerPackets.DoUploadDirectory) packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoDownloadFilePause))
+            {
+                CommandHandler.HandleDownloadFilePause((ServerPackets.DoDownloadFilePause) packet, client);
+            }
+            else if (type == typeof(ServerPackets.DoVerifyUnfinishedTransfers))
+            {
+                CommandHandler.HandleVerifyUnfinishedTransfers((ServerPackets.DoVerifyUnfinishedTransfers) packet,
+                    client);
+            }
         }
     }
 }
