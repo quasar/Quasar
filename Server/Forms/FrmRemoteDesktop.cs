@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Drawing;
+using System.Drawing.Imaging;
 using System.Windows.Forms;
 using System.Collections.Generic;
 using xServer.Core.Helper;
@@ -32,13 +33,7 @@ namespace xServer.Forms
         private void FrmRemoteDesktop_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
-
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
-
-            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
-
-            btnShow.Location = new Point(377, 0);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
+            stopMenuItem.Enabled = false;
 
             _keysPressed = new List<Keys>();
 
@@ -112,6 +107,7 @@ namespace xServer.Forms
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
             picDesktop.UpdateImage(bmp, cloneBitmap);
+           
         }
 
         private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
@@ -135,8 +131,8 @@ namespace xServer.Forms
             {
                 this.Invoke((MethodInvoker)delegate
                 {
-                    btnStart.Enabled = t;
-                    btnStop.Enabled = !t;
+                    startMenuItem.Enabled = t;
+                    stopMenuItem.Enabled = !t;
                     barQuality.Enabled = t;
                 });
             }
@@ -155,102 +151,6 @@ namespace xServer.Forms
             UnsubscribeEvents();
         }
 
-        private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
-        {
-            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
-            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
-        }
-
-        private void btnStart_Click(object sender, EventArgs e)
-        {
-            if (cbMonitors.Items.Count == 0)
-            {
-                MessageBox.Show("No monitor detected.\nPlease wait till the client sends a list with available monitors.",
-                    "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                return;
-            }
-
-            ToggleControls(false);
-
-            picDesktop.Start();
-
-            // Subscribe to the new frame counter.
-            picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
-
-            this.ActiveControl = picDesktop;
-
-            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
-        }
-
-        private void btnStop_Click(object sender, EventArgs e)
-        {
-            ToggleControls(true);
-
-            picDesktop.Stop();
-
-            // Unsubscribe from the frame counter. It will be re-created when starting again.
-            picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
-
-            this.ActiveControl = picDesktop;
-        }
-
-        private void barQuality_Scroll(object sender, EventArgs e)
-        {
-            int value = barQuality.Value;
-            lblQualityShow.Text = value.ToString();
-
-            if (value < 25)
-                lblQualityShow.Text += " (low)";
-            else if (value >= 85)
-                lblQualityShow.Text += " (best)";
-            else if (value >= 75)
-                lblQualityShow.Text += " (high)";
-            else if (value >= 25)
-                lblQualityShow.Text += " (mid)";
-
-            this.ActiveControl = picDesktop;
-        }
-
-        private void btnMouse_Click(object sender, EventArgs e)
-        {
-            if (_enableMouseInput)
-            {
-                this.picDesktop.Cursor = Cursors.Default;
-                btnMouse.Image = Properties.Resources.mouse_delete;
-                toolTipButtons.SetToolTip(btnMouse, "Enable mouse input.");
-                _enableMouseInput = false;
-            }
-            else
-            {
-                this.picDesktop.Cursor = Cursors.Hand;
-                btnMouse.Image = Properties.Resources.mouse_add;
-                toolTipButtons.SetToolTip(btnMouse, "Disable mouse input.");
-                _enableMouseInput = true;
-            }
-
-            this.ActiveControl = picDesktop;
-        }
-
-        private void btnKeyboard_Click(object sender, EventArgs e)
-        {
-            if (_enableKeyboardInput)
-            {
-                this.picDesktop.Cursor = Cursors.Default;
-                btnKeyboard.Image = Properties.Resources.keyboard_delete;
-                toolTipButtons.SetToolTip(btnKeyboard, "Enable keyboard input.");
-                _enableKeyboardInput = false;
-            }
-            else
-            {
-                this.picDesktop.Cursor = Cursors.Hand;
-                btnKeyboard.Image = Properties.Resources.keyboard_add;
-                toolTipButtons.SetToolTip(btnKeyboard, "Disable keyboard input.");
-                _enableKeyboardInput = true;
-            }
-
-            this.ActiveControl = picDesktop;
-        }
-
         private int GetRemoteWidth(int localX)
         {
             return localX * picDesktop.ScreenWidth / picDesktop.Width;
@@ -258,7 +158,7 @@ namespace xServer.Forms
 
         private int GetRemoteHeight(int localY)
         {
-            return localY * picDesktop.ScreenHeight / picDesktop.Height;
+            return localY * picDesktop.ScreenHeight /picDesktop.Height+60;
         }
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
@@ -373,19 +273,140 @@ namespace xServer.Forms
                 || ((key & Keys.Scroll) == Keys.Scroll);
         }
 
-        private void btnHide_Click(object sender, EventArgs e)
+        private void closeMenuItem_Click(object sender, EventArgs e)
         {
-            panelTop.Visible = false;
-            btnShow.Visible = true;
-            btnHide.Visible = false;
+            ActiveForm.Close();
+        }
+
+        private void startMenuItem_Click(object sender, EventArgs e)
+        {
+            if (cbMonitors.Items.Count == 0)
+            {
+                MessageBox.Show("No monitor detected.\nPlease wait till the client sends a list with available monitors.",
+                    "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            ToggleControls(false);
+
+            picDesktop.Start();
+
+            // Subscribe to the new frame counter.
+            picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
+
+            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
+
+        }
+
+        private void stopMenuItem_Click(object sender, EventArgs e)
+        {
+            ToggleControls(true);
+
+            picDesktop.Stop();
+
+            // Unsubscribe from the frame counter. It will be re-created when starting again.
+            picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
+
+        }
+
+        private void monitorMenuItem_Click(object sender, EventArgs e)
+        {
+            cbMonitors.Focus();
+        }
+
+        private void mouseMenuItem_Click(object sender, EventArgs e)
+        {
+            if (_enableMouseInput)
+            {
+                this.picDesktop.Cursor = Cursors.Default;
+                mouseMenuItem.ToolTipText = "Enable mouse input.";
+                _enableMouseInput = false;
+            }
+            else
+            {
+                this.picDesktop.Cursor = Cursors.Hand;
+                mouseMenuItem.ToolTipText = "Disable mouse input.";
+                _enableMouseInput = true;
+            }
+            mouseMenuItem.Checked = !mouseMenuItem.Checked;
             this.ActiveControl = picDesktop;
         }
 
-        private void btnShow_Click(object sender, EventArgs e)
+        private void keyboardMenuItem_Click(object sender, EventArgs e)
         {
-            panelTop.Visible = true;
-            btnShow.Visible = false;
-            btnHide.Visible = true;
+            if (_enableKeyboardInput)
+            {
+                this.picDesktop.Cursor = Cursors.Default;
+                keyboardMenuItem.ToolTipText = "Enable keyboard input.";
+                _enableKeyboardInput = false;
+            }
+            else
+            {
+                this.picDesktop.Cursor = Cursors.Hand;
+                keyboardMenuItem.ToolTipText = "Disable keyboard input.";
+                _enableKeyboardInput = true;
+            }
+            keyboardMenuItem.Checked = !keyboardMenuItem.Checked;
+            this.ActiveControl = picDesktop;
+        }
+
+        private void screenCaptureMenuItem_Click(object sender, EventArgs e)
+        {
+            if (picDesktop.Image != null)
+                savePicture();
+        }
+
+        private void savePicture()
+        {
+            using (SaveFileDialog sfdlg = new SaveFileDialog())
+            {
+                sfdlg.Title = "Screen Capture Save";
+                sfdlg.Filter = "Joint Photographic Experts Group (*.jpeg)|*.jpg|Portable Network Graphics (*.png)|*.png|Tagged Image File Format (*.tif)|*.tif|Graphics Interchange Format (*.gif)|*.gif|Windows bitmap (*.bmp)|*.bmp|All files(*.*)|*.*";
+                if (sfdlg.ShowDialog(this) == DialogResult.OK)
+                {
+                    switch (sfdlg.FilterIndex)
+                    {
+                        case 1:
+                            picDesktop.Image.Save(@sfdlg.FileName, ImageFormat.Jpeg);
+                            break;
+                        case 2:
+                            picDesktop.Image.Save(@sfdlg.FileName, ImageFormat.Png);
+                            break;
+                        case 3:
+                            picDesktop.Image.Save(@sfdlg.FileName, ImageFormat.Tiff);
+                            break;
+                        case 4:
+                            picDesktop.Image.Save(@sfdlg.FileName, ImageFormat.Gif);
+                            break;
+                        case 5:
+                            picDesktop.Image.Save(@sfdlg.FileName, ImageFormat.Bmp);
+                            break;
+                        case 6:
+                            picDesktop.Image.Save(@sfdlg.FileName);
+                            break;
+                    }
+                }
+            }
+        }
+
+        private void barQuality_Scroll(object sender, EventArgs e)
+        {
+            int value = barQuality.Value;
+            qualityShowMenuItem.Text = value.ToString();
+
+            if (value < 25)
+                qualityShowMenuItem.Text += " Low";
+            else if (value >= 85)
+                qualityShowMenuItem.Text += " Best";
+            else if (value >= 75)
+                qualityShowMenuItem.Text += " High";
+            else if (value >= 25)
+                qualityShowMenuItem.Text += " Mid";
+
             this.ActiveControl = picDesktop;
         }
     }
