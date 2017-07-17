@@ -1,6 +1,6 @@
 QuasarRAT
 =========
-[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
+[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![License](http://img.shields.io/badge/license-MIT-green.svg)](https://github.com/quasar/QuasarRAT/blob/master/LICENSE)
 
 **Free, Open-Source Remote Administration Tool for Windows**
 
