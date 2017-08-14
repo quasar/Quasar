@@ -1,6 +1,10 @@
 QuasarRAT
 =========
+MaxXor
 [![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
+
+Mr. 0x50
+![Build status](https://ci.appveyor.com/api/projects/status/lovq9u7xjuctmqv7?svg=true)
 
 **Free, Open-Source Remote Administration Tool for Windows**
 
