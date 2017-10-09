@@ -26,6 +26,14 @@ namespace xServer.Core.Commands
             if (CanceledDownloads.ContainsKey(packet.ID) || string.IsNullOrEmpty(packet.Filename))
                 return;
 
+            // don't escape from download directory
+            if (packet.Filename.IndexOfAny(DISALLOWED_FILENAME_CHARS) >= 0 || Path.IsPathRooted(packet.Filename))
+            {
+                // disconnect malicious client
+                client.Disconnect();
+                return;
+            }
+
             if (!Directory.Exists(client.Value.DownloadDirectory))
                 Directory.CreateDirectory(client.Value.DownloadDirectory);
 
