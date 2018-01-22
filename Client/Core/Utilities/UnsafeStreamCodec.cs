@@ -78,9 +78,7 @@ namespace xClient.Core.Utilities
                 }
             }
         }
-
-        public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format,
-            Stream outStream)
+        public unsafe void CodeImage(IntPtr scan0, Rectangle scanArea, Size imageSize, PixelFormat format,Stream outStream)
         {
             lock (_imageProcessLock)
             {
@@ -295,6 +293,15 @@ namespace xClient.Core.Utilities
             }
         }
 
+        public unsafe byte[] CodeImage(Bitmap bitmap)
+        {
+            lock (_imageProcessLock)
+            {
+                byte[] temp = null;
+                temp = _jpgCompression.Compress(bitmap);
+                return temp;
+            }
+        }
         public unsafe Bitmap DecodeData(IntPtr codecBuffer, uint length)
         {
             if (length < 4)

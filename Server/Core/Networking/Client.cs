@@ -495,7 +495,7 @@ namespace xServer.Core.Networking
 
                                             OnClientRead(packet);
                                         }
-                                        catch (Exception)
+                                        catch (Exception ex)
                                         {
                                             process = false;
                                             Disconnect();

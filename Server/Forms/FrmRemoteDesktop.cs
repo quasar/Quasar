@@ -253,85 +253,79 @@ namespace xServer.Forms
 
         private int GetRemoteWidth(int localX)
         {
-            return localX * picDesktop.ScreenWidth / picDesktop.Width;
+            return localX * 0xFFFF / picDesktop.Width;
         }
 
         private int GetRemoteHeight(int localY)
         {
-            return localY * picDesktop.ScreenHeight / picDesktop.Height;
+            return localY * 0xFFFF / picDesktop.Height;
+        }
+
+
+        private void  SetRemoteMouseAction(MouseEventArgs e,bool press=false,bool move=false,bool wheel=false)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
+            {
+                int dwData = e.Delta;
+                MouseAction action = MouseAction.MOUSEEVENTF_NONE;
+                if ((e.Button & MouseButtons.Left) != MouseButtons.None)
+                {
+                    action |= (press ? MouseAction.MOUSEEVENTF_LEFTDOWN : MouseAction.MOUSEEVENTF_LEFTUP);
+                }
+                if ((e.Button & MouseButtons.Middle) != MouseButtons.None)
+                {
+                    action |= (press ? MouseAction.MOUSEEVENTF_MIDDLEDOWN : MouseAction.MOUSEEVENTF_MIDDLEUP);
+                }
+                if ((e.Button & MouseButtons.Right) != MouseButtons.None)
+                {
+                    action |= (press ? MouseAction.MOUSEEVENTF_RIGHTDOWN : MouseAction.MOUSEEVENTF_RIGHTUP);
+                }
+                if ((e.Button & MouseButtons.XButton1) != MouseButtons.None)
+                {
+                    action |= (press ? MouseAction.MOUSEEVENTF_XDOWN : MouseAction.MOUSEEVENTF_XUP);
+                    dwData = 1;
+                }
+                if ((e.Button & MouseButtons.XButton2) != MouseButtons.None)
+                {
+                    action |= (press ? MouseAction.MOUSEEVENTF_XDOWN : MouseAction.MOUSEEVENTF_XUP);
+                    dwData = 2;
+                }
+                if (move)
+                {
+                    action |= MouseAction.MOUSEEVENTF_MOVE;
+                }
+                if (wheel)
+                {
+                    action |= MouseAction.MOUSEEVENTF_WHEEL;
+                }
+                action |= MouseAction.MOUSEEVENTF_ABSOLUTE;
+                int remote_x = GetRemoteWidth(e.X);
+                int remote_y = GetRemoteHeight(e.Y);
+                if (_connectClient != null)
+                    new Core.Packets.ServerPackets.DoMouseEvent(action, remote_x, remote_y, dwData, cbMonitors.SelectedIndex).Execute(_connectClient);
+            }
         }
 
         private void picDesktop_MouseDown(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                MouseAction action = MouseAction.None;
-
-                if (e.Button == MouseButtons.Left)
-                    action = MouseAction.LeftDown;
-                if (e.Button == MouseButtons.Right)
-                    action = MouseAction.RightDown;
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(action, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
-            }
+            SetRemoteMouseAction(e, true);
         }
 
         private void picDesktop_MouseUp(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                MouseAction action = MouseAction.None;
-
-                if (e.Button == MouseButtons.Left)
-                    action = MouseAction.LeftDown;
-                if (e.Button == MouseButtons.Right)
-                    action = MouseAction.RightDown;
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(action, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
-            }
+            SetRemoteMouseAction(e);
         }
 
         private void picDesktop_MouseMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(MouseAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
-            }
+            SetRemoteMouseAction(e, true, true);
         }
 
         private void OnMouseWheelMove(object sender, MouseEventArgs e)
         {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
+            if (this.Visible)
             {
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
+                SetRemoteMouseAction(e, true, true, true);
             }
         }
 

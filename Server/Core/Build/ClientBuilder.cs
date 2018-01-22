@@ -1,7 +1,7 @@
 ﻿using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Vestris.ResourceLib;
+using xServer.Core.ResourceLib;
 using xServer.Core.Cryptography;
 using xServer.Core.Data;
 using xServer.Core.Helper;

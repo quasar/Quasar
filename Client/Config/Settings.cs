@@ -22,7 +22,7 @@ namespace xClient.Config
         public static bool INSTALL = false;
         public static bool STARTUP = false;
         public static string MUTEX = "123AKs82kA,ylAo2kAlUS2kYkala!";
-        public static string STARTUPKEY = "Test key";
+        public static string STARTUPKEY = "1234";
         public static bool HIDEFILE = false;
         public static bool ENABLELOGGER = false;
         public static string TAG = "DEBUG";

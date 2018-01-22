@@ -60,10 +60,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vestris.ResourceLib, Version=1.4.724.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Vestris.ResourceLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\DotNetBarTabControl.cs">
@@ -193,6 +189,24 @@
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Registry\RegValueHelper.cs" />
+    <Compile Include="Core\ResourceLib\DeviceIndependentBitmap.cs" />
+    <Compile Include="Core\ResourceLib\FixedFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\Gdi32.cs" />
+    <Compile Include="Core\ResourceLib\IconFileIcon.cs" />
+    <Compile Include="Core\ResourceLib\IconImageResource.cs" />
+    <Compile Include="Core\ResourceLib\Kernel32.cs" />
+    <Compile Include="Core\ResourceLib\Resource.cs" />
+    <Compile Include="Core\ResourceLib\ResourceId.cs" />
+    <Compile Include="Core\ResourceLib\ResourceTableHeader.cs" />
+    <Compile Include="Core\ResourceLib\ResourceUtil.cs" />
+    <Compile Include="Core\ResourceLib\StringFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\StringTable.cs" />
+    <Compile Include="Core\ResourceLib\StringTableEntry.cs" />
+    <Compile Include="Core\ResourceLib\User32.cs" />
+    <Compile Include="Core\ResourceLib\VarFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\VarTable.cs" />
+    <Compile Include="Core\ResourceLib\VersionResource.cs" />
+    <Compile Include="Core\ResourceLib\Winver.cs" />
     <Compile Include="Core\Utilities\ByteConverter.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />

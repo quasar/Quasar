@@ -73,14 +73,17 @@ namespace xServer.Forms
         }
         public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
         {
-            picWebcam.Image = new Bitmap(bmp, picWebcam.Width, picWebcam.Height);
+            picWebcam.Invoke((MethodInvoker)delegate
+            {
+                picWebcam.Image = new Bitmap(bmp, picWebcam.Width, picWebcam.Height);
+            });
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            if (cbWebcams.Items.Count == 0)
+            if (cbWebcams.Items.Count == 0 || cbResolutions.Items.Count==0)
             {
-                MessageBox.Show("No webcam detected.\nPlease wait till the client sends a list with available webcams.",
+                MessageBox.Show("No webcam detected,or The Webcam Is No Connected.\nPlease wait till the client sends a list with available webcams.",
                     "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
@@ -131,7 +134,10 @@ namespace xServer.Forms
                 {
                     cbResolutions.Items.Add(string.Format("{0} x {1}", resolution.Width, resolution.Height));
                 }
-                cbResolutions.SelectedIndex = 0;
+                if (cbResolutions.Items.Count > 0)
+                {
+                    cbResolutions.SelectedIndex = 0;
+                }
             });
         }
     }

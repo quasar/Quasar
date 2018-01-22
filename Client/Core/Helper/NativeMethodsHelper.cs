@@ -2,18 +2,34 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using xClient.Core.Utilities;
+using xClient.Enums;
 
 namespace xClient.Core.Helper
 {
     public static class NativeMethodsHelper
     {
-        private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
-        private const uint MOUSEEVENTF_LEFTUP = 0x0004;
-        private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
-        private const uint MOUSEEVENTF_RIGHTUP = 0x0010;
-        private const uint MOUSEEVENTF_WHEEL = 0x0800;
+        private const uint MOUSEEVENTF_ABSOLUTE = 0x8000;   //绝对位置
+
+        private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;   //左键按下
+        private const uint MOUSEEVENTF_LEFTUP = 0x0004;     //左键抬起
+
+        private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;  //右键按下
+        private const uint MOUSEEVENTF_RIGHTUP = 0x0010;    //右键抬起
+
+        private const uint MOUSEEVENTF_MIDDLEDOWN = 0x0020;  //中键按下 
+        private const uint MOUSEEVENTF_MIDDLEUP = 0x0040;    //中键抬起 
+
+        private const uint MOUSEEVENTF_MOVE = 0x0001;        //按键移动
+
+        private const uint MOUSEEVENTF_WHEEL = 0x0800;       //
+        private const uint MOUSEEVENTF_HWHEEL = 0x01000;     //
+
+        private const uint MOUSEEVENTF_XDOWN = 0x0080;      //X键按下
+        private const uint MOUSEEVENTF_XUP = 0x0100;        //X键抬起 
+
         private const uint KEYEVENTF_KEYDOWN = 0x0000;
         private const uint KEYEVENTF_KEYUP = 0x0002;
+
 
         public static uint GetLastInputInfoTickCount()
         {
@@ -32,6 +48,15 @@ namespace xClient.Core.Helper
         public static void DoMouseRightClick(Point p, bool isMouseDown)
         {
             NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
+        }
+        public static void DoMouseMiddleClick(Point p, bool isMouseDown)
+        {
+            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_MIDDLEDOWN : MOUSEEVENTF_MIDDLEUP, p.X, p.Y, 0, 0);
+        }
+
+        public static void OnMouseEventHander(uint flag,int xPos,int yPos,int dwData)
+        {
+            NativeMethods.mouse_event(flag, xPos, yPos, dwData, 0);
         }
 
         public static void DoMouseMove(Point p)
