@@ -11,6 +11,9 @@ namespace xServer.Core.Packets
         {
             return new Type[]
             {
+                typeof (Packets.ServerPackets.DoChatStart),
+                typeof (Packets.ServerPackets.DoChatMessage),
+                typeof (Packets.ServerPackets.DoChatStop),
                 typeof (Packets.ServerPackets.GetAuthentication),
                 typeof (Packets.ServerPackets.DoClientDisconnect),
                 typeof (Packets.ServerPackets.DoClientReconnect),
