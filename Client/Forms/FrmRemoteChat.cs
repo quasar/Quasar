@@ -76,7 +76,10 @@ namespace xClient.Forms
                 NativeMethods.BringWindowToTop(Handle);
                 NativeMethods.AttachThreadInput(fThread, cThread, false);
             }
-            else NativeMethods.BringWindowToTop(Handle);
+            else
+            {
+                NativeMethods.BringWindowToTop(Handle);
+            }
             txtMessage.Focus();
         }
     }
