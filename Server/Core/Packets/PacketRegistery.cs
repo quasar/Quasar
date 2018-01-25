@@ -60,7 +60,7 @@ namespace xServer.Core.Packets
                 typeof (Packets.ServerPackets.SetAuthenticationSuccess),
                 typeof (Packets.ServerPackets.GetConnections),
                 typeof (Packets.ServerPackets.DoCloseConnection),
-                typeof(Packets.ServerPackets.DoRemoteDesktopProtocol),
+                typeof (Packets.ServerPackets.DoRemoteDesktopProtocol),
                 typeof (Packets.ClientPackets.GetAuthenticationResponse),
                 typeof (Packets.ClientPackets.SetStatus),
                 typeof (Packets.ClientPackets.SetStatusFileManager),
@@ -90,7 +90,6 @@ namespace xServer.Core.Packets
                 typeof (ReverseProxy.Packets.ReverseProxyConnectResponse),
                 typeof (ReverseProxy.Packets.ReverseProxyData),
                 typeof (ReverseProxy.Packets.ReverseProxyDisconnect),
-                typeof (Packets.ClientPackets.GetConnectionsResponse),
                 typeof (Packets.ClientPackets.GetConnectionsResponse),
                 typeof (Packets.ServerPackets.SearchDirectory),
                 typeof (Packets.ClientPackets.SearchDirectoryResponse)
