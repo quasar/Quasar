@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
@@ -73,42 +74,58 @@ namespace xClient.Core.Helper
                 }
             }
         }
-
+        private static bool IsConnectInternet()
+        {
+            if (NetworkInterface.GetIsNetworkAvailable())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         private static void TryLocate()
         {
             LocationCompleted = false;
-
-            try
+            if (IsConnectInternet())
             {
-                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
-
-                HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://ip-api.com/json/");
-                request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
-                request.Proxy = null;
-                request.Timeout = 10000;
-
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                try
                 {
-                    using (Stream dataStream = response.GetResponseStream())
-                    {
-                        using (StreamReader reader = new StreamReader(dataStream))
-                        {
-                            string responseString = reader.ReadToEnd();
+                    DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
 
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
+                    HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://ip-api.com/json/");
+                    request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
+                    request.Proxy = null;
+                    request.Timeout = 5000;
+
+                    using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
+                    {
+                        using (Stream dataStream = response.GetResponseStream())
+                        {
+                            using (StreamReader reader = new StreamReader(dataStream))
                             {
-                                GeoInfo = (GeoInformation)jsonSerializer.ReadObject(ms);
+                                string responseString = reader.ReadToEnd();
+
+                                using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
+                                {
+                                    GeoInfo = (GeoInformation)jsonSerializer.ReadObject(ms);
+                                }
                             }
                         }
                     }
-                }
 
-                LastLocated = DateTime.UtcNow;
-                LocationCompleted = true;
+                    LastLocated = DateTime.UtcNow;
+                    LocationCompleted = true;
+                }
+                catch
+                {
+                    TryLocateFallback();
+                }
             }
-            catch
+            else
             {
-                TryLocateFallback();
+
             }
         }
 
@@ -121,7 +138,7 @@ namespace xClient.Core.Helper
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
-                request.Timeout = 10000;
+                request.Timeout = 5000;
 
                 using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
