@@ -7,7 +7,6 @@ namespace xServer.Core.Commands
     {
         public static Dictionary<int, string> CanceledDownloads = new Dictionary<int, string>();
         public static Dictionary<int, string> RenamedFiles = new Dictionary<int, string>();
-        private static readonly char[] DISALLOWED_FILENAME_CHARS = { '/', '\\' };
         private const string DELIMITER = "$E$";
     }
 }

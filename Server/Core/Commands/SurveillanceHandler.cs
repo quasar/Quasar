@@ -121,6 +121,14 @@ namespace xServer.Core.Commands
             if (string.IsNullOrEmpty(packet.Filename))
                 return;
 
+            // don't escape from download directory
+            if (FileHelper.CheckPathForIllegalChars(packet.Filename))
+            {
+                // disconnect malicious client
+                client.Disconnect();
+                return;
+            }
+
             string downloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
 
             if (!Directory.Exists(downloadPath))

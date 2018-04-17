@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Utilities;
@@ -27,7 +28,7 @@ namespace xServer.Core.Commands
                 return;
 
             // don't escape from download directory
-            if (packet.Filename.IndexOfAny(DISALLOWED_FILENAME_CHARS) >= 0 || Path.IsPathRooted(packet.Filename))
+            if (FileHelper.CheckPathForIllegalChars(packet.Filename))
             {
                 // disconnect malicious client
                 client.Disconnect();
