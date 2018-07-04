@@ -25,7 +25,7 @@ namespace xClient
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
-
+            Control.CheckForIllegalCrossThreadCalls = false;
             if (Settings.Initialize())
             {
                 if (Initialize())

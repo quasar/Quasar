@@ -21,6 +21,7 @@ Quasar is a fast and light-weight remote administration tool coded in C#. Provid
 * Remote Desktop
 * Remote Webcam
 * Remote Shell
+* Remote Chat
 * Download & Execute
 * Upload & Execute
 * System Information

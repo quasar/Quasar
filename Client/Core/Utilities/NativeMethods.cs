@@ -58,8 +58,7 @@ namespace xClient.Core.Utilities
         /// </returns>
         [DllImport("gdi32.dll", EntryPoint = "BitBlt", SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight,
-            [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+        public static extern bool BitBlt([In] IntPtr hdc, int nXDest, int nYDest, int nWidth, int nHeight, [In] IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
 
         [DllImport("gdi32.dll")]
         public static extern IntPtr CreateDC(string lpszDriver, string lpszDevice, string lpszOutput, IntPtr lpInitData);
@@ -111,9 +110,23 @@ namespace xClient.Core.Utilities
             IntPtr lParam);
 
         [DllImport("user32.dll")]
-        public static extern bool IsWindowVisible(
-            IntPtr hWnd);
+        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
 
+        [DllImport("user32.dll")]
+        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, IntPtr lpdwProcessId);
+
+        [DllImport("Kernel32.dll")]
+        public static extern uint GetCurrentThreadId();
+
+        [DllImportAttribute("user32.dll")]
+        public static extern int SendMessage(IntPtr hWnd, int Msg, int wParam, int lParam);
+        [DllImportAttribute("user32.dll")]
+        public static extern bool ReleaseCapture();
+
+        [DllImport("user32.dll")]
+        public static extern bool BringWindowToTop(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        public static extern bool IsWindowVisible(IntPtr hWnd);
         [DllImport("user32.dll")]
         public static extern IntPtr GetForegroundWindow();
     }

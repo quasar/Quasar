@@ -124,6 +124,14 @@ namespace xServer.Core.Packets
             {
                 CommandHandler.HandleGetConnectionsResponse(client, (ClientPackets.GetConnectionsResponse)packet);
             }
+            else if (type == typeof(ServerPackets.DoChatMessage))
+            {
+                CommandHandler.HandleDoChatMessage(client, (ServerPackets.DoChatMessage)packet);
+            }
+            else if (type == typeof(ClientPackets.SearchDirectoryResponse))
+            {
+                CommandHandler.HandleSearchDirectoryResponse(client, (ClientPackets.SearchDirectoryResponse)packet);
+            }
         }
     }
 }

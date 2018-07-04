@@ -128,11 +128,9 @@ namespace xServer.Controls
                 {
                     // get old image to dispose it correctly
                     var oldImage = GetImageSafe;
-                    
                     SuspendLayout();
-                    GetImageSafe = cloneBitmap ? new Bitmap(bmp, Width, Height) /*resize bitmap*/ : bmp;
+                    GetImageSafe = cloneBitmap ? new Bitmap(bmp, Width, Height): bmp;
                     ResumeLayout();
-
                     if (oldImage != null)
                         oldImage.Dispose();
                 }

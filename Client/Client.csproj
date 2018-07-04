@@ -92,6 +92,7 @@
     <Compile Include="Core\Data\ClientData.cs" />
     <Compile Include="Core\Data\GeoInformation.cs" />
     <Compile Include="Core\Helper\CryptographyHelper.cs" />
+    <Compile Include="Core\Helper\DesktopMirror.cs" />
     <Compile Include="Core\Helper\MutexHelper.cs" />
     <Compile Include="Core\Helper\WindowsAccountHelper.cs" />
     <Compile Include="Core\Helper\FileHelper.cs" />
@@ -136,14 +137,20 @@
     <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
+    <Compile Include="Core\Packets\ClientPackets\SearchDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
     <Compile Include="Core\Packets\PacketRegistery.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatMessage.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStart.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoChatStop.cs" />
+    <Compile Include="Core\Packets\ServerPackets\DoRemoteDesktopProtocol.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
     <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
@@ -216,7 +223,7 @@
     <Compile Include="Core\MouseKeyHook\WinApi\Point.cs" />
     <Compile Include="Core\MouseKeyHook\WinApi\ThreadNativeMethods.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
+    <Compile Include="Core\Packets\ServerPackets\SearchDirectory.cs" />
     <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetKeyloggerLogsResponse.cs" />
@@ -281,9 +288,18 @@
     <Compile Include="Enums\PathType.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
+    <Compile Include="Forms\FrmRemoteChat.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteChat.Designer.cs">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmRemoteChat.resx">
+      <DependentUpon>FrmRemoteChat.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

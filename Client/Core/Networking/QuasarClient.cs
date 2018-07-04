@@ -100,6 +100,7 @@ namespace xClient.Core.Networking
         private void LostConnection()
         {
             CommandHandler.CloseShell();
+            CommandHandler.CloseChatForm();
         }
 
         public void Exit()
