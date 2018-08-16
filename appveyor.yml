@@ -4,6 +4,8 @@ configuration:
 - Debug
 - Release
 shallow_clone: true
+before_build:
+  - nuget restore
 build:
   project: QuasarRAT.sln
   parallel: true

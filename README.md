@@ -30,9 +30,9 @@ Quasar is a fast and light-weight remote administration tool coded in C#. Provid
 * Password Recovery (Common Browsers and FTP Clients)
 * Registry Editor
 
-## Requirements
-* .NET Framework 4.0 Client Profile ([Download](https://www.microsoft.com/en-us/download/details.aspx?id=24872))
-* Supported Operating Systems (32- and 64-bit)
+## Supported runtimes and operating systems
+* .NET Framework 4.0 Client Profile or higher ([Download](https://www.microsoft.com/en-us/download/details.aspx?id=24872))
+* Supported operating systems (32- and 64-bit)
   * Windows XP SP3
   * Windows Server 2003
   * Windows Vista
@@ -43,21 +43,13 @@ Quasar is a fast and light-weight remote administration tool coded in C#. Provid
   * Windows 10
 
 ## Compiling
-Open the project in Visual Studio and click build, or use one of the batch files included in the root directory.
-
-| Batch file        | Description
-| ----------------- |:-------------
-| build-debug.bat   | Builds the application using the debug configuration (for testing)
-| build-release.bat | Builds the application using the release configuration  (for publishing)
+Open the project in Visual Studio 2015+ and click build. See below which build configuration to choose.
 
 ## Building a client
-| Build configuration         | Description
-| ----------------------------|:-------------
-| debug configuration         | The pre-defined [Settings.cs](/Client/Config/Settings.cs) will be used. The client builder does not work in this configuration. You can execute the client directly with the specified settings.
-| release configuration       | Use the client builder to build your client otherwise it is going to crash.
-
-## ToDo
-* [Open Issues](https://github.com/quasar/QuasarRAT/issues)
+| Build configuration         | Usage scenario | Description
+| ----------------------------|----------------|--------------
+| Debug configuration         | Testing        | The pre-defined [Settings.cs](/Client/Config/Settings.cs) will be used, so edit this file before compiling the client. You can execute the client directly with the specified settings.
+| Release configuration       | Live use       | Start `Quasar.exe` and use the client builder.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)
