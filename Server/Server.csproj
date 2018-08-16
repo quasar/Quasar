@@ -48,21 +48,31 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Cecil, Version=0.9.5.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Mono.Cecil.dll</HintPath>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
-    <Reference Include="Mono.Nat">
-      <HintPath>lib\Mono.Nat.dll</HintPath>
+    <Reference Include="Mono.Cecil, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Nat, Version=1.2.24.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Nat.1.2.24.0\lib\net40\Mono.Nat.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
-    <Reference Include="Vestris.ResourceLib, Version=1.4.724.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>lib\Vestris.ResourceLib.dll</HintPath>
+    <Reference Include="Vestris.ResourceLib, Version=1.6.422.0, Culture=neutral, PublicKeyToken=ec632d8ba5e5750d, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vestris.ResourceLib.1.6.422\lib\Vestris.ResourceLib.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -110,46 +120,6 @@
     <Compile Include="Core\Helper\FileHelper.cs" />
     <Compile Include="Core\Helper\FormatHelper.cs" />
     <Compile Include="Core\Helper\HostHelper.cs" />
-    <Compile Include="Core\MouseKeyHook\Hook.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeyArgs.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySet.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySetCollection.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySetsListener.cs" />
-    <Compile Include="Core\MouseKeyHook\IKeyboardEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\IKeyboardMouseEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\IMouseEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppEventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppKeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppMouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\BaseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\ButtonSet.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\Callback.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\EventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalEventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalKeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalMouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\KeyboardState.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\KeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\MouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\Subscribe.cs" />
-    <Compile Include="Core\MouseKeyHook\KeyEventArgsExt.cs" />
-    <Compile Include="Core\MouseKeyHook\KeyPressEventArgsExt.cs" />
-    <Compile Include="Core\MouseKeyHook\MouseEventExtArgs.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\AppMouseStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\CallbackData.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookHelper.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookIds.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookProcedure.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookProcedureHandle.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookResult.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\KeyboardHookStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\KeyboardNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\Messages.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\MouseNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\MouseStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\Point.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\ThreadNativeMethods.cs" />
     <Compile Include="Core\NetSerializer\CodeGenContext.cs" />
     <Compile Include="Core\NetSerializer\Helpers.cs" />
     <Compile Include="Core\NetSerializer\ITypeSerializer.cs" />
@@ -542,6 +512,7 @@
     </EmbeddedResource>
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
     <None Include="app.manifest" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -558,11 +529,13 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
     <Content Include="Quasar_Server.ico" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)*.dll" /target:WinExe /wildcards /internalize</PostBuildEvent>
+  </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

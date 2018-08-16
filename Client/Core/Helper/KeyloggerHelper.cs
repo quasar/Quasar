@@ -1,7 +1,5 @@
 ﻿using System.Collections.Generic;
-using System.Text;
 using System.Windows.Forms;
-using xClient.Core.MouseKeyHook.WinApi;
 
 namespace xClient.Core.Helper
 {
@@ -103,12 +101,7 @@ namespace xClient.Core.Helper
 
         public static string GetActiveWindowTitle()
         {
-            StringBuilder sbTitle = new StringBuilder(1024);
-
-            ThreadNativeMethods.GetWindowText(ThreadNativeMethods.GetForegroundWindow(), sbTitle,
-                sbTitle.Capacity);
-
-            string title = sbTitle.ToString();
+            string title = NativeMethodsHelper.GetForegroundWindowTitle();
 
             return (!string.IsNullOrEmpty(title)) ? title : null;
         }

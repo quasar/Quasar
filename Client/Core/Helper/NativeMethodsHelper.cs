@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
+using System.Text;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Helper
@@ -106,6 +107,15 @@ namespace xClient.Core.Helper
             // Doesn't really matter if this fails
             NativeMethods.SystemParametersInfo(SPI_SETSCREENSAVEACTIVE, 1 /* TRUE */, ref dummy, SPIF_SENDWININICHANGE);
 
+        }
+
+        public static string GetForegroundWindowTitle()
+        {
+            StringBuilder sbTitle = new StringBuilder(1024);
+
+            NativeMethods.GetWindowText(NativeMethods.GetForegroundWindow(), sbTitle, sbTitle.Capacity);
+
+            return sbTitle.ToString();
         }
     }
 }

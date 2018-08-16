@@ -5,8 +5,8 @@ using System.Collections.Generic;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
-using xServer.Core.MouseKeyHook;
 using xServer.Enums;
+using Gma.System.MouseKeyHook;
 
 namespace xServer.Forms
 {
@@ -51,6 +51,8 @@ namespace xServer.Forms
         /// </summary>
         private void SubscribeEvents()
         {
+            // TODO: Check Hook.GlobalEvents vs Hook.AppEvents below
+            // TODO: Maybe replace library with .NET events like on Linux
             if (PlatformHelper.RunningOnMono) // Mono/Linux
             {
                 this.KeyDown += OnKeyDown;

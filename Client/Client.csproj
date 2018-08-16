@@ -43,6 +43,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.VisualBasic" />
     <Reference Include="System" />
     <Reference Include="System.Drawing" />
@@ -174,47 +177,7 @@
     <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
     <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
-    <Compile Include="Core\MouseKeyHook\Hook.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeyArgs.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySet.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySetCollection.cs" />
-    <Compile Include="Core\MouseKeyHook\HotKeys\HotKeySetsListener.cs" />
-    <Compile Include="Core\MouseKeyHook\IKeyboardEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\IKeyboardMouseEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\IMouseEvents.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppEventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppKeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\AppMouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\BaseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\ButtonSet.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\Callback.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\EventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalEventFacade.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalKeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\GlobalMouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\KeyboardState.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\KeyListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\MouseListener.cs" />
-    <Compile Include="Core\MouseKeyHook\Implementation\Subscribe.cs" />
-    <Compile Include="Core\MouseKeyHook\KeyEventArgsExt.cs" />
-    <Compile Include="Core\MouseKeyHook\KeyPressEventArgsExt.cs" />
     <Compile Include="Core\Helper\KeyloggerHelper.cs" />
-    <Compile Include="Core\MouseKeyHook\MouseEventExtArgs.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\AppMouseStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\CallbackData.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookHelper.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookIds.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookProcedure.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookProcedureHandle.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\HookResult.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\KeyboardHookStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\KeyboardNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\Messages.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\MouseNativeMethods.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\MouseStruct.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\Point.cs" />
-    <Compile Include="Core\MouseKeyHook\WinApi\ThreadNativeMethods.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
     <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
@@ -295,6 +258,7 @@
       <DesignTime>True</DesignTime>
     </Compile>
     <None Include="app.manifest" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -305,14 +269,17 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="Core\MouseKeyHook\HotKeys\ReadMe.txt" />
-  </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
     <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)Gma.System.MouseKeyHook.dll" /target:WinExe /wildcards /internalize
+copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y
+copy "$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" /Y
+del "$(TargetDir)$(TargetName).all.exe"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
