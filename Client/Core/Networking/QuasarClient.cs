@@ -2,11 +2,10 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xClient.Config;
 using xClient.Core.Commands;
 using xClient.Core.Data;
-using xClient.Core.NetSerializer;
-using xClient.Core.Packets;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Networking
@@ -23,8 +22,6 @@ namespace xClient.Core.Networking
         public QuasarClient(HostsManager hostsManager) : base()
         {
             this._hosts = hostsManager;
-
-            base.Serializer = new Serializer(PacketRegistery.GetPacketTypes());
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
             base.ClientFail += OnClientFail;
@@ -69,11 +66,11 @@ namespace xClient.Core.Networking
 
             if (!Authenticated)
             {
-                if (type == typeof(Packets.ServerPackets.GetAuthentication))
+                if (type == typeof(GetAuthentication))
                 {
-                    CommandHandler.HandleGetAuthentication((Packets.ServerPackets.GetAuthentication)packet, client);
+                    CommandHandler.HandleGetAuthentication((GetAuthentication)packet, client);
                 }
-                else if (type == typeof(Packets.ServerPackets.SetAuthenticationSuccess))
+                else if (type == typeof(SetAuthenticationSuccess))
                 {
                     Authenticated = true;
                 }

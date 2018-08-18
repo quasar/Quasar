@@ -1,8 +1,8 @@
 ﻿using System;
 using System.IO;
+using Quasar.Common.Packets;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Packets.ClientPackets;
 using xServer.Core.Utilities;
 using xServer.Forms;
 
@@ -24,7 +24,7 @@ namespace xServer.Core.Commands
 
         public static void HandleDoDownloadFileResponse(Client client, DoDownloadFileResponse packet)
         {
-            if (CanceledDownloads.ContainsKey(packet.ID) || string.IsNullOrEmpty(packet.Filename))
+            if (CanceledDownloads.ContainsKey(packet.Id) || string.IsNullOrEmpty(packet.Filename))
                 return;
 
             // don't escape from download directory
@@ -48,23 +48,23 @@ namespace xServer.Core.Commands
                     if (File.Exists(Path.Combine(client.Value.DownloadDirectory, newFileName))) continue;
 
                     downloadPath = Path.Combine(client.Value.DownloadDirectory, newFileName);
-                    RenamedFiles.Add(packet.ID, newFileName);
+                    RenamedFiles.Add(packet.Id, newFileName);
                     break;
                 }
             }
-            else if (packet.CurrentBlock > 0 && File.Exists(downloadPath) && RenamedFiles.ContainsKey(packet.ID))
+            else if (packet.CurrentBlock > 0 && File.Exists(downloadPath) && RenamedFiles.ContainsKey(packet.Id))
             {
-                downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.ID]);
+                downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.Id]);
             }
 
             if (client.Value == null || client.Value.FrmFm == null)
             {
                 FrmMain.Instance.SetStatusByClient(client, "Download aborted, please keep the File Manager open.");
-                new Packets.ServerPackets.DoDownloadFileCancel(packet.ID).Execute(client);
+                client.Send(new DoDownloadFileCancel {Id = packet.Id});
                 return;
             }
 
-            int index = client.Value.FrmFm.GetTransferIndex(packet.ID);
+            int index = client.Value.FrmFm.GetTransferIndex(packet.Id);
             if (index < 0)
                 return;
 
@@ -93,7 +93,7 @@ namespace xServer.Core.Commands
             if (client.Value == null || client.Value.FrmFm == null)
                 return;
 
-            if (CanceledDownloads.ContainsKey(packet.ID)) return;
+            if (CanceledDownloads.ContainsKey(packet.Id)) return;
 
             client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
 
@@ -101,7 +101,7 @@ namespace xServer.Core.Commands
             {
                 if (client.Value.FrmFm == null)
                     return;
-                RenamedFiles.Remove(packet.ID);
+                RenamedFiles.Remove(packet.Id);
                 client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
             }
         }

@@ -5,13 +5,13 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ProtoBuf;
+using ProtoBuf.Meta;
+using Quasar.Common.Packets;
 using xClient.Core.Compression;
 using xClient.Core.Cryptography;
 using xClient.Core.Extensions;
-using xClient.Core.NetSerializer;
-using xClient.Core.Packets;
 using xClient.Core.ReverseProxy;
-using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.Networking
 {
@@ -184,6 +184,11 @@ namespace xClient.Core.Networking
         private List<ReverseProxyClient> _proxyClients;
 
         /// <summary>
+        /// The internal index of the packet type.
+        /// </summary>
+        private int _typeIndex;
+
+        /// <summary>
         /// Lock object for the list of proxy clients.
         /// </summary>
         private readonly object _proxyClientsLock = new object();
@@ -256,11 +261,6 @@ namespace xClient.Core.Networking
         /// </summary>
         public bool Connected { get; private set; }
 
-        /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        protected Serializer Serializer { get; set; }
-
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
@@ -269,6 +269,7 @@ namespace xClient.Core.Networking
             _proxyClients = new List<ReverseProxyClient>();
             _readBuffer = new byte[BUFFER_SIZE];
             _tempHeader = new byte[HEADER_SIZE];
+            AddTypesToSerializer(typeof(IPacket), PacketRegistery.GetPacketTypes(typeof(IPacket)).ToArray());
         }
 
         /// <summary>
@@ -517,7 +518,7 @@ namespace xClient.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)Serializer.Deserialize(deserialized);
+                                            IPacket packet = Serializer.Deserialize<IPacket>(deserialized);
 
                                             OnClientRead(packet);
                                         }
@@ -749,6 +750,33 @@ namespace xClient.Core.Networking
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Adds a Type to the serializer so a message can be properly serialized.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="type">Type to be added</param>
+        public void AddTypeToSerializer(Type parent, Type type)
+        {
+            if (type == null || parent == null)
+                throw new ArgumentNullException();
+
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
+
+            if (!isAlreadyAdded)
+                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
+        }
+
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
+        public void AddTypesToSerializer(Type parent, params Type[] types)
+        {
+            foreach (Type type in types)
+                AddTypeToSerializer(parent, type);
         }
     }
 }

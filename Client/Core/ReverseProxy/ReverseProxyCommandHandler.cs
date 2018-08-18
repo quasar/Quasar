@@ -1,6 +1,5 @@
-﻿using xClient.Core.Networking;
-using xClient.Core.Packets;
-using xClient.Core.ReverseProxy.Packets;
+﻿using Quasar.Common.Packets;
+using xClient.Core.Networking;
 
 namespace xClient.Core.ReverseProxy
 {

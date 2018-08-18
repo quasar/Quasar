@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Quasar.Common.Packets;
 using xServer.Core.Commands;
-using xServer.Core.NetSerializer;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
@@ -71,8 +69,6 @@ namespace xServer.Core.Networking
         /// </summary>
         public QuasarServer() : base()
         {
-            base.Serializer = new Serializer(PacketRegistery.GetPacketTypes());
-
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
         }
@@ -88,7 +84,7 @@ namespace xServer.Core.Networking
             switch (connected)
             {
                 case true:
-                    new Packets.ServerPackets.GetAuthentication().Execute(client); // begin handshake
+                    client.Send(new GetAuthentication()); // begin handshake
                     break;
                 case false:
                     if (client.Authenticated)
@@ -111,12 +107,12 @@ namespace xServer.Core.Networking
 
             if (!client.Authenticated)
             {
-                if (type == typeof (Packets.ClientPackets.GetAuthenticationResponse))
+                if (type == typeof (GetAuthenticationResponse))
                 {
                     client.Authenticated = true;
-                    new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client); // finish handshake
+                    client.Send(new SetAuthenticationSuccess()); // finish handshake
                     CommandHandler.HandleGetAuthenticationResponse(client,
-                        (Packets.ClientPackets.GetAuthenticationResponse) packet);
+                        (GetAuthenticationResponse) packet);
                     OnClientConnected(client);
                 }
                 else

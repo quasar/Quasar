@@ -1,13 +1,14 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Quasar.Common.Packets;
 using xServer.Core.Compression;
 using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
@@ -491,7 +492,7 @@ namespace xServer.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)_parentServer.Serializer.Deserialize(deserialized);
+                                            IPacket packet = Serializer.Deserialize<IPacket>(deserialized);
 
                                             OnClientRead(packet);
                                         }
@@ -541,7 +542,7 @@ namespace xServer.Core.Networking
                 {
                     try
                     {
-                        _parentServer.Serializer.Serialize(ms, packet);
+                        Serializer.Serialize(ms, packet);
                     }
                     catch (Exception)
                     {

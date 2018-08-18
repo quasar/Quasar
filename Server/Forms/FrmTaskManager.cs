@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Controls;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -23,7 +24,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
+                _connectClient.Send(new GetProcesses());
             }
         }
 
@@ -41,7 +42,7 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem lvi in lstTasks.SelectedItems)
                 {
-                    new Core.Packets.ServerPackets.DoProcessKill(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
+                    _connectClient.Send(new DoProcessKill {Pid = int.Parse(lvi.SubItems[1].Text)});
                 }
             }
         }
@@ -51,17 +52,13 @@ namespace xServer.Forms
             string processname = string.Empty;
             if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
             {
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoProcessStart(processname).Execute(_connectClient);
+                _connectClient?.Send(new DoProcessStart {ApplicationName = processname});
             }
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
-            }
+            _connectClient?.Send(new GetProcesses());
         }
 
         #endregion

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
@@ -24,7 +25,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = WindowHelper.GetWindowTitle("Connections", _connectClient);
-                new Core.Packets.ServerPackets.GetConnections().Execute(_connectClient);
+                _connectClient.Send(new GetConnections());
             }
         }
 
@@ -78,10 +79,7 @@ namespace xServer.Forms
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                new Core.Packets.ServerPackets.GetConnections().Execute(_connectClient);
-            }
+            _connectClient?.Send(new GetConnections());
         }
 
         private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e)
@@ -91,8 +89,11 @@ namespace xServer.Forms
                 foreach (ListViewItem lvi in lstConnections.SelectedItems)
                 {
                     //send local and remote ports of connection
-                    new Core.Packets.ServerPackets.DoCloseConnection(int.Parse(lvi.SubItems[2].Text),
-                        int.Parse(lvi.SubItems[4].Text)).Execute(_connectClient);
+                    _connectClient.Send(new DoCloseConnection
+                    {
+                        LocalPort = int.Parse(lvi.SubItems[2].Text),
+                        RemotePort = int.Parse(lvi.SubItems[4].Text)
+                    });
                 }
             }
         }

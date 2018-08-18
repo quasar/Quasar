@@ -1,17 +1,16 @@
 ﻿using Microsoft.Win32;
+using Quasar.Common.Packets;
+using Quasar.Common.Registry;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using xServer.Controls;
-using xServer.Core.Networking;
-using xServer.Core.Registry;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
+using xServer.Core.Networking;
+using xServer.Core.Registry;
 
 namespace xServer.Forms
 {
@@ -56,7 +55,7 @@ namespace xServer.Forms
                 this.Text = WindowHelper.GetWindowTitle("Registry Editor", _connectClient);
 
             // Signal client to retrive the root nodes (indicated by null)
-            new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(null).Execute(_connectClient);
+            _connectClient.Send(new DoLoadRegistryKey {RootKeyName = null});
         }
 
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
@@ -231,9 +230,9 @@ namespace xServer.Forms
             {
                 lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
-                    List<RegValueData> ValuesFromNode = ((RegValueData[])key.Tag).ToList();
-                    ValuesFromNode.Add(value);
-                    key.Tag = ValuesFromNode.ToArray();
+                    List<RegValueData> valuesFromNode = ((RegValueData[])key.Tag).ToList();
+                    valuesFromNode.Add(value);
+                    key.Tag = valuesFromNode.ToArray();
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
@@ -384,7 +383,12 @@ namespace xServer.Forms
                     }
                     else
                     {
-                        new xServer.Core.Packets.ServerPackets.DoRenameRegistryKey(e.Node.Parent.FullPath, e.Node.Name, e.Label).Execute(_connectClient);
+                        _connectClient.Send(new DoRenameRegistryKey
+                        {
+                            ParentPath = e.Node.Parent.FullPath,
+                            OldKeyName = e.Node.Name,
+                            NewKeyName = e.Label
+                        });
                         tvRegistryDirectory.LabelEdit = false;
                     }
                 }
@@ -406,12 +410,12 @@ namespace xServer.Forms
             TreeNode parentNode = e.Node;
 
             // If nothing is there (yet).
-            if (String.IsNullOrEmpty(parentNode.FirstNode.Name))
+            if (string.IsNullOrEmpty(parentNode.FirstNode.Name))
             {
                 tvRegistryDirectory.SuspendLayout();
                 parentNode.Nodes.Clear();
 
-                new xServer.Core.Packets.ServerPackets.DoLoadRegistryKey(parentNode.FullPath).Execute(_connectClient);
+                _connectClient.Send(new DoLoadRegistryKey {RootKeyName = parentNode.FullPath});
 
                 tvRegistryDirectory.ResumeLayout();
 
@@ -556,7 +560,12 @@ namespace xServer.Forms
                         return;
                     }
 
-                    new xServer.Core.Packets.ServerPackets.DoRenameRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, lstRegistryValues.Items[index].Name, e.Label).Execute(_connectClient);
+                    _connectClient.Send(new DoRenameRegistryValue
+                    {
+                        KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                        OldValueName = lstRegistryValues.Items[index].Name,
+                        NewValueName = e.Label
+                    });
                     
                     lstRegistryValues.LabelEdit = false;
                 }
@@ -588,12 +597,15 @@ namespace xServer.Forms
             if (!(tvRegistryDirectory.SelectedNode.IsExpanded) && tvRegistryDirectory.SelectedNode.Nodes.Count > 0)
             {
                 //Subscribe (wait for node to expand)
-                tvRegistryDirectory.AfterExpand += new System.Windows.Forms.TreeViewEventHandler(this.createRegistryKey_AfterExpand);
+                tvRegistryDirectory.AfterExpand += this.createRegistryKey_AfterExpand;
                 tvRegistryDirectory.SelectedNode.Expand();
             }
             else
             {
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryKey(tvRegistryDirectory.SelectedNode.FullPath).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryKey
+                {
+                    ParentPath = tvRegistryDirectory.SelectedNode.FullPath
+                });
             }
         }
 
@@ -608,7 +620,11 @@ namespace xServer.Forms
             {
                 string parentPath = tvRegistryDirectory.SelectedNode.Parent.FullPath;
 
-                new xServer.Core.Packets.ServerPackets.DoDeleteRegistryKey(parentPath, tvRegistryDirectory.SelectedNode.Name).Execute(_connectClient);
+                _connectClient.Send(new DoDeleteRegistryKey
+                {
+                    ParentPath = parentPath,
+                    KeyName = tvRegistryDirectory.SelectedNode.Name
+                });
             }
         }
 
@@ -625,7 +641,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_SZ
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.String).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.String
+                });
             }
         }
 
@@ -634,7 +654,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_BINARY
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.Binary).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.Binary
+                });
             }
         }
 
@@ -643,7 +667,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_DWORD
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.DWord).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.DWord
+                });
             }
         }
 
@@ -652,7 +680,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_QWORD
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.QWord).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.QWord
+                });
             }
         }
 
@@ -661,7 +693,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_MULTI_SZ
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.MultiString).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.MultiString
+                });
             }
         }
 
@@ -670,7 +706,11 @@ namespace xServer.Forms
             if (tvRegistryDirectory.SelectedNode != null)
             {
                 //Request the creation of a new Registry value of type REG_EXPAND_SZ
-                new xServer.Core.Packets.ServerPackets.DoCreateRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, RegistryValueKind.ExpandString).Execute(_connectClient);
+                _connectClient.Send(new DoCreateRegistryValue
+                {
+                    KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                    Kind = RegistryValueKind.ExpandString
+                });
             }
         }
 
@@ -692,7 +732,11 @@ namespace xServer.Forms
                     if (item.GetType() == typeof(RegistryValueLstItem))
                     {
                         RegistryValueLstItem registyValue = (RegistryValueLstItem)item;
-                        new xServer.Core.Packets.ServerPackets.DoDeleteRegistryValue(tvRegistryDirectory.SelectedNode.FullPath, registyValue.RegName).Execute(_connectClient);
+                        _connectClient.Send(new DoDeleteRegistryValue
+                        {
+                            KeyPath = tvRegistryDirectory.SelectedNode.FullPath,
+                            ValueName = registyValue.RegName
+                        });
                     }
                 }
             }

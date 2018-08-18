@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{C7C363BA-E5B6-4E18-9224-39BC8DA73172}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Quasar.Common</RootNamespace>
+    <AssemblyName>Quasar.Common</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="protobuf-net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.3.17\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Enums\MouseAction.cs" />
+    <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\ShutdownAction.cs" />
+    <Compile Include="Enums\UserStatus.cs" />
+    <Compile Include="NativeMethods.cs" />
+    <Compile Include="Packets\DoDownloadFileResponse.cs" />
+    <Compile Include="Packets\DoShellExecuteResponse.cs" />
+    <Compile Include="Packets\GetAuthenticationResponse.cs" />
+    <Compile Include="Packets\GetChangeRegistryValueResponse.cs" />
+    <Compile Include="Packets\GetConnectionsResponse.cs" />
+    <Compile Include="Packets\GetCreateRegistryKeyResponse.cs" />
+    <Compile Include="Packets\GetCreateRegistryValueResponse.cs" />
+    <Compile Include="Packets\GetDeleteRegistryKeyResponse.cs" />
+    <Compile Include="Packets\GetDeleteRegistryValueResponse.cs" />
+    <Compile Include="Packets\GetDesktopResponse.cs" />
+    <Compile Include="Packets\GetDirectoryResponse.cs" />
+    <Compile Include="Packets\GetDrivesResponse.cs" />
+    <Compile Include="Packets\GetKeyloggerLogsResponse.cs" />
+    <Compile Include="Packets\GetMonitorsResponse.cs" />
+    <Compile Include="Packets\GetPasswordsResponse.cs" />
+    <Compile Include="Packets\GetProcessesResponse.cs" />
+    <Compile Include="Packets\GetRegistryKeysResponse.cs" />
+    <Compile Include="Packets\GetRenameRegistryKeyResponse.cs" />
+    <Compile Include="Packets\GetRenameRegistryValueResponse.cs" />
+    <Compile Include="Packets\GetStartupItemsResponse.cs" />
+    <Compile Include="Packets\GetSystemInfoResponse.cs" />
+    <Compile Include="Packets\GetWebcamResponse.cs" />
+    <Compile Include="Packets\GetWebcamsResponse.cs" />
+    <Compile Include="Packets\SetStatus.cs" />
+    <Compile Include="Packets\SetStatusFileManager.cs" />
+    <Compile Include="Packets\SetUserStatus.cs" />
+    <Compile Include="Packets\IPacket.cs" />
+    <Compile Include="Packets\PacketRegistery.cs" />
+    <Compile Include="Packets\ReverseProxyConnect.cs" />
+    <Compile Include="Packets\ReverseProxyConnectResponse.cs" />
+    <Compile Include="Packets\ReverseProxyData.cs" />
+    <Compile Include="Packets\ReverseProxyDisconnect.cs" />
+    <Compile Include="Packets\DoAskElevate.cs" />
+    <Compile Include="Packets\DoChangeRegistryValue.cs" />
+    <Compile Include="Packets\DoClientDisconnect.cs" />
+    <Compile Include="Packets\DoClientReconnect.cs" />
+    <Compile Include="Packets\DoClientUninstall.cs" />
+    <Compile Include="Packets\DoClientUpdate.cs" />
+    <Compile Include="Packets\DoCloseConnection.cs" />
+    <Compile Include="Packets\DoCreateRegistryKey.cs" />
+    <Compile Include="Packets\DoCreateRegistryValue.cs" />
+    <Compile Include="Packets\DoDeleteRegistryKey.cs" />
+    <Compile Include="Packets\DoDeleteRegistryValue.cs" />
+    <Compile Include="Packets\DoDownloadAndExecute.cs" />
+    <Compile Include="Packets\DoDownloadFile.cs" />
+    <Compile Include="Packets\DoDownloadFileCancel.cs" />
+    <Compile Include="Packets\DoKeyboardEvent.cs" />
+    <Compile Include="Packets\DoLoadRegistryKey.cs" />
+    <Compile Include="Packets\DoMouseEvent.cs" />
+    <Compile Include="Packets\DoPathDelete.cs" />
+    <Compile Include="Packets\DoPathRename.cs" />
+    <Compile Include="Packets\DoProcessKill.cs" />
+    <Compile Include="Packets\DoProcessStart.cs" />
+    <Compile Include="Packets\DoRenameRegistryKey.cs" />
+    <Compile Include="Packets\DoRenameRegistryValue.cs" />
+    <Compile Include="Packets\DoShellExecute.cs" />
+    <Compile Include="Packets\DoShowMessageBox.cs" />
+    <Compile Include="Packets\DoShutdownAction.cs" />
+    <Compile Include="Packets\DoStartupItemAdd.cs" />
+    <Compile Include="Packets\DoStartupItemRemove.cs" />
+    <Compile Include="Packets\DoUploadAndExecute.cs" />
+    <Compile Include="Packets\DoUploadFile.cs" />
+    <Compile Include="Packets\DoVisitWebsite.cs" />
+    <Compile Include="Packets\DoWebcamStop.cs" />
+    <Compile Include="Packets\GetAuthentication.cs" />
+    <Compile Include="Packets\GetConnections.cs" />
+    <Compile Include="Packets\GetDesktop.cs" />
+    <Compile Include="Packets\GetDirectory.cs" />
+    <Compile Include="Packets\GetDrives.cs" />
+    <Compile Include="Packets\GetKeyloggerLogs.cs" />
+    <Compile Include="Packets\GetMonitors.cs" />
+    <Compile Include="Packets\GetPasswords.cs" />
+    <Compile Include="Packets\GetProcesses.cs" />
+    <Compile Include="Packets\GetStartupItems.cs" />
+    <Compile Include="Packets\GetSystemInfo.cs" />
+    <Compile Include="Packets\GetWebcam.cs" />
+    <Compile Include="Packets\GetWebcams.cs" />
+    <Compile Include="Packets\SetAuthenticationSuccess.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Registry\RegSeekerMatch.cs" />
+    <Compile Include="Registry\RegValueData.cs" />
+    <Compile Include="Video\Codecs\UnsafeStreamCodec.cs" />
+    <Compile Include="Video\Compression\JpgCompression.cs" />
+    <Compile Include="Video\Resolution.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

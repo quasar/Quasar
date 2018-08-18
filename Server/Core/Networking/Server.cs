@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ProtoBuf.Meta;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Data;
-using xServer.Core.NetSerializer;
 using xServer.Core.Networking.Utilities;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
@@ -197,11 +198,6 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        public Serializer Serializer { get; protected set; }
-
-        /// <summary>
         /// Handle of the Server Socket.
         /// </summary>
         private Socket _handle;
@@ -215,6 +211,11 @@ namespace xServer.Core.Networking
         /// List of the clients connected to the server.
         /// </summary>
         private List<Client> _clients;
+
+        /// <summary>
+        /// The internal index of the packet type.
+        /// </summary>
+        private int _typeIndex;
 
         /// <summary>
         /// Lock object for the list of clients.
@@ -233,6 +234,7 @@ namespace xServer.Core.Networking
         {
             _clients = new List<Client>();
             BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
+            AddTypesToSerializer(typeof(IPacket), PacketRegistery.GetPacketTypes(typeof(IPacket)).ToArray());
         }
 
         /// <summary>
@@ -420,6 +422,33 @@ namespace xServer.Core.Networking
 
             ProcessingDisconnect = false;
             OnServerState(false);
+        }
+
+        /// <summary>
+        /// Adds a Type to the serializer so a message can be properly serialized.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="type">Type to be added</param>
+        public void AddTypeToSerializer(Type parent, Type type)
+        {
+            if (type == null || parent == null)
+                throw new ArgumentNullException();
+
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
+
+            if (!isAlreadyAdded)
+                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
+        }
+
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
+        public void AddTypesToSerializer(Type parent, params Type[] types)
+        {
+            foreach (Type type in types)
+                AddTypeToSerializer(parent, type);
         }
     }
 }

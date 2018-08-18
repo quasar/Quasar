@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
+using Quasar.Common.Video;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
@@ -10,10 +12,9 @@ namespace xServer.Forms
 {
     public partial class FrmRemoteWebcam : Form
     {
-
         public bool IsStarted { get; private set; }
         private readonly Client _connectClient;
-        private Dictionary<string, List<Size>> _webcams;
+        private Dictionary<string, List<Resolution>> _webcams;
 
         public FrmRemoteWebcam(Client c)
         {
@@ -51,9 +52,9 @@ namespace xServer.Forms
             btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
 
             if (_connectClient.Value != null)
-                new Core.Packets.ServerPackets.GetWebcams().Execute(_connectClient);
+                _connectClient.Send(new GetWebcams());
         }
-        public void AddWebcams(Dictionary<string, List<Size>> webcams)
+        public void AddWebcams(Dictionary<string, List<Resolution>> webcams)
         {
             this._webcams = webcams;
             try
@@ -62,7 +63,7 @@ namespace xServer.Forms
                 {
                     foreach (var webcam in webcams.Keys)
                     {
-                        cbWebcams.Items.Add(string.Format("{0}", webcam));
+                        cbWebcams.Items.Add(webcam);
                     }
                     cbWebcams.SelectedIndex = 0;
                 });
@@ -89,7 +90,11 @@ namespace xServer.Forms
 
             this.ActiveControl = picWebcam;
 
-            new Core.Packets.ServerPackets.GetWebcam(cbWebcams.SelectedIndex, cbResolutions.SelectedIndex).Execute(_connectClient);
+            _connectClient.Send(new GetWebcam
+            {
+                Webcam = cbWebcams.SelectedIndex,
+                Resolution = cbResolutions.SelectedIndex
+            });
         }
 
         public void ToggleControls(bool state)
@@ -102,7 +107,7 @@ namespace xServer.Forms
 
         private void FrmRemoteWebcam_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Core.Packets.ServerPackets.DoWebcamStop().Execute(_connectClient);
+            _connectClient.Send(new DoWebcamStop());
 
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmWebcam = null;
@@ -119,7 +124,7 @@ namespace xServer.Forms
             ToggleControls(true);
             this.ActiveControl = picWebcam;
 
-            new Core.Packets.ServerPackets.DoWebcamStop().Execute(_connectClient);
+            _connectClient.Send(new DoWebcamStop());
         }
 
         private void cbWebcams_SelectedIndexChanged(object sender, EventArgs e)
@@ -129,7 +134,7 @@ namespace xServer.Forms
                 cbResolutions.Items.Clear();
                 foreach (var resolution in this._webcams.ElementAt(cbWebcams.SelectedIndex).Value)
                 {
-                    cbResolutions.Items.Add(string.Format("{0} x {1}", resolution.Width, resolution.Height));
+                    cbResolutions.Items.Add(resolution.ToString());
                 }
                 cbResolutions.SelectedIndex = 0;
             });

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Quasar.Common.Video.Compression;
 using xClient.Core.Compression;
 
 namespace xClient.Tests.Core.Compression

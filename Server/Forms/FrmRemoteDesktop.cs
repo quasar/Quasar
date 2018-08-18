@@ -5,8 +5,9 @@ using System.Collections.Generic;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
-using xServer.Enums;
 using Gma.System.MouseKeyHook;
+using Quasar.Common.Enums;
+using Quasar.Common.Packets;
 
 namespace xServer.Forms
 {
@@ -43,7 +44,7 @@ namespace xServer.Forms
             _keysPressed = new List<Keys>();
 
             if (_connectClient.Value != null)
-                new Core.Packets.ServerPackets.GetMonitors().Execute(_connectClient);
+                _connectClient.Send(new GetMonitors());
         }
 
         /// <summary>
@@ -181,7 +182,7 @@ namespace xServer.Forms
 
             this.ActiveControl = picDesktop;
 
-            new Core.Packets.ServerPackets.GetDesktop(barQuality.Value, cbMonitors.SelectedIndex).Execute(_connectClient);
+            _connectClient.Send(new GetDesktop {Quality = barQuality.Value, Monitor = cbMonitors.SelectedIndex});
         }
 
         private void btnStop_Click(object sender, EventArgs e)
@@ -282,8 +283,14 @@ namespace xServer.Forms
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(action, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                _connectClient?.Send(new DoMouseEvent
+                {
+                    Action = action,
+                    IsMouseDown = true,
+                    X = remote_x,
+                    Y = remote_y,
+                    MonitorIndex = selectedMonitorIndex
+                });
             }
         }
 
@@ -306,8 +313,14 @@ namespace xServer.Forms
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(action, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                _connectClient?.Send(new DoMouseEvent
+                {
+                    Action = action,
+                    IsMouseDown = false,
+                    X = remote_x,
+                    Y = remote_y,
+                    MonitorIndex = selectedMonitorIndex
+                });
             }
         }
 
@@ -323,8 +336,14 @@ namespace xServer.Forms
 
                 int selectedMonitorIndex = cbMonitors.SelectedIndex;
 
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(MouseAction.MoveCursor, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+                _connectClient?.Send(new DoMouseEvent
+                {
+                    Action = MouseAction.MoveCursor,
+                    IsMouseDown = false,
+                    X = remote_x,
+                    Y = remote_y,
+                    MonitorIndex = selectedMonitorIndex
+                });
             }
         }
 
@@ -332,8 +351,14 @@ namespace xServer.Forms
         {
             if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
             {
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown, false, 0, 0, cbMonitors.SelectedIndex).Execute(_connectClient);
+                _connectClient?.Send(new DoMouseEvent
+                {
+                    Action = e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown,
+                    IsMouseDown = false,
+                    X = 0,
+                    Y = 0,
+                    MonitorIndex = cbMonitors.SelectedIndex
+                });
             }
         }
 
@@ -349,8 +374,7 @@ namespace xServer.Forms
 
                 _keysPressed.Add(e.KeyCode);
 
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, true).Execute(_connectClient);
+                _connectClient?.Send(new DoKeyboardEvent {Key = (byte) e.KeyCode, KeyDown = true});
             }
         }
 
@@ -363,8 +387,7 @@ namespace xServer.Forms
 
                 _keysPressed.Remove(e.KeyCode);
 
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoKeyboardEvent((byte)e.KeyCode, false).Execute(_connectClient);
+                _connectClient?.Send(new DoKeyboardEvent {Key = (byte) e.KeyCode, KeyDown = false});
             }
         }
 

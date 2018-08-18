@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using System.Drawing;
+using Quasar.Common.Packets;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
@@ -36,7 +37,7 @@ namespace xServer.Forms
 
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Core.Packets.ServerPackets.DoShellExecute("exit").Execute(_connectClient);
+            _connectClient.Send(new DoShellExecute {Command = "exit"});
             if (_connectClient.Value != null)
                 _connectClient.Value.FrmRs = null;
         }
@@ -73,7 +74,7 @@ namespace xServer.Forms
                             txtConsoleOutput.Text = string.Empty;
                             break;
                         default:
-                            new Core.Packets.ServerPackets.DoShellExecute(input).Execute(_connectClient);
+                            _connectClient.Send(new DoShellExecute {Command = input});
                             break;
                     }
                 }

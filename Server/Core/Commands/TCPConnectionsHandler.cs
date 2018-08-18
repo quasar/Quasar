@@ -1,6 +1,6 @@
 ﻿using System.Threading;
+using Quasar.Common.Packets;
 using xServer.Core.Networking;
-using xServer.Core.Packets.ClientPackets;
 
 namespace xServer.Core.Commands
 {

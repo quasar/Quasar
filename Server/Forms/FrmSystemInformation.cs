@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -24,7 +25,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
+                _connectClient.Send(new GetSystemInfo());
 
                 if (_connectClient.Value != null)
                 {
@@ -111,7 +112,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
+                _connectClient.Send(new GetSystemInfo());
 
                 if (_connectClient.Value != null)
                 {

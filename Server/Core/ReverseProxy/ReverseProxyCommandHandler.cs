@@ -1,6 +1,5 @@
-﻿using xServer.Core.Networking;
-using xServer.Core.Packets;
-using xServer.Core.ReverseProxy.Packets;
+﻿using Quasar.Common.Packets;
+using xServer.Core.Networking;
 
 namespace xServer.Core.ReverseProxy
 {
