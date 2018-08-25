@@ -5,7 +5,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Core.Data;
 using xServer.Core.Networking.Utilities;
 
@@ -85,7 +85,7 @@ namespace xServer.Core.Networking
         /// <param name="s">The server, the client is connected to.</param>
         /// <param name="c">The client that has received the packet.</param>
         /// <param name="packet">The packet that received by the client.</param>
-        public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
+        public delegate void ClientReadEventHandler(Server s, Client c, IMessage packet);
 
         /// <summary>
         /// Fires an event that informs subscribers that a packet has been
@@ -93,7 +93,7 @@ namespace xServer.Core.Networking
         /// </summary>
         /// <param name="c">The client that has received the packet.</param>
         /// <param name="packet">The packet that received by the client.</param>
-        private void OnClientRead(Client c, IPacket packet)
+        private void OnClientRead(Client c, IMessage packet)
         {
             var handler = ClientRead;
             if (handler != null)
@@ -115,7 +115,7 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that has been sent by the client.</param>
         /// <param name="length">The length of the packet.</param>
         /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length, byte[] rawData);
+        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage packet, long length, byte[] rawData);
 
         /// <summary>
         /// Fires an event that informs subscribers that the client has sent a packet.
@@ -124,7 +124,7 @@ namespace xServer.Core.Networking
         /// <param name="packet">The packet that has been sent by the client.</param>
         /// <param name="length">The length of the packet.</param>
         /// <param name="rawData">The packet in raw bytes.</param>
-        private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
+        private void OnClientWrite(Client c, IMessage packet, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
@@ -234,7 +234,7 @@ namespace xServer.Core.Networking
         {
             _clients = new List<Client>();
             BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
-            AddTypesToSerializer(typeof(IPacket), PacketRegistery.GetPacketTypes(typeof(IPacket)).ToArray());
+            AddTypesToSerializer(typeof(IMessage), PacketRegistery.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>

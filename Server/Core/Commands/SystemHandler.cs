@@ -1,10 +1,10 @@
 ﻿using Quasar.Common.Enums;
-using Quasar.Common.Packets;
 using System;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Messages;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;

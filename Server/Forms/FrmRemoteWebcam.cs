@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using Quasar.Common.Video;
 using xServer.Core.Helper;
 using xServer.Core.Networking;

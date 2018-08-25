@@ -1,5 +1,5 @@
 ﻿using System.Threading;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Commands

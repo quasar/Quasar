@@ -1,6 +1,6 @@
-﻿using Quasar.Common.Packets;
-using Quasar.Common.Registry;
+﻿using Quasar.Common.Registry;
 using System;
+using Quasar.Common.Messages;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;

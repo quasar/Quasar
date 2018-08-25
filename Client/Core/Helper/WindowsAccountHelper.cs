@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
 using Quasar.Common.Enums;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Helper

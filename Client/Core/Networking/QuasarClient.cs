@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Commands;
 using xClient.Core.Data;
@@ -60,7 +60,7 @@ namespace xClient.Core.Networking
             }
         }
 
-        private void OnClientRead(Client client, IPacket packet)
+        private void OnClientRead(Client client, IMessage packet)
         {
             var type = packet.GetType();
 

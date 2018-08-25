@@ -1,9 +1,9 @@
-﻿using Quasar.Common.Packets;
-using System;
+﻿using System;
 using System.IO;
 using System.Security;
 using System.Threading;
 using Quasar.Common.Enums;
+using Quasar.Common.Messages;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 

@@ -1,7 +1,7 @@
-﻿using Quasar.Common.Packets;
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
+using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Helper;
 using xClient.Core.Networking;

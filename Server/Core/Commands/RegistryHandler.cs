@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Commands

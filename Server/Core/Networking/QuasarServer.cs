@@ -1,5 +1,5 @@
 ﻿using System.Linq;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Core.Commands;
 
 namespace xServer.Core.Networking
@@ -101,7 +101,7 @@ namespace xServer.Core.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which has received the packet.</param>
         /// <param name="packet">The received packet.</param>
-        private void OnClientRead(Server server, Client client, IPacket packet)
+        private void OnClientRead(Server server, Client client, IMessage packet)
         {
             var type = packet.GetType();
 

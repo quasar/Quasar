@@ -61,16 +61,16 @@ See [ROADMAP.md](ROADMAP.md)
 See [LICENSE](LICENSE)
 
 ## Third-party libraries
-NetSerializer  
-Copyright (c) 2015 Tomi Valkeinen  
-https://github.com/tomba/netserializer
+protobuf-net  
+Copyright (c) 2008 Marc Gravell  
+https://github.com/mgravell/protobuf-net
 
 ResourceLib  
-Copyright (c) 2008-2013 Daniel Doubrovkine, Vestris Inc.  
+Copyright (c) 2008-2016 Daniel Doubrovkine, Vestris Inc.  
 https://github.com/dblock/resourcelib
 
 GlobalMouseKeyHook  
-Copyright (c) 2004-2015 George Mamaladze  
+Copyright (c) 2004-2018 George Mamaladze  
 https://github.com/gmamaladze/globalmousekeyhook
 
 Mono.Cecil  

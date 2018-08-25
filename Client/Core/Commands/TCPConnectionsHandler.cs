@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Commands

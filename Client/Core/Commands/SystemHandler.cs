@@ -7,7 +7,7 @@ using System.Net.NetworkInformation;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Quasar.Common.Enums;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Extensions;

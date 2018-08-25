@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using Quasar.Common.Video.Codecs;
 using xServer.Core.Data;
 using xServer.Core.Helper;

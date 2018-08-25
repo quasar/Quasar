@@ -7,7 +7,7 @@ using xServer.Core.Networking;
 using xServer.Core.Utilities;
 using Gma.System.MouseKeyHook;
 using Quasar.Common.Enums;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 
 namespace xServer.Forms
 {

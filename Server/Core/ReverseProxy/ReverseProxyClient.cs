@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Core.Networking;
 
 namespace xServer.Core.ReverseProxy

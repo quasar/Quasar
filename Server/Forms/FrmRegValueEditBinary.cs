@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 ﻿using Microsoft.Win32;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using Quasar.Common.Registry;
 using xServer.Core.Networking;
 using xServer.Core.Registry;

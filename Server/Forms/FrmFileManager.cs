@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Quasar.Common.Enums;
-using Quasar.Common.Packets;
+using Quasar.Common.Messages;
 using xServer.Controls;
 using xServer.Core.Commands;
 using xServer.Core.Data;

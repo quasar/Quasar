@@ -1,4 +1,4 @@
-﻿using Quasar.Common.Packets;
+﻿using Quasar.Common.Messages;
 using xServer.Core.Commands;
 using xServer.Core.ReverseProxy;
 
@@ -6,7 +6,7 @@ namespace xServer.Core.Networking
 {
     public static class PacketHandler
     {
-        public static void HandlePacket(Client client, IPacket packet)
+        public static void HandlePacket(Client client, IMessage packet)
         {
             if (client == null || client.Value == null)
                 return;
