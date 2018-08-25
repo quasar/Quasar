@@ -75,61 +75,61 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Occurs when a packet is received by a client.
+        /// Occurs when a message is received by a client.
         /// </summary>
         public event ClientReadEventHandler ClientRead;
 
         /// <summary>
-        /// Represents a method that will handle a packet received from a client.
+        /// Represents a method that will handle a message received from a client.
         /// </summary>
         /// <param name="s">The server, the client is connected to.</param>
-        /// <param name="c">The client that has received the packet.</param>
-        /// <param name="packet">The packet that received by the client.</param>
-        public delegate void ClientReadEventHandler(Server s, Client c, IMessage packet);
+        /// <param name="c">The client that has received the message.</param>
+        /// <param name="message">The message that received by the client.</param>
+        public delegate void ClientReadEventHandler(Server s, Client c, IMessage message);
 
         /// <summary>
-        /// Fires an event that informs subscribers that a packet has been
+        /// Fires an event that informs subscribers that a message has been
         /// received from the client.
         /// </summary>
-        /// <param name="c">The client that has received the packet.</param>
-        /// <param name="packet">The packet that received by the client.</param>
-        private void OnClientRead(Client c, IMessage packet)
+        /// <param name="c">The client that has received the message.</param>
+        /// <param name="message">The message that received by the client.</param>
+        private void OnClientRead(Client c, IMessage message)
         {
             var handler = ClientRead;
             if (handler != null)
             {
-                handler(this, c, packet);
+                handler(this, c, message);
             }
         }
 
         /// <summary>
-        /// Occurs when a packet is sent by a client.
+        /// Occurs when a message is sent by a client.
         /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
         /// <summary>
-        /// Represents the method that will handle the sent packet by a client.
+        /// Represents the method that will handle the sent message by a client.
         /// </summary>
         /// <param name="s">The server, the client is connected to.</param>
-        /// <param name="c">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage packet, long length, byte[] rawData);
+        /// <param name="c">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage message, long length, byte[] rawData);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// Fires an event that informs subscribers that the client has sent a message.
         /// </summary>
-        /// <param name="c">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        private void OnClientWrite(Client c, IMessage packet, long length, byte[] rawData)
+        /// <param name="c">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        private void OnClientWrite(Client c, IMessage message, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
             {
-                handler(this, c, packet, length, rawData);
+                handler(this, c, message, length, rawData);
             }
         }
 
@@ -169,9 +169,9 @@ namespace xServer.Core.Networking
         public int HEADER_SIZE { get { return 4; } } // 4B
 
         /// <summary>
-        /// The maximum size of a packet in bytes.
+        /// The maximum size of a message in bytes.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
+        public int MAX_MESSAGE_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// The buffer manager to handle the receive buffers for the clients.
@@ -213,7 +213,7 @@ namespace xServer.Core.Networking
         private List<Client> _clients;
 
         /// <summary>
-        /// The internal index of the packet type.
+        /// The internal index of the message type.
         /// </summary>
         private int _typeIndex;
 

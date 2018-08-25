@@ -96,14 +96,14 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Forwards received packets from the client to the PacketHandler.
+        /// Forwards received messages from the client to the MessageHandler.
         /// </summary>
         /// <param name="server">The server the client is connected to.</param>
-        /// <param name="client">The client which has received the packet.</param>
-        /// <param name="packet">The received packet.</param>
-        private void OnClientRead(Server server, Client client, IMessage packet)
+        /// <param name="client">The client which has received the message.</param>
+        /// <param name="message">The received message.</param>
+        private void OnClientRead(Server server, Client client, IMessage message)
         {
-            var type = packet.GetType();
+            var type = message.GetType();
 
             if (!client.Authenticated)
             {
@@ -112,7 +112,7 @@ namespace xServer.Core.Networking
                     client.Authenticated = true;
                     client.Send(new SetAuthenticationSuccess()); // finish handshake
                     CommandHandler.HandleGetAuthenticationResponse(client,
-                        (GetAuthenticationResponse) packet);
+                        (GetAuthenticationResponse)message);
                     OnClientConnected(client);
                 }
                 else
@@ -122,7 +122,7 @@ namespace xServer.Core.Networking
                 return;
             }
 
-            PacketHandler.HandlePacket(client, packet);
+            PacketHandler.HandlePacket(client, message);
         }
     }
 }

@@ -60,15 +60,15 @@ namespace xClient.Core.Networking
             }
         }
 
-        private void OnClientRead(Client client, IMessage packet)
+        private void OnClientRead(Client client, IMessage message)
         {
-            var type = packet.GetType();
+            var type = message.GetType();
 
             if (!Authenticated)
             {
                 if (type == typeof(GetAuthentication))
                 {
-                    CommandHandler.HandleGetAuthentication((GetAuthentication)packet, client);
+                    CommandHandler.HandleGetAuthentication((GetAuthentication)message, client);
                 }
                 else if (type == typeof(SetAuthenticationSuccess))
                 {
@@ -77,7 +77,7 @@ namespace xClient.Core.Networking
                 return;
             }
 
-            PacketHandler.HandlePacket(client, packet);
+            PacketHandler.HandlePacket(client, message);
         }
 
         private void OnClientFail(Client client, Exception ex)
