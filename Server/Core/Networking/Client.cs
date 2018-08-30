@@ -6,13 +6,14 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using xServer.Core.Compression;
 using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
 
 namespace xServer.Core.Networking
 {
-    public class Client : IEquatable<Client>
+    public class Client : IEquatable<Client>, ISender
     {
         /// <summary>
         /// Occurs when the state of the client changes.
@@ -98,17 +99,33 @@ namespace xServer.Core.Networking
             }
         }
 
+        public static bool operator ==(Client c1, Client c2)
+        {
+            if (ReferenceEquals(c1, null))
+                return ReferenceEquals(c2, null);
+
+            return c1.Equals(c2);
+        }
+
+        public static bool operator !=(Client c1, Client c2)
+        {
+            return !(c1 == c2);
+        }
+
         /// <summary>
         /// Checks whether the clients are equal.
         /// </summary>
-        /// <param name="c">Client to compare with.</param>
+        /// <param name="other">Client to compare with.</param>
         /// <returns>True if equal, else False.</returns>
-        public bool Equals(Client c)
+        public bool Equals(Client other)
         {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
             try
             {
                 // the port is always unique for each client
-                return this.EndPoint.Port.Equals(c.EndPoint.Port);
+                return this.EndPoint.Port.Equals(other.EndPoint.Port);
             }
             catch (Exception)
             {
@@ -205,7 +222,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The Endpoint which the client is connected to.
         /// </summary>
-        public IPEndPoint EndPoint { get; private set; }
+        public IPEndPoint EndPoint { get; }
 
         /// <summary>
         /// The parent server of the client.

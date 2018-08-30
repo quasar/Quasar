@@ -8,6 +8,7 @@ using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
 using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using xClient.Core.Compression;
 using xClient.Core.Cryptography;
 using xClient.Core.Extensions;
@@ -15,7 +16,7 @@ using xClient.Core.ReverseProxy;
 
 namespace xClient.Core.Networking
 {
-    public class Client
+    public class Client : ISender
     {
         /// <summary>
         /// Occurs as a result of an unrecoverable issue with the client.

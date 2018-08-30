@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Messages\AbstractMessageProcessor.cs" />
+    <Compile Include="Messages\IProgress.cs" />
     <Compile Include="Messages\MessageHandler.cs" />
     <Compile Include="Messages\ICommandExecutor.cs" />
     <Compile Include="Enums\MouseAction.cs" />
