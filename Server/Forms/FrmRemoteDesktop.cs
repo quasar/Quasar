@@ -1,54 +1,111 @@
-﻿using System;
+﻿using Gma.System.MouseKeyHook;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Collections.Generic;
+using xServer.Core.Commands;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Utilities;
-using Gma.System.MouseKeyHook;
-using Quasar.Common.Enums;
-using Quasar.Common.Messages;
 
 namespace xServer.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {
-        public bool IsStarted { get; private set; }
-        private readonly Client _connectClient;
+        /// <summary>
+        /// States whether remote mouse input is enabled.
+        /// </summary>
         private bool _enableMouseInput;
+
+        /// <summary>
+        /// States whether remote keyboard input is enabled.
+        /// </summary>
         private bool _enableKeyboardInput;
+
+        /// <summary>
+        /// Holds the state of the local keyboard hooks.
+        /// </summary>
         private IKeyboardMouseEvents _keyboardHook;
+
+        /// <summary>
+        /// Holds the state of the local mouse hooks.
+        /// </summary>
         private IKeyboardMouseEvents _mouseHook;
-        private List<Keys> _keysPressed;
+
+        /// <summary>
+        /// A list of pressed keys for synchronization between key down & -up events.
+        /// </summary>
+        private readonly List<Keys> _keysPressed;
+
+        /// <summary>
+        /// The client which can be used for the remote desktop.
+        /// </summary>
+        private readonly Client _connectClient;
+
+        /// <summary>
+        /// The message handler for handling the communication with the client.
+        /// </summary>
+        private readonly RemoteDesktopHandler _remoteDesktopHandler;
+
+        //private static Dictionary<Client, FrmRemoteDesktop> openForms = new Dictionary<Client, FrmRemoteDesktop>();
+        //public static FrmRemoteDesktop CreateNewOrGetExisting(Client c)
+        //{
+        //    if (openForms.ContainsKey(c))
+        //    {
+        //        return openForms[c];
+        //    }
+        //    FrmRemoteDesktop r = new FrmRemoteDesktop(c);
+        //    openForms.Add(c, r);
+        //    return r;
+        //}
 
         public FrmRemoteDesktop(Client c)
         {
             _connectClient = c;
-            _connectClient.Value.FrmRdp = this;
+            _remoteDesktopHandler = new RemoteDesktopHandler(c);
+            _keysPressed = new List<Keys>();
 
-            SubscribeEvents();
+            RegisterMessageHandler();
             InitializeComponent();
         }
 
-        private void FrmRemoteDesktop_Load(object sender, EventArgs e)
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="client">The client which disconnects.</param>
+        private void ClientDisconnected(object sender, ISender client)
         {
-            this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
-
-            panelTop.Left = (this.Width / 2) - (panelTop.Width / 2);
-
-            btnHide.Left = (panelTop.Width / 2) - (btnHide.Width / 2);
-
-            btnShow.Location = new Point(377, 0);
-            btnShow.Left = (this.Width / 2) - (btnShow.Width / 2);
-
-            _keysPressed = new List<Keys>();
-
-            if (_connectClient.Value != null)
-                _connectClient.Send(new GetMonitors());
+            this.Close();
         }
 
         /// <summary>
-        /// Subscribes the local mouse and keyboard hooks.
+        /// Registers the remote desktop message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            _remoteDesktopHandler.DisplaysChanged += DisplaysChanged;
+            _remoteDesktopHandler.ProgressChanged += UpdateImage;
+            _remoteDesktopHandler.ClientDisconnected += ClientDisconnected;
+            MessageHandler.Register(_remoteDesktopHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the remote desktop message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_remoteDesktopHandler);
+            _remoteDesktopHandler.DisplaysChanged -= DisplaysChanged;
+            _remoteDesktopHandler.ProgressChanged -= UpdateImage;
+            _remoteDesktopHandler.ClientDisconnected -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Subscribes to local mouse and keyboard events for remote desktop input.
         /// </summary>
         private void SubscribeEvents()
         {
@@ -71,7 +128,7 @@ namespace xServer.Forms
         }
 
         /// <summary>
-        /// Unsubscribes the local mouse and keyboard hooks.
+        /// Unsubscribes from local mouse and keyboard events.
         /// </summary>
         private void UnsubscribeEvents()
         {
@@ -96,106 +153,232 @@ namespace xServer.Forms
             }
         }
 
-        public void AddMonitors(int monitors)
+        /// <summary>
+        /// Starts the remote desktop stream and begin to receive desktop frames.
+        /// </summary>
+        private void StartStream()
         {
-            try
-            {
-                cbMonitors.Invoke((MethodInvoker)delegate
-                {
-                    for (int i = 0; i < monitors; i++)
-                        cbMonitors.Items.Add(string.Format("Monitor {0}", i + 1));
-                    cbMonitors.SelectedIndex = 0;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            ToggleConfigurationControls(true);
+
+            picDesktop.Start();
+            // Subscribe to the new frame counter.
+            picDesktop.SetFrameUpdatedEvent(frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
+
+            _remoteDesktopHandler.BeginReceiveFrames(barQuality.Value, cbMonitors.SelectedIndex);
         }
 
-        public void UpdateImage(Bitmap bmp, bool cloneBitmap = false)
+        /// <summary>
+        /// Stops the remote desktop stream.
+        /// </summary>
+        private void StopStream()
         {
-            picDesktop.UpdateImage(bmp, cloneBitmap);
+            ToggleConfigurationControls(false);
+
+            picDesktop.Stop();
+            // Unsubscribe from the frame counter. It will be re-created when starting again.
+            picDesktop.UnsetFrameUpdatedEvent(frameCounter_FrameUpdated);
+
+            this.ActiveControl = picDesktop;
+
+            _remoteDesktopHandler.EndReceiveFrames();
         }
 
-        private void _frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
+        /// <summary>
+        /// Toggles the activatability of configuration controls in the status/configuration panel.
+        /// </summary>
+        /// <param name="started">When set to <code>true</code> the configuration controls get enabled, otherwise <code>false</code>.</param>
+        private void ToggleConfigurationControls(bool started)
         {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            btnStart.Enabled = !started;
+            btnStop.Enabled = started;
+            barQuality.Enabled = !started;
+            cbMonitors.Enabled = !started;
         }
 
-        private void ToggleControls(bool t)
+        /// <summary>
+        /// Toggles the visibility of the status/configuration panel.
+        /// </summary>
+        /// <param name="visible">Decides if the panel should be visible.</param>
+        private void TogglePanelVisibility(bool visible)
         {
-            IsStarted = !t;
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
-                    btnStart.Enabled = t;
-                    btnStop.Enabled = !t;
-                    barQuality.Enabled = t;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            panelTop.Visible = visible;
+            btnShow.Visible = !visible;
+            this.ActiveControl = picDesktop;
+        }
+
+        /// <summary>
+        /// Called whenever the remote displays changed.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="displays">The updated displays.</param>
+        private void DisplaysChanged(object sender, int displays)
+        {
+            cbMonitors.Items.Clear();
+            for (int i = 0; i < displays; i++)
+                cbMonitors.Items.Add($"Display {i + 1}");
+            cbMonitors.SelectedIndex = 0;
+        }
+
+        /// <summary>
+        /// Updates the current desktop image by drawing it to the desktop picturebox.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="bmp">The new desktop image to draw.</param>
+        private void UpdateImage(object sender, Bitmap bmp)
+        {
+            picDesktop.UpdateImage(bmp, false);
+        }
+
+        private void FrmRemoteDesktop_Load(object sender, EventArgs e)
+        {
+            this.Text = WindowHelper.GetWindowTitle("Remote Desktop", _connectClient);
+
+            OnResize(EventArgs.Empty); // trigger resize event to align controls 
+
+            _remoteDesktopHandler.RefreshDisplays();
+        }
+
+        /// <summary>
+        /// Updates the title with the current frames per second.
+        /// </summary>
+        /// <param name="e">The new frames per second.</param>
+        private void frameCounter_FrameUpdated(FrameUpdatedEventArgs e)
+        {
+            this.Text = string.Format("{0} - FPS: {1}", WindowHelper.GetWindowTitle("Remote Desktop", _connectClient), e.CurrentFramesPerSecond.ToString("0.00"));
         }
 
         private void FrmRemoteDesktop_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!picDesktop.IsDisposed && !picDesktop.Disposing)
-                picDesktop.Dispose();
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmRdp = null;
-
+            // all cleanup logic goes here
             UnsubscribeEvents();
+            if (_remoteDesktopHandler.IsStarted) StopStream();
+            UnregisterMessageHandler();
+            _remoteDesktopHandler.Dispose();
+            picDesktop.Image?.Dispose();
         }
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
-            panelTop.Left = (this.Width/2) - (panelTop.Width/2);
-            btnShow.Left = (this.Width/2) - (btnShow.Width/2);
+            _remoteDesktopHandler.LocalResolution = picDesktop.Size;
+            panelTop.Left = (this.Width - panelTop.Width) / 2;
+            btnShow.Left = (this.Width - btnShow.Width) / 2;
+            btnHide.Left = (panelTop.Width - btnHide.Width) / 2;
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
             if (cbMonitors.Items.Count == 0)
             {
-                MessageBox.Show("No monitor detected.\nPlease wait till the client sends a list with available monitors.",
+                MessageBox.Show("No remote display detected.\nPlease wait till the client sends a list with available displays.",
                     "Starting failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            ToggleControls(false);
-
-            picDesktop.Start();
-
-            // Subscribe to the new frame counter.
-            picDesktop.SetFrameUpdatedEvent(_frameCounter_FrameUpdated);
-
-            this.ActiveControl = picDesktop;
-
-            _connectClient.Send(new GetDesktop {Quality = barQuality.Value, Monitor = cbMonitors.SelectedIndex});
+            SubscribeEvents();
+            StartStream();
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            ToggleControls(true);
-
-            picDesktop.Stop();
-
-            // Unsubscribe from the frame counter. It will be re-created when starting again.
-            picDesktop.UnsetFrameUpdatedEvent(_frameCounter_FrameUpdated);
-
-            this.ActiveControl = picDesktop;
+            UnsubscribeEvents();
+            StopStream();
         }
+
+        #region Remote Desktop Input
+
+        private void picDesktop_MouseDown(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+            {
+                MouseAction action = MouseAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = MouseAction.LeftDown;
+                if (e.Button == MouseButtons.Right)
+                    action = MouseAction.RightDown;
+
+                int selectedDisplayIndex = cbMonitors.SelectedIndex;
+
+                _remoteDesktopHandler.SendMouseEvent(action, true, e.X, e.Y, selectedDisplayIndex);
+            }
+        }
+
+        private void picDesktop_MouseUp(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+            {
+                MouseAction action = MouseAction.None;
+
+                if (e.Button == MouseButtons.Left)
+                    action = MouseAction.LeftUp;
+                if (e.Button == MouseButtons.Right)
+                    action = MouseAction.RightUp;
+
+                int selectedDisplayIndex = cbMonitors.SelectedIndex;
+
+                _remoteDesktopHandler.SendMouseEvent(action, false, e.X, e.Y, selectedDisplayIndex);
+            }
+        }
+
+        private void picDesktop_MouseMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+            {
+                int selectedDisplayIndex = cbMonitors.SelectedIndex;
+
+                _remoteDesktopHandler.SendMouseEvent(MouseAction.MoveCursor, false, e.X, e.Y, selectedDisplayIndex);
+            }
+        }
+
+        private void OnMouseWheelMove(object sender, MouseEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableMouseInput && this.ContainsFocus)
+            {
+                _remoteDesktopHandler.SendMouseEvent(e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown,
+                    false, 0, 0, cbMonitors.SelectedIndex);
+            }
+        }
+
+        private void OnKeyDown(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && this.ContainsFocus)
+            {
+                if (!IsLockKey(e.KeyCode))
+                    e.Handled = true;
+
+                if (_keysPressed.Contains(e.KeyCode))
+                    return;
+
+                _keysPressed.Add(e.KeyCode);
+
+                _remoteDesktopHandler.SendKeyboardEvent((byte)e.KeyCode, true);
+            }
+        }
+
+        private void OnKeyUp(object sender, KeyEventArgs e)
+        {
+            if (picDesktop.Image != null && _enableKeyboardInput && this.ContainsFocus)
+            {
+                if (!IsLockKey(e.KeyCode))
+                    e.Handled = true;
+
+                _keysPressed.Remove(e.KeyCode);
+
+                _remoteDesktopHandler.SendKeyboardEvent((byte)e.KeyCode, false);
+            }
+        }
+
+        private bool IsLockKey(Keys key)
+        {
+            return ((key & Keys.CapsLock) == Keys.CapsLock)
+                   || ((key & Keys.NumLock) == Keys.NumLock)
+                   || ((key & Keys.Scroll) == Keys.Scroll);
+        }
+        #endregion
+
+        #region Remote Desktop Configuration
 
         private void barQuality_Scroll(object sender, EventArgs e)
         {
@@ -254,164 +437,16 @@ namespace xServer.Forms
             this.ActiveControl = picDesktop;
         }
 
-        private int GetRemoteWidth(int localX)
-        {
-            return localX * picDesktop.ScreenWidth / picDesktop.Width;
-        }
-
-        private int GetRemoteHeight(int localY)
-        {
-            return localY * picDesktop.ScreenHeight / picDesktop.Height;
-        }
-
-        private void picDesktop_MouseDown(object sender, MouseEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                MouseAction action = MouseAction.None;
-
-                if (e.Button == MouseButtons.Left)
-                    action = MouseAction.LeftDown;
-                if (e.Button == MouseButtons.Right)
-                    action = MouseAction.RightDown;
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                _connectClient?.Send(new DoMouseEvent
-                {
-                    Action = action,
-                    IsMouseDown = true,
-                    X = remote_x,
-                    Y = remote_y,
-                    MonitorIndex = selectedMonitorIndex
-                });
-            }
-        }
-
-        private void picDesktop_MouseUp(object sender, MouseEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                MouseAction action = MouseAction.None;
-
-                if (e.Button == MouseButtons.Left)
-                    action = MouseAction.LeftDown;
-                if (e.Button == MouseButtons.Right)
-                    action = MouseAction.RightDown;
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                _connectClient?.Send(new DoMouseEvent
-                {
-                    Action = action,
-                    IsMouseDown = false,
-                    X = remote_x,
-                    Y = remote_y,
-                    MonitorIndex = selectedMonitorIndex
-                });
-            }
-        }
-
-        private void picDesktop_MouseMove(object sender, MouseEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                int local_x = e.X;
-                int local_y = e.Y;
-
-                int remote_x = GetRemoteWidth(local_x);
-                int remote_y = GetRemoteHeight(local_y);
-
-                int selectedMonitorIndex = cbMonitors.SelectedIndex;
-
-                _connectClient?.Send(new DoMouseEvent
-                {
-                    Action = MouseAction.MoveCursor,
-                    IsMouseDown = false,
-                    X = remote_x,
-                    Y = remote_y,
-                    MonitorIndex = selectedMonitorIndex
-                });
-            }
-        }
-
-        private void OnMouseWheelMove(object sender, MouseEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableMouseInput && IsStarted && this.ContainsFocus)
-            {
-                _connectClient?.Send(new DoMouseEvent
-                {
-                    Action = e.Delta == 120 ? MouseAction.ScrollUp : MouseAction.ScrollDown,
-                    IsMouseDown = false,
-                    X = 0,
-                    Y = 0,
-                    MonitorIndex = cbMonitors.SelectedIndex
-                });
-            }
-        }
-
-        private void OnKeyDown(object sender, KeyEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
-            {
-                if (!IsLockKey(e.KeyCode))
-                    e.Handled = true;
-
-                if (_keysPressed.Contains(e.KeyCode))
-                    return;
-
-                _keysPressed.Add(e.KeyCode);
-
-                _connectClient?.Send(new DoKeyboardEvent {Key = (byte) e.KeyCode, KeyDown = true});
-            }
-        }
-
-        private void OnKeyUp(object sender, KeyEventArgs e)
-        {
-            if (picDesktop.Image != null && _enableKeyboardInput && IsStarted && this.ContainsFocus)
-            {
-                if (!IsLockKey(e.KeyCode))
-                    e.Handled = true;
-
-                _keysPressed.Remove(e.KeyCode);
-
-                _connectClient?.Send(new DoKeyboardEvent {Key = (byte) e.KeyCode, KeyDown = false});
-            }
-        }
-
-        private bool IsLockKey(Keys key)
-        {
-            return ((key & Keys.CapsLock) == Keys.CapsLock)
-                || ((key & Keys.NumLock) == Keys.NumLock)
-                || ((key & Keys.Scroll) == Keys.Scroll);
-        }
+        #endregion
 
         private void btnHide_Click(object sender, EventArgs e)
         {
-            panelTop.Visible = false;
-            btnShow.Visible = true;
-            btnHide.Visible = false;
-            this.ActiveControl = picDesktop;
+            TogglePanelVisibility(false);
         }
 
         private void btnShow_Click(object sender, EventArgs e)
         {
-            panelTop.Visible = true;
-            btnShow.Visible = false;
-            btnHide.Visible = true;
-            this.ActiveControl = picDesktop;
+            TogglePanelVisibility(true);
         }
     }
 }

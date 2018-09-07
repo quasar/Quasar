@@ -6,9 +6,12 @@ namespace Quasar.Common.Messages
     public class GetDesktop : IMessage
     {
         [ProtoMember(1)]
-        public int Quality { get; set; }
+        public bool CreateNew { get; set; }
 
         [ProtoMember(2)]
-        public int Monitor { get; set; }
+        public int Quality { get; set; }
+
+        [ProtoMember(3)]
+        public int DisplayIndex { get; set; }
     }
 }

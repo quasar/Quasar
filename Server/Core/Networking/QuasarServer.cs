@@ -89,6 +89,7 @@ namespace xServer.Core.Networking
                 case false:
                     if (client.Authenticated)
                     {
+                        MessageHandler.NotifyDisconnect(client); // TODO: check
                         OnClientDisconnected(client);
                     }
                     break;
@@ -122,7 +123,8 @@ namespace xServer.Core.Networking
                 return;
             }
 
-            PacketHandler.HandlePacket(client, message);
+            MessageHandler.Process(client, message);
+            PacketHandler.HandlePacket(client, message); // TODO: Remove this
         }
     }
 }

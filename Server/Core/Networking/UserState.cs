@@ -24,7 +24,6 @@ namespace xServer.Core.Networking
         public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
 
-        public FrmRemoteDesktop FrmRdp { get; set; }
         public FrmRemoteWebcam FrmWebcam { get; set; }
         public FrmTaskManager FrmTm { get; set; }
         public FrmFileManager FrmFm { get; set; }
@@ -39,7 +38,6 @@ namespace xServer.Core.Networking
 
 
         public bool ReceivedLastDirectory { get; set; }
-        public UnsafeStreamCodec StreamCodec { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
 
         public bool ProcessingDirectory
@@ -80,8 +78,6 @@ namespace xServer.Core.Networking
             {
                 try
                 {
-                    if (FrmRdp != null)
-                        FrmRdp.Invoke((MethodInvoker)delegate { FrmRdp.Close(); });
                     if (FrmWebcam != null)
                         FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmTm != null)
@@ -108,9 +104,6 @@ namespace xServer.Core.Networking
                 catch (InvalidOperationException)
                 {
                 }
-
-                if (StreamCodec != null)
-                    StreamCodec.Dispose();
             }
         }
     }

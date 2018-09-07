@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 using Quasar.Common.Networking;
 
@@ -54,26 +55,34 @@ namespace Quasar.Common.Messages
 
     public static class MessageHandler
     {
-        private static readonly List<IMessageProcessor> Prcoessors = new List<IMessageProcessor>();
+        private static readonly ConcurrentBag<IMessageProcessor> Processors = new ConcurrentBag<IMessageProcessor>();
 
         public static void Register(IMessageProcessor cmd)
         {
-            if (Prcoessors.Contains(cmd)) return;
-            Prcoessors.Add(cmd);
+            if (Processors.Contains(cmd)) return;
+            Processors.Add(cmd);
         }
 
         public static void Unregister(IMessageProcessor cmd)
         {
-            if (!Prcoessors.Contains(cmd)) return;
-            Prcoessors.Remove(cmd);
+            if (!Processors.Contains(cmd)) return;
+            Processors.TryTake(out cmd);
         }
 
         public static void Process(ISender sender, IMessage cmd)
         {
-            var availableExecutors = Prcoessors.Where(x => x.CanExecute(cmd) && x.CanExecuteFrom(sender));
+            var availableExecutors = Processors.Where(x => x.CanExecute(cmd) && x.CanExecuteFrom(sender));
 
             foreach (var executor in availableExecutors)
                 executor.Execute(sender, cmd);
+        }
+
+        public static void NotifyDisconnect(ISender sender)
+        {
+            foreach (var cmd in Processors)
+            {
+                cmd.NotifyDisconnect(sender);
+            }
         }
     }
 }

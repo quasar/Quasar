@@ -66,8 +66,8 @@
     <Reference Include="Mono.Nat, Version=1.2.24.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Mono.Nat.1.2.24.0\lib\net40\Mono.Nat.dll</HintPath>
     </Reference>
-    <Reference Include="protobuf-net, Version=2.3.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\packages\protobuf-net.2.3.17\lib\net40\protobuf-net.dll</HintPath>
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
     </Reference>
     <Reference Include="ResourceLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Vestris.ResourceLib.2.0.0\lib\net40\ResourceLib.dll</HintPath>
@@ -112,6 +112,7 @@
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
+    <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
     <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />

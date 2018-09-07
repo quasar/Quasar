@@ -21,10 +21,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleSetUserStatus(client, (SetUserStatus)packet);
             }
-            else if (type == typeof(GetDesktopResponse))
-            {
-                CommandHandler.HandleGetDesktopResponse(client, (GetDesktopResponse)packet);
-            }
             else if (type == typeof(GetProcessesResponse))
             {
                 CommandHandler.HandleGetProcessesResponse(client,
@@ -47,10 +43,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleGetSystemInfoResponse(client,
                     (GetSystemInfoResponse)packet);
-            }
-            else if (type == typeof(GetMonitorsResponse))
-            {
-                CommandHandler.HandleGetMonitorsResponse(client, (GetMonitorsResponse)packet);
             }
             else if (type == typeof(GetWebcamsResponse))
             {

