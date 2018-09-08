@@ -43,7 +43,7 @@ Quasar is a fast and light-weight remote administration tool coded in C#. Provid
   * Windows 10
 
 ## Compiling
-Open the project in Visual Studio 2015+ and click build. See below which build configuration to choose.
+Open the project in Visual Studio 2017+ and click build. See below which build configuration to choose.
 
 ## Building a client
 | Build configuration         | Usage scenario | Description
