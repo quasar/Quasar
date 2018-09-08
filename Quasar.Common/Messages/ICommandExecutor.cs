@@ -7,6 +7,5 @@ namespace Quasar.Common.Messages
         bool CanExecute(IMessage message);
         bool CanExecuteFrom(ISender sender);
         void Execute(ISender sender, IMessage message);
-        void NotifyDisconnect(ISender sender);
     }
 }

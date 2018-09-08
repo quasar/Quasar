@@ -1,7 +1,6 @@
 ﻿using Gma.System.MouseKeyHook;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
-using Quasar.Common.Networking;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
@@ -48,24 +47,40 @@ namespace xServer.Forms
         /// <summary>
         /// The message handler for handling the communication with the client.
         /// </summary>
-        private readonly RemoteDesktopHandler _remoteDesktopHandler;
+        private readonly RemoteDesktopMessageProcessor _remoteDesktopHandler;
 
-        //private static Dictionary<Client, FrmRemoteDesktop> openForms = new Dictionary<Client, FrmRemoteDesktop>();
-        //public static FrmRemoteDesktop CreateNewOrGetExisting(Client c)
-        //{
-        //    if (openForms.ContainsKey(c))
-        //    {
-        //        return openForms[c];
-        //    }
-        //    FrmRemoteDesktop r = new FrmRemoteDesktop(c);
-        //    openForms.Add(c, r);
-        //    return r;
-        //}
+        /// <summary>
+        /// Holds the opened remote desktop form for each client.
+        /// </summary>
+        private static readonly Dictionary<Client, FrmRemoteDesktop> OpenedForms = new Dictionary<Client, FrmRemoteDesktop>();
 
-        public FrmRemoteDesktop(Client c)
+        /// <summary>
+        /// Creates a new remote desktop form for the client or gets the current open form, if there exists one already.
+        /// </summary>
+        /// <param name="client">The client used for the remote desktop form.</param>
+        /// <returns>
+        /// Returns a new remote desktop form for the client if there is none currently open, otherwise creates a new one.
+        /// </returns>
+        public static FrmRemoteDesktop CreateNewOrGetExisting(Client client)
         {
-            _connectClient = c;
-            _remoteDesktopHandler = new RemoteDesktopHandler(c);
+            if (OpenedForms.ContainsKey(client))
+            {
+                return OpenedForms[client];
+            }
+            FrmRemoteDesktop r = new FrmRemoteDesktop(client);
+            r.Disposed += (sender, args) => OpenedForms.Remove(client);
+            OpenedForms.Add(client, r);
+            return r;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmRemoteDesktop"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the remote desktop form.</param>
+        public FrmRemoteDesktop(Client client)
+        {
+            _connectClient = client;
+            _remoteDesktopHandler = new RemoteDesktopMessageProcessor(client);
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
@@ -75,11 +90,14 @@ namespace xServer.Forms
         /// <summary>
         /// Called whenever a client disconnects.
         /// </summary>
-        /// <param name="sender">The message handler which raised the event.</param>
-        /// <param name="client">The client which disconnects.</param>
-        private void ClientDisconnected(object sender, ISender client)
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
         {
-            this.Close();
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
         }
 
         /// <summary>
@@ -87,9 +105,9 @@ namespace xServer.Forms
         /// </summary>
         private void RegisterMessageHandler()
         {
+            _connectClient.ClientState += ClientDisconnected;
             _remoteDesktopHandler.DisplaysChanged += DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged += UpdateImage;
-            _remoteDesktopHandler.ClientDisconnected += ClientDisconnected;
             MessageHandler.Register(_remoteDesktopHandler);
         }
 
@@ -101,7 +119,7 @@ namespace xServer.Forms
             MessageHandler.Unregister(_remoteDesktopHandler);
             _remoteDesktopHandler.DisplaysChanged -= DisplaysChanged;
             _remoteDesktopHandler.ProgressChanged -= UpdateImage;
-            _remoteDesktopHandler.ClientDisconnected -= ClientDisconnected;
+            _connectClient.ClientState -= ClientDisconnected;
         }
 
         /// <summary>

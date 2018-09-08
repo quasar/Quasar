@@ -702,10 +702,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                // TODO: Don't allow opening multiple forms for single client
-                FrmRemoteDesktop frmRDP = new FrmRemoteDesktop(c);
-                frmRDP.Show();
-                frmRDP.Focus();
+                var frmRd = FrmRemoteDesktop.CreateNewOrGetExisting(c);
+                frmRd.Show();
+                frmRd.Focus();
             }
         }
         private void remoteWebcamToolStripMenuItem_Click(object sender, EventArgs e)

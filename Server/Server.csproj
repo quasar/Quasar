@@ -112,7 +112,7 @@
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
-    <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
+    <Compile Include="Core\Commands\RemoteDesktopMessageProcessor.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
     <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />

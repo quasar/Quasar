@@ -46,6 +46,7 @@ namespace xClient.Core.Commands
 
         public static void HandleGetDesktop(GetDesktop command, Client client)
         {
+            // TODO: Capture mouse in frames: https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
             var monitorBounds = ScreenHelper.GetBounds((command.DisplayIndex));
             var resolution = new Resolution {Height = monitorBounds.Height, Width = monitorBounds.Width};
 

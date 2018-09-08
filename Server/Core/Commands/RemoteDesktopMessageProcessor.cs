@@ -8,20 +8,34 @@ using xServer.Core.Networking;
 
 namespace xServer.Core.Commands
 {
-    // TODO: Capture mouse in frames: https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
-    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>
+    public class RemoteDesktopMessageProcessor : MessageProcessorBase<Bitmap>
     {
         /// <summary>
         /// States if the client is currently streaming desktop frames.
         /// </summary>
         public bool IsStarted { get; set; }
 
+        /// <summary>
+        /// Used in lock statements to synchronize access to <see cref="_codec"/> between UI thread and thread pool.
+        /// </summary>
         private readonly object _syncLock = new object();
 
+        /// <summary>
+        /// Used in lock statements to synchronize access to <see cref="LocalResolution"/> between UI thread and thread pool.
+        /// </summary>
         private readonly object _sizeLock = new object();
 
+        /// <summary>
+        /// The local resolution, see <seealso cref="LocalResolution"/>.
+        /// </summary>
         private Size _localResolution;
 
+        /// <summary>
+        /// The local resolution in width x height. It indicates to which resolution the received frame should be resized.
+        /// </summary>
+        /// <remarks>
+        /// This property is thread-safe.
+        /// </remarks>
         public Size LocalResolution
         {
             get
@@ -71,18 +85,32 @@ namespace xServer.Core.Commands
             }, value);
         }
 
+        /// <summary>
+        /// The client which is associated with this remote desktop message processor.
+        /// </summary>
         private readonly Client _client;
+
+        /// <summary>
+        /// The video stream codec used to decode received frames.
+        /// </summary>
         private UnsafeStreamCodec _codec;
 
-        public RemoteDesktopHandler(Client client) : base(true)
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RemoteDesktopMessageProcessor"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The associated client.</param>
+        public RemoteDesktopMessageProcessor(Client client) : base(true)
         {
             _client = client;
         }
 
+        /// <inheritdoc />
         public override bool CanExecute(IMessage message) => message is GetDesktopResponse || message is GetMonitorsResponse;
 
+        /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
 
+        /// <inheritdoc />
         public override void Execute(ISender sender, IMessage message)
         {
             switch (message)
@@ -96,6 +124,11 @@ namespace xServer.Core.Commands
             }
         }
 
+        /// <summary>
+        /// Begins receiving frames from the client using the specified quality and display.
+        /// </summary>
+        /// <param name="quality">The quality of the remote desktop frames.</param>
+        /// <param name="display">The display to receive frames from.</param>
         public void BeginReceiveFrames(int quality, int display)
         {
             lock (_syncLock)
@@ -107,6 +140,9 @@ namespace xServer.Core.Commands
             }
         }
 
+        /// <summary>
+        /// Ends receiving frames from the client.
+        /// </summary>
         public void EndReceiveFrames()
         {
             lock (_syncLock)
@@ -115,11 +151,22 @@ namespace xServer.Core.Commands
             }
         }
 
+        /// <summary>
+        /// Refreshes the available displays of the client.
+        /// </summary>
         public void RefreshDisplays()
         {
             _client.Send(new GetMonitors());
         }
 
+        /// <summary>
+        /// Sends a mouse event to the specified display of the client.
+        /// </summary>
+        /// <param name="mouseAction">The mouse action to send.</param>
+        /// <param name="isMouseDown">Indicates whether it's a mousedown or mouseup event.</param>
+        /// <param name="x">The X-coordinate inside the <see cref="LocalResolution"/>.</param>
+        /// <param name="y">The Y-coordinate inside the <see cref="LocalResolution"/>.</param>
+        /// <param name="displayIndex">The display to execute the mouse event on.</param>
         public void SendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex)
         {
             lock (_syncLock)
@@ -136,6 +183,11 @@ namespace xServer.Core.Commands
             }
         }
 
+        /// <summary>
+        /// Sends a keyboard event to the client.
+        /// </summary>
+        /// <param name="keyCode">The pressed key.</param>
+        /// <param name="keyDown">Indicates whether it's a keydown or keyup event.</param>
         public void SendKeyboardEvent(byte keyCode, bool keyDown)
         {
             _client.Send(new DoKeyboardEvent {Key = keyCode, KeyDown = keyDown});
@@ -175,14 +227,12 @@ namespace xServer.Core.Commands
         {
             if (disposing)
             {
-                // get rid of managed resources
                 lock (_syncLock)
                 {
                     _codec?.Dispose();
                     IsStarted = false;
                 }
             }
-            // get rid of unmanaged resources
         }
     }
 }

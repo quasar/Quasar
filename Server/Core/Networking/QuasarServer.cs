@@ -89,7 +89,6 @@ namespace xServer.Core.Networking
                 case false:
                     if (client.Authenticated)
                     {
-                        MessageHandler.NotifyDisconnect(client); // TODO: check
                         OnClientDisconnected(client);
                     }
                     break;

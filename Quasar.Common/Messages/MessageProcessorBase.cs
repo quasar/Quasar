@@ -25,8 +25,6 @@ namespace Quasar.Common.Messages
         /// </summary>
         private readonly SendOrPostCallback _invokeReportProgressHandlers;
 
-        private readonly SendOrPostCallback _invokeClientDisconnectedHandlers;
-
         /// <summary>
         /// Represents the method that will handle progress updates.
         /// </summary>
@@ -59,21 +57,6 @@ namespace Quasar.Common.Messages
             }
         }
 
-        public delegate void ClientDisconnectedEventHandler(object sender, ISender client);
-        public event ClientDisconnectedEventHandler ClientDisconnected;
-
-        protected virtual void OnClientDisconnected(ISender client)
-        {
-            // If there's no handler, don't bother going through the sync context.
-            // Inside the callback, we'll need to check again, in case 
-            // an event handler is removed between now and then.
-            var handler = ProgressChanged;
-            if (handler != null)
-            {
-                SynchronizationContext.Post(_invokeClientDisconnectedHandlers, client);
-            }
-        }
-
         /// <summary>
         /// Initializes the <see cref="MessageProcessorBase{T}"/>
         /// </summary>
@@ -84,12 +67,11 @@ namespace Quasar.Common.Messages
         protected MessageProcessorBase(bool useCurrentContext)
         {
             _invokeReportProgressHandlers = InvokeReportProgressHandlers;
-            _invokeClientDisconnectedHandlers = InvokeClientDisconnectedHandlers;
             SynchronizationContext = useCurrentContext ? SynchronizationContext.Current : ProgressStatics.DefaultContext;
         }
 
         /// <summary>
-        /// Invokes the action and event callbacks.
+        /// Invokes the progress event callbacks.
         /// </summary>
         /// <param name="state">The progress value.</param>
         private void InvokeReportProgressHandlers(object state)
@@ -98,24 +80,38 @@ namespace Quasar.Common.Messages
             handler?.Invoke(this, (T)state);
         }
 
-        private void InvokeClientDisconnectedHandlers(object state)
-        {
-            var handler = ClientDisconnected;
-            handler?.Invoke(this, (ISender)state);
-        }
-
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
         public void Dispose()
         {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
 
-        public virtual void NotifyDisconnect(ISender sender) => OnClientDisconnected(sender);
-        void IProgress<T>.Report(T value) => OnReport(value);
+        /// <summary>
+        /// Decides whether this message processor can execute the specified message.
+        /// </summary>
+        /// <param name="message">The message to execute.</param>
+        /// <returns><code>True</code> if the message can be executed by this message processor, otherwise <code>false</code>.</returns>
         public abstract bool CanExecute(IMessage message);
+
+        /// <summary>
+        /// Decides whether this message processor can execute messages received from the sender.
+        /// </summary>
+        /// <param name="sender">The sender of a message.</param>
+        /// <returns><code>True</code> if this message processor can execute messages from the sender, otherwise <code>false</code>.</returns>
         public abstract bool CanExecuteFrom(ISender sender);
+
+        /// <summary>
+        /// Executes the received message.
+        /// </summary>
+        /// <param name="sender">The sender of this message.</param>
+        /// <param name="message">The received message.</param>
         public abstract void Execute(ISender sender, IMessage message);
+
         protected abstract void Dispose(bool disposing);
+        void IProgress<T>.Report(T value) => OnReport(value);
     }
 
     /// <summary>
