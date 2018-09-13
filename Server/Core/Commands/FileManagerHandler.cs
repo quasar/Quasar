@@ -17,14 +17,59 @@ namespace xServer.Core.Commands
 {
     public class FileManagerHandler : MessageProcessorBase<string>
     {
+        /// <summary>
+        /// Represents the method that will handle drive changes.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="drives">All currently available drives.</param>
         public delegate void DrivesChangedEventHandler(object sender, Drive[] drives);
+
+        /// <summary>
+        /// Represents the method that will handle directory changes.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="remotePath">The remote path of the directory.</param>
+        /// <param name="items">The directory content.</param>
         public delegate void DirectoryChangedEventHandler(object sender, string remotePath, FileSystemEntry[] items);
+
+        /// <summary>
+        /// Represents the method that will handle file transfer updates.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="transfer">The updated file transfer.</param>
         public delegate void FileTransferUpdatedEventHandler(object sender, FileTransfer transfer);
 
+        /// <summary>
+        /// Raised when drives changed.
+        /// </summary>
+        /// <remarks>
+        /// Handlers registered with this event will be invoked on the 
+        /// <see cref="System.Threading.SynchronizationContext"/> chosen when the instance was constructed.
+        /// </remarks>
         public event DrivesChangedEventHandler DrivesChanged;
+
+        /// <summary>
+        /// Raised when a directory changed.
+        /// </summary>
+        /// <remarks>
+        /// Handlers registered with this event will be invoked on the 
+        /// <see cref="System.Threading.SynchronizationContext"/> chosen when the instance was constructed.
+        /// </remarks>
         public event DirectoryChangedEventHandler DirectoryChanged;
+
+        /// <summary>
+        /// Raised when a file transfer updated.
+        /// </summary>
+        /// <remarks>
+        /// Handlers registered with this event will be invoked on the 
+        /// <see cref="System.Threading.SynchronizationContext"/> chosen when the instance was constructed.
+        /// </remarks>
         public event FileTransferUpdatedEventHandler FileTransferUpdated;
 
+        /// <summary>
+        /// Reports changed remote drives.
+        /// </summary>
+        /// <param name="drives">The current remote drives.</param>
         private void OnDrivesChanged(Drive[] drives)
         {
             SynchronizationContext.Post(d =>
@@ -34,6 +79,11 @@ namespace xServer.Core.Commands
             }, drives);
         }
 
+        /// <summary>
+        /// Reports a directory change.
+        /// </summary>
+        /// <param name="remotePath">The remote path of the directory.</param>
+        /// <param name="items">The directory content.</param>
         private void OnDirectoryChanged(string remotePath, FileSystemEntry[] items)
         {
             SynchronizationContext.Post(i =>
@@ -43,6 +93,10 @@ namespace xServer.Core.Commands
             }, items);
         }
 
+        /// <summary>
+        /// Reports updated file transfers.
+        /// </summary>
+        /// <param name="transfer">The updated file transfer.</param>
         private void OnFileTransferUpdated(FileTransfer transfer)
         {
             SynchronizationContext.Post(t =>
@@ -52,7 +106,10 @@ namespace xServer.Core.Commands
             }, transfer);
         }
 
-        private readonly List<FileTransfer> _activeTransfers;
+        /// <summary>
+        /// Keeps track of all active file transfers. Finished or canceled transfers get removed.
+        /// </summary>
+        private readonly List<FileTransfer> _activeFileTransfers;
 
         /// <summary>
         /// Used in lock statements to synchronize access between UI thread and thread pool.
@@ -64,8 +121,14 @@ namespace xServer.Core.Commands
         /// </summary>
         private readonly Client _client;
 
-        private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
+        /// <summary>
+        /// Used to only allow two simultaneous file uploads.
+        /// </summary>
+        private readonly Semaphore _limitThreads = new Semaphore(2, 2);
 
+        /// <summary>
+        /// Path to the base download directory of the client.
+        /// </summary>
         private readonly string _baseDownloadPath;
 
         /// <summary>
@@ -75,7 +138,7 @@ namespace xServer.Core.Commands
         public FileManagerHandler(Client client) : base(true)
         {
             _client = client;
-            _activeTransfers = new List<FileTransfer>();
+            _activeFileTransfers = new List<FileTransfer>();
             _baseDownloadPath = client.Value.DownloadDirectory;
         }
 
@@ -108,12 +171,21 @@ namespace xServer.Core.Commands
             }
         }
 
+        /// <summary>
+        /// Begins downloading a file from the client.
+        /// </summary>
+        /// <param name="remotePath">The remote path of the file to download.</param>
         public void BeginDownloadFile(string remotePath)
         {
             int id = GetUniqueFileTransferId();
             _client.Send(new DoDownloadFile {RemotePath = remotePath, Id = id});
         }
 
+        /// <summary>
+        /// Begins uploading a file to the client.
+        /// </summary>
+        /// <param name="localPath">The local path of the file to upload.</param>
+        /// <param name="remotePath">Save the uploaded file to this remote path.</param>
         public void BeginUploadFile(string localPath, string remotePath)
         {
             new Thread(() =>
@@ -129,7 +201,10 @@ namespace xServer.Core.Commands
                     Status = "Pending..."
                 };
 
-                _activeTransfers.Add(transfer);
+                lock (_syncLock)
+                {
+                    _activeFileTransfers.Add(transfer);
+                }
 
                 FileSplit srcFile = new FileSplit(localPath);
                 if (srcFile.MaxBlocks < 0)
@@ -153,7 +228,13 @@ namespace xServer.Core.Commands
                     transfer.Status = $"Uploading...({progress}%)";
                     OnFileTransferUpdated(transfer);
 
-                    if (_activeTransfers.Count(f => f.Id == transfer.Id) == 0)
+                    bool transferCanceled;
+                    lock (_syncLock)
+                    {
+                        transferCanceled = _activeFileTransfers.Count(f => f.Id == transfer.Id) == 0;
+                    }
+
+                    if (transferCanceled)
                     {
                         transfer.Status = "Canceled";
                         OnFileTransferUpdated(transfer);
@@ -188,12 +269,25 @@ namespace xServer.Core.Commands
             }).Start();
         }
 
+        /// <summary>
+        /// Cancels a file transfer.
+        /// </summary>
+        /// <param name="transferId">The Id of the file transfer to cancel.</param>
         public void CancelFileTransfer(int transferId)
         {
             _client.Send(new DoDownloadFileCancel {Id = transferId});
-            _activeTransfers.RemoveAll(s => s.Id == transferId);
+            lock (_syncLock)
+            {
+                _activeFileTransfers.RemoveAll(s => s.Id == transferId);
+            }
         }
 
+        /// <summary>
+        /// Renames a remote file or directory.
+        /// </summary>
+        /// <param name="remotePath">The remote file or directory path to rename.</param>
+        /// <param name="newPath">The new name of the remote file or directory path.</param>
+        /// <param name="type">The type of the file (file or directory).</param>
         public void RenameFile(string remotePath, string newPath, FileType type)
         {
             _client.Send(new DoPathRename
@@ -204,34 +298,58 @@ namespace xServer.Core.Commands
             });
         }
 
+        /// <summary>
+        /// Deletes a remote file or directory.
+        /// </summary>
+        /// <param name="remotePath">The remote file or directory path.</param>
+        /// <param name="type">The type of the file (file or directory).</param>
         public void DeleteFile(string remotePath, FileType type)
         {
             _client.Send(new DoPathDelete {Path = remotePath, PathType = type});
         }
 
+        /// <summary>
+        /// Starts a new process remotely.
+        /// </summary>
+        /// <param name="remotePath">The remote path used for starting the new process.</param>
         public void StartProcess(string remotePath)
         {
             _client.Send(new DoProcessStart {ApplicationName = remotePath});
         }
 
+        /// <summary>
+        /// Adds an item to the startup of the client.
+        /// </summary>
+        /// <param name="item">The startup item to add.</param>
         public void AddToStartup(StartupItem item)
         {
             _client.Send(new DoStartupItemAdd {StartupItem = item});
         }
 
-        public void RequestDirectoryContents(string remotePath)
+        /// <summary>
+        /// Gets the directory contents for the remote path.
+        /// </summary>
+        /// <param name="remotePath">The remote path of the directory.</param>
+        public void GetDirectoryContents(string remotePath)
         {
             _client.Send(new GetDirectory {RemotePath = remotePath});
         }
 
-        public void RequestDrives()
+        /// <summary>
+        /// Refreshes the remote drives.
+        /// </summary>
+        public void RefreshDrives()
         {
             _client.Send(new GetDrives());
         }
 
         private void Execute(ISender client, DoDownloadFileResponse message)
         {
-            FileTransfer transfer = _activeTransfers.FirstOrDefault(t => t.Id == message.Id);
+            FileTransfer transfer;
+            lock (_syncLock)
+            {
+                transfer = _activeFileTransfers.FirstOrDefault(t => t.Id == message.Id);
+            }
 
             if (transfer == null)
             {
@@ -272,7 +390,10 @@ namespace xServer.Core.Commands
                     TransferredSize = 0
                 };
 
-                _activeTransfers.Add(transfer);
+                lock (_syncLock)
+                {
+                    _activeFileTransfers.Add(transfer);
+                }
             }
 
             // TODO: change to += message.Block.Length
@@ -329,14 +450,21 @@ namespace xServer.Core.Commands
             OnReport(message.Message);
         }
 
+        /// <summary>
+        /// Generates a unique file transfer id.
+        /// </summary>
+        /// <returns>A unique file transfer id.</returns>
         private int GetUniqueFileTransferId()
         {
             int id;
-            do
+            lock (_syncLock)
             {
-                id = FileHelper.GetNewTransferId();
-                // generate new Id until we have a unique one
-            } while (_activeTransfers.Any(f => f.Id == id));
+                do
+                {
+                    id = FileHelper.GetNewTransferId();
+                    // generate new Id until we have a unique one
+                } while (_activeFileTransfers.Any(f => f.Id == id));
+            }
 
             return id;
         }
@@ -345,11 +473,15 @@ namespace xServer.Core.Commands
         {
             if (disposing)
             {
-                foreach (var transfer in _activeTransfers)
+                lock (_syncLock)
                 {
-                    _client.Send(new DoDownloadFileCancel { Id = transfer.Id });
+                    foreach (var transfer in _activeFileTransfers)
+                    {
+                        _client.Send(new DoDownloadFileCancel { Id = transfer.Id });
+                    }
+
+                    _activeFileTransfers.Clear();
                 }
-                _activeTransfers.Clear();
             }
         }
     }

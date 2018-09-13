@@ -115,6 +115,11 @@ namespace xServer.Forms
             }
         }
 
+        /// <summary>
+        /// Called whenever drives changed.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="drives">The currently available drives.</param>
         private void DrivesChanged(object sender, Drive[] drives)
         {
             cmbDrives.Items.Clear();
@@ -125,6 +130,12 @@ namespace xServer.Forms
             SetStatusMessage(this, "Ready");
         }
 
+        /// <summary>
+        /// Called whenever a directory changed.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="remotePath">The remote path of the directory.</param>
+        /// <param name="items">The directory content.</param>
         private void DirectoryChanged(object sender, string remotePath, FileSystemEntry[] items)
         {
             txtPath.Text = remotePath;
@@ -151,6 +162,11 @@ namespace xServer.Forms
             SetStatusMessage(this, "Ready");
         }
 
+        /// <summary>
+        /// Called whenever a file transfer gets updated.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="transfer">The updated file transfer.</param>
         private void FileTransferUpdated(object sender, FileTransfer transfer)
         {
             for (var i = 0; i < lstTransfers.Items.Count; i++)
@@ -180,19 +196,28 @@ namespace xServer.Forms
             lstTransfers.Items.Add(lvi);
         }
 
-        private string GetAbsolutePath(string item)
+        /// <summary>
+        /// Combines the current path with the new path.
+        /// </summary>
+        /// <param name="path">The path to combine with.</param>
+        /// <returns>The absolute combined path.</returns>
+        private string GetAbsolutePath(string path)
         {
             if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
             {
                 if (_currentDir.Length == 1)
-                    return Path.Combine(_currentDir, item);
+                    return Path.Combine(_currentDir, path);
                 else
-                    return Path.Combine(_currentDir + '/', item);
+                    return Path.Combine(_currentDir + '/', path);
             }
 
-            return Path.GetFullPath(Path.Combine(_currentDir, item));
+            return Path.GetFullPath(Path.Combine(_currentDir, path));
         }
 
+        /// <summary>
+        /// Navigates one directory up in the hierarchical directory tree.
+        /// </summary>
+        /// <returns>The new directory path.</returns>
         private string NavigateUp()
         {
             if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
@@ -215,7 +240,7 @@ namespace xServer.Forms
         {
             this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
 
-            _fileManagerHandler.RequestDrives();
+            _fileManagerHandler.RefreshDrives();
         }
 
         private void FrmFileManager_FormClosing(object sender, FormClosingEventArgs e)
@@ -491,14 +516,21 @@ namespace xServer.Forms
             stripLblStatus.Text = $"Status: {message}";
         }
 
+        /// <summary>
+        /// Fetches the directory contents of the current directory.
+        /// </summary>
         private void RefreshDirectory()
         {
             SwitchDirectory(_currentDir);
         }
 
+        /// <summary>
+        /// Switches to a new directory and fetches the contents of it.
+        /// </summary>
+        /// <param name="remotePath">Path of new directory.</param>
         private void SwitchDirectory(string remotePath)
         {
-            _fileManagerHandler.RequestDirectoryContents(remotePath);
+            _fileManagerHandler.GetDirectoryContents(remotePath);
             SetStatusMessage(this, "Loading directory content...");
         }
     }

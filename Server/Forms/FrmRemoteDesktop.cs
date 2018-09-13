@@ -230,7 +230,7 @@ namespace xServer.Forms
         /// Called whenever the remote displays changed.
         /// </summary>
         /// <param name="sender">The message handler which raised the event.</param>
-        /// <param name="displays">The updated displays.</param>
+        /// <param name="displays">The currently available displays.</param>
         private void DisplaysChanged(object sender, int displays)
         {
             cbMonitors.Items.Clear();

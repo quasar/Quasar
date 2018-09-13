@@ -57,7 +57,7 @@ namespace xServer.Core.Commands
         /// <summary>
         /// Represents the method that will handle display changes.
         /// </summary>
-        /// <param name="sender">The message processor which updated the progress.</param>
+        /// <param name="sender">The message processor which raised the event.</param>
         /// <param name="value">All currently available displays.</param>
         public delegate void DisplaysChangedEventHandler(object sender, int value);
 
