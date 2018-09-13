@@ -1,5 +1,5 @@
 ﻿using Quasar.Common.Networking;
-using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Quasar.Common.Messages
@@ -10,9 +10,14 @@ namespace Quasar.Common.Messages
     public static class MessageHandler
     {
         /// <summary>
-        /// Unordered thread-safe list of registered <see cref="IMessageProcessor"/>s.
+        /// Thread-safe list of registered <see cref="IMessageProcessor"/>s.
         /// </summary>
-        private static readonly ConcurrentBag<IMessageProcessor> Processors = new ConcurrentBag<IMessageProcessor>();
+        private static readonly List<IMessageProcessor> Processors = new List<IMessageProcessor>();
+
+        /// <summary>
+        /// Used in lock statements to synchronize access between threads.
+        /// </summary>
+        private static readonly object SyncLock = new object();
 
         /// <summary>
         /// Registers a <see cref="IMessageProcessor"/> to the available <see cref="Processors"/>.
@@ -20,8 +25,11 @@ namespace Quasar.Common.Messages
         /// <param name="proc">The <see cref="IMessageProcessor"/> to register.</param>
         public static void Register(IMessageProcessor proc)
         {
-            if (Processors.Contains(proc)) return;
-            Processors.Add(proc);
+            lock (SyncLock)
+            {
+                if (Processors.Contains(proc)) return;
+                Processors.Add(proc);
+            }
         }
 
         /// <summary>
@@ -30,8 +38,10 @@ namespace Quasar.Common.Messages
         /// <param name="proc"></param>
         public static void Unregister(IMessageProcessor proc)
         {
-            if (!Processors.Contains(proc)) return;
-            Processors.TryTake(out proc);
+            lock (SyncLock)
+            {
+                Processors.Remove(proc);
+            }
         }
 
         /// <summary>
@@ -41,10 +51,15 @@ namespace Quasar.Common.Messages
         /// <param name="msg">The received message.</param>
         public static void Process(ISender sender, IMessage msg)
         {
-            // select appropriate message processors
-            var availableExecutors = Processors.Where(x => x.CanExecute(msg) && x.CanExecuteFrom(sender));
+            IEnumerable<IMessageProcessor> availableProcessors;
+            lock (SyncLock)
+            {
+                // select appropriate message processors
+                availableProcessors = Processors.Where(x => x.CanExecute(msg) && x.CanExecuteFrom(sender)).ToList();
+                // ToList() is required to retrieve a thread-safe enumerator representing a moment-in-time snapshot of the message processors
+            }
 
-            foreach (var executor in availableExecutors)
+            foreach (var executor in availableProcessors)
                 executor.Execute(sender, msg);
         }
     }
