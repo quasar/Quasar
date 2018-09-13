@@ -270,7 +270,7 @@ namespace xClient.Core.Networking
             _proxyClients = new List<ReverseProxyClient>();
             _readBuffer = new byte[BUFFER_SIZE];
             _tempHeader = new byte[HEADER_SIZE];
-            AddTypesToSerializer(typeof(IMessage), PacketRegistery.GetPacketTypes(typeof(IMessage)).ToArray());
+            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>

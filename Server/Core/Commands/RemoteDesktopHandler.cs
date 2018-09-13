@@ -8,7 +8,7 @@ using xServer.Core.Networking;
 
 namespace xServer.Core.Commands
 {
-    public class RemoteDesktopMessageProcessor : MessageProcessorBase<Bitmap>
+    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>
     {
         /// <summary>
         /// States if the client is currently streaming desktop frames.
@@ -76,7 +76,7 @@ namespace xServer.Core.Commands
         /// <param name="value">
         /// All currently available displays.
         /// </param>
-        protected virtual void OnDisplaysChanged(int value)
+        private void OnDisplaysChanged(int value)
         {
             SynchronizationContext.Post(val =>
             {
@@ -86,7 +86,7 @@ namespace xServer.Core.Commands
         }
 
         /// <summary>
-        /// The client which is associated with this remote desktop message processor.
+        /// The client which is associated with this remote desktop handler.
         /// </summary>
         private readonly Client _client;
 
@@ -96,10 +96,10 @@ namespace xServer.Core.Commands
         private UnsafeStreamCodec _codec;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="RemoteDesktopMessageProcessor"/> class using the given client.
+        /// Initializes a new instance of the <see cref="RemoteDesktopHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public RemoteDesktopMessageProcessor(Client client) : base(true)
+        public RemoteDesktopHandler(Client client) : base(true)
         {
             _client = client;
         }

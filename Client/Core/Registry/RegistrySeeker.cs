@@ -1,7 +1,7 @@
 ﻿using Microsoft.Win32;
-using Quasar.Common.Registry;
 using System;
 using System.Collections.Generic;
+using Quasar.Common.Models;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 

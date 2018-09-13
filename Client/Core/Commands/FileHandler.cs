@@ -4,6 +4,8 @@ using System.Security;
 using System.Threading;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
 
@@ -27,36 +29,32 @@ namespace xClient.Core.Commands
             {
                 DirectoryInfo dicInfo = new DirectoryInfo(command.RemotePath);
 
-                FileInfo[] iFiles = dicInfo.GetFiles();
-                DirectoryInfo[] iFolders = dicInfo.GetDirectories();
+                FileInfo[] files = dicInfo.GetFiles();
+                DirectoryInfo[] directories = dicInfo.GetDirectories();
 
-                string[] files = new string[iFiles.Length];
-                long[] filessize = new long[iFiles.Length];
-                string[] folders = new string[iFolders.Length];
+                FileSystemEntry[] items = new FileSystemEntry[files.Length + directories.Length];
 
-                int i = 0;
-                foreach (FileInfo file in iFiles)
+                int offset = 0;
+                for (int i = 0; i < directories.Length; i++, offset++)
                 {
-                    files[i] = file.Name;
-                    filessize[i] = file.Length;
-                    i++;
-                }
-                if (files.Length == 0)
-                {
-                    files = new string[] {DELIMITER};
-                    filessize = new long[] {0};
+                    items[i] = new FileSystemEntry
+                    {
+                        EntryType = FileType.Directory, Name = directories[i].Name, Size = 0,
+                        LastAccessTimeUtc = directories[i].LastAccessTimeUtc
+                    };
                 }
 
-                i = 0;
-                foreach (DirectoryInfo folder in iFolders)
+                for (int i = 0; i < files.Length; i++)
                 {
-                    folders[i] = folder.Name;
-                    i++;
+                    items[i + offset] = new FileSystemEntry
+                    {
+                        EntryType = FileType.File, Name = files[i].Name, Size = files[i].Length,
+                        ContentType = FileHelper.GetContentType(Path.GetExtension(files[i].Name)),
+                        LastAccessTimeUtc = files[i].LastAccessTimeUtc
+                    };
                 }
-                if (folders.Length == 0)
-                    folders = new string[] {DELIMITER};
 
-                client.Send(new GetDirectoryResponse {Files = files, Folders = folders, FilesSize = filessize});
+                client.Send(new GetDirectoryResponse {RemotePath = command.RemotePath, Items = items});
             }
             catch (UnauthorizedAccessException)
             {
@@ -161,7 +159,7 @@ namespace xClient.Core.Commands
 
         public static void HandleDoUploadFile(DoUploadFile command, Client client)
         {
-            if (command.CurrentBlock == 0 && File.Exists(command.RemotePath))
+            if (command.CurrentBlock == 0 && System.IO.File.Exists(command.RemotePath))
                 NativeMethods.DeleteFile(command.RemotePath); // delete existing file
 
             FileSplit destFile = new FileSplit(command.RemotePath);
@@ -183,7 +181,7 @@ namespace xClient.Core.Commands
             {
                 switch (command.PathType)
                 {
-                    case PathType.Directory:
+                    case FileType.Directory:
                         Directory.Delete(command.Path, true);
                         client.Send(new SetStatusFileManager
                         {
@@ -191,8 +189,8 @@ namespace xClient.Core.Commands
                             SetLastDirectorySeen = false
                         });
                         break;
-                    case PathType.File:
-                        File.Delete(command.Path);
+                    case FileType.File:
+                        System.IO.File.Delete(command.Path);
                         client.Send(new SetStatusFileManager
                         {
                             Message = "Deleted file",
@@ -245,7 +243,7 @@ namespace xClient.Core.Commands
             {
                 switch (command.PathType)
                 {
-                    case PathType.Directory:
+                    case FileType.Directory:
                         Directory.Move(command.Path, command.NewPath);
                         client.Send(new SetStatusFileManager
                         {
@@ -253,8 +251,8 @@ namespace xClient.Core.Commands
                             SetLastDirectorySeen = false
                         });
                         break;
-                    case PathType.File:
-                        File.Move(command.Path, command.NewPath);
+                    case FileType.File:
+                        System.IO.File.Move(command.Path, command.NewPath);
                         client.Send(new SetStatusFileManager
                         {
                             Message = "Renamed file",

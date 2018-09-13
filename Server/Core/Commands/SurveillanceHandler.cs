@@ -32,7 +32,7 @@ namespace xServer.Core.Commands
                             {
                                 Username = values[0],
                                 Password = values[1],
-                                URL = values[2],
+                                Url = values[2],
                                 Application = values[3]
                             })
                     .ToList();

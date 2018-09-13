@@ -3,7 +3,7 @@ using System.Linq;
 using Microsoft.Win32;
 using xClient.Core.Extensions;
 using System.Collections.Generic;
-using Quasar.Common.Registry;
+using Quasar.Common.Models;
 
 namespace xClient.Core.Helper
 {

@@ -1,11 +1,11 @@
 ﻿using Microsoft.Win32;
-using Quasar.Common.Registry;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xServer.Controls;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;

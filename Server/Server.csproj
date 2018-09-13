@@ -111,16 +111,12 @@
       <DependentUpon>WordTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
-    <Compile Include="Core\Commands\RemoteDesktopMessageProcessor.cs" />
+    <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
     <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
-    <Compile Include="Core\Data\AutostartItem.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
-    <Compile Include="Core\Data\DownloadAndExecute.cs" />
-    <Compile Include="Core\Data\Messagebox.cs" />
-    <Compile Include="Core\Data\Update.cs" />
-    <Compile Include="Core\Data\UploadAndExecute.cs" />
-    <Compile Include="Core\Data\VisitWebsite.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\ClipboardHelper.cs" />
     <Compile Include="Core\Helper\CryptographyHelper.cs" />
@@ -137,10 +133,8 @@
     <Compile Include="Core\Helper\WindowHelper.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />
-    <Compile Include="Core\Data\RemoteDrive.cs" />
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
-    <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
     <Compile Include="Core\Commands\MiscHandler.cs" />
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
@@ -162,6 +156,7 @@
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Networking\Server.cs" />
     <Compile Include="Core\Networking\UserState.cs" />
+    <Compile Include="Enums\TransferType.cs" />
     <Compile Include="Enums\WordType.cs" />
     <Compile Include="Forms\FrmRemoteWebcam.cs">
       <SubType>Form</SubType>
@@ -328,6 +323,7 @@
     <Compile Include="Forms\FrmUpdate.Designer.cs">
       <DependentUpon>FrmUpdate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\FileTransfer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Data\BuilderProfile.cs" />
@@ -447,6 +443,7 @@
       <Name>Quasar.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)*.dll" /target:WinExe /wildcards /internalize</PostBuildEvent>

@@ -1,7 +1,7 @@
-﻿using Quasar.Common.Registry;
-using System;
+﻿using System;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xServer.Core.Networking;
 using xServer.Core.Registry;
 

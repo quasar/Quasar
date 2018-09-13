@@ -1,6 +1,6 @@
 ﻿namespace Quasar.Common.Enums
 {
-    public enum PathType
+    public enum FileType
     {
         File,
         Directory,

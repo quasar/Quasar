@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Models;
 
 namespace Quasar.Common.Messages
 {
@@ -6,9 +7,6 @@ namespace Quasar.Common.Messages
     public class GetDrivesResponse : IMessage
     {
         [ProtoMember(1)]
-        public string[] DriveDisplayName { get; set; }
-
-        [ProtoMember(2)]
-        public string[] RootDirectory { get; set; }
+        public Drive[] Drives { get; set; }
     }
 }

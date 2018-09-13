@@ -1,5 +1,4 @@
-﻿using Quasar.Common.Video.Codecs;
-using System;
+﻿using System;
 using System.Windows.Forms;
 using xServer.Core.ReverseProxy;
 using xServer.Forms;
@@ -26,7 +25,6 @@ namespace xServer.Core.Networking
 
         public FrmRemoteWebcam FrmWebcam { get; set; }
         public FrmTaskManager FrmTm { get; set; }
-        public FrmFileManager FrmFm { get; set; }
         public FrmRegistryEditor FrmRe { get; set; }
         public FrmSystemInformation FrmSi { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
@@ -36,36 +34,7 @@ namespace xServer.Core.Networking
         public FrmPasswordRecovery FrmPass { get; set; }
         public FrmConnections FrmCon { get; set; }
 
-
-        public bool ReceivedLastDirectory { get; set; }
         public ReverseProxyServer ProxyServer { get; set; }
-
-        public bool ProcessingDirectory
-        {
-            get
-            {
-                lock (_processingDirectoryLock)
-                {
-                    return _processingDirectory;
-                }
-            }
-            set
-            {
-                lock (_processingDirectoryLock)
-                {
-                    _processingDirectory = value;
-                }
-            }
-        }
-        private bool _processingDirectory;
-        private readonly object _processingDirectoryLock;
-
-        public UserState()
-        {
-            ReceivedLastDirectory = true;
-            _processingDirectory = false;
-            _processingDirectoryLock = new object();
-        }
 
         public void Dispose()
         {
@@ -82,8 +51,6 @@ namespace xServer.Core.Networking
                         FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmTm != null)
                         FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
-                    if (FrmFm != null)
-                        FrmFm.Invoke((MethodInvoker)delegate { FrmFm.Close(); });
                     if (FrmRe != null)
                         FrmRe.Invoke((MethodInvoker)delegate { FrmRe.Close(); });
                     if (FrmSi != null)

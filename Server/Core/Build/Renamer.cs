@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Mono.Cecil;
+using Quasar.Common.Utilities;
 
 namespace xServer.Core.Build
 {
@@ -118,8 +119,9 @@ namespace xServer.Core.Build
         {
             private bool DoRandom { get; set; }
             private int StartingLength { get; set; }
-            private Dictionary<string, string> _renamedMembers = new Dictionary<string, string>();
+            private readonly Dictionary<string, string> _renamedMembers = new Dictionary<string, string>();
             private readonly char[] _charMap;
+            private readonly SafeRandom _random = new SafeRandom();
             private int[] _indices;
 
             public MemberOverloader(int startingLength, bool doRandom = true)
@@ -158,7 +160,7 @@ namespace xServer.Core.Build
 
                 for (int i = 0; i < StartingLength; i++)
                 {
-                    builder.Append((char) new Random(Guid.NewGuid().GetHashCode()).Next(int.MinValue, int.MaxValue));
+                    builder.Append((char)_random.Next(int.MinValue, int.MaxValue));
                 }
 
                 return builder.ToString();

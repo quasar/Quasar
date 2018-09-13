@@ -60,17 +60,9 @@ namespace xServer.Forms
             {
                 if (frm.ShowDialog() == DialogResult.OK)
                 {
-                    if (_connectClient != null)
-                    {
-                        _connectClient.Send(new DoStartupItemAdd
-                        {
-                            Name = AutostartItem.Name,
-                            Path = AutostartItem.Path,
-                            Type = AutostartItem.Type
-                        });
-                        lstStartupItems.Items.Clear();
-                        _connectClient.Send(new GetStartupItems());
-                    }
+                    _connectClient.Send(new DoStartupItemAdd {StartupItem = frm.StartupItem});
+                    lstStartupItems.Items.Clear();
+                    _connectClient.Send(new GetStartupItems());
                 }
             }
         }

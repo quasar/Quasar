@@ -234,7 +234,7 @@ namespace xServer.Core.Networking
         {
             _clients = new List<Client>();
             BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
-            AddTypesToSerializer(typeof(IMessage), PacketRegistery.GetPacketTypes(typeof(IMessage)).ToArray());
+            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>

@@ -10,6 +10,6 @@ namespace Quasar.Common.Messages
         public string Path { get; set; }
 
         [ProtoMember(2)]
-        public PathType PathType { get; set; }
+        public FileType PathType { get; set; }
     }
 }

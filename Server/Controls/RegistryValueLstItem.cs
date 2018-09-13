@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using Quasar.Common.Registry;
+using Quasar.Common.Models;
 using xServer.Core.Extensions;
 using xServer.Core.Registry;
 

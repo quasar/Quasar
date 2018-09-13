@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.IO;
 using System.Windows.Forms;
-using xServer.Core.Data;
 using xServer.Core.Helper;
-using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmAddToAutostart : Form
     {
+        public StartupItem StartupItem { get; set; }
+
         public FrmAddToAutostart()
         {
             InitializeComponent();
@@ -38,9 +39,7 @@ namespace xServer.Forms
 
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            AutostartItem.Name = txtName.Text;
-            AutostartItem.Path = txtPath.Text;
-            AutostartItem.Type = cmbType.SelectedIndex;
+            StartupItem = new StartupItem {Name = txtName.Text, Path = txtPath.Text, Type = cmbType.SelectedIndex};
 
             this.DialogResult = DialogResult.OK;
             this.Close();

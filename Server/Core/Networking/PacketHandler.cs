@@ -26,19 +26,6 @@ namespace xServer.Core.Networking
                 CommandHandler.HandleGetProcessesResponse(client,
                     (GetProcessesResponse)packet);
             }
-            else if (type == typeof(GetDrivesResponse))
-            {
-                CommandHandler.HandleGetDrivesResponse(client, (GetDrivesResponse)packet);
-            }
-            else if (type == typeof(GetDirectoryResponse))
-            {
-                CommandHandler.HandleGetDirectoryResponse(client, (GetDirectoryResponse)packet);
-            }
-            else if (type == typeof(DoDownloadFileResponse))
-            {
-                CommandHandler.HandleDoDownloadFileResponse(client,
-                    (DoDownloadFileResponse)packet);
-            }
             else if (type == typeof(GetSystemInfoResponse))
             {
                 CommandHandler.HandleGetSystemInfoResponse(client,
@@ -101,10 +88,6 @@ namespace xServer.Core.Networking
             else if (type == typeof(GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (GetPasswordsResponse)packet);
-            }
-            else if (type == typeof(SetStatusFileManager))
-            {
-                CommandHandler.HandleSetStatusFileManager(client, (SetStatusFileManager)packet);
             }
             else if (type == typeof(ReverseProxyConnectResponse) ||
                     type == typeof(ReverseProxyData) ||

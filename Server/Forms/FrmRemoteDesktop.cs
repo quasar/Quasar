@@ -47,7 +47,7 @@ namespace xServer.Forms
         /// <summary>
         /// The message handler for handling the communication with the client.
         /// </summary>
-        private readonly RemoteDesktopMessageProcessor _remoteDesktopHandler;
+        private readonly RemoteDesktopHandler _remoteDesktopHandler;
 
         /// <summary>
         /// Holds the opened remote desktop form for each client.
@@ -80,7 +80,7 @@ namespace xServer.Forms
         public FrmRemoteDesktop(Client client)
         {
             _connectClient = client;
-            _remoteDesktopHandler = new RemoteDesktopMessageProcessor(client);
+            _remoteDesktopHandler = new RemoteDesktopHandler(client);
             _keysPressed = new List<Keys>();
 
             RegisterMessageHandler();
@@ -394,6 +394,7 @@ namespace xServer.Forms
                    || ((key & Keys.NumLock) == Keys.NumLock)
                    || ((key & Keys.Scroll) == Keys.Scroll);
         }
+
         #endregion
 
         #region Remote Desktop Configuration

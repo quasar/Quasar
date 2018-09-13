@@ -1,5 +1,5 @@
 ﻿using ProtoBuf;
-using Quasar.Common.Registry;
+using Quasar.Common.Models;
 
 namespace Quasar.Common.Messages
 {

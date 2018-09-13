@@ -1,12 +1,8 @@
-﻿using Quasar.Common.Enums;
+﻿using Quasar.Common.Messages;
 using System;
-using System.IO;
 using System.Text;
-using System.Threading;
 using System.Windows.Forms;
-using Quasar.Common.Messages;
 using xServer.Core.Data;
-using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Forms;
 
@@ -15,79 +11,6 @@ namespace xServer.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDrivesResponse(Client client, GetDrivesResponse packet)
-        {
-            if (client.Value == null || client.Value.FrmFm == null || packet.DriveDisplayName == null || packet.RootDirectory == null)
-                return;
-
-            if (packet.DriveDisplayName.Length != packet.RootDirectory.Length) return;
-
-            RemoteDrive[] drives = new RemoteDrive[packet.DriveDisplayName.Length];
-            for (int i = 0; i < packet.DriveDisplayName.Length; i++)
-            {
-                drives[i] = new RemoteDrive(packet.DriveDisplayName[i], packet.RootDirectory[i]);
-            }
-
-            if (client.Value != null && client.Value.FrmFm != null)
-            {
-                client.Value.FrmFm.AddDrives(drives);
-                client.Value.FrmFm.SetStatus("Ready");
-            }
-        }
-
-        public static void HandleGetDirectoryResponse(Client client, GetDirectoryResponse packet)
-        {
-            if (client.Value == null || client.Value.FrmFm == null)
-                return;
-
-            new Thread(() =>
-            {
-                if (client.Value.ProcessingDirectory) return;
-                client.Value.ProcessingDirectory = true;
-
-                client.Value.FrmFm.ClearFileBrowser();
-                client.Value.FrmFm.AddItemToFileBrowser("..", "", PathType.Back, 0);
-
-                if (packet.Folders != null && packet.Folders.Length != 0 && client.Value.ProcessingDirectory)
-                {
-                    for (int i = 0; i < packet.Folders.Length; i++)
-                    {
-                        if (packet.Folders[i] != DELIMITER)
-                        {
-                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
-                                break;
-
-                            client.Value.FrmFm.AddItemToFileBrowser(packet.Folders[i], "", PathType.Directory, 1);
-                        }
-                    }
-                }
-
-                if (packet.Files != null && packet.Files.Length != 0 && client.Value.ProcessingDirectory)
-                {
-                    for (int i = 0; i < packet.Files.Length; i++)
-                    {
-                        if (packet.Files[i] != DELIMITER)
-                        {
-                            if (client.Value == null || client.Value.FrmFm == null || !client.Value.ProcessingDirectory)
-                                break;
-
-                            client.Value.FrmFm.AddItemToFileBrowser(packet.Files[i],
-                                FileHelper.GetDataSize(packet.FilesSize[i]), PathType.File,
-                                FileHelper.GetFileIcon(Path.GetExtension(packet.Files[i])));
-                        }
-                    }
-                }
-
-                if (client.Value != null)
-                {
-                    client.Value.ReceivedLastDirectory = true;
-                    client.Value.ProcessingDirectory = false;
-                    if (client.Value.FrmFm != null)
-                        client.Value.FrmFm.SetStatus("Ready");
-                }
-            }).Start();
-        }
-
         public static void HandleGetSystemInfoResponse(Client client, GetSystemInfoResponse packet)
         {
             if (packet.SystemInfos == null)

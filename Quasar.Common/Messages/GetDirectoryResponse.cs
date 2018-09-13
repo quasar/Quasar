@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Models;
 
 namespace Quasar.Common.Messages
 {
@@ -6,12 +7,9 @@ namespace Quasar.Common.Messages
     public class GetDirectoryResponse : IMessage
     {
         [ProtoMember(1)]
-        public string[] Files { get; set; }
+        public string RemotePath { get; set; }
 
         [ProtoMember(2)]
-        public string[] Folders { get; set; }
-
-        [ProtoMember(3)]
-        public long[] FilesSize { get; set; }
+        public FileSystemEntry[] Items { get; set; }
     }
 }

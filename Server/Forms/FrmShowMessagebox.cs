@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core.Data;
 using xServer.Core.Helper;
-using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmShowMessagebox : Form
     {
         private readonly int _selectedClients;
+
+        public string MsgBoxCaption { get; set; }
+        public string MsgBoxText { get; set; }
+        public string MsgBoxButton { get; set; }
+        public string MsgBoxIcon { get; set; }
 
         public FrmShowMessagebox(int selected)
         {
@@ -39,10 +42,10 @@ namespace xServer.Forms
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            Messagebox.Caption = txtCaption.Text;
-            Messagebox.Text = txtText.Text;
-            Messagebox.Button = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
-            Messagebox.Icon = GetMessageBoxIcon(cmbMsgIcon.SelectedIndex);
+            MsgBoxCaption = txtCaption.Text;
+            MsgBoxText = txtText.Text;
+            MsgBoxButton = GetMessageBoxButton(cmbMsgButtons.SelectedIndex);
+            MsgBoxIcon = GetMessageBoxIcon(cmbMsgIcon.SelectedIndex);
 
             this.DialogResult = DialogResult.OK;
             this.Close();

@@ -1,10 +1,5 @@
-﻿using System;
-using System.IO;
-using Quasar.Common.Messages;
-using xServer.Core.Helper;
+﻿using Quasar.Common.Messages;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
-using xServer.Forms;
 
 namespace xServer.Core.Commands
 {
@@ -20,97 +15,6 @@ namespace xServer.Core.Commands
                 client.Value.FrmRs.PrintError(packet.Output);
             else
                 client.Value.FrmRs.PrintMessage(packet.Output);
-        }
-
-        public static void HandleDoDownloadFileResponse(Client client, DoDownloadFileResponse packet)
-        {
-            if (CanceledDownloads.ContainsKey(packet.Id) || string.IsNullOrEmpty(packet.Filename))
-                return;
-
-            // don't escape from download directory
-            if (FileHelper.CheckPathForIllegalChars(packet.Filename))
-            {
-                // disconnect malicious client
-                client.Disconnect();
-                return;
-            }
-
-            if (!Directory.Exists(client.Value.DownloadDirectory))
-                Directory.CreateDirectory(client.Value.DownloadDirectory);
-
-            string downloadPath = Path.Combine(client.Value.DownloadDirectory, packet.Filename);
-
-            if (packet.CurrentBlock == 0 && File.Exists(downloadPath))
-            {
-                for (int i = 1; i < 100; i++)
-                {
-                    var newFileName = string.Format("{0} ({1}){2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
-                    if (File.Exists(Path.Combine(client.Value.DownloadDirectory, newFileName))) continue;
-
-                    downloadPath = Path.Combine(client.Value.DownloadDirectory, newFileName);
-                    RenamedFiles.Add(packet.Id, newFileName);
-                    break;
-                }
-            }
-            else if (packet.CurrentBlock > 0 && File.Exists(downloadPath) && RenamedFiles.ContainsKey(packet.Id))
-            {
-                downloadPath = Path.Combine(client.Value.DownloadDirectory, RenamedFiles[packet.Id]);
-            }
-
-            if (client.Value == null || client.Value.FrmFm == null)
-            {
-                FrmMain.Instance.SetStatusByClient(client, "Download aborted, please keep the File Manager open.");
-                client.Send(new DoDownloadFileCancel {Id = packet.Id});
-                return;
-            }
-
-            int index = client.Value.FrmFm.GetTransferIndex(packet.Id);
-            if (index < 0)
-                return;
-
-            if (!string.IsNullOrEmpty(packet.CustomMessage))
-            {
-                if (client.Value.FrmFm == null) // abort download when form is closed
-                    return;
-
-                client.Value.FrmFm.UpdateTransferStatus(index, packet.CustomMessage, 0);
-                return;
-            }
-
-            FileSplit destFile = new FileSplit(downloadPath);
-            if (!destFile.AppendBlock(packet.Block, packet.CurrentBlock))
-            {
-                if (client.Value == null || client.Value.FrmFm == null)
-                    return;
-
-                client.Value.FrmFm.UpdateTransferStatus(index, destFile.LastError, 0);
-                return;
-            }
-
-            decimal progress =
-                Math.Round((decimal) ((double) (packet.CurrentBlock + 1)/(double) packet.MaxBlocks*100.0), 2);
-
-            if (client.Value == null || client.Value.FrmFm == null)
-                return;
-
-            if (CanceledDownloads.ContainsKey(packet.Id)) return;
-
-            client.Value.FrmFm.UpdateTransferStatus(index, string.Format("Downloading...({0}%)", progress), -1);
-
-            if ((packet.CurrentBlock + 1) == packet.MaxBlocks)
-            {
-                if (client.Value.FrmFm == null)
-                    return;
-                RenamedFiles.Remove(packet.Id);
-                client.Value.FrmFm.UpdateTransferStatus(index, "Completed", 1);
-            }
-        }
-
-        public static void HandleSetStatusFileManager(Client client, SetStatusFileManager packet)
-        {
-            if (client.Value == null || client.Value.FrmFm == null) return;
-
-            client.Value.FrmFm.SetStatus(packet.Message, packet.SetLastDirectorySeen);
         }
     }
 }
