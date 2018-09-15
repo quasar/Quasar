@@ -143,23 +143,43 @@ namespace xServer.Forms
 
             lstDirectory.Items.Clear();
 
-            AddItemToFileBrowser("..", "", FileType.Back, 0);
+            AddItemToFileBrowser("..", 0, FileType.Back, 0);
             foreach (var item in items)
             {
                 switch (item.EntryType)
                 {
                     case FileType.Directory:
-                        AddItemToFileBrowser(item.Name, "", item.EntryType, 1);
+                        AddItemToFileBrowser(item.Name, 0, item.EntryType, 1);
                         break;
                     case FileType.File:
                         int imageIndex = item.ContentType == null ? 2 : (int)item.ContentType;
-                        AddItemToFileBrowser(item.Name, FileHelper.GetDataSize(item.Size), item.EntryType,
-                            imageIndex);
+                        AddItemToFileBrowser(item.Name, item.Size, item.EntryType, imageIndex);
                         break;
                 }
             }
 
             SetStatusMessage(this, "Ready");
+        }
+
+        /// <summary>
+        /// Gets the image index of completed or canceled file transfers.
+        /// </summary>
+        /// <param name="status">File transfer status used to determine the image index.</param>
+        /// <returns>The image index of the file transfer, default -1.</returns>
+        private int GetTransferImageIndex(string status)
+        {
+            int imageIndex = -1;
+            switch (status)
+            {
+                case "Completed":
+                    imageIndex = 1;
+                    break;
+                case "Canceled":
+                    imageIndex = 0;
+                    break;
+            }
+
+            return imageIndex;
         }
 
         /// <summary>
@@ -174,24 +194,14 @@ namespace xServer.Forms
                 if (lstTransfers.Items[i].SubItems[(int)TransferColumn.Id].Text == transfer.Id.ToString())
                 {
                     lstTransfers.Items[i].SubItems[(int)TransferColumn.Status].Text = transfer.Status;
-
-                    switch (transfer.Status)
-                    {
-                        case "Completed":
-                            lstTransfers.Items[i].ImageIndex = 1;
-                            break;
-                        case "Canceled":
-                            lstTransfers.Items[i].ImageIndex = 0;
-                            break;
-                    }
+                    lstTransfers.Items[i].ImageIndex = GetTransferImageIndex(transfer.Status);
                     return;
                 }
             }
 
             var lvi = new ListViewItem(new[]
-            {
-                transfer.Id.ToString(), transfer.Type.ToString(), transfer.Status, transfer.RemotePath
-            }) {Tag = transfer};
+                    {transfer.Id.ToString(), transfer.Type.ToString(), transfer.Status, transfer.RemotePath})
+                {Tag = transfer, ImageIndex = GetTransferImageIndex(transfer.Status)};
 
             lstTransfers.Items.Add(lvi);
         }
@@ -495,9 +505,21 @@ namespace xServer.Forms
             }
         }
 
-        private void AddItemToFileBrowser(string name, string size, FileType type, int imageIndex)
+        /// <summary>
+        /// Adds an item to the file browser.
+        /// </summary>
+        /// <param name="name">File or directory name.</param>
+        /// <param name="size">File size, for directories use 0.</param>
+        /// <param name="type">File type.</param>
+        /// <param name="imageIndex">The image to display for this item.</param>
+        private void AddItemToFileBrowser(string name, long size, FileType type, int imageIndex)
         {
-            ListViewItem lvi = new ListViewItem(new string[] { name, size, (type != FileType.Back) ? type.ToString() : string.Empty })
+            ListViewItem lvi = new ListViewItem(new string[]
+            {
+                name,
+                (type == FileType.File) ? FileHelper.GetDataSize(size) : string.Empty,
+                (type != FileType.Back) ? type.ToString() : string.Empty
+            })
             {
                 Tag = type,
                 ImageIndex = imageIndex
