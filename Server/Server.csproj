@@ -299,12 +299,6 @@
     <Compile Include="Forms\FrmTaskManager.Designer.cs">
       <DependentUpon>FrmTaskManager.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FrmTermsOfUse.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FrmTermsOfUse.Designer.cs">
-      <DependentUpon>FrmTermsOfUse.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FrmUploadAndExecute.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -398,9 +392,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmTaskManager.resx">
       <DependentUpon>FrmTaskManager.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FrmTermsOfUse.resx">
-      <DependentUpon>FrmTermsOfUse.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmUploadAndExecute.resx">
       <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>

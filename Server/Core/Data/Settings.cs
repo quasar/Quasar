@@ -35,18 +35,6 @@ namespace xServer.Core.Data
             }
         }
 
-        public static bool ShowToU
-        {
-            get
-            {
-                return bool.Parse(ReadValueSafe("ShowToU", "True"));
-            }
-            set
-            {
-                WriteValue("ShowToU", value.ToString());
-            }
-        }
-
         public static bool AutoListen
         {
             get

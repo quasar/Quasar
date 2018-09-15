@@ -32,25 +32,11 @@ namespace xServer.Forms
         private readonly object _processingClientConnectionsLock = new object();
         private readonly object _lockClients = new object(); // lock for clients-listview
 
-        private void ShowTermsOfService()
-        {
-            using (var frm = new FrmTermsOfUse())
-            {
-                frm.ShowDialog();
-            }
-            Thread.Sleep(300);
-        }
-
         public FrmMain()
         {
             Instance = this;
 
             AES.SetDefaultKey(Settings.Password);
-
-#if !DEBUG
-            if (Settings.ShowToU)
-                ShowTermsOfService();
-#endif
 
             InitializeComponent();
         }
