@@ -365,13 +365,13 @@ namespace xClient.Core.Extensions
         /// </summary>
         /// <param name="key">The registry key of which the values are obtained.</param>
         /// <returns>Yield returns formatted strings of the key and the key value.</returns>
-        public static IEnumerable<string> GetFormattedKeyValues(this RegistryKey key)
+        public static IEnumerable<Tuple<string, string>> GetKeyValues(this RegistryKey key)
         {
             if (key == null) yield break;
 
             foreach (var k in key.GetValueNames().Where(keyVal => !keyVal.IsNameOrValueNull(key)).Where(k => !string.IsNullOrEmpty(k)))
             {
-                yield return string.Format("{0}||{1}", k, key.GetValueSafe(k));
+                yield return new Tuple<string, string>(k, key.GetValueSafe(k));
             }
         }
 

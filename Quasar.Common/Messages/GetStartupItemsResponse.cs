@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
-using ProtoBuf;
+﻿using ProtoBuf;
+using Quasar.Common.Models;
+using System.Collections.Generic;
 
 namespace Quasar.Common.Messages
 {
@@ -7,6 +8,6 @@ namespace Quasar.Common.Messages
     public class GetStartupItemsResponse : IMessage
     {
         [ProtoMember(1)]
-        public List<string> StartupItems { get; set; }
+        public List<StartupItem> StartupItems { get; set; }
     }
 }

@@ -115,6 +115,7 @@
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
+    <Compile Include="Core\Commands\StartupManagerHandler.cs" />
     <Compile Include="Core\Commands\SystemInformationHandler.cs" />
     <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
@@ -139,7 +140,6 @@
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
     <Compile Include="Core\Commands\MiscHandler.cs" />
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
-    <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
@@ -170,11 +170,11 @@
     <Compile Include="Forms\FrmAbout.Designer.cs">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </Compile>
-    <Compile Include="Forms\FrmAddToAutostart.cs">
+    <Compile Include="Forms\FrmStartupAdd.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Forms\FrmAddToAutostart.Designer.cs">
-      <DependentUpon>FrmAddToAutostart.cs</DependentUpon>
+    <Compile Include="Forms\FrmStartupAdd.Designer.cs">
+      <DependentUpon>FrmStartupAdd.cs</DependentUpon>
     </Compile>
     <Compile Include="Forms\FrmBuilder.cs">
       <SubType>Form</SubType>
@@ -328,8 +328,8 @@
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Forms\FrmAddToAutostart.resx">
-      <DependentUpon>FrmAddToAutostart.cs</DependentUpon>
+    <EmbeddedResource Include="Forms\FrmStartupAdd.resx">
+      <DependentUpon>FrmStartupAdd.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmBuilder.resx">
       <DependentUpon>FrmBuilder.cs</DependentUpon>

@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Models;
 
 namespace Quasar.Common.Messages
 {
@@ -6,12 +7,6 @@ namespace Quasar.Common.Messages
     public class DoStartupItemRemove : IMessage
     {
         [ProtoMember(1)]
-        public string Name { get; set; }
-
-        [ProtoMember(2)]
-        public string Path { get; set; }
-
-        [ProtoMember(3)]
-        public int Type { get; set; }
+        public StartupItem StartupItem { get; set; }
     }
 }

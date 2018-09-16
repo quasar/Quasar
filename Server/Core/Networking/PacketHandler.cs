@@ -39,11 +39,6 @@ namespace xServer.Core.Networking
                 CommandHandler.HandleDoShellExecuteResponse(client,
                     (DoShellExecuteResponse)packet);
             }
-            else if (type == typeof(GetStartupItemsResponse))
-            {
-                CommandHandler.HandleGetStartupItemsResponse(client,
-                    (GetStartupItemsResponse)packet);
-            }
             else if (type == typeof(GetKeyloggerLogsResponse))
             {
                 CommandHandler.HandleGetKeyloggerLogsResponse(client, (GetKeyloggerLogsResponse)packet);

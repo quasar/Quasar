@@ -1,6 +1,6 @@
 ﻿namespace xServer.Forms
 {
-    partial class FrmAddToAutostart
+    partial class FrmStartupAdd
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmAddToAutostart));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmStartupAdd));
             this.groupAutostartItem = new System.Windows.Forms.GroupBox();
             this.lblType = new System.Windows.Forms.Label();
             this.cmbType = new System.Windows.Forms.ComboBox();

@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Enums;
 
 namespace Quasar.Common.Models
 {
@@ -12,7 +13,6 @@ namespace Quasar.Common.Models
         public string Path { get; set; }
 
         [ProtoMember(3)]
-        public int Type { get; set; }
-        // TODO: Change to Enum
+        public StartupType Type { get; set; }
     }
 }

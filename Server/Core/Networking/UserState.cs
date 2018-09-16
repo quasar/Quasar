@@ -27,7 +27,6 @@ namespace xServer.Core.Networking
         public FrmTaskManager FrmTm { get; set; }
         public FrmRegistryEditor FrmRe { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
-        public FrmStartupManager FrmStm { get; set; }
         public FrmKeylogger FrmKl { get; set; }
         public FrmReverseProxy FrmProxy { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
@@ -53,8 +52,6 @@ namespace xServer.Core.Networking
                         FrmRe.Invoke((MethodInvoker)delegate { FrmRe.Close(); });
                     if (FrmRs != null)
                         FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
-                    if (FrmStm != null)
-                        FrmStm.Invoke((MethodInvoker)delegate { FrmStm.Close(); });
                     if (FrmKl != null)
                         FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
                     if (FrmProxy != null)

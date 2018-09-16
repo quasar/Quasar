@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Enums\ConnectionState.cs" />
     <Compile Include="Enums\ContentType.cs" />
+    <Compile Include="Enums\StartupType.cs" />
     <Compile Include="Models\Drive.cs" />
     <Compile Include="Messages\MessageProcessorBase.cs" />
     <Compile Include="Messages\IProgress.cs" />

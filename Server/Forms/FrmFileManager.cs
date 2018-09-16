@@ -392,7 +392,7 @@ namespace xServer.Forms
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
-                    using (var frm = new FrmAddToAutostart(path))
+                    using (var frm = new FrmStartupAdd(path))
                     {
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
