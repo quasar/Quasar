@@ -19,7 +19,7 @@ namespace xServer.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -447,25 +447,6 @@ namespace xServer.Properties {
             get {
                 object obj = ResourceManager.GetObject("terminal", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized string similar to     Quasar - Remote Administration Tool
-        ///    Copyright (C) 2016 MaxX0r
-        ///
-        ///    Quasar is free software: you can redistribute it and/or modify
-        ///    it under the terms of the GNU General Public License as published by
-        ///    the Free Software Foundation, either version 3 of the License, or
-        ///    (at your option) any later version.
-        ///
-        ///    Quasar is distributed in the hope that it will be useful,
-        ///    but WITHOUT ANY WARRANTY; without even the implied warranty of
-        ///    MERCHANTABILITY or FITNESS FOR A PARTICULAR PUR [rest of string was truncated]&quot;;.
-        /// </summary>
-        internal static string TermsOfUse {
-            get {
-                return ResourceManager.GetString("TermsOfUse", resourceCulture);
             }
         }
         
