@@ -26,11 +26,6 @@ namespace xServer.Core.Networking
                 CommandHandler.HandleGetProcessesResponse(client,
                     (GetProcessesResponse)packet);
             }
-            else if (type == typeof(GetSystemInfoResponse))
-            {
-                CommandHandler.HandleGetSystemInfoResponse(client,
-                    (GetSystemInfoResponse)packet);
-            }
             else if (type == typeof(GetWebcamsResponse))
             {
                 CommandHandler.HandleGetWebcamsResponse(client, (GetWebcamsResponse)packet);
@@ -94,10 +89,6 @@ namespace xServer.Core.Networking
                     type == typeof(ReverseProxyDisconnect))
             {
                 ReverseProxyCommandHandler.HandleCommand(client, packet);
-            }
-            else if (type == typeof(GetConnectionsResponse))
-            {
-                CommandHandler.HandleGetConnectionsResponse(client, (GetConnectionsResponse)packet);
             }
         }
     }

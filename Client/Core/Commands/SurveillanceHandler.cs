@@ -9,6 +9,7 @@ using xClient.Core.Networking;
 using xClient.Core.Utilities;
 using System.Collections.Generic;
 using Quasar.Common.Enums;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Video;
 using Quasar.Common.Video.Codecs;

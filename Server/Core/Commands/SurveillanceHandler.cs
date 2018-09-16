@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Drawing;
 using System.Threading;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using xServer.Core.Data;
 using xServer.Core.Helper;

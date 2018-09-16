@@ -1,4 +1,5 @@
 ﻿using Quasar.Common.Enums;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
@@ -9,7 +10,6 @@ using System.Linq;
 using System.Threading;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
 using xServer.Enums;
 using xServer.Models;
 
@@ -109,7 +109,7 @@ namespace xServer.Core.Commands
         /// <summary>
         /// Keeps track of all active file transfers. Finished or canceled transfers get removed.
         /// </summary>
-        private readonly List<FileTransfer> _activeFileTransfers;
+        private readonly List<FileTransfer> _activeFileTransfers = new List<FileTransfer>();
 
         /// <summary>
         /// Used in lock statements to synchronize access between UI thread and thread pool.
@@ -138,7 +138,6 @@ namespace xServer.Core.Commands
         public FileManagerHandler(Client client) : base(true)
         {
             _client = client;
-            _activeFileTransfers = new List<FileTransfer>();
             _baseDownloadPath = client.Value.DownloadDirectory;
         }
 
@@ -353,16 +352,11 @@ namespace xServer.Core.Commands
 
             if (transfer == null)
             {
-                if (message.CurrentBlock != 0)
-                {
-                    // TODO: disconnect client
-                }
-
                 // don't escape from download directory
                 if (FileHelper.CheckPathForIllegalChars(message.Filename))
                 {
                     // disconnect malicious client
-                    // TODO: client.Disconnect();
+                    client.Disconnect();
                     return;
                 }
 

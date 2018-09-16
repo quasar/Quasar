@@ -6,9 +6,15 @@ namespace Quasar.Common.Messages
     public class DoCloseConnection : IMessage
     {
         [ProtoMember(1)]
-        public int LocalPort { get; set; }
+        public string LocalAddress { get; set; }
 
         [ProtoMember(2)]
-        public int RemotePort { get; set; }
+        public ushort LocalPort { get; set; }
+
+        [ProtoMember(3)]
+        public string RemoteAddress { get; set; }
+
+        [ProtoMember(4)]
+        public ushort RemotePort { get; set; }
     }
 }

@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using Quasar.Common.Enums;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using xServer.Core.Commands;
 using xServer.Core.Cryptography;
@@ -538,13 +539,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmSi != null)
-                {
-                    c.Value.FrmSi.Focus();
-                    return;
-                }
-                FrmSystemInformation frmSI = new FrmSystemInformation(c);
-                frmSI.Show();
+                FrmSystemInformation frmSi = FrmSystemInformation.CreateNewOrGetExisting(c);
+                frmSi.Show();
+                frmSi.Focus();
             }
         }
 
@@ -552,9 +549,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                FrmFileManager frmFM = FrmFileManager.CreateNewOrGetExisting(c);
-                frmFM.Show();
-                frmFM.Focus();
+                FrmFileManager frmFm = FrmFileManager.CreateNewOrGetExisting(c);
+                frmFm.Show();
+                frmFm.Focus();
             }
         }
 
@@ -604,14 +601,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmCon != null)
-                {
-                    c.Value.FrmCon.Focus();
-                    return;
-                }
-
-                FrmConnections frmCON = new FrmConnections(c);
-                frmCON.Show();
+                FrmConnections frmCon = FrmConnections.CreateNewOrGetExisting(c);
+                frmCon.Show();
+                frmCon.Focus();
             }
         }
 

@@ -4,6 +4,7 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using xClient.Core.Helper;
 using xClient.Core.Networking;

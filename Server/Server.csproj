@@ -115,7 +115,8 @@
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
-    <Compile Include="Core\Commands\TCPConnectionsHandler.cs" />
+    <Compile Include="Core\Commands\SystemInformationHandler.cs" />
+    <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\ClipboardHelper.cs" />
@@ -141,7 +142,6 @@
     <Compile Include="Core\Commands\SystemHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />
-    <Compile Include="Core\Utilities\FileSplit.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
     <Compile Include="Controls\InputBox.cs" />
     <Compile Include="Core\Utilities\ListViewColumnSorter.cs" />

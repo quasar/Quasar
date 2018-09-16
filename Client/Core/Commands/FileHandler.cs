@@ -3,6 +3,7 @@ using System.IO;
 using System.Security;
 using System.Threading;
 using Quasar.Common.Enums;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using xClient.Core.Helper;

@@ -1,7 +1,6 @@
 ﻿using System.IO;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
-using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Forms;
@@ -35,8 +34,9 @@ namespace xServer.Core.Commands
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.Value.UserAtPc, client.Value.Id.Substring(0, 7))) :
                     Path.Combine(Application.StartupPath, string.Format("Clients\\{0}_{1}\\", client.EndPoint.Address, client.Value.Id.Substring(0, 7)));
 
-                if (Settings.ShowToolTip)
-                    client.Send(new GetSystemInfo());
+                // TODO: Refactor tooltip
+                //if (Settings.ShowToolTip)
+                //    client.Send(new GetSystemInfo());
             }
             catch
             {

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Data;

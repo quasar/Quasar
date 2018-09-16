@@ -10,12 +10,12 @@ namespace Quasar.Common.Messages
     public static class MessageHandler
     {
         /// <summary>
-        /// Thread-safe list of registered <see cref="IMessageProcessor"/>s.
+        /// List of registered <see cref="IMessageProcessor"/>s.
         /// </summary>
         private static readonly List<IMessageProcessor> Processors = new List<IMessageProcessor>();
 
         /// <summary>
-        /// Used in lock statements to synchronize access between threads.
+        /// Used in lock statements to synchronize access to <see cref="Processors"/> between threads.
         /// </summary>
         private static readonly object SyncLock = new object();
 

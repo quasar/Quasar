@@ -1,14 +1,14 @@
 ﻿using System;
 using System.IO;
 
-namespace xServer.Core.Utilities
+namespace Quasar.Common.IO
 {
     public class FileSplit
     {
         private int _maxBlocks;
         private readonly object _fileStreamLock = new object();
         private const int MAX_BLOCK_SIZE = 65535;
-        public string Path { get; private set; }
+        public string Path { get; }
         public string LastError { get; private set; }
 
         public int MaxBlocks

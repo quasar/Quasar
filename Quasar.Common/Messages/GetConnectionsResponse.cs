@@ -1,4 +1,5 @@
 ﻿using ProtoBuf;
+using Quasar.Common.Models;
 
 namespace Quasar.Common.Messages
 {
@@ -6,21 +7,6 @@ namespace Quasar.Common.Messages
     public class GetConnectionsResponse : IMessage
     {
         [ProtoMember(1)]
-        public string[] Processes { get; set; }
-
-        [ProtoMember(2)]
-        public string[] LocalAddresses { get; set; }
-
-        [ProtoMember(3)]
-        public string[] LocalPorts { get; set; }
-
-        [ProtoMember(4)]
-        public string[] RemoteAddresses { get; set; }
-
-        [ProtoMember(5)]
-        public string[] RemotePorts { get; set; }
-
-        [ProtoMember(6)]
-        public byte[] States { get; set; }
+        public TcpConnection[] Connections { get; set; }
     }
 }
