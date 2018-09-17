@@ -64,7 +64,7 @@
             // lblVersion
             // 
             this.lblVersion.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersion.Location = new System.Drawing.Point(341, 40);
+            this.lblVersion.Location = new System.Drawing.Point(438, 41);
             this.lblVersion.Name = "lblVersion";
             this.lblVersion.Size = new System.Drawing.Size(75, 13);
             this.lblVersion.TabIndex = 2;
@@ -74,7 +74,7 @@
             // btnOkay
             // 
             this.btnOkay.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnOkay.Location = new System.Drawing.Point(341, 319);
+            this.btnOkay.Location = new System.Drawing.Point(438, 370);
             this.btnOkay.Name = "btnOkay";
             this.btnOkay.Size = new System.Drawing.Size(75, 23);
             this.btnOkay.TabIndex = 7;
@@ -84,11 +84,12 @@
             // 
             // rtxtContent
             // 
+            this.rtxtContent.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.rtxtContent.Location = new System.Drawing.Point(15, 112);
             this.rtxtContent.Name = "rtxtContent";
             this.rtxtContent.ReadOnly = true;
             this.rtxtContent.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.Vertical;
-            this.rtxtContent.Size = new System.Drawing.Size(401, 201);
+            this.rtxtContent.Size = new System.Drawing.Size(498, 252);
             this.rtxtContent.TabIndex = 6;
             this.rtxtContent.Text = "";
             // 
@@ -105,23 +106,23 @@
             // lnkCredits
             // 
             this.lnkCredits.AutoSize = true;
-            this.lnkCredits.Location = new System.Drawing.Point(373, 80);
+            this.lnkCredits.Location = new System.Drawing.Point(415, 83);
             this.lnkCredits.Name = "lnkCredits";
-            this.lnkCredits.Size = new System.Drawing.Size(43, 13);
+            this.lnkCredits.Size = new System.Drawing.Size(98, 13);
             this.lnkCredits.TabIndex = 4;
             this.lnkCredits.TabStop = true;
-            this.lnkCredits.Text = "Credits";
+            this.lnkCredits.Text = "3rd-party libraries";
             this.lnkCredits.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCredits_LinkClicked);
             // 
             // lnkGithubPage
             // 
             this.lnkGithubPage.AutoSize = true;
-            this.lnkGithubPage.Location = new System.Drawing.Point(344, 60);
+            this.lnkGithubPage.Location = new System.Drawing.Point(441, 61);
             this.lnkGithubPage.Name = "lnkGithubPage";
-            this.lnkGithubPage.Size = new System.Drawing.Size(72, 13);
+            this.lnkGithubPage.Size = new System.Drawing.Size(73, 13);
             this.lnkGithubPage.TabIndex = 3;
             this.lnkGithubPage.TabStop = true;
-            this.lnkGithubPage.Text = "GitHub Page";
+            this.lnkGithubPage.Text = "GitHub page";
             this.lnkGithubPage.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkGithubPage_LinkClicked);
             // 
             // lblSubTitle
@@ -130,7 +131,7 @@
             this.lblSubTitle.Font = new System.Drawing.Font("Segoe UI", 9.75F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.lblSubTitle.Location = new System.Drawing.Point(84, 37);
             this.lblSubTitle.Name = "lblSubTitle";
-            this.lblSubTitle.Size = new System.Drawing.Size(171, 17);
+            this.lblSubTitle.Size = new System.Drawing.Size(170, 17);
             this.lblSubTitle.TabIndex = 1;
             this.lblSubTitle.Text = "Remote Administration Tool";
             // 
@@ -140,7 +141,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
             this.CancelButton = this.btnOkay;
-            this.ClientSize = new System.Drawing.Size(428, 354);
+            this.ClientSize = new System.Drawing.Size(525, 405);
             this.Controls.Add(this.lblSubTitle);
             this.Controls.Add(this.lnkGithubPage);
             this.Controls.Add(this.lnkCredits);
