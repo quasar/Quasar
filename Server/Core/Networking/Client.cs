@@ -479,7 +479,6 @@ namespace xServer.Core.Networking
                                         isError = _payloadBuffer.Length == 0; // check if payload decryption failed
                                     }
 
-                                    int compressedSize = _payloadBuffer.Length;
                                     if (!isError)
                                     {
                                         if (compressionEnabled)
@@ -505,16 +504,6 @@ namespace xServer.Core.Networking
                                         Disconnect();
                                         break;
                                     }
-
-                                    int uncompressedSize = _payloadBuffer.Length;
-                                    double ratio = (double)uncompressedSize / compressedSize - 1;
-
-                                    string save = "nothing";
-                                    if (ratio > 0)
-                                        save = Helper.FileHelper.GetDataSize(uncompressedSize - compressedSize);
-
-                                    System.Diagnostics.Debug.WriteLine($"Read ratio: {ratio}, saved {save}");
-
 
                                     using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
                                     {
@@ -649,14 +638,8 @@ namespace xServer.Core.Networking
 
         private byte[] BuildMessage(byte[] payload)
         {
-            int uncompressedSize = payload.Length; // 1300
             if (compressionEnabled)
                 payload = SafeQuickLZ.Compress(payload);
-            int compressedSize = payload.Length; // 1000
-
-            double ratio = (double)uncompressedSize / compressedSize - 1;
-
-            System.Diagnostics.Debug.WriteLine($"Send ratio: {ratio}");
 
             if (encryptionEnabled)
                 payload = AES.Encrypt(payload);
