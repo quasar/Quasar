@@ -28,10 +28,7 @@ namespace xServer.Core.Networking
         public FrmRegistryEditor FrmRe { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmKeylogger FrmKl { get; set; }
-        public FrmReverseProxy FrmProxy { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
-
-        public ReverseProxyServer ProxyServer { get; set; }
 
         public void Dispose()
         {
@@ -54,8 +51,6 @@ namespace xServer.Core.Networking
                         FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
                     if (FrmKl != null)
                         FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
-                    if (FrmProxy != null)
-                        FrmProxy.Invoke((MethodInvoker)delegate { FrmProxy.Close(); });
                     if (FrmPass != null)
                         FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
                 }

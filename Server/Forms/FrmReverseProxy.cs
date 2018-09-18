@@ -1,32 +1,77 @@
-﻿using System;
+﻿using Quasar.Common.Messages;
+using System;
 using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using xServer.Core.Commands;
 using xServer.Core.Data;
-using xServer.Core.ReverseProxy;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
+using xServer.Core.ReverseProxy;
 
 namespace xServer.Forms
 {
     public partial class FrmReverseProxy : Form
     {
+        /// <summary>
+        /// The clients which can be used for the reverse proxy.
+        /// </summary>
         private readonly Client[] _clients;
-        private ReverseProxyServer SocksServer { get; set; }
-        private ReverseProxyClient[] _openConnections;
-        private Timer _refreshTimer;
 
+        /// <summary>
+        /// The message handler for handling the communication with the clients.
+        /// </summary>
+        private readonly ReverseProxyHandler _reverseProxyHandler;
+
+        /// <summary>
+        /// The open reverse proxy connections.
+        /// </summary>
+        private ReverseProxyClient[] _openConnections;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmReverseProxy"/> class using the given clients.
+        /// </summary>
+        /// <param name="clients">The clients used for the reverse proxy form.</param>
         public FrmReverseProxy(Client[] clients)
         {
             this._clients = clients;
+            this._reverseProxyHandler = new ReverseProxyHandler(clients);
 
-            foreach (Client c in clients)
-            {
-                if (c == null || c.Value == null) continue;
-                c.Value.FrmProxy = this;
-            }
-
+            RegisterMessageHandler();
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Registers the connections manager message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            //_connectClient.ClientState += ClientDisconnected;
+            _reverseProxyHandler.ProgressChanged += ConnectionChanged;
+            MessageHandler.Register(_reverseProxyHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the connections manager message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_reverseProxyHandler);
+            _reverseProxyHandler.ProgressChanged -= ConnectionChanged;
+            //_connectClient.ClientState -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
+        {
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
         }
 
         private void FrmReverseProxy_Load(object sender, EventArgs e)
@@ -44,6 +89,24 @@ namespace xServer.Forms
             nudServerPort.Value = Settings.ReverseProxyPort;
         }
 
+        private void FrmReverseProxy_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            Settings.ReverseProxyPort = GetPortSafe();
+            UnregisterMessageHandler();
+            _reverseProxyHandler.Dispose();
+        }
+
+        private void ConnectionChanged(object sender, ReverseProxyClient[] proxyClients)
+        {
+            lock (_reverseProxyHandler)
+            {
+                lstConnections.BeginUpdate();
+                _openConnections = proxyClients;
+                lstConnections.VirtualListSize = _openConnections.Length;
+                lstConnections.EndUpdate();
+            }
+        }
+
         private void btnStart_Click(object sender, EventArgs e)
         {
             try
@@ -57,16 +120,8 @@ namespace xServer.Forms
                     return;
                 }
 
-                SocksServer = new ReverseProxyServer();
-                SocksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
-                SocksServer.OnUpdateConnection += socksServer_onUpdateConnection;
-                SocksServer.StartServer(_clients, "0.0.0.0", port);
-                ToggleButtons(true);
-
-                _refreshTimer = new Timer();
-                _refreshTimer.Tick += RefreshTimer_Tick;
-                _refreshTimer.Interval = 100;
-                _refreshTimer.Start();
+                _reverseProxyHandler.StartReverseProxyServer(port);
+                ToggleConfigurationButtons(true);
             }
             catch (SocketException ex)
             {
@@ -81,7 +136,6 @@ namespace xServer.Forms
                             "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
                             ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                btnStop_Click(sender, null);
             }
             catch (Exception ex)
             {
@@ -89,75 +143,34 @@ namespace xServer.Forms
                     string.Format(
                         "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\n{1}/issues",
                         ex.Message, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                btnStop_Click(sender, null);
             }
         }
 
-        void RefreshTimer_Tick(object sender, EventArgs e)
-        {
-            try
-            {
-                lock (SocksServer)
-                {
-                    this._openConnections = SocksServer.OpenConnections;
-                    lstConnections.VirtualListSize = this._openConnections.Length;
-                    lstConnections.Refresh();
-                }
-            }
-            catch { }
-        }
-
+        /// <summary>
+        /// Safely gets the value from the <see cref="nudServerPort"/> and parses it as <see cref="ushort"/>.
+        /// </summary>
+        /// <returns>The server port parsed as <see cref="ushort"/>. Returns <value>0</value> on error.</returns>
         private ushort GetPortSafe()
         {
             var portValue = nudServerPort.Value.ToString(CultureInfo.InvariantCulture);
-            ushort port;
-            return (!ushort.TryParse(portValue, out port)) ? (ushort)0 : port;
+            return (!ushort.TryParse(portValue, out ushort port)) ? (ushort)0 : port;
         }
 
-        void socksServer_onUpdateConnection(ReverseProxyClient proxyClient)
+        /// <summary>
+        /// Toggles the activatability of configuration controls.
+        /// </summary>
+        /// <param name="started">When set to <code>true</code> the configuration controls get enabled, otherwise they get disabled.</param>
+        private void ToggleConfigurationButtons(bool started)
         {
-
-        }
-
-        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient)
-        {
-
-        }
-
-        private void ToggleButtons(bool t)
-        {
-            btnStart.Enabled = !t;
-            nudServerPort.Enabled = !t;
-            btnStop.Enabled = t;
+            btnStart.Enabled = !started;
+            nudServerPort.Enabled = !started;
+            btnStop.Enabled = started;
         }
 
         private void btnStop_Click(object sender, EventArgs e)
         {
-            if (_refreshTimer != null)
-                _refreshTimer.Stop();
-            ToggleButtons(false);
-            if (SocksServer != null)
-                SocksServer.Stop();
-
-            try
-            {
-                SocksServer.OnConnectionEstablished -= socksServer_onConnectionEstablished;
-                SocksServer.OnUpdateConnection -= socksServer_onUpdateConnection;
-            }
-            catch { }
-        }
-
-        private void FrmReverseProxy_FormClosing(object sender, FormClosingEventArgs e)
-        {
-            Settings.ReverseProxyPort = GetPortSafe();
-            //Stop the proxy server if still active
-            btnStop_Click(sender, null);
-
-            for (int i = 0; i < _clients.Length; i++)
-            {
-                if (_clients[i] != null && _clients[i].Value != null)
-                    _clients[i].Value.FrmProxy = null;
-            }
+            ToggleConfigurationButtons(false);
+            _reverseProxyHandler.StopReverseProxyServer();
         }
 
         private void nudServerPort_ValueChanged(object sender, EventArgs e)
@@ -167,7 +180,7 @@ namespace xServer.Forms
 
         private void LvConnections_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
-            lock (SocksServer)
+            lock (_reverseProxyHandler)
             {
                 if (e.ItemIndex < _openConnections.Length)
                 {
@@ -189,11 +202,11 @@ namespace xServer.Forms
 
         private void killConnectionToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            lock (SocksServer)
+            lock (_reverseProxyHandler)
             {
                 if (lstConnections.SelectedIndices.Count > 0)
                 {
-                    //copy the list, it could happen the suddenly the items de-select
+                    //copy the list, it could happen that suddenly the items de-select
                     int[] items = new int[lstConnections.SelectedIndices.Count];
                     lstConnections.SelectedIndices.CopyTo(items, 0);
 
@@ -202,10 +215,7 @@ namespace xServer.Forms
                         if (index < _openConnections.Length)
                         {
                             ReverseProxyClient connection = _openConnections[index];
-                            if (connection != null)
-                            {
-                                connection.Disconnect();
-                            }
+                            connection?.Disconnect();
                         }
                     }
                 }

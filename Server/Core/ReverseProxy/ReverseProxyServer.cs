@@ -67,10 +67,6 @@ namespace xServer.Core.ReverseProxy
             Stop();
 
             this.Clients = clients;
-
-            for (int i = 0; i < clients.Length; i++)
-                this.Clients[i].Value.ProxyServer = this;
-
             this._socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             this._socket.Bind(new IPEndPoint(IPAddress.Parse(ipAddress), port));
             this._socket.Listen(100);

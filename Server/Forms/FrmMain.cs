@@ -11,7 +11,6 @@ using xServer.Core.Commands;
 using xServer.Core.Cryptography;
 using xServer.Core.Data;
 using xServer.Core.Extensions;
-using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
@@ -607,12 +606,6 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmProxy != null)
-                {
-                    c.Value.FrmProxy.Focus();
-                    return;
-                }
-
                 FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
                 frmRS.Show();
             }

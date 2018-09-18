@@ -206,7 +206,7 @@ namespace xServer.Forms
         /// <summary>
         /// Toggles the activatability of configuration controls in the status/configuration panel.
         /// </summary>
-        /// <param name="started">When set to <code>true</code> the configuration controls get enabled, otherwise <code>false</code>.</param>
+        /// <param name="started">When set to <code>true</code> the configuration controls get enabled, otherwise they get disabled.</param>
         private void ToggleConfigurationControls(bool started)
         {
             btnStart.Enabled = !started;

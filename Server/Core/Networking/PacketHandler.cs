@@ -79,12 +79,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (GetPasswordsResponse)packet);
             }
-            else if (type == typeof(ReverseProxyConnectResponse) ||
-                    type == typeof(ReverseProxyData) ||
-                    type == typeof(ReverseProxyDisconnect))
-            {
-                ReverseProxyCommandHandler.HandleCommand(client, packet);
-            }
         }
     }
 }
