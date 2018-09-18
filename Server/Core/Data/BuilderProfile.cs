@@ -239,6 +239,18 @@ namespace xServer.Core.Data
             }
         }
 
+        public bool RequestElevationOnExecution
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("RequestElevationOnExecution", "False"));
+            }
+            set
+            {
+                WriteValue("RequestElevationOnExecution", value.ToString());
+            }
+        }
+
         public string ProductName
         {
             get
