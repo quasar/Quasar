@@ -115,6 +115,7 @@
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\KeyloggerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
+    <Compile Include="Core\Commands\RegistryHandlerOld.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
     <Compile Include="Core\Commands\RemoteShellHandler.cs" />
     <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
@@ -131,7 +132,6 @@
     <Compile Include="Core\Helper\HostHelper.cs" />
     <Compile Include="Core\Networking\PacketHandler.cs" />
     <Compile Include="Core\Registry\RegValueHelper.cs" />
-    <Compile Include="Core\Utilities\ByteConverter.cs" />
     <Compile Include="Core\Utilities\FrameCounter.cs" />
     <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
     <Compile Include="Core\Helper\PlatformHelper.cs" />

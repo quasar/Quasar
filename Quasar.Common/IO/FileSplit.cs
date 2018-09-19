@@ -3,6 +3,7 @@ using System.IO;
 
 namespace Quasar.Common.IO
 {
+    // TODO: Refactor in yield Block.Next() ...
     public class FileSplit
     {
         private int _maxBlocks;

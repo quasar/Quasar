@@ -1,106 +1,45 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.Windows.Forms;
-﻿using Microsoft.Win32;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
-using xServer.Core.Networking;
 using xServer.Core.Registry;
-using xServer.Core.Utilities;
 
 namespace xServer.Forms
 {
     public partial class FrmRegValueEditBinary : Form
     {
-        private readonly Client _connectClient;
-
         private readonly RegValueData _value;
-
-        private readonly string _keyPath;
-
-        #region Constant
 
         private const string INVALID_BINARY_ERROR = "The binary value was invalid and could not be converted correctly.";
 
-        #endregion
-
-        public FrmRegValueEditBinary(string keyPath, RegValueData value, Client c)
+        public FrmRegValueEditBinary(RegValueData value)
         {
-            _connectClient = c;
-            _keyPath = keyPath;
             _value = value;
 
             InitializeComponent();
 
             this.valueNameTxtBox.Text = RegValueHelper.GetName(value.Name);
-
-            if(value.Data == null)
-            {
-                hexEditor.HexTable = new byte[] { };
-            }
-            else {
-                switch(value.Kind)
-                {
-                    case RegistryValueKind.Binary:
-                        hexEditor.HexTable = (byte[])value.Data;
-                        break;
-                    case RegistryValueKind.DWord:
-                        hexEditor.HexTable = ByteConverter.GetBytes((uint)(int)value.Data);
-                        break;
-                    case RegistryValueKind.QWord:
-                        hexEditor.HexTable = ByteConverter.GetBytes((ulong)(long)value.Data);
-                        break;
-                    case RegistryValueKind.MultiString:
-                        hexEditor.HexTable = ByteConverter.GetBytes((string[])value.Data);
-                        break;
-                    case RegistryValueKind.String:
-                    case RegistryValueKind.ExpandString:
-                        hexEditor.HexTable = ByteConverter.GetBytes(value.Data.ToString());
-                        break;
-                }
-            }
+            hexEditor.HexTable = value.Data;
         }
 
-        private object GetData()
+        private void okButton_Click(object sender, EventArgs e)
         {
             byte[] bytes = hexEditor.HexTable;
             if (bytes != null)
             {
                 try
                 {
-                    switch(_value.Kind)
-                    {
-                        case RegistryValueKind.Binary:
-                            return bytes;
-                        case RegistryValueKind.DWord:
-                            return (int)ByteConverter.ToUInt32(bytes);
-                        case RegistryValueKind.QWord:
-                            return (long)ByteConverter.ToUInt64(bytes);
-                        case RegistryValueKind.MultiString:
-                            return ByteConverter.ToStringArray(bytes);
-                        case RegistryValueKind.String:
-                        case RegistryValueKind.ExpandString:
-                            return ByteConverter.ToString(bytes);
-                    }
+                    _value.Data = bytes;
+                    this.DialogResult = DialogResult.OK;
+                    this.Tag = _value;
                 }
                 catch
                 {
                     ShowWarning(INVALID_BINARY_ERROR, "Warning");
+                    this.DialogResult = DialogResult.None;
                 }
             }
-            return null;
-        }
 
-        private void okButton_Click(object sender, EventArgs e)
-        {
-            object valueData = GetData();
-            if (valueData != null)
-                _connectClient.Send(new DoChangeRegistryValue
-                {
-                    KeyPath = _keyPath,
-                    Value = new RegValueData {Name = _value.Name, Kind = _value.Kind, Data = valueData}
-                });
-            else
-                DialogResult = DialogResult.None;
+            this.Close();
         }
 
         private void ShowWarning(string msg, string caption)

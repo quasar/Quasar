@@ -13,12 +13,6 @@ namespace Quasar.Common.Models
         public RegistryValueKind Kind { get; set; }
 
         [ProtoMember(3)]
-        public object Data { get; set; }
-        // TODO: Fix Object
-
-        public override string ToString()
-        {
-            return $"({Name}:{Kind}:{Data})";
-        }
+        public byte[] Data { get; set; }
     }
 }

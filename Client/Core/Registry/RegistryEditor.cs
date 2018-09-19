@@ -1,9 +1,6 @@
 ﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using Quasar.Common.Models;
+using System;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 

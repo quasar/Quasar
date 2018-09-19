@@ -121,8 +121,7 @@ namespace xClient.Core.Commands
                 errorMsg = ex.Message;
             }
             responsePacket.ErrorMsg = errorMsg;
-            responsePacket.Value =
-                new RegValueData {Name = newKeyName, Kind = packet.Kind, Data = packet.Kind.GetDefault()};
+            responsePacket.Value = RegistryKeyHelper.CreateRegValueData(newKeyName, packet.Kind, packet.Kind.GetDefault());
             responsePacket.KeyPath = packet.KeyPath;
 
             client.Send(responsePacket);

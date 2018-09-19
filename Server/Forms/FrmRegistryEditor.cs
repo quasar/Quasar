@@ -1,11 +1,12 @@
 ﻿using Microsoft.Win32;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using Quasar.Common.Utilities;
 using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
 using xServer.Controls;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
@@ -269,7 +270,6 @@ namespace xServer.Forms
                     else //Handle delete of default value
                     {
                         var regValue = ((RegValueData[])key.Tag).First(item => item.Name == valueName);
-                        regValue.Data = null;
 
                         if(tvRegistryDirectory.SelectedNode == key)
                         {
@@ -319,18 +319,44 @@ namespace xServer.Forms
                 lstRegistryValues.Invoke((MethodInvoker)delegate
                 {
                     var regValue = ((RegValueData[])key.Tag).First(item => item.Name == value.Name);
-                    regValue.Data = value.Data;
+                    ChangeRegistryValue(value, regValue);
 
                     if (tvRegistryDirectory.SelectedNode == key)
                     {
                         var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
                                                          .SingleOrDefault(item => item.Name == value.Name);
                         if (valueItem != null)
-                            valueItem.Data = value.Kind.RegistryTypeToString(value.Data);
+                            valueItem.Data = RegistryValueToString(value);
                     }
 
                     tvRegistryDirectory.SelectedNode = key;
                 });
+            }
+        }
+
+        private void ChangeRegistryValue(RegValueData source, RegValueData dest)
+        {
+            if (source.Kind != dest.Kind) return;
+            dest.Data = source.Data;
+        }
+
+        private string RegistryValueToString(RegValueData value)
+        {
+            switch (value.Kind)
+            {
+                case RegistryValueKind.Binary:
+                    return value.Data.Length > 0 ? BitConverter.ToString(value.Data).Replace("-", " ").ToLower() : "(zero-length binary value)";
+                case RegistryValueKind.MultiString:
+                    return string.Join(" ", ByteConverter.ToStringArray(value.Data));
+                case RegistryValueKind.DWord: // show hexadecimal and decimal
+                    return $"0x{value.Data:x8} ({ByteConverter.ToUInt32(value.Data).ToString()})";
+                case RegistryValueKind.QWord: // show hexadecimal and decimal
+                    return $"0x{value.Data:x8} ({ByteConverter.ToUInt64(value.Data).ToString()})";
+                case RegistryValueKind.String:
+                case RegistryValueKind.ExpandString:
+                    return ByteConverter.ToString(value.Data);
+                default:
+                    return string.Empty;
             }
         }
 
@@ -796,20 +822,20 @@ namespace xServer.Forms
             return false;
         }
 
-        private Form GetEditForm(string keyPath, RegValueData value, RegistryValueKind valueKind)
+        private Form GetEditForm(RegValueData value, RegistryValueKind valueKind)
         {
             switch (valueKind)
             {
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
-                    return new FrmRegValueEditString(keyPath, value, _connectClient);
+                    return new FrmRegValueEditString(value);
                 case RegistryValueKind.DWord:
                 case RegistryValueKind.QWord:
-                    return new FrmRegValueEditWord(keyPath, value, _connectClient);
+                    return new FrmRegValueEditWord(value);
                 case RegistryValueKind.MultiString:
-                    return new FrmRegValueEditMultiString(keyPath, value, _connectClient);
+                    return new FrmRegValueEditMultiString(value);
                 case RegistryValueKind.Binary:
-                    return new FrmRegValueEditBinary(keyPath, value, _connectClient);
+                    return new FrmRegValueEditBinary(value);
                 default:
                     return null;
             }
@@ -821,16 +847,22 @@ namespace xServer.Forms
             string name = lstRegistryValues.SelectedItems[0].Name;
             RegValueData value = ((RegValueData[])tvRegistryDirectory.SelectedNode.Tag).ToList().Find(item => item.Name == name);
 
+            // any kind can be edited as binary
             RegistryValueKind kind = isBinary ? RegistryValueKind.Binary : value.Kind;
 
-            using (var frm = GetEditForm(keyPath, value, kind))
+            using (var frm = GetEditForm(value, kind))
             {
-                if (frm != null)
-                    frm.ShowDialog();
+                if (frm.ShowDialog() == DialogResult.OK)
+                {
+                    _connectClient.Send(new DoChangeRegistryValue
+                    {
+                        KeyPath = keyPath,
+                        Value = (RegValueData) frm.Tag
+                    });
+                }
             }
         }
 
         #endregion
-
     }
 }

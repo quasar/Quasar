@@ -145,6 +145,7 @@
     <Compile Include="Models\RegSeekerMatch.cs" />
     <Compile Include="Models\RegValueData.cs" />
     <Compile Include="IO\FileSplit.cs" />
+    <Compile Include="Utilities\ByteConverter.cs" />
     <Compile Include="Utilities\SafeRandom.cs" />
     <Compile Include="Video\Codecs\UnsafeStreamCodec.cs" />
     <Compile Include="Video\Compression\JpgCompression.cs" />
