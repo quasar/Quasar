@@ -34,6 +34,8 @@
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.btnGetLogs = new System.Windows.Forms.Button();
             this.wLogViewer = new System.Windows.Forms.WebBrowser();
+            this.stripLblStatus = new System.Windows.Forms.ToolStripStatusLabel();
+            this.statusStrip.SuspendLayout();
             this.SuspendLayout();
             // 
             // lstLogs
@@ -60,6 +62,8 @@
             // 
             // statusStrip
             // 
+            this.statusStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.stripLblStatus});
             this.statusStrip.Location = new System.Drawing.Point(0, 460);
             this.statusStrip.Name = "statusStrip";
             this.statusStrip.Size = new System.Drawing.Size(862, 22);
@@ -88,6 +92,12 @@
             this.wLogViewer.Size = new System.Drawing.Size(708, 409);
             this.wLogViewer.TabIndex = 8;
             // 
+            // stripLblStatus
+            // 
+            this.stripLblStatus.Name = "stripLblStatus";
+            this.stripLblStatus.Size = new System.Drawing.Size(77, 17);
+            this.stripLblStatus.Text = "Status: Ready";
+            // 
             // FrmKeylogger
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -105,6 +115,8 @@
             this.Text = "Keylogger []";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FrmKeylogger_FormClosing);
             this.Load += new System.EventHandler(this.FrmKeylogger_Load);
+            this.statusStrip.ResumeLayout(false);
+            this.statusStrip.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -117,8 +129,6 @@
         private System.Windows.Forms.WebBrowser wLogViewer;
         private System.Windows.Forms.ListView lstLogs;
         private System.Windows.Forms.Button btnGetLogs;
-
-
-
+        private System.Windows.Forms.ToolStripStatusLabel stripLblStatus;
     }
 }

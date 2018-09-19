@@ -28,10 +28,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleGetWebcamResponse(client, (GetWebcamResponse)packet);
             }
-            else if (type == typeof(GetKeyloggerLogsResponse))
-            {
-                CommandHandler.HandleGetKeyloggerLogsResponse(client, (GetKeyloggerLogsResponse)packet);
-            }
             else if (type == typeof(GetRegistryKeysResponse))
             {
                 CommandHandler.HandleLoadRegistryKey((GetRegistryKeysResponse)packet, client);

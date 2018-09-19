@@ -113,6 +113,7 @@
     <Compile Include="Core\Build\IconInjector.cs" />
     <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
+    <Compile Include="Core\Commands\KeyloggerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
     <Compile Include="Core\Commands\RemoteShellHandler.cs" />

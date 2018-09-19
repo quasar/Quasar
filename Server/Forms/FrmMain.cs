@@ -698,13 +698,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmKl != null)
-                {
-                    c.Value.FrmKl.Focus();
-                    return;
-                }
-                FrmKeylogger frmKL = new FrmKeylogger(c);
-                frmKL.Show();
+                FrmKeylogger frmKl = FrmKeylogger.CreateNewOrGetExisting(c);
+                frmKl.Show();
+                frmKl.Focus();
             }
         }
 
