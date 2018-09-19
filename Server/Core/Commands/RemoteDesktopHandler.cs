@@ -73,9 +73,7 @@ namespace xServer.Core.Commands
         /// <summary>
         /// Reports changed displays.
         /// </summary>
-        /// <param name="value">
-        /// All currently available displays.
-        /// </param>
+        /// <param name="value">All currently available displays.</param>
         private void OnDisplaysChanged(int value)
         {
             SynchronizationContext.Post(val =>

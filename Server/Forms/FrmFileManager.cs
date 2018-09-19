@@ -422,17 +422,10 @@ namespace xServer.Forms
                 }
             }
 
-            if (_connectClient.Value.FrmRs != null)
-            {
-                _connectClient.Send(new DoShellExecute {Command = $"cd \"{path}\""});
-                _connectClient.Value.FrmRs.Focus();
-            }
-            else
-            {
-                FrmRemoteShell frmRS = new FrmRemoteShell(_connectClient);
-                frmRS.Show();
-                _connectClient.Send(new DoShellExecute {Command = $"cd \"{path}\""});
-            }
+            FrmRemoteShell frmRs = FrmRemoteShell.CreateNewOrGetExisting(_connectClient);
+            frmRs.Show();
+            frmRs.Focus();
+            frmRs.RemoteShellHandler.SendCommand($"cd \"{path}\"");
         }
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)

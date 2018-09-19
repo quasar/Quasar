@@ -578,13 +578,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmRs != null)
-                {
-                    c.Value.FrmRs.Focus();
-                    return;
-                }
-                FrmRemoteShell frmRS = new FrmRemoteShell(c);
-                frmRS.Show();
+                FrmRemoteShell frmRs = FrmRemoteShell.CreateNewOrGetExisting(c);
+                frmRs.Show();
+                frmRs.Focus();
             }
         }
 

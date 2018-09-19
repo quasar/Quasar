@@ -115,6 +115,7 @@
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
+    <Compile Include="Core\Commands\RemoteShellHandler.cs" />
     <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
     <Compile Include="Core\Commands\StartupManagerHandler.cs" />
     <Compile Include="Core\Commands\SystemInformationHandler.cs" />
@@ -140,7 +141,6 @@
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
-    <Compile Include="Core\Commands\MiscHandler.cs" />
     <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />

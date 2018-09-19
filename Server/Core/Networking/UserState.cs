@@ -24,7 +24,6 @@ namespace xServer.Core.Networking
 
         public FrmRemoteWebcam FrmWebcam { get; set; }
         public FrmRegistryEditor FrmRe { get; set; }
-        public FrmRemoteShell FrmRs { get; set; }
         public FrmKeylogger FrmKl { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
 
@@ -43,8 +42,6 @@ namespace xServer.Core.Networking
                         FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmRe != null)
                         FrmRe.Invoke((MethodInvoker)delegate { FrmRe.Close(); });
-                    if (FrmRs != null)
-                        FrmRs.Invoke((MethodInvoker)delegate { FrmRs.Close(); });
                     if (FrmKl != null)
                         FrmKl.Invoke((MethodInvoker)delegate { FrmKl.Close(); });
                     if (FrmPass != null)
