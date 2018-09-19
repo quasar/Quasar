@@ -118,6 +118,7 @@
     <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
     <Compile Include="Core\Commands\StartupManagerHandler.cs" />
     <Compile Include="Core\Commands\SystemInformationHandler.cs" />
+    <Compile Include="Core\Commands\TaskManagerHandler.cs" />
     <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />

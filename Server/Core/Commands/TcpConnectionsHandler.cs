@@ -8,7 +8,7 @@ namespace xServer.Core.Commands
     public class TcpConnectionsHandler : MessageProcessorBase<TcpConnection[]>
     {
         /// <summary>
-        /// The client which is associated with this system information handler.
+        /// The client which is associated with this tcp connections handler.
         /// </summary>
         private readonly Client _client;
 

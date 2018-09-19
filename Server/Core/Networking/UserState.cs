@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core.ReverseProxy;
 using xServer.Forms;
 
 namespace xServer.Core.Networking
@@ -24,7 +23,6 @@ namespace xServer.Core.Networking
         public string DownloadDirectory { get; set; }
 
         public FrmRemoteWebcam FrmWebcam { get; set; }
-        public FrmTaskManager FrmTm { get; set; }
         public FrmRegistryEditor FrmRe { get; set; }
         public FrmRemoteShell FrmRs { get; set; }
         public FrmKeylogger FrmKl { get; set; }
@@ -43,8 +41,6 @@ namespace xServer.Core.Networking
                 {
                     if (FrmWebcam != null)
                         FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
-                    if (FrmTm != null)
-                        FrmTm.Invoke((MethodInvoker)delegate { FrmTm.Close(); });
                     if (FrmRe != null)
                         FrmRe.Invoke((MethodInvoker)delegate { FrmRe.Close(); });
                     if (FrmRs != null)

@@ -58,6 +58,7 @@
     <Compile Include="Enums\ShutdownAction.cs" />
     <Compile Include="Enums\UserStatus.cs" />
     <Compile Include="Models\FileSystemEntry.cs" />
+    <Compile Include="Models\Process.cs" />
     <Compile Include="Models\StartupItem.cs" />
     <Compile Include="Models\TcpConnection.cs" />
     <Compile Include="NativeMethods.cs" />

@@ -1,11 +1,11 @@
 ﻿using Quasar.Common.Enums;
 using Quasar.Common.Messages;
-using Quasar.Common.Models;
 using System;
 using System.Diagnostics;
 using System.Net;
 using System.Runtime.InteropServices;
 using xClient.Core.Networking;
+using Models = Quasar.Common.Models;
 
 namespace xClient.Core.Commands
 {
@@ -17,7 +17,7 @@ namespace xClient.Core.Commands
         {
             var table = GetTable();
 
-            var connections = new TcpConnection[table.Length];
+            var connections = new Models.TcpConnection[table.Length];
 
             for (int i = 0; i < table.Length; i++)
             {
@@ -32,7 +32,7 @@ namespace xClient.Core.Commands
                     processName = $"PID: {table[i].owningPid}";
                 }
 
-                connections[i] = new TcpConnection {
+                connections[i] = new Models.TcpConnection {
                     ProcessName = processName,
                     LocalAddress = table[i].LocalAddress.ToString(),
                     LocalPort = table[i].LocalPort,

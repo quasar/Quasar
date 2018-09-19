@@ -3,7 +3,6 @@ using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
 using xServer.Controls;
@@ -11,6 +10,7 @@ using xServer.Core.Commands;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Models;
+using Process = System.Diagnostics.Process;
 
 namespace xServer.Forms
 {

