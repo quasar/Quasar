@@ -5,10 +5,10 @@ using System.IO;
 using System.Text;
 using System.Windows.Forms;
 using xClient.Core.Helper;
-using xClient.Core.MouseKeyHook;
 using xClient.Core.Networking;
 using Timer = System.Timers.Timer;
 using xClient.Config;
+using Gma.System.MouseKeyHook;
 
 namespace xClient.Core.Utilities
 {

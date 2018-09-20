@@ -1,13 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xServer.Core.Networking;
-using xServer.Core.Registry;
 
 namespace xServer.Forms
 {
@@ -28,15 +23,24 @@ namespace xServer.Forms
             InitializeComponent();
 
             this.valueNameTxtBox.Text = value.Name;
-            this.valueDataTxtBox.Text = String.Join("\r\n",((string[])value.Data));
+            this.valueDataTxtBox.Text = string.Join("\r\n",((string[])value.Data));
         }
 
         private void okButton_Click(object sender, EventArgs e)
         {
-            string[] valueData = valueDataTxtBox.Text.Split(new string[] { "\r\n" }, StringSplitOptions.RemoveEmptyEntries);
+            string[] valueData =
+                valueDataTxtBox.Text.Split(new string[] {"\r\n"}, StringSplitOptions.RemoveEmptyEntries);
 
-            new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
+            _connectClient.Send(new DoChangeRegistryValue
+            {
+                KeyPath = _keyPath,
+                Value = new RegValueData
+                {
+                    Name = _value.Name,
+                    Kind = _value.Kind,
+                    Data = valueData
+                }
+            });
         }
-
     }
 }

@@ -52,17 +52,20 @@ namespace xClient.Core.Helper
         {
             TimeSpan lastLocateTry = new TimeSpan(DateTime.UtcNow.Ticks - LastLocated.Ticks);
 
-            // last location was 30 minutes ago or last location has not completed
-            if (lastLocateTry.TotalMinutes > 30 || !LocationCompleted)
+            // last location was 60 minutes ago or last location has not completed
+            if (lastLocateTry.TotalMinutes > 60 || !LocationCompleted)
             {
                 TryLocate();
 
-                if (string.IsNullOrEmpty(GeoInfo.CountryCode) || string.IsNullOrEmpty(GeoInfo.Country))
-                {
-                    ImageIndex = 247; // question icon
-                    return;
-                }
+                GeoInfo.Ip = (string.IsNullOrEmpty(GeoInfo.Ip)) ? "Unknown" : GeoInfo.Ip;
+                GeoInfo.Country = (string.IsNullOrEmpty(GeoInfo.Country)) ? "Unknown" : GeoInfo.Country;
+                GeoInfo.CountryCode = (string.IsNullOrEmpty(GeoInfo.CountryCode)) ? "-" : GeoInfo.CountryCode;
+                GeoInfo.Region = (string.IsNullOrEmpty(GeoInfo.Region)) ? "Unknown" : GeoInfo.Region;
+                GeoInfo.City = (string.IsNullOrEmpty(GeoInfo.City)) ? "Unknown" : GeoInfo.City;
+                GeoInfo.Timezone = (string.IsNullOrEmpty(GeoInfo.Timezone)) ? "Unknown" : GeoInfo.Timezone;
+                GeoInfo.Isp = (string.IsNullOrEmpty(GeoInfo.Isp)) ? "Unknown" : GeoInfo.Isp;
 
+                ImageIndex = 0;
                 for (int i = 0; i < ImageList.Length; i++)
                 {
                     if (ImageList[i] == GeoInfo.CountryCode.ToLower())
@@ -71,6 +74,7 @@ namespace xClient.Core.Helper
                         break;
                     }
                 }
+                if (ImageIndex == 0) ImageIndex = 247; // question icon
             }
         }
 
@@ -134,33 +138,12 @@ namespace xClient.Core.Helper
                             XmlDocument doc = new XmlDocument();
                             doc.LoadXml(responseString);
 
-                            string xmlIp = doc.SelectSingleNode("Response//IP").InnerXml;
-                            string xmlCountry = doc.SelectSingleNode("Response//CountryName").InnerXml;
-                            string xmlCountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
-                            string xmlRegion = doc.SelectSingleNode("Response//RegionName").InnerXml;
-                            string xmlCity = doc.SelectSingleNode("Response//City").InnerXml;
-                            string timeZone = doc.SelectSingleNode("Response//TimeZone").InnerXml;
-
-                            GeoInfo.Ip = (!string.IsNullOrEmpty(xmlIp))
-                                ? xmlIp
-                                : "-";
-                            GeoInfo.Country = (!string.IsNullOrEmpty(xmlCountry))
-                                ? xmlCountry
-                                : "Unknown";
-                            GeoInfo.CountryCode = (!string.IsNullOrEmpty(xmlCountryCode))
-                                ? xmlCountryCode
-                                : "-";
-                            GeoInfo.Region = (!string.IsNullOrEmpty(xmlRegion))
-                                ? xmlRegion
-                                : "Unknown";
-                            GeoInfo.City = (!string.IsNullOrEmpty(xmlCity))
-                                ? xmlCity
-                                : "Unknown";
-                            GeoInfo.Timezone = (!string.IsNullOrEmpty(timeZone))
-                                ? timeZone
-                                : "Unknown";
-
-                            GeoInfo.Isp = "Unknown"; // freegeoip does not support ISP detection
+                            GeoInfo.Ip = doc.SelectSingleNode("Response//IP").InnerXml;
+                            GeoInfo.Country = doc.SelectSingleNode("Response//CountryName").InnerXml;
+                            GeoInfo.CountryCode = doc.SelectSingleNode("Response//CountryCode").InnerXml;
+                            GeoInfo.Region = doc.SelectSingleNode("Response//RegionName").InnerXml;
+                            GeoInfo.City = doc.SelectSingleNode("Response//City").InnerXml;
+                            GeoInfo.Timezone = doc.SelectSingleNode("Response//TimeZone").InnerXml;
                         }
                     }
                 }
@@ -170,12 +153,6 @@ namespace xClient.Core.Helper
             }
             catch
             {
-                GeoInfo.Country = "Unknown";
-                GeoInfo.CountryCode = "-";
-                GeoInfo.Region = "Unknown";
-                GeoInfo.City = "Unknown";
-                GeoInfo.Timezone = "Unknown";
-                GeoInfo.Isp = "Unknown";
                 LocationCompleted = false;
             }
 

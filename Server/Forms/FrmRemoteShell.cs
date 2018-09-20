@@ -1,44 +1,132 @@
-﻿using System;
-using System.Windows.Forms;
+﻿using Quasar.Common.Messages;
+using System;
+using System.Collections.Generic;
 using System.Drawing;
+using System.Windows.Forms;
+using xServer.Core.Commands;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
 namespace xServer.Forms
 {
-    public interface IRemoteShell
+    public partial class FrmRemoteShell : Form
     {
-        void PrintMessage(string message);
-        void PrintError(string errorMessage);
-    }
-
-    public partial class FrmRemoteShell : Form, IRemoteShell
-    {
+        /// <summary>
+        /// The client which can be used for the remote shell.
+        /// </summary>
         private readonly Client _connectClient;
 
-        public FrmRemoteShell(Client c)
-        {
-            _connectClient = c;
-            _connectClient.Value.FrmRs = this;
+        /// <summary>
+        /// The message handler for handling the communication with the client.
+        /// </summary>
+        public readonly RemoteShellHandler RemoteShellHandler;
 
+        /// <summary>
+        /// Holds the opened remote shell form for each client.
+        /// </summary>
+        private static readonly Dictionary<Client, FrmRemoteShell> OpenedForms = new Dictionary<Client, FrmRemoteShell>();
+
+        /// <summary>
+        /// Creates a new remote shell form for the client or gets the current open form, if there exists one already.
+        /// </summary>
+        /// <param name="client">The client used for the remote shell form.</param>
+        /// <returns>
+        /// Returns a new remote shell form for the client if there is none currently open, otherwise creates a new one.
+        /// </returns>
+        public static FrmRemoteShell CreateNewOrGetExisting(Client client)
+        {
+            if (OpenedForms.ContainsKey(client))
+            {
+                return OpenedForms[client];
+            }
+            FrmRemoteShell f = new FrmRemoteShell(client);
+            f.Disposed += (sender, args) => OpenedForms.Remove(client);
+            OpenedForms.Add(client, f);
+            return f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmRemoteShell"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the remote shell form.</param>
+        public FrmRemoteShell(Client client)
+        {
+            _connectClient = client;
+            RemoteShellHandler = new RemoteShellHandler(client);
+
+            RegisterMessageHandler();
             InitializeComponent();
 
             txtConsoleOutput.AppendText(">> Type 'exit' to close this session" + Environment.NewLine);
         }
 
+        /// <summary>
+        /// Registers the remote shell message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            _connectClient.ClientState += ClientDisconnected;
+            RemoteShellHandler.ProgressChanged += CommandOutput;
+            RemoteShellHandler.CommandError += CommandError;
+            MessageHandler.Register(RemoteShellHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the remote shell message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(RemoteShellHandler);
+            RemoteShellHandler.ProgressChanged -= CommandOutput;
+            RemoteShellHandler.CommandError -= CommandError;
+            _connectClient.ClientState -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Called whenever the remote shell writes to stdout.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="output">The output to write.</param>
+        private void CommandOutput(object sender, string output)
+        {
+            txtConsoleOutput.SelectionColor = Color.WhiteSmoke;
+            txtConsoleOutput.AppendText(output);
+        }
+
+        /// <summary>
+        /// Called whenever the remote shell writes to stderr.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="output">The error output to write.</param>
+        private void CommandError(object sender, string output)
+        {
+            txtConsoleOutput.SelectionColor = Color.Red;
+            txtConsoleOutput.AppendText(output);
+        }
+
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
+        {
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
+        }
+
         private void FrmRemoteShell_Load(object sender, EventArgs e)
         {
             this.DoubleBuffered = true;
-
-            if (_connectClient != null)
-                this.Text = WindowHelper.GetWindowTitle("Remote Shell", _connectClient);
+            this.Text = WindowHelper.GetWindowTitle("Remote Shell", _connectClient);
         }
 
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
         {
-            new Core.Packets.ServerPackets.DoShellExecute("exit").Execute(_connectClient);
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmRs = null;
+            UnregisterMessageHandler();
+            RemoteShellHandler.Dispose();
         }
 
         private void txtConsoleOutput_TextChanged(object sender, EventArgs e)
@@ -73,7 +161,7 @@ namespace xServer.Forms
                             txtConsoleOutput.Text = string.Empty;
                             break;
                         default:
-                            new Core.Packets.ServerPackets.DoShellExecute(input).Execute(_connectClient);
+                            RemoteShellHandler.SendCommand(input);
                             break;
                     }
                 }
@@ -91,36 +179,6 @@ namespace xServer.Forms
                 txtConsoleInput.Focus();
                 txtConsoleInput.SelectionStart = txtConsoleOutput.TextLength;
                 txtConsoleInput.ScrollToCaret();
-            }
-        }
-
-        public void PrintMessage(string message)
-        {
-            try
-            {
-                txtConsoleOutput.Invoke((MethodInvoker)delegate
-                {
-                    txtConsoleOutput.SelectionColor = Color.WhiteSmoke;
-                    txtConsoleOutput.AppendText(message);
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public void PrintError(string errorMessage)
-        {
-            try
-            {
-                txtConsoleOutput.Invoke((MethodInvoker)delegate
-                {
-                    txtConsoleOutput.SelectionColor = Color.Red;
-                    txtConsoleOutput.AppendText(errorMessage);
-                });
-            }
-            catch (InvalidOperationException)
-            {
             }
         }
     }

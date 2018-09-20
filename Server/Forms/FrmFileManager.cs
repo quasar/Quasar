@@ -1,82 +1,282 @@
-﻿using System;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using xServer.Controls;
 using xServer.Core.Commands;
-using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
-using xServer.Core.Utilities;
-using xServer.Enums;
+using xServer.Models;
+using Process = System.Diagnostics.Process;
 
 namespace xServer.Forms
 {
     public partial class FrmFileManager : Form
     {
+        /// <summary>
+        /// The current remote directory shown in the file manager.
+        /// </summary>
         private string _currentDir;
+
+        /// <summary>
+        /// The client which can be used for the file manager.
+        /// </summary>
         private readonly Client _connectClient;
-        private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file uploads
-        public Dictionary<int, string> CanceledUploads = new Dictionary<int, string>();
 
-        private const int TRANSFER_ID = 0;
-        private const int TRANSFER_TYPE = 1;
-        private const int TRANSFER_STATUS = 2;
+        /// <summary>
+        /// The message handler for handling the communication with the client.
+        /// </summary>
+        private readonly FileManagerHandler _fileManagerHandler;
 
-        public FrmFileManager(Client c)
+        private enum TransferColumn
         {
-            _connectClient = c;
-            _connectClient.Value.FrmFm = this;
+            Id,
+            Type,
+            Status,
+        }
+
+        /// <summary>
+        /// Holds the opened file manager form for each client.
+        /// </summary>
+        private static readonly Dictionary<Client, FrmFileManager> OpenedForms = new Dictionary<Client, FrmFileManager>();
+
+        /// <summary>
+        /// Creates a new file manager form for the client or gets the current open form, if there exists one already.
+        /// </summary>
+        /// <param name="client">The client used for the file manager form.</param>
+        /// <returns>
+        /// Returns a new file manager form for the client if there is none currently open, otherwise creates a new one.
+        /// </returns>
+        public static FrmFileManager CreateNewOrGetExisting(Client client)
+        {
+            if (OpenedForms.ContainsKey(client))
+            {
+                return OpenedForms[client];
+            }
+            FrmFileManager f = new FrmFileManager(client);
+            f.Disposed += (sender, args) => OpenedForms.Remove(client);
+            OpenedForms.Add(client, f);
+            return f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmFileManager"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the remote desktop form.</param>
+        public FrmFileManager(Client client)
+        {
+            _connectClient = client;
+
+            _fileManagerHandler = new FileManagerHandler(client);
+
+            RegisterMessageHandler();
             InitializeComponent();
         }
 
-        private string GetAbsolutePath(string item)
+        /// <summary>
+        /// Registers the file manager message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
         {
-            return Path.GetFullPath(Path.Combine(_currentDir, item));
+            _connectClient.ClientState += ClientDisconnected;
+            _fileManagerHandler.ProgressChanged += SetStatusMessage;
+            _fileManagerHandler.DrivesChanged += DrivesChanged;
+            _fileManagerHandler.DirectoryChanged += DirectoryChanged;
+            _fileManagerHandler.FileTransferUpdated += FileTransferUpdated;
+            MessageHandler.Register(_fileManagerHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the file manager message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_fileManagerHandler);
+            _fileManagerHandler.ProgressChanged -= SetStatusMessage;
+            _fileManagerHandler.DrivesChanged -= DrivesChanged;
+            _fileManagerHandler.DirectoryChanged -= DirectoryChanged;
+            _fileManagerHandler.FileTransferUpdated -= FileTransferUpdated;
+            _connectClient.ClientState -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
+        {
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
+        }
+
+        /// <summary>
+        /// Called whenever drives changed.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="drives">The currently available drives.</param>
+        private void DrivesChanged(object sender, Drive[] drives)
+        {
+            cmbDrives.Items.Clear();
+            cmbDrives.DisplayMember = "DisplayName";
+            cmbDrives.ValueMember = "RootDirectory";
+            cmbDrives.DataSource = new BindingSource(drives, null);
+
+            SetStatusMessage(this, "Ready");
+        }
+
+        /// <summary>
+        /// Called whenever a directory changed.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="remotePath">The remote path of the directory.</param>
+        /// <param name="items">The directory content.</param>
+        private void DirectoryChanged(object sender, string remotePath, FileSystemEntry[] items)
+        {
+            txtPath.Text = remotePath;
+            _currentDir = remotePath;
+
+            lstDirectory.Items.Clear();
+
+            AddItemToFileBrowser("..", 0, FileType.Back, 0);
+            foreach (var item in items)
+            {
+                switch (item.EntryType)
+                {
+                    case FileType.Directory:
+                        AddItemToFileBrowser(item.Name, 0, item.EntryType, 1);
+                        break;
+                    case FileType.File:
+                        int imageIndex = item.ContentType == null ? 2 : (int)item.ContentType;
+                        AddItemToFileBrowser(item.Name, item.Size, item.EntryType, imageIndex);
+                        break;
+                }
+            }
+
+            SetStatusMessage(this, "Ready");
+        }
+
+        /// <summary>
+        /// Gets the image index of completed or canceled file transfers.
+        /// </summary>
+        /// <param name="status">File transfer status used to determine the image index.</param>
+        /// <returns>The image index of the file transfer, default -1.</returns>
+        private int GetTransferImageIndex(string status)
+        {
+            int imageIndex = -1;
+            switch (status)
+            {
+                case "Completed":
+                    imageIndex = 1;
+                    break;
+                case "Canceled":
+                    imageIndex = 0;
+                    break;
+            }
+
+            return imageIndex;
+        }
+
+        /// <summary>
+        /// Called whenever a file transfer gets updated.
+        /// </summary>
+        /// <param name="sender">The message processor which raised the event.</param>
+        /// <param name="transfer">The updated file transfer.</param>
+        private void FileTransferUpdated(object sender, FileTransfer transfer)
+        {
+            for (var i = 0; i < lstTransfers.Items.Count; i++)
+            {
+                if (lstTransfers.Items[i].SubItems[(int)TransferColumn.Id].Text == transfer.Id.ToString())
+                {
+                    lstTransfers.Items[i].SubItems[(int)TransferColumn.Status].Text = transfer.Status;
+                    lstTransfers.Items[i].ImageIndex = GetTransferImageIndex(transfer.Status);
+                    return;
+                }
+            }
+
+            var lvi = new ListViewItem(new[]
+                    {transfer.Id.ToString(), transfer.Type.ToString(), transfer.Status, transfer.RemotePath})
+                {Tag = transfer, ImageIndex = GetTransferImageIndex(transfer.Status)};
+
+            lstTransfers.Items.Add(lvi);
+        }
+
+        /// <summary>
+        /// Combines the current path with the new path.
+        /// </summary>
+        /// <param name="path">The path to combine with.</param>
+        /// <returns>The absolute combined path.</returns>
+        private string GetAbsolutePath(string path)
+        {
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
+            {
+                if (_currentDir.Length == 1)
+                    return Path.Combine(_currentDir, path);
+                else
+                    return Path.Combine(_currentDir + '/', path);
+            }
+
+            return Path.GetFullPath(Path.Combine(_currentDir, path));
+        }
+
+        /// <summary>
+        /// Navigates one directory up in the hierarchical directory tree.
+        /// </summary>
+        /// <returns>The new directory path.</returns>
+        private string NavigateUp()
+        {
+            if (!string.IsNullOrEmpty(_currentDir) && _currentDir[0] == '/') // support forward slashes
+            {
+                if (_currentDir.LastIndexOf('/') > 0)
+                {
+                    _currentDir = _currentDir.Remove(_currentDir.LastIndexOf('/') + 1);
+                    _currentDir = _currentDir.TrimEnd('/');
+                }
+                else
+                    _currentDir = "/";
+
+                return _currentDir;
+            }
+            else
+                return GetAbsolutePath(@"..\");
         }
 
         private void FrmFileManager_Load(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
-                new Core.Packets.ServerPackets.GetDrives().Execute(_connectClient);
-            }
+            this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
+
+            _fileManagerHandler.RefreshDrives();
         }
 
         private void FrmFileManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmFm = null;
+            UnregisterMessageHandler();
+            _fileManagerHandler.Dispose();
         }
 
         private void cmbDrives_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (_connectClient != null && _connectClient.Value != null)
-            {
-                SetCurrentDir(cmbDrives.SelectedValue.ToString());
-                RefreshDirectory();
-            }
+            SwitchDirectory(cmbDrives.SelectedValue.ToString());
         }
 
         private void lstDirectory_DoubleClick(object sender, EventArgs e)
         {
-            if (_connectClient != null && _connectClient.Value != null && lstDirectory.SelectedItems.Count > 0)
+            if (lstDirectory.SelectedItems.Count > 0)
             {
-                PathType type = (PathType) lstDirectory.SelectedItems[0].Tag;
+                FileType type = (FileType) lstDirectory.SelectedItems[0].Tag;
 
                 switch (type)
                 {
-                    case PathType.Back:
-                        SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
-                        RefreshDirectory();
+                    case FileType.Back:
+                        SwitchDirectory(NavigateUp());
                         break;
-                    case PathType.Directory:
-                        SetCurrentDir(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
-                        RefreshDirectory();
+                    case FileType.Directory:
+                        SwitchDirectory(GetAbsolutePath(lstDirectory.SelectedItems[0].SubItems[0].Text));
                         break;
                 }
             }
@@ -86,20 +286,15 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                PathType type = (PathType)files.Tag;
+                FileType type = (FileType)files.Tag;
 
-                if (type == PathType.File)
+                if (type == FileType.File)
                 {
-                    string path = GetAbsolutePath(files.SubItems[0].Text);
+                    string remotePath = GetAbsolutePath(files.SubItems[0].Text);
 
-                    int id = FileHelper.GetNewTransferId(files.Index);
+                    _fileManagerHandler.BeginDownloadFile(remotePath);
 
-                    if (_connectClient != null)
-                    {
-                        new Core.Packets.ServerPackets.DoDownloadFile(path, id).Execute(_connectClient);
-
-                        AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
-                    }
+                    //AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
                 }
             }
         }
@@ -114,84 +309,13 @@ namespace xServer.Forms
 
                 if (ofd.ShowDialog() == DialogResult.OK)
                 {
-                    var remoteDir = _currentDir;
-                    foreach (var filePath in ofd.FileNames)
+                    foreach (var localFilePath in ofd.FileNames)
                     {
-                        if (!File.Exists(filePath)) continue;
+                        if (!File.Exists(localFilePath)) continue;
 
-                        string path = filePath;
-                        new Thread(() =>
-                        {
-                            int id = FileHelper.GetNewTransferId();
+                        string remotePath = GetAbsolutePath(Path.GetFileName(localFilePath));
 
-                            if (string.IsNullOrEmpty(path)) return;
-
-                            AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
-
-                            int index = GetTransferIndex(id);
-                            if (index < 0)
-                                return;
-
-                            FileSplit srcFile = new FileSplit(path);
-                            if (srcFile.MaxBlocks < 0)
-                            {
-                                UpdateTransferStatus(index, "Error reading file", 0);
-                                return;
-                            }
-
-                            string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
-
-                            if (string.IsNullOrEmpty(remotePath)) return;
-
-                            _limitThreads.WaitOne();
-                            for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                            {
-                                if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
-                                {
-                                    _limitThreads.Release();
-                                    return; // abort upload when from is closed or client disconnected
-                                }
-
-                                if (CanceledUploads.ContainsKey(id))
-                                {
-                                    UpdateTransferStatus(index, "Canceled", 0);
-                                    _limitThreads.Release();
-                                    return;
-                                }
-
-                                index = GetTransferIndex(id);
-                                if (index < 0)
-                                {
-                                    _limitThreads.Release();
-                                    return;
-                                }
-
-                                decimal progress =
-                                    Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
-
-                                UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
-
-                                byte[] block;
-                                if (srcFile.ReadBlock(currentBlock, out block))
-                                {
-                                    new Core.Packets.ServerPackets.DoUploadFile(id,
-                                        remotePath, block, srcFile.MaxBlocks,
-                                        currentBlock).Execute(_connectClient);
-                                }
-                                else
-                                {
-                                    UpdateTransferStatus(index, "Error reading file", 0);
-                                    _limitThreads.Release();
-                                    return;
-                                }
-                            }
-                            _limitThreads.Release();
-
-                            if (remoteDir == _currentDir)
-                                RefreshDirectory();
-
-                            UpdateTransferStatus(index, "Completed", 1);
-                        }).Start();
+                        _fileManagerHandler.BeginUploadFile(localFilePath, remotePath);
                     }
                 }
             }
@@ -201,14 +325,13 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                PathType type = (PathType) files.Tag;
+                FileType type = (FileType) files.Tag;
 
-                if (type == PathType.File)
+                if (type == FileType.File)
                 {
-                    string path = GetAbsolutePath(files.SubItems[0].Text);
+                    string remotePath = GetAbsolutePath(files.SubItems[0].Text);
 
-                    if (_connectClient != null)
-                        new Core.Packets.ServerPackets.DoProcessStart(path).Execute(_connectClient);
+                    _fileManagerHandler.StartProcess(remotePath);
                 }
             }
         }
@@ -217,21 +340,19 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                PathType type = (PathType)files.Tag;
+                FileType type = (FileType)files.Tag;
 
                 switch (type)
                 {
-                    case PathType.Directory:
-                    case PathType.File:
+                    case FileType.Directory:
+                    case FileType.File:
                         string path = GetAbsolutePath(files.SubItems[0].Text);
                         string newName = files.SubItems[0].Text;
 
                         if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                         {
                             newName = GetAbsolutePath(newName);
-
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoPathRename(path, newName, type).Execute(_connectClient);
+                            _fileManagerHandler.RenameFile(path, newName, type);
                         }
                         break;
                 }
@@ -247,15 +368,14 @@ namespace xServer.Forms
             {
                 foreach (ListViewItem files in lstDirectory.SelectedItems)
                 {
-                    PathType type = (PathType)files.Tag;
+                    FileType type = (FileType)files.Tag;
 
                     switch (type)
                     {
-                        case PathType.Directory:
-                        case PathType.File:
+                        case FileType.Directory:
+                        case FileType.File:
                             string path = GetAbsolutePath(files.SubItems[0].Text);
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoPathDelete(path, type).Execute(_connectClient);
+                            _fileManagerHandler.DeleteFile(path, type);
                             break;
                     }
                 }
@@ -266,19 +386,17 @@ namespace xServer.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                PathType type = (PathType)files.Tag;
+                FileType type = (FileType)files.Tag;
 
-                if (type == PathType.File)
+                if (type == FileType.File)
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
-                    using (var frm = new FrmAddToAutostart(path))
+                    using (var frm = new FrmStartupAdd(path))
                     {
                         if (frm.ShowDialog() == DialogResult.OK)
                         {
-                            if (_connectClient != null)
-                                new Core.Packets.ServerPackets.DoStartupItemAdd(AutostartItem.Name, AutostartItem.Path,
-                                    AutostartItem.Type).Execute(_connectClient);
+                            _fileManagerHandler.AddToStartup(frm.StartupItem);
                         }
                     }
                 }
@@ -292,32 +410,22 @@ namespace xServer.Forms
 
         private void openDirectoryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            string path = _currentDir;
+            if (lstDirectory.SelectedItems.Count == 1)
             {
-                string path = _currentDir;
-                if (lstDirectory.SelectedItems.Count == 1)
-                {
-                    var item = lstDirectory.SelectedItems[0];
-                    PathType type = (PathType)item.Tag;
+                var item = lstDirectory.SelectedItems[0];
+                FileType type = (FileType)item.Tag;
 
-                    if (type == PathType.Directory)
-                    {
-                        path = GetAbsolutePath(item.SubItems[0].Text);
-                    }
-                }
-
-                if (_connectClient.Value.FrmRs != null)
+                if (type == FileType.Directory)
                 {
-                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
-                    _connectClient.Value.FrmRs.Focus();
-                }
-                else
-                {
-                    FrmRemoteShell frmRS = new FrmRemoteShell(_connectClient);
-                    frmRS.Show();
-                    new Core.Packets.ServerPackets.DoShellExecute(string.Format("cd \"{0}\"", path)).Execute(_connectClient);
+                    path = GetAbsolutePath(item.SubItems[0].Text);
                 }
             }
+
+            FrmRemoteShell frmRs = FrmRemoteShell.CreateNewOrGetExisting(_connectClient);
+            frmRs.Show();
+            frmRs.Focus();
+            frmRs.RemoteShellHandler.SendCommand($"cd \"{path}\"");
         }
 
         private void btnOpenDLFolder_Click(object sender, EventArgs e)
@@ -332,28 +440,13 @@ namespace xServer.Forms
         {
             foreach (ListViewItem transfer in lstTransfers.SelectedItems)
             {
-                if (!transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") &&
-                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") &&
-                    !transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+                if (!transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Downloading") &&
+                    !transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Uploading") &&
+                    !transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Pending")) continue;
 
-                int id = int.Parse(transfer.SubItems[TRANSFER_ID].Text);
+                int id = int.Parse(transfer.SubItems[(int)TransferColumn.Id].Text);
 
-                if (transfer.SubItems[TRANSFER_TYPE].Text == "Download")
-                {
-                    if (_connectClient != null)
-                        new Core.Packets.ServerPackets.DoDownloadFileCancel(id).Execute(_connectClient);
-                    if (!CommandHandler.CanceledDownloads.ContainsKey(id))
-                        CommandHandler.CanceledDownloads.Add(id, "canceled");
-                    if (CommandHandler.RenamedFiles.ContainsKey(id))
-                        CommandHandler.RenamedFiles.Remove(id);
-                    UpdateTransferStatus(transfer.Index, "Canceled", 0);
-                }
-                else if (transfer.SubItems[TRANSFER_TYPE].Text == "Upload")
-                {
-                    if (!CanceledUploads.ContainsKey(id))
-                        CanceledUploads.Add(id, "canceled");
-                    UpdateTransferStatus(transfer.Index, "Canceled", 0);
-                }
+                _fileManagerHandler.CancelFileTransfer(id);
             }
         }
 
@@ -361,9 +454,9 @@ namespace xServer.Forms
         {
             foreach (ListViewItem transfer in lstTransfers.Items)
             {
-                if (transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Downloading") ||
-                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Uploading") ||
-                    transfer.SubItems[TRANSFER_STATUS].Text.StartsWith("Pending")) continue;
+                if (transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Downloading") ||
+                    transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Uploading") ||
+                    transfer.SubItems[(int)TransferColumn.Status].Text.StartsWith("Pending")) continue;
                 transfer.Remove();
             }
         }
@@ -379,84 +472,13 @@ namespace xServer.Forms
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
                 string[] files = (string[])e.Data.GetData(DataFormats.FileDrop);
-                var remoteDir = _currentDir;
-                foreach (string filePath in files)
+                foreach (string localFilePath in files)
                 {
-                    if (!File.Exists(filePath)) continue;
+                    if (!File.Exists(localFilePath)) continue;
 
-                    string path = filePath;
-                    new Thread(() =>
-                    {
-                        int id = FileHelper.GetNewTransferId();
+                    string remotePath = GetAbsolutePath(Path.GetFileName(localFilePath));
 
-                        if (string.IsNullOrEmpty(path)) return;
-
-                        AddTransfer(id, "Upload", "Pending...", Path.GetFileName(path));
-
-                        int index = GetTransferIndex(id);
-                        if (index < 0)
-                            return;
-
-                        FileSplit srcFile = new FileSplit(path);
-                        if (srcFile.MaxBlocks < 0)
-                        {
-                            UpdateTransferStatus(index, "Error reading file", 0);
-                            return;
-                        }
-
-                        string remotePath = Path.Combine(remoteDir, Path.GetFileName(path));
-
-                        if (string.IsNullOrEmpty(remotePath)) return;
-
-                        _limitThreads.WaitOne();
-                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                        {
-                            if (_connectClient.Value == null || _connectClient.Value.FrmFm == null)
-                            {
-                                _limitThreads.Release();
-                                return; // abort upload when from is closed or client disconnected
-                            }
-
-                            if (CanceledUploads.ContainsKey(id))
-                            {
-                                UpdateTransferStatus(index, "Canceled", 0);
-                                _limitThreads.Release();
-                                return;
-                            }
-
-                            index = GetTransferIndex(id);
-                            if (index < 0)
-                            {
-                                _limitThreads.Release();
-                                return;
-                            }
-
-                            decimal progress =
-                                Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
-
-                            UpdateTransferStatus(index, string.Format("Uploading...({0}%)", progress), -1);
-
-                            byte[] block;
-                            if (srcFile.ReadBlock(currentBlock, out block))
-                            {
-                                new Core.Packets.ServerPackets.DoUploadFile(id,
-                                    remotePath, block, srcFile.MaxBlocks,
-                                    currentBlock).Execute(_connectClient);
-                            }
-                            else
-                            {
-                                UpdateTransferStatus(index, "Error reading file", 0);
-                                _limitThreads.Release();
-                                return;
-                            }
-                        }
-                        _limitThreads.Release();
-
-                        if (remoteDir == _currentDir)
-                            RefreshDirectory();
-
-                        UpdateTransferStatus(index, "Completed", 1);
-                    }).Start();
+                    _fileManagerHandler.BeginUploadFile(localFilePath, remotePath);
                 }
             }
         }
@@ -476,169 +498,55 @@ namespace xServer.Forms
             }
         }
 
-        public void AddDrives(RemoteDrive[] drives)
+        /// <summary>
+        /// Adds an item to the file browser.
+        /// </summary>
+        /// <param name="name">File or directory name.</param>
+        /// <param name="size">File size, for directories use 0.</param>
+        /// <param name="type">File type.</param>
+        /// <param name="imageIndex">The image to display for this item.</param>
+        private void AddItemToFileBrowser(string name, long size, FileType type, int imageIndex)
         {
-            try
+            ListViewItem lvi = new ListViewItem(new string[]
             {
-                cmbDrives.Invoke((MethodInvoker) delegate
-                {
-                    cmbDrives.DisplayMember = "DisplayName";
-                    cmbDrives.ValueMember = "RootDirectory";
-                    cmbDrives.DataSource = new BindingSource(drives, null);
-                });
-            }
-            catch (InvalidOperationException)
+                name,
+                (type == FileType.File) ? FileHelper.GetDataSize(size) : string.Empty,
+                (type != FileType.Back) ? type.ToString() : string.Empty
+            })
             {
-            }
-        }
+                Tag = type,
+                ImageIndex = imageIndex
+            };
 
-        public void ClearFileBrowser()
-        {
-            try
-            {
-                lstDirectory.Invoke((MethodInvoker)delegate
-                {
-                    lstDirectory.Items.Clear();
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public void AddItemToFileBrowser(string name, string size, PathType type, int imageIndex)
-        {
-            try
-            {
-                ListViewItem lvi = new ListViewItem(new string[] { name, size, (type != PathType.Back) ? type.ToString() : string.Empty })
-                {
-                    Tag = type,
-                    ImageIndex = imageIndex
-                };
-
-                lstDirectory.Invoke((MethodInvoker)delegate
-                {
-                    lstDirectory.Items.Add(lvi);
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public void AddTransfer(int id, string type, string status, string filename)
-        {
-            try
-            {
-                ListViewItem lvi =
-                    new ListViewItem(new string[] {id.ToString(), type, status, filename});
-
-                lstDirectory.Invoke((MethodInvoker)delegate
-                {
-                    lstTransfers.Items.Add(lvi);
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public int GetTransferIndex(int id)
-        {
-            string strId = id.ToString();
-            int index = 0;
-
-            try
-            {
-                lstTransfers.Invoke((MethodInvoker)delegate
-                {
-                    foreach (ListViewItem lvi in lstTransfers.Items.Cast<ListViewItem>().Where(lvi => lvi != null && strId.Equals(lvi.SubItems[TRANSFER_ID].Text)))
-                    {
-                        index = lvi.Index;
-                        break;
-                    }
-                });
-            }
-            catch (InvalidOperationException)
-            {
-                return -1;
-            }
-
-            return index;
-        }
-
-        public void UpdateTransferStatus(int index, string status, int imageIndex)
-        {
-            try
-            {
-                lstTransfers.Invoke((MethodInvoker) delegate
-                {
-                    lstTransfers.Items[index].SubItems[TRANSFER_STATUS].Text = status;
-                    if (imageIndex >= 0)
-                        lstTransfers.Items[index].ImageIndex = imageIndex;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception)
-            {
-            }
+            lstDirectory.Items.Add(lvi);
         }
 
         /// <summary>
-        /// Sets the current directory of the File Manager.
+        /// Sets the status of the file manager.
         /// </summary>
-        /// <param name="path">The new path.</param>
-        public void SetCurrentDir(string path)
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="message">The new status.</param>
+        private void SetStatusMessage(object sender, string message)
         {
-            _currentDir = path;
-            try
-            {
-                txtPath.Invoke((MethodInvoker)delegate
-                {
-                    txtPath.Text = _currentDir;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            stripLblStatus.Text = $"Status: {message}";
         }
 
         /// <summary>
-        /// Sets the status of the File Manager Form.
+        /// Fetches the directory contents of the current directory.
         /// </summary>
-        /// <param name="text">The new status.</param>
-        /// <param name="setLastDirectorySeen">Sets LastDirectorySeen to true.</param>
-        public void SetStatus(string text, bool setLastDirectorySeen = false)
-        {
-            try
-            {
-                if (_connectClient.Value != null && setLastDirectorySeen)
-                {
-                    SetCurrentDir(Path.GetFullPath(Path.Combine(_currentDir, @"..\")));
-                    _connectClient.Value.ReceivedLastDirectory = true;
-                }
-                statusStrip.Invoke((MethodInvoker)delegate
-                {
-                    stripLblStatus.Text = "Status: " + text;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
         private void RefreshDirectory()
         {
-            if (_connectClient == null || _connectClient.Value == null) return;
+            SwitchDirectory(_currentDir);
+        }
 
-            if (!_connectClient.Value.ReceivedLastDirectory)
-                _connectClient.Value.ProcessingDirectory = false;
-
-            new Core.Packets.ServerPackets.GetDirectory(_currentDir).Execute(_connectClient);
-            SetStatus("Loading directory content...");
-            _connectClient.Value.ReceivedLastDirectory = false;
+        /// <summary>
+        /// Switches to a new directory and fetches the contents of it.
+        /// </summary>
+        /// <param name="remotePath">Path of new directory.</param>
+        private void SwitchDirectory(string remotePath)
+        {
+            _fileManagerHandler.GetDirectoryContents(remotePath);
+            SetStatusMessage(this, "Loading directory content...");
         }
     }
 }

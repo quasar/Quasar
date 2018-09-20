@@ -7,6 +7,10 @@ namespace xServer.Forms
 {
     public partial class FrmUpdate : Form
     {
+        public bool UseDownload { get; set; }
+        public string UploadPath { get; set; }
+        public string DownloadUrl { get; set; }
+
         private readonly int _selectedClients;
 
         public FrmUpdate(int selected)
@@ -18,18 +22,14 @@ namespace xServer.Forms
         private void FrmUpdate_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Update Clients", _selectedClients);
-            if (Core.Data.Update.UseDownload)
-                radioURL.Checked = true;
-            txtPath.Text = File.Exists(Core.Data.Update.UploadPath) ? Core.Data.Update.UploadPath : string.Empty;
-            txtURL.Text = Core.Data.Update.DownloadURL;
             btnUpdate.Text = "Update Client" + ((_selectedClients > 1) ? "s" : string.Empty);
         }
 
         private void btnUpdate_Click(object sender, EventArgs e)
         {
-            Core.Data.Update.UseDownload = radioURL.Checked;
-            Core.Data.Update.UploadPath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
-            Core.Data.Update.DownloadURL = txtURL.Text;
+            UseDownload = radioURL.Checked;
+            UploadPath = txtPath.Text;
+            DownloadUrl = txtURL.Text;
 
             this.DialogResult = DialogResult.OK;
             this.Close();

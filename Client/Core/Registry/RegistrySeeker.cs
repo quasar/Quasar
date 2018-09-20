@@ -1,30 +1,12 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Security;
-using Microsoft.Win32;
-using System.Threading;
+using Quasar.Common.Models;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 
 namespace xClient.Core.Registry
 {
-    /*
-    * Derived and Adapted from CrackSoft's Reg Explore.
-    * Reg Explore v1.1 (Release Date: June 24, 2011)
-    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * This is a work that is not of the original. It
-    * has been modified to suit the needs of another
-    * application.
-    * (This has been taken from Justin Yanke's branch)
-    * Modified by Justin Yanke on August 15, 2015
-    * Modified by StingRaptor on January 21, 2016
-    * Modified by StingRaptor on March 15, 2016
-    * ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    * Unmodified Source:
-    * https://regexplore.codeplex.com/SourceControl/latest#Registry/RegSearcher.cs
-    */
-
     public class RegistrySeeker
     {
 
@@ -121,7 +103,7 @@ namespace xClient.Core.Registry
                 {
                     RegistryValueKind valueType = key.GetValueKind(valueName);
                     object valueData = key.GetValue(valueName);
-                    values.Add(new RegValueData(valueName, valueType, valueData));
+                    values.Add(new RegValueData {Name = valueName, Kind = valueType, Data = valueData});
                 }
 
                 AddMatch(keyName, RegistryKeyHelper.AddDefaultValue(values), key.SubKeyCount);
@@ -135,7 +117,7 @@ namespace xClient.Core.Registry
 
         private void AddMatch(string key, RegValueData[] values, int subkeycount)
         {
-            RegSeekerMatch match = new RegSeekerMatch(key, values, subkeycount);
+            RegSeekerMatch match = new RegSeekerMatch {Key = key, Data = values, HasSubKeys = subkeycount > 0};
 
             matches.Add(match);
         }

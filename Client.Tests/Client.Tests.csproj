@@ -58,13 +58,16 @@
     <Compile Include="Core\Compression\SafeQuickLZ.Tests.cs" />
     <Compile Include="Core\Encryption\AES.Tests.cs" />
     <Compile Include="Core\Encryption\SHA256.Tests.cs" />
-    <Compile Include="Core\Packet\Packet.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Client\Client.csproj">
       <Project>{9f5cf56a-ddb2-4f40-ab99-2a1dc47588e1}</Project>
       <Name>Client</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{C7C363BA-E5B6-4E18-9224-39BC8DA73172}</Project>
+      <Name>Quasar.Common</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

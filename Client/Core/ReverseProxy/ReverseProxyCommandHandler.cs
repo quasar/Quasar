@@ -1,12 +1,11 @@
-﻿using xClient.Core.Networking;
-using xClient.Core.Packets;
-using xClient.Core.ReverseProxy.Packets;
+﻿using Quasar.Common.Messages;
+using xClient.Core.Networking;
 
 namespace xClient.Core.ReverseProxy
 {
     public class ReverseProxyCommandHandler
     {
-        public static void HandleCommand(Client client, IPacket packet)
+        public static void HandleCommand(Client client, IMessage packet)
         {
             var type = packet.GetType();
 

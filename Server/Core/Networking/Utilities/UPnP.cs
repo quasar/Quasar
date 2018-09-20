@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mono.Nat;
+using Mono.Nat.Upnp;
 
 namespace xServer.Core.Networking.Utilities
 {
@@ -70,7 +71,7 @@ namespace xServer.Core.Networking.Utilities
                 Mapping mapping = new Mapping(Protocol.Tcp, port, port);
 
                 for (int i = 0; i < 3; i++)
-                    _device.CreatePortMapAsync(mapping);
+                    _device.BeginCreatePortMap(mapping, EndCreateAsync, null);
 
                 if (_mappings.ContainsKey(mapping.PrivatePort))
                     _mappings[mapping.PrivatePort] = mapping;
@@ -85,6 +86,16 @@ namespace xServer.Core.Networking.Utilities
                 externalPort = -1;
                 return false;
             }
+        }
+
+        private static void EndCreateAsync(IAsyncResult ar)
+        {
+            _device?.EndCreatePortMap(ar);
+        }
+
+        private static void EndDeleteAsync(IAsyncResult ar)
+        {
+            _device?.EndDeletePortMap(ar);
         }
 
         /// <summary>
@@ -102,7 +113,7 @@ namespace xServer.Core.Networking.Utilities
                 try
                 {
                     for (int i = 0; i < 3; i++)
-                        _device.DeletePortMapAsync(mapping);
+                        _device.BeginDeletePortMap(mapping, EndDeleteAsync, null);
                 }
                 catch (MappingException)
                 {

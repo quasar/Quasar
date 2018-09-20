@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
-using xClient.Core.Registry;
+using Quasar.Common.Video.Codecs;
 using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands

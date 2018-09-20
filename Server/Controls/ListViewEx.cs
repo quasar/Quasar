@@ -75,7 +75,8 @@ namespace xServer.Controls
             }
 
             // Perform the sort with these new sort options.
-            this.Sort();
+            if (!this.VirtualMode)
+                this.Sort();
         }
     }
 }

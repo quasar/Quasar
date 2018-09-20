@@ -1,17 +1,19 @@
-﻿using System;
+﻿using ProtoBuf;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using xServer.Core.Compression;
 using xServer.Core.Cryptography;
 using xServer.Core.Extensions;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
-    public class Client : IEquatable<Client>
+    public class Client : IEquatable<Client>, ISender
     {
         /// <summary>
         /// Occurs when the state of the client changes.
@@ -43,71 +45,87 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Occurs when a packet is received from the client.
+        /// Occurs when a message is received from the client.
         /// </summary>
         public event ClientReadEventHandler ClientRead;
 
         /// <summary>
-        /// Represents the method that will handle a packet received from the client.
+        /// Represents the method that will handle a message received from the client.
         /// </summary>
-        /// <param name="s">The client that has received the packet.</param>
-        /// <param name="packet">The packet that received by the client.</param>
-        public delegate void ClientReadEventHandler(Client s, IPacket packet);
+        /// <param name="s">The client that has received the message.</param>
+        /// <param name="message">The message that received by the client.</param>
+        public delegate void ClientReadEventHandler(Client s, IMessage message);
 
         /// <summary>
-        /// Fires an event that informs subscribers that a packet has been
+        /// Fires an event that informs subscribers that a message has been
         /// received from the client.
         /// </summary>
-        /// <param name="packet">The packet that received by the client.</param>
-        private void OnClientRead(IPacket packet)
+        /// <param name="message">The message that received by the client.</param>
+        private void OnClientRead(IMessage message)
         {
             var handler = ClientRead;
             if (handler != null)
             {
-                handler(this, packet);
+                handler(this, message);
             }
         }
 
         /// <summary>
-        /// Occurs when a packet is sent by the client.
+        /// Occurs when a message is sent by the client.
         /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
         /// <summary>
-        /// Represents the method that will handle the sent packet.
+        /// Represents the method that will handle the sent message.
         /// </summary>
-        /// <param name="s">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
+        /// <param name="s">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        public delegate void ClientWriteEventHandler(Client s, IMessage message, long length, byte[] rawData);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// Fires an event that informs subscribers that the client has sent a message.
         /// </summary>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        private void OnClientWrite(IPacket packet, long length, byte[] rawData)
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        private void OnClientWrite(IMessage message, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
             {
-                handler(this, packet, length, rawData);
+                handler(this, message, length, rawData);
             }
+        }
+
+        public static bool operator ==(Client c1, Client c2)
+        {
+            if (ReferenceEquals(c1, null))
+                return ReferenceEquals(c2, null);
+
+            return c1.Equals(c2);
+        }
+
+        public static bool operator !=(Client c1, Client c2)
+        {
+            return !(c1 == c2);
         }
 
         /// <summary>
         /// Checks whether the clients are equal.
         /// </summary>
-        /// <param name="c">Client to compare with.</param>
+        /// <param name="other">Client to compare with.</param>
         /// <returns>True if equal, else False.</returns>
-        public bool Equals(Client c)
+        public bool Equals(Client other)
         {
+            if (ReferenceEquals(null, other)) return false;
+            if (ReferenceEquals(this, other)) return true;
+
             try
             {
                 // the port is always unique for each client
-                return this.EndPoint.Port.Equals(c.EndPoint.Port);
+                return this.EndPoint.Port.Equals(other.EndPoint.Port);
             }
             catch (Exception)
             {
@@ -130,7 +148,7 @@ namespace xServer.Core.Networking
         }  
 
         /// <summary>
-        /// The type of the packet received.
+        /// The type of the message received.
         /// </summary>
         public enum ReceiveType
         {
@@ -149,14 +167,14 @@ namespace xServer.Core.Networking
         private readonly Queue<byte[]> _sendBuffers = new Queue<byte[]>();
 
         /// <summary>
-        /// Determines if the client is currently sending packets.
+        /// Determines if the client is currently sending messages.
         /// </summary>
-        private bool _sendingPackets;
+        private bool _sendingmessages;
 
         /// <summary>
-        /// Lock object for the sending packets boolean.
+        /// Lock object for the sending messages boolean.
         /// </summary>
-        private readonly object _sendingPacketsLock = new object();
+        private readonly object _sendingmessagesLock = new object();
 
         /// <summary>
         /// The Queue which holds buffers to read.
@@ -164,14 +182,14 @@ namespace xServer.Core.Networking
         private readonly Queue<byte[]> _readBuffers = new Queue<byte[]>();
 
         /// <summary>
-        /// Determines if the client is currently reading packets.
+        /// Determines if the client is currently reading messages.
         /// </summary>
-        private bool _readingPackets;
+        private bool _readingmessages;
 
         /// <summary>
-        /// Lock object for the reading packets boolean.
+        /// Lock object for the reading messages boolean.
         /// </summary>
-        private readonly object _readingPacketsLock = new object();
+        private readonly object _readingmessagesLock = new object();
 
         // receive info
         private int _readOffset;
@@ -204,7 +222,7 @@ namespace xServer.Core.Networking
         /// <summary>
         /// The Endpoint which the client is connected to.
         /// </summary>
-        public IPEndPoint EndPoint { get; private set; }
+        public IPEndPoint EndPoint { get; }
 
         /// <summary>
         /// The parent server of the client.
@@ -212,7 +230,7 @@ namespace xServer.Core.Networking
         private readonly Server _parentServer;
 
         /// <summary>
-        /// The buffer for the client's incoming packets.
+        /// The buffer for the client's incoming messages.
         /// </summary>
         private byte[] _readBuffer;
 
@@ -314,11 +332,11 @@ namespace xServer.Core.Networking
                 _readBuffers.Enqueue(received);
             }
 
-            lock (_readingPacketsLock)
+            lock (_readingmessagesLock)
             {
-                if (!_readingPackets)
+                if (!_readingmessages)
                 {
-                    _readingPackets = true;
+                    _readingmessages = true;
                     ThreadPool.QueueUserWorkItem(AsyncReceive);
                 }
             }
@@ -345,9 +363,9 @@ namespace xServer.Core.Networking
                 {
                     if (_readBuffers.Count == 0)
                     {
-                        lock (_readingPacketsLock)
+                        lock (_readingmessagesLock)
                         {
-                            _readingPackets = false;
+                            _readingmessages = false;
                         }
                         return;
                     }
@@ -393,7 +411,7 @@ namespace xServer.Core.Networking
                                             _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                         }
 
-                                        if (_payloadLen <= 0 || _payloadLen > _parentServer.MAX_PACKET_SIZE)
+                                        if (_payloadLen <= 0 || _payloadLen > _parentServer.MAX_MESSAGE_SIZE)
                                             throw new Exception("invalid header");
                                     }
                                     catch (Exception)
@@ -491,9 +509,9 @@ namespace xServer.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)_parentServer.Serializer.Deserialize(deserialized);
+                                            IMessage message = Serializer.Deserialize<IMessage>(deserialized);
 
-                                            OnClientRead(packet);
+                                            OnClientRead(message);
                                         }
                                         catch (Exception)
                                         {
@@ -519,7 +537,7 @@ namespace xServer.Core.Networking
 
                 if (_receiveState == ReceiveType.Header)
                 {
-                    _writeOffset = 0; // prepare for next packet
+                    _writeOffset = 0; // prepare for next message
                 }
                 _readOffset = 0;
                 _readableDataLen = 0;
@@ -527,13 +545,13 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Sends a packet to the connected client.
+        /// Sends a message to the connected client.
         /// </summary>
-        /// <typeparam name="T">The type of the packet.</typeparam>
-        /// <param name="packet">The packet to be send.</param>
-        public void Send<T>(T packet) where T : IPacket
+        /// <typeparam name="T">The type of the message.</typeparam>
+        /// <param name="message">The message to be send.</param>
+        public void Send<T>(T message) where T : IMessage
         {
-            if (!Connected || packet == null) return;
+            if (!Connected || message == null) return;
 
             lock (_sendBuffers)
             {
@@ -541,7 +559,7 @@ namespace xServer.Core.Networking
                 {
                     try
                     {
-                        _parentServer.Serializer.Serialize(ms, packet);
+                        Serializer.Serialize(ms, message);
                     }
                     catch (Exception)
                     {
@@ -553,13 +571,13 @@ namespace xServer.Core.Networking
 
                     _sendBuffers.Enqueue(payload);
 
-                    OnClientWrite(packet, payload.LongLength, payload);
+                    OnClientWrite(message, payload.LongLength, payload);
 
-                    lock (_sendingPacketsLock)
+                    lock (_sendingmessagesLock)
                     {
-                        if (_sendingPackets) return;
+                        if (_sendingmessages) return;
 
-                        _sendingPackets = true;
+                        _sendingmessages = true;
                     }
                     ThreadPool.QueueUserWorkItem(Send);
                 }
@@ -567,15 +585,15 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Sends a packet to the connected client.
-        /// Blocks the thread until all packets have been sent.
+        /// Sends a message to the connected client.
+        /// Blocks the thread until all messages have been sent.
         /// </summary>
-        /// <typeparam name="T">The type of the packet.</typeparam>
-        /// <param name="packet">The packet to be send.</param>
-        public void SendBlocking<T>(T packet) where T : IPacket
+        /// <typeparam name="T">The type of the message.</typeparam>
+        /// <param name="message">The message to be send.</param>
+        public void SendBlocking<T>(T message) where T : IMessage
         {
-            Send(packet);
-            while (_sendingPackets)
+            Send(message);
+            while (_sendingmessages)
             {
                 Thread.Sleep(10);
             }
@@ -605,9 +623,9 @@ namespace xServer.Core.Networking
 
                 try
                 {
-                    var packet = BuildPacket(payload);
-                    _parentServer.BytesSent += packet.Length;
-                    _handle.Send(packet);
+                    var message = BuildMessage(payload);
+                    _parentServer.BytesSent += message.Length;
+                    _handle.Send(message);
                 }
                 catch (Exception)
                 {
@@ -618,7 +636,7 @@ namespace xServer.Core.Networking
             }
         }
 
-        private byte[] BuildPacket(byte[] payload)
+        private byte[] BuildMessage(byte[] payload)
         {
             if (compressionEnabled)
                 payload = SafeQuickLZ.Compress(payload);
@@ -626,17 +644,17 @@ namespace xServer.Core.Networking
             if (encryptionEnabled)
                 payload = AES.Encrypt(payload);
 
-            byte[] packet = new byte[payload.Length + _parentServer.HEADER_SIZE];
-            Array.Copy(BitConverter.GetBytes(payload.Length), packet, _parentServer.HEADER_SIZE);
-            Array.Copy(payload, 0, packet, _parentServer.HEADER_SIZE, payload.Length);
-            return packet;
+            byte[] message = new byte[payload.Length + _parentServer.HEADER_SIZE];
+            Array.Copy(BitConverter.GetBytes(payload.Length), message, _parentServer.HEADER_SIZE);
+            Array.Copy(payload, 0, message, _parentServer.HEADER_SIZE, payload.Length);
+            return message;
         }
 
         private void SendCleanup(bool clear = false)
         {
-            lock (_sendingPacketsLock)
+            lock (_sendingmessagesLock)
             {
-                _sendingPackets = false;
+                _sendingmessages = false;
             }
 
             if (!clear) return;

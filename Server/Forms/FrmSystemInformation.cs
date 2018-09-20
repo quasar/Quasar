@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Quasar.Common.Messages;
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
+using xServer.Core.Commands;
 using xServer.Core.Extensions;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
@@ -9,67 +12,111 @@ namespace xServer.Forms
 {
     public partial class FrmSystemInformation : Form
     {
+        /// <summary>
+        /// The client which can be used for the system information.
+        /// </summary>
         private readonly Client _connectClient;
 
-        public FrmSystemInformation(Client c)
-        {
-            _connectClient = c;
-            _connectClient.Value.FrmSi = this;
+        /// <summary>
+        /// The message handler for handling the communication with the client.
+        /// </summary>
+        private readonly SystemInformationHandler _sysInfoHandler;
 
+        /// <summary>
+        /// Holds the opened system information form for each client.
+        /// </summary>
+        private static readonly Dictionary<Client, FrmSystemInformation> OpenedForms = new Dictionary<Client, FrmSystemInformation>();
+
+        /// <summary>
+        /// Creates a new system information form for the client or gets the current open form, if there exists one already.
+        /// </summary>
+        /// <param name="client">The client used for the system information form.</param>
+        /// <returns>
+        /// Returns a new system information form for the client if there is none currently open, otherwise creates a new one.
+        /// </returns>
+        public static FrmSystemInformation CreateNewOrGetExisting(Client client)
+        {
+            if (OpenedForms.ContainsKey(client))
+            {
+                return OpenedForms[client];
+            }
+            FrmSystemInformation f = new FrmSystemInformation(client);
+            f.Disposed += (sender, args) => OpenedForms.Remove(client);
+            OpenedForms.Add(client, f);
+            return f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmSystemInformation"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the remote desktop form.</param>
+        public FrmSystemInformation(Client client)
+        {
+            _connectClient = client;
+            _sysInfoHandler = new SystemInformationHandler(client);
+
+            RegisterMessageHandler();
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Registers the system information message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            _connectClient.ClientState += ClientDisconnected;
+            _sysInfoHandler.ProgressChanged += SystemInformationChanged;
+            MessageHandler.Register(_sysInfoHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the system information message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_sysInfoHandler);
+            _sysInfoHandler.ProgressChanged -= SystemInformationChanged;
+            _connectClient.ClientState -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
+        {
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
         }
 
         private void FrmSystemInformation_Load(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
-
-                if (_connectClient.Value != null)
-                {
-                    ListViewItem lvi =
-                        new ListViewItem(new string[] {"Operating System", _connectClient.Value.OperatingSystem});
-                    lstSystem.Items.Add(lvi);
-                    lvi =
-                        new ListViewItem(new string[]
-                        {
-                            "Architecture",
-                            (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
-                        });
-                    lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] {"", "Getting more information..."});
-                    lstSystem.Items.Add(lvi);
-                }
-            }
+            this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
+            _sysInfoHandler.RefreshSystemInformation();
+            AddBasicSystemInformation();
         }
 
         private void FrmSystemInformation_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmSi = null;
+            UnregisterMessageHandler();
+            _sysInfoHandler.Dispose();
         }
 
-        public void AddItems(ListViewItem[] lviCollection)
+        private void SystemInformationChanged(object sender, List<Tuple<string, string>> infos)
         {
-            try
-            {
-                lstSystem.Invoke((MethodInvoker) delegate
-                {
-                    lstSystem.Items.RemoveAt(2); // Loading... Information
+            // remove "Loading..." information
+            lstSystem.Items.RemoveAt(2);
 
-                    foreach (var lviItem in lviCollection)
-                    {
-                        if (lviItem != null)
-                            lstSystem.Items.Add(lviItem);
-                    }
-
-                    lstSystem.AutosizeColumns();
-                });
-            }
-            catch (InvalidOperationException)
+            foreach (var info in infos)
             {
+                var lvi = new ListViewItem(new[] {info.Item1, info.Item2});
+                lstSystem.Items.Add(lvi);
             }
+
+            lstSystem.AutosizeColumns();
         }
 
         private void copyAllToolStripMenuItem_Click(object sender, EventArgs e)
@@ -107,28 +154,27 @@ namespace xServer.Forms
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
             lstSystem.Items.Clear();
+            _sysInfoHandler.RefreshSystemInformation();
+            AddBasicSystemInformation();
+        }
 
-            if (_connectClient != null)
-            {
-                this.Text = WindowHelper.GetWindowTitle("System Information", _connectClient);
-                new Core.Packets.ServerPackets.GetSystemInfo().Execute(_connectClient);
-
-                if (_connectClient.Value != null)
+        /// <summary>
+        /// Adds basic system information which is already available to the ListView.
+        /// </summary>
+        private void AddBasicSystemInformation()
+        {
+            ListViewItem lvi =
+                new ListViewItem(new[] {"Operating System", _connectClient.Value.OperatingSystem});
+            lstSystem.Items.Add(lvi);
+            lvi =
+                new ListViewItem(new[]
                 {
-                    ListViewItem lvi =
-                        new ListViewItem(new string[] { "Operating System", _connectClient.Value.OperatingSystem });
-                    lstSystem.Items.Add(lvi);
-                    lvi =
-                        new ListViewItem(new string[]
-                        {
-                            "Architecture",
-                            (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
-                        });
-                    lstSystem.Items.Add(lvi);
-                    lvi = new ListViewItem(new string[] { "", "Getting more information..." });
-                    lstSystem.Items.Add(lvi);
-                }
-            }
+                    "Architecture",
+                    (_connectClient.Value.OperatingSystem.Contains("32 Bit")) ? "x86 (32 Bit)" : "x64 (64 Bit)"
+                });
+            lstSystem.Items.Add(lvi);
+            lvi = new ListViewItem(new[] {"", "Getting more information..."});
+            lstSystem.Items.Add(lvi);
         }
     }
 }

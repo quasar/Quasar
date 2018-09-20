@@ -88,7 +88,7 @@
             this.lblQuality.AutoSize = true;
             this.lblQuality.Location = new System.Drawing.Point(167, 5);
             this.lblQuality.Name = "lblQuality";
-            this.lblQuality.Size = new System.Drawing.Size(47, 13);
+            this.lblQuality.Size = new System.Drawing.Size(46, 13);
             this.lblQuality.TabIndex = 4;
             this.lblQuality.Text = "Quality:";
             // 
@@ -125,7 +125,7 @@
             this.panelTop.Controls.Add(this.btnStop);
             this.panelTop.Controls.Add(this.lblQuality);
             this.panelTop.Controls.Add(this.barQuality);
-            this.panelTop.Location = new System.Drawing.Point(189, 0);
+            this.panelTop.Location = new System.Drawing.Point(189, -1);
             this.panelTop.Name = "panelTop";
             this.panelTop.Size = new System.Drawing.Size(384, 57);
             this.panelTop.TabIndex = 7;
@@ -165,7 +165,7 @@
             // 
             // btnShow
             // 
-            this.btnShow.Location = new System.Drawing.Point(377, 69);
+            this.btnShow.Location = new System.Drawing.Point(0, 0);
             this.btnShow.Name = "btnShow";
             this.btnShow.Size = new System.Drawing.Size(54, 19);
             this.btnShow.TabIndex = 8;

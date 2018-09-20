@@ -104,8 +104,7 @@ namespace xServer.Controls
         /// </summary>
         public void Stop()
         {
-            if (_sWatch != null)
-                _sWatch.Stop();
+            _sWatch?.Stop();
 
             Running = false;
         }
@@ -133,8 +132,7 @@ namespace xServer.Controls
                     GetImageSafe = cloneBitmap ? new Bitmap(bmp, Width, Height) /*resize bitmap*/ : bmp;
                     ResumeLayout();
 
-                    if (oldImage != null)
-                        oldImage.Dispose();
+                    oldImage?.Dispose();
                 }
             }
             catch (InvalidOperationException)

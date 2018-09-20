@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Quasar.Common.Messages;
 using xServer.Core.Networking;
 
 namespace xServer.Core.Commands
@@ -13,7 +14,7 @@ namespace xServer.Core.Commands
 
         #region Registry Key
         
-        public static void HandleLoadRegistryKey(xServer.Core.Packets.ClientPackets.GetRegistryKeysResponse packet, Client client)
+        public static void HandleLoadRegistryKey(GetRegistryKeysResponse packet, Client client)
         {
             try
             {
@@ -39,7 +40,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleCreateRegistryKey(xServer.Core.Packets.ClientPackets.GetCreateRegistryKeyResponse packet, Client client)
+        public static void HandleCreateRegistryKey(GetCreateRegistryKeyResponse packet, Client client)
         {
             try
             {
@@ -59,7 +60,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleDeleteRegistryKey(xServer.Core.Packets.ClientPackets.GetDeleteRegistryKeyResponse packet, Client client)
+        public static void HandleDeleteRegistryKey(GetDeleteRegistryKeyResponse packet, Client client)
         {
             try
             {
@@ -79,7 +80,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleRenameRegistryKey(xServer.Core.Packets.ClientPackets.GetRenameRegistryKeyResponse packet, Client client)
+        public static void HandleRenameRegistryKey(GetRenameRegistryKeyResponse packet, Client client)
         {
             try
             {
@@ -103,7 +104,7 @@ namespace xServer.Core.Commands
 
         #region Registry Value
 
-        public static void HandleCreateRegistryValue(xServer.Core.Packets.ClientPackets.GetCreateRegistryValueResponse packet, Client client)
+        public static void HandleCreateRegistryValue(GetCreateRegistryValueResponse packet, Client client)
         {
             try
             {
@@ -123,7 +124,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleDeleteRegistryValue(xServer.Core.Packets.ClientPackets.GetDeleteRegistryValueResponse packet, Client client)
+        public static void HandleDeleteRegistryValue(GetDeleteRegistryValueResponse packet, Client client)
         {
             try
             {
@@ -143,7 +144,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleRenameRegistryValue(xServer.Core.Packets.ClientPackets.GetRenameRegistryValueResponse packet, Client client)
+        public static void HandleRenameRegistryValue(GetRenameRegistryValueResponse packet, Client client)
         {
             try
             {
@@ -163,7 +164,7 @@ namespace xServer.Core.Commands
             catch { }
         }
 
-        public static void HandleChangeRegistryValue(xServer.Core.Packets.ClientPackets.GetChangeRegistryValueResponse packet, Client client)
+        public static void HandleChangeRegistryValue(GetChangeRegistryValueResponse packet, Client client)
         {
             try
             {

@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Quasar.Common.Models;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 

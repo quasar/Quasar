@@ -1,8 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
+using Quasar.Common.Messages;
 using xServer.Core.Commands;
-using xServer.Core.NetSerializer;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
@@ -71,8 +69,6 @@ namespace xServer.Core.Networking
         /// </summary>
         public QuasarServer() : base()
         {
-            base.Serializer = new Serializer(PacketRegistery.GetPacketTypes());
-
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
         }
@@ -88,7 +84,7 @@ namespace xServer.Core.Networking
             switch (connected)
             {
                 case true:
-                    new Packets.ServerPackets.GetAuthentication().Execute(client); // begin handshake
+                    client.Send(new GetAuthentication()); // begin handshake
                     break;
                 case false:
                     if (client.Authenticated)
@@ -100,23 +96,23 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Forwards received packets from the client to the PacketHandler.
+        /// Forwards received messages from the client to the MessageHandler.
         /// </summary>
         /// <param name="server">The server the client is connected to.</param>
-        /// <param name="client">The client which has received the packet.</param>
-        /// <param name="packet">The received packet.</param>
-        private void OnClientRead(Server server, Client client, IPacket packet)
+        /// <param name="client">The client which has received the message.</param>
+        /// <param name="message">The received message.</param>
+        private void OnClientRead(Server server, Client client, IMessage message)
         {
-            var type = packet.GetType();
+            var type = message.GetType();
 
             if (!client.Authenticated)
             {
-                if (type == typeof (Packets.ClientPackets.GetAuthenticationResponse))
+                if (type == typeof (GetAuthenticationResponse))
                 {
                     client.Authenticated = true;
-                    new Packets.ServerPackets.SetAuthenticationSuccess().Execute(client); // finish handshake
+                    client.Send(new SetAuthenticationSuccess()); // finish handshake
                     CommandHandler.HandleGetAuthenticationResponse(client,
-                        (Packets.ClientPackets.GetAuthenticationResponse) packet);
+                        (GetAuthenticationResponse)message);
                     OnClientConnected(client);
                 }
                 else
@@ -126,7 +122,8 @@ namespace xServer.Core.Networking
                 return;
             }
 
-            PacketHandler.HandlePacket(client, packet);
+            MessageHandler.Process(client, message);
+            PacketHandler.HandlePacket(client, message); // TODO: Remove this
         }
     }
 }

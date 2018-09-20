@@ -1,12 +1,13 @@
-﻿using System;
+﻿using ProtoBuf.Meta;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using Quasar.Common.Messages;
 using xServer.Core.Data;
-using xServer.Core.NetSerializer;
 using xServer.Core.Networking.Utilities;
-using xServer.Core.Packets;
 
 namespace xServer.Core.Networking
 {
@@ -74,61 +75,61 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// Occurs when a packet is received by a client.
+        /// Occurs when a message is received by a client.
         /// </summary>
         public event ClientReadEventHandler ClientRead;
 
         /// <summary>
-        /// Represents a method that will handle a packet received from a client.
+        /// Represents a method that will handle a message received from a client.
         /// </summary>
         /// <param name="s">The server, the client is connected to.</param>
-        /// <param name="c">The client that has received the packet.</param>
-        /// <param name="packet">The packet that received by the client.</param>
-        public delegate void ClientReadEventHandler(Server s, Client c, IPacket packet);
+        /// <param name="c">The client that has received the message.</param>
+        /// <param name="message">The message that received by the client.</param>
+        public delegate void ClientReadEventHandler(Server s, Client c, IMessage message);
 
         /// <summary>
-        /// Fires an event that informs subscribers that a packet has been
+        /// Fires an event that informs subscribers that a message has been
         /// received from the client.
         /// </summary>
-        /// <param name="c">The client that has received the packet.</param>
-        /// <param name="packet">The packet that received by the client.</param>
-        private void OnClientRead(Client c, IPacket packet)
+        /// <param name="c">The client that has received the message.</param>
+        /// <param name="message">The message that received by the client.</param>
+        private void OnClientRead(Client c, IMessage message)
         {
             var handler = ClientRead;
             if (handler != null)
             {
-                handler(this, c, packet);
+                handler(this, c, message);
             }
         }
 
         /// <summary>
-        /// Occurs when a packet is sent by a client.
+        /// Occurs when a message is sent by a client.
         /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
         /// <summary>
-        /// Represents the method that will handle the sent packet by a client.
+        /// Represents the method that will handle the sent message by a client.
         /// </summary>
         /// <param name="s">The server, the client is connected to.</param>
-        /// <param name="c">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Server s, Client c, IPacket packet, long length, byte[] rawData);
+        /// <param name="c">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage message, long length, byte[] rawData);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// Fires an event that informs subscribers that the client has sent a message.
         /// </summary>
-        /// <param name="c">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        private void OnClientWrite(Client c, IPacket packet, long length, byte[] rawData)
+        /// <param name="c">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        private void OnClientWrite(Client c, IMessage message, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
             {
-                handler(this, c, packet, length, rawData);
+                handler(this, c, message, length, rawData);
             }
         }
 
@@ -168,9 +169,9 @@ namespace xServer.Core.Networking
         public int HEADER_SIZE { get { return 4; } } // 4B
 
         /// <summary>
-        /// The maximum size of a packet in bytes.
+        /// The maximum size of a message in bytes.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
+        public int MAX_MESSAGE_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// The buffer manager to handle the receive buffers for the clients.
@@ -197,11 +198,6 @@ namespace xServer.Core.Networking
         }
 
         /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        public Serializer Serializer { get; protected set; }
-
-        /// <summary>
         /// Handle of the Server Socket.
         /// </summary>
         private Socket _handle;
@@ -215,6 +211,11 @@ namespace xServer.Core.Networking
         /// List of the clients connected to the server.
         /// </summary>
         private List<Client> _clients;
+
+        /// <summary>
+        /// The internal index of the message type.
+        /// </summary>
+        private int _typeIndex;
 
         /// <summary>
         /// Lock object for the list of clients.
@@ -233,6 +234,7 @@ namespace xServer.Core.Networking
         {
             _clients = new List<Client>();
             BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
+            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>
@@ -420,6 +422,33 @@ namespace xServer.Core.Networking
 
             ProcessingDisconnect = false;
             OnServerState(false);
+        }
+
+        /// <summary>
+        /// Adds a Type to the serializer so a message can be properly serialized.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="type">Type to be added</param>
+        public void AddTypeToSerializer(Type parent, Type type)
+        {
+            if (type == null || parent == null)
+                throw new ArgumentNullException();
+
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
+
+            if (!isAlreadyAdded)
+                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
+        }
+
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IPacket</param>
+        /// <param name="types">Types to add.</param>
+        public void AddTypesToSerializer(Type parent, params Type[] types)
+        {
+            foreach (Type type in types)
+                AddTypeToSerializer(parent, type);
         }
     }
 }

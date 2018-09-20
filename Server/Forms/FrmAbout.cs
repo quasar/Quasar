@@ -11,11 +11,11 @@ namespace xServer.Forms
         {
             InitializeComponent();
 
-            lblVersion.Text = "v" + Application.ProductVersion;
-            rtxtContent.Text = Properties.Resources.TermsOfUse;
+            lblVersion.Text = $"v{Application.ProductVersion}";
+            rtxtContent.Text = Properties.Resources.License;
 
-            lnkGithubPage.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL });
-            lnkCredits.Links.Add(new LinkLabel.Link { LinkData = Settings.RepositoryURL + "#credits" });
+            lnkGithubPage.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL});
+            lnkCredits.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL + "#third-party-libraries"});
         }
         
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

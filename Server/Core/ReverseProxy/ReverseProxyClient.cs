@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
+using Quasar.Common.Messages;
 using xServer.Core.Networking;
-using xServer.Core.ReverseProxy.Packets;
 
 namespace xServer.Core.ReverseProxy
 {
@@ -169,14 +169,19 @@ namespace xServer.Core.ReverseProxy
                                         string ipPort = split[1];
                                         this.TargetServer = ipPort.Split(':')[0];
                                         this.TargetPort = ushort.Parse(ipPort.Split(':')[1]);
-
+                                        
                                         this._isConnectCommand = true;
                                         this._isDomainNameType = true;
-
+                                        
                                         //Send Command to client and wait for response from CommandHandler
-                                        new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                        Client.Send(new ReverseProxyConnect
+                                        {
+                                            ConnectionId = ConnectionId,
+                                            Target = TargetServer,
+                                            Port = TargetPort
+                                        });
                                         Server.CallonConnectionEstablished(this);
-
+                                        
                                         return; //Quit receiving and wait for client's response
                                     }
                                     catch
@@ -239,7 +244,12 @@ namespace xServer.Core.ReverseProxy
                             if (this.TargetServer.Length > 0)
                             {
                                 //Send Command to client and wait for response from CommandHandler
-                                new ReverseProxyConnect(ConnectionId, this.TargetServer, this.TargetPort).Execute(Client);
+                                Client.Send(new ReverseProxyConnect
+                                {
+                                    ConnectionId = ConnectionId,
+                                    Target = TargetServer,
+                                    Port = TargetPort
+                                });
                             }
                         }
                         else
@@ -273,7 +283,7 @@ namespace xServer.Core.ReverseProxy
             {
                 _disconnectIsSend = true;
                 //send to the Server we've been disconnected
-                new ReverseProxyDisconnect(this.ConnectionId).Execute(Client);
+                Client.Send(new ReverseProxyDisconnect {ConnectionId = ConnectionId});
             }
 
             try
@@ -367,7 +377,7 @@ namespace xServer.Core.ReverseProxy
                             responsePacket.Add(SOCKS5_CMD_REPLY_SUCCEEDED);
                             responsePacket.Add(SOCKS5_RESERVED);
                             responsePacket.Add(1);
-                            responsePacket.AddRange(response.LocalAddress.GetAddressBytes());
+                            responsePacket.AddRange(response.LocalAddress);
                             responsePacket.Add((byte)(Math.Floor((decimal)response.LocalPort / 256)));
                             responsePacket.Add((byte)(response.LocalPort % 256));
 
@@ -444,7 +454,7 @@ namespace xServer.Core.ReverseProxy
 
                 byte[] payload = new byte[received];
                 Array.Copy(_buffer, payload, received);
-                new ReverseProxyData(this.ConnectionId, payload).Execute(Client);
+                Client.Send(new ReverseProxyData {ConnectionId = ConnectionId, Data = payload});
 
                 LengthSent += payload.Length;
                 PacketsSended++;

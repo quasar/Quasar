@@ -1,12 +1,7 @@
-﻿using Microsoft.Win32;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
+﻿using System;
 using System.Windows.Forms;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using xServer.Core.Networking;
 using xServer.Core.Registry;
 
@@ -37,7 +32,11 @@ namespace xServer.Forms
             if (_value.Data == null || valueDataTxtBox.Text != _value.Data.ToString())
             {
                 object valueData = valueDataTxtBox.Text;
-                new xServer.Core.Packets.ServerPackets.DoChangeRegistryValue(_keyPath, new RegValueData(_value.Name, _value.Kind, valueData)).Execute(_connectClient);
+                _connectClient.Send(new DoChangeRegistryValue
+                {
+                    KeyPath = _keyPath,
+                    Value = new RegValueData {Name = _value.Name, Kind = _value.Kind, Data = valueData}
+                });
             }
         }
     }

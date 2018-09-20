@@ -5,17 +5,18 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ProtoBuf;
+using ProtoBuf.Meta;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using xClient.Core.Compression;
 using xClient.Core.Cryptography;
 using xClient.Core.Extensions;
-using xClient.Core.NetSerializer;
-using xClient.Core.Packets;
 using xClient.Core.ReverseProxy;
-using xClient.Core.ReverseProxy.Packets;
 
 namespace xClient.Core.Networking
 {
-    public class Client
+    public class Client : ISender
     {
         /// <summary>
         /// Occurs as a result of an unrecoverable issue with the client.
@@ -72,61 +73,61 @@ namespace xClient.Core.Networking
         }
 
         /// <summary>
-        /// Occurs when a packet is received from the server.
+        /// Occurs when a message is received from the server.
         /// </summary>
         public event ClientReadEventHandler ClientRead;
 
         /// <summary>
-        /// Represents a method that will handle a packet from the server.
+        /// Represents a method that will handle a message from the server.
         /// </summary>
-        /// <param name="s">The client that has received the packet.</param>
-        /// <param name="packet">The packet that has been received by the server.</param>
-        public delegate void ClientReadEventHandler(Client s, IPacket packet);
+        /// <param name="s">The client that has received the message.</param>
+        /// <param name="message">The message that has been received by the server.</param>
+        public delegate void ClientReadEventHandler(Client s, IMessage message);
 
         /// <summary>
-        /// Fires an event that informs subscribers that a packet has been received by the server.
+        /// Fires an event that informs subscribers that a message has been received by the server.
         /// </summary>
-        /// <param name="packet">The packet that has been received by the server.</param>
-        private void OnClientRead(IPacket packet)
+        /// <param name="message">The message that has been received by the server.</param>
+        private void OnClientRead(IMessage message)
         {
             var handler = ClientRead;
             if (handler != null)
             {
-                handler(this, packet);
+                handler(this, message);
             }
         }
 
         /// <summary>
-        /// Occurs when a packet is sent by the client.
+        /// Occurs when a message is sent by the client.
         /// </summary>
         public event ClientWriteEventHandler ClientWrite;
 
         /// <summary>
-        /// Represents the method that will handle the sent packet.
+        /// Represents the method that will handle the sent message.
         /// </summary>
-        /// <param name="s">The client that has sent the packet.</param>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Client s, IPacket packet, long length, byte[] rawData);
+        /// <param name="s">The client that has sent the message.</param>
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        public delegate void ClientWriteEventHandler(Client s, IMessage message, long length, byte[] rawData);
 
         /// <summary>
-        /// Fires an event that informs subscribers that the client has sent a packet.
+        /// Fires an event that informs subscribers that the client has sent a message.
         /// </summary>
-        /// <param name="packet">The packet that has been sent by the client.</param>
-        /// <param name="length">The length of the packet.</param>
-        /// <param name="rawData">The packet in raw bytes.</param>
-        private void OnClientWrite(IPacket packet, long length, byte[] rawData)
+        /// <param name="message">The message that has been sent by the client.</param>
+        /// <param name="length">The length of the message.</param>
+        /// <param name="rawData">The message in raw bytes.</param>
+        private void OnClientWrite(IMessage message, long length, byte[] rawData)
         {
             var handler = ClientWrite;
             if (handler != null)
             {
-                handler(this, packet, length, rawData);
+                handler(this, message, length, rawData);
             }
         }
 
         /// <summary>
-        /// The type of the packet received.
+        /// The type of the message received.
         /// </summary>
         public enum ReceiveType
         {
@@ -155,9 +156,9 @@ namespace xClient.Core.Networking
         public int HEADER_SIZE { get { return 4; } } // 4B
 
         /// <summary>
-        /// The maximum size of a packet in bytes.
+        /// The maximum size of a message in bytes.
         /// </summary>
-        public int MAX_PACKET_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
+        public int MAX_MESSAGE_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
 
         /// <summary>
         /// Returns an array containing all of the proxy clients of this client.
@@ -184,12 +185,17 @@ namespace xClient.Core.Networking
         private List<ReverseProxyClient> _proxyClients;
 
         /// <summary>
+        /// The internal index of the message type.
+        /// </summary>
+        private int _typeIndex;
+
+        /// <summary>
         /// Lock object for the list of proxy clients.
         /// </summary>
         private readonly object _proxyClientsLock = new object();
 
         /// <summary>
-        /// The buffer for incoming packets.
+        /// The buffer for incoming messages.
         /// </summary>
         private byte[] _readBuffer;
 
@@ -204,14 +210,14 @@ namespace xClient.Core.Networking
         private readonly Queue<byte[]> _sendBuffers = new Queue<byte[]>();
 
         /// <summary>
-        /// Determines if the client is currently sending packets.
+        /// Determines if the client is currently sending messages.
         /// </summary>
-        private bool _sendingPackets;
+        private bool _sendingMessages;
 
         /// <summary>
-        /// Lock object for the sending packets boolean.
+        /// Lock object for the sending messages boolean.
         /// </summary>
-        private readonly object _sendingPacketsLock = new object();
+        private readonly object _sendingMessagesLock = new object();
 
         /// <summary>
         /// The Queue which holds buffers to read.
@@ -219,14 +225,14 @@ namespace xClient.Core.Networking
         private readonly Queue<byte[]> _readBuffers = new Queue<byte[]>();
 
         /// <summary>
-        /// Determines if the client is currently reading packets.
+        /// Determines if the client is currently reading messages.
         /// </summary>
-        private bool _readingPackets;
+        private bool _readingMessages;
 
         /// <summary>
-        /// Lock object for the reading packets boolean.
+        /// Lock object for the reading messages boolean.
         /// </summary>
-        private readonly object _readingPacketsLock = new object();
+        private readonly object _readingMessagesLock = new object();
 
         /// <summary>
         /// The temporary header to store parts of the header.
@@ -256,11 +262,6 @@ namespace xClient.Core.Networking
         /// </summary>
         public bool Connected { get; private set; }
 
-        /// <summary>
-        /// The packet serializer.
-        /// </summary>
-        protected Serializer Serializer { get; set; }
-
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
@@ -269,6 +270,7 @@ namespace xClient.Core.Networking
             _proxyClients = new List<ReverseProxyClient>();
             _readBuffer = new byte[BUFFER_SIZE];
             _tempHeader = new byte[HEADER_SIZE];
+            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>
@@ -340,11 +342,11 @@ namespace xClient.Core.Networking
                 _readBuffers.Enqueue(received);
             }
 
-            lock (_readingPacketsLock)
+            lock (_readingMessagesLock)
             {
-                if (!_readingPackets)
+                if (!_readingMessages)
                 {
-                    _readingPackets = true;
+                    _readingMessages = true;
                     ThreadPool.QueueUserWorkItem(AsyncReceive);
                 }
             }
@@ -371,9 +373,9 @@ namespace xClient.Core.Networking
                 {
                     if (_readBuffers.Count == 0)
                     {
-                        lock (_readingPacketsLock)
+                        lock (_readingMessagesLock)
                         {
-                            _readingPackets = false;
+                            _readingMessages = false;
                         }
                         return;
                     }
@@ -419,7 +421,7 @@ namespace xClient.Core.Networking
                                             _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                         }
 
-                                        if (_payloadLen <= 0 || _payloadLen > MAX_PACKET_SIZE)
+                                        if (_payloadLen <= 0 || _payloadLen > MAX_MESSAGE_SIZE)
                                             throw new Exception("invalid header");
                                     }
                                     catch (Exception)
@@ -517,9 +519,9 @@ namespace xClient.Core.Networking
                                     {
                                         try
                                         {
-                                            IPacket packet = (IPacket)Serializer.Deserialize(deserialized);
+                                            IMessage message = Serializer.Deserialize<IMessage>(deserialized);
 
-                                            OnClientRead(packet);
+                                            OnClientRead(message);
                                         }
                                         catch (Exception ex)
                                         {
@@ -545,7 +547,7 @@ namespace xClient.Core.Networking
 
                 if (_receiveState == ReceiveType.Header)
                 {
-                    _writeOffset = 0; // prepare for next packet
+                    _writeOffset = 0; // prepare for next message
                 }
                 _readOffset = 0;
                 _readableDataLen = 0;
@@ -553,13 +555,13 @@ namespace xClient.Core.Networking
         }
 
         /// <summary>
-        /// Sends a packet to the connected server.
+        /// Sends a message to the connected server.
         /// </summary>
-        /// <typeparam name="T">The type of the packet.</typeparam>
-        /// <param name="packet">The packet to be send.</param>
-        public void Send<T>(T packet) where T : IPacket
+        /// <typeparam name="T">The type of the message.</typeparam>
+        /// <param name="message">The message to be send.</param>
+        public void Send<T>(T message) where T : IMessage
         {
-            if (!Connected || packet == null) return;
+            if (!Connected || message == null) return;
 
             lock (_sendBuffers)
             {
@@ -567,7 +569,7 @@ namespace xClient.Core.Networking
                 {
                     try
                     {
-                        Serializer.Serialize(ms, packet);
+                        Serializer.Serialize(ms, message);
                     }
                     catch (Exception ex)
                     {
@@ -579,13 +581,13 @@ namespace xClient.Core.Networking
 
                     _sendBuffers.Enqueue(payload);
 
-                    OnClientWrite(packet, payload.LongLength, payload);
+                    OnClientWrite(message, payload.LongLength, payload);
 
-                    lock (_sendingPacketsLock)
+                    lock (_sendingMessagesLock)
                     {
-                        if (_sendingPackets) return;
+                        if (_sendingMessages) return;
 
-                        _sendingPackets = true;
+                        _sendingMessages = true;
                     }
                     ThreadPool.QueueUserWorkItem(Send);
                 }
@@ -593,15 +595,15 @@ namespace xClient.Core.Networking
         }
 
         /// <summary>
-        /// Sends a packet to the connected server.
-        /// Blocks the thread until all packets have been sent.
+        /// Sends a message to the connected server.
+        /// Blocks the thread until all messages have been sent.
         /// </summary>
-        /// <typeparam name="T">The type of the packet.</typeparam>
-        /// <param name="packet">The packet to be send.</param>
-        public void SendBlocking<T>(T packet) where T : IPacket
+        /// <typeparam name="T">The type of the message.</typeparam>
+        /// <param name="message">The message to be send.</param>
+        public void SendBlocking<T>(T message) where T : IMessage
         {
-            Send(packet);
-            while (_sendingPackets)
+            Send(message);
+            while (_sendingMessages)
             {
                 Thread.Sleep(10);
             }
@@ -631,7 +633,7 @@ namespace xClient.Core.Networking
 
                 try
                 {
-                    _handle.Send(BuildPacket(payload));
+                    _handle.Send(BuildMessage(payload));
                 }
                 
                 catch (Exception ex)
@@ -643,7 +645,7 @@ namespace xClient.Core.Networking
             }
         }
 
-        private byte[] BuildPacket(byte[] payload)
+        private byte[] BuildMessage(byte[] payload)
         {
             if (compressionEnabled)
                 payload = SafeQuickLZ.Compress(payload);
@@ -651,17 +653,17 @@ namespace xClient.Core.Networking
             if (encryptionEnabled)
                 payload = AES.Encrypt(payload);
 
-            byte[] packet = new byte[payload.Length + HEADER_SIZE];
-            Array.Copy(BitConverter.GetBytes(payload.Length), packet, HEADER_SIZE);
-            Array.Copy(payload, 0, packet, HEADER_SIZE, payload.Length);
-            return packet;
+            byte[] message = new byte[payload.Length + HEADER_SIZE];
+            Array.Copy(BitConverter.GetBytes(payload.Length), message, HEADER_SIZE);
+            Array.Copy(payload, 0, message, HEADER_SIZE, payload.Length);
+            return message;
         }
 
         private void SendCleanup(bool clear = false)
         {
-            lock (_sendingPacketsLock)
+            lock (_sendingMessagesLock)
             {
-                _sendingPackets = false;
+                _sendingMessages = false;
             }
 
             if (!clear) return;
@@ -749,6 +751,33 @@ namespace xClient.Core.Networking
                 }
             }
             catch { }
+        }
+
+        /// <summary>
+        /// Adds a Type to the serializer so a message can be properly serialized.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IMessage</param>
+        /// <param name="type">Type to be added</param>
+        public void AddTypeToSerializer(Type parent, Type type)
+        {
+            if (type == null || parent == null)
+                throw new ArgumentNullException();
+
+            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
+
+            if (!isAlreadyAdded)
+                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
+        }
+
+        /// <summary>
+        /// Adds Types to the serializer.
+        /// </summary>
+        /// <param name="parent">The parent type, i.e.: IMessage</param>
+        /// <param name="types">Types to add.</param>
+        public void AddTypesToSerializer(Type parent, params Type[] types)
+        {
+            foreach (Type type in types)
+                AddTypeToSerializer(parent, type);
         }
     }
 }

@@ -57,10 +57,13 @@
   <ItemGroup>
     <Compile Include="Core\Compression\SafeQuickLZ.Tests.cs" />
     <Compile Include="Core\Encryption\AES.Tests.cs" />
-    <Compile Include="Core\Packet\Packet.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{c7c363ba-e5b6-4e18-9224-39bc8da73172}</Project>
+      <Name>Quasar.Common</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{14ca405b-8bac-48ab-9fba-8fb5df88fd0d}</Project>
       <Name>Server</Name>
