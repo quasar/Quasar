@@ -1,9 +1,8 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using xClient.Core.Data;
 using xClient.Core.Recovery.Utilities;
-using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Browsers
 {

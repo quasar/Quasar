@@ -66,7 +66,7 @@ namespace xServer.Forms
         }
 
         /// <summary>
-        /// Registers the file manager message handler for client communication.
+        /// Registers the registry editor handler for client communication.
         /// </summary>
         private void RegisterMessageHandler()
         {
@@ -84,7 +84,7 @@ namespace xServer.Forms
         }
 
         /// <summary>
-        /// Unregisters the file manager message handler.
+        /// Unregisters the registry editor message handler.
         /// </summary>
         private void UnregisterMessageHandler()
         {

@@ -108,7 +108,6 @@
     <Compile Include="Core\Recovery\Browsers\Firefox.cs" />
     <Compile Include="Core\Recovery\Utilities\Chromium.cs" />
     <Compile Include="Core\Recovery\Utilities\JsonUtil.cs" />
-    <Compile Include="Core\Data\RecoveredAccount.cs" />
     <Compile Include="Core\Recovery\Utilities\SQLiteHandler.cs" />
     <Compile Include="Core\Recovery\Browsers\InternetExplorer.cs" />
     <Compile Include="Core\Recovery\Browsers\Opera.cs" />

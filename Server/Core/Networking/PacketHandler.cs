@@ -20,10 +20,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleSetUserStatus(client, (SetUserStatus)packet);
             }
-            else if (type == typeof(GetPasswordsResponse))
-            {
-                CommandHandler.HandleGetPasswordsResponse(client, (GetPasswordsResponse)packet);
-            }
         }
     }
 }

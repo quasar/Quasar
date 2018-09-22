@@ -685,7 +685,6 @@ namespace xServer.Core.Networking
 
                 if (Value != null)
                 {
-                    Value.Dispose();
                     Value = null;
                 }
                 

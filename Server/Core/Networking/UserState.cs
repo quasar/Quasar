@@ -1,10 +1,6 @@
-﻿using System;
-using System.Windows.Forms;
-using xServer.Forms;
-
-namespace xServer.Core.Networking
+﻿namespace xServer.Core.Networking
 {
-    public class UserState : IDisposable
+    public class UserState
     {
         public string Version { get; set; }
         public string OperatingSystem { get; set; }
@@ -21,27 +17,5 @@ namespace xServer.Core.Networking
         public string CountryWithCode { get { return string.Format("{0} [{1}]", Country, CountryCode); } }
         public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
-
-        public FrmPasswordRecovery FrmPass { get; set; }
-
-        public void Dispose()
-        {
-            Dispose(true);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                try
-                {
-                    if (FrmPass != null)
-                        FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
-                }
-                catch (InvalidOperationException)
-                {
-                }
-            }
-        }
     }
 }

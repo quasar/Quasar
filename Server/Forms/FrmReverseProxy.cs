@@ -42,7 +42,7 @@ namespace xServer.Forms
         }
 
         /// <summary>
-        /// Registers the connections manager message handler for client communication.
+        /// Registers the reverse proxy message handler for client communication.
         /// </summary>
         private void RegisterMessageHandler()
         {
@@ -52,7 +52,7 @@ namespace xServer.Forms
         }
 
         /// <summary>
-        /// Unregisters the connections manager message handler.
+        /// Unregisters the reverse proxy message handler.
         /// </summary>
         private void UnregisterMessageHandler()
         {
