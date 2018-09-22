@@ -21,24 +21,44 @@ namespace xServer.Forms
     public partial class FrmMain : Form
     {
         public QuasarServer ListenServer { get; set; }
-        public static FrmMain Instance { get; private set; }
 
         private const int STATUS_ID = 4;
         private const int USERSTATUS_ID = 5;
 
         private bool _titleUpdateRunning;
         private bool _processingClientConnections;
+        private readonly ClientStatusHandler _clientStatusHandler;
         private readonly Queue<KeyValuePair<Client, bool>> _clientConnections = new Queue<KeyValuePair<Client, bool>>();
         private readonly object _processingClientConnectionsLock = new object();
         private readonly object _lockClients = new object(); // lock for clients-listview
 
         public FrmMain()
         {
-            Instance = this;
-
             AES.SetDefaultKey(Settings.Password);
 
+            _clientStatusHandler = new ClientStatusHandler();
+            RegisterMessageHandler();
             InitializeComponent();
+        }
+
+        /// <summary>
+        /// Registers the client status message handler for client communication.
+        /// </summary>
+        private void RegisterMessageHandler()
+        {
+            MessageHandler.Register(_clientStatusHandler);
+            _clientStatusHandler.StatusUpdated += SetStatusByClient;
+            _clientStatusHandler.UserStatusUpdated += SetUserStatusByClient;
+        }
+
+        /// <summary>
+        /// Unregisters the client status message handler.
+        /// </summary>
+        private void UnregisterMessageHandler()
+        {
+            MessageHandler.Unregister(_clientStatusHandler);
+            _clientStatusHandler.StatusUpdated -= SetStatusByClient;
+            _clientStatusHandler.UserStatusUpdated -= SetUserStatusByClient;
         }
 
         public void UpdateWindowTitle()
@@ -104,9 +124,10 @@ namespace xServer.Forms
         {
             ListenServer.Disconnect();
             UPnP.DeletePortMap(Settings.ListenPort);
+            UnregisterMessageHandler();
+            _clientStatusHandler.Dispose();
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
-            Instance = null;
         }
 
         private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
@@ -292,51 +313,32 @@ namespace xServer.Forms
             {
             }
         }
-        
+
         /// <summary>
         /// Sets the status of a client.
         /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
         /// <param name="client">The client to update the status of.</param>
         /// <param name="text">The new status.</param>
-        public void SetStatusByClient(Client client, string text)
+        private void SetStatusByClient(object sender, Client client, string text)
         {
-            if (client == null) return;
-
-            try
-            {
-                lstClients.Invoke((MethodInvoker) delegate
-                {
-                    var item = GetListViewItemByClient(client);
-                    if (item != null)
-                        item.SubItems[STATUS_ID].Text = text;
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
+            var item = GetListViewItemByClient(client);
+            if (item != null)
+                item.SubItems[STATUS_ID].Text = text;
         }
 
         /// <summary>
         /// Sets the user status of a client.
         /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
         /// <param name="client">The client to update the user status of.</param>
         /// <param name="userStatus">The new user status.</param>
-        public void SetUserStatusByClient(Client client, UserStatus userStatus)
+        private void SetUserStatusByClient(object sender, Client client, UserStatus userStatus)
         {
-            if (client == null) return;
+            var item = GetListViewItemByClient(client);
+            if (item != null)
+                item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
 
-            try
-            {
-                lstClients.Invoke((MethodInvoker) delegate
-                {
-                    var item = GetListViewItemByClient(client);
-                    if (item != null)
-                        item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
-                });
-            }
-            catch (InvalidOperationException)
-            {
-            }
         }
 
         /// <summary>
@@ -419,6 +421,7 @@ namespace xServer.Forms
 
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // TODO: Refactor file upload
             if (lstClients.SelectedItems.Count != 0)
             {
                 using (var frm = new FrmUpdate(lstClients.SelectedItems.Count))
@@ -465,8 +468,7 @@ namespace xServer.Forms
 
                                     int id = FileHelper.GetNewTransferId();
 
-                                    CommandHandler.HandleSetStatus(c,
-                                        new SetStatus {Message = "Uploading file..."});
+                                    //SetStatusByClient(this, c, "Uploading file...");
 
                                     for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                     {
@@ -687,6 +689,7 @@ namespace xServer.Forms
 
         private void localFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            // TODO: Refactor file upload
             if (lstClients.SelectedItems.Count != 0)
             {
                 using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
@@ -715,8 +718,7 @@ namespace xServer.Forms
 
                                 int id = FileHelper.GetNewTransferId();
 
-                                CommandHandler.HandleSetStatus(c,
-                                    new SetStatus {Message = "Uploading file..."});
+                                // SetStatusByClient(this, c, "Uploading file...");
 
                                 for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
                                 {

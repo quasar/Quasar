@@ -1,6 +1,5 @@
-﻿using System.Linq;
-using Quasar.Common.Messages;
-using xServer.Core.Commands;
+﻿using Quasar.Common.Messages;
+using System.Linq;
 
 namespace xServer.Core.Networking
 {
@@ -33,10 +32,7 @@ namespace xServer.Core.Networking
         {
             if (ProcessingDisconnect || !Listening) return;
             var handler = ClientConnected;
-            if (handler != null)
-            {
-                handler(client);
-            }
+            handler?.Invoke(client);
         }
 
         /// <summary>
@@ -58,10 +54,7 @@ namespace xServer.Core.Networking
         {
             if (ProcessingDisconnect || !Listening) return;
             var handler = ClientDisconnected;
-            if (handler != null)
-            {
-                handler(client);
-            }
+            handler?.Invoke(client);
         }
 
         /// <summary>
@@ -109,11 +102,17 @@ namespace xServer.Core.Networking
             {
                 if (type == typeof (GetAuthenticationResponse))
                 {
-                    client.Authenticated = true;
-                    client.Send(new SetAuthenticationSuccess()); // finish handshake
-                    CommandHandler.HandleGetAuthenticationResponse(client,
-                        (GetAuthenticationResponse)message);
-                    OnClientConnected(client);
+                    AuthenticateClient(client, (GetAuthenticationResponse) message);
+                    client.Authenticated = AuthenticateClient(client, (GetAuthenticationResponse)message);
+                    if (client.Authenticated)
+                    {
+                        client.Send(new SetAuthenticationSuccess()); // finish handshake
+                        OnClientConnected(client);
+                    }
+                    else
+                    {
+                        client.Disconnect();
+                    }
                 }
                 else
                 {
@@ -123,7 +122,31 @@ namespace xServer.Core.Networking
             }
 
             MessageHandler.Process(client, message);
-            PacketHandler.HandlePacket(client, message); // TODO: Remove this
+        }
+
+        private bool AuthenticateClient(Client client, GetAuthenticationResponse packet)
+        {
+            if (packet.Id.Length != 64)
+                return false;
+
+            client.Value.Version = packet.Version;
+            client.Value.OperatingSystem = packet.OperatingSystem;
+            client.Value.AccountType = packet.AccountType;
+            client.Value.Country = packet.Country;
+            client.Value.CountryCode = packet.CountryCode;
+            client.Value.Region = packet.Region;
+            client.Value.City = packet.City;
+            client.Value.Id = packet.Id;
+            client.Value.Username = packet.Username;
+            client.Value.PcName = packet.PcName;
+            client.Value.Tag = packet.Tag;
+            client.Value.ImageIndex = packet.ImageIndex;
+
+            // TODO: Refactor tooltip
+            //if (Settings.ShowToolTip)
+            //    client.Send(new GetSystemInfo());
+
+            return true;
         }
     }
 }

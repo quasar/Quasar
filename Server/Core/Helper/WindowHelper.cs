@@ -6,7 +6,7 @@ namespace xServer.Core.Helper
     {
         public static string GetWindowTitle(string title, Client c)
         {
-            return string.Format("{0} - {1}@{2} [{3}:{4}]", title, c.Value.Username, c.Value.PCName, c.EndPoint.Address.ToString(), c.EndPoint.Port.ToString());
+            return string.Format("{0} - {1}@{2} [{3}:{4}]", title, c.Value.Username, c.Value.PcName, c.EndPoint.Address.ToString(), c.EndPoint.Port.ToString());
         }
 
         public static string GetWindowTitle(string title, int count)
