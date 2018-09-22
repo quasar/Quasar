@@ -609,14 +609,9 @@ namespace xServer.Forms
             {
                 foreach (Client c in GetSelectedClients())
                 {
-                    if (c.Value.FrmRe != null)
-                    {
-                        c.Value.FrmRe.Focus();
-                        return;
-                    }
-
-                    FrmRegistryEditor frmRE = new FrmRegistryEditor(c);
-                    frmRE.Show();
+                    FrmRegistryEditor frmRe = FrmRegistryEditor.CreateNewOrGetExisting(c);
+                    frmRe.Show();
+                    frmRe.Focus();
                 }
             }
         }
