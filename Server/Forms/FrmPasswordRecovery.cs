@@ -107,8 +107,29 @@ namespace xServer.Forms
         {
             try
             {
-                var items = new List<ListViewItem>();
+                if (accounts == null || accounts.Count == 0) // no accounts found
+                {
+                    var lvi = new ListViewItem { Tag = _noResultsFound, Text = clientIdentifier };
 
+                    lvi.SubItems.Add(_noResultsFound.Url); // URL
+                    lvi.SubItems.Add(_noResultsFound.Username); // User
+                    lvi.SubItems.Add(_noResultsFound.Password); // Pass
+
+                    var lvg = GetGroupFromApplication(_noResultsFound.Application);
+
+                    if (lvg == null) // create new group
+                    {
+                        lvg = new ListViewGroup
+                            { Name = _noResultsFound.Application, Header = _noResultsFound.Application };
+                        lstPasswords.Groups.Add(lvg); // add the new group
+                    }
+
+                    lvi.Group = lvg;
+                    lstPasswords.Items.Add(lvi);
+                    return;
+                }
+
+                var items = new List<ListViewItem>();
                 foreach (var acc in accounts)
                 {
                     var lvi = new ListViewItem {Tag = acc, Text = clientIdentifier};
@@ -131,27 +152,6 @@ namespace xServer.Forms
 
                 lstPasswords.Items.AddRange(items.ToArray());
                 UpdateRecoveryCount();
-
-                if (accounts.Count == 0) // no accounts found
-                {
-                    var lvi = new ListViewItem {Tag = _noResultsFound, Text = clientIdentifier};
-
-                    lvi.SubItems.Add(_noResultsFound.Url); // URL
-                    lvi.SubItems.Add(_noResultsFound.Username); // User
-                    lvi.SubItems.Add(_noResultsFound.Password); // Pass
-
-                    var lvg = GetGroupFromApplication(_noResultsFound.Application);
-
-                    if (lvg == null) // create new group
-                    {
-                        lvg = new ListViewGroup
-                            {Name = _noResultsFound.Application, Header = _noResultsFound.Application};
-                        lstPasswords.Groups.Add(lvg); // add the new group
-                    }
-
-                    lvi.Group = lvg;
-                    lstPasswords.Items.Add(lvi);
-                }
             }
             catch
             {
