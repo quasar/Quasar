@@ -39,10 +39,6 @@ namespace xClient.Core.Networking
             {
                 CommandHandler.HandleGetDesktop((GetDesktop)packet, client);
             }
-            else if (type == typeof(GetWebcam))
-            {
-                CommandHandler.HandleGetWebcam((GetWebcam)packet, client);
-            }
             else if (type == typeof(GetProcesses))
             {
                 CommandHandler.HandleGetProcesses((GetProcesses)packet, client);
@@ -50,10 +46,6 @@ namespace xClient.Core.Networking
             else if (type == typeof(DoProcessKill))
             {
                 CommandHandler.HandleDoProcessKill((DoProcessKill)packet, client);
-            }
-            else if (type == typeof(DoWebcamStop))
-            {
-                CommandHandler.HandleDoWebcamStop((DoWebcamStop)packet, client);
             }
             else if (type == typeof(DoProcessStart))
             {
@@ -98,10 +90,6 @@ namespace xClient.Core.Networking
             else if (type == typeof(DoClientUpdate))
             {
                 CommandHandler.HandleDoClientUpdate((DoClientUpdate)packet, client);
-            }
-            else if (type == typeof(GetWebcams))
-            {
-                CommandHandler.HandleGetWebcams((GetWebcams)packet, client);
             }
             else if (type == typeof(GetMonitors))
             {

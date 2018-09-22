@@ -83,8 +83,6 @@
     <Compile Include="Messages\GetRenameRegistryValueResponse.cs" />
     <Compile Include="Messages\GetStartupItemsResponse.cs" />
     <Compile Include="Messages\GetSystemInfoResponse.cs" />
-    <Compile Include="Messages\GetWebcamResponse.cs" />
-    <Compile Include="Messages\GetWebcamsResponse.cs" />
     <Compile Include="Messages\SetStatus.cs" />
     <Compile Include="Messages\SetStatusFileManager.cs" />
     <Compile Include="Messages\SetUserStatus.cs" />
@@ -137,8 +135,6 @@
     <Compile Include="Messages\GetProcesses.cs" />
     <Compile Include="Messages\GetStartupItems.cs" />
     <Compile Include="Messages\GetSystemInfo.cs" />
-    <Compile Include="Messages\GetWebcam.cs" />
-    <Compile Include="Messages\GetWebcams.cs" />
     <Compile Include="Messages\SetAuthenticationSuccess.cs" />
     <Compile Include="Networking\ISender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

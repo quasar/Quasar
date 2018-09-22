@@ -119,6 +119,7 @@
     <Compile Include="Core\Commands\RemoteShellHandler.cs" />
     <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
     <Compile Include="Core\Commands\StartupManagerHandler.cs" />
+    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Commands\SystemInformationHandler.cs" />
     <Compile Include="Core\Commands\TaskManagerHandler.cs" />
     <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
@@ -141,7 +142,6 @@
     <Compile Include="Core\Networking\Client.cs" />
     <Compile Include="Core\Build\ClientBuilder.cs" />
     <Compile Include="Core\Commands\ConnectionHandler.cs" />
-    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
     <Compile Include="Core\Compression\SafeQuickLZ.cs" />
     <Compile Include="Core\Cryptography\AES.cs" />
     <Compile Include="Core\Networking\Utilities\UPnP.cs" />
@@ -159,12 +159,6 @@
     <Compile Include="Core\Networking\UserState.cs" />
     <Compile Include="Enums\TransferType.cs" />
     <Compile Include="Enums\WordType.cs" />
-    <Compile Include="Forms\FrmRemoteWebcam.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Forms\FrmRemoteWebcam.Designer.cs">
-      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
-    </Compile>
     <Compile Include="Forms\FrmAbout.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -323,9 +317,6 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Core\Data\BuilderProfile.cs" />
     <Compile Include="Core\Data\Settings.cs" />
-    <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
-      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
     </EmbeddedResource>

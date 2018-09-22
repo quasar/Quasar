@@ -22,7 +22,6 @@ namespace xServer.Core.Networking
         public string Tag { get; set; }
         public string DownloadDirectory { get; set; }
 
-        public FrmRemoteWebcam FrmWebcam { get; set; }
         public FrmPasswordRecovery FrmPass { get; set; }
 
         public void Dispose()
@@ -36,8 +35,6 @@ namespace xServer.Core.Networking
             {
                 try
                 {
-                    if (FrmWebcam != null)
-                        FrmWebcam.Invoke((MethodInvoker)delegate { FrmWebcam.Close(); });
                     if (FrmPass != null)
                         FrmPass.Invoke((MethodInvoker)delegate { FrmPass.Close(); });
                 }
