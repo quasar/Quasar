@@ -101,6 +101,9 @@ namespace xServer.Core.Build
                                         case 6: // HideInstallSubdirectory
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideInstallSubdirectory));
                                             break;
+                                        case 7: // RequestElevationOnExecution
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.RequestElevationOnExecution));
+                                            break;
                                     }
                                     bools++;
                                 }

