@@ -423,7 +423,8 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)*.dll" /target:WinExe /wildcards /internalize</PostBuildEvent>
+    <PostBuildEvent>
+    </PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
