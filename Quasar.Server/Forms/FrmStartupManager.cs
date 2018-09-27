@@ -1,15 +1,15 @@
-﻿using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using xServer.Core.Commands;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Messages;
+using Quasar.Server.Core.Networking;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmStartupManager : Form
     {

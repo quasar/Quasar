@@ -1,8 +1,8 @@
 ﻿using System.IO;
 using System.Windows.Forms;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Core.Networking
+namespace Quasar.Server.Core.Networking
 {
     public class UserState
     {

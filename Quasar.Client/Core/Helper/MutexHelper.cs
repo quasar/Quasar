@@ -1,6 +1,6 @@
 ﻿using System.Threading;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class MutexHelper
     {

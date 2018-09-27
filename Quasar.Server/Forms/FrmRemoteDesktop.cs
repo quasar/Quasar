@@ -1,16 +1,16 @@
-﻿using Gma.System.MouseKeyHook;
-using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using xServer.Core.Commands;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
-using xServer.Core.Utilities;
+using Gma.System.MouseKeyHook;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Messages;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmRemoteDesktop : Form
     {

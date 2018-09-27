@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmConnections
     {
@@ -33,7 +35,7 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.closeConnectionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstConnections = new xServer.Controls.AeroListView();
+            this.lstConnections = new AeroListView();
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -53,7 +55,7 @@
             // 
             // refreshToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
+            this.refreshToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
@@ -61,7 +63,7 @@
             // 
             // closeConnectionToolStripMenuItem
             // 
-            this.closeConnectionToolStripMenuItem.Image = global::xServer.Properties.Resources.uac_shield;
+            this.closeConnectionToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.uac_shield;
             this.closeConnectionToolStripMenuItem.Name = "closeConnectionToolStripMenuItem";
             this.closeConnectionToolStripMenuItem.Size = new System.Drawing.Size(168, 22);
             this.closeConnectionToolStripMenuItem.Text = "Close Connection";

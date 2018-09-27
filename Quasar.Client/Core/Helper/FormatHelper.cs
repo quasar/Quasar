@@ -1,8 +1,7 @@
-﻿using System.Drawing;
-using System.IO;
+﻿using System.IO;
 using System.Text.RegularExpressions;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class FormatHelper
     {

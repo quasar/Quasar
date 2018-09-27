@@ -1,10 +1,10 @@
-﻿using Microsoft.Win32;
+﻿using System;
+using Microsoft.Win32;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
 using Quasar.Common.Models;
-using System;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
 
-namespace xClient.Core.Registry
+namespace Quasar.Client.Core.Registry
 {
     public class RegistryEditor
     {

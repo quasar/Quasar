@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Diagnostics;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Helper;
 using Quasar.Common.Messages;
-using xClient.Config;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
 
-namespace xClient.Core.Installation
+namespace Quasar.Client.Core.Installation
 {
     public static class ClientUninstaller
     {
-        public static void Uninstall(Client client)
+        public static void Uninstall(Networking.Client client)
         {
             try
             {

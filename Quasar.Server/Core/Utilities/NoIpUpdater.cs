@@ -2,9 +2,9 @@
 using System.Net;
 using System.Text;
 using System.Threading;
-using xServer.Core.Data;
+using Quasar.Server.Core.Data;
 
-namespace xServer.Core.Utilities
+namespace Quasar.Server.Core.Utilities
 {
     public static class NoIpUpdater
     {

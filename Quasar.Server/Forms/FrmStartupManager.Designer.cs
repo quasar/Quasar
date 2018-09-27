@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmStartupManager
     {
@@ -33,7 +35,7 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.addEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.removeEntryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.lstStartupItems = new xServer.Controls.AeroListView();
+            this.lstStartupItems = new AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPath = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip.SuspendLayout();
@@ -49,7 +51,7 @@
             // 
             // addEntryToolStripMenuItem
             // 
-            this.addEntryToolStripMenuItem.Image = global::xServer.Properties.Resources.application_add;
+            this.addEntryToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.application_add;
             this.addEntryToolStripMenuItem.Name = "addEntryToolStripMenuItem";
             this.addEntryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.addEntryToolStripMenuItem.Text = "Add Entry";
@@ -57,7 +59,7 @@
             // 
             // removeEntryToolStripMenuItem
             // 
-            this.removeEntryToolStripMenuItem.Image = global::xServer.Properties.Resources.application_delete;
+            this.removeEntryToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.application_delete;
             this.removeEntryToolStripMenuItem.Name = "removeEntryToolStripMenuItem";
             this.removeEntryToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
             this.removeEntryToolStripMenuItem.Text = "Remove Entry";

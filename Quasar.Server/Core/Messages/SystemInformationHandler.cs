@@ -1,10 +1,10 @@
 ﻿using Quasar.Common.Messages;
 using Quasar.Common.Networking;
+using Quasar.Server.Core.Networking;
 using System;
 using System.Collections.Generic;
-using xServer.Core.Networking;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class SystemInformationHandler : MessageProcessorBase<List<Tuple<string, string>>>
     {

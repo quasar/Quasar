@@ -1,6 +1,6 @@
 ﻿using System.Net;
 
-namespace xClient.Core.Data
+namespace Quasar.Client.Core.Data
 {
     public class Host
     {

@@ -7,14 +7,14 @@ using System.Net.Sockets;
 using System.Threading;
 using ProtoBuf;
 using ProtoBuf.Meta;
+using Quasar.Client.Core.Compression;
+using Quasar.Client.Core.Cryptography;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.ReverseProxy;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
-using xClient.Core.Compression;
-using xClient.Core.Cryptography;
-using xClient.Core.Extensions;
-using xClient.Core.ReverseProxy;
 
-namespace xClient.Core.Networking
+namespace Quasar.Client.Core.Networking
 {
     public class Client : ISender
     {

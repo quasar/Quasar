@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace xServer.Core.Networking.Utilities
+namespace Quasar.Server.Core.Networking.Utilities
 {
     /// <summary>
     /// Implements a pool of byte arrays to improve allocation performance when parsing data.

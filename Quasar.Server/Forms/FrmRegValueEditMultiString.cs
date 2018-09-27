@@ -1,9 +1,9 @@
-﻿using Quasar.Common.Models;
-using Quasar.Common.Utilities;
-using System;
+﻿using System;
 using System.Windows.Forms;
+using Quasar.Common.Models;
+using Quasar.Common.Utilities;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmRegValueEditMultiString : Form
     {

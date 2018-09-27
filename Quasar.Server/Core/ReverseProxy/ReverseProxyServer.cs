@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
-using xServer.Core.Networking;
+using Quasar.Server.Core.Networking;
 
-namespace xServer.Core.ReverseProxy
+namespace Quasar.Server.Core.ReverseProxy
 {
     public class ReverseProxyServer
     {

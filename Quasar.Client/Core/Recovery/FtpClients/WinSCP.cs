@@ -1,12 +1,12 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
+using Microsoft.Win32;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.FtpClients
+namespace Quasar.Client.Core.Recovery.FtpClients
 {
     public class WinSCP
     {

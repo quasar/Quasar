@@ -2,14 +2,14 @@
 using System.Diagnostics;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Commands;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
-using xClient.Config;
-using xClient.Core.Commands;
-using xClient.Core.Data;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Networking
+namespace Quasar.Client.Core.Networking
 {
     public class QuasarClient : Client
     {

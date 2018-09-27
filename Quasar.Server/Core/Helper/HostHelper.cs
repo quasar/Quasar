@@ -2,10 +2,9 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using xServer.Core.Data;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Data;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class HostHelper
     {

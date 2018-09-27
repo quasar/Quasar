@@ -1,10 +1,10 @@
-﻿using System.Collections.Generic;
-using Microsoft.Win32;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-using System;
+using Microsoft.Win32;
 using Quasar.Common.Utilities;
 
-namespace xClient.Core.Extensions
+namespace Quasar.Client.Core.Extensions
 {
     public static class RegistryKeyExtensions
     {

@@ -1,6 +1,6 @@
-﻿using xServer.Core.Networking;
+﻿using Quasar.Server.Core.Networking;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class WindowHelper
     {

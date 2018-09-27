@@ -1,12 +1,12 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Models;
-using Quasar.Common.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using xClient.Core.Extensions;
+using Microsoft.Win32;
+using Quasar.Client.Core.Extensions;
+using Quasar.Common.Models;
+using Quasar.Common.Utilities;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class RegistryKeyHelper
     {

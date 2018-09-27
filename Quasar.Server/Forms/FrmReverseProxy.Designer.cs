@@ -1,6 +1,6 @@
-﻿using xServer.Controls;
+﻿using Quasar.Server.Controls;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     partial class FrmReverseProxy
     {
@@ -43,7 +43,7 @@ namespace xServer.Forms
             this.lblProxyInfo = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.lblLoadBalance = new System.Windows.Forms.Label();
-            this.lstConnections = new xServer.Controls.AeroListView();
+            this.lstConnections = new AeroListView();
             this.columnHeader6 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader7 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader1 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

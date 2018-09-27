@@ -1,6 +1,6 @@
-﻿using xServer.Controls;
+﻿using Quasar.Server.Controls;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     partial class FrmTaskManager
     {
@@ -38,7 +38,7 @@ namespace xServer.Forms
             this.lineToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.refreshToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
-            this.lstTasks = new xServer.Controls.AeroListView();
+            this.lstTasks = new AeroListView();
             this.hProcessname = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hPID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTitle = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -61,7 +61,7 @@ namespace xServer.Forms
             // 
             // killProcessToolStripMenuItem
             // 
-            this.killProcessToolStripMenuItem.Image = global::xServer.Properties.Resources.cancel;
+            this.killProcessToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.cancel;
             this.killProcessToolStripMenuItem.Name = "killProcessToolStripMenuItem";
             this.killProcessToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.killProcessToolStripMenuItem.Text = "Kill Process";
@@ -69,7 +69,7 @@ namespace xServer.Forms
             // 
             // startProcessToolStripMenuItem
             // 
-            this.startProcessToolStripMenuItem.Image = global::xServer.Properties.Resources.run;
+            this.startProcessToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.run;
             this.startProcessToolStripMenuItem.Name = "startProcessToolStripMenuItem";
             this.startProcessToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.startProcessToolStripMenuItem.Text = "Start Process";
@@ -82,7 +82,7 @@ namespace xServer.Forms
             // 
             // refreshToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
+            this.refreshToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";

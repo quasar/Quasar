@@ -1,11 +1,11 @@
 ﻿using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Networking;
 using System.IO;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class KeyloggerHandler : MessageProcessorBase<string>
     {

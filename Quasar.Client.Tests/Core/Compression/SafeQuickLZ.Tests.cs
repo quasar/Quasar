@@ -1,8 +1,8 @@
 ﻿using System;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xClient.Core.Compression;
+using Quasar.Client.Core.Compression;
 
-namespace xClient.Tests.Core.Compression
+namespace Quasar.Client.Tests.Core.Compression
 {
     [TestClass]
     public class SafeQuickLZTests

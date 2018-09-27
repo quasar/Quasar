@@ -1,4 +1,4 @@
-﻿namespace xServer.Forms
+﻿namespace Quasar.Server.Forms
 {
     partial class FrmKeylogger
     {

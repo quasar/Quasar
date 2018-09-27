@@ -6,7 +6,7 @@
     <ProjectGuid>{7223F9B2-17A2-432B-ADAC-51B1E35681DB}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xClient.Tests</RootNamespace>
+    <RootNamespace>Quasar.Client.Tests</RootNamespace>
     <AssemblyName>Client.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>

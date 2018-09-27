@@ -1,21 +1,20 @@
 ﻿using System;
 using System.Net;
 using System.Threading;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Installation;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
-using xClient.Config;
-using xClient.Core.Data;
-using xClient.Core.Helper;
-using xClient.Core.Installation;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE CONNECTION COMMANDS. */
     public static partial class CommandHandler
     {
-        public static void HandleGetAuthentication(GetAuthentication command, Client client)
+        public static void HandleGetAuthentication(GetAuthentication command, Networking.Client client)
         {
             GeoLocationHelper.Initialize();
 
@@ -45,7 +44,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoClientUpdate(DoClientUpdate command, Client client)
+        public static void HandleDoClientUpdate(DoClientUpdate command, Networking.Client client)
         {
             // i dont like this updating... if anyone has a better idea feel free to edit it
             if (string.IsNullOrEmpty(command.DownloadUrl))
@@ -110,7 +109,7 @@ namespace xClient.Core.Commands
             }).Start();
         }
 
-        public static void HandleDoClientUninstall(DoClientUninstall command, Client client)
+        public static void HandleDoClientUninstall(DoClientUninstall command, Networking.Client client)
         {
             client.Send(new SetStatus {Message = "Uninstalling... good bye :-("});
 

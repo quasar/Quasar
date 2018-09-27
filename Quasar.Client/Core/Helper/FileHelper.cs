@@ -1,13 +1,13 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using Quasar.Client.Core.Cryptography;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Utilities;
-using xClient.Core.Cryptography;
-using xClient.Core.Data;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class FileHelper
     {

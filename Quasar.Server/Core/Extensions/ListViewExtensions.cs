@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
-using xServer.Core.Helper;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Core.Extensions
+namespace Quasar.Server.Core.Extensions
 {
     public static class ListViewExtensions
     {

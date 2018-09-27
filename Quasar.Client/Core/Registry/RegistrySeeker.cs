@@ -1,11 +1,11 @@
-﻿using Microsoft.Win32;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using Microsoft.Win32;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
 using Quasar.Common.Models;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
 
-namespace xClient.Core.Registry
+namespace Quasar.Client.Core.Registry
 {
     public class RegistrySeeker
     {

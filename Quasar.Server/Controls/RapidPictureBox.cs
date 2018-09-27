@@ -2,9 +2,9 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Controls
+namespace Quasar.Server.Controls
 {
     public interface IRapidPictureBox
     {

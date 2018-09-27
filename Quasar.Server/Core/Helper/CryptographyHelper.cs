@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
-using xServer.Core.Cryptography;
+using Quasar.Server.Core.Cryptography;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class CryptographyHelper
     {

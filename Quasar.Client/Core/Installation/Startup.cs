@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
 using Microsoft.Win32;
-using xClient.Config;
-using xClient.Core.Data;
-using xClient.Core.Helper;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Helper;
 
-namespace xClient.Core.Installation
+namespace Quasar.Client.Core.Installation
 {
     public static class Startup
     {

@@ -1,6 +1,6 @@
-﻿using xServer.Controls;
+﻿using Quasar.Server.Controls;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     partial class FrmMain
     {
@@ -70,7 +70,7 @@ namespace xServer.Forms
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();
             this.statusStrip = new System.Windows.Forms.StatusStrip();
             this.listenToolStripStatusLabel = new System.Windows.Forms.ToolStripStatusLabel();
-            this.lstClients = new xServer.Controls.AeroListView();
+            this.lstClients = new AeroListView();
             this.hIP = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTag = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUserPC = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -185,7 +185,7 @@ namespace xServer.Forms
             // 
             // startupManagerToolStripMenuItem
             // 
-            this.startupManagerToolStripMenuItem.Image = global::xServer.Properties.Resources.startup_programs;
+            this.startupManagerToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.startup_programs;
             this.startupManagerToolStripMenuItem.Name = "startupManagerToolStripMenuItem";
             this.startupManagerToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.startupManagerToolStripMenuItem.Text = "Startup Manager";
@@ -209,7 +209,7 @@ namespace xServer.Forms
             // 
             // connectionsToolStripMenuItem
             // 
-            this.connectionsToolStripMenuItem.Image = global::xServer.Properties.Resources.transmit_blue;
+            this.connectionsToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.transmit_blue;
             this.connectionsToolStripMenuItem.Name = "connectionsToolStripMenuItem";
             this.connectionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.connectionsToolStripMenuItem.Text = "TCP Connections";
@@ -217,7 +217,7 @@ namespace xServer.Forms
             // 
             // reverseProxyToolStripMenuItem
             // 
-            this.reverseProxyToolStripMenuItem.Image = global::xServer.Properties.Resources.server_link;
+            this.reverseProxyToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.server_link;
             this.reverseProxyToolStripMenuItem.Name = "reverseProxyToolStripMenuItem";
             this.reverseProxyToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.reverseProxyToolStripMenuItem.Text = "Reverse Proxy";
@@ -225,7 +225,7 @@ namespace xServer.Forms
             // 
             // registryEditorToolStripMenuItem
             // 
-            this.registryEditorToolStripMenuItem.Image = global::xServer.Properties.Resources.registry;
+            this.registryEditorToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.registry;
             this.registryEditorToolStripMenuItem.Name = "registryEditorToolStripMenuItem";
             this.registryEditorToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.registryEditorToolStripMenuItem.Text = "Registry Editor";
@@ -233,7 +233,7 @@ namespace xServer.Forms
             // 
             // elevateClientPermissionsToolStripMenuItem
             // 
-            this.elevateClientPermissionsToolStripMenuItem.Image = global::xServer.Properties.Resources.uac_shield;
+            this.elevateClientPermissionsToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.uac_shield;
             this.elevateClientPermissionsToolStripMenuItem.Name = "elevateClientPermissionsToolStripMenuItem";
             this.elevateClientPermissionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.elevateClientPermissionsToolStripMenuItem.Text = "Elevate Client Permissions";
@@ -250,14 +250,14 @@ namespace xServer.Forms
             this.shutdownToolStripMenuItem,
             this.restartToolStripMenuItem,
             this.standbyToolStripMenuItem});
-            this.actionsToolStripMenuItem.Image = global::xServer.Properties.Resources.actions;
+            this.actionsToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.actions;
             this.actionsToolStripMenuItem.Name = "actionsToolStripMenuItem";
             this.actionsToolStripMenuItem.Size = new System.Drawing.Size(211, 22);
             this.actionsToolStripMenuItem.Text = "Actions";
             // 
             // shutdownToolStripMenuItem
             // 
-            this.shutdownToolStripMenuItem.Image = global::xServer.Properties.Resources.shutdown;
+            this.shutdownToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.shutdown;
             this.shutdownToolStripMenuItem.Name = "shutdownToolStripMenuItem";
             this.shutdownToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.shutdownToolStripMenuItem.Text = "Shutdown";
@@ -265,7 +265,7 @@ namespace xServer.Forms
             // 
             // restartToolStripMenuItem
             // 
-            this.restartToolStripMenuItem.Image = global::xServer.Properties.Resources.restart;
+            this.restartToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.restart;
             this.restartToolStripMenuItem.Name = "restartToolStripMenuItem";
             this.restartToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.restartToolStripMenuItem.Text = "Restart";
@@ -273,7 +273,7 @@ namespace xServer.Forms
             // 
             // standbyToolStripMenuItem
             // 
-            this.standbyToolStripMenuItem.Image = global::xServer.Properties.Resources.standby;
+            this.standbyToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.standby;
             this.standbyToolStripMenuItem.Name = "standbyToolStripMenuItem";
             this.standbyToolStripMenuItem.Size = new System.Drawing.Size(128, 22);
             this.standbyToolStripMenuItem.Text = "Standby";
@@ -308,7 +308,7 @@ namespace xServer.Forms
             // 
             // keyloggerToolStripMenuItem
             // 
-            this.keyloggerToolStripMenuItem.Image = global::xServer.Properties.Resources.logger;
+            this.keyloggerToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.logger;
             this.keyloggerToolStripMenuItem.Name = "keyloggerToolStripMenuItem";
             this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.keyloggerToolStripMenuItem.Text = "Keylogger";
@@ -330,14 +330,14 @@ namespace xServer.Forms
             this.remoteExecuteToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.localFileToolStripMenuItem,
             this.webFileToolStripMenuItem});
-            this.remoteExecuteToolStripMenuItem.Image = global::xServer.Properties.Resources.lightning;
+            this.remoteExecuteToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.lightning;
             this.remoteExecuteToolStripMenuItem.Name = "remoteExecuteToolStripMenuItem";
             this.remoteExecuteToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.remoteExecuteToolStripMenuItem.Text = "Remote Execute";
             // 
             // localFileToolStripMenuItem
             // 
-            this.localFileToolStripMenuItem.Image = global::xServer.Properties.Resources.drive_go;
+            this.localFileToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.drive_go;
             this.localFileToolStripMenuItem.Name = "localFileToolStripMenuItem";
             this.localFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.localFileToolStripMenuItem.Text = "Local File...";
@@ -345,7 +345,7 @@ namespace xServer.Forms
             // 
             // webFileToolStripMenuItem
             // 
-            this.webFileToolStripMenuItem.Image = global::xServer.Properties.Resources.world_go;
+            this.webFileToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.world_go;
             this.webFileToolStripMenuItem.Name = "webFileToolStripMenuItem";
             this.webFileToolStripMenuItem.Size = new System.Drawing.Size(132, 22);
             this.webFileToolStripMenuItem.Text = "Web File...";

@@ -1,6 +1,6 @@
-﻿using xServer.Controls;
+﻿using Quasar.Server.Controls;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     partial class FrmFileManager
     {
@@ -51,12 +51,12 @@ namespace xServer.Forms
             this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
-            this.TabControlFileManager = new xServer.Controls.DotNetBarTabControl();
+            this.TabControlFileManager = new DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.lblPath = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
-            this.lstDirectory = new xServer.Controls.AeroListView();
+            this.lstDirectory = new AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -64,7 +64,7 @@ namespace xServer.Forms
             this.cmbDrives = new System.Windows.Forms.ComboBox();
             this.tabTransfers = new System.Windows.Forms.TabPage();
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
-            this.lstTransfers = new xServer.Controls.AeroListView();
+            this.lstTransfers = new AeroListView();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -98,7 +98,7 @@ namespace xServer.Forms
             // downloadToolStripMenuItem
             // 
             this.downloadToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.downloadToolStripMenuItem.Image = global::xServer.Properties.Resources.download;
+            this.downloadToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.download;
             this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
             this.downloadToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.downloadToolStripMenuItem.Text = "Download";
@@ -106,7 +106,7 @@ namespace xServer.Forms
             // 
             // uploadToolStripMenuItem
             // 
-            this.uploadToolStripMenuItem.Image = global::xServer.Properties.Resources.upload;
+            this.uploadToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.upload;
             this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
             this.uploadToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.uploadToolStripMenuItem.Text = "Upload";
@@ -119,7 +119,7 @@ namespace xServer.Forms
             // 
             // executeToolStripMenuItem
             // 
-            this.executeToolStripMenuItem.Image = global::xServer.Properties.Resources.run;
+            this.executeToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.run;
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
             this.executeToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.executeToolStripMenuItem.Text = "Execute";
@@ -127,7 +127,7 @@ namespace xServer.Forms
             // 
             // renameToolStripMenuItem
             // 
-            this.renameToolStripMenuItem.Image = global::xServer.Properties.Resources.textfield_rename;
+            this.renameToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.textfield_rename;
             this.renameToolStripMenuItem.Name = "renameToolStripMenuItem";
             this.renameToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.renameToolStripMenuItem.Text = "Rename";
@@ -135,7 +135,7 @@ namespace xServer.Forms
             // 
             // deleteToolStripMenuItem
             // 
-            this.deleteToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
+            this.deleteToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.delete;
             this.deleteToolStripMenuItem.Name = "deleteToolStripMenuItem";
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
@@ -148,7 +148,7 @@ namespace xServer.Forms
             // 
             // addToStartupToolStripMenuItem
             // 
-            this.addToStartupToolStripMenuItem.Image = global::xServer.Properties.Resources.application_add;
+            this.addToStartupToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.application_add;
             this.addToStartupToolStripMenuItem.Name = "addToStartupToolStripMenuItem";
             this.addToStartupToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.addToStartupToolStripMenuItem.Text = "Add to Startup";
@@ -161,7 +161,7 @@ namespace xServer.Forms
             // 
             // refreshToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
+            this.refreshToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
@@ -217,7 +217,7 @@ namespace xServer.Forms
             // 
             // cancelToolStripMenuItem
             // 
-            this.cancelToolStripMenuItem.Image = global::xServer.Properties.Resources.cancel;
+            this.cancelToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.cancel;
             this.cancelToolStripMenuItem.Name = "cancelToolStripMenuItem";
             this.cancelToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.cancelToolStripMenuItem.Text = "Cancel";
@@ -225,7 +225,7 @@ namespace xServer.Forms
             // 
             // clearToolStripMenuItem
             // 
-            this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.broom;
+            this.clearToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.broom;
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.clearToolStripMenuItem.Text = "Clear transfers";
@@ -273,7 +273,7 @@ namespace xServer.Forms
             // 
             this.btnRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.btnRefresh.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.btnRefresh.Image = global::xServer.Properties.Resources.refresh;
+            this.btnRefresh.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.btnRefresh.ImageAlign = System.Drawing.ContentAlignment.BottomCenter;
             this.btnRefresh.Location = new System.Drawing.Point(682, 8);
             this.btnRefresh.Name = "btnRefresh";

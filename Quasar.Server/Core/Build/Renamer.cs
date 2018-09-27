@@ -5,7 +5,7 @@ using System.Text;
 using Mono.Cecil;
 using Quasar.Common.Utilities;
 
-namespace xServer.Core.Build
+namespace Quasar.Server.Core.Build
 {
     public class Renamer
     {
@@ -57,7 +57,7 @@ namespace xServer.Core.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (typeDef.Namespace.Contains("Registry") || typeDef.HasInterfaces)
+            if (typeDef.HasInterfaces)
                 return;
 
             _typeOverloader.GiveName(typeDef);

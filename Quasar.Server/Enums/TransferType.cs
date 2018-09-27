@@ -1,4 +1,4 @@
-﻿namespace xServer.Enums
+﻿namespace Quasar.Server.Enums
 {
     public enum TransferType
     {

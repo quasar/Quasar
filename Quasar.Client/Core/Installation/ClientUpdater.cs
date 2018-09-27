@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Diagnostics;
 using System.IO;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.Messages;
-using xClient.Config;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Installation
+namespace Quasar.Client.Core.Installation
 {
     public static class ClientUpdater
     {
-        public static void Update(Client client, string newFilePath)
+        public static void Update(Networking.Client client, string newFilePath)
         {
             try
             {

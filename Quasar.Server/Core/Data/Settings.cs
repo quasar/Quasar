@@ -3,7 +3,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace xServer.Core.Data
+namespace Quasar.Server.Core.Data
 {
     public static class Settings
     {

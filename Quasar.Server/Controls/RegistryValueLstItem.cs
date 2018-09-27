@@ -1,9 +1,9 @@
-﻿using Quasar.Common.Models;
-using System.Windows.Forms;
-using xServer.Core.Extensions;
-using xServer.Core.Registry;
+﻿using System.Windows.Forms;
+using Quasar.Common.Models;
+using Quasar.Server.Core.Extensions;
+using Quasar.Server.Core.Registry;
 
-namespace xServer.Controls
+namespace Quasar.Server.Controls
 {
     public class RegistryValueLstItem : ListViewItem
     {

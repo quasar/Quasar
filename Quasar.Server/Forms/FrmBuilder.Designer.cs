@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmBuilder
     {
@@ -39,28 +41,28 @@
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeHostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.builderTabs = new xServer.Controls.DotNetBarTabControl();
+            this.builderTabs = new DotNetBarTabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
-            this.line6 = new xServer.Controls.Line();
+            this.line6 = new Line();
             this.label8 = new System.Windows.Forms.Label();
             this.txtTag = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.lblTag = new System.Windows.Forms.Label();
             this.txtMutex = new System.Windows.Forms.TextBox();
             this.btnMutex = new System.Windows.Forms.Button();
-            this.line5 = new xServer.Controls.Line();
+            this.line5 = new Line();
             this.lblMutex = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.connectionPage = new System.Windows.Forms.TabPage();
             this.numericUpDownPort = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownDelay = new System.Windows.Forms.NumericUpDown();
-            this.line3 = new xServer.Controls.Line();
+            this.line3 = new Line();
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.line2 = new xServer.Controls.Line();
+            this.line2 = new Line();
             this.label2 = new System.Windows.Forms.Label();
-            this.line1 = new xServer.Controls.Line();
+            this.line1 = new Line();
             this.label1 = new System.Windows.Forms.Label();
             this.lstHosts = new System.Windows.Forms.ListBox();
             this.btnAddHost = new System.Windows.Forms.Button();
@@ -74,9 +76,9 @@
             this.lblPassword = new System.Windows.Forms.Label();
             this.installationPage = new System.Windows.Forms.TabPage();
             this.chkHideSubDirectory = new System.Windows.Forms.CheckBox();
-            this.line7 = new xServer.Controls.Line();
+            this.line7 = new Line();
             this.label10 = new System.Windows.Forms.Label();
-            this.line4 = new xServer.Controls.Line();
+            this.line4 = new Line();
             this.label5 = new System.Windows.Forms.Label();
             this.chkInstall = new System.Windows.Forms.CheckBox();
             this.lblInstallName = new System.Windows.Forms.Label();
@@ -96,11 +98,11 @@
             this.iconPreview = new System.Windows.Forms.PictureBox();
             this.btnBrowseIcon = new System.Windows.Forms.Button();
             this.txtIconPath = new System.Windows.Forms.TextBox();
-            this.line8 = new xServer.Controls.Line();
+            this.line8 = new Line();
             this.label11 = new System.Windows.Forms.Label();
             this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
             this.txtFileVersion = new System.Windows.Forms.TextBox();
-            this.line9 = new xServer.Controls.Line();
+            this.line9 = new Line();
             this.lblProductName = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.chkChangeIcon = new System.Windows.Forms.CheckBox();
@@ -122,7 +124,7 @@
             this.chkHideLogDirectory = new System.Windows.Forms.CheckBox();
             this.txtLogDirectoryName = new System.Windows.Forms.TextBox();
             this.lblLogDirectory = new System.Windows.Forms.Label();
-            this.line10 = new xServer.Controls.Line();
+            this.line10 = new Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
@@ -151,7 +153,7 @@
             // 
             // picUAC2
             // 
-            this.picUAC2.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC2.Image = global::Quasar.Server.Properties.Resources.uac_shield;
             this.picUAC2.Location = new System.Drawing.Point(363, 88);
             this.picUAC2.Name = "picUAC2";
             this.picUAC2.Size = new System.Drawing.Size(16, 20);
@@ -162,7 +164,7 @@
             // 
             // picUAC1
             // 
-            this.picUAC1.Image = global::xServer.Properties.Resources.uac_shield;
+            this.picUAC1.Image = global::Quasar.Server.Properties.Resources.uac_shield;
             this.picUAC1.Location = new System.Drawing.Point(363, 68);
             this.picUAC1.Name = "picUAC1";
             this.picUAC1.Size = new System.Drawing.Size(16, 20);
@@ -207,7 +209,7 @@
             // 
             // removeHostToolStripMenuItem
             // 
-            this.removeHostToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
+            this.removeHostToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.delete;
             this.removeHostToolStripMenuItem.Name = "removeHostToolStripMenuItem";
             this.removeHostToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.removeHostToolStripMenuItem.Text = "Remove host";
@@ -215,7 +217,7 @@
             // 
             // clearToolStripMenuItem
             // 
-            this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.broom;
+            this.clearToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.broom;
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.Size = new System.Drawing.Size(143, 22);
             this.clearToolStripMenuItem.Text = "Clear all";
@@ -272,7 +274,7 @@
             // 
             // line6
             // 
-            this.line6.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line6.LineAlignment = Line.Alignment.Horizontal;
             this.line6.Location = new System.Drawing.Point(83, 78);
             this.line6.Name = "line6";
             this.line6.Size = new System.Drawing.Size(300, 13);
@@ -335,7 +337,7 @@
             // 
             // line5
             // 
-            this.line5.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line5.LineAlignment = Line.Alignment.Horizontal;
             this.line5.Location = new System.Drawing.Point(112, 5);
             this.line5.Name = "line5";
             this.line5.Size = new System.Drawing.Size(271, 13);
@@ -431,7 +433,7 @@
             // 
             // line3
             // 
-            this.line3.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line3.LineAlignment = Line.Alignment.Horizontal;
             this.line3.Location = new System.Drawing.Point(95, 263);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(290, 13);
@@ -459,7 +461,7 @@
             // 
             // line2
             // 
-            this.line2.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line2.LineAlignment = Line.Alignment.Horizontal;
             this.line2.Location = new System.Drawing.Point(123, 161);
             this.line2.Name = "line2";
             this.line2.Size = new System.Drawing.Size(260, 13);
@@ -477,7 +479,7 @@
             // 
             // line1
             // 
-            this.line1.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(104, 5);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(281, 13);
@@ -630,7 +632,7 @@
             // 
             // line7
             // 
-            this.line7.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line7.LineAlignment = Line.Alignment.Horizontal;
             this.line7.Location = new System.Drawing.Point(60, 274);
             this.line7.Name = "line7";
             this.line7.Size = new System.Drawing.Size(323, 13);
@@ -648,7 +650,7 @@
             // 
             // line4
             // 
-            this.line4.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line4.LineAlignment = Line.Alignment.Horizontal;
             this.line4.Location = new System.Drawing.Point(117, 5);
             this.line4.Name = "line4";
             this.line4.Size = new System.Drawing.Size(266, 13);
@@ -861,7 +863,7 @@
             // 
             // line8
             // 
-            this.line8.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line8.LineAlignment = Line.Alignment.Horizontal;
             this.line8.Location = new System.Drawing.Point(122, 5);
             this.line8.Name = "line8";
             this.line8.Size = new System.Drawing.Size(261, 13);
@@ -898,7 +900,7 @@
             // 
             // line9
             // 
-            this.line9.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line9.LineAlignment = Line.Alignment.Horizontal;
             this.line9.Location = new System.Drawing.Point(83, 276);
             this.line9.Name = "line9";
             this.line9.Size = new System.Drawing.Size(300, 13);
@@ -1099,7 +1101,7 @@
             // 
             // line10
             // 
-            this.line10.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line10.LineAlignment = Line.Alignment.Horizontal;
             this.line10.Location = new System.Drawing.Point(72, 5);
             this.line10.Name = "line10";
             this.line10.Size = new System.Drawing.Size(308, 13);

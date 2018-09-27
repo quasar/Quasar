@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace xServer.Core.Utilities
+namespace Quasar.Server.Core.Utilities
 {
     public class FrameUpdatedEventArgs : EventArgs
     {

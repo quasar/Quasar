@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.Video.Codecs;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN VARIABLES NECESSARY FOR VARIOUS COMMANDS (if needed). */
     public static partial class CommandHandler

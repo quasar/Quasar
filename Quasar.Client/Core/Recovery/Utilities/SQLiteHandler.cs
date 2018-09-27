@@ -5,7 +5,7 @@ using System.Text;
 using Microsoft.VisualBasic;
 using Microsoft.VisualBasic.CompilerServices;
 
-namespace xClient.Core.Recovery.Utilities
+namespace Quasar.Client.Core.Recovery.Utilities
 {
     public class SQLiteHandler
     {

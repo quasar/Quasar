@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using xClient.Core.Data;
+using Quasar.Client.Core.Data;
 
-namespace xClient.Core.Utilities
+namespace Quasar.Client.Core.Utilities
 {
     public class HostsManager
     {

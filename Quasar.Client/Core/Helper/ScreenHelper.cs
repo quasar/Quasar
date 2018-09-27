@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Windows.Forms;
-using xClient.Core.Utilities;
+using Quasar.Client.Core.Utilities;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class ScreenHelper
     {

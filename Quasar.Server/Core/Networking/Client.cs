@@ -1,17 +1,17 @@
-﻿using ProtoBuf;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
+using ProtoBuf;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
-using xServer.Core.Compression;
-using xServer.Core.Cryptography;
-using xServer.Core.Extensions;
+using Quasar.Server.Core.Compression;
+using Quasar.Server.Core.Cryptography;
+using Quasar.Server.Core.Extensions;
 
-namespace xServer.Core.Networking
+namespace Quasar.Server.Core.Networking
 {
     public class Client : IEquatable<Client>, ISender
     {

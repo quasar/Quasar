@@ -1,7 +1,7 @@
 ﻿using System;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class NativeMethodsHelper
     {

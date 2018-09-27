@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace xClient.Core.Data
+namespace Quasar.Client.Core.Data
 {
     [DataContract]
     public class GeoInformation

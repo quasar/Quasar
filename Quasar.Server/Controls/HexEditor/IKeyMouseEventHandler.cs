@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace xServer.Controls.HexEditor
+namespace Quasar.Server.Controls.HexEditor
 {
     public interface IKeyMouseEventHandler
     {

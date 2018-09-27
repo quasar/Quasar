@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using xServer.Core.Data;
+using Quasar.Server.Core.Data;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmAbout : Form
     {

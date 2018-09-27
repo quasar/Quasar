@@ -1,20 +1,20 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
-using Quasar.Common.Utilities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using xServer.Controls;
-using xServer.Core.Commands;
-using xServer.Core.Extensions;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
-using xServer.Core.Registry;
+using Microsoft.Win32;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using Quasar.Common.Utilities;
+using Quasar.Server.Controls;
+using Quasar.Server.Core.Extensions;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Messages;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Core.Registry;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmRegistryEditor : Form
     {

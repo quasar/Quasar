@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Management;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class SystemHelper
     {

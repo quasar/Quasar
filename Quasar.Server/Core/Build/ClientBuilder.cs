@@ -1,12 +1,12 @@
 ﻿using System;
 using Mono.Cecil;
 using Mono.Cecil.Cil;
+using Quasar.Server.Core.Cryptography;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Helper;
 using Vestris.ResourceLib;
-using xServer.Core.Cryptography;
-using xServer.Core.Data;
-using xServer.Core.Helper;
 
-namespace xServer.Core.Build
+namespace Quasar.Server.Core.Build
 {
     /// <summary>
     /// Provides methods used to create a custom client executable.
@@ -28,7 +28,7 @@ namespace xServer.Core.Build
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
-                if (typeDef.FullName == "xClient.Config.Settings")
+                if (typeDef.FullName == "Quasar.Client.Config.Settings")
                 {
                     foreach (var methodDef in typeDef.Methods)
                     {

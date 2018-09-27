@@ -1,4 +1,7 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+using Quasar.Server.Enums;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmRegValueEditWord
     {
@@ -37,7 +40,7 @@
             this.baseBox = new System.Windows.Forms.GroupBox();
             this.radioDecimal = new System.Windows.Forms.RadioButton();
             this.radioHexa = new System.Windows.Forms.RadioButton();
-            this.valueDataTxtBox = new xServer.Controls.WordTextBox();
+            this.valueDataTxtBox = new WordTextBox();
             this.baseBox.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -143,7 +146,7 @@
             this.valueDataTxtBox.Size = new System.Drawing.Size(161, 20);
             this.valueDataTxtBox.TabIndex = 0;
             this.valueDataTxtBox.Text = "0";
-            this.valueDataTxtBox.Type = xServer.Enums.WordType.DWORD;
+            this.valueDataTxtBox.Type = WordType.DWORD;
             // 
             // FrmRegValueEditWord
             // 

@@ -1,4 +1,4 @@
-﻿namespace xServer.Forms
+﻿namespace Quasar.Server.Forms
 {
     partial class FrmAbout
     {
@@ -43,7 +43,7 @@
             // 
             // picIcon
             // 
-            this.picIcon.Image = global::xServer.Properties.Resources.Quasar_Server;
+            this.picIcon.Image = global::Quasar.Server.Properties.Resources.Quasar_Server;
             this.picIcon.Location = new System.Drawing.Point(12, 12);
             this.picIcon.Name = "picIcon";
             this.picIcon.Size = new System.Drawing.Size(64, 64);

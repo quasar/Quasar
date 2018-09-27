@@ -4,9 +4,9 @@ using System.Net;
 using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Xml;
-using xClient.Core.Data;
+using Quasar.Client.Core.Data;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class GeoLocationHelper
     {

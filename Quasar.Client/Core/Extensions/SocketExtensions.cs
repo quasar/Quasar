@@ -2,7 +2,7 @@
 using System.Net.Sockets;
 using System.Runtime.InteropServices;
 
-namespace xClient.Core.Extensions
+namespace Quasar.Client.Core.Extensions
 {
     /// <summary>
     /// Socket Extension for KeepAlive

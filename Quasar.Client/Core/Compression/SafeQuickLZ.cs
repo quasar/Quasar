@@ -2,7 +2,7 @@
 
 #pragma warning disable 0675
 
-namespace xClient.Core.Compression
+namespace Quasar.Client.Core.Compression
 {
     // QuickLZ data compression library
     // Copyright (C) 2006-2011 Lasse Mikkel Reinhold

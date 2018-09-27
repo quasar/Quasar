@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace xServer.Core.Utilities
+namespace Quasar.Server.Core.Utilities
 {
     /// <summary>
     /// Provides access to Win32 API and Microsoft C Runtime Library (msvcrt.dll).

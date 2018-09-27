@@ -2,7 +2,7 @@
 using System.Runtime.Serialization.Json;
 using System.Text;
 
-namespace xClient.Core.Recovery.Utilities
+namespace Quasar.Client.Core.Recovery.Utilities
 {
     public static class JsonUtil
     {

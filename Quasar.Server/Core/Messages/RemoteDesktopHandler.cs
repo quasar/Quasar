@@ -2,11 +2,11 @@
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Common.Video.Codecs;
+using Quasar.Server.Core.Networking;
 using System.Drawing;
 using System.IO;
-using xServer.Core.Networking;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>
     {

@@ -1,11 +1,10 @@
 ﻿using Quasar.Common.Messages;
-using xClient.Core.Networking;
 
-namespace xClient.Core.ReverseProxy
+namespace Quasar.Client.Core.ReverseProxy
 {
     public class ReverseProxyCommandHandler
     {
-        public static void HandleCommand(Client client, IMessage packet)
+        public static void HandleCommand(Networking.Client client, IMessage packet)
         {
             var type = packet.GetType();
 

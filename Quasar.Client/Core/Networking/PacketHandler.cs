@@ -1,8 +1,8 @@
-﻿using Quasar.Common.Messages;
-using xClient.Core.Commands;
-using xClient.Core.ReverseProxy;
+﻿using Quasar.Client.Core.Commands;
+using Quasar.Client.Core.ReverseProxy;
+using Quasar.Common.Messages;
 
-namespace xClient.Core.Networking
+namespace Quasar.Client.Core.Networking
 {
     public static class PacketHandler
     {

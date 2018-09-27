@@ -2,7 +2,7 @@
 using System.Runtime.InteropServices;
 using System.Security;
 
-namespace xServer.Core.Build
+namespace Quasar.Server.Core.Build
 {
     public static class IconInjector
     {

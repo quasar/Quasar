@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace xClient.Core.Data
+namespace Quasar.Client.Core.Data
 {
     public static class ClientData
     {

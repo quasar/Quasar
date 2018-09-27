@@ -3,9 +3,9 @@ using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Core.Data
+namespace Quasar.Server.Core.Data
 {
     public class BuilderProfile
     {

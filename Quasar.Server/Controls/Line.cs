@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Windows.Forms;
 
-namespace xServer.Controls
+namespace Quasar.Server.Controls
 {
     public class Line : Control
     {

@@ -2,7 +2,7 @@
 using System.Drawing.Imaging;
 using System.Windows.Forms;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class RemoteDesktopHelper
     {

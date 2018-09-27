@@ -1,12 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 
-namespace xServer.Controls.HexEditor
+namespace Quasar.Server.Controls.HexEditor
 {
     /*
     * Derived and Adapted from Bernhard Elbl 

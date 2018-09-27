@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmShowMessagebox : Form
     {

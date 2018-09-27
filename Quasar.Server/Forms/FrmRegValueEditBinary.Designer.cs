@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls.HexEditor;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmRegValueEditBinary
     {
@@ -33,7 +35,7 @@
             this.label2 = new System.Windows.Forms.Label();
             this.cancelButton = new System.Windows.Forms.Button();
             this.okButton = new System.Windows.Forms.Button();
-            this.hexEditor = new xServer.Controls.HexEditor.HexEditor();
+            this.hexEditor = new HexEditor();
             this.SuspendLayout();
             // 
             // valueNameTxtBox

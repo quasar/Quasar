@@ -2,9 +2,9 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using xClient.Core.Utilities;
+using Quasar.Client.Core.Utilities;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class NativeMethodsHelper
     {

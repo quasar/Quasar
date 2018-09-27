@@ -3,9 +3,9 @@ using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using xClient.Core.Cryptography;
+using Quasar.Client.Core.Cryptography;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class DevicesHelper
     {

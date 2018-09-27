@@ -2,9 +2,8 @@
 using System.Net;
 using System.Net.Sockets;
 using Quasar.Common.Messages;
-using xClient.Core.Networking;
 
-namespace xClient.Core.ReverseProxy
+namespace Quasar.Client.Core.ReverseProxy
 {
     public class ReverseProxyClient
     {
@@ -14,11 +13,11 @@ namespace xClient.Core.ReverseProxy
         public Socket Handle { get; private set; }
         public string Target { get; private set; }
         public int Port { get; private set; }
-        public Client Client { get; private set; }
+        public Networking.Client Client { get; private set; }
         private byte[] _buffer;
         private bool _disconnectIsSend;
 
-        public ReverseProxyClient(ReverseProxyConnect command, Client client)
+        public ReverseProxyClient(ReverseProxyConnect command, Networking.Client client)
         {
             this.ConnectionId = command.ConnectionId;
             this.Target = command.Target;

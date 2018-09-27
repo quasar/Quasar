@@ -1,11 +1,11 @@
-﻿using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.FtpClients
+namespace Quasar.Client.Core.Recovery.FtpClients
 {
     public class FileZilla
     {

@@ -7,16 +7,16 @@ using System.Windows.Forms;
 using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
-using xServer.Core.Commands;
-using xServer.Core.Cryptography;
-using xServer.Core.Data;
-using xServer.Core.Extensions;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
-using xServer.Core.Networking.Utilities;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Cryptography;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Extensions;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Messages;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Core.Networking.Utilities;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmMain : Form
     {
@@ -135,7 +135,7 @@ namespace xServer.Forms
             UpdateWindowTitle();
         }
 
-        private void ServerState(Server server, bool listening, ushort port)
+        private void ServerState(Core.Networking.Server server, bool listening, ushort port)
         {
             try
             {

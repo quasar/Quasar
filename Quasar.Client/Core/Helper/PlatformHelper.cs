@@ -2,7 +2,7 @@
 using System.Management;
 using System.Text.RegularExpressions;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class PlatformHelper
     {

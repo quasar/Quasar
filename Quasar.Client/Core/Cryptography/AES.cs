@@ -2,9 +2,9 @@
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
-using xClient.Core.Helper;
+using Quasar.Client.Core.Helper;
 
-namespace xClient.Core.Cryptography
+namespace Quasar.Client.Core.Cryptography
 {
     public static class AES
     {

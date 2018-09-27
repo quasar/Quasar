@@ -1,7 +1,7 @@
 ﻿using System;
-using xServer.Enums;
+using Quasar.Server.Enums;
 
-namespace xServer.Models
+namespace Quasar.Server.Models
 {
     public class FileTransfer : IEquatable<FileTransfer>
     {

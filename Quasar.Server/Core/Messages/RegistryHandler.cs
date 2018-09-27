@@ -2,9 +2,9 @@
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
-using xServer.Core.Networking;
+using Quasar.Server.Core.Networking;
 
-namespace xServer.Core.Commands
+namespace Quasar.Server.Core.Messages
 {
     public class RegistryHandler : MessageProcessorBase<string>
     {

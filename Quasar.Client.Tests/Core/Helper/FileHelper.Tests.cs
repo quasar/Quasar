@@ -1,7 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xClient.Core.Helper;
+using Quasar.Client.Core.Helper;
 
-namespace xClient.Tests.Core.Helper
+namespace Quasar.Client.Tests.Core.Helper
 {
     [TestClass]
     public class FileHelperTests

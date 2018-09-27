@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
-using xServer.Forms;
+using Quasar.Server.Forms;
 
-namespace xServer
+namespace Quasar.Server
 {
     internal static class Program
     {

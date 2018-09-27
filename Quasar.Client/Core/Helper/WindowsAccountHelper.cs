@@ -2,11 +2,11 @@
 using System.Diagnostics;
 using System.Security.Principal;
 using System.Threading;
+using Quasar.Client.Core.Networking;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
-using xClient.Core.Networking;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class WindowsAccountHelper
     {

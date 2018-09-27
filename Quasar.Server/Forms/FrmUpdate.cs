@@ -1,9 +1,9 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmUpdate : Form
     {

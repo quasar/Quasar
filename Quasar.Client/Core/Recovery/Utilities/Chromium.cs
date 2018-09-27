@@ -1,11 +1,11 @@
-﻿using Quasar.Common.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Security.Cryptography;
 using System.Text;
+using Quasar.Common.Models;
 
-namespace xClient.Core.Recovery.Utilities
+namespace Quasar.Client.Core.Recovery.Utilities
 {
     public class ChromiumBase
     {

@@ -3,16 +3,16 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
-using xClient.Config;
-using xClient.Core.Commands;
-using xClient.Core.Cryptography;
-using xClient.Core.Data;
-using xClient.Core.Helper;
-using xClient.Core.Installation;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Commands;
+using Quasar.Client.Core.Cryptography;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Installation;
+using Quasar.Client.Core.Networking;
+using Quasar.Client.Core.Utilities;
 
-namespace xClient
+namespace Quasar.Client
 {
     internal static class Program
     {

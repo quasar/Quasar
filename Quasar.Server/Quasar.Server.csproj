@@ -8,18 +8,18 @@
     <ProjectGuid>{14CA405B-8BAC-48AB-9FBA-8FB5DF88FD0D}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xServer</RootNamespace>
+    <RootNamespace>Quasar.Server</RootNamespace>
     <AssemblyName>Quasar</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
   </PropertyGroup>
   <PropertyGroup>
-    <StartupObject>xServer.Program</StartupObject>
+    <StartupObject>Quasar.Server.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <ApplicationIcon>Quasar_Server.ico</ApplicationIcon>
+    <ApplicationIcon>icons\Quasar_Server.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
@@ -111,18 +111,18 @@
       <DependentUpon>WordTextBox.cs</DependentUpon>
     </Compile>
     <Compile Include="Core\Build\IconInjector.cs" />
-    <Compile Include="Core\Commands\ClientStatusHandler.cs" />
-    <Compile Include="Core\Commands\FileManagerHandler.cs" />
-    <Compile Include="Core\Commands\KeyloggerHandler.cs" />
-    <Compile Include="Core\Commands\PasswordRecoveryHandler.cs" />
-    <Compile Include="Core\Commands\RegistryHandler.cs" />
-    <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
-    <Compile Include="Core\Commands\RemoteShellHandler.cs" />
-    <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
-    <Compile Include="Core\Commands\StartupManagerHandler.cs" />
-    <Compile Include="Core\Commands\SystemInformationHandler.cs" />
-    <Compile Include="Core\Commands\TaskManagerHandler.cs" />
-    <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
+    <Compile Include="Core\Messages\ClientStatusHandler.cs" />
+    <Compile Include="Core\Messages\FileManagerHandler.cs" />
+    <Compile Include="Core\Messages\KeyloggerHandler.cs" />
+    <Compile Include="Core\Messages\PasswordRecoveryHandler.cs" />
+    <Compile Include="Core\Messages\RegistryHandler.cs" />
+    <Compile Include="Core\Messages\RemoteDesktopHandler.cs" />
+    <Compile Include="Core\Messages\RemoteShellHandler.cs" />
+    <Compile Include="Core\Messages\ReverseProxyHandler.cs" />
+    <Compile Include="Core\Messages\StartupManagerHandler.cs" />
+    <Compile Include="Core\Messages\SystemInformationHandler.cs" />
+    <Compile Include="Core\Messages\TaskManagerHandler.cs" />
+    <Compile Include="Core\Messages\TcpConnectionsHandler.cs" />
     <Compile Include="Core\Data\BuildOptions.cs" />
     <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Core\Helper\ClipboardHelper.cs" />
@@ -413,9 +413,6 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Quasar_Server.ico" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">

@@ -2,20 +2,19 @@
 using System.IO;
 using System.Security;
 using System.Threading;
+using Quasar.Client.Core.Helper;
+using Quasar.Client.Core.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
-using xClient.Core.Utilities;
 
-namespace xClient.Core.Commands
+namespace Quasar.Client.Core.Commands
 {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE DIRECTORIES AND FILES (excluding the program). */
     public static partial class CommandHandler
     {
-        public static void HandleGetDirectory(GetDirectory command, Client client)
+        public static void HandleGetDirectory(GetDirectory command, Networking.Client client)
         {
             bool isError = false;
             string message = null;
@@ -92,7 +91,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoDownloadFile(DoDownloadFile command, Client client)
+        public static void HandleDoDownloadFile(DoDownloadFile command, Networking.Client client)
         {
             new Thread(() =>
             {
@@ -141,7 +140,7 @@ namespace xClient.Core.Commands
             }).Start();
         }
 
-        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Client client)
+        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Networking.Client client)
         {
             if (!_canceledDownloads.ContainsKey(command.Id))
             {
@@ -158,7 +157,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoUploadFile(DoUploadFile command, Client client)
+        public static void HandleDoUploadFile(DoUploadFile command, Networking.Client client)
         {
             if (command.CurrentBlock == 0 && System.IO.File.Exists(command.RemotePath))
                 NativeMethods.DeleteFile(command.RemotePath); // delete existing file
@@ -167,7 +166,7 @@ namespace xClient.Core.Commands
             destFile.AppendBlock(command.Block, command.CurrentBlock);
         }
 
-        public static void HandleDoPathDelete(DoPathDelete command, Client client)
+        public static void HandleDoPathDelete(DoPathDelete command, Networking.Client client)
         {
             bool isError = false;
             string message = null;
@@ -229,7 +228,7 @@ namespace xClient.Core.Commands
             }
         }
 
-        public static void HandleDoPathRename(DoPathRename command, Client client)
+        public static void HandleDoPathRename(DoPathRename command, Networking.Client client)
         {
             bool isError = false;
             string message = null;

@@ -1,4 +1,4 @@
-﻿namespace xServer.Core.Data
+﻿namespace Quasar.Server.Core.Data
 {
     public class Host
     {

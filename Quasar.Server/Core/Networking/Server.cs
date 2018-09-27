@@ -1,15 +1,15 @@
-﻿using ProtoBuf.Meta;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using ProtoBuf.Meta;
 using Quasar.Common.Messages;
-using xServer.Core.Data;
-using xServer.Core.Networking.Utilities;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Networking.Utilities;
 
-namespace xServer.Core.Networking
+namespace Quasar.Server.Core.Networking
 {
     public class Server
     {

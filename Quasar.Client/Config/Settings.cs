@@ -1,11 +1,11 @@
 ﻿using System;
-using xClient.Core.Helper;
+using Quasar.Client.Core.Helper;
 
 #if !DEBUG
-using xClient.Core.Cryptography;
+using Quasar.Client.Core.Cryptography;
 #endif
 
-namespace xClient.Config
+namespace Quasar.Client.Config
 {
     public static class Settings
     {

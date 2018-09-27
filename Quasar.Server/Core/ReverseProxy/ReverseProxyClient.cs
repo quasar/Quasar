@@ -4,9 +4,9 @@ using System.IO;
 using System.Net.Sockets;
 using System.Text;
 using Quasar.Common.Messages;
-using xServer.Core.Networking;
+using Quasar.Server.Core.Networking;
 
-namespace xServer.Core.ReverseProxy
+namespace Quasar.Server.Core.ReverseProxy
 {
     public class ReverseProxyClient
     {

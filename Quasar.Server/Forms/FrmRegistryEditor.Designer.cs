@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmRegistryEditor
     {
@@ -84,8 +86,8 @@
             this.qWORD64bitValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.multiStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
             this.expandableStringValueToolStripMenuItem1 = new System.Windows.Forms.ToolStripMenuItem();
-            this.tvRegistryDirectory = new xServer.Controls.RegistryTreeView();
-            this.lstRegistryValues = new xServer.Controls.AeroListView();
+            this.tvRegistryDirectory = new RegistryTreeView();
+            this.lstRegistryValues = new AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));

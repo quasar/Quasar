@@ -1,6 +1,6 @@
-﻿using xServer.Controls;
+﻿using Quasar.Server.Controls;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     partial class FrmSystemInformation
     {
@@ -32,7 +32,7 @@ namespace xServer.Forms
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmSystemInformation));
-            this.lstSystem = new xServer.Controls.AeroListView();
+            this.lstSystem = new AeroListView();
             this.hComponent = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hValue = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -86,7 +86,7 @@ namespace xServer.Forms
             this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyAllToolStripMenuItem,
             this.copySelectedToolStripMenuItem});
-            this.copyToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
+            this.copyToClipboardToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.copy;
             this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
             this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.copyToClipboardToolStripMenuItem.Text = "Copy to Clipboard";
@@ -112,7 +112,7 @@ namespace xServer.Forms
             // 
             // refreshToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
+            this.refreshToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";

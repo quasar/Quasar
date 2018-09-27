@@ -2,9 +2,8 @@
 using System.Drawing;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Quasar.Common.Video.Compression;
-using xClient.Core.Compression;
 
-namespace xClient.Tests.Core.Compression
+namespace Quasar.Client.Tests.Core.Compression
 {
     [TestClass]
     public class JpgCompressionTests

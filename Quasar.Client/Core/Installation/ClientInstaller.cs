@@ -2,16 +2,15 @@
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using xClient.Config;
-using xClient.Core.Data;
-using xClient.Core.Helper;
-using xClient.Core.Networking;
+using Quasar.Client.Config;
+using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Helper;
 
-namespace xClient.Core.Installation
+namespace Quasar.Client.Core.Installation
 {
     public static class ClientInstaller
     {
-        public static void Install(Client client)
+        public static void Install(Networking.Client client)
         {
             bool isKilled = false;
 

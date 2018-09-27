@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using Quasar.Common.Messages;
 
-namespace xClient.Core.Utilities
+namespace Quasar.Client.Core.Utilities
 {
     /// <summary>
     /// This class manages a remote shell session.

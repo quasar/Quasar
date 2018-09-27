@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace xClient.Core.Helper
+namespace Quasar.Client.Core.Helper
 {
     public static class CryptographyHelper
     {

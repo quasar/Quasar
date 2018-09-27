@@ -1,15 +1,15 @@
-﻿using Quasar.Common.Messages;
-using System;
+﻿using System;
 using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using xServer.Core.Commands;
-using xServer.Core.Data;
-using xServer.Core.Helper;
-using xServer.Core.Networking;
-using xServer.Core.ReverseProxy;
+using Quasar.Common.Messages;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Helper;
+using Quasar.Server.Core.Messages;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Core.ReverseProxy;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmReverseProxy : Form
     {

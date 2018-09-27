@@ -1,13 +1,13 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using xServer.Core.Cryptography;
-using xServer.Core.Data;
-using xServer.Core.Networking;
-using xServer.Core.Networking.Utilities;
-using xServer.Core.Utilities;
+using Quasar.Server.Core.Cryptography;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Networking;
+using Quasar.Server.Core.Networking.Utilities;
+using Quasar.Server.Core.Utilities;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmSettings : Form
     {

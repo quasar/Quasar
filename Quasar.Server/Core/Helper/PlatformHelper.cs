@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace xServer.Core.Helper
+namespace Quasar.Server.Core.Helper
 {
     public static class PlatformHelper
     {

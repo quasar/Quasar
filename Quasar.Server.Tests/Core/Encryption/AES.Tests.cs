@@ -1,9 +1,9 @@
 ﻿using System.Text;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using xServer.Core.Cryptography;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Cryptography;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Tests.Core.Encryption
+namespace Quasar.Server.Tests.Core.Encryption
 {
     [TestClass]
     public class AESTests

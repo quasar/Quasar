@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Mono.Nat;
-using Mono.Nat.Upnp;
 
-namespace xServer.Core.Networking.Utilities
+namespace Quasar.Server.Core.Networking.Utilities
 {
     internal static class UPnP
     {

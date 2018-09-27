@@ -1,7 +1,7 @@
-﻿using Quasar.Common.Messages;
-using System.Linq;
+﻿using System.Linq;
+using Quasar.Common.Messages;
 
-namespace xServer.Core.Networking
+namespace Quasar.Server.Core.Networking
 {
     public class QuasarServer : Server
     {

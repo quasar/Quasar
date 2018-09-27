@@ -6,11 +6,11 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using xServer.Core.Build;
-using xServer.Core.Data;
-using xServer.Core.Helper;
+using Quasar.Server.Core.Build;
+using Quasar.Server.Core.Data;
+using Quasar.Server.Core.Helper;
 
-namespace xServer.Forms
+namespace Quasar.Server.Forms
 {
     public partial class FrmBuilder : Form
     {

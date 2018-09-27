@@ -1,15 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Globalization;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using xServer.Enums;
+using Quasar.Server.Enums;
 
-namespace xServer.Controls
+namespace Quasar.Server.Controls
 {
     public partial class WordTextBox : TextBox
     {

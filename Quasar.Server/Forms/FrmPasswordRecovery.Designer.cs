@@ -1,4 +1,6 @@
-﻿namespace xServer.Forms
+﻿using Quasar.Server.Controls;
+
+namespace Quasar.Server.Forms
 {
     partial class FrmPasswordRecovery
     {
@@ -46,7 +48,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.lblInfo = new System.Windows.Forms.Label();
             this.txtFormat = new System.Windows.Forms.TextBox();
-            this.lstPasswords = new xServer.Controls.AeroListView();
+            this.lstPasswords = new AeroListView();
             this.hIdentification = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hURL = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hUser = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -72,7 +74,7 @@
             this.saveToFileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.saveAllToolStripMenuItem,
             this.saveSelectedToolStripMenuItem});
-            this.saveToFileToolStripMenuItem.Image = global::xServer.Properties.Resources.save;
+            this.saveToFileToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.save;
             this.saveToFileToolStripMenuItem.Name = "saveToFileToolStripMenuItem";
             this.saveToFileToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.saveToFileToolStripMenuItem.Text = "Save to File";
@@ -96,7 +98,7 @@
             this.copyToClipboardToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyAllToolStripMenuItem,
             this.copySelectedToolStripMenuItem});
-            this.copyToClipboardToolStripMenuItem.Image = global::xServer.Properties.Resources.copy;
+            this.copyToClipboardToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.copy;
             this.copyToClipboardToolStripMenuItem.Name = "copyToClipboardToolStripMenuItem";
             this.copyToClipboardToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.copyToClipboardToolStripMenuItem.Text = "Copy to Clipboard";
@@ -125,7 +127,7 @@
             this.clearToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.clearAllToolStripMenuItem,
             this.clearSelectedToolStripMenuItem});
-            this.clearToolStripMenuItem.Image = global::xServer.Properties.Resources.delete;
+            this.clearToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.delete;
             this.clearToolStripMenuItem.Name = "clearToolStripMenuItem";
             this.clearToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.clearToolStripMenuItem.Text = "Clear";
@@ -146,7 +148,7 @@
             // 
             // refreshToolStripMenuItem
             // 
-            this.refreshToolStripMenuItem.Image = global::xServer.Properties.Resources.refresh;
+            this.refreshToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.refresh;
             this.refreshToolStripMenuItem.Name = "refreshToolStripMenuItem";
             this.refreshToolStripMenuItem.Size = new System.Drawing.Size(171, 22);
             this.refreshToolStripMenuItem.Text = "Refresh";
