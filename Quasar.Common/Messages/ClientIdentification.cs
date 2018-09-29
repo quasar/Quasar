@@ -3,7 +3,7 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class GetAuthenticationResponse : IMessage
+    public class ClientIdentification : IMessage
     {
         [ProtoMember(1)]
         public string Version { get; set; }

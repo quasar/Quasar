@@ -210,9 +210,9 @@ namespace Quasar.Server.Core.Networking
         public bool Connected { get; private set; }
 
         /// <summary>
-        /// Determines if the client is authenticated.
+        /// Determines if the client is identified.
         /// </summary>
-        public bool Authenticated { get; set; }
+        public bool Identified { get; set; }
 
         /// <summary>
         /// Stores values of the user.
@@ -284,7 +284,7 @@ namespace Quasar.Server.Core.Networking
 
         private void Initialize()
         {
-            Authenticated = false;
+            Identified = false;
             Value = new UserState();
         }
 

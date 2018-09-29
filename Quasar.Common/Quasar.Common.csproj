@@ -50,6 +50,8 @@
     <Compile Include="Enums\ConnectionState.cs" />
     <Compile Include="Enums\ContentType.cs" />
     <Compile Include="Enums\StartupType.cs" />
+    <Compile Include="Messages\ClientIdentification.cs" />
+    <Compile Include="Messages\ClientIdentificationResult.cs" />
     <Compile Include="Models\Drive.cs" />
     <Compile Include="Messages\MessageProcessorBase.cs" />
     <Compile Include="Messages\IProgress.cs" />
@@ -67,7 +69,6 @@
     <Compile Include="NativeMethods.cs" />
     <Compile Include="Messages\DoDownloadFileResponse.cs" />
     <Compile Include="Messages\DoShellExecuteResponse.cs" />
-    <Compile Include="Messages\GetAuthenticationResponse.cs" />
     <Compile Include="Messages\GetChangeRegistryValueResponse.cs" />
     <Compile Include="Messages\GetConnectionsResponse.cs" />
     <Compile Include="Messages\GetCreateRegistryKeyResponse.cs" />
@@ -127,7 +128,6 @@
     <Compile Include="Messages\DoUploadFile.cs" />
     <Compile Include="Messages\DoVisitWebsite.cs" />
     <Compile Include="Messages\DoWebcamStop.cs" />
-    <Compile Include="Messages\GetAuthentication.cs" />
     <Compile Include="Messages\GetConnections.cs" />
     <Compile Include="Messages\GetDesktop.cs" />
     <Compile Include="Messages\GetDirectory.cs" />
@@ -138,7 +138,6 @@
     <Compile Include="Messages\GetProcesses.cs" />
     <Compile Include="Messages\GetStartupItems.cs" />
     <Compile Include="Messages\GetSystemInfo.cs" />
-    <Compile Include="Messages\SetAuthenticationSuccess.cs" />
     <Compile Include="Networking\ISender.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Models\RegSeekerMatch.cs" />

