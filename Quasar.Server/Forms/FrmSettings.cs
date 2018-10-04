@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Globalization;
 using System.Windows.Forms;
-using Quasar.Server.Core.Cryptography;
-using Quasar.Server.Core.Data;
-using Quasar.Server.Core.Networking;
-using Quasar.Server.Core.Networking.Utilities;
-using Quasar.Server.Core.Utilities;
+using Quasar.Common.Cryptography;
+using Quasar.Server.Data;
+using Quasar.Server.Networking;
+using Quasar.Server.Networking.Utilities;
+using Quasar.Server.Utilities;
 
 namespace Quasar.Server.Forms
 {
@@ -75,7 +75,7 @@ namespace Quasar.Server.Forms
             {
                 try
                 {
-                    AES.SetDefaultKey(password);
+                    Aes128.SetDefaultKey(password);
 
                     if (chkUseUpnp.Checked)
                     {
@@ -148,7 +148,7 @@ namespace Quasar.Server.Forms
             Settings.AutoListen = chkAutoListen.Checked;
             Settings.ShowPopup = chkPopup.Checked;
             if (password != Settings.Password)
-                AES.SetDefaultKey(password);
+                Aes128.SetDefaultKey(password);
             Settings.Password = password;
             Settings.UseUPnP = chkUseUpnp.Checked;
             Settings.ShowToolTip = chkShowTooltip.Checked;

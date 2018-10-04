@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
-using Quasar.Server.Core.Extensions;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
+using Quasar.Server.Extensions;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
 
 namespace Quasar.Server.Forms
 {

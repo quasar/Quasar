@@ -6,9 +6,9 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Server.Core.Build;
-using Quasar.Server.Core.Data;
-using Quasar.Server.Core.Helper;
+using Quasar.Server.Build;
+using Quasar.Server.Data;
+using Quasar.Server.Helper;
 
 namespace Quasar.Server.Forms
 {

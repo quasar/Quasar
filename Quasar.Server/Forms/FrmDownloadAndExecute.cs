@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows.Forms;
-using Quasar.Server.Core.Helper;
+using Quasar.Server.Helper;
 
 namespace Quasar.Server.Forms
 {

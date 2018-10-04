@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Drawing;
 using System.Windows.Forms;
-using Quasar.Server.Core.Utilities;
+using Quasar.Server.Utilities;
 
 namespace Quasar.Server.Controls
 {

@@ -7,7 +7,7 @@
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Quasar.Client.Tests</RootNamespace>
-    <AssemblyName>Client.Tests</AssemblyName>
+    <AssemblyName>Quasar.Client.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{3AC096D0-A1C2-E12C-1390-A8335801FDAB};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -53,21 +53,13 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="Core\Helper\FileHelper.Tests.cs" />
-    <Compile Include="Core\Compression\JpgCompression.Tests.cs" />
-    <Compile Include="Core\Compression\SafeQuickLZ.Tests.cs" />
-    <Compile Include="Core\Encryption\AES.Tests.cs" />
-    <Compile Include="Core\Encryption\SHA256.Tests.cs" />
+    <Compile Include="Helper\FileHelper.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Quasar.Client\Quasar.Client.csproj">
       <Project>{9f5cf56a-ddb2-4f40-ab99-2a1dc47588e1}</Project>
-      <Name>Client</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
-      <Project>{C7C363BA-E5B6-4E18-9224-39BC8DA73172}</Project>
-      <Name>Quasar.Common</Name>
+      <Name>Quasar.Client</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

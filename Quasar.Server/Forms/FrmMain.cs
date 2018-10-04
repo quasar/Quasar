@@ -4,17 +4,17 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Cryptography;
 using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
-using Quasar.Server.Core.Cryptography;
-using Quasar.Server.Core.Data;
-using Quasar.Server.Core.Extensions;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
-using Quasar.Server.Core.Networking.Utilities;
-using Quasar.Server.Core.Utilities;
+using Quasar.Server.Data;
+using Quasar.Server.Extensions;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
+using Quasar.Server.Networking.Utilities;
+using Quasar.Server.Utilities;
 
 namespace Quasar.Server.Forms
 {
@@ -34,7 +34,7 @@ namespace Quasar.Server.Forms
 
         public FrmMain()
         {
-            AES.SetDefaultKey(Settings.Password);
+            Aes128.SetDefaultKey(Settings.Password);
 
             _clientStatusHandler = new ClientStatusHandler();
             RegisterMessageHandler();
@@ -135,7 +135,7 @@ namespace Quasar.Server.Forms
             UpdateWindowTitle();
         }
 
-        private void ServerState(Core.Networking.Server server, bool listening, ushort port)
+        private void ServerState(Networking.Server server, bool listening, ushort port)
         {
             try
             {

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Quasar.Server.Core.Data;
+using Quasar.Server.Data;
 
 namespace Quasar.Server.Forms
 {

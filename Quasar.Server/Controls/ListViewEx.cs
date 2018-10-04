@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Utilities;
+using Quasar.Server.Helper;
+using Quasar.Server.Utilities;
 
 namespace Quasar.Server.Controls
 {

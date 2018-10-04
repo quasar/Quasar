@@ -3,7 +3,7 @@ using System.IO;
 using System.Windows.Forms;
 using Quasar.Common.Enums;
 using Quasar.Common.Models;
-using Quasar.Server.Core.Helper;
+using Quasar.Server.Helper;
 
 namespace Quasar.Server.Forms
 {

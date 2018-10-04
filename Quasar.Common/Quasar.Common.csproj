@@ -47,6 +47,10 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\Aes128.cs" />
+    <Compile Include="Cryptography\Sha256.cs" />
+    <Compile Include="Helpers\StringHelper.cs" />
+    <Compile Include="IO\Compression\SafeQuickLZ.cs" />
     <Compile Include="Enums\ConnectionState.cs" />
     <Compile Include="Enums\ContentType.cs" />
     <Compile Include="Enums\StartupType.cs" />

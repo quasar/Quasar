@@ -5,10 +5,10 @@ using System.Windows.Forms;
 using Gma.System.MouseKeyHook;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
-using Quasar.Server.Core.Utilities;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
+using Quasar.Server.Utilities;
 
 namespace Quasar.Server.Forms
 {

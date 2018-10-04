@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
 
 namespace Quasar.Server.Forms
 {

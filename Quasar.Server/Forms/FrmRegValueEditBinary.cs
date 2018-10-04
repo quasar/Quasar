@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Forms;
 using Quasar.Common.Models;
-using Quasar.Server.Core.Registry;
+using Quasar.Server.Registry;
 
 namespace Quasar.Server.Forms
 {

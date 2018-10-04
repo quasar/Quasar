@@ -8,11 +8,11 @@ using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Utilities;
 using Quasar.Server.Controls;
-using Quasar.Server.Core.Extensions;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
-using Quasar.Server.Core.Registry;
+using Quasar.Server.Extensions;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
+using Quasar.Server.Registry;
 
 namespace Quasar.Server.Forms
 {

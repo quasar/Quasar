@@ -3,11 +3,11 @@ using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
-using Quasar.Server.Core.Data;
-using Quasar.Server.Core.Helper;
-using Quasar.Server.Core.Messages;
-using Quasar.Server.Core.Networking;
-using Quasar.Server.Core.ReverseProxy;
+using Quasar.Server.Data;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Networking;
+using Quasar.Server.ReverseProxy;
 
 namespace Quasar.Server.Forms
 {
