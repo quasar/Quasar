@@ -417,7 +417,15 @@ namespace Quasar.Server.Forms
 
         #region "ContextMenuStrip"
 
-        #region "Connection"
+        #region "Client Management"
+
+                private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                c.Send(new DoAskElevate());
+            }
+        }
 
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -534,7 +542,7 @@ namespace Quasar.Server.Forms
 
         #endregion
 
-        #region "System"
+        #region "Administration"
 
         private void systemInformationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -598,9 +606,10 @@ namespace Quasar.Server.Forms
 
         private void reverseProxyToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            foreach (Client c in GetSelectedClients())
+            Client[] clients = GetSelectedClients();
+            if (clients.Length > 0)
             {
-                FrmReverseProxy frmRs = new FrmReverseProxy(GetSelectedClients());
+                FrmReverseProxy frmRs = new FrmReverseProxy(clients);
                 frmRs.Show();
             }
         }
@@ -617,75 +626,6 @@ namespace Quasar.Server.Forms
                 }
             }
         }
-
-        private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoAskElevate());
-            }
-        }
-
-        private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Shutdown});
-            }
-        }
-
-        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Restart});
-            }
-        }
-
-        private void standbyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Standby});
-            }
-        }
-
-        #endregion
-
-        #region "Surveillance"
-
-        private void remoteDesktopToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                var frmRd = FrmRemoteDesktop.CreateNewOrGetExisting(c);
-                frmRd.Show();
-                frmRd.Focus();
-            }
-        }
-
-        private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(GetSelectedClients());
-                frmPass.Show();
-            }
-        }
-
-        private void keyloggerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                FrmKeylogger frmKl = FrmKeylogger.CreateNewOrGetExisting(c);
-                frmKl.Show();
-                frmKl.Focus();
-            }
-        }
-
-        #endregion
-
-        #region "Miscellaneous"
 
         private void localFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -770,6 +710,68 @@ namespace Quasar.Server.Forms
                 }
             }
         }
+
+        private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Shutdown});
+            }
+        }
+
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Restart});
+            }
+        }
+
+        private void standbyToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                c.Send(new DoShutdownAction {Action = ShutdownAction.Standby});
+            }
+        }
+
+        #endregion
+
+        #region "Monitoring"
+
+        private void remoteDesktopToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                var frmRd = FrmRemoteDesktop.CreateNewOrGetExisting(c);
+                frmRd.Show();
+                frmRd.Focus();
+            }
+        }
+
+        private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Client[] clients = GetSelectedClients();
+            if (clients.Length > 0)
+            {
+                FrmPasswordRecovery frmPass = new FrmPasswordRecovery(clients);
+                frmPass.Show();
+            }
+        }
+
+        private void keyloggerToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            foreach (Client c in GetSelectedClients())
+            {
+                FrmKeylogger frmKl = FrmKeylogger.CreateNewOrGetExisting(c);
+                frmKl.Show();
+                frmKl.Focus();
+            }
+        }
+
+        #endregion
+
+        #region "User Support"
 
         private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e)
         {

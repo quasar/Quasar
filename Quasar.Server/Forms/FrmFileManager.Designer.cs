@@ -49,14 +49,15 @@ namespace Quasar.Server.Forms
             this.stripLblStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.contextMenuStripTransfers = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.cancelToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.imgListTransfers = new System.Windows.Forms.ImageList(this.components);
-            this.TabControlFileManager = new DotNetBarTabControl();
+            this.TabControlFileManager = new Quasar.Server.Controls.DotNetBarTabControl();
             this.tabFileExplorer = new System.Windows.Forms.TabPage();
             this.btnRefresh = new System.Windows.Forms.Button();
             this.lblPath = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
-            this.lstDirectory = new AeroListView();
+            this.lstDirectory = new Quasar.Server.Controls.AeroListView();
             this.hName = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hSize = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -64,12 +65,11 @@ namespace Quasar.Server.Forms
             this.cmbDrives = new System.Windows.Forms.ComboBox();
             this.tabTransfers = new System.Windows.Forms.TabPage();
             this.btnOpenDLFolder = new System.Windows.Forms.Button();
-            this.lstTransfers = new AeroListView();
+            this.lstTransfers = new Quasar.Server.Controls.AeroListView();
             this.hID = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.toolStripMenuItem1 = new System.Windows.Forms.ToolStripSeparator();
             this.contextMenuStripDirectory.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextMenuStripTransfers.SuspendLayout();
@@ -98,7 +98,7 @@ namespace Quasar.Server.Forms
             // downloadToolStripMenuItem
             // 
             this.downloadToolStripMenuItem.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.downloadToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.download;
+            this.downloadToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("downloadToolStripMenuItem.Image")));
             this.downloadToolStripMenuItem.Name = "downloadToolStripMenuItem";
             this.downloadToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.downloadToolStripMenuItem.Text = "Download";
@@ -106,7 +106,7 @@ namespace Quasar.Server.Forms
             // 
             // uploadToolStripMenuItem
             // 
-            this.uploadToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.upload;
+            this.uploadToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uploadToolStripMenuItem.Image")));
             this.uploadToolStripMenuItem.Name = "uploadToolStripMenuItem";
             this.uploadToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.uploadToolStripMenuItem.Text = "Upload";
@@ -119,7 +119,7 @@ namespace Quasar.Server.Forms
             // 
             // executeToolStripMenuItem
             // 
-            this.executeToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.run;
+            this.executeToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("executeToolStripMenuItem.Image")));
             this.executeToolStripMenuItem.Name = "executeToolStripMenuItem";
             this.executeToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.executeToolStripMenuItem.Text = "Execute";
@@ -169,6 +169,7 @@ namespace Quasar.Server.Forms
             // 
             // openDirectoryInShellToolStripMenuItem
             // 
+            this.openDirectoryInShellToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.terminal;
             this.openDirectoryInShellToolStripMenuItem.Name = "openDirectoryInShellToolStripMenuItem";
             this.openDirectoryInShellToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.openDirectoryInShellToolStripMenuItem.Text = "Open Directory in Remote Shell";
@@ -222,6 +223,11 @@ namespace Quasar.Server.Forms
             this.cancelToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.cancelToolStripMenuItem.Text = "Cancel";
             this.cancelToolStripMenuItem.Click += new System.EventHandler(this.cancelToolStripMenuItem_Click);
+            // 
+            // toolStripMenuItem1
+            // 
+            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
+            this.toolStripMenuItem1.Size = new System.Drawing.Size(146, 6);
             // 
             // clearToolStripMenuItem
             // 
@@ -423,11 +429,6 @@ namespace Quasar.Server.Forms
             // 
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 289;
-            // 
-            // toolStripMenuItem1
-            // 
-            this.toolStripMenuItem1.Name = "toolStripMenuItem1";
-            this.toolStripMenuItem1.Size = new System.Drawing.Size(146, 6);
             // 
             // FrmFileManager
             // 

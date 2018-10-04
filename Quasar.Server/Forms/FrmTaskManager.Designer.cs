@@ -69,7 +69,7 @@ namespace Quasar.Server.Forms
             // 
             // startProcessToolStripMenuItem
             // 
-            this.startProcessToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.run;
+            this.startProcessToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.application_go;
             this.startProcessToolStripMenuItem.Name = "startProcessToolStripMenuItem";
             this.startProcessToolStripMenuItem.Size = new System.Drawing.Size(141, 22);
             this.startProcessToolStripMenuItem.Text = "Start Process";

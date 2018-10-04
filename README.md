@@ -1,10 +1,12 @@
-# QuasarRAT
+# Quasar
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![License](https://img.shields.io/badge/license-MIT-green.svg)](LICENSE)
+[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat)
+[![Downloads](https://img.shields.io/github/downloads/quasar/QuasarRAT/total.svg)](https://github.com/quasar/QuasarRAT/releases)
+[![License](https://img.shields.io/github/license/quasar/QuasarRAT.svg)](LICENSE)
 
 **Free, Open-Source Remote Administration Tool for Windows**
 
-Quasar is a fast and light-weight remote administration tool coded in C#. Providing high stability and an easy-to-use user interface, Quasar is the perfect remote administration solution for you.
+Quasar is a fast and light-weight remote administration tool coded in C#. The usage ranges from user support through day-to-day administrative work to employee monitoring. Providing high stability and an easy-to-use user interface, Quasar is the perfect remote administration solution for you.
 
 ## Features
 * TCP network stream (IPv4 & IPv6 support)
@@ -57,30 +59,8 @@ See [CONTRIBUTING.md](CONTRIBUTING.md)
 See [ROADMAP.md](ROADMAP.md)
 
 ## License
-See [LICENSE](LICENSE)
-
-## Third-party libraries
-protobuf-net  
-Copyright (c) 2008 Marc Gravell  
-https://github.com/mgravell/protobuf-net
-
-ResourceLib  
-Copyright (c) 2008-2016 Daniel Doubrovkine, Vestris Inc.  
-https://github.com/dblock/resourcelib
-
-GlobalMouseKeyHook  
-Copyright (c) 2004-2018 George Mamaladze  
-https://github.com/gmamaladze/globalmousekeyhook
-
-Mono.Cecil  
-Copyright (c) 2008 - 2015 Jb Evain  
-Copyright (c) 2008 - 2011 Novell, Inc.  
-https://github.com/jbevain/cecil
-
-Mono.Nat  
-Copyright (c) 2006 Alan McGovern  
-Copyright (c) 2007 Ben Motmans  
-https://github.com/nterry/Mono.Nat
+Quasar is distributed under the MIT License.  
+Third-party licenses are located [here](Licenses).
 
 ## Thank you!
 I really appreciate all kinds of feedback and contributions. Thanks for using and supporting Quasar!
