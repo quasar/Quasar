@@ -57,6 +57,7 @@
     <Compile Include="Compression\SafeQuickLZ.Tests.cs" />
     <Compile Include="Cryptography\Aes128.Tests.cs" />
     <Compile Include="Cryptography\Sha256.Tests.cs" />
+    <Compile Include="Helpers\FileHelper.Tests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

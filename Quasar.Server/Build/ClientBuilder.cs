@@ -1,9 +1,9 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
-using Quasar.Server.Data;
-using Quasar.Server.Helper;
-using System;
 using Quasar.Common.Cryptography;
+using Quasar.Common.Helpers;
+using Quasar.Server.Data;
+using System;
 using Vestris.ResourceLib;
 
 namespace Quasar.Server.Build
@@ -36,7 +36,7 @@ namespace Quasar.Server.Build
                     {
                         if (methodDef.Name == ".cctor")
                         {
-                            string encKey = FileHelper.GetRandomFilename(20);
+                            string encKey = StringHelper.GetRandomString(20);
 
                             int strings = 1, bools = 1;
 

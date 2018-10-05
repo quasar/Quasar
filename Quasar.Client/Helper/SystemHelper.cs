@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Quasar.Common.Helpers;
+using System;
 using System.Management;
 
 namespace Quasar.Client.Helper
@@ -55,7 +56,7 @@ namespace Quasar.Client.Helper
                         antivirusName += mObject["displayName"].ToString() + "; ";
                     }
                 }
-                antivirusName = FormatHelper.RemoveEnd(antivirusName);
+                antivirusName = StringHelper.RemoveLastChars(antivirusName);
 
                 return (!string.IsNullOrEmpty(antivirusName)) ? antivirusName : "N/A";
             }
@@ -81,7 +82,7 @@ namespace Quasar.Client.Helper
                         firewallName += mObject["displayName"].ToString() + "; ";
                     }
                 }
-                firewallName = FormatHelper.RemoveEnd(firewallName);
+                firewallName = StringHelper.RemoveLastChars(firewallName);
 
                 return (!string.IsNullOrEmpty(firewallName)) ? firewallName : "N/A";
             }

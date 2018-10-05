@@ -1,15 +1,15 @@
-﻿using System;
+﻿using ProtoBuf;
+using Quasar.Common.Cryptography;
+using Quasar.Common.Extensions;
+using Quasar.Common.IO.Compression;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ProtoBuf;
-using Quasar.Common.Cryptography;
-using Quasar.Common.IO.Compression;
-using Quasar.Common.Messages;
-using Quasar.Common.Networking;
-using Quasar.Server.Extensions;
 
 namespace Quasar.Server.Networking
 {

@@ -1,20 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
-using Quasar.Common.Cryptography;
+﻿using Quasar.Common.Cryptography;
 using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Server.Data;
 using Quasar.Server.Extensions;
-using Quasar.Server.Helper;
 using Quasar.Server.Messages;
+using Quasar.Server.Models;
 using Quasar.Server.Networking;
 using Quasar.Server.Networking.Utilities;
 using Quasar.Server.Utilities;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
 {
@@ -474,7 +474,7 @@ namespace Quasar.Server.Forms
                                         break;
                                     }
 
-                                    int id = FileHelper.GetNewTransferId();
+                                    int id = FileTransfer.GetRandomTransferId();
 
                                     //SetStatusByClient(this, c, "Uploading file...");
 
@@ -656,7 +656,7 @@ namespace Quasar.Server.Forms
                                     break;
                                 }
 
-                                int id = FileHelper.GetNewTransferId();
+                                int id = FileTransfer.GetRandomTransferId();
 
                                 // SetStatusByClient(this, c, "Uploading file...");
 

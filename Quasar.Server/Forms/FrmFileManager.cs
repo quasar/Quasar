@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Windows.Forms;
-using Quasar.Common.Enums;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Server.Controls;
@@ -10,6 +7,10 @@ using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Models;
 using Quasar.Server.Networking;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Windows.Forms;
 using Process = System.Diagnostics.Process;
 
 namespace Quasar.Server.Forms
@@ -510,7 +511,7 @@ namespace Quasar.Server.Forms
             ListViewItem lvi = new ListViewItem(new string[]
             {
                 name,
-                (type == FileType.File) ? FileHelper.GetDataSize(size) : string.Empty,
+                (type == FileType.File) ? StringHelper.GetHumanReadableFileSize(size) : string.Empty,
                 (type != FileType.Back) ? type.ToString() : string.Empty
             })
             {

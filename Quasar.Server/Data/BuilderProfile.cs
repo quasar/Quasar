@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Quasar.Common.Helpers;
+using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
-using Quasar.Server.Helper;
 
 namespace Quasar.Server.Data
 {
@@ -63,7 +63,7 @@ namespace Quasar.Server.Data
         {
             get
             {
-                return ReadValueSafe("Mutex", FormatHelper.GenerateMutex());
+                return ReadValueSafe("Mutex", StringHelper.GetRandomMutex());
             }
             set
             {

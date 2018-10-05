@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quasar.Client.Config;
+using Quasar.Client.Data;
+using Quasar.Common.Helpers;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
-using Quasar.Client.Config;
-using Quasar.Client.Data;
-using Quasar.Client.Helper;
 
 namespace Quasar.Client.Installation
 {

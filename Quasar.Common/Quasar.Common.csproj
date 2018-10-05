@@ -43,12 +43,18 @@
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Cryptography\Aes128.cs" />
     <Compile Include="Cryptography\Sha256.cs" />
+    <Compile Include="Extensions\DriveTypeExtensions.cs" />
+    <Compile Include="Extensions\SocketExtensions.cs" />
+    <Compile Include="Extensions\StringExtensions.cs" />
+    <Compile Include="Helpers\FileHelper.cs" />
+    <Compile Include="Helpers\PlatformHelper.cs" />
     <Compile Include="Helpers\StringHelper.cs" />
     <Compile Include="IO\Compression\SafeQuickLZ.cs" />
     <Compile Include="Enums\ConnectionState.cs" />

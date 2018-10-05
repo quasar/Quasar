@@ -1,13 +1,14 @@
-﻿using System;
+﻿using Gma.System.MouseKeyHook;
+using Quasar.Client.Config;
+using Quasar.Client.Helper;
+using Quasar.Client.Networking;
+using Quasar.Common.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Text;
 using System.Windows.Forms;
-using Gma.System.MouseKeyHook;
-using Quasar.Client.Config;
-using Quasar.Client.Helper;
-using Quasar.Client.Networking;
 using Timer = System.Timers.Timer;
 
 namespace Quasar.Client.Utilities

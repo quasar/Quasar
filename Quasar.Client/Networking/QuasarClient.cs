@@ -7,6 +7,7 @@ using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
 using Quasar.Client.Utilities;
+using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
 

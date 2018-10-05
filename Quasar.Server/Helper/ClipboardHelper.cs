@@ -5,7 +5,7 @@ namespace Quasar.Server.Helper
 {
     public static class ClipboardHelper
     {
-        public static void SetClipboardText(string text)
+        public static void SetClipboardTextSafe(string text)
         {
             try
             {

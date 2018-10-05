@@ -1,9 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Cryptography;
+using Quasar.Common.Helpers;
+using System;
 using System.Linq;
 using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using Quasar.Common.Cryptography;
 
 namespace Quasar.Client.Helper
 {
@@ -80,7 +81,7 @@ namespace Quasar.Client.Helper
                         cpuName += mObject["Name"].ToString() + "; ";
                     }
                 }
-                cpuName = FormatHelper.RemoveEnd(cpuName);
+                cpuName = StringHelper.RemoveLastChars(cpuName);
 
                 return (!string.IsNullOrEmpty(cpuName)) ? cpuName : "N/A";
             }
@@ -130,7 +131,7 @@ namespace Quasar.Client.Helper
                         gpuName += mObject["Description"].ToString() + "; ";
                     }
                 }
-                gpuName = FormatHelper.RemoveEnd(gpuName);
+                gpuName = StringHelper.RemoveLastChars(gpuName);
 
                 return (!string.IsNullOrEmpty(gpuName)) ? gpuName : "N/A";
             }
@@ -185,7 +186,7 @@ namespace Quasar.Client.Helper
                     }
 
                     if (foundCorrect)
-                        return FormatHelper.FormatMacAddress(ni.GetPhysicalAddress().ToString());
+                        return StringHelper.GetFormattedMacAddress(ni.GetPhysicalAddress().ToString());
                 }
             }
 

@@ -1,10 +1,13 @@
-﻿using System;
+﻿using Quasar.Common.Utilities;
 using Quasar.Server.Enums;
+using System;
 
 namespace Quasar.Server.Models
 {
     public class FileTransfer : IEquatable<FileTransfer>
     {
+        private static readonly SafeRandom Random = new SafeRandom();
+
         public int Id { get; set; }
         public TransferType Type { get; set; }
         public long Size { get; set; }
@@ -43,6 +46,11 @@ namespace Quasar.Server.Models
         public override int GetHashCode()
         {
             return Id;
+        }
+
+        public static int GetRandomTransferId()
+        {
+            return Random.Next(0, int.MaxValue);
         }
     }
 }

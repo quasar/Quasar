@@ -12,6 +12,8 @@ using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
+using Quasar.Common.Extensions;
+using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Models = Quasar.Common.Models;
 using Process = System.Diagnostics.Process;
@@ -53,9 +55,9 @@ namespace Quasar.Client.Commands
                     var displayName = !string.IsNullOrEmpty(driveInfos[i].VolumeLabel)
                         ? string.Format("{0} ({1}) [{2}, {3}]", driveInfos[i].RootDirectory.FullName,
                             driveInfos[i].VolumeLabel,
-                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat)
+                            driveInfos[i].DriveType.ToFriendlyString(), driveInfos[i].DriveFormat)
                         : string.Format("{0} [{1}, {2}]", driveInfos[i].RootDirectory.FullName,
-                            FormatHelper.DriveTypeName(driveInfos[i].DriveType), driveInfos[i].DriveFormat);
+                            driveInfos[i].DriveType.ToFriendlyString(), driveInfos[i].DriveFormat);
 
                     drives[i] = new Models.Drive
                         { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };

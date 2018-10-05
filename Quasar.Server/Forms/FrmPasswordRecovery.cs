@@ -242,14 +242,14 @@ namespace Quasar.Server.Forms
         {
             StringBuilder sb = GetLoginData();
 
-            ClipboardHelper.SetClipboardText(sb.ToString());
+            ClipboardHelper.SetClipboardTextSafe(sb.ToString());
         }
 
         private void copySelectedToolStripMenuItem_Click(object sender, EventArgs e)
         {
             StringBuilder sb = GetLoginData(true);
 
-            ClipboardHelper.SetClipboardText(sb.ToString());
+            ClipboardHelper.SetClipboardTextSafe(sb.ToString());
         }
         #endregion
 

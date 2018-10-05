@@ -132,7 +132,7 @@ namespace Quasar.Server.Forms
                 output = output + "\r\n";
             }
 
-            ClipboardHelper.SetClipboardText(output);
+            ClipboardHelper.SetClipboardTextSafe(output);
         }
 
         private void copySelectedToolStripMenuItem_Click(object sender, EventArgs e)
@@ -148,7 +148,7 @@ namespace Quasar.Server.Forms
                 output = output + "\r\n";
             }
 
-            ClipboardHelper.SetClipboardText(output);
+            ClipboardHelper.SetClipboardTextSafe(output);
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)

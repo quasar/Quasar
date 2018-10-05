@@ -1,18 +1,18 @@
-﻿using System;
+﻿using ProtoBuf;
+using ProtoBuf.Meta;
+using Quasar.Client.ReverseProxy;
+using Quasar.Common.Cryptography;
+using Quasar.Common.Extensions;
+using Quasar.Common.IO.Compression;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Threading;
-using ProtoBuf;
-using ProtoBuf.Meta;
-using Quasar.Client.Extensions;
-using Quasar.Client.ReverseProxy;
-using Quasar.Common.Cryptography;
-using Quasar.Common.IO.Compression;
-using Quasar.Common.Messages;
-using Quasar.Common.Networking;
 
 namespace Quasar.Client.Networking
 {

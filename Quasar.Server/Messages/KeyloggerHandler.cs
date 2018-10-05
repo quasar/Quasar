@@ -1,9 +1,9 @@
-﻿using System.IO;
+﻿using Quasar.Common.Helpers;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
-using Quasar.Server.Helper;
 using Quasar.Server.Networking;
+using System.IO;
 
 namespace Quasar.Server.Messages
 {
@@ -63,7 +63,7 @@ namespace Quasar.Server.Messages
             }
 
             // don't escape from download directory
-            if (FileHelper.CheckPathForIllegalChars(message.Filename))
+            if (FileHelper.HasIllegalCharacters(message.Filename))
             {
                 // disconnect malicious client
                 client.Disconnect();

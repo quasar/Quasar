@@ -2,6 +2,7 @@
 using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
+using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Server.Data;
 using Quasar.Server.Helper;
@@ -193,8 +194,8 @@ namespace Quasar.Server.Forms
                         connection.Client.Value.Country,
                         (connection.HostName.Length > 0 && connection.HostName != connection.TargetServer) ? string.Format("{0}  ({1})", connection.HostName, connection.TargetServer) : connection.TargetServer,
                         connection.TargetPort.ToString(),
-                        FileHelper.GetDataSize(connection.LengthReceived),
-                        FileHelper.GetDataSize(connection.LengthSent),
+                        StringHelper.GetHumanReadableFileSize(connection.LengthReceived),
+                        StringHelper.GetHumanReadableFileSize(connection.LengthSent),
                         connection.Type.ToString()
                     }) { Tag = connection };
                 }

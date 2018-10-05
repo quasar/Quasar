@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Threading;
-using Quasar.Common.Enums;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Helpers;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
 using Quasar.Server.Enums;
-using Quasar.Server.Helper;
 using Quasar.Server.Models;
 using Quasar.Server.Networking;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading;
 
 namespace Quasar.Server.Messages
 {
@@ -353,7 +353,7 @@ namespace Quasar.Server.Messages
             if (transfer == null)
             {
                 // don't escape from download directory
-                if (FileHelper.CheckPathForIllegalChars(message.Filename))
+                if (FileHelper.HasIllegalCharacters(message.Filename))
                 {
                     // disconnect malicious client
                     client.Disconnect();
@@ -455,7 +455,7 @@ namespace Quasar.Server.Messages
             {
                 do
                 {
-                    id = FileHelper.GetNewTransferId();
+                    id = FileTransfer.GetRandomTransferId();
                     // generate new Id until we have a unique one
                 } while (_activeFileTransfers.Any(f => f.Id == id));
             }

@@ -67,11 +67,8 @@
     <Compile Include="Data\GeoInformation.cs" />
     <Compile Include="Helper\MutexHelper.cs" />
     <Compile Include="Helper\WindowsAccountHelper.cs" />
-    <Compile Include="Helper\FileHelper.cs" />
-    <Compile Include="Helper\FormatHelper.cs" />
     <Compile Include="Helper\HostHelper.cs" />
     <Compile Include="Helper\NativeMethodsHelper.cs" />
-    <Compile Include="Helper\PlatformHelper.cs" />
     <Compile Include="Helper\RegistryKeyHelper.cs" />
     <Compile Include="Helper\ScreenHelper.cs" />
     <Compile Include="Helper\DevicesHelper.cs" />
@@ -80,6 +77,7 @@
     <Compile Include="Installation\ClientUninstaller.cs" />
     <Compile Include="Installation\ClientUpdater.cs" />
     <Compile Include="Installation\Startup.cs" />
+    <Compile Include="IO\BatchFile.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Commands\CommandHandler.cs" />
     <Compile Include="Commands\ConnectionHandler.cs" />
@@ -97,7 +95,6 @@
     <Compile Include="Data\Host.cs" />
     <Compile Include="Utilities\HostsManager.cs" />
     <Compile Include="Utilities\NativeMethods.cs" />
-    <Compile Include="Extensions\SocketExtensions.cs" />
     <Compile Include="Helper\KeyloggerHelper.cs" />
     <Compile Include="Utilities\Shell.cs" />
     <Compile Include="Recovery\Browsers\Chrome.cs" />
@@ -143,6 +140,7 @@
       <Name>Quasar.Common</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>

@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Helpers;
+using Quasar.Common.Models;
+using System;
 using System.IO;
 using System.Windows.Forms;
-using Quasar.Common.Enums;
-using Quasar.Common.Models;
-using Quasar.Server.Helper;
 
 namespace Quasar.Server.Forms
 {
@@ -62,13 +62,13 @@ namespace Quasar.Server.Forms
 
         private void txtName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
         private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
     }

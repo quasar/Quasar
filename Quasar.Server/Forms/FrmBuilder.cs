@@ -1,14 +1,16 @@
-﻿using System;
+﻿using Quasar.Common.Helpers;
+using Quasar.Server.Build;
+using Quasar.Server.Data;
+using Quasar.Server.Helper;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Server.Build;
-using Quasar.Server.Data;
-using Quasar.Server.Helper;
 
 namespace Quasar.Server.Forms
 {
@@ -166,19 +168,19 @@ namespace Quasar.Server.Forms
 
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
         private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
         private void txtLogDirectoryName_KeyPress(object sender, KeyPressEventArgs e)
         {
-            e.Handled = ((e.KeyChar == '\\' || FileHelper.CheckPathForIllegalChars(e.KeyChar.ToString())) &&
+            e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
@@ -186,7 +188,7 @@ namespace Quasar.Server.Forms
         {
             HasChanged();
 
-            txtMutex.Text = FormatHelper.GenerateMutex();
+            txtMutex.Text = StringHelper.GetRandomMutex();
         }
 
         private void chkInstall_CheckedChanged(object sender, EventArgs e)
@@ -312,14 +314,14 @@ namespace Quasar.Server.Forms
 
             if (chkChangeAsmInfo.Checked)
             {
-                if (!FormatHelper.IsValidVersionNumber(txtProductVersion.Text))
+                if (!IsValidVersionNumber(txtProductVersion.Text))
                 {
                     MessageBox.Show("Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return options;
                 }
 
-                if (!FormatHelper.IsValidVersionNumber(txtFileVersion.Text))
+                if (!IsValidVersionNumber(txtFileVersion.Text))
                 {
                     MessageBox.Show("Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
@@ -423,18 +425,24 @@ namespace Quasar.Server.Forms
                 path =
                     Path.Combine(
                         Path.Combine(
-                            Environment.GetFolderPath(PlatformHelper.Architecture == 64
+                            Environment.GetFolderPath(PlatformHelper.Is64Bit
                                 ? Environment.SpecialFolder.ProgramFilesX86
                                 : Environment.SpecialFolder.ProgramFiles), txtInstallSubDirectory.Text), txtInstallName.Text);
             else if (rbSystem.Checked)
                 path =
                     Path.Combine(
                         Path.Combine(
-                            Environment.GetFolderPath(PlatformHelper.Architecture == 64
+                            Environment.GetFolderPath(PlatformHelper.Is64Bit
                                 ? Environment.SpecialFolder.SystemX86
                                 : Environment.SpecialFolder.System), txtInstallSubDirectory.Text), txtInstallName.Text);
 
             this.Invoke((MethodInvoker)delegate { txtPreviewPath.Text = path + ".exe"; });
+        }
+
+        private bool IsValidVersionNumber(string input)
+        {
+            Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
+            return match.Success;
         }
 
         private short GetInstallPath()

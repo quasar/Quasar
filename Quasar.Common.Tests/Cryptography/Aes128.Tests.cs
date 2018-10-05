@@ -8,7 +8,7 @@ namespace Quasar.Common.Tests.Cryptography
     [TestClass]
     public class Aes128Tests
     {
-        [TestMethod, TestCategory("Encryption")]
+        [TestMethod, TestCategory("Cryptography")]
         public void EncryptAndDecryptStringTest()
         {
             var input = StringHelper.GetRandomString(100);
@@ -26,7 +26,7 @@ namespace Quasar.Common.Tests.Cryptography
             Assert.AreEqual(input, decrypted);
         }
 
-        [TestMethod, TestCategory("Encryption")]
+        [TestMethod, TestCategory("Cryptography")]
         public void EncryptAndDecryptByteArrayTest()
         {
             var input = StringHelper.GetRandomString(100);
