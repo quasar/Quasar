@@ -15,7 +15,7 @@ namespace Quasar.Server.Forms
             rtxtContent.Text = Properties.Resources.License;
 
             lnkGithubPage.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL});
-            lnkCredits.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL + "#third-party-libraries"});
+            lnkCredits.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL + "/tree/master/Licenses"});
         }
         
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

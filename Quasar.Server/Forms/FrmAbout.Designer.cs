@@ -108,10 +108,10 @@
             this.lnkCredits.AutoSize = true;
             this.lnkCredits.Location = new System.Drawing.Point(415, 83);
             this.lnkCredits.Name = "lnkCredits";
-            this.lnkCredits.Size = new System.Drawing.Size(98, 13);
+            this.lnkCredits.Size = new System.Drawing.Size(97, 13);
             this.lnkCredits.TabIndex = 4;
             this.lnkCredits.TabStop = true;
-            this.lnkCredits.Text = "3rd-party libraries";
+            this.lnkCredits.Text = "3rd-party licenses";
             this.lnkCredits.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.lnkCredits_LinkClicked);
             // 
             // lnkGithubPage
