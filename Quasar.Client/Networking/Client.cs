@@ -484,7 +484,18 @@ namespace Quasar.Client.Networking
                                     if (!isError)
                                     {
                                         if (encryptionEnabled)
-                                            _payloadBuffer = Aes128.Decrypt(_payloadBuffer);
+                                        {
+                                            try
+                                            {
+                                                _payloadBuffer = Aes128.Decrypt(_payloadBuffer);
+                                            }
+                                            catch (Exception)
+                                            {
+                                                process = false;
+                                                Disconnect();
+                                                break;
+                                            }
+                                        }
 
                                         isError = _payloadBuffer.Length == 0; // check if payload decryption failed
                                     }
@@ -635,7 +646,6 @@ namespace Quasar.Client.Networking
                 {
                     _handle.Send(BuildMessage(payload));
                 }
-                
                 catch (Exception ex)
                 {
                     OnClientFail(ex);

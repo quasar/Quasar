@@ -3,6 +3,7 @@ using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
+using System;
 using System.IO;
 
 namespace Quasar.Server.Messages
@@ -85,8 +86,9 @@ namespace Quasar.Server.Messages
                 {
                     File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath));
                 }
-                catch
+                catch (Exception)
                 {
+                    OnReport("Failed to write logs");
                 }
 
                 if (message.Index == message.FileCount)

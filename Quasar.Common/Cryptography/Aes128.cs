@@ -46,11 +46,6 @@ namespace Quasar.Common.Cryptography
             }
         }
 
-        public static string Encrypt(string input, string key)
-        {
-            return Convert.ToBase64String(Encrypt(Encoding.UTF8.GetBytes(input), Encoding.UTF8.GetBytes(key)));
-        }
-
         public static string Encrypt(string input)
         {
             return Convert.ToBase64String(Encrypt(Encoding.UTF8.GetBytes(input)));
@@ -65,97 +60,82 @@ namespace Quasar.Common.Cryptography
         public static byte[] Encrypt(byte[] input)
         {
             if (_defaultKey == null || _defaultKey.Length == 0) throw new ArgumentException("Key can not be empty.");
+            if (_defaultAuthKey == null || _defaultAuthKey.Length == 0) throw new ArgumentException("Auth key can not be empty.");
             if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
-            byte[] data = input, encdata = new byte[0];
-
-            try
+            using (var ms = new MemoryStream())
             {
-                using (var ms = new MemoryStream())
+                ms.Position = HmacSha256Length; // reserve first 32 bytes for HMAC
+                using (var aesProvider = new AesCryptoServiceProvider())
                 {
-                    ms.Position = HmacSha256Length; // reserve first 32 bytes for HMAC
-                    using (var aesProvider = new AesCryptoServiceProvider())
+                    aesProvider.KeySize = 128;
+                    aesProvider.BlockSize = 128;
+                    aesProvider.Mode = CipherMode.CBC;
+                    aesProvider.Padding = PaddingMode.PKCS7;
+                    aesProvider.Key = _defaultKey;
+                    aesProvider.GenerateIV();
+
+                    using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        aesProvider.KeySize = 128;
-                        aesProvider.BlockSize = 128;
-                        aesProvider.Mode = CipherMode.CBC;
-                        aesProvider.Padding = PaddingMode.PKCS7;
-                        aesProvider.Key = _defaultKey;
-                        aesProvider.GenerateIV();
+                        ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write next 16 bytes the IV, followed by ciphertext
+                        cs.Write(input, 0, input.Length);
+                        cs.FlushFinalBlock();
 
-                        using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
+                        using (var hmac = new HMACSHA256(_defaultAuthKey))
                         {
-                            ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write next 16 bytes the IV, followed by ciphertext
-                            cs.Write(data, 0, data.Length);
-                            cs.FlushFinalBlock();
-
-                            using (var hmac = new HMACSHA256(_defaultAuthKey))
-                            {
-                                byte[] hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length); // compute the HMAC of IV and ciphertext
-                                ms.Position = 0; // write hash at beginning
-                                ms.Write(hash, 0, hash.Length);
-                            }
+                            byte[] hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length); // compute the HMAC of IV and ciphertext
+                            ms.Position = 0; // write hash at beginning
+                            ms.Write(hash, 0, hash.Length);
                         }
                     }
-
-                    encdata = ms.ToArray();
                 }
+
+                return ms.ToArray();
             }
-            catch
-            {
-            }
-            return encdata;
         }
 
-        public static byte[] Encrypt(byte[] input, byte[] key)
+        public static string Encrypt(string input, string password)
         {
-            if (key == null || key.Length == 0) throw new Exception("Key can not be empty.");
+            return Convert.ToBase64String(Encrypt(Encoding.UTF8.GetBytes(input), password));
+        }
 
-            byte[] authKey;
-            using (Rfc2898DeriveBytes derive = new Rfc2898DeriveBytes(key, Salt, 50000))
+        public static byte[] Encrypt(byte[] input, string password)
+        {
+            if (string.IsNullOrEmpty(password)) throw new Exception("Password can not be empty.");
+
+            var keys = DeriveKeys(password);
+            byte[] key = keys.Item1;
+            byte[] authKey = keys.Item2;
+
+            using (var ms = new MemoryStream())
             {
-                key = derive.GetBytes(KeyLength);
-                authKey = derive.GetBytes(AuthKeyLength);
-            }
-
-            byte[] data = input, encdata = new byte[0];
-
-            try
-            {
-                using (var ms = new MemoryStream())
+                ms.Position = HmacSha256Length; // reserve first 32 bytes for HMAC
+                using (var aesProvider = new AesCryptoServiceProvider())
                 {
-                    ms.Position = HmacSha256Length; // reserve first 32 bytes for HMAC
-                    using (var aesProvider = new AesCryptoServiceProvider())
+                    aesProvider.KeySize = 128;
+                    aesProvider.BlockSize = 128;
+                    aesProvider.Mode = CipherMode.CBC;
+                    aesProvider.Padding = PaddingMode.PKCS7;
+                    aesProvider.Key = key;
+                    aesProvider.GenerateIV();
+
+                    using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
                     {
-                        aesProvider.KeySize = 128;
-                        aesProvider.BlockSize = 128;
-                        aesProvider.Mode = CipherMode.CBC;
-                        aesProvider.Padding = PaddingMode.PKCS7;
-                        aesProvider.Key = key;
-                        aesProvider.GenerateIV();
+                        ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write next 16 bytes the IV, followed by ciphertext
+                        cs.Write(input, 0, input.Length);
+                        cs.FlushFinalBlock();
 
-                        using (var cs = new CryptoStream(ms, aesProvider.CreateEncryptor(), CryptoStreamMode.Write))
+                        using (var hmac = new HMACSHA256(authKey))
                         {
-                            ms.Write(aesProvider.IV, 0, aesProvider.IV.Length); // write next 16 bytes the IV, followed by ciphertext
-                            cs.Write(data, 0, data.Length);
-                            cs.FlushFinalBlock();
-
-                            using (var hmac = new HMACSHA256(authKey))
-                            {
-                                byte[] hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length); // compute the HMAC of IV and ciphertext
-                                ms.Position = 0; // write hash at beginning
-                                ms.Write(hash, 0, hash.Length);
-                            }
+                            byte[] hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length); // compute the HMAC of IV and ciphertext
+                            ms.Position = 0; // write hash at beginning
+                            ms.Write(hash, 0, hash.Length);
                         }
                     }
-
-                    encdata = ms.ToArray();
                 }
+
+                return ms.ToArray();
             }
-            catch
-            {
-            }
-            return encdata;
         }
 
         public static string Decrypt(string input)
@@ -166,50 +146,42 @@ namespace Quasar.Common.Cryptography
         public static byte[] Decrypt(byte[] input)
         {
             if (_defaultKey == null || _defaultKey.Length == 0) throw new ArgumentException("Key can not be empty.");
+            if (_defaultAuthKey == null || _defaultAuthKey.Length == 0) throw new ArgumentException("Auth key can not be empty.");
             if (input == null || input.Length == 0) throw new ArgumentException("Input can not be empty.");
 
-            byte[] data = new byte[0];
-
-            try
+            using (var ms = new MemoryStream(input))
             {
-                using (var ms = new MemoryStream(input))
+                using (var aesProvider = new AesCryptoServiceProvider())
                 {
-                    using (var aesProvider = new AesCryptoServiceProvider())
+                    aesProvider.KeySize = 128;
+                    aesProvider.BlockSize = 128;
+                    aesProvider.Mode = CipherMode.CBC;
+                    aesProvider.Padding = PaddingMode.PKCS7;
+                    aesProvider.Key = _defaultKey;
+
+                    // read first 32 bytes for HMAC
+                    using (var hmac = new HMACSHA256(_defaultAuthKey))
                     {
-                        aesProvider.KeySize = 128;
-                        aesProvider.BlockSize = 128;
-                        aesProvider.Mode = CipherMode.CBC;
-                        aesProvider.Padding = PaddingMode.PKCS7;
-                        aesProvider.Key = _defaultKey;
+                        var hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length);
+                        byte[] receivedHash = new byte[HmacSha256Length];
+                        ms.Read(receivedHash, 0, receivedHash.Length);
 
-                        // read first 32 bytes for HMAC
-                        using (var hmac = new HMACSHA256(_defaultAuthKey))
-                        {
-                            var hash = hmac.ComputeHash(ms.ToArray(), HmacSha256Length, ms.ToArray().Length - HmacSha256Length);
-                            byte[] receivedHash = new byte[HmacSha256Length];
-                            ms.Read(receivedHash, 0, receivedHash.Length);
+                        if (!AreEqual(hash, receivedHash))
+                            throw new CryptographicException("Invalid message authentication code (MAC).");
+                    }
 
-                            if (!AreEqual(hash, receivedHash))
-                                return data;
-                        }
+                    byte[] iv = new byte[IvLength];
+                    ms.Read(iv, 0, IvLength); // read next 16 bytes for IV, followed by ciphertext
+                    aesProvider.IV = iv;
 
-                        byte[] iv = new byte[IvLength];
-                        ms.Read(iv, 0, IvLength); // read next 16 bytes for IV, followed by ciphertext
-                        aesProvider.IV = iv;
-
-                        using (var cs = new CryptoStream(ms, aesProvider.CreateDecryptor(), CryptoStreamMode.Read))
-                        {
-                            byte[] temp = new byte[ms.Length - IvLength + 1];
-                            data = new byte[cs.Read(temp, 0, temp.Length)];
-                            Buffer.BlockCopy(temp, 0, data, 0, data.Length);
-                        }
+                    using (var cs = new CryptoStream(ms, aesProvider.CreateDecryptor(), CryptoStreamMode.Read))
+                    {
+                        byte[] data = new byte[ms.Length - IvLength + 1];
+                        cs.Read(data, 0, data.Length);
+                        return data;
                     }
                 }
             }
-            catch
-            {
-            }
-            return data;
         }
 
         /// <summary>
@@ -222,7 +194,7 @@ namespace Quasar.Common.Cryptography
         /// Assumes that the byte arrays have the same length.
         /// This method is safe against timing attacks.
         /// </remarks>
-        [MethodImpl(MethodImplOptions.NoOptimization)]
+        [MethodImpl(MethodImplOptions.NoInlining | MethodImplOptions.NoOptimization)]
         private static bool AreEqual(byte[] a1, byte[] a2)
         {
             bool result = true;
