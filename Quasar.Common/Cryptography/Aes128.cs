@@ -176,8 +176,9 @@ namespace Quasar.Common.Cryptography
 
                     using (var cs = new CryptoStream(ms, aesProvider.CreateDecryptor(), CryptoStreamMode.Read))
                     {
-                        byte[] data = new byte[ms.Length - IvLength + 1];
-                        cs.Read(data, 0, data.Length);
+                        byte[] temp = new byte[ms.Length - IvLength + 1];
+                        byte[] data = new byte[cs.Read(temp, 0, temp.Length)];
+                        Buffer.BlockCopy(temp, 0, data, 0, data.Length);
                         return data;
                     }
                 }
