@@ -9,20 +9,11 @@ namespace Quasar.Server.Helper
         private const int LVM_SETITEMSTATE = LVM_FIRST + 43;
 
         private const int WM_VSCROLL = 277;
-        private const int SB_PAGEBOTTOM = 7;
+        private static readonly IntPtr SB_PAGEBOTTOM = new IntPtr(7);
 
-        public static int MakeLong(int wLow, int wHigh)
+        public static int MakeWin32Long(short wLow, short wHigh)
         {
-            int low = (int)IntLoWord(wLow);
-            short high = IntLoWord(wHigh);
-            int product = 0x10000 * (int)high;
-            int mkLong = (int)(low | product);
-            return mkLong;
-        }
-
-        private static short IntLoWord(int word)
-        {
-            return (short)(word & short.MaxValue);
+            return (int)wLow << 16 | (int)(short)wHigh;
         }
 
         public static void SetItemState(IntPtr handle, int itemIndex, int mask, int value)
@@ -32,12 +23,13 @@ namespace Quasar.Server.Helper
                 stateMask = mask,
                 state = value
             };
-            NativeMethods.SendMessageLVItem(handle, LVM_SETITEMSTATE, itemIndex, ref lvItem);
+
+            NativeMethods.SendMessageListViewItem(handle, LVM_SETITEMSTATE, new IntPtr(itemIndex), ref lvItem);
         }
 
         public static void ScrollToBottom(IntPtr handle)
         {
-            NativeMethods.SendMessage(handle, WM_VSCROLL, SB_PAGEBOTTOM, 0);
+            NativeMethods.SendMessage(handle, WM_VSCROLL, SB_PAGEBOTTOM, IntPtr.Zero);
         }
     }
 }

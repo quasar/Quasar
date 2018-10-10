@@ -112,7 +112,7 @@ namespace Quasar.Server.Forms
         private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
         {
             if (_changed &&
-                MessageBox.Show("Do you want to save your current settings?", "Changes detected",
+                MessageBox.Show(this, "Do you want to save your current settings?", "Changes detected",
                     MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
                 SaveProfile("Default");
@@ -255,7 +255,7 @@ namespace Quasar.Server.Forms
             BuildOptions options = new BuildOptions();
             if (!CheckForEmptyInput())
             {
-                MessageBox.Show("Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
+                MessageBox.Show(this, "Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 return options;
             }
@@ -281,21 +281,21 @@ namespace Quasar.Server.Forms
 
             if (options.Password.Length < 3)
             {
-                MessageBox.Show("Please enter a secure password with more than 3 characters.",
+                MessageBox.Show(this, "Please enter a secure password with more than 3 characters.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return options;
             }
 
             if (!File.Exists("client.bin"))
             {
-                MessageBox.Show("Could not locate \"client.bin\" file. It should be in the same directory as Quasar.",
+                MessageBox.Show(this, "Could not locate \"client.bin\" file. It should be in the same directory as Quasar.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return options;
             }
 
             if (options.RawHosts.Length < 2)
             {
-                MessageBox.Show("Please enter a valid host to connect to.", "Build failed", MessageBoxButtons.OK,
+                MessageBox.Show(this, "Please enter a valid host to connect to.", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return options;
             }
@@ -304,7 +304,7 @@ namespace Quasar.Server.Forms
             {
                 if (string.IsNullOrWhiteSpace(options.IconPath) || !File.Exists(options.IconPath))
                 {
-                    MessageBox.Show("Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK,
+                    MessageBox.Show(this, "Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return options;
                 }
@@ -316,14 +316,14 @@ namespace Quasar.Server.Forms
             {
                 if (!IsValidVersionNumber(txtProductVersion.Text))
                 {
-                    MessageBox.Show("Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
+                    MessageBox.Show(this, "Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return options;
                 }
 
                 if (!IsValidVersionNumber(txtFileVersion.Text))
                 {
-                    MessageBox.Show("Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
+                    MessageBox.Show(this, "Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return options;
                 }
@@ -354,7 +354,7 @@ namespace Quasar.Server.Forms
 
             if (string.IsNullOrEmpty(options.OutputPath))
             {
-                MessageBox.Show("Please choose a valid output path.", "Build failed", MessageBoxButtons.OK,
+                MessageBox.Show(this, "Please choose a valid output path.", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return options;
             }
@@ -398,18 +398,17 @@ namespace Quasar.Server.Forms
 
                 ClientBuilder.Build(options);
 
-                MessageBox.Show(
-                    "Successfully built client!\nSaved to: " + options.OutputPath +
-                    "\n\nOnly install it on computers where you have the permission to do so!", "Build Success",
-                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show(this,
+                    $"Successfully built client!\nSaved to: {options.OutputPath}\n\nOnly install it on computers where you have the permission to do so!",
+                    "Build Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 SetBuildState(true);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format("An error occurred!\n\nError Message: {0}\nStack Trace:\n{1}", ex.Message,
-                        ex.StackTrace), "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(this,
+                    $"An error occurred!\n\nError Message: {ex.Message}\nStack Trace:\n{ex.StackTrace}", "Build failed",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

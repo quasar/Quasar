@@ -27,12 +27,12 @@ namespace Quasar.Client.Helper
 
         public static void DoMouseLeftClick(Point p, bool isMouseDown)
         {
-            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, 0);
+            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, UIntPtr.Zero);
         }
 
         public static void DoMouseRightClick(Point p, bool isMouseDown)
         {
-            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, 0);
+            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, UIntPtr.Zero);
         }
 
         public static void DoMouseMove(Point p)
@@ -42,12 +42,12 @@ namespace Quasar.Client.Helper
 
         public static void DoMouseScroll(Point p, bool scrollDown)
         {
-            NativeMethods.mouse_event(MOUSEEVENTF_WHEEL, p.X, p.Y, scrollDown ? -120 : 120, 0);
+            NativeMethods.mouse_event(MOUSEEVENTF_WHEEL, p.X, p.Y, scrollDown ? -120 : 120, UIntPtr.Zero);
         }
 
         public static void DoKeyPress(byte key, bool keyDown)
         {
-            NativeMethods.keybd_event(key, 0, keyDown ? KEYEVENTF_KEYDOWN : KEYEVENTF_KEYUP, 0);
+            NativeMethods.keybd_event(key, 0, keyDown ? KEYEVENTF_KEYDOWN : KEYEVENTF_KEYUP, UIntPtr.Zero);
         }
 
         private const int SPI_GETSCREENSAVERRUNNING = 114;
@@ -84,7 +84,7 @@ namespace Quasar.Client.Helper
                 NativeMethods.EnumDesktopWindows(handle, (hWnd, lParam) =>
                 {
                     if (NativeMethods.IsWindowVisible(hWnd))
-                        NativeMethods.PostMessage(hWnd, WM_CLOSE, 0, 0);
+                        NativeMethods.PostMessage(hWnd, WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
 
                     // Continue enumeration even if it fails
                     return true;
@@ -94,8 +94,7 @@ namespace Quasar.Client.Helper
             }
             else
             {
-                NativeMethods.PostMessage(NativeMethods.GetForegroundWindow(), WM_CLOSE,
-                    0, 0);
+                NativeMethods.PostMessage(NativeMethods.GetForegroundWindow(), WM_CLOSE, IntPtr.Zero, IntPtr.Zero);
             }
 
             // We need to restart the counter for next screensaver according to

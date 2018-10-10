@@ -1,8 +1,8 @@
-﻿using System;
-using System.Net;
-using System.Runtime.InteropServices;
+﻿using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
+using System;
+using System.Runtime.InteropServices;
 using Models = Quasar.Common.Models;
 using Process = System.Diagnostics.Process;
 
@@ -60,29 +60,29 @@ namespace Quasar.Client.Commands
                     table[i].state = 12; // 12 for Delete_TCB state
                     var ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(table[i]));
                     Marshal.StructureToPtr(table[i], ptr, false);
-                    SetTcpEntry(ptr);
+                    NativeMethods.SetTcpEntry(ptr);
                 }
             }
         }
 
-        public static MibTcprowOwnerPid[] GetTable()
+        private static NativeMethods.MibTcprowOwnerPid[] GetTable()
         {
-            MibTcprowOwnerPid[] tTable;
+            NativeMethods.MibTcprowOwnerPid[] tTable;
             var afInet = 2;
             var buffSize = 0;
-            var ret = GetExtendedTcpTable(IntPtr.Zero, ref buffSize, true, afInet, TcpTableClass.TcpTableOwnerPidAll);
+            var ret = NativeMethods.GetExtendedTcpTable(IntPtr.Zero, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
             var buffTable = Marshal.AllocHGlobal(buffSize);
             try
             {
-                ret = GetExtendedTcpTable(buffTable, ref buffSize, true, afInet, TcpTableClass.TcpTableOwnerPidAll);
+                ret = NativeMethods.GetExtendedTcpTable(buffTable, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
                 if (ret != 0)
                     return null;
-                var tab = (MibTcptableOwnerPid) Marshal.PtrToStructure(buffTable, typeof(MibTcptableOwnerPid));
+                var tab = (NativeMethods.MibTcptableOwnerPid) Marshal.PtrToStructure(buffTable, typeof(NativeMethods.MibTcptableOwnerPid));
                 var rowPtr = (IntPtr) ((long) buffTable + Marshal.SizeOf(tab.dwNumEntries));
-                tTable = new MibTcprowOwnerPid[tab.dwNumEntries];
+                tTable = new NativeMethods.MibTcprowOwnerPid[tab.dwNumEntries];
                 for (var i = 0; i < tab.dwNumEntries; i++)
                 {
-                    var tcpRow = (MibTcprowOwnerPid) Marshal.PtrToStructure(rowPtr, typeof(MibTcprowOwnerPid));
+                    var tcpRow = (NativeMethods.MibTcprowOwnerPid) Marshal.PtrToStructure(rowPtr, typeof(NativeMethods.MibTcprowOwnerPid));
                     tTable[i] = tcpRow;
                     rowPtr = (IntPtr) ((long) rowPtr + Marshal.SizeOf(tcpRow));
                 }
@@ -92,64 +92,6 @@ namespace Quasar.Client.Commands
                 Marshal.FreeHGlobal(buffTable);
             }
             return tTable;
-        }
-
-        [DllImport("iphlpapi.dll", SetLastError = true)]
-        private static extern uint GetExtendedTcpTable(IntPtr pTcpTable, ref int dwOutBufLen, bool sort, int ipVersion,
-            TcpTableClass tblClass, uint reserved = 0);
-
-        [DllImport("iphlpapi.dll")]
-        private static extern int SetTcpEntry(IntPtr pTcprow);
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MibTcprowOwnerPid
-        {
-            public uint state;
-            public uint localAddr;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] localPort;
-            public uint remoteAddr;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] remotePort;
-            public uint owningPid;
-
-            public IPAddress LocalAddress
-            {
-                get { return new IPAddress(localAddr); }
-            }
-
-            public ushort LocalPort
-            {
-                get { return BitConverter.ToUInt16(new byte[2] {localPort[1], localPort[0]}, 0); }
-            }
-
-            public IPAddress RemoteAddress
-            {
-                get { return new IPAddress(remoteAddr); }
-            }
-
-            public ushort RemotePort
-            {
-                get { return BitConverter.ToUInt16(new byte[2] {remotePort[1], remotePort[0]}, 0); }
-            }
-        }
-
-        [StructLayout(LayoutKind.Sequential)]
-        public struct MibTcptableOwnerPid
-        {
-            public uint dwNumEntries;
-            private readonly MibTcprowOwnerPid table;
-        }
-
-        private enum TcpTableClass
-        {
-            TcpTableBasicListener,
-            TcpTableBasicConnections,
-            TcpTableBasicAll,
-            TcpTableOwnerPidListener,
-            TcpTableOwnerPidConnections,
-            TcpTableOwnerPidAll,
-            TcpTableOwnerModuleListener,
-            TcpTableOwnerModuleConnections,
-            TcpTableOwnerModuleAll
         }
     }
 }

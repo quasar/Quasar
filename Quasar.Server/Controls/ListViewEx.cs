@@ -10,8 +10,9 @@ namespace Quasar.Server.Controls
     {
         private const uint WM_CHANGEUISTATE = 0x127;
 
-        private const int UIS_SET = 1;
-        private const int UISF_HIDEFOCUS = 0x1;
+        private const short UIS_SET = 1;
+        private const short UISF_HIDEFOCUS = 0x1;
+        private readonly IntPtr _removeDots = new IntPtr(NativeMethodsHelper.MakeWin32Long(UIS_SET, UISF_HIDEFOCUS));
 
         private ListViewColumnSorter LvwColumnSorter { get; set; }
 
@@ -19,7 +20,6 @@ namespace Quasar.Server.Controls
         /// Initializes a new instance of the <see cref="AeroListView"/> class.
         /// </summary>
         public AeroListView()
-            : base()
         {
             SetStyle(ControlStyles.OptimizedDoubleBuffer | ControlStyles.AllPaintingInWmPaint, true);
             this.LvwColumnSorter = new ListViewColumnSorter();
@@ -47,8 +47,7 @@ namespace Quasar.Server.Controls
             if (PlatformHelper.XpOrHigher)
             {
                 // removes the ugly dotted line around focused item
-                NativeMethods.SendMessage(this.Handle, WM_CHANGEUISTATE,
-                    NativeMethodsHelper.MakeLong(UIS_SET, UISF_HIDEFOCUS), 0);
+                NativeMethods.SendMessage(this.Handle, WM_CHANGEUISTATE, _removeDots, IntPtr.Zero);
             }
         }
         

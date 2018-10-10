@@ -110,7 +110,6 @@
     <Compile Include="Controls\WordTextBox.Designer.cs">
       <DependentUpon>WordTextBox.cs</DependentUpon>
     </Compile>
-    <Compile Include="Build\IconInjector.cs" />
     <Compile Include="Messages\ClientStatusHandler.cs" />
     <Compile Include="Messages\FileManagerHandler.cs" />
     <Compile Include="Messages\KeyloggerHandler.cs" />

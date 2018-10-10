@@ -9,9 +9,9 @@ namespace Quasar.Server.Utilities
     public static class NativeMethods
     {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        public struct LVITEM
+        internal struct LVITEM
         {
-            public int mask;
+            public uint mask;
             public int iItem;
             public int iSubItem;
             public int state;
@@ -23,23 +23,25 @@ namespace Quasar.Server.Utilities
             public IntPtr lParam;
             public int iIndent;
             public int iGroupId;
-            public int cColumns;
+            public uint cColumns;
             public IntPtr puColumns;
+            public IntPtr piColFmt;
+            public int iGroup;
         };
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr SendMessage(IntPtr hWnd, uint msg, int wParam, int lParam);
+        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        internal static extern IntPtr SendMessage(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam);
+
+        [DllImport("user32.dll", CharSet = CharSet.Auto, EntryPoint = "SendMessage")]
+        internal static extern IntPtr SendMessageListViewItem(IntPtr hWnd, uint msg, IntPtr wParam, ref LVITEM lParam);
 
         [DllImport("user32.dll")]
-        public static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, int vk);
+        internal static extern bool RegisterHotKey(IntPtr hWnd, int id, uint fsModifiers, int vk);
 
         [DllImport("user32.dll")]
-        public static extern bool UnregisterHotKey(IntPtr hWnd, int id);
-
-        [DllImport("user32.dll", EntryPoint = "SendMessage", CharSet = CharSet.Auto)]
-        public static extern IntPtr SendMessageLVItem(IntPtr hWnd, int msg, int wParam, ref LVITEM lvi);
+        internal static extern bool UnregisterHotKey(IntPtr hWnd, int id);
 
         [DllImport("uxtheme.dll", CharSet = CharSet.Unicode)]
-        public static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
+        internal static extern int SetWindowTheme(IntPtr hWnd, string pszSubAppName, string pszSubIdList);
     }
 }

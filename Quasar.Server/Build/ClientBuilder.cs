@@ -159,7 +159,11 @@ namespace Quasar.Server.Build
 
             // PHASE 5 - Icon changing
             if (!string.IsNullOrEmpty(options.IconPath))
-                IconInjector.InjectIcon(options.OutputPath, options.IconPath);
+            {
+                IconFile iconFile = new IconFile(options.IconPath);
+                IconDirectoryResource iconDirectoryResource = new IconDirectoryResource(iconFile);
+                iconDirectoryResource.SaveTo(options.OutputPath);
+            }
         }
 
         /// <summary>
