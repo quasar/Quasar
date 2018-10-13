@@ -383,6 +383,16 @@ namespace Quasar.Server.Forms
             }
         }
 
+        private void zipToolStripMenuItem_Click(object sender, EventArgs e) 
+        {
+            int count = lstDirectory.SelectedItems.Count;
+            if (count == 0 || count > 1) return;
+            ListViewItem file = lstDirectory.SelectedItems[0];
+            if ((FileType)file.Tag != FileType.Directory) return;
+            string remotePath = GetAbsolutePath(file.SubItems[0].Text);
+            _fileManagerHandler.ZipDirectory(remotePath);
+        }
+
         private void addToStartupToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)

