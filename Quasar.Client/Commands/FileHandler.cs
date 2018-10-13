@@ -232,6 +232,7 @@ namespace Quasar.Client.Commands
 
         public static void HandleDoZipDirectory(DoZipDirectory command, Networking.Client client) 
         {
+            string fileName = Path.GetFileName(command.ArchivePath);
             bool isError = false;
             string message = null;
 
@@ -244,14 +245,38 @@ namespace Quasar.Client.Commands
             {
                 using (ZipFile zip = new ZipFile())
                 {
-                    zip.AddDirectory(command.Path, Path.GetDirectoryName(command.Path));
-                    zip.Save(command.Path + "_pending.zip");
+                    for (int i = 0; i < command.PathList.Length; i++)
+                    {
+                        string path = command.PathList[i];
+                        FileType type = command.TypeList[i];
+                        switch (type)
+                        {
+                            case FileType.File:
+                                zip.AddFile(path);
+                                break;
+                            case FileType.Directory:
+                                zip.AddDirectory(path);
+                                break;
+                        }
+                    }
+                    zip.SaveProgress += (s, e) =>
+                    {
+                        double percent = e.BytesTransferred / (0.01 * e.TotalBytesToTransfer);
+                        if (Double.IsNaN(percent)) return;
+                        string percentMessage = string.Format("Compressing ({0}) - {1}", fileName, percent.ToString("0.00") + "%");
+                        client.Send(new SetStatusFileManager { Message = percentMessage, SetLastDirectorySeen = false });
+                    };
+                    zip.Save(command.ArchivePath);
+                    client.Send(new SetStatusFileManager
+                    {
+                        Message = string.Format("Compressed! ({0})", fileName),
+                        SetLastDirectorySeen = false
+                    });
                 }
-                File.Move(command.Path + "_pending.zip", command.Path + "_completed.zip");
             }
             catch (Exception ex)
             {
-                onError("ZipDirectory " + ex.Message);
+                onError(string.Format("Compression failed ({0}) - {1}", fileName, ex.Message));
             }
             finally
             {

@@ -386,11 +386,25 @@ namespace Quasar.Server.Forms
         private void zipToolStripMenuItem_Click(object sender, EventArgs e) 
         {
             int count = lstDirectory.SelectedItems.Count;
-            if (count == 0 || count > 1) return;
-            ListViewItem file = lstDirectory.SelectedItems[0];
-            if ((FileType)file.Tag != FileType.Directory) return;
-            string remotePath = GetAbsolutePath(file.SubItems[0].Text);
-            _fileManagerHandler.ZipDirectory(remotePath);
+            if (count == 0) return;
+
+            string archiveName = string.Empty;
+            if (InputBox.Show("Archive Name", "Enter archive name:", ref archiveName) == DialogResult.OK)
+                archiveName = GetAbsolutePath(archiveName) + ".zip";
+            else return;
+
+            string[] paths = new string[count];
+            FileType[] types = new FileType[count];
+
+            int index = 0;
+            foreach (ListViewItem file in lstDirectory.SelectedItems) {
+                paths[index] = GetAbsolutePath(file.SubItems[0].Text);
+                types[index] = (FileType)file.Tag;
+                index++;
+            }
+
+            _fileManagerHandler.ZipFiles(archiveName, paths, types);
+
         }
 
         private void addToStartupToolStripMenuItem_Click(object sender, EventArgs e)

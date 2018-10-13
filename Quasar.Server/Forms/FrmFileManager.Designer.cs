@@ -39,6 +39,7 @@ namespace Quasar.Server.Forms
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.line2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.addToStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.line3ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -70,7 +71,6 @@ namespace Quasar.Server.Forms
             this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-            this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripDirectory.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextMenuStripTransfers.SuspendLayout();
@@ -86,16 +86,16 @@ namespace Quasar.Server.Forms
             this.uploadToolStripMenuItem,
             this.lineToolStripMenuItem,
             this.executeToolStripMenuItem,
+            this.zipToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
-            this.zipToolStripMenuItem,
             this.line2ToolStripMenuItem,
             this.addToStartupToolStripMenuItem,
             this.line3ToolStripMenuItem,
             this.refreshToolStripMenuItem,
             this.openDirectoryInShellToolStripMenuItem});
             this.contextMenuStripDirectory.Name = "ctxtMenu";
-            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 220);
+            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 242);
             // 
             // downloadToolStripMenuItem
             // 
@@ -142,6 +142,14 @@ namespace Quasar.Server.Forms
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // zipToolStripMenuItem
+            // 
+            this.zipToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.zip;
+            this.zipToolStripMenuItem.Name = "zipToolStripMenuItem";
+            this.zipToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.zipToolStripMenuItem.Text = "Compress";
+            this.zipToolStripMenuItem.Click += new System.EventHandler(this.zipToolStripMenuItem_Click);
             // 
             // line2ToolStripMenuItem
             // 
@@ -431,14 +439,6 @@ namespace Quasar.Server.Forms
             // 
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 289;
-            // 
-            // zipToolStripMenuItem
-            // 
-            this.zipToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.zip;
-            this.zipToolStripMenuItem.Name = "zipToolStripMenuItem";
-            this.zipToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
-            this.zipToolStripMenuItem.Text = "ZIP Directory";
-            this.zipToolStripMenuItem.Click += new System.EventHandler(zipToolStripMenuItem_Click);
             // 
             // FrmFileManager
             // 
