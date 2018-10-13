@@ -39,6 +39,7 @@ namespace Quasar.Server.Forms
             this.executeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.renameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.deleteToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.line2ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
             this.addToStartupToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.line3ToolStripMenuItem = new System.Windows.Forms.ToolStripSeparator();
@@ -85,6 +86,7 @@ namespace Quasar.Server.Forms
             this.uploadToolStripMenuItem,
             this.lineToolStripMenuItem,
             this.executeToolStripMenuItem,
+            this.zipToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
             this.line2ToolStripMenuItem,
@@ -93,7 +95,7 @@ namespace Quasar.Server.Forms
             this.refreshToolStripMenuItem,
             this.openDirectoryInShellToolStripMenuItem});
             this.contextMenuStripDirectory.Name = "ctxtMenu";
-            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 198);
+            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 242);
             // 
             // downloadToolStripMenuItem
             // 
@@ -140,6 +142,14 @@ namespace Quasar.Server.Forms
             this.deleteToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
             this.deleteToolStripMenuItem.Text = "Delete";
             this.deleteToolStripMenuItem.Click += new System.EventHandler(this.deleteToolStripMenuItem_Click);
+            // 
+            // zipToolStripMenuItem
+            // 
+            this.zipToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.zip;
+            this.zipToolStripMenuItem.Name = "zipToolStripMenuItem";
+            this.zipToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.zipToolStripMenuItem.Text = "Compress";
+            this.zipToolStripMenuItem.Click += new System.EventHandler(this.zipToolStripMenuItem_Click);
             // 
             // line2ToolStripMenuItem
             // 
@@ -500,5 +510,6 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.ToolStripMenuItem uploadToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hTransferType;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem zipToolStripMenuItem;
     }
 }

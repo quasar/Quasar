@@ -308,6 +308,15 @@ namespace Quasar.Server.Messages
         }
 
         /// <summary>
+        /// ZIPs selected files/folders.
+        /// </summary>
+        /// <param name="pathList">List of remote files/directories.</param>
+        public void ZipFiles(string archivePath, string[] pathList, FileType[] typeList) 
+        {
+            _client.Send(new DoZipDirectory { ArchivePath = archivePath, PathList = pathList, TypeList = typeList });
+        }
+
+        /// <summary>
         /// Starts a new process remotely.
         /// </summary>
         /// <param name="remotePath">The remote path used for starting the new process.</param>
