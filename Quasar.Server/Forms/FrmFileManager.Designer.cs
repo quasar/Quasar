@@ -70,6 +70,7 @@ namespace Quasar.Server.Forms
             this.hTransferType = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hStatus = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.hFilename = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.zipToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.contextMenuStripDirectory.SuspendLayout();
             this.statusStrip.SuspendLayout();
             this.contextMenuStripTransfers.SuspendLayout();
@@ -87,13 +88,14 @@ namespace Quasar.Server.Forms
             this.executeToolStripMenuItem,
             this.renameToolStripMenuItem,
             this.deleteToolStripMenuItem,
+            this.zipToolStripMenuItem,
             this.line2ToolStripMenuItem,
             this.addToStartupToolStripMenuItem,
             this.line3ToolStripMenuItem,
             this.refreshToolStripMenuItem,
             this.openDirectoryInShellToolStripMenuItem});
             this.contextMenuStripDirectory.Name = "ctxtMenu";
-            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 198);
+            this.contextMenuStripDirectory.Size = new System.Drawing.Size(240, 220);
             // 
             // downloadToolStripMenuItem
             // 
@@ -430,6 +432,14 @@ namespace Quasar.Server.Forms
             this.hFilename.Text = "Filename";
             this.hFilename.Width = 289;
             // 
+            // zipToolStripMenuItem
+            // 
+            this.zipToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.zip;
+            this.zipToolStripMenuItem.Name = "zipToolStripMenuItem";
+            this.zipToolStripMenuItem.Size = new System.Drawing.Size(239, 22);
+            this.zipToolStripMenuItem.Text = "ZIP Directory";
+            this.zipToolStripMenuItem.Click += new System.EventHandler(zipToolStripMenuItem_Click);
+            // 
             // FrmFileManager
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
@@ -500,5 +510,6 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.ToolStripMenuItem uploadToolStripMenuItem;
         private System.Windows.Forms.ColumnHeader hTransferType;
         private System.Windows.Forms.ToolStripSeparator toolStripMenuItem1;
+        private System.Windows.Forms.ToolStripMenuItem zipToolStripMenuItem;
     }
 }
