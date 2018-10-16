@@ -150,7 +150,7 @@
     <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)DotNetZip.dll" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
 copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
