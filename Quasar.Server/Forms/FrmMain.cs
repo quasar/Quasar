@@ -711,6 +711,12 @@ namespace Quasar.Server.Forms
             }
         }
 
+        private void codeExecutorToolStripMenuItem_Click(object sender, EventArgs e) {
+            Client[] clients = GetSelectedClients();
+            if (clients.Count() > 0) 
+                new FrmExecuteCode(clients).Show();
+        }
+
         private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
@@ -874,5 +880,6 @@ namespace Quasar.Server.Forms
         }
 
         #endregion
+
     }
 }

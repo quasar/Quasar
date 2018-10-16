@@ -173,6 +173,52 @@ namespace Quasar.Server.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap code {
+            get {
+                object obj = ResourceManager.GetObject("code", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to using System;
+        ///using System.Collections.Generic;
+        ///using System.Linq;
+        ///using System.Text;
+        ///using System.Threading.Tasks;
+        ///
+        ///namespace QuasarCode  {
+        ///    class Program {
+        ///        static void Main(string[] args) {
+        ///            // Write your code!
+        ///        }
+        ///    }
+        ///}.
+        /// </summary>
+        internal static string CodeExecuter_CSharp {
+            get {
+                return ResourceManager.GetString("CodeExecuter_CSharp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Module QuasarCode
+        ///
+        ///    Sub Main()
+        ///        &apos; Write your code!
+        ///    End Sub
+        ///
+        ///End Module.
+        /// </summary>
+        internal static string CodeExecuter_VB {
+            get {
+                return ResourceManager.GetString("CodeExecuter_VB", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap cog {
             get {
                 object obj = ResourceManager.GetObject("cog", resourceCulture);

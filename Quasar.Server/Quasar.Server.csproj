@@ -48,6 +48,9 @@
     <DebugSymbols>false</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FastColoredTextBox, Version=2.16.21.0, Culture=neutral, PublicKeyToken=fb8aa12b994ef61b, processorArchitecture=MSIL">
+      <HintPath>..\packages\FCTB.2.16.21.0\lib\FastColoredTextBox.dll</HintPath>
+    </Reference>
     <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
     </Reference>
@@ -109,6 +112,12 @@
     </Compile>
     <Compile Include="Controls\WordTextBox.Designer.cs">
       <DependentUpon>WordTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmExecuteCode.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmExecuteCode.Designer.cs">
+      <DependentUpon>FrmExecuteCode.cs</DependentUpon>
     </Compile>
     <Compile Include="Messages\ClientStatusHandler.cs" />
     <Compile Include="Messages\FileManagerHandler.cs" />
@@ -308,6 +317,9 @@
     <Compile Include="Data\Settings.cs" />
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmExecuteCode.resx">
+      <DependentUpon>FrmExecuteCode.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmStartupAdd.resx">
       <DependentUpon>FrmStartupAdd.cs</DependentUpon>
