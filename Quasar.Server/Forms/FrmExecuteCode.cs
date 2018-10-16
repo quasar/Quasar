@@ -63,7 +63,8 @@ namespace Quasar.Server.Forms
                 string message = "Found " + result.Errors.Count + " errors!\n\n";
                 foreach (CompilerError error in result.Errors)
                 {
-                    message += "=== ERROR #" + error.ErrorNumber + " ===\n";
+                    message += "=== ERROR " + error.ErrorNumber + " ===\n";
+                    message += "-- Line #" + error.Line + "\n";
                     message += error.ErrorText + "\n\n";
                 }
                 EndExecution(output, message);
@@ -132,9 +133,7 @@ namespace Quasar.Server.Forms
                 btnExecuteCode.Enabled = true;
                 lblStatus.Text = "Ready.";
                 if (error != string.Empty)
-                {
                     MessageBox.Show(error, "Execution aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                }
             }));
         }
 
