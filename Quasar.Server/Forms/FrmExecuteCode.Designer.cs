@@ -27,11 +27,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmExecuteCode));
             this.btnExecuteCode = new System.Windows.Forms.Button();
             this.btnResetCode = new System.Windows.Forms.Button();
-            this.tcLanguage = new Quasar.Server.Controls.DotNetBarTabControl();
-            this.tabCSharp = new System.Windows.Forms.TabPage();
-            this.fctbCSharp = new FastColoredTextBoxNS.FastColoredTextBox();
-            this.tabVB = new System.Windows.Forms.TabPage();
-            this.fctbVB = new FastColoredTextBoxNS.FastColoredTextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.lbReferences = new System.Windows.Forms.ListBox();
@@ -46,6 +41,11 @@
             this.button2 = new System.Windows.Forms.Button();
             this.ScriptList = new System.Windows.Forms.ListBox();
             this.script_name = new System.Windows.Forms.TextBox();
+            this.tcLanguage = new Quasar.Server.Controls.DotNetBarTabControl();
+            this.tabCSharp = new System.Windows.Forms.TabPage();
+            this.fctbCSharp = new FastColoredTextBoxNS.FastColoredTextBox();
+            this.tabVB = new System.Windows.Forms.TabPage();
+            this.fctbVB = new FastColoredTextBoxNS.FastColoredTextBox();
             this.tcLanguage.SuspendLayout();
             this.tabCSharp.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.fctbCSharp)).BeginInit();
@@ -75,122 +75,6 @@
             this.btnResetCode.TabIndex = 2;
             this.btnResetCode.UseVisualStyleBackColor = true;
             this.btnResetCode.Click += new System.EventHandler(this.btnResetCode_Click);
-            // 
-            // tcLanguage
-            // 
-            this.tcLanguage.Alignment = System.Windows.Forms.TabAlignment.Left;
-            this.tcLanguage.Controls.Add(this.tabCSharp);
-            this.tcLanguage.Controls.Add(this.tabVB);
-            this.tcLanguage.Dock = System.Windows.Forms.DockStyle.Left;
-            this.tcLanguage.ItemSize = new System.Drawing.Size(44, 136);
-            this.tcLanguage.Location = new System.Drawing.Point(0, 0);
-            this.tcLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tcLanguage.Multiline = true;
-            this.tcLanguage.Name = "tcLanguage";
-            this.tcLanguage.SelectedIndex = 0;
-            this.tcLanguage.Size = new System.Drawing.Size(1200, 882);
-            this.tcLanguage.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.tcLanguage.TabIndex = 0;
-            // 
-            // tabCSharp
-            // 
-            this.tabCSharp.Controls.Add(this.fctbCSharp);
-            this.tabCSharp.Location = new System.Drawing.Point(140, 4);
-            this.tabCSharp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabCSharp.Name = "tabCSharp";
-            this.tabCSharp.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabCSharp.Size = new System.Drawing.Size(1056, 874);
-            this.tabCSharp.TabIndex = 0;
-            this.tabCSharp.Text = "C#";
-            this.tabCSharp.UseVisualStyleBackColor = true;
-            // 
-            // fctbCSharp
-            // 
-            this.fctbCSharp.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.fctbCSharp.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\n^\\s*(case|default)\\s*[^:]*(" +
-    "?<range>:)\\s*(?<range>[^;]+);\n";
-            this.fctbCSharp.AutoScrollMinSize = new System.Drawing.Size(35, 22);
-            this.fctbCSharp.BackBrush = null;
-            this.fctbCSharp.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
-            this.fctbCSharp.CharHeight = 22;
-            this.fctbCSharp.CharWidth = 12;
-            this.fctbCSharp.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.fctbCSharp.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fctbCSharp.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctbCSharp.Font = new System.Drawing.Font("Courier New", 9.75F);
-            this.fctbCSharp.IsReplaceMode = false;
-            this.fctbCSharp.Language = FastColoredTextBoxNS.Language.CSharp;
-            this.fctbCSharp.LeftBracket = '(';
-            this.fctbCSharp.LeftBracket2 = '{';
-            this.fctbCSharp.Location = new System.Drawing.Point(4, 5);
-            this.fctbCSharp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.fctbCSharp.Name = "fctbCSharp";
-            this.fctbCSharp.Paddings = new System.Windows.Forms.Padding(0);
-            this.fctbCSharp.RightBracket = ')';
-            this.fctbCSharp.RightBracket2 = '}';
-            this.fctbCSharp.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.fctbCSharp.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbCSharp.ServiceColors")));
-            this.fctbCSharp.Size = new System.Drawing.Size(1048, 864);
-            this.fctbCSharp.TabIndex = 0;
-            this.fctbCSharp.Zoom = 100;
-            // 
-            // tabVB
-            // 
-            this.tabVB.Controls.Add(this.fctbVB);
-            this.tabVB.Location = new System.Drawing.Point(140, 4);
-            this.tabVB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabVB.Name = "tabVB";
-            this.tabVB.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.tabVB.Size = new System.Drawing.Size(1056, 874);
-            this.tabVB.TabIndex = 1;
-            this.tabVB.Text = "VB";
-            this.tabVB.UseVisualStyleBackColor = true;
-            // 
-            // fctbVB
-            // 
-            this.fctbVB.AutoCompleteBracketsList = new char[] {
-        '(',
-        ')',
-        '{',
-        '}',
-        '[',
-        ']',
-        '\"',
-        '\"',
-        '\'',
-        '\''};
-            this.fctbVB.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.\\(\\)]+\\s*(?<range>=)\\s*(?<range>.+)\n";
-            this.fctbVB.AutoScrollMinSize = new System.Drawing.Size(2, 22);
-            this.fctbVB.BackBrush = null;
-            this.fctbVB.CharHeight = 22;
-            this.fctbVB.CharWidth = 12;
-            this.fctbVB.CommentPrefix = "\'";
-            this.fctbVB.Cursor = System.Windows.Forms.Cursors.IBeam;
-            this.fctbVB.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
-            this.fctbVB.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.fctbVB.IsReplaceMode = false;
-            this.fctbVB.Language = FastColoredTextBoxNS.Language.VB;
-            this.fctbVB.LeftBracket = '(';
-            this.fctbVB.Location = new System.Drawing.Point(4, 5);
-            this.fctbVB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.fctbVB.Name = "fctbVB";
-            this.fctbVB.Paddings = new System.Windows.Forms.Padding(0);
-            this.fctbVB.RightBracket = ')';
-            this.fctbVB.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
-            this.fctbVB.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbVB.ServiceColors")));
-            this.fctbVB.Size = new System.Drawing.Size(1048, 864);
-            this.fctbVB.TabIndex = 0;
-            this.fctbVB.Zoom = 100;
             // 
             // label1
             // 
@@ -338,6 +222,122 @@
             this.script_name.Size = new System.Drawing.Size(284, 26);
             this.script_name.TabIndex = 20;
             // 
+            // tcLanguage
+            // 
+            this.tcLanguage.Alignment = System.Windows.Forms.TabAlignment.Left;
+            this.tcLanguage.Controls.Add(this.tabCSharp);
+            this.tcLanguage.Controls.Add(this.tabVB);
+            this.tcLanguage.Dock = System.Windows.Forms.DockStyle.Left;
+            this.tcLanguage.ItemSize = new System.Drawing.Size(44, 136);
+            this.tcLanguage.Location = new System.Drawing.Point(0, 0);
+            this.tcLanguage.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tcLanguage.Multiline = true;
+            this.tcLanguage.Name = "tcLanguage";
+            this.tcLanguage.SelectedIndex = 0;
+            this.tcLanguage.Size = new System.Drawing.Size(1200, 882);
+            this.tcLanguage.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
+            this.tcLanguage.TabIndex = 0;
+            // 
+            // tabCSharp
+            // 
+            this.tabCSharp.Controls.Add(this.fctbCSharp);
+            this.tabCSharp.Location = new System.Drawing.Point(140, 4);
+            this.tabCSharp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabCSharp.Name = "tabCSharp";
+            this.tabCSharp.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabCSharp.Size = new System.Drawing.Size(1056, 874);
+            this.tabCSharp.TabIndex = 0;
+            this.tabCSharp.Text = "C#";
+            this.tabCSharp.UseVisualStyleBackColor = true;
+            // 
+            // fctbCSharp
+            // 
+            this.fctbCSharp.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.fctbCSharp.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.]+(\\s\\w+)?\\s*(?<range>=)\\s*(?<range>[^;]+);\n^\\s*(case|default)\\s*[^:]*(" +
+    "?<range>:)\\s*(?<range>[^;]+);\n";
+            this.fctbCSharp.AutoScrollMinSize = new System.Drawing.Size(35, 22);
+            this.fctbCSharp.BackBrush = null;
+            this.fctbCSharp.BracketsHighlightStrategy = FastColoredTextBoxNS.BracketsHighlightStrategy.Strategy2;
+            this.fctbCSharp.CharHeight = 22;
+            this.fctbCSharp.CharWidth = 12;
+            this.fctbCSharp.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.fctbCSharp.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.fctbCSharp.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fctbCSharp.IsReplaceMode = false;
+            this.fctbCSharp.Language = FastColoredTextBoxNS.Language.CSharp;
+            this.fctbCSharp.LeftBracket = '(';
+            this.fctbCSharp.LeftBracket2 = '{';
+            this.fctbCSharp.Location = new System.Drawing.Point(4, 5);
+            this.fctbCSharp.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.fctbCSharp.Name = "fctbCSharp";
+            this.fctbCSharp.Paddings = new System.Windows.Forms.Padding(0);
+            this.fctbCSharp.RightBracket = ')';
+            this.fctbCSharp.RightBracket2 = '}';
+            this.fctbCSharp.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.fctbCSharp.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbCSharp.ServiceColors")));
+            this.fctbCSharp.Size = new System.Drawing.Size(1048, 864);
+            this.fctbCSharp.TabIndex = 0;
+            this.fctbCSharp.Zoom = 100;
+            // 
+            // tabVB
+            // 
+            this.tabVB.Controls.Add(this.fctbVB);
+            this.tabVB.Location = new System.Drawing.Point(140, 4);
+            this.tabVB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabVB.Name = "tabVB";
+            this.tabVB.Padding = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.tabVB.Size = new System.Drawing.Size(1056, 874);
+            this.tabVB.TabIndex = 1;
+            this.tabVB.Text = "VB";
+            this.tabVB.UseVisualStyleBackColor = true;
+            // 
+            // fctbVB
+            // 
+            this.fctbVB.AutoCompleteBracketsList = new char[] {
+        '(',
+        ')',
+        '{',
+        '}',
+        '[',
+        ']',
+        '\"',
+        '\"',
+        '\'',
+        '\''};
+            this.fctbVB.AutoIndentCharsPatterns = "\n^\\s*[\\w\\.\\(\\)]+\\s*(?<range>=)\\s*(?<range>.+)\n";
+            this.fctbVB.AutoScrollMinSize = new System.Drawing.Size(2, 22);
+            this.fctbVB.BackBrush = null;
+            this.fctbVB.CharHeight = 22;
+            this.fctbVB.CharWidth = 12;
+            this.fctbVB.CommentPrefix = "\'";
+            this.fctbVB.Cursor = System.Windows.Forms.Cursors.IBeam;
+            this.fctbVB.DisabledColor = System.Drawing.Color.FromArgb(((int)(((byte)(100)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))), ((int)(((byte)(180)))));
+            this.fctbVB.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.fctbVB.Font = new System.Drawing.Font("Courier New", 9.75F);
+            this.fctbVB.IsReplaceMode = false;
+            this.fctbVB.Language = FastColoredTextBoxNS.Language.VB;
+            this.fctbVB.LeftBracket = '(';
+            this.fctbVB.Location = new System.Drawing.Point(4, 5);
+            this.fctbVB.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.fctbVB.Name = "fctbVB";
+            this.fctbVB.Paddings = new System.Windows.Forms.Padding(0);
+            this.fctbVB.RightBracket = ')';
+            this.fctbVB.SelectionColor = System.Drawing.Color.FromArgb(((int)(((byte)(60)))), ((int)(((byte)(0)))), ((int)(((byte)(0)))), ((int)(((byte)(255)))));
+            this.fctbVB.ServiceColors = ((FastColoredTextBoxNS.ServiceColors)(resources.GetObject("fctbVB.ServiceColors")));
+            this.fctbVB.Size = new System.Drawing.Size(1048, 864);
+            this.fctbVB.TabIndex = 0;
+            this.fctbVB.Zoom = 100;
+            // 
             // FrmExecuteCode
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(9F, 20F);
@@ -365,6 +365,7 @@
             this.Name = "FrmExecuteCode";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Code Executor";
+            this.Load += new System.EventHandler(this.FrmExecuteCode_Load);
             this.tcLanguage.ResumeLayout(false);
             this.tabCSharp.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.fctbCSharp)).EndInit();

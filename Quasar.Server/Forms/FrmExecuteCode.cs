@@ -323,6 +323,10 @@ namespace Quasar.Server.Forms {
             loadScript();
             updateScripts();
         }
+
+        private void FrmExecuteCode_Load(object sender, EventArgs e) {
+            updateScripts();
+        }
     }
 
 }
