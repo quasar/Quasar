@@ -173,9 +173,11 @@ namespace Quasar.Server.Forms {
         /// saves the script into the c://quasar directory
         /// </summary>
         private void saveScript() {
+            System.IO.Directory.CreateDirectory("C://Quasar");
+
             // Build the script with existing code
             cScript script = new cScript();
-            string file_name = script_name.Text;
+            string file_name = "C://Quasar//" + script_name.Text;
 
             // Helps verify the file.
             script.version = 1337;
@@ -183,15 +185,16 @@ namespace Quasar.Server.Forms {
             // Seperate type naming
             switch (tcLanguage.SelectedIndex) {
                 case 0: // C#
+                    script.code = fctbCSharp.Text;
                     file_name += ".QuasarCS";
 
                     break;
                 case 1: // VB
+                    script.code = fctbVB.Text;
                     file_name += ".QuasarVB";
                     break;
             }
             // Store code.
-            script.code = fctbVB.Text;
 
             // build references list
             int referenceCount = lbReferences.Items.Count;
@@ -207,21 +210,119 @@ namespace Quasar.Server.Forms {
             stream.Close();
         }
 
+        private cScript getScriptObj(string path) {
+
+            cScript temp = new cScript();
+
+            try {
+                // Attempt to deseserialize
+                IFormatter formatter = new BinaryFormatter();
+                Stream stream = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
+                temp = (cScript)formatter.Deserialize(stream);
+                stream.Close();
+            } catch {
+                // invalid file.
+            }
+
+            return temp;
+        }
         /// <summary>
         ///  Fetches selected script and check the verification test
         ///  if succesfull, the script will be loaded
         /// </summary>
         private void loadScript() {
 
+            string selected_name = ScriptList.SelectedItem.ToString();
+
+            // Iterate all files
+            DirectoryInfo d = new DirectoryInfo(@"C://Quasar");
+
+            FileInfo[] Files = null;
+
+            switch (tcLanguage.SelectedIndex) {
+                case 0: // C#
+                    Files = d.GetFiles("*.QuasarCS"); //Getting CS files
+                    break;
+                case 1: // VB
+                    Files = d.GetFiles("*.QuasarVB"); //Getting VB files
+                    break;
+            }
+
+            foreach (FileInfo file in Files) {
+                // Veryify the file.
+                cScript scriptFile = getScriptObj(file.FullName);
+
+                if (verify_file(scriptFile)) {
+
+                    if (file.Name == selected_name) {
+                        // Set everything
+
+                        lbReferences.Items.Clear();
+
+                        foreach (string refItem in  scriptFile.references) {
+                            lbReferences.Items.Add(refItem);
+                        }
+
+                        switch (tcLanguage.SelectedIndex) {
+                            case 0: // C#
+                                fctbCSharp.Text = scriptFile.code;
+                                break;
+                            case 1: // VB
+                                fctbVB.Text = scriptFile.code;
+                                break;
+                        }
+                    }
+                }
+            }
+
+        }
+
+        private bool verify_file(cScript file) {
+            return file.version == 1337;
         }
 
         /// <summary>
         /// iterates the directory of all including scripts and loads into the browser.
         /// </summary>
         private void updateScripts() {
+            // Empty the list
+            ScriptList.Items.Clear();
 
+            // Iterate all files
+            DirectoryInfo d = new DirectoryInfo(@"C://Quasar");
+
+            FileInfo[] Files = null;
+
+            switch (tcLanguage.SelectedIndex) {
+                case 0: // C#
+                    Files = d.GetFiles("*.QuasarCS"); //Getting CS files
+                    break;
+                case 1: // VB
+                    Files = d.GetFiles("*.QuasarVB"); //Getting VB files
+                    break;
+            }
+
+            foreach (FileInfo file in Files) {
+                // Veryify the file.
+                cScript scriptFile = getScriptObj(file.FullName);
+
+                if (verify_file(scriptFile)) {
+                    ScriptList.Items.Add(file.Name);
+                }
+            }
         }
 
+        // save script
+        private void button1_Click(object sender, EventArgs e) {
+            saveScript();
+            updateScripts();
+        }
+
+        // Load Script
+        private void button2_Click(object sender, EventArgs e) {
+            loadScript();
+            updateScripts();
+        }
     }
 
 }

@@ -44,7 +44,7 @@
             this.cbHidden = new System.Windows.Forms.CheckBox();
             this.button1 = new System.Windows.Forms.Button();
             this.button2 = new System.Windows.Forms.Button();
-            this.listBox1 = new System.Windows.Forms.ListBox();
+            this.ScriptList = new System.Windows.Forms.ListBox();
             this.script_name = new System.Windows.Forms.TextBox();
             this.tcLanguage.SuspendLayout();
             this.tabCSharp.SuspendLayout();
@@ -307,6 +307,7 @@
             this.button1.TabIndex = 17;
             this.button1.Text = "Save Script";
             this.button1.UseVisualStyleBackColor = true;
+            this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
             // button2
             // 
@@ -317,16 +318,17 @@
             this.button2.TabIndex = 18;
             this.button2.Text = "Load Script";
             this.button2.UseVisualStyleBackColor = true;
+            this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
-            // listBox1
+            // ScriptList
             // 
-            this.listBox1.FormattingEnabled = true;
-            this.listBox1.ItemHeight = 20;
-            this.listBox1.Location = new System.Drawing.Point(1220, 570);
-            this.listBox1.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
-            this.listBox1.Name = "listBox1";
-            this.listBox1.Size = new System.Drawing.Size(284, 224);
-            this.listBox1.TabIndex = 19;
+            this.ScriptList.FormattingEnabled = true;
+            this.ScriptList.ItemHeight = 20;
+            this.ScriptList.Location = new System.Drawing.Point(1220, 570);
+            this.ScriptList.Margin = new System.Windows.Forms.Padding(4, 5, 4, 5);
+            this.ScriptList.Name = "ScriptList";
+            this.ScriptList.Size = new System.Drawing.Size(284, 224);
+            this.ScriptList.TabIndex = 19;
             // 
             // script_name
             // 
@@ -342,7 +344,7 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1514, 882);
             this.Controls.Add(this.script_name);
-            this.Controls.Add(this.listBox1);
+            this.Controls.Add(this.ScriptList);
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.cbHidden);
@@ -394,7 +396,7 @@
         private System.Windows.Forms.CheckBox cbHidden;
         private System.Windows.Forms.Button button1;
         private System.Windows.Forms.Button button2;
-        private System.Windows.Forms.ListBox listBox1;
+        private System.Windows.Forms.ListBox ScriptList;
         private System.Windows.Forms.TextBox script_name;
     }
 }
