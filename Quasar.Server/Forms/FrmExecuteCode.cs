@@ -197,10 +197,8 @@ namespace Quasar.Server.Forms {
             // Store code.
 
             // build references list
-            int referenceCount = lbReferences.Items.Count;
-            string[] references = new string[referenceCount];
-            for (int i = 0; i < referenceCount; i++) {
-                script.references.Add(lbReferences.Items[i].ToString());
+            foreach (string s in lbReferences.Items) { 
+                script.references.Add(s);
             }
 
             // Write serialized file to disk.
