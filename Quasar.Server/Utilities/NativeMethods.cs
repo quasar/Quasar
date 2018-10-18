@@ -1,16 +1,13 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Quasar.Server.Utilities
-{
+namespace Quasar.Server.Utilities {
     /// <summary>
     /// Provides access to Win32 API and Microsoft C Runtime Library (msvcrt.dll).
     /// </summary>
-    public static class NativeMethods
-    {
+    public static class NativeMethods {
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
-        internal struct LVITEM
-        {
+        internal struct LVITEM {
             public uint mask;
             public int iItem;
             public int iSubItem;

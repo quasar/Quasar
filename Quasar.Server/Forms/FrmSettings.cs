@@ -7,20 +7,16 @@ using Quasar.Server.Networking;
 using Quasar.Server.Networking.Utilities;
 using Quasar.Server.Utilities;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmSettings : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmSettings : Form {
         private readonly QuasarServer _listenServer;
 
-        public FrmSettings(QuasarServer listenServer)
-        {
+        public FrmSettings(QuasarServer listenServer) {
             this._listenServer = listenServer;
 
             InitializeComponent();
 
-            if (listenServer.Listening)
-            {
+            if (listenServer.Listening) {
                 btnListen.Text = "Stop listening";
                 ncPort.Enabled = false;
                 txtPassword.Enabled = false;
@@ -30,8 +26,7 @@ namespace Quasar.Server.Forms
             ShowPassword(false);
         }
 
-        private void FrmSettings_Load(object sender, EventArgs e)
-        {
+        private void FrmSettings_Load(object sender, EventArgs e) {
             ncPort.Value = Settings.ListenPort;
             chkIPv6Support.Checked = Settings.IPv6Support;
             chkAutoListen.Checked = Settings.AutoListen;
@@ -45,77 +40,59 @@ namespace Quasar.Server.Forms
             txtNoIPPass.Text = Settings.NoIPPassword;
         }
 
-        private ushort GetPortSafe()
-        {
+        private ushort GetPortSafe() {
             var portValue = ncPort.Value.ToString(CultureInfo.InvariantCulture);
             ushort port;
             return (!ushort.TryParse(portValue, out port)) ? (ushort)0 : port;
         }
 
-        private void btnListen_Click(object sender, EventArgs e)
-        {
+        private void btnListen_Click(object sender, EventArgs e) {
             ushort port = GetPortSafe();
             string password = txtPassword.Text;
 
-            if (port == 0)
-            {
+            if (port == 0) {
                 MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 return;
             }
 
-            if (password.Length < 3)
-            {
+            if (password.Length < 3) {
                 MessageBox.Show("Please enter a secure password with more than 3 characters.",
                     "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
-            if (btnListen.Text == "Start listening" && !_listenServer.Listening)
-            {
-                try
-                {
+            if (btnListen.Text == "Start listening" && !_listenServer.Listening) {
+                try {
                     Aes128.SetDefaultKey(password);
 
-                    if (chkUseUpnp.Checked)
-                    {
-                        if (!UPnP.IsDeviceFound)
-                        {
+                    if (chkUseUpnp.Checked) {
+                        if (!UPnP.IsDeviceFound) {
                             MessageBox.Show("No available UPnP device found!", "No UPnP device", MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
-                        }
-                        else
-                        {
+                        } else {
                             int outPort;
                             UPnP.CreatePortMap(port, out outPort);
-                            if (port != outPort)
-                            {
+                            if (port != outPort) {
                                 MessageBox.Show("Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
                             }
                         }
                     }
-                    if(chkNoIPIntegration.Checked)
+                    if (chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
                     _listenServer.Listen(port, chkIPv6Support.Checked);
-                }
-                finally
-                {
+                } finally {
                     btnListen.Text = "Stop listening";
                     ncPort.Enabled = false;
                     txtPassword.Enabled = false;
                     chkIPv6Support.Enabled = false;
                 }
-            }
-            else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
-            {
-                try
-                {
+            } else if (btnListen.Text == "Stop listening" && _listenServer.Listening) {
+                try {
                     _listenServer.Disconnect();
                     UPnP.DeletePortMap(port);
-                }
-                finally
-                {
+                } finally {
                     btnListen.Text = "Start listening";
                     ncPort.Enabled = true;
                     txtPassword.Enabled = true;
@@ -124,20 +101,17 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void btnSave_Click(object sender, EventArgs e)
-        {
+        private void btnSave_Click(object sender, EventArgs e) {
             ushort port = GetPortSafe();
             string password = txtPassword.Text;
 
-            if (port == 0)
-            {
+            if (port == 0) {
                 MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
                 return;
             }
 
-            if (password.Length < 3)
-            {
+            if (password.Length < 3) {
                 MessageBox.Show("Please enter a secure password with more than 3 characters.",
                     "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
@@ -159,20 +133,17 @@ namespace Quasar.Server.Forms
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
+        private void btnCancel_Click(object sender, EventArgs e) {
             if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
                 DialogResult.Yes)
                 this.Close();
         }
 
-        private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e) {
             NoIPControlHandler(chkNoIPIntegration.Checked);
         }
 
-        private void NoIPControlHandler(bool enable)
-        {
+        private void NoIPControlHandler(bool enable) {
             lblHost.Enabled = enable;
             lblUser.Enabled = enable;
             lblPass.Enabled = enable;
@@ -182,13 +153,11 @@ namespace Quasar.Server.Forms
             chkShowPassword.Enabled = enable;
         }
 
-        private void ShowPassword(bool show = true)
-        {
+        private void ShowPassword(bool show = true) {
             txtNoIPPass.PasswordChar = (show) ? (char)0 : (char)'●';
         }
 
-        private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkShowPassword_CheckedChanged(object sender, EventArgs e) {
             ShowPassword(chkShowPassword.Checked);
         }
     }

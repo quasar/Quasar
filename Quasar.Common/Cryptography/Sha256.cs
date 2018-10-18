@@ -1,16 +1,12 @@
 ﻿using System.Security.Cryptography;
 using System.Text;
 
-namespace Quasar.Common.Cryptography
-{
-    public static class Sha256
-    {
-        public static string ComputeHash(string input)
-        {
+namespace Quasar.Common.Cryptography {
+    public static class Sha256 {
+        public static string ComputeHash(string input) {
             byte[] data = Encoding.UTF8.GetBytes(input);
 
-            using (SHA256Managed sha = new SHA256Managed())
-            {
+            using (SHA256Managed sha = new SHA256Managed()) {
                 data = sha.ComputeHash(data, 0, data.Length);
             }
 

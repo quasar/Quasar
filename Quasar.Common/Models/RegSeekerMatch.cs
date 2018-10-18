@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class RegSeekerMatch
-    {
+    public class RegSeekerMatch {
         [ProtoMember(1)]
         public string Key { get; set; }
 
@@ -14,8 +12,7 @@ namespace Quasar.Common.Models
         [ProtoMember(3)]
         public bool HasSubKeys { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"({Key}:{Data})";
         }
     }

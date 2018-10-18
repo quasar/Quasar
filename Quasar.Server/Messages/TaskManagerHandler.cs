@@ -3,10 +3,8 @@ using Quasar.Common.Models;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class TaskManagerHandler : MessageProcessorBase<Process[]>
-    {
+namespace Quasar.Server.Messages {
+    public class TaskManagerHandler : MessageProcessorBase<Process[]> {
         /// <summary>
         /// The client which is associated with this task manager handler.
         /// </summary>
@@ -16,8 +14,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="TaskManagerHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public TaskManagerHandler(Client client) : base(true)
-        {
+        public TaskManagerHandler(Client client) : base(true) {
             _client = client;
         }
 
@@ -28,10 +25,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(_client);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case GetProcessesResponse proc:
                     Execute(sender, proc);
                     break;
@@ -41,8 +36,7 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Refreshes the current started processes.
         /// </summary>
-        public void RefreshProcesses()
-        {
+        public void RefreshProcesses() {
             _client.Send(new GetProcesses());
         }
 
@@ -50,27 +44,23 @@ namespace Quasar.Server.Messages
         /// Starts a new process given an application name.
         /// </summary>
         /// <param name="applicationName">The name or path of the application to start.</param>
-        public void StartProcess(string applicationName)
-        {
-            _client.Send(new DoProcessStart {ApplicationName = applicationName});
+        public void StartProcess(string applicationName) {
+            _client.Send(new DoProcessStart { ApplicationName = applicationName });
         }
 
         /// <summary>
         /// Ends a started process given the process id.
         /// </summary>
         /// <param name="pid">The process id to end.</param>
-        public void EndProcess(int pid)
-        {
-            _client.Send(new DoProcessKill {Pid = pid});
+        public void EndProcess(int pid) {
+            _client.Send(new DoProcessKill { Pid = pid });
         }
 
-        private void Execute(ISender client, GetProcessesResponse message)
-        {
+        private void Execute(ISender client, GetProcessesResponse message) {
             OnReport(message.Processes);
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
         }
     }
 }

@@ -1,7 +1,5 @@
-﻿namespace Quasar.Common.Enums
-{
-    public enum ConnectionState : byte
-    {
+﻿namespace Quasar.Common.Enums {
+    public enum ConnectionState : byte {
         Closed = 1,
         Listening = 2,
         SYN_Sent = 3,

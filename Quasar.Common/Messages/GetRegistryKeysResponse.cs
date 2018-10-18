@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Models;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetRegistryKeysResponse : IMessage
-    {
+    public class GetRegistryKeysResponse : IMessage {
         [ProtoMember(1)]
         public RegSeekerMatch[] Matches { get; set; }
 

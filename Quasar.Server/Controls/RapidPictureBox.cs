@@ -4,10 +4,8 @@ using System.Drawing;
 using System.Windows.Forms;
 using Quasar.Server.Utilities;
 
-namespace Quasar.Server.Controls
-{
-    public interface IRapidPictureBox
-    {
+namespace Quasar.Server.Controls {
+    public interface IRapidPictureBox {
         bool Running { get; set; }
         Image GetImageSafe { get; set; }
 
@@ -19,8 +17,7 @@ namespace Quasar.Server.Controls
     /// <summary>
     /// Custom PictureBox Control designed for rapidly-changing images.
     /// </summary>
-    public class RapidPictureBox : PictureBox, IRapidPictureBox
-    {
+    public class RapidPictureBox : PictureBox, IRapidPictureBox {
         /// <summary>
         /// True if the PictureBox is currently streaming images, else False.
         /// </summary>
@@ -39,16 +36,12 @@ namespace Quasar.Server.Controls
         /// <summary>
         /// Provides thread-safe access to the Image of this Picturebox.
         /// </summary>
-        public Image GetImageSafe
-        {
-            get
-            {
+        public Image GetImageSafe {
+            get {
                 return Image;
             }
-            set
-            {
-                lock (_imageLock)
-                {
+            set {
+                lock (_imageLock) {
                     Image = value;
                 }
             }
@@ -73,8 +66,7 @@ namespace Quasar.Server.Controls
         /// Subscribes an Eventhandler to the FrameUpdated event.
         /// </summary>
         /// <param name="e">The Eventhandler to set.</param>
-        public void SetFrameUpdatedEvent(FrameUpdatedEventHandler e)
-        {
+        public void SetFrameUpdatedEvent(FrameUpdatedEventHandler e) {
             _frameCounter.FrameUpdated += e;
         }
 
@@ -82,16 +74,14 @@ namespace Quasar.Server.Controls
         /// Unsubscribes an Eventhandler from the FrameUpdated event.
         /// </summary>
         /// <param name="e">The Eventhandler to remove.</param>
-        public void UnsetFrameUpdatedEvent(FrameUpdatedEventHandler e)
-        {
+        public void UnsetFrameUpdatedEvent(FrameUpdatedEventHandler e) {
             _frameCounter.FrameUpdated -= e;
         }
 
         /// <summary>
         /// Starts the internal FPS measuring.
         /// </summary>
-        public void Start()
-        {
+        public void Start() {
             _frameCounter = new FrameCounter();
 
             _sWatch = Stopwatch.StartNew();
@@ -102,8 +92,7 @@ namespace Quasar.Server.Controls
         /// <summary>
         /// Stops the internal FPS measuring.
         /// </summary>
-        public void Stop()
-        {
+        public void Stop() {
             _sWatch?.Stop();
 
             Running = false;
@@ -114,72 +103,57 @@ namespace Quasar.Server.Controls
         /// </summary>
         /// <param name="bmp">The new bitmap to use.</param>
         /// <param name="cloneBitmap">If True the bitmap will be cloned, else it uses the original bitmap.</param>
-        public void UpdateImage(Bitmap bmp, bool cloneBitmap)
-        {
-            try
-            {
+        public void UpdateImage(Bitmap bmp, bool cloneBitmap) {
+            try {
                 CountFps();
 
                 if ((ScreenWidth != bmp.Width) && (ScreenHeight != bmp.Height))
                     UpdateScreenSize(bmp.Width, bmp.Height);
 
-                lock (_imageLock)
-                {
+                lock (_imageLock) {
                     // get old image to dispose it correctly
                     var oldImage = GetImageSafe;
-                    
+
                     SuspendLayout();
                     GetImageSafe = cloneBitmap ? new Bitmap(bmp, Width, Height) /*resize bitmap*/ : bmp;
                     ResumeLayout();
 
                     oldImage?.Dispose();
                 }
-            }
-            catch (InvalidOperationException)
-            {
-            }
-            catch (Exception)
-            {
+            } catch (InvalidOperationException) {
+            } catch (Exception) {
             }
         }
 
         /// <summary>
         /// Constructor, sets Picturebox double-buffered and initializes the Framecounter.
         /// </summary>
-        public RapidPictureBox()
-        {
+        public RapidPictureBox() {
             this.SetStyle(ControlStyles.UserPaint | ControlStyles.AllPaintingInWmPaint | ControlStyles.OptimizedDoubleBuffer, true);
         }
 
-        protected override CreateParams CreateParams
-        {
-            get
-            {
+        protected override CreateParams CreateParams {
+            get {
                 CreateParams cp = base.CreateParams;
                 cp.ExStyle |= 0x02000000;  // Turn on WS_EX_COMPOSITED
                 return cp;
             }
         }
 
-        protected override void OnPaint(PaintEventArgs pe)
-        {
-            lock (_imageLock)
-            {
-                if (GetImageSafe != null)
-                {
+        protected override void OnPaint(PaintEventArgs pe) {
+            lock (_imageLock) {
+                if (GetImageSafe != null) {
                     pe.Graphics.DrawImage(GetImageSafe, Location);
                 }
             }
         }
 
-        private void UpdateScreenSize(int newWidth, int newHeight)
-        {
+        private void UpdateScreenSize(int newWidth, int newHeight) {
             ScreenWidth = newWidth;
             ScreenHeight = newHeight;
         }
 
-        private void CountFps()
-        {
+        private void CountFps() {
             var deltaTime = (float)_sWatch.Elapsed.TotalSeconds;
             _sWatch = Stopwatch.StartNew();
 

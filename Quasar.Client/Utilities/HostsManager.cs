@@ -3,22 +3,18 @@ using System.Net;
 using System.Net.Sockets;
 using Quasar.Client.Data;
 
-namespace Quasar.Client.Utilities
-{
-    public class HostsManager
-    {
+namespace Quasar.Client.Utilities {
+    public class HostsManager {
         public bool IsEmpty { get { return _hosts.Count == 0; } }
 
         private readonly Queue<Host> _hosts = new Queue<Host>();
 
-        public HostsManager(List<Host> hosts)
-        {
-            foreach(var host in hosts)
+        public HostsManager(List<Host> hosts) {
+            foreach (var host in hosts)
                 _hosts.Enqueue(host);
         }
 
-        public Host GetNextHost()
-        {
+        public Host GetNextHost() {
             var temp = _hosts.Dequeue();
             _hosts.Enqueue(temp); // add to the end of the queue
 
@@ -26,25 +22,20 @@ namespace Quasar.Client.Utilities
             return temp;
         }
 
-        private static IPAddress GetIp(Host host)
-        {
+        private static IPAddress GetIp(Host host) {
             if (string.IsNullOrEmpty(host.Hostname)) return null;
 
             IPAddress ip;
-            if (IPAddress.TryParse(host.Hostname, out ip))
-            {
-                if (ip.AddressFamily == AddressFamily.InterNetworkV6)
-                {
+            if (IPAddress.TryParse(host.Hostname, out ip)) {
+                if (ip.AddressFamily == AddressFamily.InterNetworkV6) {
                     if (!Socket.OSSupportsIPv6) return null;
                 }
                 return ip;
             }
 
             var ipAddresses = Dns.GetHostEntry(host.Hostname).AddressList;
-            foreach (IPAddress ipAddress in ipAddresses)
-            {
-                switch (ipAddress.AddressFamily)
-                {
+            foreach (IPAddress ipAddress in ipAddresses) {
+                switch (ipAddress.AddressFamily) {
                     case AddressFamily.InterNetwork:
                         return ipAddress;
                     case AddressFamily.InterNetworkV6:

@@ -6,10 +6,8 @@ using System.Text;
 using System.Xml;
 using Quasar.Client.Data;
 
-namespace Quasar.Client.Helper
-{
-    public static class GeoLocationHelper
-    {
+namespace Quasar.Client.Helper {
+    public static class GeoLocationHelper {
         public static readonly string[] ImageList =
         {
             "ad", "ae", "af", "ag", "ai", "al",
@@ -43,18 +41,15 @@ namespace Quasar.Client.Helper
         public static DateTime LastLocated { get; private set; }
         public static bool LocationCompleted { get; private set; }
 
-        static GeoLocationHelper()
-        {
+        static GeoLocationHelper() {
             LastLocated = new DateTime(1, 1, 1, 0, 0, 0, DateTimeKind.Utc);
         }
 
-        public static void Initialize()
-        {
+        public static void Initialize() {
             TimeSpan lastLocateTry = new TimeSpan(DateTime.UtcNow.Ticks - LastLocated.Ticks);
 
             // last location was 60 minutes ago or last location has not completed
-            if (lastLocateTry.TotalMinutes > 60 || !LocationCompleted)
-            {
+            if (lastLocateTry.TotalMinutes > 60 || !LocationCompleted) {
                 TryLocate();
 
                 GeoInfo.Ip = (string.IsNullOrEmpty(GeoInfo.Ip)) ? "Unknown" : GeoInfo.Ip;
@@ -66,10 +61,8 @@ namespace Quasar.Client.Helper
                 GeoInfo.Isp = (string.IsNullOrEmpty(GeoInfo.Isp)) ? "Unknown" : GeoInfo.Isp;
 
                 ImageIndex = 0;
-                for (int i = 0; i < ImageList.Length; i++)
-                {
-                    if (ImageList[i] == GeoInfo.CountryCode.ToLower())
-                    {
+                for (int i = 0; i < ImageList.Length; i++) {
+                    if (ImageList[i] == GeoInfo.CountryCode.ToLower()) {
                         ImageIndex = i;
                         break;
                     }
@@ -78,12 +71,10 @@ namespace Quasar.Client.Helper
             }
         }
 
-        private static void TryLocate()
-        {
+        private static void TryLocate() {
             LocationCompleted = false;
 
-            try
-            {
+            try {
                 DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoInformation));
 
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://ip-api.com/json/");
@@ -91,16 +82,12 @@ namespace Quasar.Client.Helper
                 request.Proxy = null;
                 request.Timeout = 10000;
 
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    using (Stream dataStream = response.GetResponseStream())
-                    {
-                        using (StreamReader reader = new StreamReader(dataStream))
-                        {
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse()) {
+                    using (Stream dataStream = response.GetResponseStream()) {
+                        using (StreamReader reader = new StreamReader(dataStream)) {
                             string responseString = reader.ReadToEnd();
 
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
-                            {
+                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString))) {
                                 GeoInfo = (GeoInformation)jsonSerializer.ReadObject(ms);
                             }
                         }
@@ -109,30 +96,23 @@ namespace Quasar.Client.Helper
 
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
-            }
-            catch
-            {
+            } catch {
                 TryLocateFallback();
             }
         }
 
-        private static void TryLocateFallback()
-        {
+        private static void TryLocateFallback() {
             GeoInfo = new GeoInformation();
 
-            try
-            {
+            try {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://freegeoip.net/xml/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
                 request.Timeout = 10000;
 
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    using (Stream dataStream = response.GetResponseStream())
-                    {
-                        using (StreamReader reader = new StreamReader(dataStream))
-                        {
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse()) {
+                    using (Stream dataStream = response.GetResponseStream()) {
+                        using (StreamReader reader = new StreamReader(dataStream)) {
                             string responseString = reader.ReadToEnd();
 
                             XmlDocument doc = new XmlDocument();
@@ -150,9 +130,7 @@ namespace Quasar.Client.Helper
 
                 LastLocated = DateTime.UtcNow;
                 LocationCompleted = true;
-            }
-            catch
-            {
+            } catch {
                 LocationCompleted = false;
             }
 
@@ -160,30 +138,23 @@ namespace Quasar.Client.Helper
                 TryGetWanIp();
         }
 
-        private static void TryGetWanIp()
-        {
+        private static void TryGetWanIp() {
             string wanIp = "-";
 
-            try
-            {
+            try {
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("http://api.ipify.org/");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 6.3; rv:48.0) Gecko/20100101 Firefox/48.0";
                 request.Proxy = null;
                 request.Timeout = 5000;
 
-                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                {
-                    using (Stream dataStream = response.GetResponseStream())
-                    {
-                        using (StreamReader reader = new StreamReader(dataStream))
-                        {
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse()) {
+                    using (Stream dataStream = response.GetResponseStream()) {
+                        using (StreamReader reader = new StreamReader(dataStream)) {
                             wanIp = reader.ReadToEnd();
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
             }
 
             GeoInfo.Ip = wanIp;

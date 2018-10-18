@@ -1,17 +1,13 @@
 ﻿using System;
 using Microsoft.Win32;
 
-namespace Quasar.Server.Extensions
-{
-    public static class RegistryKeyExtensions
-    {
-        public static string RegistryTypeToString(this RegistryValueKind valueKind, object valueData)
-        {
+namespace Quasar.Server.Extensions {
+    public static class RegistryKeyExtensions {
+        public static string RegistryTypeToString(this RegistryValueKind valueKind, object valueData) {
             if (valueData == null)
                 return "(value not set)";
 
-            switch (valueKind)
-            {
+            switch (valueKind) {
                 case RegistryValueKind.Binary:
                     return ((byte[])valueData).Length > 0 ? BitConverter.ToString((byte[])valueData).Replace("-", " ").ToLower() : "(zero-length binary value)";
                 case RegistryValueKind.MultiString:
@@ -29,10 +25,8 @@ namespace Quasar.Server.Extensions
             }
         }
 
-        public static string RegistryTypeToString(this RegistryValueKind valueKind)
-        {
-            switch (valueKind)
-            {
+        public static string RegistryTypeToString(this RegistryValueKind valueKind) {
+            switch (valueKind) {
                 case RegistryValueKind.Binary:
                     return "REG_BINARY";
                 case RegistryValueKind.MultiString:

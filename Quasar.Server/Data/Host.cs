@@ -1,7 +1,5 @@
-﻿namespace Quasar.Server.Data
-{
-    public class Host
-    {
+﻿namespace Quasar.Server.Data {
+    public class Host {
         /// <summary>
         /// Stores the hostname of the Host.
         /// </summary>
@@ -15,8 +13,7 @@
         /// </summary>
         public ushort Port { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Hostname + ":" + Port;
         }
     }

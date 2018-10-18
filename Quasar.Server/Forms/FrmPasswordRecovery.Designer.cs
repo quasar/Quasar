@@ -1,9 +1,7 @@
 ﻿using Quasar.Server.Controls;
 
-namespace Quasar.Server.Forms
-{
-    partial class FrmPasswordRecovery
-    {
+namespace Quasar.Server.Forms {
+    partial class FrmPasswordRecovery {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,10 +11,8 @@ namespace Quasar.Server.Forms
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,8 +24,7 @@ namespace Quasar.Server.Forms
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmPasswordRecovery));
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
@@ -156,8 +151,8 @@ namespace Quasar.Server.Forms
             // 
             // groupBox1
             // 
-            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox1.Controls.Add(this.lstPasswords);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
@@ -169,7 +164,7 @@ namespace Quasar.Server.Forms
             // 
             // groupBox2
             // 
-            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox2.Controls.Add(this.lblInfo);
             this.groupBox2.Controls.Add(this.txtFormat);
@@ -182,7 +177,7 @@ namespace Quasar.Server.Forms
             // 
             // lblInfo
             // 
-            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.lblInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lblInfo.Location = new System.Drawing.Point(35, 50);
             this.lblInfo.Name = "lblInfo";
@@ -194,7 +189,7 @@ namespace Quasar.Server.Forms
             // 
             // txtFormat
             // 
-            this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.txtFormat.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.txtFormat.Location = new System.Drawing.Point(6, 19);
             this.txtFormat.Name = "txtFormat";
@@ -205,8 +200,8 @@ namespace Quasar.Server.Forms
             // 
             // lstPasswords
             // 
-            this.lstPasswords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.lstPasswords.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.lstPasswords.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.hIdentification,

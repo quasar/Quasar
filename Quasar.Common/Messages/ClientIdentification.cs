@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class ClientIdentification : IMessage
-    {
+    public class ClientIdentification : IMessage {
         [ProtoMember(1)]
         public string Version { get; set; }
 

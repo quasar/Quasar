@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class Drive
-    {
+    public class Drive {
         [ProtoMember(1)]
         public string DisplayName { get; set; }
 

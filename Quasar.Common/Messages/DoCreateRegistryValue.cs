@@ -1,11 +1,9 @@
 ﻿using Microsoft.Win32;
 using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoCreateRegistryValue : IMessage
-    {
+    public class DoCreateRegistryValue : IMessage {
         [ProtoMember(1)]
         public string KeyPath { get; set; }
 

@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Video;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetDesktopResponse : IMessage
-    {
+    public class GetDesktopResponse : IMessage {
         [ProtoMember(1)]
         public byte[] Image { get; set; }
 

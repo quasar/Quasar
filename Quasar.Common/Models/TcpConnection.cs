@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Enums;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class TcpConnection
-    {
+    public class TcpConnection {
         [ProtoMember(1)]
         public string ProcessName { get; set; }
 

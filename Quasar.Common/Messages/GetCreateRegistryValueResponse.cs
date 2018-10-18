@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Models;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetCreateRegistryValueResponse : IMessage
-    {
+    public class GetCreateRegistryValueResponse : IMessage {
         [ProtoMember(1)]
         public string KeyPath { get; set; }
 

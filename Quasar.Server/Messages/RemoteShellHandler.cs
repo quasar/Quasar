@@ -2,10 +2,8 @@
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class RemoteShellHandler : MessageProcessorBase<string>
-    {
+namespace Quasar.Server.Messages {
+    public class RemoteShellHandler : MessageProcessorBase<string> {
         /// <summary>
         /// The client which is associated with this remote shell handler.
         /// </summary>
@@ -31,10 +29,8 @@ namespace Quasar.Server.Messages
         /// Reports a command error.
         /// </summary>
         /// <param name="errorMessage">The error message.</param>
-        private void OnCommandError(string errorMessage)
-        {
-            SynchronizationContext.Post(val =>
-            {
+        private void OnCommandError(string errorMessage) {
+            SynchronizationContext.Post(val => {
                 var handler = CommandError;
                 handler?.Invoke(this, (string)val);
             }, errorMessage);
@@ -44,8 +40,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="RemoteShellHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public RemoteShellHandler(Client client) : base(true)
-        {
+        public RemoteShellHandler(Client client) : base(true) {
             _client = client;
         }
 
@@ -56,10 +51,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case DoShellExecuteResponse resp:
                     Execute(sender, resp);
                     break;
@@ -70,25 +63,20 @@ namespace Quasar.Server.Messages
         /// Sends a command to execute in the remote shell of the client.
         /// </summary>
         /// <param name="command">The command to execute.</param>
-        public void SendCommand(string command)
-        {
-            _client.Send(new DoShellExecute {Command = command});
+        public void SendCommand(string command) {
+            _client.Send(new DoShellExecute { Command = command });
         }
 
-        private void Execute(ISender client, DoShellExecuteResponse message)
-        {
+        private void Execute(ISender client, DoShellExecuteResponse message) {
             if (message.IsError)
                 OnCommandError(message.Output);
             else
                 OnReport(message.Output);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_client.Connected)
-                {
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                if (_client.Connected) {
                     SendCommand("exit");
                 }
             }

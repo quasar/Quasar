@@ -2,10 +2,8 @@
 using System.Drawing;
 using System.Runtime.InteropServices;
 
-namespace Quasar.Server.Controls.HexEditor
-{
-    public class Caret
-    {
+namespace Quasar.Server.Controls.HexEditor {
+    public class Caret {
         #region Field
 
         /// <summary>
@@ -48,38 +46,31 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Properties
 
-        public int SelectionStart
-        {
-            get
-            {
+        public int SelectionStart {
+            get {
                 if (_endIndex < _startIndex)
                     return _endIndex;
                 return _startIndex;
             }
         }
 
-        public int SelectionLength
-        {
-            get
-            {
+        public int SelectionLength {
+            get {
                 if (_endIndex < _startIndex)
                     return _startIndex - _endIndex;
                 return _endIndex - _startIndex;
             }
         }
 
-        public bool Focused
-        {
+        public bool Focused {
             get { return _isCaretActive; }
         }
 
-        public int CurrentIndex
-        {
+        public int CurrentIndex {
             get { return _endIndex; }
         }
 
-        public Point Location
-        {
+        public Point Location {
             get { return _location; }
         }
 
@@ -95,8 +86,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Constructor
 
-        public Caret(HexEditor editor)
-        {
+        public Caret(HexEditor editor) {
             _editor = editor;
             _isCaretActive = false;
             _startIndex = 0;
@@ -111,10 +101,8 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Caret
 
-        private bool Create(IntPtr hWHandler)
-        {
-            if (!_isCaretActive)
-            {
+        private bool Create(IntPtr hWHandler) {
+            if (!_isCaretActive) {
                 _isCaretActive = true;
                 return CreateCaret(hWHandler, IntPtr.Zero, 0, (int)_editor.CharSize.Height - 2);
             }
@@ -122,10 +110,8 @@ namespace Quasar.Server.Controls.HexEditor
             return false;
         }
 
-        private bool Show(IntPtr hWnd)
-        {
-            if (_isCaretActive)
-            {
+        private bool Show(IntPtr hWnd) {
+            if (_isCaretActive) {
                 _isCaretHidden = false;
                 return ShowCaret(hWnd);
             }
@@ -133,20 +119,16 @@ namespace Quasar.Server.Controls.HexEditor
             return false;
         }
 
-        public bool Hide(IntPtr hWnd)
-        {
-            if (_isCaretActive && !_isCaretHidden)
-            {
+        public bool Hide(IntPtr hWnd) {
+            if (_isCaretActive && !_isCaretHidden) {
                 _isCaretHidden = true;
                 return HideCaret(hWnd);
             }
             return false;
         }
 
-        public bool Destroy()
-        {
-            if (_isCaretActive)
-            {
+        public bool Destroy() {
+            if (_isCaretActive) {
                 _isCaretActive = false;
                 DeSelect();
                 DestroyCaret();
@@ -157,8 +139,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #endregion
 
-        public void SetStartIndex(int index)
-        {
+        public void SetStartIndex(int index) {
             _startIndex = index;
             _endIndex = _startIndex;
 
@@ -170,8 +151,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         }
 
-        public void SetEndIndex(int index)
-        {
+        public void SetEndIndex(int index) {
             _endIndex = index;
 
             if (SelectionStartChanged != null)
@@ -181,21 +161,18 @@ namespace Quasar.Server.Controls.HexEditor
                 SelectionLengthChanged(this, EventArgs.Empty);
         }
 
-        public void SetCaretLocation(Point start)
-        {
+        public void SetCaretLocation(Point start) {
             Create(_editor.Handle);
             _location = start;
             SetCaretPos(_location.X, _location.Y);
             Show(_editor.Handle);
         }
 
-        public bool IsSelected(int byteIndex)
-        {
+        public bool IsSelected(int byteIndex) {
             return (SelectionStart <= byteIndex && byteIndex < (SelectionStart + SelectionLength));
         }
 
-        private void DeSelect()
-        {
+        private void DeSelect() {
             if (_endIndex < _startIndex)
                 _startIndex = _endIndex;
             else

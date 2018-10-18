@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoKeyboardEvent : IMessage
-    {
+    public class DoKeyboardEvent : IMessage {
         [ProtoMember(1)]
         public byte Key { get; set; }
 

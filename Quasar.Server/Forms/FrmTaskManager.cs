@@ -8,10 +8,8 @@ using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmTaskManager : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmTaskManager : Form {
         /// <summary>
         /// The client which can be used for the task manager.
         /// </summary>
@@ -34,10 +32,8 @@ namespace Quasar.Server.Forms
         /// <returns>
         /// Returns a new task manager form for the client if there is none currently open, otherwise creates a new one.
         /// </returns>
-        public static FrmTaskManager CreateNewOrGetExisting(Client client)
-        {
-            if (OpenedForms.ContainsKey(client))
-            {
+        public static FrmTaskManager CreateNewOrGetExisting(Client client) {
+            if (OpenedForms.ContainsKey(client)) {
                 return OpenedForms[client];
             }
             FrmTaskManager f = new FrmTaskManager(client);
@@ -50,8 +46,7 @@ namespace Quasar.Server.Forms
         /// Initializes a new instance of the <see cref="FrmTaskManager"/> class using the given client.
         /// </summary>
         /// <param name="client">The client used for the task manager form.</param>
-        public FrmTaskManager(Client client)
-        {
+        public FrmTaskManager(Client client) {
             _connectClient = client;
             _taskManagerHandler = new TaskManagerHandler(client);
 
@@ -62,8 +57,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Registers the task manager message handler for client communication.
         /// </summary>
-        private void RegisterMessageHandler()
-        {
+        private void RegisterMessageHandler() {
             _connectClient.ClientState += ClientDisconnected;
             _taskManagerHandler.ProgressChanged += TasksChanged;
             MessageHandler.Register(_taskManagerHandler);
@@ -72,8 +66,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Unregisters the task manager message handler.
         /// </summary>
-        private void UnregisterMessageHandler()
-        {
+        private void UnregisterMessageHandler() {
             MessageHandler.Unregister(_taskManagerHandler);
             _taskManagerHandler.ProgressChanged -= TasksChanged;
             _connectClient.ClientState -= ClientDisconnected;
@@ -84,59 +77,48 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client which disconnected.</param>
         /// <param name="connected">True if the client connected, false if disconnected</param>
-        private void ClientDisconnected(Client client, bool connected)
-        {
-            if (!connected)
-            {
+        private void ClientDisconnected(Client client, bool connected) {
+            if (!connected) {
                 this.Invoke((MethodInvoker)this.Close);
             }
         }
 
-        private void TasksChanged(object sender, Process[] processes)
-        {
+        private void TasksChanged(object sender, Process[] processes) {
             lstTasks.Items.Clear();
 
-            foreach (var process in processes)
-            {
+            foreach (var process in processes) {
                 ListViewItem lvi =
-                    new ListViewItem(new[] {process.Name, process.Id.ToString(), process.MainWindowTitle});
+                    new ListViewItem(new[] { process.Name, process.Id.ToString(), process.MainWindowTitle });
                 lstTasks.Items.Add(lvi);
             }
 
             processesToolStripStatusLabel.Text = $"Processes: {processes.Length}";
         }
 
-        private void FrmTaskManager_Load(object sender, EventArgs e)
-        {
+        private void FrmTaskManager_Load(object sender, EventArgs e) {
             this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);
             _taskManagerHandler.RefreshProcesses();
         }
 
-        private void FrmTaskManager_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmTaskManager_FormClosing(object sender, FormClosingEventArgs e) {
             UnregisterMessageHandler();
             _taskManagerHandler.Dispose();
         }
 
-        private void killProcessToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (ListViewItem lvi in lstTasks.SelectedItems)
-            {
+        private void killProcessToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (ListViewItem lvi in lstTasks.SelectedItems) {
                 _taskManagerHandler.EndProcess(int.Parse(lvi.SubItems[1].Text));
             }
         }
 
-        private void startProcessToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void startProcessToolStripMenuItem_Click(object sender, EventArgs e) {
             string processName = string.Empty;
-            if (InputBox.Show("Process name", "Enter Process name:", ref processName) == DialogResult.OK)
-            {
+            if (InputBox.Show("Process name", "Enter Process name:", ref processName) == DialogResult.OK) {
                 _taskManagerHandler.StartProcess(processName);
             }
         }
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e) {
             _taskManagerHandler.RefreshProcesses();
         }
     }

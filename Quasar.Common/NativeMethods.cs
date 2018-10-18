@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Runtime.InteropServices;
 
-namespace Quasar.Common
-{
-    public class NativeMethods
-    {
+namespace Quasar.Common {
+    public class NativeMethods {
         [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
         internal static extern unsafe int memcmp(byte* ptr1, byte* ptr2, uint count);
 

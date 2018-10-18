@@ -1,7 +1,5 @@
-﻿namespace Quasar.Common.Enums
-{
-    public enum ContentType
-    {
+﻿namespace Quasar.Common.Enums {
+    public enum ContentType {
         // these values must match the index of the images in file manager
         Blob = 2,
         Application = 3,

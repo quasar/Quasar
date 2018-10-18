@@ -5,20 +5,16 @@ using System;
 using System.IO;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmStartupAdd : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmStartupAdd : Form {
         public StartupItem StartupItem { get; set; }
 
-        public FrmStartupAdd()
-        {
+        public FrmStartupAdd() {
             InitializeComponent();
             AddTypes();
         }
 
-        public FrmStartupAdd(string startupPath)
-        {
+        public FrmStartupAdd(string startupPath) {
             InitializeComponent();
             AddTypes();
 
@@ -32,8 +28,7 @@ namespace Quasar.Server.Forms
         /// <remarks>
         /// Must be in same order as <see cref="StartupType"/>.
         /// </remarks>
-        private void AddTypes()
-        {
+        private void AddTypes() {
             // must be in same order as StartupType
             cmbType.Items.Add("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run");
             cmbType.Items.Add("HKEY_LOCAL_MACHINE\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce");
@@ -45,29 +40,24 @@ namespace Quasar.Server.Forms
             cmbType.SelectedIndex = 0;
         }
 
-        private void btnAdd_Click(object sender, EventArgs e)
-        {
-            StartupItem = new StartupItem
-                {Name = txtName.Text, Path = txtPath.Text, Type = (StartupType) cmbType.SelectedIndex};
+        private void btnAdd_Click(object sender, EventArgs e) {
+            StartupItem = new StartupItem { Name = txtName.Text, Path = txtPath.Text, Type = (StartupType)cmbType.SelectedIndex };
 
             this.DialogResult = DialogResult.OK;
             this.Close();
         }
 
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
+        private void btnCancel_Click(object sender, EventArgs e) {
             this.DialogResult = DialogResult.Cancel;
             this.Close();
         }
 
-        private void txtName_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void txtName_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
-        private void txtPath_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void txtPath_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }

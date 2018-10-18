@@ -2,14 +2,11 @@
 using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 
-namespace Quasar.Common.Tests.Cryptography
-{
+namespace Quasar.Common.Tests.Cryptography {
     [TestClass]
-    public class Sha256Tests
-    {
+    public class Sha256Tests {
         [TestMethod, TestCategory("Cryptography")]
-        public void ComputeHashTest()
-        {
+        public void ComputeHashTest() {
             var input = StringHelper.GetRandomString(100);
             var result = Sha256.ComputeHash(input);
 

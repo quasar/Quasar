@@ -2,8 +2,7 @@
 using System;
 using System.Threading;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     /// <summary>
     /// Provides a MessageProcessor implementation that provides progress report callbacks.
     /// </summary>
@@ -13,8 +12,7 @@ namespace Quasar.Common.Messages
     /// <see cref="System.Threading.SynchronizationContext"/> instance chosen when the instance is constructed.
     /// </remarks>
     /// TODO: .NET 4.5 Change: this can be simplified with .NET 4.5+ --> IProgress{T} in System namespace
-    public abstract class MessageProcessorBase<T> : IMessageProcessor, IProgress<T>, IDisposable
-    {
+    public abstract class MessageProcessorBase<T> : IMessageProcessor, IProgress<T>, IDisposable {
         /// <summary>
         /// The synchronization context chosen upon construction.
         /// </summary>
@@ -45,14 +43,12 @@ namespace Quasar.Common.Messages
         /// Reports a progress change.
         /// </summary>
         /// <param name="value">The value of the updated progress.</param>
-        protected virtual void OnReport(T value)
-        {
+        protected virtual void OnReport(T value) {
             // If there's no handler, don't bother going through the sync context.
             // Inside the callback, we'll need to check again, in case 
             // an event handler is removed between now and then.
             var handler = ProgressChanged;
-            if (handler != null)
-            {
+            if (handler != null) {
                 SynchronizationContext.Post(_invokeReportProgressHandlers, value);
             }
         }
@@ -64,8 +60,7 @@ namespace Quasar.Common.Messages
         /// If this value is <code>false</code>, the progress callbacks will be invoked on the ThreadPool.
         /// Otherwise the current SynchronizationContext will be used.
         /// </param>
-        protected MessageProcessorBase(bool useCurrentContext)
-        {
+        protected MessageProcessorBase(bool useCurrentContext) {
             _invokeReportProgressHandlers = InvokeReportProgressHandlers;
             SynchronizationContext = useCurrentContext ? SynchronizationContext.Current : ProgressStatics.DefaultContext;
         }
@@ -74,8 +69,7 @@ namespace Quasar.Common.Messages
         /// Invokes the progress event callbacks.
         /// </summary>
         /// <param name="state">The progress value.</param>
-        private void InvokeReportProgressHandlers(object state)
-        {
+        private void InvokeReportProgressHandlers(object state) {
             var handler = ProgressChanged;
             handler?.Invoke(this, (T)state);
         }
@@ -83,8 +77,7 @@ namespace Quasar.Common.Messages
         /// <summary>
         /// Disposes all managed and unmanaged resources associated with this message processor.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
             GC.SuppressFinalize(this);
         }
@@ -120,8 +113,7 @@ namespace Quasar.Common.Messages
     /// <remarks>
     /// This avoids one static instance per type T.
     /// </remarks>
-    internal static class ProgressStatics
-    {
+    internal static class ProgressStatics {
         /// <summary>
         /// A default synchronization context that targets the ThreadPool.
         /// </summary>

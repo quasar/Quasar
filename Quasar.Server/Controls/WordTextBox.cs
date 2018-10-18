@@ -3,39 +3,30 @@ using System.Globalization;
 using System.Windows.Forms;
 using Quasar.Server.Enums;
 
-namespace Quasar.Server.Controls
-{
-    public partial class WordTextBox : TextBox
-    {
+namespace Quasar.Server.Controls {
+    public partial class WordTextBox : TextBox {
         private bool isHexNumber;
         private WordType type;
 
-        public override int MaxLength
-        {
-            get
-            {
+        public override int MaxLength {
+            get {
                 return base.MaxLength;
             }
             set { }
         }
 
-        public bool IsHexNumber
-        {
+        public bool IsHexNumber {
             get { return isHexNumber; }
-            set
-            {
+            set {
                 if (isHexNumber == value)
                     return;
 
-                if(value)
-                {
+                if (value) {
                     if (Type == WordType.DWORD)
                         Text = UIntValue.ToString("x");
                     else
                         Text = ULongValue.ToString("x");
-                }
-                else
-                {
+                } else {
                     if (Type == WordType.DWORD)
                         Text = UIntValue.ToString();
                     else
@@ -48,11 +39,9 @@ namespace Quasar.Server.Controls
             }
         }
 
-        public WordType Type
-        {
+        public WordType Type {
             get { return type; }
-            set
-            {
+            set {
                 if (type == value)
                     return;
 
@@ -62,88 +51,69 @@ namespace Quasar.Server.Controls
             }
         }
 
-        public uint UIntValue
-        {
-            get
-            {
-                try
-                {
+        public uint UIntValue {
+            get {
+                try {
                     if (String.IsNullOrEmpty(Text))
                         return 0;
                     else if (IsHexNumber)
                         return UInt32.Parse(Text, NumberStyles.HexNumber);
                     else
                         return UInt32.Parse(Text);
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     return UInt32.MaxValue;
                 }
             }
         }
 
-        public ulong ULongValue
-        {
-            get
-            {
-                try
-                {
+        public ulong ULongValue {
+            get {
+                try {
                     if (String.IsNullOrEmpty(Text))
                         return 0;
                     else if (IsHexNumber)
                         return UInt64.Parse(Text, NumberStyles.HexNumber);
                     else
                         return UInt64.Parse(Text);
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     return UInt64.MaxValue;
                 }
             }
         }
 
-        public bool IsConversionValid()
-        {
+        public bool IsConversionValid() {
             if (String.IsNullOrEmpty(Text))
                 return true;
 
-            if (!IsHexNumber)
-            {
+            if (!IsHexNumber) {
                 return ConvertToHex();
             }
             return true;
         }
 
-        public WordTextBox()
-        {
+        public WordTextBox() {
             InitializeComponent();
             base.MaxLength = 8;
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
+        protected override void OnKeyPress(KeyPressEventArgs e) {
             base.OnKeyPress(e);
             e.Handled = !IsValidChar(e.KeyChar);
         }
 
-        private bool IsValidChar(char ch)
-        {
+        private bool IsValidChar(char ch) {
             return (Char.IsControl(ch) ||
                     Char.IsDigit(ch) ||
                     (IsHexNumber && Char.IsLetter(ch) && Char.ToLower(ch) <= 'f'));
         }
 
-        private void UpdateMaxLength()
-        {
-            if(Type == WordType.DWORD)
-            {
+        private void UpdateMaxLength() {
+            if (Type == WordType.DWORD) {
                 if (IsHexNumber)
                     base.MaxLength = 8;
                 else
                     base.MaxLength = 10;
-            }
-            else
-            {
+            } else {
                 if (IsHexNumber)
                     base.MaxLength = 16;
                 else
@@ -152,18 +122,14 @@ namespace Quasar.Server.Controls
         }
 
 
-        private bool ConvertToHex()
-        {
-            try
-            {
+        private bool ConvertToHex() {
+            try {
                 if (Type == WordType.DWORD)
                     UInt32.Parse(Text);
                 else
                     UInt64.Parse(Text);
                 return true;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return false;
             }
         }

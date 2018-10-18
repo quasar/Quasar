@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class ReverseProxyConnectResponse : IMessage
-    {
+    public class ReverseProxyConnectResponse : IMessage {
         [ProtoMember(1)]
         public int ConnectionId { get; set; }
 

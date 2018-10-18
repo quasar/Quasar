@@ -3,10 +3,8 @@ using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class ClientStatusHandler : MessageProcessorBase<object>
-    {
+namespace Quasar.Server.Messages {
+    public class ClientStatusHandler : MessageProcessorBase<object> {
         /// <summary>
         /// Represents the method that will handle status updates.
         /// </summary>
@@ -46,12 +44,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="client">The client which updated the status.</param>
         /// <param name="statusMessage">The new status.</param>
-        private void OnStatusUpdated(Client client, string statusMessage)
-        {
-            SynchronizationContext.Post(c =>
-            {
+        private void OnStatusUpdated(Client client, string statusMessage) {
+            SynchronizationContext.Post(c => {
                 var handler = StatusUpdated;
-                handler?.Invoke(this, (Client) c, statusMessage);
+                handler?.Invoke(this, (Client)c, statusMessage);
             }, client);
         }
 
@@ -60,20 +56,17 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="client">The client which updated the user status.</param>
         /// <param name="userStatusMessage">The new user status.</param>
-        private void OnUserStatusUpdated(Client client, UserStatus userStatusMessage)
-        {
-            SynchronizationContext.Post(c =>
-            {
+        private void OnUserStatusUpdated(Client client, UserStatus userStatusMessage) {
+            SynchronizationContext.Post(c => {
                 var handler = UserStatusUpdated;
-                handler?.Invoke(this, (Client) c, userStatusMessage);
+                handler?.Invoke(this, (Client)c, userStatusMessage);
             }, client);
         }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ClientStatusHandler"/> class.
         /// </summary>
-        public ClientStatusHandler() : base(true)
-        {
+        public ClientStatusHandler() : base(true) {
         }
 
         /// <inheritdoc />
@@ -83,31 +76,26 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => true;
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case SetStatus status:
-                    Execute((Client) sender, status);
+                    Execute((Client)sender, status);
                     break;
                 case SetUserStatus userStatus:
-                    Execute((Client) sender, userStatus);
+                    Execute((Client)sender, userStatus);
                     break;
             }
         }
 
-        private void Execute(Client client, SetStatus message)
-        {
+        private void Execute(Client client, SetStatus message) {
             OnStatusUpdated(client, message.Message);
         }
 
-        private void Execute(Client client, SetUserStatus message)
-        {
+        private void Execute(Client client, SetUserStatus message) {
             OnUserStatusUpdated(client, message.Message);
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
         }
     }
 }

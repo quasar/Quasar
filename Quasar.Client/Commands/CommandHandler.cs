@@ -3,11 +3,9 @@ using System.Threading;
 using Quasar.Client.Utilities;
 using Quasar.Common.Video.Codecs;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN VARIABLES NECESSARY FOR VARIOUS COMMANDS (if needed). */
-    public static partial class CommandHandler
-    {
+    public static partial class CommandHandler {
         public static UnsafeStreamCodec StreamCodec;
         private static Shell _shell;
         private static Dictionary<int, string> _renamedFiles = new Dictionary<int, string>();

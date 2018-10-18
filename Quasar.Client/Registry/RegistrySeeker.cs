@@ -5,10 +5,8 @@ using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Registry
-{
-    public class RegistrySeeker
-    {
+namespace Quasar.Client.Registry {
+    public class RegistrySeeker {
 
         #region Fields
 
@@ -22,10 +20,8 @@ namespace Quasar.Client.Registry
         /// </summary>
         private List<RegSeekerMatch> matches;
 
-        public RegSeekerMatch[] Matches
-        {
-            get
-            {
+        public RegSeekerMatch[] Matches {
+            get {
                 if (matches != null)
                     return matches.ToArray();
                 return null;
@@ -34,99 +30,75 @@ namespace Quasar.Client.Registry
 
         #endregion
 
-        public RegistrySeeker()
-        {
+        public RegistrySeeker() {
             matches = new List<RegSeekerMatch>();
         }
 
-        public void BeginSeeking(string rootKeyName)
-        {
-            if (!String.IsNullOrEmpty(rootKeyName))
-            {
-                using(RegistryKey root = GetRootKey(rootKeyName))
-                {
+        public void BeginSeeking(string rootKeyName) {
+            if (!String.IsNullOrEmpty(rootKeyName)) {
+                using (RegistryKey root = GetRootKey(rootKeyName)) {
                     //Check if this is a root key or not
-                    if (root != null && root.Name != rootKeyName)
-                    {
+                    if (root != null && root.Name != rootKeyName) {
                         //Must get the subKey name by removing root and '\'
                         string subKeyName = rootKeyName.Substring(root.Name.Length + 1);
-                        using(RegistryKey subroot = root.OpenReadonlySubKeySafe(subKeyName))
-                        {
-                            if(subroot != null)
+                        using (RegistryKey subroot = root.OpenReadonlySubKeySafe(subKeyName)) {
+                            if (subroot != null)
                                 Seek(subroot);
-                        } 
-                    }
-                    else
-                    {
+                        }
+                    } else {
                         Seek(root);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 Seek(null);
             }
         }
 
-        private void Seek(RegistryKey rootKey)
-        {
+        private void Seek(RegistryKey rootKey) {
             // Get root registrys
-            if (rootKey == null)
-            {
+            if (rootKey == null) {
                 foreach (RegistryKey key in GetRootKeys())
                     //Just need root key so process it
                     ProcessKey(key, key.Name);
-            }
-            else
-            {
+            } else {
                 //searching for subkeys to root key
                 Search(rootKey);
             }
         }
 
-        private void Search(RegistryKey rootKey)
-        {
-            foreach(string subKeyName in rootKey.GetSubKeyNames())
-            {
+        private void Search(RegistryKey rootKey) {
+            foreach (string subKeyName in rootKey.GetSubKeyNames()) {
                 RegistryKey subKey = rootKey.OpenReadonlySubKeySafe(subKeyName);
                 ProcessKey(subKey, subKeyName);
             }
         }
 
-        private void ProcessKey(RegistryKey key, string keyName)
-        {
-            if (key != null)
-            {
+        private void ProcessKey(RegistryKey key, string keyName) {
+            if (key != null) {
                 List<RegValueData> values = new List<RegValueData>();
 
-                foreach (string valueName in key.GetValueNames())
-                {
+                foreach (string valueName in key.GetValueNames()) {
                     RegistryValueKind valueType = key.GetValueKind(valueName);
                     object valueData = key.GetValue(valueName);
                     values.Add(RegistryKeyHelper.CreateRegValueData(valueName, valueType, valueData));
                 }
 
                 AddMatch(keyName, RegistryKeyHelper.AddDefaultValue(values), key.SubKeyCount);
-            }
-            else
-            {
+            } else {
                 AddMatch(keyName, RegistryKeyHelper.GetDefaultValues(), 0);
             }
 
         }
 
-        private void AddMatch(string key, RegValueData[] values, int subkeycount)
-        {
-            RegSeekerMatch match = new RegSeekerMatch {Key = key, Data = values, HasSubKeys = subkeycount > 0};
+        private void AddMatch(string key, RegValueData[] values, int subkeycount) {
+            RegSeekerMatch match = new RegSeekerMatch { Key = key, Data = values, HasSubKeys = subkeycount > 0 };
 
             matches.Add(match);
         }
 
-        public static RegistryKey GetRootKey(string subkeyFullPath)
-        {
+        public static RegistryKey GetRootKey(string subkeyFullPath) {
             string[] path = subkeyFullPath.Split('\\');
-            try
-            {
+            try {
                 switch (path[0]) // <== root;
                 {
                     case "HKEY_CLASSES_ROOT":
@@ -143,34 +115,24 @@ namespace Quasar.Client.Registry
                         /* If none of the above then the key must be invalid */
                         throw new Exception("Invalid rootkey, could not be found.");
                 }
-            }
-            catch (SystemException)
-            {
+            } catch (SystemException) {
                 throw new Exception("Unable to open root registry key, you do not have the needed permissions.");
-            }
-            catch(Exception e)
-            {
+            } catch (Exception e) {
                 throw e;
             }
         }
 
-        public static List<RegistryKey> GetRootKeys()
-        {
+        public static List<RegistryKey> GetRootKeys() {
             List<RegistryKey> rootKeys = new List<RegistryKey>();
-            try
-            {
+            try {
                 rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.ClassesRoot, RegistryView.Registry64));
                 rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.CurrentUser, RegistryView.Registry64));
                 rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, RegistryView.Registry64));
                 rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.Users, RegistryView.Registry64));
                 rootKeys.Add(RegistryKey.OpenBaseKey(RegistryHive.CurrentConfig, RegistryView.Registry64));
-            }
-            catch (SystemException)
-            {
+            } catch (SystemException) {
                 throw new Exception("Could not open root registry keys, you may not have the needed permission");
-            }
-            catch (Exception e)
-            {
+            } catch (Exception e) {
                 throw e;
             }
 

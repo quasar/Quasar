@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoDownloadFileResponse : IMessage
-    {
+    public class DoDownloadFileResponse : IMessage {
         [ProtoMember(1)]
         public int Id { get; set; }
 

@@ -4,10 +4,8 @@ using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 using Quasar.Server.ReverseProxy;
 
-namespace Quasar.Server.Messages
-{
-    public class ReverseProxyHandler : MessageProcessorBase<ReverseProxyClient[]>
-    {
+namespace Quasar.Server.Messages {
+    public class ReverseProxyHandler : MessageProcessorBase<ReverseProxyClient[]> {
         /// <summary>
         /// The clients which is associated with this reverse proxy handler.
         /// </summary>
@@ -22,8 +20,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="ReverseProxyHandler"/> class using the given clients.
         /// </summary>
         /// <param name="clients">The associated clients.</param>
-        public ReverseProxyHandler(Client[] clients) : base(true)
-        {
+        public ReverseProxyHandler(Client[] clients) : base(true) {
             _clients = clients;
         }
 
@@ -36,10 +33,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _clients.Any(c => c.Equals(sender));
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case ReverseProxyConnectResponse con:
                     Execute(sender, con);
                     break;
@@ -56,8 +51,7 @@ namespace Quasar.Server.Messages
         /// Starts the reverse proxy server using the given port.
         /// </summary>
         /// <param name="port">The port to listen on.</param>
-        public void StartReverseProxyServer(ushort port)
-        {
+        public void StartReverseProxyServer(ushort port) {
             _socksServer = new ReverseProxyServer();
             _socksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
             _socksServer.OnUpdateConnection += socksServer_onUpdateConnection;
@@ -67,45 +61,37 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Stops the reverse proxy server.
         /// </summary>
-        public void StopReverseProxyServer()
-        {
+        public void StopReverseProxyServer() {
             _socksServer.Stop();
             _socksServer.OnConnectionEstablished -= socksServer_onConnectionEstablished;
             _socksServer.OnUpdateConnection -= socksServer_onUpdateConnection;
         }
 
-        private void Execute(ISender client, ReverseProxyConnectResponse message)
-        {
+        private void Execute(ISender client, ReverseProxyConnectResponse message) {
             ReverseProxyClient socksClient = _socksServer.GetClientByConnectionId(message.ConnectionId);
             socksClient?.HandleCommandResponse(message);
         }
 
-        private void Execute(ISender client, ReverseProxyData message)
-        {
+        private void Execute(ISender client, ReverseProxyData message) {
             ReverseProxyClient socksClient = _socksServer.GetClientByConnectionId(message.ConnectionId);
             socksClient?.SendToClient(message.Data);
         }
 
-        private void Execute(ISender client, ReverseProxyDisconnect message)
-        {
+        private void Execute(ISender client, ReverseProxyDisconnect message) {
             ReverseProxyClient socksClient = _socksServer.GetClientByConnectionId(message.ConnectionId);
             socksClient?.Disconnect();
         }
 
-        void socksServer_onUpdateConnection(ReverseProxyClient proxyClient)
-        {
+        void socksServer_onUpdateConnection(ReverseProxyClient proxyClient) {
             OnReport(_socksServer.OpenConnections);
         }
 
-        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient)
-        {
+        void socksServer_onConnectionEstablished(ReverseProxyClient proxyClient) {
             OnReport(_socksServer.OpenConnections);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
                 StopReverseProxyServer();
             }
         }

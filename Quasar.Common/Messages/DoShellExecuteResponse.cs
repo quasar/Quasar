@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoShellExecuteResponse : IMessage
-    {
+    public class DoShellExecuteResponse : IMessage {
         [ProtoMember(1)]
         public string Output { get; set; }
 

@@ -3,14 +3,11 @@ using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 using System.Text;
 
-namespace Quasar.Common.Tests.Cryptography
-{
+namespace Quasar.Common.Tests.Cryptography {
     [TestClass]
-    public class Aes128Tests
-    {
+    public class Aes128Tests {
         [TestMethod, TestCategory("Cryptography")]
-        public void EncryptAndDecryptStringTest()
-        {
+        public void EncryptAndDecryptStringTest() {
             var input = StringHelper.GetRandomString(100);
             var password = StringHelper.GetRandomString(50);
 
@@ -27,8 +24,7 @@ namespace Quasar.Common.Tests.Cryptography
         }
 
         [TestMethod, TestCategory("Cryptography")]
-        public void EncryptAndDecryptByteArrayTest()
-        {
+        public void EncryptAndDecryptByteArrayTest() {
             var input = StringHelper.GetRandomString(100);
             var inputByte = Encoding.UTF8.GetBytes(input);
             var password = StringHelper.GetRandomString(50);

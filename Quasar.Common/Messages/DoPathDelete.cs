@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Enums;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoPathDelete : IMessage
-    {
+    public class DoPathDelete : IMessage {
         [ProtoMember(1)]
         public string Path { get; set; }
 

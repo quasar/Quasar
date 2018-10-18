@@ -16,10 +16,8 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmMain : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmMain : Form {
         public QuasarServer ListenServer { get; set; }
 
         private const int STATUS_ID = 4;
@@ -32,8 +30,7 @@ namespace Quasar.Server.Forms
         private readonly object _processingClientConnectionsLock = new object();
         private readonly object _lockClients = new object(); // lock for clients-listview
 
-        public FrmMain()
-        {
+        public FrmMain() {
             Aes128.SetDefaultKey(Settings.Password);
 
             _clientStatusHandler = new ClientStatusHandler();
@@ -44,8 +41,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Registers the client status message handler for client communication.
         /// </summary>
-        private void RegisterMessageHandler()
-        {
+        private void RegisterMessageHandler() {
             MessageHandler.Register(_clientStatusHandler);
             _clientStatusHandler.StatusUpdated += SetStatusByClient;
             _clientStatusHandler.UserStatusUpdated += SetUserStatusByClient;
@@ -54,36 +50,29 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Unregisters the client status message handler.
         /// </summary>
-        private void UnregisterMessageHandler()
-        {
+        private void UnregisterMessageHandler() {
             MessageHandler.Unregister(_clientStatusHandler);
             _clientStatusHandler.StatusUpdated -= SetStatusByClient;
             _clientStatusHandler.UserStatusUpdated -= SetUserStatusByClient;
         }
 
-        public void UpdateWindowTitle()
-        {
+        public void UpdateWindowTitle() {
             if (_titleUpdateRunning) return;
             _titleUpdateRunning = true;
-            try
-            {
-                this.Invoke((MethodInvoker) delegate
-                {
+            try {
+                this.Invoke((MethodInvoker)delegate {
                     int selected = lstClients.SelectedItems.Count;
                     this.Text = (selected > 0)
                         ? string.Format("Quasar - Connected: {0} [Selected: {1}]", ListenServer.ConnectedClients.Length,
                             selected)
                         : string.Format("Quasar - Connected: {0}", ListenServer.ConnectedClients.Length);
                 });
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
             }
             _titleUpdateRunning = false;
         }
 
-        private void InitializeServer()
-        {
+        private void InitializeServer() {
             ListenServer = new QuasarServer();
 
             ListenServer.ServerState += ServerState;
@@ -91,37 +80,28 @@ namespace Quasar.Server.Forms
             ListenServer.ClientDisconnected += ClientDisconnected;
         }
 
-        private void AutostartListening()
-        {
-            if (Settings.AutoListen && Settings.UseUPnP)
-            {
+        private void AutostartListening() {
+            if (Settings.AutoListen && Settings.UseUPnP) {
                 UPnP.Initialize(Settings.ListenPort);
                 ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
-            }
-            else if (Settings.AutoListen)
-            {
+            } else if (Settings.AutoListen) {
                 UPnP.Initialize();
                 ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
-            }
-            else
-            {
+            } else {
                 UPnP.Initialize();
             }
 
-            if (Settings.EnableNoIPUpdater)
-            {
+            if (Settings.EnableNoIPUpdater) {
                 NoIpUpdater.Start();
             }
         }
 
-        private void FrmMain_Load(object sender, EventArgs e)
-        {
+        private void FrmMain_Load(object sender, EventArgs e) {
             InitializeServer();
             AutostartListening();
         }
 
-        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmMain_FormClosing(object sender, FormClosingEventArgs e) {
             ListenServer.Disconnect();
             UPnP.DeletePortMap(Settings.ListenPort);
             UnregisterMessageHandler();
@@ -130,80 +110,60 @@ namespace Quasar.Server.Forms
             notifyIcon.Dispose();
         }
 
-        private void lstClients_SelectedIndexChanged(object sender, EventArgs e)
-        {
+        private void lstClients_SelectedIndexChanged(object sender, EventArgs e) {
             UpdateWindowTitle();
         }
 
-        private void ServerState(Networking.Server server, bool listening, ushort port)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker) delegate
-                {
+        private void ServerState(Networking.Server server, bool listening, ushort port) {
+            try {
+                this.Invoke((MethodInvoker)delegate {
                     if (!listening)
                         lstClients.Items.Clear();
                     listenToolStripStatusLabel.Text = listening ? string.Format("Listening on port {0}.", port) : "Not listening.";
                 });
                 UpdateWindowTitle();
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
-        private void ClientConnected(Client client)
-        {
-            lock (_clientConnections)
-            {
+        private void ClientConnected(Client client) {
+            lock (_clientConnections) {
                 if (!ListenServer.Listening) return;
                 _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, true));
             }
 
-            lock (_processingClientConnectionsLock)
-            {
-                if (!_processingClientConnections)
-                {
+            lock (_processingClientConnectionsLock) {
+                if (!_processingClientConnections) {
                     _processingClientConnections = true;
                     ThreadPool.QueueUserWorkItem(ProcessClientConnections);
                 }
             }
         }
 
-        private void ClientDisconnected(Client client)
-        {
-            lock (_clientConnections)
-            {
+        private void ClientDisconnected(Client client) {
+            lock (_clientConnections) {
                 if (!ListenServer.Listening) return;
                 _clientConnections.Enqueue(new KeyValuePair<Client, bool>(client, false));
             }
 
-            lock (_processingClientConnectionsLock)
-            {
-                if (!_processingClientConnections)
-                {
+            lock (_processingClientConnectionsLock) {
+                if (!_processingClientConnections) {
                     _processingClientConnections = true;
                     ThreadPool.QueueUserWorkItem(ProcessClientConnections);
                 }
             }
         }
 
-        private void ProcessClientConnections(object state)
-        {
-            while (true)
-            {
+        private void ProcessClientConnections(object state) {
+            while (true) {
                 KeyValuePair<Client, bool> client;
-                lock (_clientConnections)
-                {
-                    if (!ListenServer.Listening)
-                    {
+                lock (_clientConnections) {
+                    if (!ListenServer.Listening) {
                         _clientConnections.Clear();
                     }
 
-                    if (_clientConnections.Count == 0)
-                    {
-                        lock (_processingClientConnectionsLock)
-                        {
+                    if (_clientConnections.Count == 0) {
+                        lock (_processingClientConnectionsLock) {
                             _processingClientConnections = false;
                         }
                         return;
@@ -212,10 +172,8 @@ namespace Quasar.Server.Forms
                     client = _clientConnections.Dequeue();
                 }
 
-                if (client.Key != null)
-                {
-                    switch (client.Value)
-                    {
+                if (client.Key != null) {
+                    switch (client.Value) {
                         case true:
                             AddClientToListview(client.Key);
                             if (Settings.ShowPopup)
@@ -234,21 +192,16 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client on which the change is performed.</param>
         /// <param name="text">The new tooltip text.</param>
-        public void SetToolTipText(Client client, string text)
-        {
+        public void SetToolTipText(Client client, string text) {
             if (client == null) return;
 
-            try
-            {
-                lstClients.Invoke((MethodInvoker) delegate
-                {
+            try {
+                lstClients.Invoke((MethodInvoker)delegate {
                     var item = GetListViewItemByClient(client);
                     if (item != null)
                         item.ToolTipText = text;
                 });
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
@@ -256,12 +209,10 @@ namespace Quasar.Server.Forms
         /// Adds a connected client to the Listview.
         /// </summary>
         /// <param name="client">The client to add.</param>
-        private void AddClientToListview(Client client)
-        {
+        private void AddClientToListview(Client client) {
             if (client == null) return;
 
-            try
-            {
+            try {
                 // this " " leaves some space between the flag-icon and first item
                 ListViewItem lvi = new ListViewItem(new string[]
                 {
@@ -270,18 +221,14 @@ namespace Quasar.Server.Forms
                     client.Value.OperatingSystem, client.Value.AccountType
                 }) { Tag = client, ImageIndex = client.Value.ImageIndex };
 
-                lstClients.Invoke((MethodInvoker) delegate
-                {
-                    lock (_lockClients)
-                    {
+                lstClients.Invoke((MethodInvoker)delegate {
+                    lock (_lockClients) {
                         lstClients.Items.Add(lvi);
                     }
                 });
 
                 UpdateWindowTitle();
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
@@ -289,28 +236,21 @@ namespace Quasar.Server.Forms
         /// Removes a connected client from the Listview.
         /// </summary>
         /// <param name="client">The client to remove.</param>
-        private void RemoveClientFromListview(Client client)
-        {
+        private void RemoveClientFromListview(Client client) {
             if (client == null) return;
 
-            try
-            {
-                lstClients.Invoke((MethodInvoker) delegate
-                {
-                    lock (_lockClients)
-                    {
+            try {
+                lstClients.Invoke((MethodInvoker)delegate {
+                    lock (_lockClients) {
                         foreach (ListViewItem lvi in lstClients.Items.Cast<ListViewItem>()
-                            .Where(lvi => lvi != null && client.Equals(lvi.Tag)))
-                        {
+                            .Where(lvi => lvi != null && client.Equals(lvi.Tag))) {
                             lvi.Remove();
                             break;
                         }
                     }
                 });
                 UpdateWindowTitle();
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
@@ -320,8 +260,7 @@ namespace Quasar.Server.Forms
         /// <param name="sender">The message handler which raised the event.</param>
         /// <param name="client">The client to update the status of.</param>
         /// <param name="text">The new status.</param>
-        private void SetStatusByClient(object sender, Client client, string text)
-        {
+        private void SetStatusByClient(object sender, Client client, string text) {
             var item = GetListViewItemByClient(client);
             if (item != null)
                 item.SubItems[STATUS_ID].Text = text;
@@ -333,8 +272,7 @@ namespace Quasar.Server.Forms
         /// <param name="sender">The message handler which raised the event.</param>
         /// <param name="client">The client to update the user status of.</param>
         /// <param name="userStatus">The new user status.</param>
-        private void SetUserStatusByClient(object sender, Client client, UserStatus userStatus)
-        {
+        private void SetUserStatusByClient(object sender, Client client, UserStatus userStatus) {
             var item = GetListViewItemByClient(client);
             if (item != null)
                 item.SubItems[USERSTATUS_ID].Text = userStatus.ToString();
@@ -346,14 +284,12 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client to get the Listview item of.</param>
         /// <returns>Listview item of the client.</returns>
-        private ListViewItem GetListViewItemByClient(Client client)
-        {
+        private ListViewItem GetListViewItemByClient(Client client) {
             if (client == null) return null;
 
             ListViewItem itemClient = null;
 
-            lstClients.Invoke((MethodInvoker) delegate
-            {
+            lstClients.Invoke((MethodInvoker)delegate {
                 itemClient = lstClients.Items.Cast<ListViewItem>()
                     .FirstOrDefault(lvi => lvi != null && client.Equals(lvi.Tag));
             });
@@ -365,14 +301,11 @@ namespace Quasar.Server.Forms
         /// Gets all selected clients.
         /// </summary>
         /// <returns>An array of all selected Clients.</returns>
-        private Client[] GetSelectedClients()
-        {
+        private Client[] GetSelectedClients() {
             List<Client> clients = new List<Client>();
 
-            lstClients.Invoke((MethodInvoker)delegate
-            {
-                lock (_lockClients)
-                {
+            lstClients.Invoke((MethodInvoker)delegate {
+                lock (_lockClients) {
                     if (lstClients.SelectedItems.Count == 0) return;
                     clients.AddRange(
                         lstClients.SelectedItems.Cast<ListViewItem>()
@@ -388,8 +321,7 @@ namespace Quasar.Server.Forms
         /// Gets all connected clients.
         /// </summary>
         /// <returns>An array of all connected Clients.</returns>
-        private Client[] GetConnectedClients()
-        {
+        private Client[] GetConnectedClients() {
             return ListenServer.ConnectedClients;
         }
 
@@ -397,21 +329,16 @@ namespace Quasar.Server.Forms
         /// Displays a popup with information about a client.
         /// </summary>
         /// <param name="c">The client.</param>
-        private void ShowPopup(Client c)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
+        private void ShowPopup(Client c) {
+            try {
+                this.Invoke((MethodInvoker)delegate {
                     if (c == null || c.Value == null) return;
-                    
+
                     notifyIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
                 });
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
@@ -419,31 +346,22 @@ namespace Quasar.Server.Forms
 
         #region "Client Management"
 
-                private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 c.Send(new DoAskElevate());
             }
         }
 
-        private void updateToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void updateToolStripMenuItem_Click(object sender, EventArgs e) {
             // TODO: Refactor file upload
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                using (var frm = new FrmUpdate(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
+            if (lstClients.SelectedItems.Count != 0) {
+                using (var frm = new FrmUpdate(lstClients.SelectedItems.Count)) {
+                    if (frm.ShowDialog() == DialogResult.OK) {
                         if (!frm.UseDownload && !File.Exists(frm.UploadPath)) return;
 
-                        if (frm.UseDownload)
-                        {
-                            foreach (Client c in GetSelectedClients())
-                            {
-                                c.Send(new DoClientUpdate
-                                {
+                        if (frm.UseDownload) {
+                            foreach (Client c in GetSelectedClients()) {
+                                c.Send(new DoClientUpdate {
                                     Id = 0,
                                     DownloadUrl = frm.DownloadUrl,
                                     FileName = string.Empty,
@@ -452,22 +370,17 @@ namespace Quasar.Server.Forms
                                     CurrentBlock = 0
                                 });
                             }
-                        }
-                        else
-                        {
+                        } else {
                             string path = frm.UploadPath;
 
-                            new Thread(() =>
-                            {
+                            new Thread(() => {
                                 bool error = false;
-                                foreach (Client c in GetSelectedClients())
-                                {
+                                foreach (Client c in GetSelectedClients()) {
                                     if (c == null) continue;
                                     if (error) continue;
 
                                     FileSplit srcFile = new FileSplit(path);
-                                    if (srcFile.MaxBlocks < 0)
-                                    {
+                                    if (srcFile.MaxBlocks < 0) {
                                         MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                             "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
@@ -478,19 +391,16 @@ namespace Quasar.Server.Forms
 
                                     //SetStatusByClient(this, c, "Uploading file...");
 
-                                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                                    {
+                                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++) {
                                         byte[] block;
-                                        if (!srcFile.ReadBlock(currentBlock, out block))
-                                        {
+                                        if (!srcFile.ReadBlock(currentBlock, out block)) {
                                             MessageBox.Show($"Error reading file: {srcFile.LastError}",
                                                 "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                             error = true;
                                             break;
                                         }
 
-                                        c.Send(new DoClientUpdate
-                                        {
+                                        c.Send(new DoClientUpdate {
                                             Id = id,
                                             DownloadUrl = string.Empty,
                                             FileName = string.Empty,
@@ -507,34 +417,27 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void reconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 c.Send(new DoClientReconnect());
             }
         }
 
-        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void disconnectToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 c.Send(new DoClientDisconnect());
             }
         }
 
-        private void uninstallToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void uninstallToolStripMenuItem_Click(object sender, EventArgs e) {
             if (lstClients.SelectedItems.Count == 0) return;
             if (
                 MessageBox.Show(
                     string.Format(
                         "Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!",
                         lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo,
-                    MessageBoxIcon.Question) == DialogResult.Yes)
-            {
-                foreach (Client c in GetSelectedClients())
-                {
+                    MessageBoxIcon.Question) == DialogResult.Yes) {
+                foreach (Client c in GetSelectedClients()) {
                     c.Send(new DoClientUninstall());
                 }
             }
@@ -544,82 +447,65 @@ namespace Quasar.Server.Forms
 
         #region "Administration"
 
-        private void systemInformationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void systemInformationToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmSystemInformation frmSi = FrmSystemInformation.CreateNewOrGetExisting(c);
                 frmSi.Show();
                 frmSi.Focus();
             }
         }
 
-        private void fileManagerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void fileManagerToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmFileManager frmFm = FrmFileManager.CreateNewOrGetExisting(c);
                 frmFm.Show();
                 frmFm.Focus();
             }
         }
 
-        private void startupManagerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void startupManagerToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmStartupManager frmStm = FrmStartupManager.CreateNewOrGetExisting(c);
                 frmStm.Show();
                 frmStm.Focus();
             }
         }
 
-        private void taskManagerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void taskManagerToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmTaskManager frmTm = FrmTaskManager.CreateNewOrGetExisting(c);
                 frmTm.Show();
                 frmTm.Focus();
             }
         }
 
-        private void remoteShellToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void remoteShellToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmRemoteShell frmRs = FrmRemoteShell.CreateNewOrGetExisting(c);
                 frmRs.Show();
                 frmRs.Focus();
             }
         }
 
-        private void connectionsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void connectionsToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmConnections frmCon = FrmConnections.CreateNewOrGetExisting(c);
                 frmCon.Show();
                 frmCon.Focus();
             }
         }
 
-        private void reverseProxyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void reverseProxyToolStripMenuItem_Click(object sender, EventArgs e) {
             Client[] clients = GetSelectedClients();
-            if (clients.Length > 0)
-            {
+            if (clients.Length > 0) {
                 FrmReverseProxy frmRs = new FrmReverseProxy(clients);
                 frmRs.Show();
             }
         }
 
-        private void registryEditorToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                foreach (Client c in GetSelectedClients())
-                {
+        private void registryEditorToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstClients.SelectedItems.Count != 0) {
+                foreach (Client c in GetSelectedClients()) {
                     FrmRegistryEditor frmRe = FrmRegistryEditor.CreateNewOrGetExisting(c);
                     frmRe.Show();
                     frmRe.Focus();
@@ -627,29 +513,22 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void localFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void localFileToolStripMenuItem_Click(object sender, EventArgs e) {
             // TODO: Refactor file upload
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK && File.Exists(frm.LocalFilePath))
-                    {
+            if (lstClients.SelectedItems.Count != 0) {
+                using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count)) {
+                    if (frm.ShowDialog() == DialogResult.OK && File.Exists(frm.LocalFilePath)) {
                         string path = frm.LocalFilePath;
                         bool hidden = frm.Hidden;
 
-                        new Thread(() =>
-                        {
+                        new Thread(() => {
                             bool error = false;
-                            foreach (Client c in GetSelectedClients())
-                            {
+                            foreach (Client c in GetSelectedClients()) {
                                 if (c == null) continue;
                                 if (error) continue;
 
                                 FileSplit srcFile = new FileSplit(path);
-                                if (srcFile.MaxBlocks < 0)
-                                {
+                                if (srcFile.MaxBlocks < 0) {
                                     MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                         "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                     error = true;
@@ -660,13 +539,10 @@ namespace Quasar.Server.Forms
 
                                 // SetStatusByClient(this, c, "Uploading file...");
 
-                                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                                {
+                                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++) {
                                     byte[] block;
-                                    if (srcFile.ReadBlock(currentBlock, out block))
-                                    {
-                                        c.SendBlocking(new DoUploadAndExecute
-                                        {
+                                    if (srcFile.ReadBlock(currentBlock, out block)) {
+                                        c.SendBlocking(new DoUploadAndExecute {
                                             Id = id,
                                             FileName = Path.GetFileName(path),
                                             Block = block,
@@ -674,9 +550,7 @@ namespace Quasar.Server.Forms
                                             CurrentBlock = currentBlock,
                                             RunHidden = hidden
                                         });
-                                    }
-                                    else
-                                    {
+                                    } else {
                                         MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
                                             "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                                         error = true;
@@ -690,18 +564,12 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void webFileToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
-                        foreach (Client c in GetSelectedClients())
-                        {
-                            c.Send(new DoDownloadAndExecute
-                            {
+        private void webFileToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstClients.SelectedItems.Count != 0) {
+                using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count)) {
+                    if (frm.ShowDialog() == DialogResult.OK) {
+                        foreach (Client c in GetSelectedClients()) {
+                            c.Send(new DoDownloadAndExecute {
                                 Url = frm.Url,
                                 RunHidden = frm.Hidden
                             });
@@ -713,31 +581,25 @@ namespace Quasar.Server.Forms
 
         private void codeExecutorToolStripMenuItem_Click(object sender, EventArgs e) {
             Client[] clients = GetSelectedClients();
-            if (clients.Count() > 0) 
+            if (clients.Count() > 0)
                 new FrmExecuteCode(clients).Show();
         }
 
-        private void shutdownToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Shutdown});
+        private void shutdownToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
+                c.Send(new DoShutdownAction { Action = ShutdownAction.Shutdown });
             }
         }
 
-        private void restartToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Restart});
+        private void restartToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
+                c.Send(new DoShutdownAction { Action = ShutdownAction.Restart });
             }
         }
 
-        private void standbyToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
-                c.Send(new DoShutdownAction {Action = ShutdownAction.Standby});
+        private void standbyToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
+                c.Send(new DoShutdownAction { Action = ShutdownAction.Standby });
             }
         }
 
@@ -745,30 +607,24 @@ namespace Quasar.Server.Forms
 
         #region "Monitoring"
 
-        private void remoteDesktopToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void remoteDesktopToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 var frmRd = FrmRemoteDesktop.CreateNewOrGetExisting(c);
                 frmRd.Show();
                 frmRd.Focus();
             }
         }
 
-        private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void passwordRecoveryToolStripMenuItem_Click(object sender, EventArgs e) {
             Client[] clients = GetSelectedClients();
-            if (clients.Length > 0)
-            {
+            if (clients.Length > 0) {
                 FrmPasswordRecovery frmPass = new FrmPasswordRecovery(clients);
                 frmPass.Show();
             }
         }
 
-        private void keyloggerToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            foreach (Client c in GetSelectedClients())
-            {
+        private void keyloggerToolStripMenuItem_Click(object sender, EventArgs e) {
+            foreach (Client c in GetSelectedClients()) {
                 FrmKeylogger frmKl = FrmKeylogger.CreateNewOrGetExisting(c);
                 frmKl.Show();
                 frmKl.Focus();
@@ -779,18 +635,12 @@ namespace Quasar.Server.Forms
 
         #region "User Support"
 
-        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                using (var frm = new FrmVisitWebsite(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
-                        foreach (Client c in GetSelectedClients())
-                        {
-                            c.Send(new DoVisitWebsite
-                            {
+        private void visitWebsiteToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstClients.SelectedItems.Count != 0) {
+                using (var frm = new FrmVisitWebsite(lstClients.SelectedItems.Count)) {
+                    if (frm.ShowDialog() == DialogResult.OK) {
+                        foreach (Client c in GetSelectedClients()) {
+                            c.Send(new DoVisitWebsite {
                                 Url = frm.Url,
                                 Hidden = frm.Hidden
                             });
@@ -800,18 +650,12 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void showMessageboxToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            if (lstClients.SelectedItems.Count != 0)
-            {
-                using (var frm = new FrmShowMessagebox(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
-                        foreach (Client c in GetSelectedClients())
-                        {
-                            c.Send(new DoShowMessageBox
-                            {
+        private void showMessageboxToolStripMenuItem_Click(object sender, EventArgs e) {
+            if (lstClients.SelectedItems.Count != 0) {
+                using (var frm = new FrmShowMessagebox(lstClients.SelectedItems.Count)) {
+                    if (frm.ShowDialog() == DialogResult.OK) {
+                        foreach (Client c in GetSelectedClients()) {
+                            c.Send(new DoShowMessageBox {
                                 Caption = frm.MsgBoxCaption,
                                 Text = frm.MsgBoxText,
                                 Button = frm.MsgBoxButton,
@@ -825,8 +669,7 @@ namespace Quasar.Server.Forms
 
         #endregion
 
-        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void selectAllToolStripMenuItem_Click(object sender, EventArgs e) {
             lstClients.SelectAllItems();
         }
 
@@ -834,35 +677,28 @@ namespace Quasar.Server.Forms
 
         #region "MenuStrip"
 
-        private void closeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void closeToolStripMenuItem_Click(object sender, EventArgs e) {
             Application.Exit();
         }
 
-        private void settingsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var frm = new FrmSettings(ListenServer))
-            {
+        private void settingsToolStripMenuItem_Click(object sender, EventArgs e) {
+            using (var frm = new FrmSettings(ListenServer)) {
                 frm.ShowDialog();
             }
         }
 
-        private void builderToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void builderToolStripMenuItem_Click(object sender, EventArgs e) {
 #if DEBUG
             MessageBox.Show("Client Builder is not available in DEBUG configuration.\nPlease build the project using RELEASE configuration.", "Not available", MessageBoxButtons.OK, MessageBoxIcon.Information);
 #else
-            using (var frm = new FrmBuilder())
-            {
+            using (var frm = new FrmBuilder()) {
                 frm.ShowDialog();
             }
 #endif
         }
 
-        private void aboutToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            using (var frm = new FrmAbout())
-            {
+        private void aboutToolStripMenuItem_Click(object sender, EventArgs e) {
+            using (var frm = new FrmAbout()) {
                 frm.ShowDialog();
             }
         }
@@ -871,8 +707,7 @@ namespace Quasar.Server.Forms
 
         #region "NotifyIcon"
 
-        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e)
-        {
+        private void notifyIcon_MouseDoubleClick(object sender, MouseEventArgs e) {
             this.WindowState = (this.WindowState == FormWindowState.Normal)
                 ? FormWindowState.Minimized
                 : FormWindowState.Normal;

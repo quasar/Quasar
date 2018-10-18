@@ -1,7 +1,5 @@
-﻿namespace Quasar.Common.Enums
-{
-    public enum UserStatus
-    {
+﻿namespace Quasar.Common.Enums {
+    public enum UserStatus {
         Idle,
         Active
     }

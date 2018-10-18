@@ -2,15 +2,11 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Controls
-{
-    public static class InputBox
-    {
-        public static DialogResult Show(string title, string promptText, ref string value)
-        {
+namespace Quasar.Server.Controls {
+    public static class InputBox {
+        public static DialogResult Show(string title, string promptText, ref string value) {
             DialogResult dialogResult = DialogResult.Cancel;
-            using (var form = new Form())
-            {
+            using (var form = new Form()) {
                 Label label = new Label();
                 TextBox textBox = new TextBox();
                 Button buttonOk = new Button();
@@ -36,7 +32,7 @@ namespace Quasar.Server.Controls
                 buttonCancel.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
 
                 form.ClientSize = new Size(396, 107);
-                form.Controls.AddRange(new Control[] {label, textBox, buttonOk, buttonCancel});
+                form.Controls.AddRange(new Control[] { label, textBox, buttonOk, buttonCancel });
                 form.ClientSize = new Size(Math.Max(300, label.Right + 10), form.ClientSize.Height);
                 form.FormBorderStyle = FormBorderStyle.FixedDialog;
                 form.StartPosition = FormStartPosition.CenterScreen;

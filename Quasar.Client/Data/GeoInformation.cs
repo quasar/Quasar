@@ -1,10 +1,8 @@
 ﻿using System.Runtime.Serialization;
 
-namespace Quasar.Client.Data
-{
+namespace Quasar.Client.Data {
     [DataContract]
-    public class GeoInformation
-    {
+    public class GeoInformation {
         [DataMember(Name = "as")]
         public string As { get; set; }
         [DataMember(Name = "city")]

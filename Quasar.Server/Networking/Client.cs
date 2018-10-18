@@ -11,10 +11,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 
-namespace Quasar.Server.Networking
-{
-    public class Client : IEquatable<Client>, ISender
-    {
+namespace Quasar.Server.Networking {
+    public class Client : IEquatable<Client>, ISender {
         /// <summary>
         /// Occurs when the state of the client changes.
         /// </summary>
@@ -31,15 +29,13 @@ namespace Quasar.Server.Networking
         /// Fires an event that informs subscribers that the state of the client has changed.
         /// </summary>
         /// <param name="connected">The new connection state of the client.</param>
-        private void OnClientState(bool connected)
-        {
+        private void OnClientState(bool connected) {
             if (Connected == connected) return;
 
             Connected = connected;
 
             var handler = ClientState;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, connected);
             }
         }
@@ -61,11 +57,9 @@ namespace Quasar.Server.Networking
         /// received from the client.
         /// </summary>
         /// <param name="message">The message that received by the client.</param>
-        private void OnClientRead(IMessage message)
-        {
+        private void OnClientRead(IMessage message) {
             var handler = ClientRead;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, message);
             }
         }
@@ -90,25 +84,21 @@ namespace Quasar.Server.Networking
         /// <param name="message">The message that has been sent by the client.</param>
         /// <param name="length">The length of the message.</param>
         /// <param name="rawData">The message in raw bytes.</param>
-        private void OnClientWrite(IMessage message, long length, byte[] rawData)
-        {
+        private void OnClientWrite(IMessage message, long length, byte[] rawData) {
             var handler = ClientWrite;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, message, length, rawData);
             }
         }
 
-        public static bool operator ==(Client c1, Client c2)
-        {
+        public static bool operator ==(Client c1, Client c2) {
             if (ReferenceEquals(c1, null))
                 return ReferenceEquals(c2, null);
 
             return c1.Equals(c2);
         }
 
-        public static bool operator !=(Client c1, Client c2)
-        {
+        public static bool operator !=(Client c1, Client c2) {
             return !(c1 == c2);
         }
 
@@ -117,24 +107,19 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="other">Client to compare with.</param>
         /// <returns>True if equal, else False.</returns>
-        public bool Equals(Client other)
-        {
+        public bool Equals(Client other) {
             if (ReferenceEquals(null, other)) return false;
             if (ReferenceEquals(this, other)) return true;
 
-            try
-            {
+            try {
                 // the port is always unique for each client
                 return this.EndPoint.Port.Equals(other.EndPoint.Port);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return false;
             }
         }
 
-        public override bool Equals(object obj)
-        {
+        public override bool Equals(object obj) {
             return this.Equals(obj as Client);
         }
 
@@ -142,16 +127,14 @@ namespace Quasar.Server.Networking
         /// Returns the hashcode for this instance.
         /// </summary>
         /// <returns>A hash code for the current instance.</returns>
-        public override int GetHashCode()
-        {
+        public override int GetHashCode() {
             return this.EndPoint.Port.GetHashCode();
-        }  
+        }
 
         /// <summary>
         /// The type of the message received.
         /// </summary>
-        public enum ReceiveType
-        {
+        public enum ReceiveType {
             Header,
             Payload
         }
@@ -257,10 +240,8 @@ namespace Quasar.Server.Networking
         private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        public Client(Server parentServer, Socket socket)
-        {
-            try
-            {
+        public Client(Server parentServer, Socket socket) {
+            try {
                 _parentServer = parentServer;
                 Initialize();
 
@@ -275,40 +256,29 @@ namespace Quasar.Server.Networking
 
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
                 OnClientState(true);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Disconnect();
             }
         }
 
-        private void Initialize()
-        {
+        private void Initialize() {
             Identified = false;
             Value = new UserState();
         }
 
-        private void AsyncReceive(IAsyncResult result)
-        {
+        private void AsyncReceive(IAsyncResult result) {
             int bytesTransferred;
 
-            try
-            {
+            try {
                 bytesTransferred = _handle.EndReceive(result);
 
                 if (bytesTransferred <= 0)
                     throw new Exception("no bytes transferred");
-            }
-            catch (NullReferenceException)
-            {
+            } catch (NullReferenceException) {
                 return;
-            }
-            catch (ObjectDisposedException)
-            {
+            } catch (ObjectDisposedException) {
                 return;
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Disconnect();
                 return;
             }
@@ -317,54 +287,38 @@ namespace Quasar.Server.Networking
 
             byte[] received = new byte[bytesTransferred];
 
-            try
-            {
+            try {
                 Array.Copy(_readBuffer, received, received.Length);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Disconnect();
                 return;
             }
 
-            lock (_readBuffers)
-            {
+            lock (_readBuffers) {
                 _readBuffers.Enqueue(received);
             }
 
-            lock (_readingmessagesLock)
-            {
-                if (!_readingmessages)
-                {
+            lock (_readingmessagesLock) {
+                if (!_readingmessages) {
                     _readingmessages = true;
                     ThreadPool.QueueUserWorkItem(AsyncReceive);
                 }
             }
 
-            try
-            {
+            try {
                 _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (Exception)
-            {
+            } catch (ObjectDisposedException) {
+            } catch (Exception) {
                 Disconnect();
             }
         }
 
-        private void AsyncReceive(object state)
-        {
-            while (true)
-            {
+        private void AsyncReceive(object state) {
+            while (true) {
                 byte[] readBuffer;
-                lock (_readBuffers)
-                {
-                    if (_readBuffers.Count == 0)
-                    {
-                        lock (_readingmessagesLock)
-                        {
+                lock (_readBuffers) {
+                    if (_readBuffers.Count == 0) {
+                        lock (_readingmessagesLock) {
                             _readingmessages = false;
                         }
                         return;
@@ -375,29 +329,20 @@ namespace Quasar.Server.Networking
 
                 _readableDataLen += readBuffer.Length;
                 bool process = true;
-                while (process)
-                {
-                    switch (_receiveState)
-                    {
-                        case ReceiveType.Header:
-                            {
-                                if (_readableDataLen + _tempHeaderOffset >= _parentServer.HEADER_SIZE)
-                                { // we can read the header
+                while (process) {
+                    switch (_receiveState) {
+                        case ReceiveType.Header: {
+                                if (_readableDataLen + _tempHeaderOffset >= _parentServer.HEADER_SIZE) { // we can read the header
                                     int headerLength = (_appendHeader)
                                         ? _parentServer.HEADER_SIZE - _tempHeaderOffset
                                         : _parentServer.HEADER_SIZE;
 
-                                    try
-                                    {
-                                        if (_appendHeader)
-                                        {
-                                            try
-                                            {
+                                    try {
+                                        if (_appendHeader) {
+                                            try {
                                                 Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset,
                                                     headerLength);
-                                            }
-                                            catch (Exception)
-                                            {
+                                            } catch (Exception) {
                                                 process = false;
                                                 Disconnect();
                                                 break;
@@ -405,17 +350,13 @@ namespace Quasar.Server.Networking
                                             _payloadLen = BitConverter.ToInt32(_tempHeader, 0);
                                             _tempHeaderOffset = 0;
                                             _appendHeader = false;
-                                        }
-                                        else
-                                        {
+                                        } else {
                                             _payloadLen = BitConverter.ToInt32(readBuffer, _readOffset);
                                         }
 
                                         if (_payloadLen <= 0 || _payloadLen > _parentServer.MAX_MESSAGE_SIZE)
                                             throw new Exception("invalid header");
-                                    }
-                                    catch (Exception)
-                                    {
+                                    } catch (Exception) {
                                         process = false;
                                         Disconnect();
                                         break;
@@ -424,15 +365,11 @@ namespace Quasar.Server.Networking
                                     _readableDataLen -= headerLength;
                                     _readOffset += headerLength;
                                     _receiveState = ReceiveType.Payload;
-                                }
-                                else // _readableDataLen < _parentServer.HEADER_SIZE
-                                {
-                                    try
-                                    {
+                                } else // _readableDataLen < _parentServer.HEADER_SIZE
+                                  {
+                                    try {
                                         Array.Copy(readBuffer, _readOffset, _tempHeader, _tempHeaderOffset, _readableDataLen);
-                                    }
-                                    catch (Exception)
-                                    {
+                                    } catch (Exception) {
                                         process = false;
                                         Disconnect();
                                         break;
@@ -443,8 +380,7 @@ namespace Quasar.Server.Networking
                                 }
                                 break;
                             }
-                        case ReceiveType.Payload:
-                            {
+                        case ReceiveType.Payload: {
                                 if (_payloadBuffer == null || _payloadBuffer.Length != _payloadLen)
                                     _payloadBuffer = new byte[_payloadLen];
 
@@ -452,12 +388,9 @@ namespace Quasar.Server.Networking
                                     ? _payloadLen - _writeOffset
                                     : _readableDataLen;
 
-                                try
-                                {
+                                try {
                                     Array.Copy(readBuffer, _readOffset, _payloadBuffer, _writeOffset, length);
-                                }
-                                catch (Exception)
-                                {
+                                } catch (Exception) {
                                     process = false;
                                     Disconnect();
                                     break;
@@ -467,20 +400,14 @@ namespace Quasar.Server.Networking
                                 _readOffset += length;
                                 _readableDataLen -= length;
 
-                                if (_writeOffset == _payloadLen)
-                                {
+                                if (_writeOffset == _payloadLen) {
                                     bool isError = _payloadBuffer.Length == 0;
 
-                                    if (!isError)
-                                    {
-                                        if (encryptionEnabled)
-                                        {
-                                            try
-                                            {
+                                    if (!isError) {
+                                        if (encryptionEnabled) {
+                                            try {
                                                 _payloadBuffer = Aes128.Decrypt(_payloadBuffer);
-                                            }
-                                            catch (Exception)
-                                            {
+                                            } catch (Exception) {
                                                 process = false;
                                                 Disconnect();
                                                 break;
@@ -490,16 +417,11 @@ namespace Quasar.Server.Networking
                                         isError = _payloadBuffer.Length == 0; // check if payload decryption failed
                                     }
 
-                                    if (!isError)
-                                    {
-                                        if (compressionEnabled)
-                                        {
-                                            try
-                                            {
+                                    if (!isError) {
+                                        if (compressionEnabled) {
+                                            try {
                                                 _payloadBuffer = SafeQuickLZ.Decompress(_payloadBuffer);
-                                            }
-                                            catch (Exception)
-                                            {
+                                            } catch (Exception) {
                                                 process = false;
                                                 Disconnect();
                                                 break;
@@ -509,23 +431,18 @@ namespace Quasar.Server.Networking
                                         isError = _payloadBuffer.Length == 0; // check if payload decompression failed
                                     }
 
-                                    if (isError)
-                                    {
+                                    if (isError) {
                                         process = false;
                                         Disconnect();
                                         break;
                                     }
 
-                                    using (MemoryStream deserialized = new MemoryStream(_payloadBuffer))
-                                    {
-                                        try
-                                        {
+                                    using (MemoryStream deserialized = new MemoryStream(_payloadBuffer)) {
+                                        try {
                                             IMessage message = Serializer.Deserialize<IMessage>(deserialized);
 
                                             OnClientRead(message);
-                                        }
-                                        catch (Exception)
-                                        {
+                                        } catch (Exception) {
                                             process = false;
                                             Disconnect();
                                             break;
@@ -546,8 +463,7 @@ namespace Quasar.Server.Networking
                     }
                 }
 
-                if (_receiveState == ReceiveType.Header)
-                {
+                if (_receiveState == ReceiveType.Header) {
                     _writeOffset = 0; // prepare for next message
                 }
                 _readOffset = 0;
@@ -560,20 +476,14 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <typeparam name="T">The type of the message.</typeparam>
         /// <param name="message">The message to be send.</param>
-        public void Send<T>(T message) where T : IMessage
-        {
+        public void Send<T>(T message) where T : IMessage {
             if (!Connected || message == null) return;
 
-            lock (_sendBuffers)
-            {
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    try
-                    {
+            lock (_sendBuffers) {
+                using (MemoryStream ms = new MemoryStream()) {
+                    try {
                         Serializer.Serialize(ms, message);
-                    }
-                    catch (Exception)
-                    {
+                    } catch (Exception) {
                         Disconnect();
                         return;
                     }
@@ -584,8 +494,7 @@ namespace Quasar.Server.Networking
 
                     OnClientWrite(message, payload.LongLength, payload);
 
-                    lock (_sendingmessagesLock)
-                    {
+                    lock (_sendingmessagesLock) {
                         if (_sendingmessages) return;
 
                         _sendingmessages = true;
@@ -601,30 +510,23 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <typeparam name="T">The type of the message.</typeparam>
         /// <param name="message">The message to be send.</param>
-        public void SendBlocking<T>(T message) where T : IMessage
-        {
+        public void SendBlocking<T>(T message) where T : IMessage {
             Send(message);
-            while (_sendingmessages)
-            {
+            while (_sendingmessages) {
                 Thread.Sleep(10);
             }
         }
 
-        private void Send(object state)
-        {
-            while (true)
-            {
-                if (!Connected)
-                {
+        private void Send(object state) {
+            while (true) {
+                if (!Connected) {
                     SendCleanup(true);
                     return;
                 }
 
                 byte[] payload;
-                lock (_sendBuffers)
-                {
-                    if (_sendBuffers.Count == 0)
-                    {
+                lock (_sendBuffers) {
+                    if (_sendBuffers.Count == 0) {
                         SendCleanup();
                         return;
                     }
@@ -632,14 +534,11 @@ namespace Quasar.Server.Networking
                     payload = _sendBuffers.Dequeue();
                 }
 
-                try
-                {
+                try {
                     var message = BuildMessage(payload);
                     _parentServer.BytesSent += message.Length;
                     _handle.Send(message);
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     Disconnect();
                     SendCleanup(true);
                     return;
@@ -647,8 +546,7 @@ namespace Quasar.Server.Networking
             }
         }
 
-        private byte[] BuildMessage(byte[] payload)
-        {
+        private byte[] BuildMessage(byte[] payload) {
             if (compressionEnabled)
                 payload = SafeQuickLZ.Compress(payload);
 
@@ -661,17 +559,14 @@ namespace Quasar.Server.Networking
             return message;
         }
 
-        private void SendCleanup(bool clear = false)
-        {
-            lock (_sendingmessagesLock)
-            {
+        private void SendCleanup(bool clear = false) {
+            lock (_sendingmessagesLock) {
                 _sendingmessages = false;
             }
 
             if (!clear) return;
 
-            lock (_sendBuffers)
-            {
+            lock (_sendBuffers) {
                 _sendBuffers.Clear();
             }
         }
@@ -680,10 +575,8 @@ namespace Quasar.Server.Networking
         /// Disconnect the client from the server and dispose of
         /// resources associated with the client.
         /// </summary>
-        public void Disconnect()
-        {
-            if (_handle != null)
-            {
+        public void Disconnect() {
+            if (_handle != null) {
                 _handle.Close();
                 _handle = null;
                 _readOffset = 0;
@@ -694,11 +587,10 @@ namespace Quasar.Server.Networking
                 _payloadBuffer = null;
                 _receiveState = ReceiveType.Header;
 
-                if (Value != null)
-                {
+                if (Value != null) {
                     Value = null;
                 }
-                
+
                 _parentServer.BufferManager.ReturnBuffer(_readBuffer);
             }
 

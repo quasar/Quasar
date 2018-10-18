@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class RecoveredAccount
-    {
+    public class RecoveredAccount {
         [ProtoMember(1)]
         public string Username { get; set; }
 

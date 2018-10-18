@@ -9,10 +9,8 @@ using Quasar.Common.Messages;
 using Quasar.Server.Data;
 using Quasar.Server.Networking.Utilities;
 
-namespace Quasar.Server.Networking
-{
-    public class Server
-    {
+namespace Quasar.Server.Networking {
+    public class Server {
         /// <summary>
         /// Occurs when the state of the server changes.
         /// </summary>
@@ -30,15 +28,13 @@ namespace Quasar.Server.Networking
         /// Fires an event that informs subscribers that the server has changed it's state.
         /// </summary>
         /// <param name="listening">The new listening state of the server.</param>
-        private void OnServerState(bool listening)
-        {
+        private void OnServerState(bool listening) {
             if (Listening == listening) return;
 
             Listening = listening;
 
             var handler = ServerState;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, listening, Port);
             }
         }
@@ -61,15 +57,13 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="c">The client which changed its state.</param>
         /// <param name="connected">The new connection state of the client.</param>
-        private void OnClientState(Client c, bool connected)
-        {
+        private void OnClientState(Client c, bool connected) {
             var handler = ClientState;
 
             if (!connected)
                 RemoveClient(c);
 
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, c, connected);
             }
         }
@@ -93,11 +87,9 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="c">The client that has received the message.</param>
         /// <param name="message">The message that received by the client.</param>
-        private void OnClientRead(Client c, IMessage message)
-        {
+        private void OnClientRead(Client c, IMessage message) {
             var handler = ClientRead;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, c, message);
             }
         }
@@ -124,11 +116,9 @@ namespace Quasar.Server.Networking
         /// <param name="message">The message that has been sent by the client.</param>
         /// <param name="length">The length of the message.</param>
         /// <param name="rawData">The message in raw bytes.</param>
-        private void OnClientWrite(Client c, IMessage message, long length, byte[] rawData)
-        {
+        private void OnClientWrite(Client c, IMessage message, long length, byte[] rawData) {
             var handler = ClientWrite;
-            if (handler != null)
-            {
+            if (handler != null) {
                 handler(this, c, message, length, rawData);
             }
         }
@@ -186,12 +176,9 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// Gets the clients currently connected to the server.
         /// </summary>
-        protected Client[] Clients
-        {
-            get
-            {
-                lock (_clientsLock)
-                {
+        protected Client[] Clients {
+            get {
+                lock (_clientsLock) {
                     return _clients.ToArray();
                 }
             }
@@ -230,8 +217,7 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// Constructor of the server, initializes variables.
         /// </summary>
-        protected Server()
-        {
+        protected Server() {
             _clients = new List<Client>();
             BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
             AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
@@ -242,29 +228,22 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="port">Port to listen for clients on.</param>
         /// <param name="ipv6">If set to true, use a dual-stack socket to allow IPv4/6 connections. Otherwise use IPv4-only socket.</param>
-        public void Listen(ushort port, bool ipv6)
-        {
+        public void Listen(ushort port, bool ipv6) {
             this.Port = port;
-            try
-            {
-                if (!Listening)
-                {
-                    if (_handle != null)
-                    {
+            try {
+                if (!Listening) {
+                    if (_handle != null) {
                         _handle.Close();
                         _handle = null;
                     }
 
-                    if (Socket.OSSupportsIPv6 && ipv6)
-                    {
+                    if (Socket.OSSupportsIPv6 && ipv6) {
                         _handle = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
                         // fix for mono compatibility, SocketOptionName.IPv6Only
                         SocketOptionName ipv6only = (SocketOptionName)27;
                         _handle.SetSocketOption(SocketOptionLevel.IPv6, ipv6only, 0);
                         _handle.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
-                    }
-                    else
-                    {
+                    } else {
                         _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                         _handle.Bind(new IPEndPoint(IPAddress.Any, port));
                     }
@@ -274,8 +253,7 @@ namespace Quasar.Server.Networking
 
                     OnServerState(true);
 
-                    if (_item != null)
-                    {
+                    if (_item != null) {
                         _item.Dispose();
                         _item = null;
                     }
@@ -286,24 +264,17 @@ namespace Quasar.Server.Networking
                     if (!_handle.AcceptAsync(_item))
                         AcceptClient(null, _item);
                 }
-            }
-            catch (SocketException ex)
-            {
-                if (ex.ErrorCode == 10048)
-                {
+            } catch (SocketException ex) {
+                if (ex.ErrorCode == 10048) {
                     MessageBox.Show("The port is already in use.", "Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
+                } else {
                     MessageBox.Show(
                         string.Format(
                             "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
                             ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
                 Disconnect();
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 Disconnect();
             }
         }
@@ -313,14 +284,10 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="s">Unused, use null.</param>
         /// <param name="e">Asynchronously Socket Event</param>
-        private void AcceptClient(object s, SocketAsyncEventArgs e)
-        {
-            try
-            {
-                do
-                {
-                    switch (e.SocketError)
-                    {
+        private void AcceptClient(object s, SocketAsyncEventArgs e) {
+            try {
+                do {
+                    switch (e.SocketError) {
                         case SocketError.Success:
                             if (BufferManager.BuffersAvailable == 0)
                                 BufferManager.IncreaseBufferCount(1);
@@ -337,12 +304,8 @@ namespace Quasar.Server.Networking
 
                     e.AcceptSocket = null; // enable reuse
                 } while (!_handle.AcceptAsync(e));
-            }
-            catch (ObjectDisposedException)
-            {
-            }
-            catch (Exception)
-            {
+            } catch (ObjectDisposedException) {
+            } catch (Exception) {
                 Disconnect();
             }
         }
@@ -352,10 +315,8 @@ namespace Quasar.Server.Networking
         /// subscribes to the client's events.
         /// </summary>
         /// <param name="client">The client to add.</param>
-        private void AddClient(Client client)
-        {
-            lock (_clientsLock)
-            {
+        private void AddClient(Client client) {
+            lock (_clientsLock) {
                 client.ClientState += OnClientState;
                 client.ClientRead += OnClientRead;
                 client.ClientWrite += OnClientWrite;
@@ -368,12 +329,10 @@ namespace Quasar.Server.Networking
         /// unsubscribes from the client's events.
         /// </summary>
         /// <param name="client">The client to remove.</param>
-        private void RemoveClient(Client client)
-        {
+        private void RemoveClient(Client client) {
             if (ProcessingDisconnect) return;
 
-            lock (_clientsLock)
-            {
+            lock (_clientsLock) {
                 client.ClientState -= OnClientState;
                 client.ClientRead -= OnClientRead;
                 client.ClientWrite -= OnClientWrite;
@@ -385,37 +344,29 @@ namespace Quasar.Server.Networking
         /// Disconnect the server from all of the clients and discontinue
         /// listening (placing the server in an "off" state).
         /// </summary>
-        public void Disconnect()
-        {
+        public void Disconnect() {
             if (ProcessingDisconnect) return;
             ProcessingDisconnect = true;
 
-            if (_handle != null)
-            {
+            if (_handle != null) {
                 _handle.Close();
                 _handle = null;
             }
 
-            if (_item != null)
-            {
+            if (_item != null) {
                 _item.Dispose();
                 _item = null;
             }
 
-            lock (_clientsLock)
-            {
-                while (_clients.Count != 0)
-                {
-                    try
-                    {
+            lock (_clientsLock) {
+                while (_clients.Count != 0) {
+                    try {
                         _clients[0].Disconnect();
                         _clients[0].ClientState -= OnClientState;
                         _clients[0].ClientRead -= OnClientRead;
                         _clients[0].ClientWrite -= OnClientWrite;
                         _clients.RemoveAt(0);
-                    }
-                    catch
-                    {
+                    } catch {
                     }
                 }
             }
@@ -429,8 +380,7 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="type">Type to be added</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
+        public void AddTypeToSerializer(Type parent, Type type) {
             if (type == null || parent == null)
                 throw new ArgumentNullException();
 
@@ -445,8 +395,7 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="parent">The parent type, i.e.: IPacket</param>
         /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
-        {
+        public void AddTypesToSerializer(Type parent, params Type[] types) {
             foreach (Type type in types)
                 AddTypeToSerializer(parent, type);
         }

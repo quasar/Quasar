@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoCloseConnection : IMessage
-    {
+    public class DoCloseConnection : IMessage {
         [ProtoMember(1)]
         public string LocalAddress { get; set; }
 

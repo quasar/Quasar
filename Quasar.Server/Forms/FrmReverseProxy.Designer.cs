@@ -1,9 +1,7 @@
 ﻿using Quasar.Server.Controls;
 
-namespace Quasar.Server.Forms
-{
-    partial class FrmReverseProxy
-    {
+namespace Quasar.Server.Forms {
+    partial class FrmReverseProxy {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,10 +11,8 @@ namespace Quasar.Server.Forms
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,8 +24,7 @@ namespace Quasar.Server.Forms
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmReverseProxy));
             this.btnStart = new System.Windows.Forms.Button();
@@ -102,8 +97,8 @@ namespace Quasar.Server.Forms
             // 
             // tabCtrl
             // 
-            this.tabCtrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tabCtrl.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tabCtrl.Controls.Add(this.tabPage1);
             this.tabCtrl.Location = new System.Drawing.Point(26, 115);

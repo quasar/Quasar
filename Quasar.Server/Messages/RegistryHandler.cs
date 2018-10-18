@@ -4,10 +4,8 @@ using Quasar.Common.Models;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class RegistryHandler : MessageProcessorBase<string>
-    {
+namespace Quasar.Server.Messages {
+    public class RegistryHandler : MessageProcessorBase<string> {
         /// <summary>
         /// The client which is associated with this registry handler.
         /// </summary>
@@ -36,12 +34,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="rootKey">The root registry key name.</param>
         /// <param name="matches">The child registry keys.</param>
-        private void OnKeysReceived(string rootKey, RegSeekerMatch[] matches)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnKeysReceived(string rootKey, RegSeekerMatch[] matches) {
+            SynchronizationContext.Post(t => {
                 var handler = KeysReceived;
-                handler?.Invoke(this, rootKey, (RegSeekerMatch[]) t);
+                handler?.Invoke(this, rootKey, (RegSeekerMatch[])t);
             }, matches);
         }
 
@@ -50,12 +46,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="parentPath">The registry key parent path.</param>
         /// <param name="match">The created registry key.</param>
-        private void OnKeyCreated(string parentPath, RegSeekerMatch match)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnKeyCreated(string parentPath, RegSeekerMatch match) {
+            SynchronizationContext.Post(t => {
                 var handler = KeyCreated;
-                handler?.Invoke(this, parentPath, (RegSeekerMatch) t);
+                handler?.Invoke(this, parentPath, (RegSeekerMatch)t);
             }, match);
         }
 
@@ -64,12 +58,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="parentPath">The registry key parent path.</param>
         /// <param name="subKey">The registry sub key name.</param>
-        private void OnKeyDeleted(string parentPath, string subKey)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnKeyDeleted(string parentPath, string subKey) {
+            SynchronizationContext.Post(t => {
                 var handler = KeyDeleted;
-                handler?.Invoke(this, parentPath, (string) t);
+                handler?.Invoke(this, parentPath, (string)t);
             }, subKey);
         }
 
@@ -79,12 +71,10 @@ namespace Quasar.Server.Messages
         /// <param name="parentPath">The registry key parent path.</param>
         /// <param name="oldSubKey">The old registry sub key name.</param>
         /// <param name="newSubKey">The new registry sub key name.</param>
-        private void OnKeyRenamed(string parentPath, string oldSubKey, string newSubKey)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnKeyRenamed(string parentPath, string oldSubKey, string newSubKey) {
+            SynchronizationContext.Post(t => {
                 var handler = KeyRenamed;
-                handler?.Invoke(this, parentPath, oldSubKey, (string) t);
+                handler?.Invoke(this, parentPath, oldSubKey, (string)t);
             }, newSubKey);
         }
 
@@ -93,10 +83,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="value">The created value.</param>
-        private void OnValueCreated(string keyPath, RegValueData value)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnValueCreated(string keyPath, RegValueData value) {
+            SynchronizationContext.Post(t => {
                 var handler = ValueCreated;
                 handler?.Invoke(this, keyPath, (RegValueData)t);
             }, value);
@@ -107,12 +95,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="valueName">The value name.</param>
-        private void OnValueDeleted(string keyPath, string valueName)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnValueDeleted(string keyPath, string valueName) {
+            SynchronizationContext.Post(t => {
                 var handler = ValueDeleted;
-                handler?.Invoke(this, keyPath, (string) t);
+                handler?.Invoke(this, keyPath, (string)t);
             }, valueName);
         }
 
@@ -122,12 +108,10 @@ namespace Quasar.Server.Messages
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="oldValueName">The old value name.</param>
         /// <param name="newValueName">The new value name.</param>
-        private void OnValueRenamed(string keyPath, string oldValueName, string newValueName)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnValueRenamed(string keyPath, string oldValueName, string newValueName) {
+            SynchronizationContext.Post(t => {
                 var handler = ValueRenamed;
-                handler?.Invoke(this, keyPath, oldValueName, (string) t);
+                handler?.Invoke(this, keyPath, oldValueName, (string)t);
             }, newValueName);
         }
 
@@ -136,12 +120,10 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="value">The new value.</param>
-        private void OnValueChanged(string keyPath, RegValueData value)
-        {
-            SynchronizationContext.Post(t =>
-            {
+        private void OnValueChanged(string keyPath, RegValueData value) {
+            SynchronizationContext.Post(t => {
                 var handler = ValueChanged;
-                handler?.Invoke(this, keyPath, (RegValueData) t);
+                handler?.Invoke(this, keyPath, (RegValueData)t);
             }, value);
         }
 
@@ -149,8 +131,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="RegistryHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public RegistryHandler(Client client) : base(true)
-        {
+        public RegistryHandler(Client client) : base(true) {
             _client = client;
         }
 
@@ -168,10 +149,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case GetRegistryKeysResponse keysResp:
                     Execute(sender, keysResp);
                     break;
@@ -203,10 +182,8 @@ namespace Quasar.Server.Messages
         /// Loads the registry keys of a given root key.
         /// </summary>
         /// <param name="rootKeyName">The root key name.</param>
-        public void LoadRegistryKey(string rootKeyName)
-        {
-            _client.Send(new DoLoadRegistryKey
-            {
+        public void LoadRegistryKey(string rootKeyName) {
+            _client.Send(new DoLoadRegistryKey {
                 RootKeyName = rootKeyName
             });
         }
@@ -215,10 +192,8 @@ namespace Quasar.Server.Messages
         /// Creates a registry key at the given parent path.
         /// </summary>
         /// <param name="parentPath">The parent path.</param>
-        public void CreateRegistryKey(string parentPath)
-        {
-            _client.Send(new DoCreateRegistryKey
-            {
+        public void CreateRegistryKey(string parentPath) {
+            _client.Send(new DoCreateRegistryKey {
                 ParentPath = parentPath
             });
         }
@@ -228,10 +203,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="parentPath">The parent path of the registry key to delete.</param>
         /// <param name="keyName">The registry key name to delete.</param>
-        public void DeleteRegistryKey(string parentPath, string keyName)
-        {
-            _client.Send(new DoDeleteRegistryKey
-            {
+        public void DeleteRegistryKey(string parentPath, string keyName) {
+            _client.Send(new DoDeleteRegistryKey {
                 ParentPath = parentPath,
                 KeyName = keyName
             });
@@ -243,10 +216,8 @@ namespace Quasar.Server.Messages
         /// <param name="parentPath">The parent path of the registry key to rename.</param>
         /// <param name="oldKeyName">The old name of the registry key.</param>
         /// <param name="newKeyName">The new name of the registry key.</param>
-        public void RenameRegistryKey(string parentPath, string oldKeyName, string newKeyName)
-        {
-            _client.Send(new DoRenameRegistryKey
-            {
+        public void RenameRegistryKey(string parentPath, string oldKeyName, string newKeyName) {
+            _client.Send(new DoRenameRegistryKey {
                 ParentPath = parentPath,
                 OldKeyName = oldKeyName,
                 NewKeyName = newKeyName
@@ -258,10 +229,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="kind">The kind of registry key value.</param>
-        public void CreateRegistryValue(string keyPath, RegistryValueKind kind)
-        {
-            _client.Send(new DoCreateRegistryValue
-            {
+        public void CreateRegistryValue(string keyPath, RegistryValueKind kind) {
+            _client.Send(new DoCreateRegistryValue {
                 KeyPath = keyPath,
                 Kind = kind
             });
@@ -272,10 +241,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="valueName">The registry key value name to delete.</param>
-        public void DeleteRegistryValue(string keyPath, string valueName)
-        {
-            _client.Send(new DoDeleteRegistryValue
-            {
+        public void DeleteRegistryValue(string keyPath, string valueName) {
+            _client.Send(new DoDeleteRegistryValue {
                 KeyPath = keyPath,
                 ValueName = valueName
             });
@@ -287,10 +254,8 @@ namespace Quasar.Server.Messages
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="oldValueName">The old registry key value name.</param>
         /// <param name="newValueName">The new registry key value name.</param>
-        public void RenameRegistryValue(string keyPath, string oldValueName, string newValueName)
-        {
-            _client.Send(new DoRenameRegistryValue
-            {
+        public void RenameRegistryValue(string keyPath, string oldValueName, string newValueName) {
+            _client.Send(new DoRenameRegistryValue {
                 KeyPath = keyPath,
                 OldValueName = oldValueName,
                 NewValueName = newValueName
@@ -302,113 +267,78 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyPath">The registry key path.</param>
         /// <param name="value">The updated registry key value.</param>
-        public void ChangeRegistryValue(string keyPath, RegValueData value)
-        {
-            _client.Send(new DoChangeRegistryValue
-            {
+        public void ChangeRegistryValue(string keyPath, RegValueData value) {
+            _client.Send(new DoChangeRegistryValue {
                 KeyPath = keyPath,
                 Value = value
             });
         }
 
-        private void Execute(ISender client, GetRegistryKeysResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetRegistryKeysResponse message) {
+            if (!message.IsError) {
                 OnKeysReceived(message.RootKey, message.Matches);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetCreateRegistryKeyResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetCreateRegistryKeyResponse message) {
+            if (!message.IsError) {
                 OnKeyCreated(message.ParentPath, message.Match);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetDeleteRegistryKeyResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetDeleteRegistryKeyResponse message) {
+            if (!message.IsError) {
                 OnKeyDeleted(message.ParentPath, message.KeyName);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetRenameRegistryKeyResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetRenameRegistryKeyResponse message) {
+            if (!message.IsError) {
                 OnKeyRenamed(message.ParentPath, message.OldKeyName, message.NewKeyName);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetCreateRegistryValueResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetCreateRegistryValueResponse message) {
+            if (!message.IsError) {
                 OnValueCreated(message.KeyPath, message.Value);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetDeleteRegistryValueResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetDeleteRegistryValueResponse message) {
+            if (!message.IsError) {
                 OnValueDeleted(message.KeyPath, message.ValueName);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetRenameRegistryValueResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetRenameRegistryValueResponse message) {
+            if (!message.IsError) {
                 OnValueRenamed(message.KeyPath, message.OldValueName, message.NewValueName);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        private void Execute(ISender client, GetChangeRegistryValueResponse message)
-        {
-            if (!message.IsError)
-            {
+        private void Execute(ISender client, GetChangeRegistryValueResponse message) {
+            if (!message.IsError) {
                 OnValueChanged(message.KeyPath, message.Value);
-            }
-            else
-            {
+            } else {
                 OnReport(message.ErrorMsg);
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
         }
     }
 }

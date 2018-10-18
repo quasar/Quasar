@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Models;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetDirectoryResponse : IMessage
-    {
+    public class GetDirectoryResponse : IMessage {
         [ProtoMember(1)]
         public string RemotePath { get; set; }
 

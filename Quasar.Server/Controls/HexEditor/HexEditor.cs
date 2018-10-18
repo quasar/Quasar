@@ -3,8 +3,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Controls.HexEditor
-{
+namespace Quasar.Server.Controls.HexEditor {
     /*
     * Derived and Adapted from Bernhard Elbl 
     * Be.HexEditor v1.6 (Last Update: Dec 27, 2013).
@@ -48,8 +47,7 @@ namespace Quasar.Server.Controls.HexEditor
     * http://sourceforge.net/projects/hexbox/?source=navbar
     */
 
-    public class HexEditor : Control
-    {
+    public class HexEditor : Control {
         #region Locks
 
         private object _caretLock = new object();
@@ -226,10 +224,8 @@ namespace Quasar.Server.Controls.HexEditor
         #region Overriden
 
         //Override font to trigger update on font change
-        public override Font Font
-        {
-            set
-            {
+        public override Font Font {
+            set {
                 base.Font = value;
 
                 UpdateRectanglePositioning();
@@ -239,14 +235,11 @@ namespace Quasar.Server.Controls.HexEditor
 
         //Hides the property Text that is not used for the control
         [Browsable(false), EditorBrowsable(EditorBrowsableState.Never)]
-        public override string Text
-        {
-            get
-            {
+        public override string Text {
+            get {
                 return base.Text;
             }
-            set
-            {
+            set {
                 base.Text = value;
             }
         }
@@ -256,19 +249,14 @@ namespace Quasar.Server.Controls.HexEditor
         #region Hidden
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public byte[] HexTable
-        {
-            get
-            {
-                lock (_hexTableLock)
-                {
+        public byte[] HexTable {
+            get {
+                lock (_hexTableLock) {
                     return _hexTable.ToArray();
                 }
             }
-            set
-            {
-                lock (_hexTableLock)
-                {
+            set {
+                lock (_hexTableLock) {
                     if (value == _hexTable.ToArray())
                         return;
 
@@ -280,11 +268,9 @@ namespace Quasar.Server.Controls.HexEditor
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public SizeF CharSize
-        {
+        public SizeF CharSize {
             get { return _charSize; }
-            private set
-            {
+            private set {
                 if (_charSize == value)
                     return;
 
@@ -293,32 +279,28 @@ namespace Quasar.Server.Controls.HexEditor
                 if (CharSizeChanged != null)
                     CharSizeChanged(this, EventArgs.Empty);
             }
-        }SizeF _charSize;
+        }
+        SizeF _charSize;
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int MaxBytesV
-        {
+        public int MaxBytesV {
             get { return _maxBytesV; }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int FirstVisibleByte
-        {
+        public int FirstVisibleByte {
             get { return _firstByte; }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public int LastVisibleByte
-        {
+        public int LastVisibleByte {
             get { return _lastByte; }
         }
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public bool VScrollBarHidden
-        {
+        public bool VScrollBarHidden {
             get { return _isVScrollHidden; }
-            set
-            {
+            set {
                 if (_isVScrollHidden == value)
                     return;
 
@@ -332,7 +314,8 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
             }
-        }bool _isVScrollHidden = true;
+        }
+        bool _isVScrollHidden = true;
 
         #endregion
 
@@ -343,11 +326,9 @@ namespace Quasar.Server.Controls.HexEditor
         /// display per line
         /// </summary>
         [DefaultValue(8), Category("Hex"), Description("Property that specifies the number of bytes to display per line.")]
-        public int BytesPerLine
-        {
+        public int BytesPerLine {
             get { return _bytesPerLine; }
-            set
-            {
+            set {
                 if (_bytesPerLine == value)
                     return;
 
@@ -355,7 +336,8 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
             }
-        }int _bytesPerLine = 8;
+        }
+        int _bytesPerLine = 8;
 
 
         /// <summary>
@@ -363,11 +345,9 @@ namespace Quasar.Server.Controls.HexEditor
         /// of the entitys
         /// </summary>
         [DefaultValue(10), Category("Hex"), Description("Property that specifies the margin between each of the entitys in the control.")]
-        public int EntityMargin
-        {
+        public int EntityMargin {
             get { return _entityMargin; }
-            set
-            {
+            set {
                 if (_entityMargin == value)
                     return;
 
@@ -375,18 +355,17 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
             }
-        }int _entityMargin = 10;
+        }
+        int _entityMargin = 10;
 
         /// <summary>
         /// Contains the type of border 
         /// that is used for the control
         /// </summary>
         [DefaultValue(BorderStyle.Fixed3D), Category("Appearance"), Description("Indicates where the control should have a border.")]
-        public BorderStyle BorderStyle
-        {
+        public BorderStyle BorderStyle {
             get { return _borderStyle; }
-            set
-            {
+            set {
                 if (_borderStyle == value)
                     return;
 
@@ -397,7 +376,8 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
             }
-        }BorderStyle _borderStyle = BorderStyle.Fixed3D;
+        }
+        BorderStyle _borderStyle = BorderStyle.Fixed3D;
 
         /// <summary>
         /// Contains the color for the border 
@@ -405,63 +385,58 @@ namespace Quasar.Server.Controls.HexEditor
         /// (Only used when BorderStyle is FixedSingle)
         /// </summary>
         [DefaultValue(typeof(Color), "Empty"), Category("Appearance"), Description("Indicates the color to be used when displaying a FixedSingle border.")]
-        public Color BorderColor
-        {
+        public Color BorderColor {
             get { return _borderColor; }
-            set
-            {
+            set {
                 if (BorderStyle != BorderStyle.FixedSingle || _borderColor == value)
                     return;
 
                 _borderColor = value;
                 Invalidate();
             }
-        }Color _borderColor = Color.Empty;
+        }
+        Color _borderColor = Color.Empty;
 
         /// <summary>
         /// Contains the color of the selected
         /// background area in the control
         /// </summary>
         [DefaultValue(typeof(Color), "Blue"), Category("Hex"), Description("Property for the background color of the selected text areas.")]
-        public Color SelectionBackColor
-        {
+        public Color SelectionBackColor {
             get { return _selectionBackColor; }
-            set
-            {
+            set {
                 if (_selectionBackColor == value)
                     return;
 
                 _selectionBackColor = value;
             }
-        }Color _selectionBackColor = Color.Blue;
+        }
+        Color _selectionBackColor = Color.Blue;
 
         /// <summary>
         /// Contains the color of the selected
         /// foreground area in the control
         /// </summary>
         [DefaultValue(typeof(Color), "White"), Category("Hex"), Description("Property for the foreground color of the selected text areas.")]
-        public Color SelectionForeColor
-        {
+        public Color SelectionForeColor {
             get { return _selectionForeColor; }
-            set
-            {
+            set {
                 if (_selectionForeColor == value)
                     return;
 
                 _selectionForeColor = value;
             }
-        }Color _selectionForeColor = Color.White;
+        }
+        Color _selectionForeColor = Color.White;
 
         /// <summary>
         /// Contains the case type for the
         /// line counter
         /// </summary>
         [DefaultValue(CaseStyle.UpperCase), Category("Hex"), Description("Property for the case type to use on the line counter.")]
-        public CaseStyle LineCountCaseStyle
-        {
+        public CaseStyle LineCountCaseStyle {
             get { return _lineCountCaseStyle; }
-            set
-            {
+            set {
                 if (_lineCountCaseStyle == value)
                     return;
 
@@ -474,18 +449,17 @@ namespace Quasar.Server.Controls.HexEditor
 
                 Invalidate();
             }
-        }CaseStyle _lineCountCaseStyle = CaseStyle.UpperCase;
+        }
+        CaseStyle _lineCountCaseStyle = CaseStyle.UpperCase;
 
         /// <summary>
         /// Contains the case type for the
         /// hex view.
         /// </summary>
         [DefaultValue(CaseStyle.UpperCase), Category("Hex"), Description("Property for the case type to use for the hexadecimal values view.")]
-        public CaseStyle HexViewCaseStyle
-        {
+        public CaseStyle HexViewCaseStyle {
             get { return _hexViewCaseStyle; }
-            set
-            {
+            set {
                 if (_hexViewCaseStyle == value)
                     return;
 
@@ -498,7 +472,8 @@ namespace Quasar.Server.Controls.HexEditor
 
                 Invalidate();
             }
-        }CaseStyle _hexViewCaseStyle = CaseStyle.UpperCase;
+        }
+        CaseStyle _hexViewCaseStyle = CaseStyle.UpperCase;
 
         /// <summary>
         /// Property that contains if the
@@ -506,11 +481,9 @@ namespace Quasar.Server.Controls.HexEditor
         /// visible or not
         /// </summary>
         [DefaultValue(false), Category("Hex"), Description("Property for the visibility of the vertical scrollbar.")]
-        public bool VScrollBarVisisble
-        {
+        public bool VScrollBarVisisble {
             get { return _isVScrollVisible; }
-            set
-            {
+            set {
                 if (_isVScrollVisible == value)
                     return;
 
@@ -519,7 +492,8 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
             }
-        }bool _isVScrollVisible = false;
+        }
+        bool _isVScrollVisible = false;
 
         #endregion
 
@@ -543,10 +517,8 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Events
 
-        protected void OnVScrollBarScroll(object sender, ScrollEventArgs e)
-        {
-            switch (e.Type)
-            {
+        protected void OnVScrollBarScroll(object sender, ScrollEventArgs e) {
+            switch (e.Type) {
                 case ScrollEventType.SmallIncrement:
                     ScrollLineDown(1);
                     break;
@@ -566,29 +538,25 @@ namespace Quasar.Server.Controls.HexEditor
             Invalidate();
         }
 
-        protected void CaretSelectionStartChanged(object sender, EventArgs e)
-        {
+        protected void CaretSelectionStartChanged(object sender, EventArgs e) {
             if (SelectionStartChanged != null)
                 SelectionStartChanged(this, e);
         }
 
-        protected void CaretSelectionLengthChanged(object sender, EventArgs e)
-        {
+        protected void CaretSelectionLengthChanged(object sender, EventArgs e) {
             if (SelectionLengthChanged != null)
                 SelectionLengthChanged(this, e);
         }
 
         #region Overriden
 
-        protected override void OnMarginChanged(EventArgs e)
-        {
+        protected override void OnMarginChanged(EventArgs e) {
             base.OnMarginChanged(e);
             UpdateRectanglePositioning();
             Invalidate();
         }
 
-        protected override void OnGotFocus(EventArgs e)
-        {
+        protected override void OnGotFocus(EventArgs e) {
             if (_handler != null)
                 _handler.OnGotFocus(e);
 
@@ -597,8 +565,7 @@ namespace Quasar.Server.Controls.HexEditor
             base.OnGotFocus(e);
         }
 
-        protected override void OnLostFocus(EventArgs e)
-        {
+        protected override void OnLostFocus(EventArgs e) {
             _dragging = false;
             DestroyCaret();
             base.OnLostFocus(e);
@@ -610,10 +577,8 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region KeyEvents
 
-        protected override bool IsInputKey(Keys keyData)
-        {
-            switch (keyData)
-            {
+        protected override bool IsInputKey(Keys keyData) {
+            switch (keyData) {
                 case Keys.Right:
                 case Keys.Left:
                 case Keys.Up:
@@ -627,34 +592,25 @@ namespace Quasar.Server.Controls.HexEditor
             return base.IsInputKey(keyData);
         }
 
-        protected override void OnKeyPress(KeyPressEventArgs e)
-        {
+        protected override void OnKeyPress(KeyPressEventArgs e) {
             if (_handler != null)
                 _handler.OnKeyPress(e);
 
             base.OnKeyPress(e);
         }
 
-        protected override void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.PageDown)
-            {
-                if (!_isVScrollHidden)
-                {
+        protected override void OnKeyDown(KeyEventArgs e) {
+            if (e.KeyCode == Keys.PageDown) {
+                if (!_isVScrollHidden) {
                     ScrollLineDown(_vScrollLarge);
                     Invalidate();
                 }
-            }
-            else if (e.KeyCode == Keys.PageUp)
-            {
-                if (!_isVScrollHidden)
-                {
+            } else if (e.KeyCode == Keys.PageUp) {
+                if (!_isVScrollHidden) {
                     ScrollLineUp(_vScrollLarge);
                     Invalidate();
                 }
-            }
-            else
-            {
+            } else {
                 if (_handler != null)
                     _handler.OnKeyDown(e);
             }
@@ -662,8 +618,7 @@ namespace Quasar.Server.Controls.HexEditor
             base.OnKeyDown(e);
         }
 
-        protected override void OnKeyUp(KeyEventArgs e)
-        {
+        protected override void OnKeyUp(KeyEventArgs e) {
             if (_handler != null)
                 _handler.OnKeyUp(e);
 
@@ -677,33 +632,25 @@ namespace Quasar.Server.Controls.HexEditor
         //Indicates if the mouse is currently being dragged or not
         private bool _dragging;
 
-        protected override void OnMouseDown(MouseEventArgs e)
-        {
-            if (this.Focused)
-            {
+        protected override void OnMouseDown(MouseEventArgs e) {
+            if (this.Focused) {
                 if (_handler != null)
                     _handler.OnMouseDown(e);
 
-                if (e.Button == MouseButtons.Left)
-                {
+                if (e.Button == MouseButtons.Left) {
                     _dragging = true;
                     Invalidate();
                 }
-            }
-            else
-            {
+            } else {
                 this.Focus();
             }
 
             base.OnMouseDown(e);
         }
 
-        protected override void OnMouseMove(MouseEventArgs e)
-        {
-            if (this.Focused)
-            {
-                if (_dragging)
-                {
+        protected override void OnMouseMove(MouseEventArgs e) {
+            if (this.Focused) {
+                if (_dragging) {
                     if (_handler != null)
                         _handler.OnMouseDragged(e);
 
@@ -714,12 +661,10 @@ namespace Quasar.Server.Controls.HexEditor
             base.OnMouseMove(e);
         }
 
-        protected override void OnMouseUp(MouseEventArgs e)
-        {
+        protected override void OnMouseUp(MouseEventArgs e) {
             _dragging = false;
 
-            if (this.Focused)
-            {
+            if (this.Focused) {
                 if (_handler != null)
                     _handler.OnMouseUp(e);
             }
@@ -727,10 +672,8 @@ namespace Quasar.Server.Controls.HexEditor
             base.OnMouseUp(e);
         }
 
-        protected override void OnMouseDoubleClick(MouseEventArgs e)
-        {
-            if (this.Focused)
-            {
+        protected override void OnMouseDoubleClick(MouseEventArgs e) {
+            if (this.Focused) {
                 if (_handler != null)
                     _handler.OnMouseDoubleClick(e);
             }
@@ -744,67 +687,49 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Properties
 
-        public int CaretPosX
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public int CaretPosX {
+            get {
+                lock (_caretLock) {
                     return _caret.Location.X;
                 }
             }
         }
 
-        public int CaretPosY
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public int CaretPosY {
+            get {
+                lock (_caretLock) {
                     return _caret.Location.Y;
                 }
             }
         }
 
-        public int SelectionStart
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public int SelectionStart {
+            get {
+                lock (_caretLock) {
                     return _caret.SelectionStart;
                 }
             }
         }
 
-        public int SelectionLength
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public int SelectionLength {
+            get {
+                lock (_caretLock) {
                     return _caret.SelectionLength;
                 }
             }
         }
 
-        public int CaretIndex
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public int CaretIndex {
+            get {
+                lock (_caretLock) {
                     return _caret.CurrentIndex;
                 }
             }
         }
 
-        public bool CaretFocused
-        {
-            get
-            {
-                lock (_caretLock)
-                {
+        public bool CaretFocused {
+            get {
+                lock (_caretLock) {
                     return _caret.Focused;
                 }
             }
@@ -814,12 +739,10 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Methods
 
-        public void SetCaretStart(int index, Point location)
-        {
+        public void SetCaretStart(int index, Point location) {
             location = ScrollToCaret(index, location);
 
-            lock (_caretLock)
-            {
+            lock (_caretLock) {
                 _caret.SetStartIndex(index);
                 _caret.SetCaretLocation(location);
             }
@@ -827,12 +750,10 @@ namespace Quasar.Server.Controls.HexEditor
             Invalidate();
         }
 
-        public void SetCaretEnd(int index, Point location)
-        {
+        public void SetCaretEnd(int index, Point location) {
             location = ScrollToCaret(index, location);
 
-            lock (_caretLock)
-            {
+            lock (_caretLock) {
                 _caret.SetEndIndex(index);
                 _caret.SetCaretLocation(location);
             }
@@ -840,18 +761,14 @@ namespace Quasar.Server.Controls.HexEditor
             Invalidate();
         }
 
-        public bool IsSelected(int byteIndex)
-        {
-            lock (_caretLock)
-            {
+        public bool IsSelected(int byteIndex) {
+            lock (_caretLock) {
                 return _caret.IsSelected(byteIndex);
             }
         }
 
-        public void DestroyCaret()
-        {
-            lock (_caretLock)
-            {
+        public void DestroyCaret() {
+            lock (_caretLock) {
                 _caret.Destroy();
             }
         }
@@ -864,12 +781,9 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Properties
 
-        public int HexTableLength
-        {
-            get
-            {
-                lock (_hexTableLock)
-                {
+        public int HexTableLength {
+            get {
+                lock (_hexTableLock) {
                     return _hexTable.Length;
                 }
             }
@@ -879,14 +793,11 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Methods
 
-        public void RemoveSelectedBytes()
-        {
+        public void RemoveSelectedBytes() {
             int index = SelectionStart;
             int length = SelectionLength;
-            if (length > 0)
-            {
-                lock (_hexTableLock)
-                {
+            if (length > 0) {
+                lock (_hexTableLock) {
                     _hexTable.RemoveRange(index, length);
                 }
 
@@ -898,10 +809,8 @@ namespace Quasar.Server.Controls.HexEditor
             }
         }
 
-        public void RemoveByteAt(int index)
-        {
-            lock (_hexTableLock)
-            {
+        public void RemoveByteAt(int index) {
+            lock (_hexTableLock) {
                 _hexTable.RemoveAt(index);
             }
 
@@ -912,10 +821,8 @@ namespace Quasar.Server.Controls.HexEditor
                 HexTableChanged(this, EventArgs.Empty);
         }
 
-        public void AppendByte(byte item)
-        {
-            lock (_hexTableLock)
-            {
+        public void AppendByte(byte item) {
+            lock (_hexTableLock) {
                 _hexTable.Add(item);
             }
 
@@ -926,10 +833,8 @@ namespace Quasar.Server.Controls.HexEditor
                 HexTableChanged(this, EventArgs.Empty);
         }
 
-        public void InsertByte(int index, byte item)
-        {
-            lock (_hexTableLock)
-            {
+        public void InsertByte(int index, byte item) {
+            lock (_hexTableLock) {
                 _hexTable.Insert(index, item);
             }
 
@@ -940,26 +845,20 @@ namespace Quasar.Server.Controls.HexEditor
                 HexTableChanged(this, EventArgs.Empty);
         }
 
-        public char GetByteAsChar(int index)
-        {
-            lock (_hexTableLock)
-            {
+        public char GetByteAsChar(int index) {
+            lock (_hexTableLock) {
                 return _hexTable.GetCharAt(index);
             }
         }
 
-        public byte GetByte(int index)
-        {
-            lock (_hexTableLock)
-            {
+        public byte GetByte(int index) {
+            lock (_hexTableLock) {
                 return _hexTable.GetAt(index);
             }
         }
 
-        public void SetByte(int index, byte item)
-        {
-            lock (_hexTableLock)
-            {
+        public void SetByte(int index, byte item) {
+            lock (_hexTableLock) {
                 _hexTable.SetAt(index, item);
             }
 
@@ -975,10 +874,8 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Scrollbar
 
-        public void ScrollLineUp(int lines)
-        {
-            if (_firstByte > 0)
-            {
+        public void ScrollLineUp(int lines) {
+            if (_firstByte > 0) {
                 lines = lines > _vScrollPos ? _vScrollPos : lines;
                 //Scroll up
                 _vScrollPos -= _vScrollSmall * lines;
@@ -986,23 +883,19 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateVisibleByteIndex();
                 UpdateScrollValues();
                 //Update the Caret
-                if (CaretFocused)
-                {
+                if (CaretFocused) {
                     Point caretLocation = new Point(CaretPosX, CaretPosY);
                     caretLocation.Y += _recLineCount.Height * lines;
 
-                    lock (_caretLock)
-                    {
+                    lock (_caretLock) {
                         _caret.SetCaretLocation(caretLocation);
                     }
                 }
             }
         }
 
-        public void ScrollLineDown(int lines)
-        {
-            if (_vScrollPos <= _vScrollMax - _vScrollLarge)
-            {
+        public void ScrollLineDown(int lines) {
+            if (_vScrollPos <= _vScrollMax - _vScrollLarge) {
                 lines = (lines + _vScrollPos) > (_vScrollMax - _vScrollLarge) ? (_vScrollMax - _vScrollLarge) - _vScrollPos + 1 : lines;
                 //Scroll up
                 _vScrollPos += _vScrollSmall * lines;
@@ -1010,13 +903,11 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateVisibleByteIndex();
                 UpdateScrollValues();
                 //Update the Caret
-                if (CaretFocused)
-                {
+                if (CaretFocused) {
                     Point caretLocation = new Point(CaretPosX, CaretPosY);
                     caretLocation.Y -= _recLineCount.Height * lines;
 
-                    lock (_caretLock)
-                    {
+                    lock (_caretLock) {
                         _caret.SetCaretLocation(caretLocation);
                         if (caretLocation.Y < _recContent.Y)
                             _caret.Hide(this.Handle);
@@ -1025,17 +916,13 @@ namespace Quasar.Server.Controls.HexEditor
             }
         }
 
-        public void ScrollThumbTrack(int lines)
-        {
+        public void ScrollThumbTrack(int lines) {
             if (lines == 0)
                 return;
 
-            if (lines < 0)
-            {
+            if (lines < 0) {
                 ScrollLineUp((-1) * lines);
-            }
-            else
-            {
+            } else {
                 ScrollLineDown(lines);
             }
         }
@@ -1044,22 +931,17 @@ namespace Quasar.Server.Controls.HexEditor
         /// Performs a scroll to the given caretIndex
         /// </summary>
         /// <param name="caretIndex">The caret index to scroll to</param>
-        public Point ScrollToCaret(int caretIndex, Point position)
-        {
-            if (position.Y < 0)
-            {
+        public Point ScrollToCaret(int caretIndex, Point position) {
+            if (position.Y < 0) {
                 //Need to scroll up until caret is visible
                 _vScrollPos -= Math.Abs((position.Y - _recContent.Y) / _recLineCount.Height) * _vScrollSmall;
                 UpdateVisibleByteIndex();
                 UpdateScrollValues();
 
-                if (CaretFocused)
-                {
+                if (CaretFocused) {
                     position.Y = _recContent.Y;
                 }
-            }
-            else if (position.Y > _maxVisibleBytesV * _recLineCount.Height)
-            {
+            } else if (position.Y > _maxVisibleBytesV * _recLineCount.Height) {
                 //Need to scroll down until caret is visible
                 _vScrollPos += ((position.Y) / _recLineCount.Height - (_maxVisibleBytesV - 1)) * _vScrollSmall;
 
@@ -1069,8 +951,7 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateVisibleByteIndex();
                 UpdateScrollValues();
 
-                if (CaretFocused)
-                {
+                if (CaretFocused) {
                     position.Y = (_maxVisibleBytesV - 1) * _recLineCount.Height + _recContent.Y;
                 }
             }
@@ -1081,15 +962,13 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Update Actions
 
-        private void UpdateRectanglePositioning()
-        {
+        private void UpdateRectanglePositioning() {
             if (ClientRectangle.Width == 0)
                 return;
 
             //Start by calculating the size of a char
             SizeF charSize;
-            using (var graphics = this.CreateGraphics())
-            {
+            using (var graphics = this.CreateGraphics()) {
                 charSize = graphics.MeasureString("D", Font, 100, _stringFormat);
             }
             CharSize = new SizeF((float)Math.Ceiling(charSize.Width), (float)Math.Ceiling(charSize.Height));
@@ -1102,15 +981,12 @@ namespace Quasar.Server.Controls.HexEditor
             _recContent.Height -= Margin.Bottom;
 
             //Check if the border is active and decrease the bounds
-            if (BorderStyle == BorderStyle.Fixed3D)
-            {
+            if (BorderStyle == BorderStyle.Fixed3D) {
                 _recContent.X += 2;
                 _recContent.Y += 2;
                 _recContent.Width -= 1;
                 _recContent.Height -= 1;
-            }
-            else if (BorderStyle == BorderStyle.FixedSingle)
-            {
+            } else if (BorderStyle == BorderStyle.FixedSingle) {
                 _recContent.X += 1;
                 _recContent.Y += 1;
                 _recContent.Width -= 1;
@@ -1118,8 +994,7 @@ namespace Quasar.Server.Controls.HexEditor
             }
 
             //Handle if the scrollbar is visible
-            if (!VScrollBarHidden)
-            {
+            if (!VScrollBarHidden) {
                 _recContent.Width -= _vScrollBarWidth;
                 _vScrollBar.Left = _recContent.X + _recContent.Width - Margin.Left;
                 _vScrollBar.Top = _recContent.Y - Margin.Top;
@@ -1140,24 +1015,18 @@ namespace Quasar.Server.Controls.HexEditor
             UpdateScrollBarSize();
         }
 
-        private void UpdateVisibleByteIndex()
-        {
-            if (_hexTable.Length == 0)
-            {
+        private void UpdateVisibleByteIndex() {
+            if (_hexTable.Length == 0) {
                 _firstByte = 0;
                 _lastByte = 0;
-            }
-            else
-            {
+            } else {
                 _firstByte = _vScrollPos * _maxBytesH;
                 _lastByte = (int)Math.Min(HexTableLength, _firstByte + _maxBytes);
             }
         }
 
-        private void UpdateScrollValues()
-        {
-            if (!_isVScrollHidden)
-            {
+        private void UpdateScrollValues() {
+            if (!_isVScrollHidden) {
                 _vScrollBar.Minimum = _vScrollMin;
                 _vScrollBar.Maximum = _vScrollMax;
                 _vScrollBar.Value = _vScrollPos;
@@ -1166,17 +1035,13 @@ namespace Quasar.Server.Controls.HexEditor
                 _vScrollBar.LargeChange = _vScrollLarge;
 
                 _vScrollBar.Visible = true;
-            }
-            else
-            {
+            } else {
                 _vScrollBar.Visible = false;
             }
         }
 
-        private void UpdateScrollBarSize()
-        {
-            if (VScrollBarVisisble && _maxVisibleBytesV > 0 && _maxBytesH > 0)
-            {
+        private void UpdateScrollBarSize() {
+            if (VScrollBarVisisble && _maxVisibleBytesV > 0 && _maxBytesH > 0) {
                 //Holds the size of a page (number of rows per page)
                 int largeScroll = _maxVisibleBytesV;
                 //Holds the row size (1)
@@ -1188,16 +1053,13 @@ namespace Quasar.Server.Controls.HexEditor
                 //Holds the current positon on the scrollbar
                 int posScroll = _firstByte / _maxBytesH;
 
-                if (largeScroll != _vScrollLarge || smallScroll != _vScrollSmall)
-                {
+                if (largeScroll != _vScrollLarge || smallScroll != _vScrollSmall) {
                     _vScrollLarge = largeScroll;
                     _vScrollSmall = smallScroll;
                 }
 
-                if (maxScroll >= largeScroll)
-                {
-                    if (maxScroll != _vScrollMax || posScroll != _vScrollPos)
-                    {
+                if (maxScroll >= largeScroll) {
+                    if (maxScroll != _vScrollMax || posScroll != _vScrollPos) {
                         _vScrollMin = minScroll;
                         _vScrollMax = maxScroll;
                         _vScrollPos = posScroll;
@@ -1206,14 +1068,10 @@ namespace Quasar.Server.Controls.HexEditor
                     VScrollBarHidden = false;
 
                     UpdateScrollValues();
-                }
-                else
-                {
+                } else {
                     VScrollBarHidden = true;
                 }
-            }
-            else
-            {
+            } else {
                 VScrollBarHidden = true;
             }
         }
@@ -1223,11 +1081,9 @@ namespace Quasar.Server.Controls.HexEditor
         #region Constructor
 
         public HexEditor()
-            : this(new ByteCollection())
-        { }
+            : this(new ByteCollection()) { }
 
-        public HexEditor(ByteCollection collection)
-        {
+        public HexEditor(ByteCollection collection) {
             //Set String format for the hex values
             _stringFormat = new StringFormat(StringFormat.GenericTypographic);
             _stringFormat.Alignment = StringAlignment.Center;
@@ -1266,8 +1122,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Boundary Calculator
 
-        private RectangleF GetLineCountBound(int index)
-        {
+        private RectangleF GetLineCountBound(int index) {
             RectangleF ret = new RectangleF(
                 _recLineCount.X,
                 _recLineCount.Y + (_recLineCount.Height * index),
@@ -1282,31 +1137,24 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region OnPaint - Functions
 
-        protected override void OnPaintBackground(PaintEventArgs pevent)
-        {
+        protected override void OnPaintBackground(PaintEventArgs pevent) {
 
-            if (BorderStyle == BorderStyle.Fixed3D)
-            {
+            if (BorderStyle == BorderStyle.Fixed3D) {
                 SolidBrush brush = new SolidBrush(BackColor);
                 Rectangle rect = ClientRectangle;
                 pevent.Graphics.FillRectangle(brush, rect);
                 ControlPaint.DrawBorder3D(pevent.Graphics, ClientRectangle, Border3DStyle.Sunken);
-            }
-            else if (BorderStyle == BorderStyle.FixedSingle)
-            {
+            } else if (BorderStyle == BorderStyle.FixedSingle) {
                 SolidBrush brush = new SolidBrush(BackColor);
                 Rectangle rect = ClientRectangle;
                 pevent.Graphics.FillRectangle(brush, rect);
                 ControlPaint.DrawBorder(pevent.Graphics, ClientRectangle, BorderColor, ButtonBorderStyle.Solid);
-            }
-            else
-            {
+            } else {
                 base.OnPaintBackground(pevent);
             }
         }
 
-        protected override void OnPaint(PaintEventArgs e)
-        {
+        protected override void OnPaint(PaintEventArgs e) {
             base.OnPaint(e);
 
             Region r = new Region(ClientRectangle);
@@ -1320,24 +1168,19 @@ namespace Quasar.Server.Controls.HexEditor
             _editView.Paint(e.Graphics, _firstByte, _lastByte);
         }
 
-        private void PaintLineCount(Graphics g, int startIndex, int lastIndex)
-        {
+        private void PaintLineCount(Graphics g, int startIndex, int lastIndex) {
             SolidBrush brush = new SolidBrush(ForeColor);
 
-            for (int i = 0; ((i * _maxBytesH) + startIndex) <= lastIndex; i++)
-            {
+            for (int i = 0; ((i * _maxBytesH) + startIndex) <= lastIndex; i++) {
                 RectangleF drawSurface = GetLineCountBound(i);
                 string lineCount = (startIndex + (i * _maxBytesH)).ToString(_lineCountCaps);
                 //Calculate how many '0' need to be added to the current count
                 int zeros = _nrCharsLineCount - lineCount.Length;
 
                 string lineStr;
-                if (zeros > -1)
-                {
+                if (zeros > -1) {
                     lineStr = new string('0', zeros) + lineCount;
-                }
-                else
-                {
+                } else {
                     lineStr = new string('~', _nrCharsLineCount);
                 }
                 g.DrawString(lineStr, Font, brush, drawSurface, _stringFormat);
@@ -1348,8 +1191,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region OnRezie
 
-        protected override void OnResize(EventArgs e)
-        {
+        protected override void OnResize(EventArgs e) {
             base.OnResize(e);
 
             UpdateRectanglePositioning();

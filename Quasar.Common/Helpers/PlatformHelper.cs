@@ -2,15 +2,12 @@
 using System.Management;
 using System.Text.RegularExpressions;
 
-namespace Quasar.Common.Helpers
-{
-    public static class PlatformHelper
-    {
+namespace Quasar.Common.Helpers {
+    public static class PlatformHelper {
         /// <summary>
         /// Initializes the <see cref="PlatformHelper"/> class.
         /// </summary>
-        static PlatformHelper()
-        {
+        static PlatformHelper() {
             Win32NT = Environment.OSVersion.Platform == PlatformID.Win32NT;
             XpOrHigher = Win32NT && Environment.OSVersion.Version.Major >= 5;
             VistaOrHigher = Win32NT && Environment.OSVersion.Version.Major >= 6;
@@ -21,10 +18,8 @@ namespace Quasar.Common.Helpers
             RunningOnMono = Type.GetType("Mono.Runtime") != null;
 
             Name = "Unknown OS";
-            using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem"))
-            {
-                foreach (ManagementObject os in searcher.Get())
-                {
+            using (var searcher = new ManagementObjectSearcher("SELECT Caption FROM Win32_OperatingSystem")) {
+                foreach (ManagementObject os in searcher.Get()) {
                     Name = os["Caption"].ToString();
                     break;
                 }
@@ -38,7 +33,7 @@ namespace Quasar.Common.Helpers
         /// <summary>
         /// Gets the full name of the operating system running on this computer (including the edition and architecture).
         /// </summary>
-        public static string FullName { get; } 
+        public static string FullName { get; }
 
         /// <summary>
         /// Gets the name of the operating system running on this computer (including the edition).

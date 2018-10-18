@@ -12,21 +12,17 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmBuilder : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmBuilder : Form {
         private bool _profileLoaded;
         private bool _changed;
         private BindingList<Host> _hosts = new BindingList<Host>();
 
-        public FrmBuilder()
-        {
+        public FrmBuilder() {
             InitializeComponent();
         }
 
-        private void LoadProfile(string profilename)
-        {
+        private void LoadProfile(string profilename) {
             var profile = new BuilderProfile(profilename);
 
             foreach (var host in HostHelper.GetHostsList(profile.Hosts))
@@ -63,14 +59,13 @@ namespace Quasar.Server.Forms
             _profileLoaded = true;
         }
 
-        private void SaveProfile(string profilename)
-        {
+        private void SaveProfile(string profilename) {
             var profile = new BuilderProfile(profilename);
 
             profile.Tag = txtTag.Text;
             profile.Hosts = HostHelper.GetRawHosts(_hosts);
             profile.Password = txtPassword.Text;
-            profile.Delay = (int) numericUpDownDelay.Value;
+            profile.Delay = (int)numericUpDownDelay.Value;
             profile.Mutex = txtMutex.Text;
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallName.Text;
@@ -96,8 +91,7 @@ namespace Quasar.Server.Forms
             profile.FileVersion = txtFileVersion.Text;
         }
 
-        private void FrmBuilder_Load(object sender, EventArgs e)
-        {
+        private void FrmBuilder_Load(object sender, EventArgs e) {
             LoadProfile("Default");
 
             numericUpDownPort.Value = Settings.ListenPort;
@@ -109,42 +103,35 @@ namespace Quasar.Server.Forms
             UpdateKeyloggerControlStates();
         }
 
-        private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmBuilder_FormClosing(object sender, FormClosingEventArgs e) {
             if (_changed &&
                 MessageBox.Show(this, "Do you want to save your current settings?", "Changes detected",
-                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
-            {
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes) {
                 SaveProfile("Default");
             }
         }
 
-        private void btnAddHost_Click(object sender, EventArgs e)
-        {
+        private void btnAddHost_Click(object sender, EventArgs e) {
             if (txtHost.Text.Length < 1) return;
 
             HasChanged();
 
             var host = txtHost.Text;
-            ushort port = (ushort) numericUpDownPort.Value;
+            ushort port = (ushort)numericUpDownPort.Value;
 
-            _hosts.Add(new Host {Hostname = host, Port = port});
+            _hosts.Add(new Host { Hostname = host, Port = port });
             txtHost.Text = "";
         }
 
         #region "Context Menu"
-        private void removeHostToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void removeHostToolStripMenuItem_Click(object sender, EventArgs e) {
             HasChanged();
 
             List<string> selectedHosts = (from object arr in lstHosts.SelectedItems select arr.ToString()).ToList();
 
-            foreach (var item in selectedHosts)
-            {
-                foreach (var host in _hosts)
-                {
-                    if (item == host.ToString())
-                    {
+            foreach (var item in selectedHosts) {
+                foreach (var host in _hosts) {
+                    if (item == host.ToString()) {
                         _hosts.Remove(host);
                         break;
                     }
@@ -152,8 +139,7 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void clearToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void clearToolStripMenuItem_Click(object sender, EventArgs e) {
             HasChanged();
 
             _hosts.Clear();
@@ -161,100 +147,84 @@ namespace Quasar.Server.Forms
         #endregion
 
         #region "Misc"
-        private void chkShowPass_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkShowPass_CheckedChanged(object sender, EventArgs e) {
             txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
         }
 
-        private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
-        private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void txtInstallsub_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
-        private void txtLogDirectoryName_KeyPress(object sender, KeyPressEventArgs e)
-        {
+        private void txtLogDirectoryName_KeyPress(object sender, KeyPressEventArgs e) {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
                          !char.IsControl(e.KeyChar));
         }
 
-        private void btnMutex_Click(object sender, EventArgs e)
-        {
+        private void btnMutex_Click(object sender, EventArgs e) {
             HasChanged();
 
             txtMutex.Text = StringHelper.GetRandomMutex();
         }
 
-        private void chkInstall_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkInstall_CheckedChanged(object sender, EventArgs e) {
             HasChanged();
 
             UpdateInstallationControlStates();
         }
 
-        private void chkStartup_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkStartup_CheckedChanged(object sender, EventArgs e) {
             HasChanged();
 
             UpdateStartupControlStates();
         }
 
-        private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkChangeAsmInfo_CheckedChanged(object sender, EventArgs e) {
             HasChanged();
 
             UpdateAssemblyControlStates();
         }
 
-        private void chkKeylogger_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkKeylogger_CheckedChanged(object sender, EventArgs e) {
             HasChanged();
 
             UpdateKeyloggerControlStates();
         }
 
-        private void btnBrowseIcon_Click(object sender, EventArgs e)
-        {
-            using (OpenFileDialog ofd = new OpenFileDialog())
-            {
+        private void btnBrowseIcon_Click(object sender, EventArgs e) {
+            using (OpenFileDialog ofd = new OpenFileDialog()) {
                 ofd.Title = "Choose Icon";
                 ofd.Filter = "Icons *.ico|*.ico";
                 ofd.Multiselect = false;
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
+                if (ofd.ShowDialog() == DialogResult.OK) {
                     txtIconPath.Text = ofd.FileName;
                     iconPreview.Image = Bitmap.FromHicon(new Icon(ofd.FileName, new Size(64, 64)).Handle);
                 }
             }
         }
 
-        private void chkChangeIcon_CheckedChanged(object sender, EventArgs e)
-        {
+        private void chkChangeIcon_CheckedChanged(object sender, EventArgs e) {
             HasChanged();
 
             UpdateIconControlStates();
         }
         #endregion
 
-        private bool CheckForEmptyInput()
-        {
+        private bool CheckForEmptyInput() {
             return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
                  _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
                  (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) && // Installation
                  (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
         }
 
-        private BuildOptions ValidateInput()
-        {
+        private BuildOptions ValidateInput() {
             BuildOptions options = new BuildOptions();
-            if (!CheckForEmptyInput())
-            {
+            if (!CheckForEmptyInput()) {
                 MessageBox.Show(this, "Please fill out all required fields!", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Information);
                 return options;
@@ -264,7 +234,7 @@ namespace Quasar.Server.Forms
             options.Mutex = txtMutex.Text;
             options.RawHosts = HostHelper.GetRawHosts(_hosts);
             options.Password = txtPassword.Text;
-            options.Delay = (int) numericUpDownDelay.Value;
+            options.Delay = (int)numericUpDownDelay.Value;
             options.IconPath = txtIconPath.Text;
             options.Version = Application.ProductVersion;
             options.InstallPath = GetInstallPath();
@@ -279,50 +249,41 @@ namespace Quasar.Server.Forms
             options.LogDirectoryName = txtLogDirectoryName.Text;
             options.HideLogDirectory = chkHideLogDirectory.Checked;
 
-            if (options.Password.Length < 3)
-            {
+            if (options.Password.Length < 3) {
                 MessageBox.Show(this, "Please enter a secure password with more than 3 characters.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return options;
             }
 
-            if (!File.Exists("client.bin"))
-            {
+            if (!File.Exists("client.bin")) {
                 MessageBox.Show(this, "Could not locate \"client.bin\" file. It should be in the same directory as Quasar.",
                     "Build failed", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return options;
             }
 
-            if (options.RawHosts.Length < 2)
-            {
+            if (options.RawHosts.Length < 2) {
                 MessageBox.Show(this, "Please enter a valid host to connect to.", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return options;
             }
 
-            if (chkChangeIcon.Checked)
-            {
-                if (string.IsNullOrWhiteSpace(options.IconPath) || !File.Exists(options.IconPath))
-                {
+            if (chkChangeIcon.Checked) {
+                if (string.IsNullOrWhiteSpace(options.IconPath) || !File.Exists(options.IconPath)) {
                     MessageBox.Show(this, "Please choose a valid icon path.", "Build failed", MessageBoxButtons.OK,
                         MessageBoxIcon.Error);
                     return options;
                 }
-            }
-            else
+            } else
                 options.IconPath = string.Empty;
 
-            if (chkChangeAsmInfo.Checked)
-            {
-                if (!IsValidVersionNumber(txtProductVersion.Text))
-                {
+            if (chkChangeAsmInfo.Checked) {
+                if (!IsValidVersionNumber(txtProductVersion.Text)) {
                     MessageBox.Show(this, "Please enter a valid product version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return options;
                 }
 
-                if (!IsValidVersionNumber(txtFileVersion.Text))
-                {
+                if (!IsValidVersionNumber(txtFileVersion.Text)) {
                     MessageBox.Show(this, "Please enter a valid file version number!\nExample: 1.2.3.4", "Build failed",
                         MessageBoxButtons.OK, MessageBoxIcon.Error);
                     return options;
@@ -339,21 +300,18 @@ namespace Quasar.Server.Forms
                 options.AssemblyInformation[7] = txtFileVersion.Text;
             }
 
-            using (SaveFileDialog sfd = new SaveFileDialog())
-            {
+            using (SaveFileDialog sfd = new SaveFileDialog()) {
                 sfd.Title = "Save Client as";
                 sfd.Filter = "Executables *.exe|*.exe";
                 sfd.RestoreDirectory = true;
                 sfd.FileName = "Client-built.exe";
-                if (sfd.ShowDialog() != DialogResult.OK)
-                {
+                if (sfd.ShowDialog() != DialogResult.OK) {
                     return options;
                 }
                 options.OutputPath = sfd.FileName;
             }
 
-            if (string.IsNullOrEmpty(options.OutputPath))
-            {
+            if (string.IsNullOrEmpty(options.OutputPath)) {
                 MessageBox.Show(this, "Please choose a valid output path.", "Build failed", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 return options;
@@ -363,8 +321,7 @@ namespace Quasar.Server.Forms
             return options;
         }
 
-        private void btnBuild_Click(object sender, EventArgs e)
-        {
+        private void btnBuild_Click(object sender, EventArgs e) {
             BuildOptions options = ValidateInput();
             if (!options.ValidationSuccess)
                 return;
@@ -375,26 +332,19 @@ namespace Quasar.Server.Forms
             t.Start(options);
         }
 
-        private void SetBuildState(bool state)
-        {
-            try
-            {
-                this.Invoke((MethodInvoker)delegate
-                {
+        private void SetBuildState(bool state) {
+            try {
+                this.Invoke((MethodInvoker)delegate {
                     btnBuild.Text = (state) ? "Build" : "Building...";
                     btnBuild.Enabled = state;
                 });
-            }
-            catch (InvalidOperationException)
-            {
+            } catch (InvalidOperationException) {
             }
         }
 
-        private void BuildClient(object o)
-        {
-            try
-            {
-                BuildOptions options = (BuildOptions) o;
+        private void BuildClient(object o) {
+            try {
+                BuildOptions options = (BuildOptions)o;
 
                 ClientBuilder.Build(options);
 
@@ -403,17 +353,14 @@ namespace Quasar.Server.Forms
                     "Build Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 SetBuildState(true);
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 MessageBox.Show(this,
                     $"An error occurred!\n\nError Message: {ex.Message}\nStack Trace:\n{ex.StackTrace}", "Build failed",
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
-        private void RefreshPreviewPath()
-        {
+        private void RefreshPreviewPath() {
             string path = string.Empty;
             if (rbAppdata.Checked)
                 path =
@@ -438,24 +385,20 @@ namespace Quasar.Server.Forms
             this.Invoke((MethodInvoker)delegate { txtPreviewPath.Text = path + ".exe"; });
         }
 
-        private bool IsValidVersionNumber(string input)
-        {
+        private bool IsValidVersionNumber(string input) {
             Match match = Regex.Match(input, @"^[0-9]+\.[0-9]+\.(\*|[0-9]+)\.(\*|[0-9]+)$", RegexOptions.IgnoreCase);
             return match.Success;
         }
 
-        private short GetInstallPath()
-        {
+        private short GetInstallPath() {
             if (rbAppdata.Checked) return 1;
             if (rbProgramFiles.Checked) return 2;
             if (rbSystem.Checked) return 3;
             throw new ArgumentException("InstallPath");
         }
 
-        private RadioButton GetInstallPath(short installPath)
-        {
-            switch (installPath)
-            {
+        private RadioButton GetInstallPath(short installPath) {
+            switch (installPath) {
                 case 1:
                     return rbAppdata;
                 case 2:
@@ -467,8 +410,7 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void UpdateAssemblyControlStates()
-        {
+        private void UpdateAssemblyControlStates() {
             txtProductName.Enabled = chkChangeAsmInfo.Checked;
             txtDescription.Enabled = chkChangeAsmInfo.Checked;
             txtCompanyName.Enabled = chkChangeAsmInfo.Checked;
@@ -479,19 +421,16 @@ namespace Quasar.Server.Forms
             txtProductVersion.Enabled = chkChangeAsmInfo.Checked;
         }
 
-        private void UpdateIconControlStates()
-        {
+        private void UpdateIconControlStates() {
             txtIconPath.Enabled = chkChangeIcon.Checked;
             btnBrowseIcon.Enabled = chkChangeIcon.Checked;
         }
 
-        private void UpdateStartupControlStates()
-        {
+        private void UpdateStartupControlStates() {
             txtRegistryKeyName.Enabled = chkStartup.Checked;
         }
 
-        private void UpdateInstallationControlStates()
-        {
+        private void UpdateInstallationControlStates() {
             txtInstallName.Enabled = chkInstall.Checked;
             rbAppdata.Enabled = chkInstall.Checked;
             rbProgramFiles.Enabled = chkInstall.Checked;
@@ -501,14 +440,12 @@ namespace Quasar.Server.Forms
             chkHideSubDirectory.Enabled = chkInstall.Checked;
         }
 
-        private void UpdateKeyloggerControlStates()
-        {
+        private void UpdateKeyloggerControlStates() {
             txtLogDirectoryName.Enabled = chkKeylogger.Checked;
             chkHideLogDirectory.Enabled = chkKeylogger.Checked;
         }
 
-        private void HasChanged()
-        {
+        private void HasChanged() {
             if (!_changed && _profileLoaded)
                 _changed = true;
         }
@@ -516,16 +453,14 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Handles a basic change in setting.
         /// </summary>
-        private void HasChangedSetting(object sender, EventArgs e)
-        {
+        private void HasChangedSetting(object sender, EventArgs e) {
             HasChanged();
         }
 
         /// <summary>
         /// Handles a basic change in setting, also refreshing the example file path.
         /// </summary>
-        private void HasChangedSettingAndFilePath(object sender, EventArgs e)
-        {
+        private void HasChangedSettingAndFilePath(object sender, EventArgs e) {
             HasChanged();
 
             RefreshPreviewPath();

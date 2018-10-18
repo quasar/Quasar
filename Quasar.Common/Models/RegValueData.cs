@@ -1,11 +1,9 @@
 ﻿using Microsoft.Win32;
 using ProtoBuf;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class RegValueData
-    {
+    public class RegValueData {
         [ProtoMember(1)]
         public string Name { get; set; }
 

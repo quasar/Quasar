@@ -3,16 +3,13 @@ using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace Quasar.Client.Utilities
-{
+namespace Quasar.Client.Utilities {
     /// <summary>
     /// Provides access to Win32 API and Microsoft C Runtime Library (msvcrt.dll).
     /// </summary>
-    public static class NativeMethods
-    {
+    public static class NativeMethods {
         [StructLayout(LayoutKind.Sequential)]
-        internal struct LASTINPUTINFO
-        {
+        internal struct LASTINPUTINFO {
             public static readonly int SizeOf = Marshal.SizeOf(typeof(LASTINPUTINFO));
             [MarshalAs(UnmanagedType.U4)] public UInt32 cbSize;
             [MarshalAs(UnmanagedType.U4)] public UInt32 dwTime;
@@ -128,8 +125,7 @@ namespace Quasar.Client.Utilities
         internal static extern int SetTcpEntry(IntPtr pTcprow);
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct MibTcprowOwnerPid
-        {
+        internal struct MibTcprowOwnerPid {
             public uint state;
             public uint localAddr;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] localPort;
@@ -137,36 +133,30 @@ namespace Quasar.Client.Utilities
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] remotePort;
             public uint owningPid;
 
-            public IPAddress LocalAddress
-            {
+            public IPAddress LocalAddress {
                 get { return new IPAddress(localAddr); }
             }
 
-            public ushort LocalPort
-            {
+            public ushort LocalPort {
                 get { return BitConverter.ToUInt16(new byte[2] { localPort[1], localPort[0] }, 0); }
             }
 
-            public IPAddress RemoteAddress
-            {
+            public IPAddress RemoteAddress {
                 get { return new IPAddress(remoteAddr); }
             }
 
-            public ushort RemotePort
-            {
+            public ushort RemotePort {
                 get { return BitConverter.ToUInt16(new byte[2] { remotePort[1], remotePort[0] }, 0); }
             }
         }
 
         [StructLayout(LayoutKind.Sequential)]
-        internal struct MibTcptableOwnerPid
-        {
+        internal struct MibTcptableOwnerPid {
             public uint dwNumEntries;
             private readonly MibTcprowOwnerPid table;
         }
 
-        internal enum TcpTableClass
-        {
+        internal enum TcpTableClass {
             TcpTableBasicListener,
             TcpTableBasicConnections,
             TcpTableBasicAll,

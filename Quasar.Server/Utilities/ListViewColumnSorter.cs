@@ -1,10 +1,8 @@
 ﻿using System.Collections;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Utilities
-{
-    public class ListViewColumnSorter : IComparer
-    {
+namespace Quasar.Server.Utilities {
+    public class ListViewColumnSorter : IComparer {
         /// <summary>
         /// Specifies the column to be sorted
         /// </summary>
@@ -23,8 +21,7 @@ namespace Quasar.Server.Utilities
         /// <summary>
         /// Class constructor.  Initializes various elements
         /// </summary>
-        public ListViewColumnSorter()
-        {
+        public ListViewColumnSorter() {
             // Initialize the column to '0'
             _columnToSort = 0;
 
@@ -41,11 +38,10 @@ namespace Quasar.Server.Utilities
         /// <param name="x">First object to be compared</param>
         /// <param name="y">Second object to be compared</param>
         /// <returns>The result of the comparison. "0" if equal, negative if 'x' is less than 'y' and positive if 'x' is greater than 'y'</returns>
-        public int Compare(object x, object y)
-        {
+        public int Compare(object x, object y) {
             // Cast the objects to be compared to ListViewItem objects
-            var listviewX = (ListViewItem) x;
-            var listviewY = (ListViewItem) y;
+            var listviewX = (ListViewItem)x;
+            var listviewY = (ListViewItem)y;
 
             if (listviewX.SubItems[0].Text == ".." || listviewY.SubItems[0].Text == "..")
                 return 0;
@@ -55,18 +51,13 @@ namespace Quasar.Server.Utilities
                 listviewY.SubItems[_columnToSort].Text);
 
             // Calculate correct return value based on object comparison
-            if (_orderOfSort == SortOrder.Ascending)
-            {
+            if (_orderOfSort == SortOrder.Ascending) {
                 // Ascending sort is selected, return normal result of compare operation
                 return compareResult;
-            }
-            else if (_orderOfSort == SortOrder.Descending)
-            {
+            } else if (_orderOfSort == SortOrder.Descending) {
                 // Descending sort is selected, return negative result of compare operation
                 return (-compareResult);
-            }
-            else
-            {
+            } else {
                 // Return '0' to indicate they are equal
                 return 0;
             }
@@ -75,8 +66,7 @@ namespace Quasar.Server.Utilities
         /// <summary>
         /// Gets or sets the number of the column to which to apply the sorting operation (Defaults to '0').
         /// </summary>
-        public int SortColumn
-        {
+        public int SortColumn {
             set { _columnToSort = value; }
             get { return _columnToSort; }
         }
@@ -84,8 +74,7 @@ namespace Quasar.Server.Utilities
         /// <summary>
         /// Gets or sets the order of sorting to apply (for example, 'Ascending' or 'Descending').
         /// </summary>
-        public SortOrder Order
-        {
+        public SortOrder Order {
             set { _orderOfSort = value; }
             get { return _orderOfSort; }
         }

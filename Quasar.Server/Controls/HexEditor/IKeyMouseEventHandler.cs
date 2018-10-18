@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Controls.HexEditor
-{
-    public interface IKeyMouseEventHandler
-    {
+namespace Quasar.Server.Controls.HexEditor {
+    public interface IKeyMouseEventHandler {
         void OnKeyPress(KeyPressEventArgs e);
 
         void OnKeyDown(KeyEventArgs e);

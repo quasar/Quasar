@@ -2,18 +2,15 @@
 using Quasar.Common.IO.Compression;
 using System;
 
-namespace Quasar.Common.Tests.Compression
-{
+namespace Quasar.Common.Tests.Compression {
     [TestClass]
-    public class SafeQuickLZTests
-    {
+    public class SafeQuickLZTests {
         /*
          * Purpose: To validate a small amount of data after compression/decompression
          *          using SafeQuickLZ with level 1 compression.
          */
         [TestMethod, TestCategory("Compression")]
-        public void SmallDataCompressionTestLevel1()
-        {
+        public void SmallDataCompressionTestLevel1() {
             byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
@@ -39,8 +36,7 @@ namespace Quasar.Common.Tests.Compression
          *          using SafeQuickLZ with level 3 compression.
          */
         [TestMethod, TestCategory("Compression")]
-        public void SmallDataCompressionTestLevel3()
-        {
+        public void SmallDataCompressionTestLevel3() {
             byte[] smallData = new byte[100];
 
             // Fill the small data array with random data.
@@ -66,8 +62,7 @@ namespace Quasar.Common.Tests.Compression
          *          using SafeQuickLZ with level 1 compression.
          */
         [TestMethod, TestCategory("Compression")]
-        public void BigDataCompressionTestLevel1()
-        {
+        public void BigDataCompressionTestLevel1() {
             byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.
@@ -93,8 +88,7 @@ namespace Quasar.Common.Tests.Compression
          *          using SafeQuickLZ with level 3 compression.
          */
         [TestMethod, TestCategory("Compression")]
-        public void BigDataCompressionTestLevel3()
-        {
+        public void BigDataCompressionTestLevel3() {
             byte[] bigData = new byte[100000];
 
             // Fill the big data array with random data.

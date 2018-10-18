@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoShowMessageBox : IMessage
-    {
+    public class DoShowMessageBox : IMessage {
         [ProtoMember(1)]
         public string Caption { get; set; }
 

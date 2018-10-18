@@ -3,10 +3,8 @@ using System.IO;
 using System.Linq;
 using System.Text;
 
-namespace Quasar.Common.Helpers
-{
-    public static class FileHelper
-    {
+namespace Quasar.Common.Helpers {
+    public static class FileHelper {
         /// <summary>
         /// List of illegal path characters.
         /// </summary>
@@ -17,8 +15,7 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="path">The path to check.</param>
         /// <returns>Returns <value>true</value> if the path contains illegal characters, otherwise <value>false</value>.</returns>
-        public static bool HasIllegalCharacters(string path)
-        {
+        public static bool HasIllegalCharacters(string path) {
             return path.Any(c => IllegalPathChars.Contains(c));
         }
 
@@ -28,8 +25,7 @@ namespace Quasar.Common.Helpers
         /// <param name="length">The length of the file name.</param>
         /// <param name="extension">The file extension including the dot, e.g. <value>.exe</value>.</param>
         /// <returns>The random file name.</returns>
-        public static string GetRandomFilename(int length, string extension = "")
-        {
+        public static string GetRandomFilename(int length, string extension = "") {
             return string.Concat(StringHelper.GetRandomString(length), extension);
         }
 
@@ -38,11 +34,9 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="extension">The file extension including the dot, e.g. <value>.exe</value>.</param>
         /// <returns>The path to the temp file.</returns>
-        public static string GetTempFilePath(string extension)
-        {
+        public static string GetTempFilePath(string extension) {
             string tempFilePath;
-            do
-            {
+            do {
                 tempFilePath = Path.Combine(Path.GetTempPath(), GetRandomFilename(12, extension));
             } while (File.Exists(tempFilePath));
 
@@ -54,8 +48,7 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="binary">The binary file to check.</param>
         /// <returns>Returns <value>true</value> for valid executable identifiers, otherwise <value>false</value>.</returns>
-        public static bool HasExecutableIdentifier(byte[] binary)
-        {
+        public static bool HasExecutableIdentifier(byte[] binary) {
             if (binary.Length < 2) return false;
             return (binary[0] == 'M' && binary[1] == 'Z') || (binary[0] == 'Z' && binary[1] == 'M');
         }
@@ -65,8 +58,7 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>Returns <value>true</value> if the deletion was successful, otherwise <value>false</value>.</returns>
-        public static bool DeleteZoneIdentifier(string filePath)
-        {
+        public static bool DeleteZoneIdentifier(string filePath) {
             return NativeMethods.DeleteFile(filePath + ":Zone.Identifier");
         }
 
@@ -75,12 +67,10 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="filename">The filename of the log.</param>
         /// <param name="appendText">The text to append.</param>
-        public static void WriteLogFile(string filename, string appendText)
-        {
+        public static void WriteLogFile(string filename, string appendText) {
             appendText = ReadLogFile(filename) + appendText;
 
-            using (FileStream fStream = File.Open(filename, FileMode.Create, FileAccess.Write))
-            {
+            using (FileStream fStream = File.Open(filename, FileMode.Create, FileAccess.Write)) {
                 byte[] data = Aes128.Encrypt(Encoding.UTF8.GetBytes(appendText));
                 fStream.Seek(0, SeekOrigin.Begin);
                 fStream.Write(data, 0, data.Length);
@@ -91,8 +81,7 @@ namespace Quasar.Common.Helpers
         /// Reads a log file.
         /// </summary>
         /// <param name="filename">The filename of the log.</param>
-        public static string ReadLogFile(string filename)
-        {
+        public static string ReadLogFile(string filename) {
             return File.Exists(filename) ? Encoding.UTF8.GetString(Aes128.Decrypt(File.ReadAllBytes(filename))) : string.Empty;
         }
     }

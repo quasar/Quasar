@@ -1,9 +1,7 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoClientUninstall : IMessage
-    {
+    public class DoClientUninstall : IMessage {
     }
 }

@@ -1,9 +1,7 @@
 ﻿using System.Net;
 
-namespace Quasar.Client.Data
-{
-    public class Host
-    {
+namespace Quasar.Client.Data {
+    public class Host {
         /// <summary>
         /// Stores the hostname of the Host.
         /// </summary>
@@ -25,8 +23,7 @@ namespace Quasar.Client.Data
         /// </summary>
         public ushort Port { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return Hostname + ":" + Port;
         }
     }

@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetDeleteRegistryKeyResponse : IMessage
-    {
+    public class GetDeleteRegistryKeyResponse : IMessage {
         [ProtoMember(1)]
         public string ParentPath { get; set; }
 

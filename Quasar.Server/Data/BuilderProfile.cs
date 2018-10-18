@@ -5,392 +5,295 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Quasar.Server.Data
-{
-    public class BuilderProfile
-    {
+namespace Quasar.Server.Data {
+    public class BuilderProfile {
         private readonly string _profilePath;
 
-        public string Hosts
-        {
-            get
-            {
+        public string Hosts {
+            get {
                 return ReadValueSafe("Hosts");
             }
-            set
-            {
+            set {
                 WriteValue("Hosts", value);
             }
         }
 
-        public string Tag
-        {
-            get
-            {
+        public string Tag {
+            get {
                 return ReadValueSafe("Tag", "Office04");
             }
-            set
-            {
+            set {
                 WriteValue("Tag", value);
             }
         }
 
-        public string Password
-        {
-            get
-            {
+        public string Password {
+            get {
                 return ReadValueSafe("Password", Settings.Password);
             }
-            set
-            {
+            set {
                 WriteValue("Password", value);
             }
         }
 
-        public int Delay
-        {
-            get
-            {
+        public int Delay {
+            get {
                 return int.Parse(ReadValueSafe("Delay", "3000"));
             }
-            set
-            {
+            set {
                 WriteValue("Delay", value.ToString());
             }
         }
 
-        public string Mutex
-        {
-            get
-            {
+        public string Mutex {
+            get {
                 return ReadValueSafe("Mutex", StringHelper.GetRandomMutex());
             }
-            set
-            {
+            set {
                 WriteValue("Mutex", value);
             }
         }
 
-        public bool InstallClient
-        {
-            get
-            {
+        public bool InstallClient {
+            get {
                 return bool.Parse(ReadValueSafe("InstallClient", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("InstallClient", value.ToString());
             }
         }
 
-        public string InstallName
-        {
-            get
-            {
+        public string InstallName {
+            get {
                 return ReadValueSafe("InstallName", "Client");
             }
-            set
-            {
+            set {
                 WriteValue("InstallName", value);
             }
         }
 
-        public short InstallPath
-        {
-            get
-            {
+        public short InstallPath {
+            get {
                 return short.Parse(ReadValueSafe("InstallPath", "1"));
             }
-            set
-            {
+            set {
                 WriteValue("InstallPath", value.ToString());
             }
         }
 
-        public string InstallSub
-        {
-            get
-            {
+        public string InstallSub {
+            get {
                 return ReadValueSafe("InstallSub", "SubDir");
             }
-            set
-            {
+            set {
                 WriteValue("InstallSub", value);
             }
         }
 
-        public bool HideFile
-        {
-            get
-            {
+        public bool HideFile {
+            get {
                 return bool.Parse(ReadValueSafe("HideFile", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("HideFile", value.ToString());
             }
         }
 
-        public bool HideSubDirectory
-        {
-            get
-            {
+        public bool HideSubDirectory {
+            get {
                 return bool.Parse(ReadValueSafe("HideSubDirectory", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("HideSubDirectory", value.ToString());
             }
         }
 
-        public bool AddStartup
-        {
-            get
-            {
+        public bool AddStartup {
+            get {
                 return bool.Parse(ReadValueSafe("AddStartup", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("AddStartup", value.ToString());
             }
         }
 
-        public string RegistryName
-        {
-            get
-            {
+        public string RegistryName {
+            get {
                 return ReadValueSafe("RegistryName", "Quasar Client Startup");
             }
-            set
-            {
+            set {
                 WriteValue("RegistryName", value);
             }
         }
 
-        public bool ChangeIcon
-        {
-            get
-            {
+        public bool ChangeIcon {
+            get {
                 return bool.Parse(ReadValueSafe("ChangeIcon", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("ChangeIcon", value.ToString());
             }
         }
 
-        public string IconPath
-        {
-            get
-            {
+        public string IconPath {
+            get {
                 return ReadValueSafe("IconPath");
             }
-            set
-            {
+            set {
                 WriteValue("IconPath", value);
             }
         }
 
-        public bool ChangeAsmInfo
-        {
-            get
-            {
+        public bool ChangeAsmInfo {
+            get {
                 return bool.Parse(ReadValueSafe("ChangeAsmInfo", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("ChangeAsmInfo", value.ToString());
             }
         }
 
-        public bool Keylogger
-        {
-            get
-            {
+        public bool Keylogger {
+            get {
                 return bool.Parse(ReadValueSafe("Keylogger", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("Keylogger", value.ToString());
             }
         }
 
-        public string LogDirectoryName
-        {
-            get
-            {
+        public string LogDirectoryName {
+            get {
                 return ReadValueSafe("LogDirectoryName", "Logs");
             }
-            set
-            {
+            set {
                 WriteValue("LogDirectoryName", value);
             }
         }
 
-        public bool HideLogDirectory
-        {
-            get
-            {
+        public bool HideLogDirectory {
+            get {
                 return bool.Parse(ReadValueSafe("HideLogDirectory", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("HideLogDirectory", value.ToString());
             }
         }
 
-        public string ProductName
-        {
-            get
-            {
+        public string ProductName {
+            get {
                 return ReadValueSafe("ProductName");
             }
-            set
-            {
+            set {
                 WriteValue("ProductName", value);
             }
         }
 
-        public string Description
-        {
-            get
-            {
+        public string Description {
+            get {
                 return ReadValueSafe("Description");
             }
-            set
-            {
+            set {
                 WriteValue("Description", value);
             }
         }
 
-        public string CompanyName
-        {
-            get
-            {
+        public string CompanyName {
+            get {
                 return ReadValueSafe("CompanyName");
             }
-            set
-            {
+            set {
                 WriteValue("CompanyName", value);
             }
         }
 
-        public string Copyright
-        {
-            get
-            {
+        public string Copyright {
+            get {
                 return ReadValueSafe("Copyright");
             }
-            set
-            {
+            set {
                 WriteValue("Copyright", value);
             }
         }
 
-        public string Trademarks
-        {
-            get
-            {
+        public string Trademarks {
+            get {
                 return ReadValueSafe("Trademarks");
             }
-            set
-            {
+            set {
                 WriteValue("Trademarks", value);
             }
         }
 
-        public string OriginalFilename
-        {
-            get
-            {
+        public string OriginalFilename {
+            get {
                 return ReadValueSafe("OriginalFilename");
             }
-            set
-            {
+            set {
                 WriteValue("OriginalFilename", value);
             }
         }
 
-        public string ProductVersion
-        {
-            get
-            {
+        public string ProductVersion {
+            get {
                 return ReadValueSafe("ProductVersion");
             }
-            set
-            {
+            set {
                 WriteValue("ProductVersion", value);
             }
         }
 
-        public string FileVersion
-        {
-            get
-            {
+        public string FileVersion {
+            get {
                 return ReadValueSafe("FileVersion");
             }
-            set
-            {
+            set {
                 WriteValue("FileVersion", value);
             }
         }
 
-        public BuilderProfile(string profileName)
-        {
+        public BuilderProfile(string profileName) {
             if (string.IsNullOrEmpty(profileName)) throw new ArgumentException("Invalid Profile Path");
             _profilePath = Path.Combine(Application.StartupPath, "Profiles\\" + profileName + ".xml");
         }
 
-        private string ReadValue(string pstrValueToRead)
-        {
-            try
-            {
+        private string ReadValue(string pstrValueToRead) {
+            try {
                 XPathDocument doc = new XPathDocument(_profilePath);
                 XPathNavigator nav = doc.CreateNavigator();
                 XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
-                while (iterator.MoveNext())
-                {
+                while (iterator.MoveNext()) {
                     return iterator.Current.Value;
                 }
 
                 return string.Empty;
-            }
-            catch
-            {
+            } catch {
                 return string.Empty;
             }
         }
 
-        private string ReadValueSafe(string pstrValueToRead, string defaultValue = "")
-        {
+        private string ReadValueSafe(string pstrValueToRead, string defaultValue = "") {
             string value = ReadValue(pstrValueToRead);
             return (!string.IsNullOrEmpty(value)) ? value : defaultValue;
         }
 
-        private void WriteValue(string pstrValueToRead, string pstrValueToWrite)
-        {
-            try
-            {
+        private void WriteValue(string pstrValueToRead, string pstrValueToWrite) {
+            try {
                 XmlDocument doc = new XmlDocument();
 
-                if (File.Exists(_profilePath))
-                {
-                    using (var reader = new XmlTextReader(_profilePath))
-                    {
+                if (File.Exists(_profilePath)) {
+                    using (var reader = new XmlTextReader(_profilePath)) {
                         doc.Load(reader);
                     }
-                }
-                else
-                {
+                } else {
                     var dir = Path.GetDirectoryName(_profilePath);
-                    if (!Directory.Exists(dir))
-                    {
+                    if (!Directory.Exists(dir)) {
                         Directory.CreateDirectory(dir);
                     }
                     doc.AppendChild(doc.CreateElement("settings"));
                 }
-                
+
                 XmlElement root = doc.DocumentElement;
                 XmlNode oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
                 if (oldNode == null) // create if not exist
@@ -402,9 +305,7 @@ namespace Quasar.Server.Data
                 }
                 oldNode.InnerText = pstrValueToWrite;
                 doc.Save(_profilePath);
-            }
-            catch
-            {
+            } catch {
             }
         }
     }

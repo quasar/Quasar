@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Quasar.Server.Networking.Utilities
-{
+namespace Quasar.Server.Networking.Utilities {
     /// <summary>
     /// Implements a pool of byte arrays to improve allocation performance when parsing data.
     /// </summary>
     /// <threadsafety>This type is safe for multithreaded operations.</threadsafety>
-    public class PooledBufferManager
-    {
+    public class PooledBufferManager {
         private readonly int _bufferLength;
         private int _bufferCount;
         private readonly Stack<byte[]> _buffers;
@@ -22,8 +20,7 @@ namespace Quasar.Server.Networking.Utilities
         /// Fires the <see>NewBufferAllocated</see> event.
         /// </summary>
         /// <param name="e">The event arguments.</param>
-        protected virtual void OnNewBufferAllocated(EventArgs e)
-        {
+        protected virtual void OnNewBufferAllocated(EventArgs e) {
             var handler = NewBufferAllocated;
             if (handler != null)
                 handler(this, e);
@@ -37,9 +34,8 @@ namespace Quasar.Server.Networking.Utilities
         /// Raises the <see>BufferRequested</see> event.
         /// </summary>
         /// <param name="e">The event arguments.</param>
-        protected virtual void OnBufferRequested(EventArgs e)
-        {
-            var handler =BufferRequested;
+        protected virtual void OnBufferRequested(EventArgs e) {
+            var handler = BufferRequested;
             if (handler != null)
                 handler(this, e);
         }
@@ -52,9 +48,8 @@ namespace Quasar.Server.Networking.Utilities
         /// Raises the <see>BufferReturned</see> event.
         /// </summary>
         /// <param name="e">The event arguments.</param>
-        protected virtual void OnBufferReturned(EventArgs e)
-        {
-            var handler = BufferReturned; 
+        protected virtual void OnBufferReturned(EventArgs e) {
+            var handler = BufferReturned;
             if (handler != null)
                 handler(this, e);
         }
@@ -64,24 +59,21 @@ namespace Quasar.Server.Networking.Utilities
         /// <summary>
         /// Gets the size of the buffers allocated from this pool.
         /// </summary>
-        public int BufferLength
-        {
+        public int BufferLength {
             get { return _bufferLength; }
         }
 
         /// <summary>
         /// Gets the maximum number of buffers available at any given time from this pool.
         /// </summary>
-        public int MaxBufferCount
-        {
+        public int MaxBufferCount {
             get { return _bufferCount; }
         }
 
         /// <summary>
         /// Gets the current number of buffers available for use.
         /// </summary>
-        public int BuffersAvailable
-        {
+        public int BuffersAvailable {
             get { return _buffers.Count; }
         }
 
@@ -99,8 +91,7 @@ namespace Quasar.Server.Networking.Utilities
         /// <param name="baseBufferCount">The number of preallocated buffers that should be available.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="baseBufferLength"/> or
         /// <paramref name="baseBufferCount"/> are zero or negative.</exception>
-        public PooledBufferManager(int baseBufferLength, int baseBufferCount)
-        {
+        public PooledBufferManager(int baseBufferLength, int baseBufferCount) {
             if (baseBufferLength <= 0)
                 throw new ArgumentOutOfRangeException("baseBufferLength", baseBufferLength, "Buffer length must be a positive integer value.");
             if (baseBufferCount <= 0)
@@ -111,8 +102,7 @@ namespace Quasar.Server.Networking.Utilities
 
             _buffers = new Stack<byte[]>(baseBufferCount);
 
-            for (int i = 0; i < baseBufferCount; i++)
-            {
+            for (int i = 0; i < baseBufferCount; i++) {
                 _buffers.Push(new byte[baseBufferLength]);
             }
         }
@@ -127,14 +117,10 @@ namespace Quasar.Server.Networking.Utilities
         /// <see>ReturnBuffer</see> method.</para>
         /// </remarks>
         /// <returns>A <see>byte</see>[] from the pool.</returns>
-        public byte[] GetBuffer()
-        {
-            if (_buffers.Count > 0)
-            {
-                lock (_buffers)
-                {
-                    if (_buffers.Count > 0)
-                    {
+        public byte[] GetBuffer() {
+            if (_buffers.Count > 0) {
+                lock (_buffers) {
+                    if (_buffers.Count > 0) {
                         byte[] buffer = _buffers.Pop();
                         return buffer;
                     }
@@ -144,8 +130,7 @@ namespace Quasar.Server.Networking.Utilities
             return AllocateNewBuffer();
         }
 
-        private byte[] AllocateNewBuffer()
-        {
+        private byte[] AllocateNewBuffer() {
             byte[] newBuffer = new byte[_bufferLength];
             _bufferCount++;
             OnNewBufferAllocated(EventArgs.Empty);
@@ -163,8 +148,7 @@ namespace Quasar.Server.Networking.Utilities
         /// </remarks>
         /// <param name="buffer">The buffer to return to the pool.</param>
         /// <exception cref="ArgumentNullException">Thrown if <paramref name="buffer" /> is <see langword="null" />.</exception>
-        public bool ReturnBuffer(byte[] buffer)
-        {
+        public bool ReturnBuffer(byte[] buffer) {
             if (buffer == null)
                 throw new ArgumentNullException("buffer");
             if (buffer.Length != _bufferLength)
@@ -173,8 +157,7 @@ namespace Quasar.Server.Networking.Utilities
             if (ClearOnReturn)
                 Array.Clear(buffer, 0, buffer.Length);
 
-            lock (_buffers)
-            {
+            lock (_buffers) {
                 if (!_buffers.Contains(buffer))
                     _buffers.Push(buffer);
             }
@@ -190,22 +173,18 @@ namespace Quasar.Server.Networking.Utilities
         /// <remarks>
         /// <para>This method does not cause the <see>NewBufferAllocated</see> event to be raised.</para>
         /// </remarks>
-        public void IncreaseBufferCount(int buffersToAdd)
-        {
+        public void IncreaseBufferCount(int buffersToAdd) {
             if (buffersToAdd <= 0)
                 throw new ArgumentOutOfRangeException("buffersToAdd", buffersToAdd, "The number of buffers to add must be a nonnegative, nonzero integer.");
 
             List<byte[]> newBuffers = new List<byte[]>(buffersToAdd);
-            for (int i = 0; i < buffersToAdd; i++)
-            {
+            for (int i = 0; i < buffersToAdd; i++) {
                 newBuffers.Add(new byte[_bufferLength]);
             }
 
-            lock (_buffers)
-            {
+            lock (_buffers) {
                 _bufferCount += buffersToAdd;
-                for (int i = 0; i < buffersToAdd; i++)
-                {
+                for (int i = 0; i < buffersToAdd; i++) {
                     _buffers.Push(newBuffers[i]);
                 }
             }
@@ -222,17 +201,14 @@ namespace Quasar.Server.Networking.Utilities
         /// returned value will be 15.</para>
         /// </remarks>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="buffersToRemove"/> is less than or equal to 0.</exception>
-        public int DecreaseBufferCount(int buffersToRemove)
-        {
+        public int DecreaseBufferCount(int buffersToRemove) {
             if (buffersToRemove <= 0)
                 throw new ArgumentOutOfRangeException("buffersToRemove", buffersToRemove, "The number of buffers to remove must be a nonnegative, nonzero integer.");
 
             int numRemoved = 0;
 
-            lock (_buffers)
-            {
-                for (int i = 0; i < buffersToRemove && _buffers.Count > 0; i++)
-                {
+            lock (_buffers) {
+                for (int i = 0; i < buffersToRemove && _buffers.Count > 0; i++) {
                     _buffers.Pop();
                     numRemoved++;
                     _bufferCount--;

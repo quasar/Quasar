@@ -7,10 +7,8 @@ using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmConnections : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmConnections : Form {
         /// <summary>
         /// The client which can be used for the connections manager.
         /// </summary>
@@ -38,10 +36,8 @@ namespace Quasar.Server.Forms
         /// <returns>
         /// Returns a new connections manager form for the client if there is none currently open, otherwise creates a new one.
         /// </returns>
-        public static FrmConnections CreateNewOrGetExisting(Client client)
-        {
-            if (OpenedForms.ContainsKey(client))
-            {
+        public static FrmConnections CreateNewOrGetExisting(Client client) {
+            if (OpenedForms.ContainsKey(client)) {
                 return OpenedForms[client];
             }
             FrmConnections f = new FrmConnections(client);
@@ -54,8 +50,7 @@ namespace Quasar.Server.Forms
         /// Initializes a new instance of the <see cref="FrmConnections"/> class using the given client.
         /// </summary>
         /// <param name="client">The client used for the connections manager form.</param>
-        public FrmConnections(Client client)
-        {
+        public FrmConnections(Client client) {
             _connectClient = client;
             _connectionsHandler = new TcpConnectionsHandler(client);
 
@@ -66,8 +61,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Registers the connections manager message handler for client communication.
         /// </summary>
-        private void RegisterMessageHandler()
-        {
+        private void RegisterMessageHandler() {
             _connectClient.ClientState += ClientDisconnected;
             _connectionsHandler.ProgressChanged += TcpConnectionsChanged;
             MessageHandler.Register(_connectionsHandler);
@@ -76,8 +70,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Unregisters the connections manager message handler.
         /// </summary>
-        private void UnregisterMessageHandler()
-        {
+        private void UnregisterMessageHandler() {
             MessageHandler.Unregister(_connectionsHandler);
             _connectionsHandler.ProgressChanged -= TcpConnectionsChanged;
             _connectClient.ClientState -= ClientDisconnected;
@@ -88,10 +81,8 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client which disconnected.</param>
         /// <param name="connected">True if the client connected, false if disconnected</param>
-        private void ClientDisconnected(Client client, bool connected)
-        {
-            if (!connected)
-            {
+        private void ClientDisconnected(Client client, bool connected) {
+            if (!connected) {
                 this.Invoke((MethodInvoker)this.Close);
             }
         }
@@ -101,12 +92,10 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="sender">The message handler which raised the event.</param>
         /// <param name="connections">The current TCP connections of the client.</param>
-        private void TcpConnectionsChanged(object sender, TcpConnection[] connections)
-        {
+        private void TcpConnectionsChanged(object sender, TcpConnection[] connections) {
             lstConnections.Items.Clear();
 
-            foreach (var con in connections)
-            {
+            foreach (var con in connections) {
                 string state = con.State.ToString();
 
                 ListViewItem lvi = new ListViewItem(new[]
@@ -115,8 +104,7 @@ namespace Quasar.Server.Forms
                     con.RemoteAddress, con.RemotePort.ToString(), state
                 });
 
-                if (!_groups.ContainsKey(state))
-                {
+                if (!_groups.ContainsKey(state)) {
                     // create new group if not exists already
                     ListViewGroup g = new ListViewGroup(state, state);
                     lstConnections.Groups.Add(g);
@@ -128,36 +116,30 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void FrmConnections_Load(object sender, EventArgs e)
-        {
+        private void FrmConnections_Load(object sender, EventArgs e) {
             this.Text = WindowHelper.GetWindowTitle("Connections", _connectClient);
             _connectionsHandler.RefreshTcpConnections();
         }
 
-        private void FrmConnections_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmConnections_FormClosing(object sender, FormClosingEventArgs e) {
             UnregisterMessageHandler();
             _connectionsHandler.Dispose();
         }
 
-        private void refreshToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void refreshToolStripMenuItem_Click(object sender, EventArgs e) {
             _connectionsHandler.RefreshTcpConnections();
         }
 
-        private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e)
-        {
+        private void closeConnectionToolStripMenuItem_Click(object sender, EventArgs e) {
             bool modified = false;
 
-            foreach (ListViewItem lvi in lstConnections.SelectedItems)
-            {
+            foreach (ListViewItem lvi in lstConnections.SelectedItems) {
                 _connectionsHandler.CloseTcpConnection(lvi.SubItems[1].Text, ushort.Parse(lvi.SubItems[2].Text),
                     lvi.SubItems[3].Text, ushort.Parse(lvi.SubItems[4].Text));
                 modified = true;
             }
 
-            if (modified)
-            {
+            if (modified) {
                 _connectionsHandler.RefreshTcpConnections();
             }
         }

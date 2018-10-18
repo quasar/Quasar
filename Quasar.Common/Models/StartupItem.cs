@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Enums;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class StartupItem
-    {
+    public class StartupItem {
         [ProtoMember(1)]
         public string Name { get; set; }
 

@@ -5,10 +5,8 @@ using System.Net;
 using System.Net.Sockets;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.ReverseProxy
-{
-    public class ReverseProxyServer
-    {
+namespace Quasar.Server.ReverseProxy {
+    public class ReverseProxyServer {
         public delegate void ConnectionEstablishedCallback(ReverseProxyClient proxyClient);
 
         public delegate void UpdateConnectionCallback(ReverseProxyClient proxyClient);
@@ -19,29 +17,21 @@ namespace Quasar.Server.ReverseProxy
         private Socket _socket;
         private readonly List<ReverseProxyClient> _clients;
 
-        public ReverseProxyClient[] ProxyClients
-        {
-            get
-            {
-                lock (_clients)
-                {
+        public ReverseProxyClient[] ProxyClients {
+            get {
+                lock (_clients) {
                     return _clients.ToArray();
                 }
             }
         }
 
-        public ReverseProxyClient[] OpenConnections
-        {
-            get
-            {
-                lock (_clients)
-                {
+        public ReverseProxyClient[] OpenConnections {
+            get {
+                lock (_clients) {
                     List<ReverseProxyClient> temp = new List<ReverseProxyClient>();
 
-                    for (int i = 0; i < _clients.Count; i++)
-                    {
-                        if (_clients[i].ProxySuccessful)
-                        {
+                    for (int i = 0; i < _clients.Count; i++) {
+                        if (_clients[i].ProxySuccessful) {
                             temp.Add(_clients[i]);
                         }
                     }
@@ -57,13 +47,11 @@ namespace Quasar.Server.ReverseProxy
         //The Random class might even fail to make use of all the clients
         private uint _clientIndex;
 
-        public ReverseProxyServer()
-        {
+        public ReverseProxyServer() {
             _clients = new List<ReverseProxyClient>();
         }
 
-        public void StartServer(Client[] clients, string ipAddress, ushort port)
-        {
+        public void StartServer(Client[] clients, string ipAddress, ushort port) {
             Stop();
 
             this.Clients = clients;
@@ -73,97 +61,69 @@ namespace Quasar.Server.ReverseProxy
             this._socket.BeginAccept(AsyncAccept, null);
         }
 
-        private void AsyncAccept(IAsyncResult ar)
-        {
-            try
-            {
-                lock (_clients)
-                {
+        private void AsyncAccept(IAsyncResult ar) {
+            try {
+                lock (_clients) {
                     _clients.Add(new ReverseProxyClient(Clients[_clientIndex % Clients.Length], this._socket.EndAccept(ar), this));
                     _clientIndex++;
                 }
-            }
-            catch
-            {
+            } catch {
             }
 
-            try
-            {
+            try {
                 this._socket.BeginAccept(AsyncAccept, null);
-            }
-            catch
-            {
+            } catch {
                 /* Server stopped listening */
             }
         }
 
-        public void Stop()
-        {
-            if (_socket != null)
-            {
+        public void Stop() {
+            if (_socket != null) {
                 _socket.Close();
                 _socket = null;
             }
 
-            lock (_clients)
-            {
+            lock (_clients) {
                 foreach (ReverseProxyClient client in new List<ReverseProxyClient>(_clients))
                     client.Disconnect();
                 _clients.Clear();
             }
         }
 
-        public ReverseProxyClient GetClientByConnectionId(int connectionId)
-        {
-            lock (_clients)
-            {
+        public ReverseProxyClient GetClientByConnectionId(int connectionId) {
+            lock (_clients) {
                 return _clients.FirstOrDefault(t => t.ConnectionId == connectionId);
             }
         }
 
-        internal void CallonConnectionEstablished(ReverseProxyClient proxyClient)
-        {
-            try
-            {
+        internal void CallonConnectionEstablished(ReverseProxyClient proxyClient) {
+            try {
                 if (OnConnectionEstablished != null)
                     OnConnectionEstablished(proxyClient);
-            }
-            catch
-            {
+            } catch {
             }
         }
 
-        internal void CallonUpdateConnection(ReverseProxyClient proxyClient)
-        {
+        internal void CallonUpdateConnection(ReverseProxyClient proxyClient) {
             //remove a client that has been disconnected
-            try
-            {
-                if (!proxyClient.IsConnected)
-                {
-                    lock (_clients)
-                    {
-                        for (int i = 0; i < _clients.Count; i++)
-                        {
-                            if (_clients[i].ConnectionId == proxyClient.ConnectionId)
-                            {
+            try {
+                if (!proxyClient.IsConnected) {
+                    lock (_clients) {
+                        for (int i = 0; i < _clients.Count; i++) {
+                            if (_clients[i].ConnectionId == proxyClient.ConnectionId) {
                                 _clients.RemoveAt(i);
                                 break;
                             }
                         }
                     }
                 }
-            }
-            catch
-            {
+            } catch {
             }
 
-            try
-            {
+            try {
                 if (OnUpdateConnection != null)
                     OnUpdateConnection(proxyClient);
-            }
-            catch
-            {
+            } catch {
             }
         }
     }

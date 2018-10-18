@@ -1,7 +1,5 @@
-﻿namespace Quasar.Server.Enums
-{
-    public enum WordType
-    {
+﻿namespace Quasar.Server.Enums {
+    public enum WordType {
         DWORD,
         QWORD
     }

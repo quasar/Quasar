@@ -3,14 +3,11 @@ using Quasar.Common.Video.Compression;
 using System;
 using System.Drawing;
 
-namespace Quasar.Common.Tests.Compression
-{
+namespace Quasar.Common.Tests.Compression {
     [TestClass]
-    public class JpgCompressionTests
-    {
+    public class JpgCompressionTests {
         [TestMethod, TestCategory("Compression")]
-        public void CompressionTest()
-        {
+        public void CompressionTest() {
             var quality = Int64.MaxValue;
             var jpg = new JpgCompression(quality);
             var bitmap = new Bitmap(200, 200);

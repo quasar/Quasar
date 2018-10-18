@@ -11,24 +11,19 @@ using System.IO.Compression;
 using System.Security;
 using System.Threading;
 
-namespace Quasar.Client.Commands
-{
+namespace Quasar.Client.Commands {
     /* THIS PARTIAL CLASS SHOULD CONTAIN METHODS THAT MANIPULATE DIRECTORIES AND FILES (excluding the program). */
-    public static partial class CommandHandler
-    {
-        public static void HandleGetDirectory(GetDirectory command, Networking.Client client)
-        {
+    public static partial class CommandHandler {
+        public static void HandleGetDirectory(GetDirectory command, Networking.Client client) {
             bool isError = false;
             string message = null;
 
-            Action<string> onError = (msg) =>
-            {
+            Action<string> onError = (msg) => {
                 isError = true;
                 message = msg;
             };
 
-            try
-            {
+            try {
                 DirectoryInfo dicInfo = new DirectoryInfo(command.RemotePath);
 
                 FileInfo[] files = dicInfo.GetFiles();
@@ -37,75 +32,51 @@ namespace Quasar.Client.Commands
                 FileSystemEntry[] items = new FileSystemEntry[files.Length + directories.Length];
 
                 int offset = 0;
-                for (int i = 0; i < directories.Length; i++, offset++)
-                {
-                    items[i] = new FileSystemEntry
-                    {
+                for (int i = 0; i < directories.Length; i++, offset++) {
+                    items[i] = new FileSystemEntry {
                         EntryType = FileType.Directory, Name = directories[i].Name, Size = 0,
                         LastAccessTimeUtc = directories[i].LastAccessTimeUtc
                     };
                 }
 
-                for (int i = 0; i < files.Length; i++)
-                {
-                    items[i + offset] = new FileSystemEntry
-                    {
+                for (int i = 0; i < files.Length; i++) {
+                    items[i + offset] = new FileSystemEntry {
                         EntryType = FileType.File, Name = files[i].Name, Size = files[i].Length,
                         ContentType = Path.GetExtension(files[i].Name).ToContentType(),
                         LastAccessTimeUtc = files[i].LastAccessTimeUtc
                     };
                 }
 
-                client.Send(new GetDirectoryResponse {RemotePath = command.RemotePath, Items = items});
-            }
-            catch (UnauthorizedAccessException)
-            {
+                client.Send(new GetDirectoryResponse { RemotePath = command.RemotePath, Items = items });
+            } catch (UnauthorizedAccessException) {
                 onError("GetDirectory No permission");
-            }
-            catch (SecurityException)
-            {
+            } catch (SecurityException) {
                 onError("GetDirectory No permission");
-            }
-            catch (PathTooLongException)
-            {
+            } catch (PathTooLongException) {
                 onError("GetDirectory Path too long");
-            }
-            catch (DirectoryNotFoundException)
-            {
+            } catch (DirectoryNotFoundException) {
                 onError("GetDirectory Directory not found");
-            }
-            catch (FileNotFoundException)
-            {
+            } catch (FileNotFoundException) {
                 onError("GetDirectory File not found");
-            }
-            catch (IOException)
-            {
+            } catch (IOException) {
                 onError("GetDirectory I/O error");
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 onError("GetDirectory Failed");
-            }
-            finally
-            {
+            } finally {
                 if (isError && !string.IsNullOrEmpty(message))
-                    client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = true});
+                    client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = true });
             }
         }
 
-        public static void HandleDoDownloadFile(DoDownloadFile command, Networking.Client client)
-        {
-            new Thread(() =>
-            {
+        public static void HandleDoDownloadFile(DoDownloadFile command, Networking.Client client) {
+            new Thread(() => {
                 _limitThreads.WaitOne();
-                try
-                {
+                try {
                     FileSplit srcFile = new FileSplit(command.RemotePath);
                     if (srcFile.MaxBlocks < 0)
                         throw new Exception(srcFile.LastError);
 
-                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                    {
+                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++) {
                         if (!client.Connected || _canceledDownloads.ContainsKey(command.Id))
                             break;
 
@@ -115,8 +86,7 @@ namespace Quasar.Client.Commands
                             throw new Exception(srcFile.LastError);
 
 
-                        client.SendBlocking(new DoDownloadFileResponse
-                        {
+                        client.SendBlocking(new DoDownloadFileResponse {
                             Id = command.Id,
                             Filename = Path.GetFileName(command.RemotePath),
                             Block = block,
@@ -125,11 +95,8 @@ namespace Quasar.Client.Commands
                             CustomMessage = srcFile.LastError
                         });
                     }
-                }
-                catch (Exception ex)
-                {
-                    client.SendBlocking(new DoDownloadFileResponse
-                    {
+                } catch (Exception ex) {
+                    client.SendBlocking(new DoDownloadFileResponse {
                         Id = command.Id,
                         Filename = Path.GetFileName(command.RemotePath),
                         Block = new byte[0],
@@ -142,13 +109,10 @@ namespace Quasar.Client.Commands
             }).Start();
         }
 
-        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Networking.Client client)
-        {
-            if (!_canceledDownloads.ContainsKey(command.Id))
-            {
+        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Networking.Client client) {
+            if (!_canceledDownloads.ContainsKey(command.Id)) {
                 _canceledDownloads.Add(command.Id, "canceled");
-                client.SendBlocking(new DoDownloadFileResponse
-                {
+                client.SendBlocking(new DoDownloadFileResponse {
                     Id = command.Id,
                     Filename = "canceled",
                     Block = new byte[0],
@@ -159,8 +123,7 @@ namespace Quasar.Client.Commands
             }
         }
 
-        public static void HandleDoUploadFile(DoUploadFile command, Networking.Client client)
-        {
+        public static void HandleDoUploadFile(DoUploadFile command, Networking.Client client) {
             if (command.CurrentBlock == 0 && System.IO.File.Exists(command.RemotePath))
                 NativeMethods.DeleteFile(command.RemotePath); // delete existing file
 
@@ -168,33 +131,27 @@ namespace Quasar.Client.Commands
             destFile.AppendBlock(command.Block, command.CurrentBlock);
         }
 
-        public static void HandleDoPathDelete(DoPathDelete command, Networking.Client client)
-        {
+        public static void HandleDoPathDelete(DoPathDelete command, Networking.Client client) {
             bool isError = false;
             string message = null;
 
-            Action<string> onError = (msg) =>
-            {
+            Action<string> onError = (msg) => {
                 isError = true;
                 message = msg;
             };
 
-            try
-            {
-                switch (command.PathType)
-                {
+            try {
+                switch (command.PathType) {
                     case FileType.Directory:
                         Directory.Delete(command.Path, true);
-                        client.Send(new SetStatusFileManager
-                        {
+                        client.Send(new SetStatusFileManager {
                             Message = "Deleted directory",
                             SetLastDirectorySeen = false
                         });
                         break;
                     case FileType.File:
                         System.IO.File.Delete(command.Path);
-                        client.Send(new SetStatusFileManager
-                        {
+                        client.Send(new SetStatusFileManager {
                             Message = "Deleted file",
                             SetLastDirectorySeen = false
                         });
@@ -202,36 +159,23 @@ namespace Quasar.Client.Commands
                 }
 
                 HandleGetDirectory(new GetDirectory { RemotePath = Path.GetDirectoryName(command.Path) }, client);
-            }
-            catch (UnauthorizedAccessException)
-            {
+            } catch (UnauthorizedAccessException) {
                 onError("DeletePath No permission");
-            }
-            catch (PathTooLongException)
-            {
+            } catch (PathTooLongException) {
                 onError("DeletePath Path too long");
-            }
-            catch (DirectoryNotFoundException)
-            {
+            } catch (DirectoryNotFoundException) {
                 onError("DeletePath Path not found");
-            }
-            catch (IOException)
-            {
+            } catch (IOException) {
                 onError("DeletePath I/O error");
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 onError("DeletePath Failed");
-            }
-            finally
-            {
+            } finally {
                 if (isError && !string.IsNullOrEmpty(message))
-                    client.Send(new SetStatusFileManager {Message = message, SetLastDirectorySeen = false});
+                    client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }
         }
 
-        public static void HandleDoZipDirectory(DoZipDirectory command, Networking.Client client) 
-        {
+        public static void HandleDoZipDirectory(DoZipDirectory command, Networking.Client client) {
             string fileName = Path.GetFileName(command.ArchivePath);
             bool isError = false;
             string message = null;
@@ -241,16 +185,12 @@ namespace Quasar.Client.Commands
                 message = msg;
             };
 
-            try
-            {
-                using (ZipFile zip = new ZipFile())
-                {
-                    for (int i = 0; i < command.PathList.Length; i++)
-                    {
+            try {
+                using (ZipFile zip = new ZipFile()) {
+                    for (int i = 0; i < command.PathList.Length; i++) {
                         string path = command.PathList[i];
                         FileType type = command.TypeList[i];
-                        switch (type)
-                        {
+                        switch (type) {
                             case FileType.File:
                                 zip.AddFile(path);
                                 break;
@@ -259,89 +199,65 @@ namespace Quasar.Client.Commands
                                 break;
                         }
                     }
-                    zip.SaveProgress += (s, e) =>
-                    {
+                    zip.SaveProgress += (s, e) => {
                         double percent = e.BytesTransferred / (0.01 * e.TotalBytesToTransfer);
                         if (Double.IsNaN(percent)) return;
                         string percentMessage = string.Format("Compressing ({0}) - {1}", fileName, percent.ToString("0.00") + "%");
                         client.Send(new SetStatusFileManager { Message = percentMessage, SetLastDirectorySeen = false });
                     };
                     zip.Save(command.ArchivePath);
-                    client.Send(new SetStatusFileManager
-                    {
+                    client.Send(new SetStatusFileManager {
                         Message = string.Format("Compressed! ({0})", fileName),
                         SetLastDirectorySeen = false
                     });
                 }
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 onError(string.Format("Compression failed ({0}) - {1}", fileName, ex.Message));
-            }
-            finally
-            {
+            } finally {
                 if (isError && !string.IsNullOrEmpty(message))
                     client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }
         }
 
-        public static void HandleDoPathRename(DoPathRename command, Networking.Client client)
-        {
+        public static void HandleDoPathRename(DoPathRename command, Networking.Client client) {
             bool isError = false;
             string message = null;
 
-            Action<string> onError = (msg) =>
-            {
+            Action<string> onError = (msg) => {
                 isError = true;
                 message = msg;
             };
 
-            try
-            {
-                switch (command.PathType)
-                {
+            try {
+                switch (command.PathType) {
                     case FileType.Directory:
                         Directory.Move(command.Path, command.NewPath);
-                        client.Send(new SetStatusFileManager
-                        {
+                        client.Send(new SetStatusFileManager {
                             Message = "Renamed directory",
                             SetLastDirectorySeen = false
                         });
                         break;
                     case FileType.File:
                         System.IO.File.Move(command.Path, command.NewPath);
-                        client.Send(new SetStatusFileManager
-                        {
+                        client.Send(new SetStatusFileManager {
                             Message = "Renamed file",
                             SetLastDirectorySeen = false
                         });
                         break;
                 }
 
-                HandleGetDirectory(new GetDirectory {RemotePath = Path.GetDirectoryName(command.NewPath)}, client);
-            }
-            catch (UnauthorizedAccessException)
-            {
+                HandleGetDirectory(new GetDirectory { RemotePath = Path.GetDirectoryName(command.NewPath) }, client);
+            } catch (UnauthorizedAccessException) {
                 onError("RenamePath No permission");
-            }
-            catch (PathTooLongException)
-            {
+            } catch (PathTooLongException) {
                 onError("RenamePath Path too long");
-            }
-            catch (DirectoryNotFoundException)
-            {
+            } catch (DirectoryNotFoundException) {
                 onError("RenamePath Path not found");
-            }
-            catch (IOException)
-            {
+            } catch (IOException) {
                 onError("RenamePath I/O error");
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 onError("RenamePath Failed");
-            }
-            finally
-            {
+            } finally {
                 if (isError && !string.IsNullOrEmpty(message))
                     client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
             }

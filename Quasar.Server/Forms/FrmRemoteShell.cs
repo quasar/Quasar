@@ -7,10 +7,8 @@ using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmRemoteShell : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmRemoteShell : Form {
         /// <summary>
         /// The client which can be used for the remote shell.
         /// </summary>
@@ -33,10 +31,8 @@ namespace Quasar.Server.Forms
         /// <returns>
         /// Returns a new remote shell form for the client if there is none currently open, otherwise creates a new one.
         /// </returns>
-        public static FrmRemoteShell CreateNewOrGetExisting(Client client)
-        {
-            if (OpenedForms.ContainsKey(client))
-            {
+        public static FrmRemoteShell CreateNewOrGetExisting(Client client) {
+            if (OpenedForms.ContainsKey(client)) {
                 return OpenedForms[client];
             }
             FrmRemoteShell f = new FrmRemoteShell(client);
@@ -49,8 +45,7 @@ namespace Quasar.Server.Forms
         /// Initializes a new instance of the <see cref="FrmRemoteShell"/> class using the given client.
         /// </summary>
         /// <param name="client">The client used for the remote shell form.</param>
-        public FrmRemoteShell(Client client)
-        {
+        public FrmRemoteShell(Client client) {
             _connectClient = client;
             RemoteShellHandler = new RemoteShellHandler(client);
 
@@ -63,8 +58,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Registers the remote shell message handler for client communication.
         /// </summary>
-        private void RegisterMessageHandler()
-        {
+        private void RegisterMessageHandler() {
             _connectClient.ClientState += ClientDisconnected;
             RemoteShellHandler.ProgressChanged += CommandOutput;
             RemoteShellHandler.CommandError += CommandError;
@@ -74,8 +68,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Unregisters the remote shell message handler.
         /// </summary>
-        private void UnregisterMessageHandler()
-        {
+        private void UnregisterMessageHandler() {
             MessageHandler.Unregister(RemoteShellHandler);
             RemoteShellHandler.ProgressChanged -= CommandOutput;
             RemoteShellHandler.CommandError -= CommandError;
@@ -87,8 +80,7 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="sender">The message processor which raised the event.</param>
         /// <param name="output">The output to write.</param>
-        private void CommandOutput(object sender, string output)
-        {
+        private void CommandOutput(object sender, string output) {
             txtConsoleOutput.SelectionColor = Color.WhiteSmoke;
             txtConsoleOutput.AppendText(output);
         }
@@ -98,8 +90,7 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="sender">The message processor which raised the event.</param>
         /// <param name="output">The error output to write.</param>
-        private void CommandError(object sender, string output)
-        {
+        private void CommandError(object sender, string output) {
             txtConsoleOutput.SelectionColor = Color.Red;
             txtConsoleOutput.AppendText(output);
         }
@@ -109,35 +100,28 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client which disconnected.</param>
         /// <param name="connected">True if the client connected, false if disconnected</param>
-        private void ClientDisconnected(Client client, bool connected)
-        {
-            if (!connected)
-            {
+        private void ClientDisconnected(Client client, bool connected) {
+            if (!connected) {
                 this.Invoke((MethodInvoker)this.Close);
             }
         }
 
-        private void FrmRemoteShell_Load(object sender, EventArgs e)
-        {
+        private void FrmRemoteShell_Load(object sender, EventArgs e) {
             this.DoubleBuffered = true;
             this.Text = WindowHelper.GetWindowTitle("Remote Shell", _connectClient);
         }
 
-        private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e) {
             UnregisterMessageHandler();
             RemoteShellHandler.Dispose();
         }
 
-        private void txtConsoleOutput_TextChanged(object sender, EventArgs e)
-        {
+        private void txtConsoleOutput_TextChanged(object sender, EventArgs e) {
             NativeMethodsHelper.ScrollToBottom(txtConsoleOutput.Handle);
         }
 
-        private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Enter && !string.IsNullOrEmpty(txtConsoleInput.Text.Trim()))
-            {
+        private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e) {
+            if (e.KeyCode == Keys.Enter && !string.IsNullOrEmpty(txtConsoleInput.Text.Trim())) {
                 string input = txtConsoleInput.Text.TrimStart(' ', ' ').TrimEnd(' ', ' ');
                 txtConsoleInput.Text = string.Empty;
 
@@ -149,14 +133,10 @@ namespace Quasar.Server.Forms
                 // We have an exit command.
                 if (input == "exit" ||
                     ((splitSpaceInput.Length > 0) && splitSpaceInput[0] == "exit") ||
-                    ((splitNullInput.Length > 0) && splitNullInput[0] == "exit"))
-                {
+                    ((splitNullInput.Length > 0) && splitNullInput[0] == "exit")) {
                     this.Close();
-                }
-                else
-                {
-                    switch (input)
-                    {
+                } else {
+                    switch (input) {
                         case "cls":
                             txtConsoleOutput.Text = string.Empty;
                             break;
@@ -171,10 +151,8 @@ namespace Quasar.Server.Forms
             }
         }
 
-        private void txtConsoleOutput_KeyPress(object sender, KeyPressEventArgs e)
-        {
-            if (e.KeyChar != (char) 2)
-            {
+        private void txtConsoleOutput_KeyPress(object sender, KeyPressEventArgs e) {
+            if (e.KeyChar != (char)2) {
                 txtConsoleInput.Text += e.KeyChar.ToString();
                 txtConsoleInput.Focus();
                 txtConsoleInput.SelectionStart = txtConsoleOutput.TextLength;

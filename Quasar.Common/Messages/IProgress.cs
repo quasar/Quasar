@@ -1,11 +1,9 @@
-﻿namespace Quasar.Common.Messages
-{
+﻿namespace Quasar.Common.Messages {
     /// <summary>
     /// Defines a provider for progress updates.
     /// </summary>
     /// <typeparam name="T">The type of progress update value.</typeparam>
-    public interface IProgress<in T>
-    {
+    public interface IProgress<in T> {
         /// <summary>
         /// Reports a progress update.
         /// </summary>

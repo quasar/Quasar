@@ -197,7 +197,7 @@ namespace Quasar.Server.Forms {
             // Store code.
 
             // build references list
-            foreach (string s in lbReferences.Items) { 
+            foreach (string s in lbReferences.Items) {
                 script.references.Add(s);
             }
 
@@ -257,7 +257,7 @@ namespace Quasar.Server.Forms {
 
                         lbReferences.Items.Clear();
 
-                        foreach (string refItem in  scriptFile.references) {
+                        foreach (string refItem in scriptFile.references) {
                             lbReferences.Items.Add(refItem);
                         }
 

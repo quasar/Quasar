@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Models
-{
+namespace Quasar.Common.Models {
     [ProtoContract]
-    public class Process
-    {
+    public class Process {
         [ProtoMember(1)]
         public string Name { get; set; }
 

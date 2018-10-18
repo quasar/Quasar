@@ -1,11 +1,9 @@
 ﻿using ProtoBuf;
 using Quasar.Common.Enums;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class DoMouseEvent : IMessage
-    {
+    public class DoMouseEvent : IMessage {
         [ProtoMember(1)]
         public MouseAction Action { get; set; }
 

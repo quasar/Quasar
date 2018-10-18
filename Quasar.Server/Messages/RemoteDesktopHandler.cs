@@ -6,10 +6,8 @@ using Quasar.Common.Networking;
 using Quasar.Common.Video.Codecs;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>
-    {
+namespace Quasar.Server.Messages {
+    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap> {
         /// <summary>
         /// States if the client is currently streaming desktop frames.
         /// </summary>
@@ -36,19 +34,14 @@ namespace Quasar.Server.Messages
         /// <remarks>
         /// This property is thread-safe.
         /// </remarks>
-        public Size LocalResolution
-        {
-            get
-            {
-                lock (_sizeLock)
-                {
+        public Size LocalResolution {
+            get {
+                lock (_sizeLock) {
                     return _localResolution;
                 }
             }
-            set
-            {
-                lock (_sizeLock)
-                {
+            set {
+                lock (_sizeLock) {
                     _localResolution = value;
                 }
             }
@@ -74,10 +67,8 @@ namespace Quasar.Server.Messages
         /// Reports changed displays.
         /// </summary>
         /// <param name="value">All currently available displays.</param>
-        private void OnDisplaysChanged(int value)
-        {
-            SynchronizationContext.Post(val =>
-            {
+        private void OnDisplaysChanged(int value) {
+            SynchronizationContext.Post(val => {
                 var handler = DisplaysChanged;
                 handler?.Invoke(this, (int)val);
             }, value);
@@ -97,8 +88,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="RemoteDesktopHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public RemoteDesktopHandler(Client client) : base(true)
-        {
+        public RemoteDesktopHandler(Client client) : base(true) {
             _client = client;
         }
 
@@ -109,10 +99,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case GetDesktopResponse d:
                     Execute(sender, d);
                     break;
@@ -127,10 +115,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="quality">The quality of the remote desktop frames.</param>
         /// <param name="display">The display to receive frames from.</param>
-        public void BeginReceiveFrames(int quality, int display)
-        {
-            lock (_syncLock)
-            {
+        public void BeginReceiveFrames(int quality, int display) {
+            lock (_syncLock) {
                 IsStarted = true;
                 _codec?.Dispose();
                 _codec = null;
@@ -141,10 +127,8 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Ends receiving frames from the client.
         /// </summary>
-        public void EndReceiveFrames()
-        {
-            lock (_syncLock)
-            {
+        public void EndReceiveFrames() {
+            lock (_syncLock) {
                 IsStarted = false;
             }
         }
@@ -152,8 +136,7 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Refreshes the available displays of the client.
         /// </summary>
-        public void RefreshDisplays()
-        {
+        public void RefreshDisplays() {
             _client.Send(new GetMonitors());
         }
 
@@ -165,12 +148,9 @@ namespace Quasar.Server.Messages
         /// <param name="x">The X-coordinate inside the <see cref="LocalResolution"/>.</param>
         /// <param name="y">The Y-coordinate inside the <see cref="LocalResolution"/>.</param>
         /// <param name="displayIndex">The display to execute the mouse event on.</param>
-        public void SendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex)
-        {
-            lock (_syncLock)
-            {
-                _client.Send(new DoMouseEvent
-                {
+        public void SendMouseEvent(MouseAction mouseAction, bool isMouseDown, int x, int y, int displayIndex) {
+            lock (_syncLock) {
+                _client.Send(new DoMouseEvent {
                     Action = mouseAction,
                     IsMouseDown = isMouseDown,
                     // calculate remote width & height
@@ -186,47 +166,38 @@ namespace Quasar.Server.Messages
         /// </summary>
         /// <param name="keyCode">The pressed key.</param>
         /// <param name="keyDown">Indicates whether it's a keydown or keyup event.</param>
-        public void SendKeyboardEvent(byte keyCode, bool keyDown)
-        {
-            _client.Send(new DoKeyboardEvent {Key = keyCode, KeyDown = keyDown});
+        public void SendKeyboardEvent(byte keyCode, bool keyDown) {
+            _client.Send(new DoKeyboardEvent { Key = keyCode, KeyDown = keyDown });
         }
 
-        private void Execute(ISender client, GetDesktopResponse message)
-        {
-            lock (_syncLock)
-            {
+        private void Execute(ISender client, GetDesktopResponse message) {
+            lock (_syncLock) {
                 if (!IsStarted)
                     return;
 
-                if (_codec == null || _codec.ImageQuality != message.Quality || _codec.Monitor != message.Monitor || _codec.Resolution != message.Resolution)
-                {
+                if (_codec == null || _codec.ImageQuality != message.Quality || _codec.Monitor != message.Monitor || _codec.Resolution != message.Resolution) {
                     _codec?.Dispose();
                     _codec = new UnsafeStreamCodec(message.Quality, message.Monitor, message.Resolution);
                 }
 
-                using (MemoryStream ms = new MemoryStream(message.Image))
-                {
+                using (MemoryStream ms = new MemoryStream(message.Image)) {
                     // create deep copy & resize bitmap to local resolution
                     OnReport(new Bitmap(_codec.DecodeData(ms), LocalResolution));
                 }
-                
+
                 message.Image = null;
 
-                client.Send(new GetDesktop {Quality = message.Quality, DisplayIndex = message.Monitor});
+                client.Send(new GetDesktop { Quality = message.Quality, DisplayIndex = message.Monitor });
             }
         }
 
-        private void Execute(ISender client, GetMonitorsResponse message)
-        {
+        private void Execute(ISender client, GetMonitorsResponse message) {
             OnDisplaysChanged(message.Number);
         }
 
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                lock (_syncLock)
-                {
+        protected override void Dispose(bool disposing) {
+            if (disposing) {
+                lock (_syncLock) {
                     _codec?.Dispose();
                     IsStarted = false;
                 }

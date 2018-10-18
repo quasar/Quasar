@@ -2,10 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Controls.HexEditor
-{
-    public class HexViewHandler
-    {
+namespace Quasar.Server.Controls.HexEditor {
+    public class HexViewHandler {
         #region Fields
 
         bool _isEditing;
@@ -35,8 +33,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Properties
 
-        public int MaxWidth
-        {
+        public int MaxWidth {
             get { return _recHexValue.X + (_recHexValue.Width * _editor.BytesPerLine); }
         }
 
@@ -44,8 +41,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Constructor
 
-        public HexViewHandler(HexEditor editor)
-        {
+        public HexViewHandler(HexEditor editor) {
             _editor = editor;
 
             //Set String format for the hex values
@@ -62,37 +58,28 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region KeyEvents
 
-        public void OnKeyPress(KeyPressEventArgs e)
-        {
+        public void OnKeyPress(KeyPressEventArgs e) {
             if (IsHex(e.KeyChar))
                 HandleUserInput(e.KeyChar);
         }
 
-        public void OnKeyDown(KeyEventArgs e)
-        {
-            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back)
-            {
-                if (_editor.SelectionLength > 0)
-                {
+        public void OnKeyDown(KeyEventArgs e) {
+            if (e.KeyCode == Keys.Delete || e.KeyCode == Keys.Back) {
+                if (_editor.SelectionLength > 0) {
                     //Remove the selected bytes
                     HandleUserRemove();
                     int index = _editor.CaretIndex;
                     Point newLocation = GetCaretLocation(index);
                     _editor.SetCaretStart(index, newLocation);
-                }
-                else if (_editor.CaretIndex < _editor.LastVisibleByte && e.KeyCode == Keys.Delete)
-                {
+                } else if (_editor.CaretIndex < _editor.LastVisibleByte && e.KeyCode == Keys.Delete) {
                     //Remove the byte after the caret
                     _editor.RemoveByteAt(_editor.CaretIndex);
                     Point newLocation = GetCaretLocation(_editor.CaretIndex);
                     _editor.SetCaretStart(_editor.CaretIndex, newLocation);
-                }
-                else if (_editor.CaretIndex > 0 && e.KeyCode == Keys.Back)
-                {
+                } else if (_editor.CaretIndex > 0 && e.KeyCode == Keys.Back) {
                     //Remove byte before the caret
                     int index = _editor.CaretIndex - 1;
-                    if (_isEditing)
-                    {
+                    if (_isEditing) {
                         //Remove the byte that is being edited
                         index = _editor.CaretIndex;
                     }
@@ -101,19 +88,15 @@ namespace Quasar.Server.Controls.HexEditor
                     _editor.SetCaretStart(index, newLocation);
                 }
                 _isEditing = false;
-            }
-            else if (e.KeyCode == Keys.Up && (_editor.CaretIndex - _editor.BytesPerLine) >= 0)
-            {
+            } else if (e.KeyCode == Keys.Up && (_editor.CaretIndex - _editor.BytesPerLine) >= 0) {
                 int index = _editor.CaretIndex - _editor.BytesPerLine;
 
                 //Check ig caret is att the end of the line
-                if (index % _editor.BytesPerLine == 0 && _editor.CaretPosX >= _recHexValue.X + _recHexValue.Width * _editor.BytesPerLine)
-                {
+                if (index % _editor.BytesPerLine == 0 && _editor.CaretPosX >= _recHexValue.X + _recHexValue.Width * _editor.BytesPerLine) {
                     Point position = new Point(_editor.CaretPosX, _editor.CaretPosY - _recHexValue.Height);
 
                     //check that this is not the last row (nothing above)
-                    if (index == 0)
-                    {
+                    if (index == 0) {
                         //Last row do not change index and position
                         position = new Point(_editor.CaretPosX, _editor.CaretPosY);
                         index = _editor.BytesPerLine;
@@ -124,23 +107,16 @@ namespace Quasar.Server.Controls.HexEditor
                     else
                         _editor.SetCaretStart(index, position);
                     _isEditing = false;
-                }
-                else
-                {
+                } else {
                     HandleArrowKeys(index, e.Shift);
                 }
-            }
-            else if (e.KeyCode == Keys.Down && (_editor.CaretIndex - 1) / _editor.BytesPerLine < _editor.HexTableLength / _editor.BytesPerLine)
-            {
+            } else if (e.KeyCode == Keys.Down && (_editor.CaretIndex - 1) / _editor.BytesPerLine < _editor.HexTableLength / _editor.BytesPerLine) {
                 int index = _editor.CaretIndex + _editor.BytesPerLine;
 
-                if (index > _editor.HexTableLength)
-                {
+                if (index > _editor.HexTableLength) {
                     index = _editor.HexTableLength;
                     HandleArrowKeys(index, e.Shift);
-                }
-                else
-                {
+                } else {
                     Point position = new Point(_editor.CaretPosX, _editor.CaretPosY + _recHexValue.Height);
 
                     if (e.Shift)
@@ -149,21 +125,16 @@ namespace Quasar.Server.Controls.HexEditor
                         _editor.SetCaretStart(index, position);
                     _isEditing = false;
                 }
-            }
-            else if (e.KeyCode == Keys.Left && (_editor.CaretIndex - 1) >= 0)
-            {
+            } else if (e.KeyCode == Keys.Left && (_editor.CaretIndex - 1) >= 0) {
                 int index = _editor.CaretIndex - 1;
                 HandleArrowKeys(index, e.Shift);
-            }
-            else if (e.KeyCode == Keys.Right && (_editor.CaretIndex + 1) <= _editor.HexTableLength)
-            {
+            } else if (e.KeyCode == Keys.Right && (_editor.CaretIndex + 1) <= _editor.HexTableLength) {
                 int index = _editor.CaretIndex + 1;
                 HandleArrowKeys(index, e.Shift);
             }
         }
 
-        public void HandleArrowKeys(int index, bool isShiftDown)
-        {
+        public void HandleArrowKeys(int index, bool isShiftDown) {
             Point position = GetCaretLocation(index);
 
             if (isShiftDown)
@@ -177,8 +148,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region MouseEvent
 
-        public void OnMouseDown(int x, int y)
-        {
+        public void OnMouseDown(int x, int y) {
             int iX = (x - _recHexValue.X) / _recHexValue.Width;
             int iY = (y - _recHexValue.Y) / _recHexValue.Height;
 
@@ -189,11 +159,9 @@ namespace Quasar.Server.Controls.HexEditor
             iY = iY < 0 ? 0 : iY;
 
             //Make sure values are withing the given bounds
-            if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
-            {
+            if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY) {
                 //Check that column is not greater than max
-                if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
-                {
+                if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX) {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
                 }
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
@@ -209,8 +177,7 @@ namespace Quasar.Server.Controls.HexEditor
             _isEditing = false;
         }
 
-        public void OnMouseDragged(int x, int y)
-        {
+        public void OnMouseDragged(int x, int y) {
             int iX = (x - _recHexValue.X) / _recHexValue.Width;
             int iY = (y - _recHexValue.Y) / _recHexValue.Height;
 
@@ -219,21 +186,16 @@ namespace Quasar.Server.Controls.HexEditor
             iX = iX < 0 ? 0 : iX;
             iY = iY > _editor.MaxBytesV ? _editor.MaxBytesV : iY;
 
-            if (_editor.FirstVisibleByte > 0)
-            {
+            if (_editor.FirstVisibleByte > 0) {
                 iY = iY < 0 ? -1 : iY;
-            }
-            else
-            {
+            } else {
                 iY = iY < 0 ? 0 : iY;
             }
 
             //Make sure values are withing the given bounds
-            if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY)
-            {
+            if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine <= iY) {
                 //Check that column is not greater than max
-                if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX)
-                {
+                if ((_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine <= iX) {
                     iX = (_editor.LastVisibleByte - _editor.FirstVisibleByte) % _editor.BytesPerLine;
                 }
                 iY = (_editor.LastVisibleByte - _editor.FirstVisibleByte) / _editor.BytesPerLine;
@@ -248,10 +210,8 @@ namespace Quasar.Server.Controls.HexEditor
             _editor.SetCaretEnd(index, new Point(xPos, yPos));
         }
 
-        public void OnMouseDoubleClick()
-        {
-            if (_editor.CaretIndex < _editor.LastVisibleByte)
-            {
+        public void OnMouseDoubleClick() {
+            if (_editor.CaretIndex < _editor.LastVisibleByte) {
                 int index = _editor.CaretIndex + 1;
                 Point newLocation = GetCaretLocation(index);
                 _editor.SetCaretEnd(index, newLocation);
@@ -264,8 +224,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region PaintMethod
 
-        public void Update(int startPositionX, Rectangle area)
-        {
+        public void Update(int startPositionX, Rectangle area) {
             _recHexValue = new Rectangle(
                 startPositionX,
                 area.Y,
@@ -276,22 +235,17 @@ namespace Quasar.Server.Controls.HexEditor
             _recHexValue.X += _editor.EntityMargin;
         }
 
-        public void Paint(Graphics g, int index, int startIndex)
-        {
+        public void Paint(Graphics g, int index, int startIndex) {
             Point columnAndRow = GetByteColumnAndRow(index);
 
-            if (_editor.IsSelected(index + startIndex))
-            {
+            if (_editor.IsSelected(index + startIndex)) {
                 PaintByteAsSelected(g, columnAndRow, (index + startIndex));
-            }
-            else
-            {
+            } else {
                 PaintByte(g, columnAndRow, (index + startIndex));
             }
         }
 
-        private void PaintByteAsSelected(Graphics g, Point point, int index)
-        {
+        private void PaintByteAsSelected(Graphics g, Point point, int index) {
             SolidBrush backBrush = new SolidBrush(_editor.SelectionBackColor);
             SolidBrush textBrush = new SolidBrush(_editor.SelectionForeColor);
             RectangleF drawSurface = GetBound(point);
@@ -301,8 +255,7 @@ namespace Quasar.Server.Controls.HexEditor
             g.DrawString(hexValue, _editor.Font, textBrush, drawSurface, _stringFormat);
         }
 
-        private void PaintByte(Graphics g, Point point, int index)
-        {
+        private void PaintByte(Graphics g, Point point, int index) {
             SolidBrush brush = new SolidBrush(_editor.ForeColor);
             RectangleF drawSurface = GetBound(point);
             string hexValue = _editor.GetByte(index).ToString(_hexType);
@@ -312,18 +265,15 @@ namespace Quasar.Server.Controls.HexEditor
 
         #endregion
 
-        public void SetLowerCase()
-        {
+        public void SetLowerCase() {
             _hexType = "x2";
         }
 
-        public void SetUpperCase()
-        {
+        public void SetUpperCase() {
             _hexType = "X2";
         }
 
-        public void Focus()
-        {
+        public void Focus() {
             int index = _editor.CaretIndex;
             Point location = GetCaretLocation(index);
             _editor.SetCaretStart(index, location);
@@ -337,8 +287,7 @@ namespace Quasar.Server.Controls.HexEditor
         /// Get the caret current location
         /// in the given bound.
         /// </summary>
-        private Point GetCaretLocation(int index)
-        {
+        private Point GetCaretLocation(int index) {
             int xPos = _recHexValue.X + (_recHexValue.Width * (index % _editor.BytesPerLine));
             int yPos = _recHexValue.Y + (_recHexValue.Height * ((index - (_editor.FirstVisibleByte + index % _editor.BytesPerLine)) / _editor.BytesPerLine));
 
@@ -350,8 +299,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Misc
 
-        private void HandleUserRemove()
-        {
+        private void HandleUserRemove() {
             //Calculate where to position the caret after the removal
             int index = _editor.SelectionStart;
             Point position = GetCaretLocation(index);
@@ -362,16 +310,14 @@ namespace Quasar.Server.Controls.HexEditor
             _editor.SetCaretStart(index, position);
         }
 
-        private void HandleUserInput(char key)
-        {
+        private void HandleUserInput(char key) {
             if (!_editor.CaretFocused)
                 return;
 
             //Perform overwrite
             HandleUserRemove();
 
-            if (_isEditing)
-            {
+            if (_isEditing) {
                 //Editing has already started, should change the second nibble
                 _isEditing = false;
                 //Load old bytes to allow change
@@ -384,20 +330,15 @@ namespace Quasar.Server.Controls.HexEditor
                 Point newLocation = GetCaretLocation(index);
                 _editor.SetCaretStart(index, newLocation);
 
-            }
-            else
-            {
+            } else {
                 //Begin new edit phase
                 _isEditing = true;
                 string hexByte = key.ToString() + "0";
                 byte newByte = Convert.ToByte(hexByte, 16);
 
-                if (_editor.HexTable.Length <= 0)
-                {
+                if (_editor.HexTable.Length <= 0) {
                     _editor.AppendByte(newByte);
-                }
-                else
-                {
+                } else {
                     _editor.InsertByte(_editor.CaretIndex, newByte);
                 }
 
@@ -409,8 +350,7 @@ namespace Quasar.Server.Controls.HexEditor
             }
         }
 
-        private Point GetByteColumnAndRow(int index)
-        {
+        private Point GetByteColumnAndRow(int index) {
             int column = index % _editor.BytesPerLine;
             int row = index / _editor.BytesPerLine;
 
@@ -418,8 +358,7 @@ namespace Quasar.Server.Controls.HexEditor
             return ret;
         }
 
-        private RectangleF GetBound(Point point)
-        {
+        private RectangleF GetBound(Point point) {
             RectangleF ret = new RectangleF(
                 _recHexValue.X + (point.X * _recHexValue.Width),
                 _recHexValue.Y + (point.Y * _recHexValue.Height),
@@ -430,8 +369,7 @@ namespace Quasar.Server.Controls.HexEditor
             return ret;
         }
 
-        private bool IsHex(char c)
-        {
+        private bool IsHex(char c) {
             return (c >= 'a' && c <= 'f') ||
                     (c >= 'A' && c <= 'F') ||
                         Char.IsDigit(c);

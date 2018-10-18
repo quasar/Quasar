@@ -3,26 +3,20 @@ using Microsoft.Win32;
 using Quasar.Common.Models;
 using Quasar.Common.Utilities;
 
-namespace Quasar.Server.Registry
-{
-    public class RegValueHelper
-    {
+namespace Quasar.Server.Registry {
+    public class RegValueHelper {
         private static string DEFAULT_REG_VALUE = "(Default)";
 
-        public static bool IsDefaultValue(string valueName)
-        {
+        public static bool IsDefaultValue(string valueName) {
             return String.IsNullOrEmpty(valueName);
         }
 
-        public static string GetName(string valueName)
-        {
+        public static string GetName(string valueName) {
             return IsDefaultValue(valueName) ? DEFAULT_REG_VALUE : valueName;
         }
 
-        public static string RegistryValueToString(RegValueData value)
-        {
-            switch (value.Kind)
-            {
+        public static string RegistryValueToString(RegValueData value) {
+            switch (value.Kind) {
                 case RegistryValueKind.Binary:
                     return value.Data.Length > 0 ? BitConverter.ToString(value.Data).Replace("-", " ").ToLower() : "(zero-length binary value)";
                 case RegistryValueKind.MultiString:

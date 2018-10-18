@@ -7,10 +7,8 @@ using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Forms
-{
-    public partial class FrmKeylogger : Form
-    {
+namespace Quasar.Server.Forms {
+    public partial class FrmKeylogger : Form {
         /// <summary>
         /// The client which can be used for the keylogger.
         /// </summary>
@@ -38,10 +36,8 @@ namespace Quasar.Server.Forms
         /// <returns>
         /// Returns a new keylogger form for the client if there is none currently open, otherwise creates a new one.
         /// </returns>
-        public static FrmKeylogger CreateNewOrGetExisting(Client client)
-        {
-            if (OpenedForms.ContainsKey(client))
-            {
+        public static FrmKeylogger CreateNewOrGetExisting(Client client) {
+            if (OpenedForms.ContainsKey(client)) {
                 return OpenedForms[client];
             }
             FrmKeylogger f = new FrmKeylogger(client);
@@ -54,8 +50,7 @@ namespace Quasar.Server.Forms
         /// Initializes a new instance of the <see cref="FrmKeylogger"/> class using the given client.
         /// </summary>
         /// <param name="client">The client used for the keylogger form.</param>
-        public FrmKeylogger(Client client)
-        {
+        public FrmKeylogger(Client client) {
             _connectClient = client;
             _keyloggerHandler = new KeyloggerHandler(client);
 
@@ -68,8 +63,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Registers the keylogger message handler for client communication.
         /// </summary>
-        private void RegisterMessageHandler()
-        {
+        private void RegisterMessageHandler() {
             _connectClient.ClientState += ClientDisconnected;
             _keyloggerHandler.ProgressChanged += LogsChanged;
             MessageHandler.Register(_keyloggerHandler);
@@ -78,8 +72,7 @@ namespace Quasar.Server.Forms
         /// <summary>
         /// Unregisters the keylogger message handler.
         /// </summary>
-        private void UnregisterMessageHandler()
-        {
+        private void UnregisterMessageHandler() {
             MessageHandler.Unregister(_keyloggerHandler);
             _keyloggerHandler.ProgressChanged -= LogsChanged;
             _connectClient.ClientState -= ClientDisconnected;
@@ -90,10 +83,8 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="client">The client which disconnected.</param>
         /// <param name="connected">True if the client connected, false if disconnected</param>
-        private void ClientDisconnected(Client client, bool connected)
-        {
-            if (!connected)
-            {
+        private void ClientDisconnected(Client client, bool connected) {
+            if (!connected) {
                 this.Invoke((MethodInvoker)this.Close);
             }
         }
@@ -103,19 +94,16 @@ namespace Quasar.Server.Forms
         /// </summary>
         /// <param name="sender">The message processor which raised the event.</param>
         /// <param name="message">The status message.</param>
-        private void LogsChanged(object sender, string message)
-        {
+        private void LogsChanged(object sender, string message) {
             RefreshLogsDirectory();
             btnGetLogs.Enabled = true;
             statusStrip.Text = "Status: " + message;
         }
 
-        private void FrmKeylogger_Load(object sender, EventArgs e)
-        {
+        private void FrmKeylogger_Load(object sender, EventArgs e) {
             this.Text = WindowHelper.GetWindowTitle("Keylogger", _connectClient);
 
-            if (!Directory.Exists(_baseDownloadPath))
-            {
+            if (!Directory.Exists(_baseDownloadPath)) {
                 Directory.CreateDirectory(_baseDownloadPath);
                 return;
             }
@@ -123,38 +111,32 @@ namespace Quasar.Server.Forms
             RefreshLogsDirectory();
         }
 
-        private void FrmKeylogger_FormClosing(object sender, FormClosingEventArgs e)
-        {
+        private void FrmKeylogger_FormClosing(object sender, FormClosingEventArgs e) {
             UnregisterMessageHandler();
             _keyloggerHandler.Dispose();
         }
 
-        private void btnGetLogs_Click(object sender, EventArgs e)
-        {
+        private void btnGetLogs_Click(object sender, EventArgs e) {
             btnGetLogs.Enabled = false;
             statusStrip.Text = "Status: Retrieving logs...";
             _keyloggerHandler.RetrieveLogs();
         }
 
-        private void lstLogs_ItemActivate(object sender, EventArgs e)
-        {
-            if (lstLogs.SelectedItems.Count > 0)
-            {
+        private void lstLogs_ItemActivate(object sender, EventArgs e) {
+            if (lstLogs.SelectedItems.Count > 0) {
                 wLogViewer.Navigate(Path.Combine(_baseDownloadPath, lstLogs.SelectedItems[0].Text));
             }
         }
 
-        private void RefreshLogsDirectory()
-        {
+        private void RefreshLogsDirectory() {
             lstLogs.Items.Clear();
 
             DirectoryInfo dicInfo = new DirectoryInfo(_baseDownloadPath);
 
             FileInfo[] iFiles = dicInfo.GetFiles();
 
-            foreach (FileInfo file in iFiles)
-            {
-                lstLogs.Items.Add(new ListViewItem {Text = file.Name});
+            foreach (FileInfo file in iFiles) {
+                lstLogs.Items.Add(new ListViewItem { Text = file.Name });
             }
         }
     }

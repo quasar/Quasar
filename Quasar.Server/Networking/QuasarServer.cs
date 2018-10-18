@@ -1,15 +1,12 @@
 ﻿using System.Linq;
 using Quasar.Common.Messages;
 
-namespace Quasar.Server.Networking
-{
-    public class QuasarServer : Server
-    {
+namespace Quasar.Server.Networking {
+    public class QuasarServer : Server {
         /// <summary>
         /// Gets the clients currently connected and identified to the server.
         /// </summary>
-        public Client[] ConnectedClients
-        {
+        public Client[] ConnectedClients {
             get { return Clients.Where(c => c != null && c.Identified).ToArray(); }
         }
 
@@ -28,8 +25,7 @@ namespace Quasar.Server.Networking
         /// Fires an event that informs subscribers that the client is connected.
         /// </summary>
         /// <param name="client">The connected client.</param>
-        private void OnClientConnected(Client client)
-        {
+        private void OnClientConnected(Client client) {
             if (ProcessingDisconnect || !Listening) return;
             var handler = ClientConnected;
             handler?.Invoke(client);
@@ -50,8 +46,7 @@ namespace Quasar.Server.Networking
         /// Fires an event that informs subscribers that the client is disconnected.
         /// </summary>
         /// <param name="client">The disconnected client.</param>
-        private void OnClientDisconnected(Client client)
-        {
+        private void OnClientDisconnected(Client client) {
             if (ProcessingDisconnect || !Listening) return;
             var handler = ClientDisconnected;
             handler?.Invoke(client);
@@ -60,8 +55,7 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public QuasarServer() : base()
-        {
+        public QuasarServer() : base() {
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
         }
@@ -72,12 +66,9 @@ namespace Quasar.Server.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which changed its state.</param>
         /// <param name="connected">True if the client connected, false if disconnected.</param>
-        private void OnClientState(Server server, Client client, bool connected)
-        {
-            if (!connected)
-            {
-                if (client.Identified)
-                {
+        private void OnClientState(Server server, Client client, bool connected) {
+            if (!connected) {
+                if (client.Identified) {
                     OnClientDisconnected(client);
                 }
             }
@@ -89,26 +80,18 @@ namespace Quasar.Server.Networking
         /// <param name="server">The server the client is connected to.</param>
         /// <param name="client">The client which has received the message.</param>
         /// <param name="message">The received message.</param>
-        private void OnClientRead(Server server, Client client, IMessage message)
-        {
-            if (!client.Identified)
-            {
-                if (message.GetType() == typeof (ClientIdentification))
-                {
-                    client.Identified = IdentifyClient(client, (ClientIdentification) message);
-                    if (client.Identified)
-                    {
-                        client.Send(new ClientIdentificationResult {Result = true}); // finish handshake
+        private void OnClientRead(Server server, Client client, IMessage message) {
+            if (!client.Identified) {
+                if (message.GetType() == typeof(ClientIdentification)) {
+                    client.Identified = IdentifyClient(client, (ClientIdentification)message);
+                    if (client.Identified) {
+                        client.Send(new ClientIdentificationResult { Result = true }); // finish handshake
                         OnClientConnected(client);
-                    }
-                    else
-                    {
+                    } else {
                         // identification failed
                         client.Disconnect();
                     }
-                }
-                else
-                {
+                } else {
                     // no messages of other types are allowed as long as client is in unidentified state
                     client.Disconnect();
                 }
@@ -118,8 +101,7 @@ namespace Quasar.Server.Networking
             MessageHandler.Process(client, message);
         }
 
-        private bool IdentifyClient(Client client, ClientIdentification packet)
-        {
+        private bool IdentifyClient(Client client, ClientIdentification packet) {
             if (packet.Id.Length != 64)
                 return false;
 

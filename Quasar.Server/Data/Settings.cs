@@ -3,215 +3,161 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Quasar.Server.Data
-{
-    public static class Settings
-    {
+namespace Quasar.Server.Data {
+    public static class Settings {
         private static readonly string SettingsPath = Path.Combine(Application.StartupPath, "settings.xml");
 
         public static string RepositoryURL = @"https://github.com/quasar/QuasarRAT";
 
-        public static ushort ListenPort
-        {
-            get
-            {
+        public static ushort ListenPort {
+            get {
                 return ushort.Parse(ReadValueSafe("ListenPort", "4782"));
             }
-            set
-            {
+            set {
                 WriteValue("ListenPort", value.ToString());
             }
         }
 
-        public static bool IPv6Support
-        {
-            get
-            {
+        public static bool IPv6Support {
+            get {
                 return bool.Parse(ReadValueSafe("IPv6Support", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("IPv6Support", value.ToString());
             }
         }
 
-        public static bool AutoListen
-        {
-            get
-            {
+        public static bool AutoListen {
+            get {
                 return bool.Parse(ReadValueSafe("AutoListen", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("AutoListen", value.ToString());
             }
         }
 
-        public static bool ShowPopup
-        {
-            get
-            {
+        public static bool ShowPopup {
+            get {
                 return bool.Parse(ReadValueSafe("ShowPopup", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("ShowPopup", value.ToString());
             }
         }
 
-        public static bool UseUPnP
-        {
-            get
-            {
+        public static bool UseUPnP {
+            get {
                 return bool.Parse(ReadValueSafe("UseUPnP", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("UseUPnP", value.ToString());
             }
         }
 
-        public static bool ShowToolTip
-        {
-            get
-            {
+        public static bool ShowToolTip {
+            get {
                 return bool.Parse(ReadValueSafe("ShowToolTip", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("ShowToolTip", value.ToString());
             }
         }
 
-        public static string Password
-        {
-            get
-            {
+        public static string Password {
+            get {
                 return ReadValueSafe("Password", "1234");
             }
-            set
-            {
+            set {
                 WriteValue("Password", value);
             }
         }
 
-        public static bool EnableNoIPUpdater
-        {
-            get
-            {
+        public static bool EnableNoIPUpdater {
+            get {
                 return bool.Parse(ReadValueSafe("EnableNoIPUpdater", "False"));
             }
-            set
-            {
+            set {
                 WriteValue("EnableNoIPUpdater", value.ToString());
             }
         }
 
-        public static string NoIPHost
-        {
-            get
-            {
+        public static string NoIPHost {
+            get {
                 return ReadValueSafe("NoIPHost");
             }
-            set
-            {
+            set {
                 WriteValue("NoIPHost", value);
             }
         }
 
-        public static string NoIPUsername
-        {
-            get
-            {
+        public static string NoIPUsername {
+            get {
                 return ReadValueSafe("NoIPUsername");
             }
-            set
-            {
+            set {
                 WriteValue("NoIPUsername", value);
             }
         }
 
-        public static string NoIPPassword
-        {
-            get
-            {
+        public static string NoIPPassword {
+            get {
                 return ReadValueSafe("NoIPPassword");
             }
-            set
-            {
+            set {
                 WriteValue("NoIPPassword", value);
             }
         }
 
-        public static string SaveFormat
-        {
-            get
-            {
+        public static string SaveFormat {
+            get {
                 return ReadValueSafe("SaveFormat", "APP - URL - USER:PASS");
             }
-            set
-            {
+            set {
                 WriteValue("SaveFormat", value);
             }
         }
 
-        public static ushort ReverseProxyPort
-        {
-            get
-            {
+        public static ushort ReverseProxyPort {
+            get {
                 return ushort.Parse(ReadValueSafe("ReverseProxyPort", "3128"));
             }
-            set
-            {
+            set {
                 WriteValue("ReverseProxyPort", value.ToString());
             }
         }
 
-        private static string ReadValue(string pstrValueToRead)
-        {
-            try
-            {
+        private static string ReadValue(string pstrValueToRead) {
+            try {
                 XPathDocument doc = new XPathDocument(SettingsPath);
                 XPathNavigator nav = doc.CreateNavigator();
                 XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
                 XPathNodeIterator iterator = nav.Select(expr);
-                while (iterator.MoveNext())
-                {
+                while (iterator.MoveNext()) {
                     return iterator.Current.Value;
                 }
 
                 return string.Empty;
-            }
-            catch
-            {
+            } catch {
                 return string.Empty;
             }
         }
 
-        private static string ReadValueSafe(string pstrValueToRead, string defaultValue = "")
-        {
+        private static string ReadValueSafe(string pstrValueToRead, string defaultValue = "") {
             string value = ReadValue(pstrValueToRead);
-            return (!string.IsNullOrEmpty(value)) ? value: defaultValue;
+            return (!string.IsNullOrEmpty(value)) ? value : defaultValue;
         }
 
-        private static void WriteValue(string pstrValueToRead, string pstrValueToWrite)
-        {
-            try
-            {
+        private static void WriteValue(string pstrValueToRead, string pstrValueToWrite) {
+            try {
                 XmlDocument doc = new XmlDocument();
 
-                if (File.Exists(SettingsPath))
-                {
-                    using (var reader = new XmlTextReader(SettingsPath))
-                    {
+                if (File.Exists(SettingsPath)) {
+                    using (var reader = new XmlTextReader(SettingsPath)) {
                         doc.Load(reader);
                     }
-                }
-                else
-                {
+                } else {
                     var dir = Path.GetDirectoryName(SettingsPath);
-                    if (!Directory.Exists(dir))
-                    {
+                    if (!Directory.Exists(dir)) {
                         Directory.CreateDirectory(dir);
                     }
                     doc.AppendChild(doc.CreateElement("settings"));
@@ -228,9 +174,7 @@ namespace Quasar.Server.Data
                 }
                 oldNode.InnerText = pstrValueToWrite;
                 doc.Save(SettingsPath);
-            }
-            catch
-            {
+            } catch {
             }
         }
     }

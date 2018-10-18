@@ -1,9 +1,7 @@
 ﻿using Quasar.Server.Controls;
 
-namespace Quasar.Server.Forms
-{
-    partial class FrmRegistryEditor
-    {
+namespace Quasar.Server.Forms {
+    partial class FrmRegistryEditor {
         /// <summary>
         /// Required designer variable.
         /// </summary>
@@ -13,10 +11,8 @@ namespace Quasar.Server.Forms
         /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing && (components != null))
-            {
+        protected override void Dispose(bool disposing) {
+            if (disposing && (components != null)) {
                 components.Dispose();
             }
             base.Dispose(disposing);
@@ -28,8 +24,7 @@ namespace Quasar.Server.Forms
         /// Required method for Designer support - do not modify
         /// the contents of this method with the code editor.
         /// </summary>
-        private void InitializeComponent()
-        {
+        private void InitializeComponent() {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmRegistryEditor));
             this.tableLayoutPanel = new System.Windows.Forms.TableLayoutPanel();

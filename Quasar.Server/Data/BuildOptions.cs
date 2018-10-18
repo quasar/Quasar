@@ -1,7 +1,5 @@
-﻿namespace Quasar.Server.Data
-{
-    public class BuildOptions
-    {
+﻿namespace Quasar.Server.Data {
+    public class BuildOptions {
         public bool ValidationSuccess { get; set; }
         public bool Install { get; set; }
         public bool Startup { get; set; }

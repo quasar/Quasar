@@ -6,10 +6,8 @@ using Quasar.Server.Networking;
 using System;
 using System.IO;
 
-namespace Quasar.Server.Messages
-{
-    public class KeyloggerHandler : MessageProcessorBase<string>
-    {
+namespace Quasar.Server.Messages {
+    public class KeyloggerHandler : MessageProcessorBase<string> {
         /// <summary>
         /// The client which is associated with this keylogger handler.
         /// </summary>
@@ -24,8 +22,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="KeyloggerHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public KeyloggerHandler(Client client) : base(true)
-        {
+        public KeyloggerHandler(Client client) : base(true) {
             _client = client;
             _baseDownloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
         }
@@ -37,10 +34,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case GetKeyloggerLogsResponse logs:
                     Execute(sender, logs);
                     break;
@@ -50,22 +45,18 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Retrieves the keylogger logs and begins downloading them.
         /// </summary>
-        public void RetrieveLogs()
-        {
+        public void RetrieveLogs() {
             _client.Send(new GetKeyloggerLogs());
         }
 
-        private void Execute(ISender client, GetKeyloggerLogsResponse message)
-        {
-            if (message.FileCount == 0)
-            {
+        private void Execute(ISender client, GetKeyloggerLogsResponse message) {
+            if (message.FileCount == 0) {
                 OnReport("Ready");
                 return;
             }
 
             // don't escape from download directory
-            if (FileHelper.HasIllegalCharacters(message.Filename))
-            {
+            if (FileHelper.HasIllegalCharacters(message.Filename)) {
                 // disconnect malicious client
                 client.Disconnect();
                 return;
@@ -80,26 +71,20 @@ namespace Quasar.Server.Messages
 
             destFile.AppendBlock(message.Block, message.CurrentBlock);
 
-            if (message.CurrentBlock + 1 == message.MaxBlocks)
-            {
-                try
-                {
+            if (message.CurrentBlock + 1 == message.MaxBlocks) {
+                try {
                     File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath));
-                }
-                catch (Exception)
-                {
+                } catch (Exception) {
                     OnReport("Failed to write logs");
                 }
 
-                if (message.Index == message.FileCount)
-                {
+                if (message.Index == message.FileCount) {
                     OnReport("Ready");
                 }
             }
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
         }
     }
 }

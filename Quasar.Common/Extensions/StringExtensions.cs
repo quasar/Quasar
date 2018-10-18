@@ -1,18 +1,14 @@
 ﻿using Quasar.Common.Enums;
 
-namespace Quasar.Common.Extensions
-{
-    public static class StringExtensions
-    {
+namespace Quasar.Common.Extensions {
+    public static class StringExtensions {
         /// <summary>
         /// Converts the file extension string to its <see cref="ContentType"/> representation.
         /// </summary>
         /// <param name="fileExtension">The file extension string.</param>
         /// <returns>The <see cref="ContentType"/> representation of the file extension string.</returns>
-        public static ContentType ToContentType(this string fileExtension)
-        {
-            switch (fileExtension.ToLower())
-            {
+        public static ContentType ToContentType(this string fileExtension) {
+            switch (fileExtension.ToLower()) {
                 default:
                     return ContentType.Blob;
                 case ".exe":

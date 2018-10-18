@@ -1,10 +1,8 @@
 ﻿using ProtoBuf;
 
-namespace Quasar.Common.Messages
-{
+namespace Quasar.Common.Messages {
     [ProtoContract]
-    public class GetKeyloggerLogsResponse : IMessage
-    {
+    public class GetKeyloggerLogsResponse : IMessage {
         [ProtoMember(1)]
         public string Filename { get; set; }
 

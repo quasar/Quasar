@@ -6,10 +6,8 @@ using Quasar.Client.Extensions;
 using Quasar.Common.Models;
 using Quasar.Common.Utilities;
 
-namespace Quasar.Client.Helper
-{
-    public static class RegistryKeyHelper
-    {
+namespace Quasar.Client.Helper {
+    public static class RegistryKeyHelper {
         private static string DEFAULT_VALUE = String.Empty;
 
         /// <summary>
@@ -21,12 +19,9 @@ namespace Quasar.Client.Helper
         /// <param name="value">The value.</param>
         /// <param name="addQuotes">If set to True, adds quotes to the value.</param>
         /// <returns>True on success, else False.</returns>
-        public static bool AddRegistryKeyValue(RegistryHive hive, string path, string name, string value, bool addQuotes = false)
-        {
-            try
-            {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(hive, RegistryView.Registry64).OpenWritableSubKeySafe(path))
-                {
+        public static bool AddRegistryKeyValue(RegistryHive hive, string path, string name, string value, bool addQuotes = false) {
+            try {
+                using (RegistryKey key = RegistryKey.OpenBaseKey(hive, RegistryView.Registry64).OpenWritableSubKeySafe(path)) {
                     if (key == null) return false;
 
                     if (addQuotes && !value.StartsWith("\"") && !value.EndsWith("\""))
@@ -35,9 +30,7 @@ namespace Quasar.Client.Helper
                     key.SetValue(name, value);
                     return true;
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -48,14 +41,10 @@ namespace Quasar.Client.Helper
         /// <param name="hive">Represents the possible values for a top-level node on a foreign machine.</param>
         /// <param name="path">The path to the registry key.</param>
         /// <returns></returns>
-        public static RegistryKey OpenReadonlySubKey(RegistryHive hive, string path)
-        {
-            try
-            {
+        public static RegistryKey OpenReadonlySubKey(RegistryHive hive, string path) {
+            try {
                 return RegistryKey.OpenBaseKey(hive, RegistryView.Registry64).OpenSubKey(path, false);
-            }
-            catch
-            {
+            } catch {
                 return null;
             }
         }
@@ -67,19 +56,14 @@ namespace Quasar.Client.Helper
         /// <param name="path">The path to the registry key.</param>
         /// <param name="name">The name of the value to delete.</param>
         /// <returns>True on success, else False.</returns>
-        public static bool DeleteRegistryKeyValue(RegistryHive hive, string path, string name)
-        {
-            try
-            {
-                using (RegistryKey key = RegistryKey.OpenBaseKey(hive, RegistryView.Registry64).OpenWritableSubKeySafe(path))
-                {
+        public static bool DeleteRegistryKeyValue(RegistryHive hive, string path, string name) {
+            try {
+                using (RegistryKey key = RegistryKey.OpenBaseKey(hive, RegistryView.Registry64).OpenWritableSubKeySafe(path)) {
                     if (key == null) return false;
                     key.DeleteValue(name, true);
                     return true;
                 }
-            }
-            catch (Exception)
-            {
+            } catch (Exception) {
                 return false;
             }
         }
@@ -89,8 +73,7 @@ namespace Quasar.Client.Helper
         /// </summary>
         /// <param name="valueName">The name of the value</param>
         /// <returns>True if default value, else False</returns>
-        public static bool IsDefaultValue(string valueName)
-        {
+        public static bool IsDefaultValue(string valueName) {
             return String.IsNullOrEmpty(valueName);
         }
 
@@ -100,10 +83,8 @@ namespace Quasar.Client.Helper
         /// </summary>
         /// <param name="values">The list with the values for which the default value should be added to</param>
         /// <returns>Array with all of the values including the default value</returns>
-        public static RegValueData[] AddDefaultValue(List<RegValueData> values)
-        {
-            if(!values.Any(value => IsDefaultValue(value.Name)))
-            {
+        public static RegValueData[] AddDefaultValue(List<RegValueData> values) {
+            if (!values.Any(value => IsDefaultValue(value.Name))) {
                 values.Add(GetDefaultValue());
             }
             return values.ToArray();
@@ -113,36 +94,32 @@ namespace Quasar.Client.Helper
         /// Gets the default registry values
         /// </summary>
         /// <returns>A array with the default registry values</returns>
-        public static RegValueData[] GetDefaultValues()
-        {
-            return new[] {GetDefaultValue()};
+        public static RegValueData[] GetDefaultValues() {
+            return new[] { GetDefaultValue() };
         }
 
-        public static RegValueData CreateRegValueData(string name, RegistryValueKind kind, object value = null)
-        {
-            var newRegValue = new RegValueData {Name = name, Kind = kind};
+        public static RegValueData CreateRegValueData(string name, RegistryValueKind kind, object value = null) {
+            var newRegValue = new RegValueData { Name = name, Kind = kind };
 
             if (value == null)
                 newRegValue.Data = new byte[] { };
-            else
-            {
-                switch (newRegValue.Kind)
-                {
+            else {
+                switch (newRegValue.Kind) {
                     case RegistryValueKind.Binary:
-                        newRegValue.Data = (byte[]) value;
+                        newRegValue.Data = (byte[])value;
                         break;
                     case RegistryValueKind.MultiString:
-                        newRegValue.Data = ByteConverter.GetBytes((string[]) value);
+                        newRegValue.Data = ByteConverter.GetBytes((string[])value);
                         break;
                     case RegistryValueKind.DWord:
-                        newRegValue.Data = ByteConverter.GetBytes((uint) (int) value);
+                        newRegValue.Data = ByteConverter.GetBytes((uint)(int)value);
                         break;
                     case RegistryValueKind.QWord:
-                        newRegValue.Data = ByteConverter.GetBytes((ulong) (long) value);
+                        newRegValue.Data = ByteConverter.GetBytes((ulong)(long)value);
                         break;
                     case RegistryValueKind.String:
                     case RegistryValueKind.ExpandString:
-                        newRegValue.Data = ByteConverter.GetBytes((string) value);
+                        newRegValue.Data = ByteConverter.GetBytes((string)value);
                         break;
                 }
             }
@@ -150,8 +127,7 @@ namespace Quasar.Client.Helper
             return newRegValue;
         }
 
-        private static RegValueData GetDefaultValue()
-        {
+        private static RegValueData GetDefaultValue() {
             return CreateRegValueData(DEFAULT_VALUE, RegistryValueKind.String);
         }
     }

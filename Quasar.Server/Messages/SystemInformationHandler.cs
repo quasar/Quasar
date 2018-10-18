@@ -4,10 +4,8 @@ using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 
-namespace Quasar.Server.Messages
-{
-    public class SystemInformationHandler : MessageProcessorBase<List<Tuple<string, string>>>
-    {
+namespace Quasar.Server.Messages {
+    public class SystemInformationHandler : MessageProcessorBase<List<Tuple<string, string>>> {
         /// <summary>
         /// The client which is associated with this system information handler.
         /// </summary>
@@ -17,8 +15,7 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="SystemInformationHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public SystemInformationHandler(Client client) : base(true)
-        {
+        public SystemInformationHandler(Client client) : base(true) {
             _client = client;
         }
 
@@ -29,10 +26,8 @@ namespace Quasar.Server.Messages
         public override bool CanExecuteFrom(ISender client) => _client.Equals(client);
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
-        {
-            switch (message)
-            {
+        public override void Execute(ISender sender, IMessage message) {
+            switch (message) {
                 case GetSystemInfoResponse info:
                     Execute(sender, info);
                     break;
@@ -42,13 +37,11 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// Refreshes the system information of the client.
         /// </summary>
-        public void RefreshSystemInformation()
-        {
+        public void RefreshSystemInformation() {
             _client.Send(new GetSystemInfo());
         }
 
-        private void Execute(ISender client, GetSystemInfoResponse message)
-        {
+        private void Execute(ISender client, GetSystemInfoResponse message) {
             OnReport(message.SystemInfos);
 
             // TODO: Refactor tooltip
@@ -67,8 +60,7 @@ namespace Quasar.Server.Messages
             //}
         }
 
-        protected override void Dispose(bool disposing)
-        {
+        protected override void Dispose(bool disposing) {
         }
     }
 }

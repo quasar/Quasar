@@ -2,10 +2,8 @@
 using System.IO;
 using System.Windows.Forms;
 
-namespace Quasar.Server.Networking
-{
-    public class UserState
-    {
+namespace Quasar.Server.Networking {
+    public class UserState {
         private string _downloadDirectory;
 
         public string Version { get; set; }

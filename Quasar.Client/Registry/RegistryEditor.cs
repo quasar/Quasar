@@ -4,10 +4,8 @@ using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
 
-namespace Quasar.Client.Registry
-{
-    public class RegistryEditor
-    {
+namespace Quasar.Client.Registry {
+    public class RegistryEditor {
 
         #region CONSTANTS
 
@@ -43,17 +41,14 @@ namespace Quasar.Client.Registry
         /// <param name="name">output parameter that holds the name of the sub-key that was create.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if action succeeded.</returns>
-        public static bool CreateRegistryKey(string parentPath, out string name, out string errorMsg)
-        {
+        public static bool CreateRegistryKey(string parentPath, out string name, out string errorMsg) {
             name = "";
-            try
-            {
+            try {
                 RegistryKey parent = GetWritableRegistryKey(parentPath);
 
 
                 //Invalid can not open parent
-                if (parent == null)
-                {
+                if (parent == null) {
                     errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
@@ -62,18 +57,15 @@ namespace Quasar.Client.Registry
                 int i = 1;
                 string testName = String.Format("New Key #{0}", i);
 
-                while (parent.ContainsSubKey(testName))
-                {
+                while (parent.ContainsSubKey(testName)) {
                     i++;
                     testName = String.Format("New Key #{0}", i);
                 }
                 name = testName;
 
-                using (RegistryKey child = parent.CreateSubKeySafe(name))
-                {
+                using (RegistryKey child = parent.CreateSubKeySafe(name)) {
                     //Child could not be created
-                    if (child == null)
-                    {
+                    if (child == null) {
                         errorMsg = REGISTRY_KEY_CREATE_ERROR;
                         return false;
                     }
@@ -82,9 +74,7 @@ namespace Quasar.Client.Registry
                 //Child was successfully created
                 errorMsg = "";
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -98,22 +88,18 @@ namespace Quasar.Client.Registry
         /// <param name="parentPath">The path to the parent for which to delete the sub-key on.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool DeleteRegistryKey(string name, string parentPath, out string errorMsg)
-        {
-            try
-            {
+        public static bool DeleteRegistryKey(string name, string parentPath, out string errorMsg) {
+            try {
                 RegistryKey parent = GetWritableRegistryKey(parentPath);
 
                 //Invalid can not open parent
-                if (parent == null)
-                {
+                if (parent == null) {
                     errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
                 //Child does not exist
-                if (!parent.ContainsSubKey(name))
-                {
+                if (!parent.ContainsSubKey(name)) {
                     errorMsg = "The registry: " + name + " does not exist in: " + parentPath;
                     //If child does not exists then the action has already succeeded
                     return true;
@@ -122,8 +108,7 @@ namespace Quasar.Client.Registry
                 bool success = parent.DeleteSubKeyTreeSafe(name);
 
                 //Child could not be deleted
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_KEY_DELETE_ERROR;
                     return false;
                 }
@@ -131,9 +116,7 @@ namespace Quasar.Client.Registry
                 //Child was successfully deleted
                 errorMsg = "";
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -147,23 +130,19 @@ namespace Quasar.Client.Registry
         /// <param name="parentPath">The path of the parent for which to rename the key.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool RenameRegistryKey(string oldName, string newName, string parentPath, out string errorMsg)
-        {
-            try
-            {
+        public static bool RenameRegistryKey(string oldName, string newName, string parentPath, out string errorMsg) {
+            try {
 
                 RegistryKey parent = GetWritableRegistryKey(parentPath);
 
                 //Invalid can not open parent
-                if (parent == null)
-                {
+                if (parent == null) {
                     errorMsg = "You do not have write access to registry: " + parentPath + ", try running client as administrator";
                     return false;
                 }
 
                 //Child does not exist
-                if (!parent.ContainsSubKey(oldName))
-                {
+                if (!parent.ContainsSubKey(oldName)) {
                     errorMsg = "The registry: " + oldName + " does not exist in: " + parentPath;
                     return false;
                 }
@@ -171,8 +150,7 @@ namespace Quasar.Client.Registry
                 bool success = parent.RenameSubKeySafe(oldName, newName);
 
                 //Child could not be renamed
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_KEY_RENAME_ERROR;
                     return false;
                 }
@@ -181,9 +159,7 @@ namespace Quasar.Client.Registry
                 errorMsg = "";
                 return true;
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -201,16 +177,13 @@ namespace Quasar.Client.Registry
         /// <param name="name">output parameter that holds the name of the registry value that was create.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool CreateRegistryValue(string keyPath, RegistryValueKind kind, out string name, out string errorMsg)
-        {
+        public static bool CreateRegistryValue(string keyPath, RegistryValueKind kind, out string name, out string errorMsg) {
             name = "";
-            try
-            {
+            try {
                 RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
-                if (key == null)
-                {
+                if (key == null) {
                     errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
@@ -219,8 +192,7 @@ namespace Quasar.Client.Registry
                 int i = 1;
                 string testName = String.Format("New Value #{0}", i);
 
-                while (key.ContainsValue(testName))
-                {
+                while (key.ContainsValue(testName)) {
                     i++;
                     testName = String.Format("New Value #{0}", i);
                 }
@@ -229,8 +201,7 @@ namespace Quasar.Client.Registry
                 bool success = key.SetValueSafe(name, kind.GetDefault(), kind);
 
                 //Value could not be created
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_VALUE_CREATE_ERROR;
                     return false;
                 }
@@ -238,9 +209,7 @@ namespace Quasar.Client.Registry
                 //Value was successfully created
                 errorMsg = "";
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -254,22 +223,18 @@ namespace Quasar.Client.Registry
         /// /// <param name="name">The name of the registry value to delete.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool DeleteRegistryValue(string keyPath, string name, out string errorMsg)
-        {
-            try
-            {
+        public static bool DeleteRegistryValue(string keyPath, string name, out string errorMsg) {
+            try {
                 RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
-                if (key == null)
-                {
+                if (key == null) {
                     errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
                 //Value does not exist
-                if (!key.ContainsValue(name))
-                {
+                if (!key.ContainsValue(name)) {
                     errorMsg = "The value: " + name + " does not exist in: " + keyPath;
                     //If value does not exists then the action has already succeeded
                     return true;
@@ -278,8 +243,7 @@ namespace Quasar.Client.Registry
                 bool success = key.DeleteValueSafe(name);
 
                 //Value could not be deleted
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_VALUE_DELETE_ERROR;
                     return false;
                 }
@@ -287,9 +251,7 @@ namespace Quasar.Client.Registry
                 //Value was successfully deleted
                 errorMsg = "";
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -303,22 +265,18 @@ namespace Quasar.Client.Registry
         /// <param name="keyPath">The path of the key for which to rename the registry value.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool RenameRegistryValue(string oldName, string newName, string keyPath, out string errorMsg)
-        {
-            try
-            {
+        public static bool RenameRegistryValue(string oldName, string newName, string keyPath, out string errorMsg) {
+            try {
                 RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
-                if (key == null)
-                {
+                if (key == null) {
                     errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
 
                 //Value does not exist
-                if (!key.ContainsValue(oldName))
-                {
+                if (!key.ContainsValue(oldName)) {
                     errorMsg = "The value: " + oldName + " does not exist in: " + keyPath;
                     return false;
                 }
@@ -326,8 +284,7 @@ namespace Quasar.Client.Registry
                 bool success = key.RenameValueSafe(oldName, newName);
 
                 //Value could not be renamed
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_VALUE_RENAME_ERROR;
                     return false;
                 }
@@ -336,9 +293,7 @@ namespace Quasar.Client.Registry
                 errorMsg = "";
                 return true;
 
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -354,22 +309,18 @@ namespace Quasar.Client.Registry
         /// value of the registry value on.</param>
         /// <param name="errorMsg">output parameter that contians possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
-        public static bool ChangeRegistryValue(RegValueData value, string keyPath, out string errorMsg)
-        {
-            try
-            {
+        public static bool ChangeRegistryValue(RegValueData value, string keyPath, out string errorMsg) {
+            try {
                 RegistryKey key = GetWritableRegistryKey(keyPath);
 
                 //Invalid can not open key
-                if (key == null)
-                {
+                if (key == null) {
                     errorMsg = "You do not have write access to registry: " + keyPath + ", try running client as administrator";
                     return false;
                 }
-                
+
                 //Is not default value and does not exist
-                if (!RegistryKeyHelper.IsDefaultValue(value.Name) && !key.ContainsValue(value.Name))
-                {
+                if (!RegistryKeyHelper.IsDefaultValue(value.Name) && !key.ContainsValue(value.Name)) {
                     errorMsg = "The value: " + value.Name + " does not exist in: " + keyPath;
                     return false;
                 }
@@ -377,8 +328,7 @@ namespace Quasar.Client.Registry
                 bool success = key.SetValueSafe(value.Name, value.Data, value.Kind);
 
                 //Value could not be created
-                if (!success)
-                {
+                if (!success) {
                     errorMsg = REGISTRY_VALUE_CHANGE_ERROR;
                     return false;
                 }
@@ -386,9 +336,7 @@ namespace Quasar.Client.Registry
                 //Value was successfully created
                 errorMsg = "";
                 return true;
-            }
-            catch (Exception ex)
-            {
+            } catch (Exception ex) {
                 errorMsg = ex.Message;
                 return false;
             }
@@ -397,15 +345,12 @@ namespace Quasar.Client.Registry
 
         #endregion
 
-        public static RegistryKey GetWritableRegistryKey(string keyPath)
-        {
+        public static RegistryKey GetWritableRegistryKey(string keyPath) {
             RegistryKey key = RegistrySeeker.GetRootKey(keyPath);
 
-            if (key != null)
-            {
+            if (key != null) {
                 //Check if this is a root key or not
-                if (key.Name != keyPath)
-                {
+                if (key.Name != keyPath) {
                     //Must get the subKey name by removing root and '\\'
                     string subKeyName = keyPath.Substring(key.Name.Length + 1);
 
