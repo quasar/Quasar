@@ -1,6 +1,7 @@
 ﻿using Quasar.Common.Helpers;
 using Quasar.Server.Build;
 using Quasar.Server.Helper;
+using Quasar.Server.Models;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -10,7 +11,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Server.Models;
 
 namespace Quasar.Server.Forms
 {
@@ -160,11 +160,6 @@ namespace Quasar.Server.Forms
         #endregion
 
         #region "Misc"
-        private void chkShowPass_CheckedChanged(object sender, EventArgs e)
-        {
-            txtPassword.PasswordChar = (chkShowPass.Checked) ? '\0' : '•';
-        }
-
         private void txtInstallname_KeyPress(object sender, KeyPressEventArgs e)
         {
             e.Handled = ((e.KeyChar == '\\' || FileHelper.HasIllegalCharacters(e.KeyChar.ToString())) &&
@@ -244,7 +239,7 @@ namespace Quasar.Server.Forms
         private bool CheckForEmptyInput()
         {
             return (!string.IsNullOrWhiteSpace(txtTag.Text) && !string.IsNullOrWhiteSpace(txtMutex.Text) && // General Settings
-                 _hosts.Count > 0 && !string.IsNullOrWhiteSpace(txtPassword.Text) && // Connection
+                 _hosts.Count > 0  && // Connection
                  (!chkInstall.Checked || (chkInstall.Checked && !string.IsNullOrWhiteSpace(txtInstallName.Text))) && // Installation
                  (!chkStartup.Checked || (chkStartup.Checked && !string.IsNullOrWhiteSpace(txtRegistryKeyName.Text)))); // Installation
         }

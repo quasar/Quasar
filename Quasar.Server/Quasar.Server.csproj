@@ -113,6 +113,12 @@
     <Compile Include="Controls\WordTextBox.Designer.cs">
       <DependentUpon>WordTextBox.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmCertificate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmCertificate.Designer.cs">
+      <DependentUpon>FrmCertificate.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helper\CertificateHelper.cs" />
     <Compile Include="Messages\ClientStatusHandler.cs" />
     <Compile Include="Messages\FileManagerHandler.cs" />
@@ -312,6 +318,9 @@
     <Compile Include="Models\Settings.cs" />
     <EmbeddedResource Include="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmCertificate.resx">
+      <DependentUpon>FrmCertificate.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmStartupAdd.resx">
       <DependentUpon>FrmStartupAdd.cs</DependentUpon>

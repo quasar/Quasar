@@ -22,7 +22,6 @@ namespace Quasar.Server.Forms
             {
                 btnListen.Text = "Stop listening";
                 ncPort.Enabled = false;
-                txtPassword.Enabled = false;
                 chkIPv6Support.Enabled = false;
             }
 
@@ -53,19 +52,11 @@ namespace Quasar.Server.Forms
         private void btnListen_Click(object sender, EventArgs e)
         {
             ushort port = GetPortSafe();
-            string password = txtPassword.Text;
 
             if (port == 0)
             {
                 MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (password.Length < 3)
-            {
-                MessageBox.Show("Please enter a secure password with more than 3 characters.",
-                    "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 
@@ -115,7 +106,6 @@ namespace Quasar.Server.Forms
                 {
                     btnListen.Text = "Stop listening";
                     ncPort.Enabled = false;
-                    txtPassword.Enabled = false;
                     chkIPv6Support.Enabled = false;
                 }
             }
@@ -130,7 +120,6 @@ namespace Quasar.Server.Forms
                 {
                     btnListen.Text = "Start listening";
                     ncPort.Enabled = true;
-                    txtPassword.Enabled = true;
                     chkIPv6Support.Enabled = true;
                 }
             }
@@ -139,19 +128,11 @@ namespace Quasar.Server.Forms
         private void btnSave_Click(object sender, EventArgs e)
         {
             ushort port = GetPortSafe();
-            string password = txtPassword.Text;
 
             if (port == 0)
             {
                 MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
-                return;
-            }
-
-            if (password.Length < 3)
-            {
-                MessageBox.Show("Please enter a secure password with more than 3 characters.",
-                    "Please enter a secure password", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 return;
             }
 

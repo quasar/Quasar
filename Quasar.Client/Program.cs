@@ -6,7 +6,6 @@ using Quasar.Client.Installation;
 using Quasar.Client.IO;
 using Quasar.Client.Networking;
 using Quasar.Client.Utilities;
-using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 using System;
 using System.Diagnostics;
