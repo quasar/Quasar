@@ -5,7 +5,7 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Quasar.Server.Data
+namespace Quasar.Server.Models
 {
     public class BuilderProfile
     {
@@ -32,18 +32,6 @@ namespace Quasar.Server.Data
             set
             {
                 WriteValue("Tag", value);
-            }
-        }
-
-        public string Password
-        {
-            get
-            {
-                return ReadValueSafe("Password", Settings.Password);
-            }
-            set
-            {
-                WriteValue("Password", value);
             }
         }
 

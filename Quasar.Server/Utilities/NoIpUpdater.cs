@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Quasar.Server.Models;
+using System;
 using System.Net;
 using System.Text;
 using System.Threading;
-using Quasar.Server.Data;
 
 namespace Quasar.Server.Utilities
 {

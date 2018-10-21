@@ -1,19 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Quasar.Server.Networking.Utilities
+namespace Quasar.Server.Networking
 {
     /// <summary>
     /// Implements a pool of byte arrays to improve allocation performance when parsing data.
     /// </summary>
-    /// <threadsafety>This type is safe for multithreaded operations.</threadsafety>
-    public class PooledBufferManager
+    /// <threadsafety>This type is safe for multi-threaded operations.</threadsafety>
+    public class BufferPool
     {
         private readonly int _bufferLength;
         private int _bufferCount;
         private readonly Stack<byte[]> _buffers;
 
-        #region events
         /// <summary>
         /// Informs listeners when a new buffer beyond the initial length has been allocated.
         /// </summary>
@@ -58,9 +57,7 @@ namespace Quasar.Server.Networking.Utilities
             if (handler != null)
                 handler(this, e);
         }
-        #endregion
 
-        #region properties
         /// <summary>
         /// Gets the size of the buffers allocated from this pool.
         /// </summary>
@@ -80,18 +77,13 @@ namespace Quasar.Server.Networking.Utilities
         /// <summary>
         /// Gets the current number of buffers available for use.
         /// </summary>
-        public int BuffersAvailable
-        {
-            get { return _buffers.Count; }
-        }
+        public int BuffersAvailable => _buffers.Count;
 
         /// <summary>
         /// Gets or sets whether to zero the contents of a buffer when it is returned.  
         /// </summary>
         public bool ClearOnReturn { get; set; }
-        #endregion
 
-        #region constructor
         /// <summary>
         /// Creates a new buffer pool with the specified name, buffer sizes, and buffer count.
         /// </summary>
@@ -99,7 +91,7 @@ namespace Quasar.Server.Networking.Utilities
         /// <param name="baseBufferCount">The number of preallocated buffers that should be available.</param>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="baseBufferLength"/> or
         /// <paramref name="baseBufferCount"/> are zero or negative.</exception>
-        public PooledBufferManager(int baseBufferLength, int baseBufferCount)
+        public BufferPool(int baseBufferLength, int baseBufferCount)
         {
             if (baseBufferLength <= 0)
                 throw new ArgumentOutOfRangeException("baseBufferLength", baseBufferLength, "Buffer length must be a positive integer value.");
@@ -116,9 +108,7 @@ namespace Quasar.Server.Networking.Utilities
                 _buffers.Push(new byte[baseBufferLength]);
             }
         }
-        #endregion
 
-        #region methods
         /// <summary>
         /// Gets a buffer from the available pool if one is available, or else allocates a new one.
         /// </summary>
@@ -129,15 +119,12 @@ namespace Quasar.Server.Networking.Utilities
         /// <returns>A <see>byte</see>[] from the pool.</returns>
         public byte[] GetBuffer()
         {
-            if (_buffers.Count > 0)
+            lock (_buffers)
             {
-                lock (_buffers)
+                if (_buffers.Count > 0)
                 {
-                    if (_buffers.Count > 0)
-                    {
-                        byte[] buffer = _buffers.Pop();
-                        return buffer;
-                    }
+                    byte[] buffer = _buffers.Pop();
+                    return buffer;
                 }
             }
 
@@ -241,6 +228,5 @@ namespace Quasar.Server.Networking.Utilities
 
             return numRemoved;
         }
-        #endregion
     }
 }

@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Quasar.Common.Helpers;
+using Quasar.Common.Messages;
+using Quasar.Server.Helper;
+using Quasar.Server.Messages;
+using Quasar.Server.Models;
+using Quasar.Server.Networking;
+using Quasar.Server.ReverseProxy;
+using System;
 using System.Globalization;
 using System.Net.Sockets;
 using System.Windows.Forms;
-using Quasar.Common.Helpers;
-using Quasar.Common.Messages;
-using Quasar.Server.Data;
-using Quasar.Server.Helper;
-using Quasar.Server.Messages;
-using Quasar.Server.Networking;
-using Quasar.Server.ReverseProxy;
 
 namespace Quasar.Server.Forms
 {
@@ -133,18 +133,13 @@ namespace Quasar.Server.Forms
                 }
                 else
                 {
-                    MessageBox.Show(
-                        string.Format(
-                            "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
-                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    MessageBox.Show($"An unexpected socket error occurred: {ex.Message}\n\nError Code: {ex.ErrorCode}",
+                        "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
-                    string.Format(
-                        "An unexpected error occurred: {0}\n\nPlease report this as fast as possible here:\n{1}/issues",
-                        ex.Message, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An unexpected error occurred: {ex.Message}", "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 

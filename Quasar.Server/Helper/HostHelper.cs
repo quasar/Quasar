@@ -2,7 +2,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Text;
-using Quasar.Server.Data;
+using Quasar.Server.Models;
 
 namespace Quasar.Server.Helper
 {

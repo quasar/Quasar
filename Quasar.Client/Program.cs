@@ -92,7 +92,6 @@ namespace Quasar.Client
             if (!MutexHelper.CreateMutex(Settings.MUTEX) || hosts.IsEmpty || string.IsNullOrEmpty(Settings.VERSION)) // no hosts to connect
                 return false;
 
-            Aes128.SetDefaultKey(Settings.KEY, Settings.AUTHKEY);
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
             GeoLocationHelper.Initialize();
             
@@ -140,7 +139,7 @@ namespace Quasar.Client
                     }) {IsBackground = true}.Start();
                 }
 
-                ConnectClient = new QuasarClient(hosts);
+                ConnectClient = new QuasarClient(hosts, Settings.CLIENTCERTIFICATE, Settings.SERVERCERTIFICATE);
                 return true;
             }
             else

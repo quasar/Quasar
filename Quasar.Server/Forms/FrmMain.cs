@@ -1,18 +1,18 @@
-﻿using Quasar.Common.Cryptography;
-using Quasar.Common.Enums;
+﻿using Quasar.Common.Enums;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
-using Quasar.Server.Data;
 using Quasar.Server.Extensions;
+using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Models;
 using Quasar.Server.Networking;
-using Quasar.Server.Networking.Utilities;
 using Quasar.Server.Utilities;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -34,8 +34,6 @@ namespace Quasar.Server.Forms
 
         public FrmMain()
         {
-            Aes128.SetDefaultKey(Settings.Password);
-
             _clientStatusHandler = new ClientStatusHandler();
             RegisterMessageHandler();
             InitializeComponent();
@@ -84,11 +82,40 @@ namespace Quasar.Server.Forms
 
         private void InitializeServer()
         {
-            ListenServer = new QuasarServer();
-
+            X509Certificate2 serverCertificate;
+#if DEBUG
+            serverCertificate = CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 2048);
+#else
+            serverCertificate = new X509Certificate2("server.p12");
+#endif
+            ListenServer = new QuasarServer(serverCertificate);
             ListenServer.ServerState += ServerState;
             ListenServer.ClientConnected += ClientConnected;
             ListenServer.ClientDisconnected += ClientDisconnected;
+        }
+
+        private void StartConnectionListener()
+        {
+            try
+            {
+                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
+            }
+            catch (SocketException ex)
+            {
+                if (ex.ErrorCode == 10048)
+                {
+                    MessageBox.Show(this, "The port is already in use.", "Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                else
+                {
+                    MessageBox.Show(this, $"An unexpected socket error occurred: {ex.Message}\n\nError Code: {ex.ErrorCode}\n\n", "Unexpected Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+                ListenServer.Disconnect();
+            }
+            catch (Exception)
+            {
+                ListenServer.Disconnect();
+            }
         }
 
         private void AutostartListening()
@@ -96,12 +123,12 @@ namespace Quasar.Server.Forms
             if (Settings.AutoListen && Settings.UseUPnP)
             {
                 UPnP.Initialize(Settings.ListenPort);
-                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
+                StartConnectionListener();
             }
             else if (Settings.AutoListen)
             {
                 UPnP.Initialize();
-                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
+                StartConnectionListener();
             }
             else
             {

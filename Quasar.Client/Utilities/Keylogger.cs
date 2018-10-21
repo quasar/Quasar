@@ -280,7 +280,7 @@ namespace Quasar.Client.Utilities
                     logFile.Append(_logFileBuffer);
                 }
 
-                FileHelper.WriteLogFile(filename, logFile.ToString());
+                FileHelper.WriteLogFile(filename, logFile.ToString(), Settings.ENCRYPTIONKEY);
 
                 logFile.Clear();
             }

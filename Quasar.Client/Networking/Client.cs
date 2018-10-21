@@ -1,7 +1,5 @@
 ﻿using ProtoBuf;
-using ProtoBuf.Meta;
 using Quasar.Client.ReverseProxy;
-using Quasar.Common.Cryptography;
 using Quasar.Common.Extensions;
 using Quasar.Common.IO.Compression;
 using Quasar.Common.Messages;
@@ -11,7 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
 namespace Quasar.Client.Networking
@@ -174,15 +175,22 @@ namespace Quasar.Client.Networking
             }
         }
 
+        private SslStream _stream;
+
         /// <summary>
-        /// Handle of the Client Socket.
+        /// The client certificate.
         /// </summary>
-        private Socket _handle;
+        private readonly X509Certificate2 _clientCertificate;
+
+        /// <summary>
+        /// The server certificate.
+        /// </summary>
+        private readonly X509Certificate2 _serverCertificate;
 
         /// <summary>
         /// A list of all the connected proxy clients that this client holds.
         /// </summary>
-        private List<ReverseProxyClient> _proxyClients;
+        private List<ReverseProxyClient> _proxyClients = new List<ReverseProxyClient>();
 
         /// <summary>
         /// The internal index of the message type.
@@ -262,15 +270,20 @@ namespace Quasar.Client.Networking
         /// </summary>
         public bool Connected { get; private set; }
 
-        private const bool encryptionEnabled = true;
         private const bool compressionEnabled = true;
 
-        protected Client()
+        /// <summary>
+        /// Constructor of the client, initializes serializer types.
+        /// </summary>
+        /// <param name="clientCertificate">The client certificate.</param>
+        /// <param name="serverCertificate">The server certificate.</param>
+        protected Client(X509Certificate2 clientCertificate, X509Certificate2 serverCertificate)
         {
-            _proxyClients = new List<ReverseProxyClient>();
+            _clientCertificate = clientCertificate;
+            _serverCertificate = serverCertificate;
             _readBuffer = new byte[BUFFER_SIZE];
             _tempHeader = new byte[HEADER_SIZE];
-            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
+            TypeRegistry.AddTypesToSerializer(typeof(IMessage), TypeRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>
@@ -280,24 +293,52 @@ namespace Quasar.Client.Networking
         /// <param name="port">The port of the host.</param>
         protected void Connect(IPAddress ip, ushort port)
         {
+            Socket handle = null;
             try
             {
                 Disconnect();
 
-                _handle = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
-                _handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
-                _handle.Connect(ip, port);
+                handle = new Socket(ip.AddressFamily, SocketType.Stream, ProtocolType.Tcp);
+                handle.SetKeepAliveEx(KEEP_ALIVE_INTERVAL, KEEP_ALIVE_TIME);
+                handle.Connect(ip, port);
 
-                if (_handle.Connected)
+                if (handle.Connected)
                 {
-                    _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
+                    _stream = new SslStream(new NetworkStream(handle, true), false, ValidateServerCertificate);
+                    X509CertificateCollection col = new X509CertificateCollection {_clientCertificate};
+                    _stream.AuthenticateAsClient(ip.ToString(), col, SslProtocols.Tls, false);
+                    _stream.BeginRead(_readBuffer, 0, _readBuffer.Length, AsyncReceive, null);
                     OnClientState(true);
+                }
+                else
+                {
+                    handle.Dispose();
                 }
             }
             catch (Exception ex)
             {
+                handle?.Dispose();
                 OnClientFail(ex);
             }
+        }
+
+        /// <summary>
+        /// Validates the server certificate by comparing it with the included server certificate.
+        /// </summary>
+        /// <param name="sender">The sender of the callback.</param>
+        /// <param name="certificate">The server certificate to validate.</param>
+        /// <param name="chain">The X.509 chain.</param>
+        /// <param name="sslPolicyErrors">The SSL policy errors.</param>
+        /// <returns>Returns <value>true</value> when the validation was successful, otherwise <value>false</value>.</returns>
+        private bool ValidateServerCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+#if DEBUG
+            // for debugging don't validate server certificate
+            return true;
+#else
+            // compare the received server certificate with the included server certificate to validate we are connected to the correct server
+            return _serverCertificate.Equals(certificate);
+#endif
         }
 
         private void AsyncReceive(IAsyncResult result)
@@ -306,7 +347,7 @@ namespace Quasar.Client.Networking
 
             try
             {
-                bytesTransferred = _handle.EndReceive(result);
+                bytesTransferred = _stream.EndRead(result);
 
                 if (bytesTransferred <= 0)
                     throw new Exception("no bytes transferred");
@@ -353,7 +394,7 @@ namespace Quasar.Client.Networking
 
             try
             {
-                _handle.BeginReceive(_readBuffer, 0, _readBuffer.Length, SocketFlags.None, AsyncReceive, null);
+                _stream.BeginRead(_readBuffer, 0, _readBuffer.Length, AsyncReceive, null);
             }
             catch (ObjectDisposedException)
             {
@@ -480,25 +521,6 @@ namespace Quasar.Client.Networking
                                 if (_writeOffset == _payloadLen)
                                 {
                                     bool isError = _payloadBuffer.Length == 0;
-
-                                    if (!isError)
-                                    {
-                                        if (encryptionEnabled)
-                                        {
-                                            try
-                                            {
-                                                _payloadBuffer = Aes128.Decrypt(_payloadBuffer);
-                                            }
-                                            catch (Exception)
-                                            {
-                                                process = false;
-                                                Disconnect();
-                                                break;
-                                            }
-                                        }
-
-                                        isError = _payloadBuffer.Length == 0; // check if payload decryption failed
-                                    }
 
                                     if (!isError)
                                     {
@@ -644,7 +666,7 @@ namespace Quasar.Client.Networking
 
                 try
                 {
-                    _handle.Send(BuildMessage(payload));
+                    _stream.Write(BuildMessage(payload));
                 }
                 catch (Exception ex)
                 {
@@ -659,9 +681,6 @@ namespace Quasar.Client.Networking
         {
             if (compressionEnabled)
                 payload = SafeQuickLZ.Compress(payload);
-
-            if (encryptionEnabled)
-                payload = Aes128.Encrypt(payload);
 
             byte[] message = new byte[payload.Length + HEADER_SIZE];
             Array.Copy(BitConverter.GetBytes(payload.Length), message, HEADER_SIZE);
@@ -691,10 +710,9 @@ namespace Quasar.Client.Networking
         /// </summary>
         public void Disconnect()
         {
-            if (_handle != null)
+            if (_stream != null)
             {
-                _handle.Close();
-                _handle = null;
+                _stream.Close();
                 _readOffset = 0;
                 _writeOffset = 0;
                 _tempHeaderOffset = 0;
@@ -761,33 +779,6 @@ namespace Quasar.Client.Networking
                 }
             }
             catch { }
-        }
-
-        /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
-        /// </summary>
-        /// <param name="parent">The parent type, i.e.: IMessage</param>
-        /// <param name="type">Type to be added</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
-            if (type == null || parent == null)
-                throw new ArgumentNullException();
-
-            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
-
-            if (!isAlreadyAdded)
-                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
-        }
-
-        /// <summary>
-        /// Adds Types to the serializer.
-        /// </summary>
-        /// <param name="parent">The parent type, i.e.: IMessage</param>
-        /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
-        {
-            foreach (Type type in types)
-                AddTypeToSerializer(parent, type);
         }
     }
 }

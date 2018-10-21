@@ -1,4 +1,4 @@
-﻿namespace Quasar.Server.Data
+﻿namespace Quasar.Server.Models
 {
     public class Host
     {

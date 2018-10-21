@@ -1,13 +1,13 @@
-﻿using System;
+﻿using Quasar.Common.Extensions;
+using Quasar.Common.Messages;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.Security;
 using System.Net.Sockets;
-using System.Windows.Forms;
-using ProtoBuf.Meta;
-using Quasar.Common.Messages;
-using Quasar.Server.Data;
-using Quasar.Server.Networking.Utilities;
+using System.Security.Authentication;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Quasar.Server.Networking
 {
@@ -37,10 +37,7 @@ namespace Quasar.Server.Networking
             Listening = listening;
 
             var handler = ServerState;
-            if (handler != null)
-            {
-                handler(this, listening, Port);
-            }
+            handler?.Invoke(this, listening, Port);
         }
 
         /// <summary>
@@ -63,15 +60,11 @@ namespace Quasar.Server.Networking
         /// <param name="connected">The new connection state of the client.</param>
         private void OnClientState(Client c, bool connected)
         {
-            var handler = ClientState;
-
             if (!connected)
                 RemoveClient(c);
 
-            if (handler != null)
-            {
-                handler(this, c, connected);
-            }
+            var handler = ClientState;
+            handler?.Invoke(this, c, connected);
         }
 
         /// <summary>
@@ -93,13 +86,12 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="c">The client that has received the message.</param>
         /// <param name="message">The message that received by the client.</param>
-        private void OnClientRead(Client c, IMessage message)
+        /// <param name="messageLength">The length of the message.</param>
+        private void OnClientRead(Client c, IMessage message, int messageLength)
         {
+            BytesReceived += messageLength;
             var handler = ClientRead;
-            if (handler != null)
-            {
-                handler(this, c, message);
-            }
+            handler?.Invoke(this, c, message);
         }
 
         /// <summary>
@@ -113,24 +105,19 @@ namespace Quasar.Server.Networking
         /// <param name="s">The server, the client is connected to.</param>
         /// <param name="c">The client that has sent the message.</param>
         /// <param name="message">The message that has been sent by the client.</param>
-        /// <param name="length">The length of the message.</param>
-        /// <param name="rawData">The message in raw bytes.</param>
-        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage message, long length, byte[] rawData);
+        public delegate void ClientWriteEventHandler(Server s, Client c, IMessage message);
 
         /// <summary>
         /// Fires an event that informs subscribers that the client has sent a message.
         /// </summary>
         /// <param name="c">The client that has sent the message.</param>
         /// <param name="message">The message that has been sent by the client.</param>
-        /// <param name="length">The length of the message.</param>
-        /// <param name="rawData">The message in raw bytes.</param>
-        private void OnClientWrite(Client c, IMessage message, long length, byte[] rawData)
+        /// <param name="messageLength">The length of the message.</param>
+        private void OnClientWrite(Client c, IMessage message, int messageLength)
         {
+            BytesSent += messageLength;
             var handler = ClientWrite;
-            if (handler != null)
-            {
-                handler(this, c, message, length, rawData);
-            }
+            handler?.Invoke(this, c, message);
         }
 
         /// <summary>
@@ -151,32 +138,22 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// The buffer size for receiving data in bytes.
         /// </summary>
-        public int BUFFER_SIZE { get { return 1024 * 16; } } // 16KB
+        private const int BufferSize = 1024 * 16; // 16 KB
 
         /// <summary>
         /// The keep-alive time in ms.
         /// </summary>
-        public uint KEEP_ALIVE_TIME { get { return 25000; } } // 25s
+        private const uint KeepAliveTime = 25000; // 25 s
 
         /// <summary>
         /// The keep-alive interval in ms.
         /// </summary>
-        public uint KEEP_ALIVE_INTERVAL { get { return 25000; } } // 25s
+        private const uint KeepAliveInterval = 25000; // 25 s
 
         /// <summary>
-        /// The header size in bytes.
+        /// The buffer pool to hold the receive-buffers for the clients.
         /// </summary>
-        public int HEADER_SIZE { get { return 4; } } // 4B
-
-        /// <summary>
-        /// The maximum size of a message in bytes.
-        /// </summary>
-        public int MAX_MESSAGE_SIZE { get { return (1024 * 1024) * 5; } } // 5MB
-
-        /// <summary>
-        /// The buffer manager to handle the receive buffers for the clients.
-        /// </summary>
-        public PooledBufferManager BufferManager { get; private set; }
+        private readonly BufferPool _bufferPool = new BufferPool(BufferSize, 1) { ClearOnReturn = false };
 
         /// <summary>
         /// The listening state of the server. True if listening, else False.
@@ -203,6 +180,11 @@ namespace Quasar.Server.Networking
         private Socket _handle;
 
         /// <summary>
+        /// The server certificate.
+        /// </summary>
+        private readonly X509Certificate2 _serverCertificate;
+
+        /// <summary>
         /// The event to accept new connections asynchronously.
         /// </summary>
         private SocketAsyncEventArgs _item;
@@ -210,12 +192,7 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// List of the clients connected to the server.
         /// </summary>
-        private List<Client> _clients;
-
-        /// <summary>
-        /// The internal index of the message type.
-        /// </summary>
-        private int _typeIndex;
+        private readonly List<Client> _clients = new List<Client>();
 
         /// <summary>
         /// Lock object for the list of clients.
@@ -228,13 +205,13 @@ namespace Quasar.Server.Networking
         protected bool ProcessingDisconnect { get; set; }
 
         /// <summary>
-        /// Constructor of the server, initializes variables.
+        /// Constructor of the server, initializes serializer types.
         /// </summary>
-        protected Server()
+        /// <param name="serverCertificate">The server certificate.</param>
+        protected Server(X509Certificate2 serverCertificate)
         {
-            _clients = new List<Client>();
-            BufferManager = new PooledBufferManager(BUFFER_SIZE, 1) { ClearOnReturn = false };
-            AddTypesToSerializer(typeof(IMessage), PacketRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
+            _serverCertificate = serverCertificate;
+            TypeRegistry.AddTypesToSerializer(typeof(IMessage), TypeRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
         /// <summary>
@@ -244,75 +221,49 @@ namespace Quasar.Server.Networking
         /// <param name="ipv6">If set to true, use a dual-stack socket to allow IPv4/6 connections. Otherwise use IPv4-only socket.</param>
         public void Listen(ushort port, bool ipv6)
         {
+            if (Listening) return;
             this.Port = port;
-            try
+            
+            if (_handle != null)
             {
-                if (!Listening)
-                {
-                    if (_handle != null)
-                    {
-                        _handle.Close();
-                        _handle = null;
-                    }
-
-                    if (Socket.OSSupportsIPv6 && ipv6)
-                    {
-                        _handle = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
-                        // fix for mono compatibility, SocketOptionName.IPv6Only
-                        SocketOptionName ipv6only = (SocketOptionName)27;
-                        _handle.SetSocketOption(SocketOptionLevel.IPv6, ipv6only, 0);
-                        _handle.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
-                    }
-                    else
-                    {
-                        _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                        _handle.Bind(new IPEndPoint(IPAddress.Any, port));
-                    }
-                    _handle.Listen(1000);
-
-                    ProcessingDisconnect = false;
-
-                    OnServerState(true);
-
-                    if (_item != null)
-                    {
-                        _item.Dispose();
-                        _item = null;
-                    }
-
-                    _item = new SocketAsyncEventArgs();
-                    _item.Completed += AcceptClient;
-
-                    if (!_handle.AcceptAsync(_item))
-                        AcceptClient(null, _item);
-                }
+                _handle.Close();
+                _handle = null;
             }
-            catch (SocketException ex)
+
+            if (Socket.OSSupportsIPv6 && ipv6)
             {
-                if (ex.ErrorCode == 10048)
-                {
-                    MessageBox.Show("The port is already in use.", "Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                else
-                {
-                    MessageBox.Show(
-                        string.Format(
-                            "An unexpected socket error occurred: {0}\n\nError Code: {1}\n\nPlease report this as fast as possible here:\n{2}/issues",
-                            ex.Message, ex.ErrorCode, Settings.RepositoryURL), "Unexpected Listen Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                }
-                Disconnect();
+                _handle = new Socket(AddressFamily.InterNetworkV6, SocketType.Stream, ProtocolType.Tcp);
+                _handle.SetSocketOption(SocketOptionLevel.IPv6, SocketOptionName.IPv6Only, 0);
+                _handle.Bind(new IPEndPoint(IPAddress.IPv6Any, port));
             }
-            catch (Exception)
+            else
             {
-                Disconnect();
+                _handle = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+                _handle.Bind(new IPEndPoint(IPAddress.Any, port));
             }
+            _handle.Listen(1000);
+            ProcessingDisconnect = false;
+
+            OnServerState(true);
+
+            if (_item != null)
+            {
+                _item.Dispose();
+                _item = null;
+            }
+
+            _item = new SocketAsyncEventArgs();
+            _item.Completed += AcceptClient;
+
+            if (!_handle.AcceptAsync(_item))
+                AcceptClient(this, _item);
         }
 
         /// <summary>
-        /// Processes and accepts an incoming client.
+        /// Accepts and begins authenticating an incoming client.
         /// </summary>
-        /// <param name="s">Unused, use null.</param>
-        /// <param name="e">Asynchronously Socket Event</param>
+        /// <param name="s">The sender.</param>
+        /// <param name="e">Asynchronous socket event.</param>
         private void AcceptClient(object s, SocketAsyncEventArgs e)
         {
             try
@@ -322,12 +273,12 @@ namespace Quasar.Server.Networking
                     switch (e.SocketError)
                     {
                         case SocketError.Success:
-                            if (BufferManager.BuffersAvailable == 0)
-                                BufferManager.IncreaseBufferCount(1);
-
-                            Client client = new Client(this, e.AcceptSocket);
-                            AddClient(client);
-                            OnClientState(client, true);
+                            e.AcceptSocket.SetKeepAliveEx(KeepAliveInterval, KeepAliveTime);
+                            Socket client = e.AcceptSocket;
+                            SslStream sslStream = new SslStream(new NetworkStream(client, true), false, ValidateClientCertificate);
+                            // the sslStream owns the socket and on disposing also disposes the NetworkStream and Socket
+                            sslStream.BeginAuthenticateAsServer(_serverCertificate, true, SslProtocols.Tls, false, EndAuthenticateClient,
+                                new PendingClient {Stream = sslStream, EndPoint = (IPEndPoint) client.RemoteEndPoint});
                             break;
                         case SocketError.ConnectionReset:
                             break;
@@ -345,6 +296,83 @@ namespace Quasar.Server.Networking
             {
                 Disconnect();
             }
+        }
+
+        private class PendingClient
+        {
+            public SslStream Stream { get; set; }
+            public IPEndPoint EndPoint { get; set; }
+        }
+
+        /// <summary>
+        /// Ends the authentication process of a newly connected client.
+        /// </summary>
+        /// <param name="ar">The status of the asynchronous operation.</param>
+        private void EndAuthenticateClient(IAsyncResult ar)
+        {
+            try
+            {
+                var con = (PendingClient) ar.AsyncState;
+                con.Stream.EndAuthenticateAsServer(ar);
+                Client client = new Client(_bufferPool, con.Stream, con.EndPoint);
+                AddClient(client);
+                OnClientState(client, true);
+            }
+            catch (ObjectDisposedException)
+            {
+            }
+            catch (Exception)
+            {
+                Disconnect();
+            }
+        }
+
+        /// <summary>
+        /// Validates the client certificate by checking whether it has been signed by the server.
+        /// </summary>
+        /// <param name="sender">The sender of the callback.</param>
+        /// <param name="certificate">The client certificate to validate.</param>
+        /// <param name="chain">The X.509 chain.</param>
+        /// <param name="sslPolicyErrors">The SSL policy errors.</param>
+        /// <returns>Returns <value>true</value> when the validation was successful, otherwise <value>false</value>.</returns>
+        public bool ValidateClientCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
+        {
+#if DEBUG
+            // for debugging don't validate client certificate
+            return true;
+#else
+            // if client does not provide a certificate, don't accept connection
+            if (certificate == null) return false;
+
+            chain.Reset();
+            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
+            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
+            chain.ChainPolicy.VerificationTime = DateTime.UtcNow;
+            chain.ChainPolicy.ExtraStore.Add(_serverCertificate);
+
+            chain.Build(new X509Certificate2(certificate));
+
+            bool result = true;
+
+            foreach (var status in chain.ChainStatus)
+            {
+                if (status.Status == X509ChainStatusFlags.UntrustedRoot)
+                {
+                    // self-signed certificates with an untrusted root are valid.
+                    continue;
+                }
+                else
+                {
+                    if (status.Status != X509ChainStatusFlags.NoError)
+                    {
+                        // if there are any other errors in the certificate chain, the certificate is invalid.
+                        result = false;
+                    }
+                }
+            }
+
+            return result;
+#endif
         }
 
         /// <summary>
@@ -422,33 +450,6 @@ namespace Quasar.Server.Networking
 
             ProcessingDisconnect = false;
             OnServerState(false);
-        }
-
-        /// <summary>
-        /// Adds a Type to the serializer so a message can be properly serialized.
-        /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
-        /// <param name="type">Type to be added</param>
-        public void AddTypeToSerializer(Type parent, Type type)
-        {
-            if (type == null || parent == null)
-                throw new ArgumentNullException();
-
-            bool isAlreadyAdded = RuntimeTypeModel.Default[parent].GetSubtypes().Any(subType => subType.DerivedType.Type == type);
-
-            if (!isAlreadyAdded)
-                RuntimeTypeModel.Default[parent].AddSubType(++_typeIndex, type);
-        }
-
-        /// <summary>
-        /// Adds Types to the serializer.
-        /// </summary>
-        /// <param name="parent">The parent type, i.e.: IPacket</param>
-        /// <param name="types">Types to add.</param>
-        public void AddTypesToSerializer(Type parent, params Type[] types)
-        {
-            foreach (Type type in types)
-                AddTypeToSerializer(parent, type);
         }
     }
 }

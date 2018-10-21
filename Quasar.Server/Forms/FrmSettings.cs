@@ -1,11 +1,10 @@
-﻿using System;
-using System.Globalization;
-using System.Windows.Forms;
-using Quasar.Common.Cryptography;
-using Quasar.Server.Data;
-using Quasar.Server.Networking;
-using Quasar.Server.Networking.Utilities;
+﻿using Quasar.Server.Networking;
 using Quasar.Server.Utilities;
+using System;
+using System.Globalization;
+using System.Net.Sockets;
+using System.Windows.Forms;
+using Quasar.Server.Models;
 
 namespace Quasar.Server.Forms
 {
@@ -36,7 +35,6 @@ namespace Quasar.Server.Forms
             chkIPv6Support.Checked = Settings.IPv6Support;
             chkAutoListen.Checked = Settings.AutoListen;
             chkPopup.Checked = Settings.ShowPopup;
-            txtPassword.Text = Settings.Password;
             chkUseUpnp.Checked = Settings.UseUPnP;
             chkShowTooltip.Checked = Settings.ShowToolTip;
             chkNoIPIntegration.Checked = Settings.EnableNoIPUpdater;
@@ -75,13 +73,11 @@ namespace Quasar.Server.Forms
             {
                 try
                 {
-                    Aes128.SetDefaultKey(password);
-
                     if (chkUseUpnp.Checked)
                     {
                         if (!UPnP.IsDeviceFound)
                         {
-                            MessageBox.Show("No available UPnP device found!", "No UPnP device", MessageBoxButtons.OK,
+                            MessageBox.Show(this, "No available UPnP device found!", "No UPnP device", MessageBoxButtons.OK,
                                 MessageBoxIcon.Information);
                         }
                         else
@@ -90,7 +86,7 @@ namespace Quasar.Server.Forms
                             UPnP.CreatePortMap(port, out outPort);
                             if (port != outPort)
                             {
-                                MessageBox.Show("Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
+                                MessageBox.Show(this, "Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
                                     MessageBoxIcon.Warning);
                             }
                         }
@@ -98,6 +94,22 @@ namespace Quasar.Server.Forms
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
                     _listenServer.Listen(port, chkIPv6Support.Checked);
+                }
+                catch (SocketException ex)
+                {
+                    if (ex.ErrorCode == 10048)
+                    {
+                        MessageBox.Show(this, "The port is already in use.", "Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    else
+                    {
+                        MessageBox.Show(this, $"An unexpected socket error occurred: {ex.Message}\n\nError Code: {ex.ErrorCode}\n\n", "Unexpected Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    }
+                    _listenServer.Disconnect();
+                }
+                catch (Exception)
+                {
+                    _listenServer.Disconnect();
                 }
                 finally
                 {
@@ -147,9 +159,6 @@ namespace Quasar.Server.Forms
             Settings.IPv6Support = chkIPv6Support.Checked;
             Settings.AutoListen = chkAutoListen.Checked;
             Settings.ShowPopup = chkPopup.Checked;
-            if (password != Settings.Password)
-                Aes128.SetDefaultKey(password);
-            Settings.Password = password;
             Settings.UseUPnP = chkUseUpnp.Checked;
             Settings.ShowToolTip = chkShowTooltip.Checked;
             Settings.EnableNoIPUpdater = chkNoIPIntegration.Checked;

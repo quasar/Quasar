@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Quasar.Server.Data;
 
 namespace Quasar.Server.Forms
 {
     public partial class FrmAbout : Form
     {
+        private readonly string _repositoryUrl = @"https://github.com/quasar/QuasarRAT";
+
         public FrmAbout()
         {
             InitializeComponent();
@@ -14,8 +15,8 @@ namespace Quasar.Server.Forms
             lblVersion.Text = $"v{Application.ProductVersion}";
             rtxtContent.Text = Properties.Resources.License;
 
-            lnkGithubPage.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL});
-            lnkCredits.Links.Add(new LinkLabel.Link {LinkData = Settings.RepositoryURL + "/tree/master/Licenses"});
+            lnkGithubPage.Links.Add(new LinkLabel.Link {LinkData = _repositoryUrl});
+            lnkCredits.Links.Add(new LinkLabel.Link {LinkData = _repositoryUrl + "/tree/master/Licenses"});
         }
         
         private void lnkGithubPage_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)

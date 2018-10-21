@@ -6,9 +6,9 @@ using System.Text;
 using System.Windows.Forms;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
-using Quasar.Server.Data;
 using Quasar.Server.Helper;
 using Quasar.Server.Messages;
+using Quasar.Server.Models;
 using Quasar.Server.Networking;
 
 namespace Quasar.Server.Forms

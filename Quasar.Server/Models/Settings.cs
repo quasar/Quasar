@@ -3,13 +3,11 @@ using System.Windows.Forms;
 using System.Xml;
 using System.Xml.XPath;
 
-namespace Quasar.Server.Data
+namespace Quasar.Server.Models
 {
     public static class Settings
     {
         private static readonly string SettingsPath = Path.Combine(Application.StartupPath, "settings.xml");
-
-        public static string RepositoryURL = @"https://github.com/quasar/QuasarRAT";
 
         public static ushort ListenPort
         {
@@ -80,18 +78,6 @@ namespace Quasar.Server.Data
             set
             {
                 WriteValue("ShowToolTip", value.ToString());
-            }
-        }
-
-        public static string Password
-        {
-            get
-            {
-                return ReadValueSafe("Password", "1234");
-            }
-            set
-            {
-                WriteValue("Password", value);
             }
         }
 

@@ -14,14 +14,14 @@ namespace Quasar.Common.Tests.Cryptography
             var input = StringHelper.GetRandomString(100);
             var password = StringHelper.GetRandomString(50);
 
-            Aes128.SetDefaultKey(password);
+            var aes = new Aes256(password);
 
-            var encrypted = Aes128.Encrypt(input);
+            var encrypted = aes.Encrypt(input);
 
             Assert.IsNotNull(encrypted);
             Assert.AreNotEqual(encrypted, input);
 
-            var decrypted = Aes128.Decrypt(encrypted);
+            var decrypted = aes.Decrypt(encrypted);
 
             Assert.AreEqual(input, decrypted);
         }
@@ -33,15 +33,15 @@ namespace Quasar.Common.Tests.Cryptography
             var inputByte = Encoding.UTF8.GetBytes(input);
             var password = StringHelper.GetRandomString(50);
 
-            Aes128.SetDefaultKey(password);
+            var aes = new Aes256(password);
 
-            var encryptedByte = Aes128.Encrypt(inputByte);
+            var encryptedByte = aes.Encrypt(inputByte);
 
             Assert.IsNotNull(encryptedByte);
             CollectionAssert.AllItemsAreNotNull(encryptedByte);
             CollectionAssert.AreNotEqual(encryptedByte, inputByte);
 
-            var decryptedByte = Aes128.Decrypt(encryptedByte);
+            var decryptedByte = aes.Decrypt(encryptedByte);
 
             CollectionAssert.AreEqual(inputByte, decryptedByte);
         }

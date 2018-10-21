@@ -10,8 +10,8 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 
 ## Features
 * TCP network stream (IPv4 & IPv6 support)
-* Fast network serialization (NetSerializer)
-* Compressed (QuickLZ) & Encrypted (AES-128) communication
+* Fast network serialization (Protocol Buffers)
+* Compressed (QuickLZ) & Encrypted (TLS) communication
 * Multi-Threaded
 * UPnP Support
 * No-Ip.com Support

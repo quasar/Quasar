@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using Mono.Nat;
 
-namespace Quasar.Server.Networking.Utilities
+namespace Quasar.Server.Networking
 {
     internal static class UPnP
     {

@@ -40,5 +40,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(12)]
         public string Tag { get; set; }
+
+        [ProtoMember(13)]
+        public string EncryptionKey { get; set; }
     }
 }

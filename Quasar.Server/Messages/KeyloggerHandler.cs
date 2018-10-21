@@ -84,7 +84,7 @@ namespace Quasar.Server.Messages
             {
                 try
                 {
-                    File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath));
+                    File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath, _client.Value.EncryptionKey));
                 }
                 catch (Exception)
                 {

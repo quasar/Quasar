@@ -48,7 +48,7 @@
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cryptography\Aes128.cs" />
+    <Compile Include="Cryptography\Aes256.cs" />
     <Compile Include="Cryptography\Sha256.cs" />
     <Compile Include="Extensions\DriveTypeExtensions.cs" />
     <Compile Include="Extensions\SocketExtensions.cs" />
@@ -62,6 +62,7 @@
     <Compile Include="Enums\StartupType.cs" />
     <Compile Include="Messages\ClientIdentification.cs" />
     <Compile Include="Messages\ClientIdentificationResult.cs" />
+    <Compile Include="Messages\TypeRegistry.cs" />
     <Compile Include="Models\Drive.cs" />
     <Compile Include="Messages\MessageProcessorBase.cs" />
     <Compile Include="Messages\IProgress.cs" />
@@ -101,7 +102,6 @@
     <Compile Include="Messages\SetStatusFileManager.cs" />
     <Compile Include="Messages\SetUserStatus.cs" />
     <Compile Include="Messages\IMessage.cs" />
-    <Compile Include="Messages\PacketRegistry.cs" />
     <Compile Include="Messages\ReverseProxyConnect.cs" />
     <Compile Include="Messages\ReverseProxyConnectResponse.cs" />
     <Compile Include="Messages\ReverseProxyData.cs" />

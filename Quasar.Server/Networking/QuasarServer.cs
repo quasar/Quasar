@@ -1,5 +1,6 @@
-﻿using System.Linq;
-using Quasar.Common.Messages;
+﻿using Quasar.Common.Messages;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 
 namespace Quasar.Server.Networking
 {
@@ -60,7 +61,8 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// Constructor, initializes required objects and subscribes to events of the server.
         /// </summary>
-        public QuasarServer() : base()
+        /// <param name="serverCertificate">The server certificate.</param>
+        public QuasarServer(X509Certificate2 serverCertificate) : base(serverCertificate)
         {
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
@@ -135,6 +137,7 @@ namespace Quasar.Server.Networking
             client.Value.PcName = packet.PcName;
             client.Value.Tag = packet.Tag;
             client.Value.ImageIndex = packet.ImageIndex;
+            client.Value.EncryptionKey = packet.EncryptionKey;
 
             // TODO: Refactor tooltip
             //if (Settings.ShowToolTip)

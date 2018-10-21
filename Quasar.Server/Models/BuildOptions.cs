@@ -1,8 +1,7 @@
-﻿namespace Quasar.Server.Data
+﻿namespace Quasar.Server.Models
 {
     public class BuildOptions
     {
-        public bool ValidationSuccess { get; set; }
         public bool Install { get; set; }
         public bool Startup { get; set; }
         public bool HideFile { get; set; }
@@ -10,7 +9,6 @@
         public string Tag { get; set; }
         public string Mutex { get; set; }
         public string RawHosts { get; set; }
-        public string Password { get; set; }
         public string IconPath { get; set; }
         public string Version { get; set; }
         public string InstallSub { get; set; }

