@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
 using System.Windows.Forms;
+using Quasar.Server.Models;
 
 namespace Quasar.Server.Forms
 {
@@ -56,14 +57,13 @@ namespace Quasar.Server.Forms
                 if (!_certificate.HasPrivateKey)
                     throw new ArgumentException();
 
-                string path = Path.Combine(Application.StartupPath, "quasar.p12");
-                File.WriteAllBytes(path, _certificate.Export(X509ContentType.Pkcs12));
+                File.WriteAllBytes(Settings.CertificatePath, _certificate.Export(X509ContentType.Pkcs12));
 
                 MessageBox.Show(this,
                     "Please backup the certificate now. Loss of the certificate results in loosing all clients!",
                     "Certificate backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
-                string argument = "/select, \"" + path + "\"";
+                string argument = "/select, \"" + Settings.CertificatePath + "\"";
                 Process.Start("explorer.exe", argument);
 
                 this.DialogResult = DialogResult.OK;

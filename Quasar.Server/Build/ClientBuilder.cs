@@ -85,7 +85,7 @@ namespace Quasar.Server.Build
             var key = StringHelper.GetRandomString(32);
             var aes = new Aes256(key);
 
-            var caCertificate = new X509Certificate2(Path.Combine(Application.StartupPath, "quasar.p12"), "", X509KeyStorageFlags.Exportable);
+            var caCertificate = new X509Certificate2(Settings.CertificatePath, "", X509KeyStorageFlags.Exportable);
             var clientCertificate = CertificateHelper.CreateCertificate("Quasar Client", caCertificate, 4096);
             var serverCertificate = new X509Certificate2(caCertificate.Export(X509ContentType.Cert)); // export without private key, very important!
 
