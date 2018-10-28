@@ -46,8 +46,8 @@ namespace Quasar.Common.Cryptography
          */
         public byte[] Encrypt(byte[] input)
         {
-            if (input == null || input.Length == 0)
-                throw new ArgumentException($"{nameof(input)} can not be null or empty.");
+            if (input == null)
+                throw new ArgumentNullException($"{nameof(input)} can not be null.");
 
             using (var ms = new MemoryStream())
             {
@@ -87,8 +87,8 @@ namespace Quasar.Common.Cryptography
 
         public byte[] Decrypt(byte[] input)
         {
-            if (input == null || input.Length == 0)
-                throw new ArgumentException($"{nameof(input)} can not be null or empty.");
+            if (input == null)
+                throw new ArgumentNullException($"{nameof(input)} can not be null.");
 
             using (var ms = new MemoryStream(input))
             {
