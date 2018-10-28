@@ -314,6 +314,13 @@ namespace Quasar.Server.Networking
             {
                 var con = (PendingClient) ar.AsyncState;
                 con.Stream.EndAuthenticateAsServer(ar);
+
+                // only allow connection which are authenticated on both sides
+                if (!con.Stream.IsMutuallyAuthenticated)
+                {
+                    throw new AuthenticationException("Client did not provide a client certificate.");
+                }
+
                 Client client = new Client(_bufferPool, con.Stream, con.EndPoint);
                 AddClient(client);
                 OnClientState(client, true);
