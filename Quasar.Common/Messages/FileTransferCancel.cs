@@ -3,12 +3,12 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class DoDownloadFile : IMessage
+    public class FileTransferCancel : IMessage
     {
         [ProtoMember(1)]
-        public string RemotePath { get; set; }
+        public int Id { get; set; }
 
         [ProtoMember(2)]
-        public int Id { get; set; }
+        public string Reason { get; set; }
     }
 }

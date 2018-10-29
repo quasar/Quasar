@@ -294,8 +294,6 @@ namespace Quasar.Server.Forms
                     string remotePath = GetAbsolutePath(files.SubItems[0].Text);
 
                     _fileManagerHandler.BeginDownloadFile(remotePath);
-
-                    //AddTransfer(id, "Download", "Pending...", files.SubItems[0].Text);
                 }
             }
         }

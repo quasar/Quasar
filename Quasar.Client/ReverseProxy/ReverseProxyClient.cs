@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Quasar.Common.Messages.ReverseProxy;
+using System;
 using System.Net;
 using System.Net.Sockets;
-using Quasar.Common.Messages;
 
 namespace Quasar.Client.ReverseProxy
 {

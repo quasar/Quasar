@@ -1,4 +1,5 @@
 ﻿using Quasar.Common.Messages;
+using Quasar.Common.Messages.ReverseProxy;
 
 namespace Quasar.Client.ReverseProxy
 {

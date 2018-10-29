@@ -500,7 +500,7 @@ namespace Quasar.Server.Forms
                                     if (c == null) continue;
                                     if (error) continue;
 
-                                    FileSplit srcFile = new FileSplit(path);
+                                    var srcFile = new FileSplitLegacy(path);
                                     if (srcFile.MaxBlocks < 0)
                                     {
                                         MessageBox.Show($"Error reading file: {srcFile.LastError}",
@@ -682,7 +682,7 @@ namespace Quasar.Server.Forms
                                 if (c == null) continue;
                                 if (error) continue;
 
-                                FileSplit srcFile = new FileSplit(path);
+                                var srcFile = new FileSplitLegacy(path);
                                 if (srcFile.MaxBlocks < 0)
                                 {
                                     MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),

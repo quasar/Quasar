@@ -1,8 +1,9 @@
-﻿using System.Linq;
-using Quasar.Common.Messages;
+﻿using Quasar.Common.Messages;
+using Quasar.Common.Messages.ReverseProxy;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 using Quasar.Server.ReverseProxy;
+using System.Linq;
 
 namespace Quasar.Server.Messages
 {

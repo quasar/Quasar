@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Messages.ReverseProxy;
+using Quasar.Server.Networking;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Sockets;
 using System.Text;
-using Quasar.Common.Messages;
-using Quasar.Server.Networking;
 
 namespace Quasar.Server.ReverseProxy
 {

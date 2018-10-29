@@ -218,7 +218,7 @@ namespace Quasar.Client.Commands
 
                     foreach (FileInfo file in iFiles)
                     {
-                        FileSplit srcFile = new FileSplit(file.FullName);
+                        var srcFile = new FileSplitLegacy(file.FullName);
 
                         if (srcFile.MaxBlocks < 0)
                         {

@@ -1,5 +1,4 @@
 ﻿using Quasar.Common.Enums;
-using Quasar.Common.Helpers;
 using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
@@ -142,7 +141,8 @@ namespace Quasar.Server.Messages
         }
 
         /// <inheritdoc />
-        public override bool CanExecute(IMessage message) => message is DoDownloadFileResponse ||
+        public override bool CanExecute(IMessage message) => message is FileTransferChunk ||
+                                                             message is FileTransferCancel ||
                                                              message is GetDrivesResponse ||
                                                              message is GetDirectoryResponse ||
                                                              message is SetStatusFileManager;
@@ -155,8 +155,11 @@ namespace Quasar.Server.Messages
         {
             switch (message)
             {
-                case DoDownloadFileResponse file:
+                case FileTransferChunk file:
                     Execute(sender, file);
+                    break;
+                case FileTransferCancel cancel:
+                    Execute(sender, cancel);
                     break;
                 case GetDrivesResponse drive:
                     Execute(sender, drive);
@@ -176,8 +179,56 @@ namespace Quasar.Server.Messages
         /// <param name="remotePath">The remote path of the file to download.</param>
         public void BeginDownloadFile(string remotePath)
         {
+            if (string.IsNullOrEmpty(remotePath))
+                return;
+
             int id = GetUniqueFileTransferId();
-            _client.Send(new DoDownloadFile {RemotePath = remotePath, Id = id});
+
+            if (!Directory.Exists(_baseDownloadPath))
+                Directory.CreateDirectory(_baseDownloadPath);
+
+            string fileName = Path.GetFileName(remotePath);
+            string downloadPath = Path.Combine(_baseDownloadPath, fileName);
+
+            int i = 1;
+            while (File.Exists(downloadPath))
+            {
+                // rename file if it exists already
+                var newFileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
+                downloadPath = Path.Combine(_baseDownloadPath, newFileName);
+                i++;
+            }
+
+            var transfer = new FileTransfer
+            {
+                Id = id,
+                Type = TransferType.Download,
+                LocalPath = downloadPath,
+                RemotePath = fileName,
+                Status = "Pending...",
+                //Size = fileSize, TODO: Add file size here
+                TransferredSize = 0
+            };
+
+            try
+            {
+                transfer.FileSplit = new FileSplit(transfer.LocalPath, FileAccess.Write);
+            }
+            catch (Exception)
+            {
+                transfer.Status = "Error writing file";
+                OnFileTransferUpdated(transfer);
+                return;
+            }
+
+            lock (_syncLock)
+            {
+                _activeFileTransfers.Add(transfer);
+            }
+
+            OnFileTransferUpdated(transfer);
+
+            _client.Send(new FileTransferRequest {RemotePath = remotePath, Id = id});
         }
 
         /// <summary>
@@ -197,88 +248,97 @@ namespace Quasar.Server.Messages
                     Type = TransferType.Upload,
                     LocalPath = localPath,
                     RemotePath = remotePath,
-                    Status = "Pending..."
+                    Status = "Pending...",
+                    TransferredSize = 0
                 };
 
-                lock (_syncLock)
+                try
                 {
-                    _activeFileTransfers.Add(transfer);
+                    transfer.FileSplit = new FileSplit(localPath, FileAccess.Read);
                 }
-
-                FileSplit srcFile = new FileSplit(localPath);
-                if (srcFile.MaxBlocks < 0)
+                catch (Exception)
                 {
                     transfer.Status = "Error reading file";
                     OnFileTransferUpdated(transfer);
                     return;
                 }
 
-                // TODO: change to real size
-                transfer.Size = srcFile.MaxBlocks;
+                transfer.Size = transfer.FileSplit.FileSize;
+
+                lock (_syncLock)
+                {
+                    _activeFileTransfers.Add(transfer);
+                }
+
+                transfer.Size = transfer.FileSplit.FileSize;
                 OnFileTransferUpdated(transfer);
 
                 _limitThreads.WaitOne();
-                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                try
                 {
-                    decimal progress =
-                        Math.Round((decimal)((double)(currentBlock + 1) / (double)srcFile.MaxBlocks * 100.0), 2);
-
-                    transfer.TransferredSize = currentBlock + 1;
-                    transfer.Status = $"Uploading...({progress}%)";
-                    OnFileTransferUpdated(transfer);
-
-                    bool transferCanceled;
-                    lock (_syncLock)
+                    foreach (var chunk in transfer.FileSplit)
                     {
-                        transferCanceled = _activeFileTransfers.Count(f => f.Id == transfer.Id) == 0;
-                    }
-
-                    if (transferCanceled)
-                    {
-                        transfer.Status = "Canceled";
+                        transfer.TransferredSize += chunk.Data.Length;
+                        decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
+                        transfer.Status = $"Uploading...({progress}%)";
                         OnFileTransferUpdated(transfer);
-                        _limitThreads.Release();
-                        return;
-                    }
 
-                    if (srcFile.ReadBlock(currentBlock, out var block))
-                    {
+                        bool transferCanceled;
+                        lock (_syncLock)
+                        {
+                            transferCanceled = _activeFileTransfers.Count(f => f.Id == transfer.Id) == 0;
+                        }
+
+                        if (transferCanceled)
+                        {
+                            transfer.Status = "Canceled";
+                            OnFileTransferUpdated(transfer);
+                            _limitThreads.Release();
+                            return;
+                        }
+
                         // blocking sending might not be required, needs further testing
-                        _client.SendBlocking(new DoUploadFile
+                        _client.SendBlocking(new FileTransferChunk
                         {
                             Id = id,
-                            RemotePath = remotePath,
-                            Block = block,
-                            MaxBlocks = srcFile.MaxBlocks,
-                            CurrentBlock = currentBlock
+                            Chunk = chunk,
+                            FilePath = remotePath,
+                            FileSize = transfer.Size
                         });
                     }
-                    else
-                    {
-                        transfer.Status = "Error reading file";
-                        OnFileTransferUpdated(transfer);
-                        _limitThreads.Release();
-                        return;
-                    }
                 }
-                _limitThreads.Release();
+                catch (Exception)
+                {
+                    lock (_syncLock)
+                    {
+                        // if transfer is already cancelled, just return
+                        if (_activeFileTransfers.Count(f => f.Id == transfer.Id) == 0)
+                        {
+                            _limitThreads.Release();
+                            return;
+                        }
+                    }
+                    transfer.Status = "Error reading file";
+                    OnFileTransferUpdated(transfer);
+                    CancelFileTransfer(transfer.Id);
+                    _limitThreads.Release();
+                    return;
+                }
 
                 transfer.Status = "Completed";
                 OnFileTransferUpdated(transfer);
+                RemoveFileTransfer(transfer.Id);
+                _limitThreads.Release();
             }).Start();
         }
 
         /// <summary>
         /// Cancels a file transfer.
         /// </summary>
-        /// <param name="transferId">The Id of the file transfer to cancel.</param>
+        /// <param name="transferId">The id of the file transfer to cancel.</param>
         public void CancelFileTransfer(int transferId)
         {
-            _client.Send(new DoDownloadFileCancel {Id = transferId});
-            lock (_syncLock)
-            {
-                _activeFileTransfers.RemoveAll(s => s.Id == transferId);
-            }
+            _client.Send(new FileTransferCancel {Id = transferId});
         }
 
         /// <summary>
@@ -342,7 +402,7 @@ namespace Quasar.Server.Messages
             _client.Send(new GetDrives());
         }
 
-        private void Execute(ISender client, DoDownloadFileResponse message)
+        private void Execute(ISender client, FileTransferChunk message)
         {
             FileTransfer transfer;
             lock (_syncLock)
@@ -351,79 +411,54 @@ namespace Quasar.Server.Messages
             }
 
             if (transfer == null)
+                return;
+
+            transfer.Size = message.FileSize;
+            transfer.TransferredSize += message.Chunk.Data.Length;
+
+            try
             {
-                // don't escape from download directory
-                if (FileHelper.HasIllegalCharacters(message.Filename))
-                {
-                    // disconnect malicious client
-                    client.Disconnect();
-                    return;
-                }
-
-                if (!Directory.Exists(_baseDownloadPath))
-                    Directory.CreateDirectory(_baseDownloadPath);
-
-                string downloadPath = Path.Combine(_baseDownloadPath, message.Filename);
-
-                int i = 1;
-                while (File.Exists(downloadPath))
-                {
-                    // rename file if it exists already
-                    var newFileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
-                    downloadPath = Path.Combine(_baseDownloadPath, newFileName);
-                    i++;
-                }
-
-                transfer = new FileTransfer
-                {
-                    Id = message.Id,
-                    Type = TransferType.Download,
-                    LocalPath = downloadPath,
-                    RemotePath = message.Filename, // TODO: Change to absolute path
-                    Size = message.MaxBlocks, // TODO: Change to real size
-                    TransferredSize = 0
-                };
-
-                lock (_syncLock)
-                {
-                    _activeFileTransfers.Add(transfer);
-                }
+                transfer.FileSplit.WriteChunk(message.Chunk);
             }
-
-            // TODO: change to += message.Block.Length
-            transfer.TransferredSize = message.CurrentBlock + 1;
-
-            if (!string.IsNullOrEmpty(message.CustomMessage))
+            catch (Exception)
             {
-                // client-side error
-                transfer.Status = message.CustomMessage;
+                transfer.Status = "Error writing file";
                 OnFileTransferUpdated(transfer);
+                CancelFileTransfer(transfer.Id);
                 return;
             }
 
-            FileSplit destFile = new FileSplit(transfer.LocalPath);
-
-            if (!destFile.AppendBlock(message.Block, message.CurrentBlock))
-            {
-                // server-side error
-                transfer.Status = destFile.LastError;
-                OnFileTransferUpdated(transfer);
-                return;
-            }
-
-            if (message.CurrentBlock + 1 == message.MaxBlocks)
+            if (transfer.TransferredSize == transfer.Size)
             {
                 transfer.Status = "Completed";
+                RemoveFileTransfer(transfer.Id);
             }
             else
             {
-                decimal progress =
-                    Math.Round((decimal) ((double) (message.CurrentBlock + 1) / (double) message.MaxBlocks * 100.0), 2);
-
+                decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
                 transfer.Status = $"Downloading...({progress}%)";
             }
 
             OnFileTransferUpdated(transfer);
+        }
+
+        private void Execute(ISender client, FileTransferCancel message)
+        {
+            FileTransfer transfer;
+            lock (_syncLock)
+            {
+                transfer = _activeFileTransfers.FirstOrDefault(t => t.Id == message.Id);
+            }
+
+            if (transfer != null)
+            {
+                transfer.Status = message.Reason;
+                OnFileTransferUpdated(transfer);
+                RemoveFileTransfer(transfer.Id);
+                // don't keep un-finished files
+                if (transfer.Type == TransferType.Download)
+                    File.Delete(transfer.LocalPath);
+            }
         }
 
         private void Execute(ISender client, GetDrivesResponse message)
@@ -445,6 +480,20 @@ namespace Quasar.Server.Messages
         }
 
         /// <summary>
+        /// Removes a file transfer given the transfer id.
+        /// </summary>
+        /// <param name="transferId">The file transfer id.</param>
+        private void RemoveFileTransfer(int transferId)
+        {
+            lock (_syncLock)
+            {
+                var transfer = _activeFileTransfers.FirstOrDefault(t => t.Id == transferId);
+                transfer?.FileSplit?.Dispose();
+                _activeFileTransfers.RemoveAll(s => s.Id == transferId);
+            }
+        }
+
+        /// <summary>
         /// Generates a unique file transfer id.
         /// </summary>
         /// <returns>A unique file transfer id.</returns>
@@ -456,7 +505,7 @@ namespace Quasar.Server.Messages
                 do
                 {
                     id = FileTransfer.GetRandomTransferId();
-                    // generate new Id until we have a unique one
+                    // generate new id until we have a unique one
                 } while (_activeFileTransfers.Any(f => f.Id == id));
             }
 
@@ -471,7 +520,8 @@ namespace Quasar.Server.Messages
                 {
                     foreach (var transfer in _activeFileTransfers)
                     {
-                        _client.Send(new DoDownloadFileCancel { Id = transfer.Id });
+                        _client.Send(new FileTransferCancel {Id = transfer.Id});
+                        transfer.FileSplit?.Dispose();
                     }
 
                     _activeFileTransfers.Clear();

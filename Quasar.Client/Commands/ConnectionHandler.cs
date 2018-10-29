@@ -17,33 +17,33 @@ namespace Quasar.Client.Commands
             // i dont like this updating... if anyone has a better idea feel free to edit it
             if (string.IsNullOrEmpty(command.DownloadUrl))
             {
-                if (!_renamedFiles.ContainsKey(command.Id))
-                    _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(".exe"));
+                if (!RenamedFiles.ContainsKey(command.Id))
+                    RenamedFiles.Add(command.Id, FileHelper.GetTempFilePath(".exe"));
 
-                string filePath = _renamedFiles[command.Id];
+                string filePath = RenamedFiles[command.Id];
 
                 try
                 {
                     if (command.CurrentBlock == 0 && !FileHelper.HasExecutableIdentifier(command.Block))
                         throw new Exception("No executable file");
 
-                    FileSplit destFile = new FileSplit(filePath);
+                    var destFile = new FileSplitLegacy(filePath);
 
                     if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
                         throw new Exception(destFile.LastError);
 
                     if ((command.CurrentBlock + 1) == command.MaxBlocks) // Upload finished
                     {
-                        if (_renamedFiles.ContainsKey(command.Id))
-                            _renamedFiles.Remove(command.Id);
+                        if (RenamedFiles.ContainsKey(command.Id))
+                            RenamedFiles.Remove(command.Id);
                         client.Send(new SetStatus {Message = "Updating..."});
                         ClientUpdater.Update(client, filePath);
                     }
                 }
                 catch (Exception ex)
                 {
-                    if (_renamedFiles.ContainsKey(command.Id))
-                        _renamedFiles.Remove(command.Id);
+                    if (RenamedFiles.ContainsKey(command.Id))
+                        RenamedFiles.Remove(command.Id);
                     NativeMethods.DeleteFile(filePath);
                     client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
                 }

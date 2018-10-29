@@ -1,4 +1,5 @@
-﻿using Quasar.Common.Utilities;
+﻿using Quasar.Common.IO;
+using Quasar.Common.Utilities;
 using Quasar.Server.Enums;
 using System;
 
@@ -15,6 +16,7 @@ namespace Quasar.Server.Models
         public string LocalPath { get; set; }
         public string RemotePath { get; set; }
         public string Status { get; set; }
+        public FileSplit FileSplit { get; set; }
 
         public bool Equals(FileTransfer other)
         {

