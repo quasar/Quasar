@@ -522,6 +522,8 @@ namespace Quasar.Server.Messages
                     {
                         _client.Send(new FileTransferCancel {Id = transfer.Id});
                         transfer.FileSplit?.Dispose();
+                        if (transfer.Type == TransferType.Download)
+                            File.Delete(transfer.LocalPath);
                     }
 
                     _activeFileTransfers.Clear();
