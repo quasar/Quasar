@@ -273,12 +273,20 @@ namespace Quasar.Server.Networking
                     switch (e.SocketError)
                     {
                         case SocketError.Success:
-                            e.AcceptSocket.SetKeepAliveEx(KeepAliveInterval, KeepAliveTime);
-                            Socket client = e.AcceptSocket;
-                            SslStream sslStream = new SslStream(new NetworkStream(client, true), false, ValidateClientCertificate);
-                            // the sslStream owns the socket and on disposing also disposes the NetworkStream and Socket
-                            sslStream.BeginAuthenticateAsServer(_serverCertificate, true, SslProtocols.Tls, false, EndAuthenticateClient,
-                                new PendingClient {Stream = sslStream, EndPoint = (IPEndPoint) client.RemoteEndPoint});
+                            SslStream sslStream = null;
+                            try
+                            {
+                                Socket clientSocket = e.AcceptSocket;
+                                clientSocket.SetKeepAliveEx(KeepAliveInterval, KeepAliveTime);
+                                sslStream = new SslStream(new NetworkStream(clientSocket, true), false, ValidateClientCertificate);
+                                // the SslStream owns the socket and on disposing also disposes the NetworkStream and Socket
+                                sslStream.BeginAuthenticateAsServer(_serverCertificate, true, SslProtocols.Tls, false, EndAuthenticateClient,
+                                    new PendingClient {Stream = sslStream, EndPoint = (IPEndPoint) clientSocket.RemoteEndPoint});
+                            }
+                            catch (Exception)
+                            {
+                                sslStream?.Close();
+                            }
                             break;
                         case SocketError.ConnectionReset:
                             break;
@@ -310,7 +318,7 @@ namespace Quasar.Server.Networking
         /// <param name="ar">The status of the asynchronous operation.</param>
         private void EndAuthenticateClient(IAsyncResult ar)
         {
-            var con = (PendingClient)ar.AsyncState;
+            var con = (PendingClient) ar.AsyncState;
             try
             {
                 con.Stream.EndAuthenticateAsServer(ar);
@@ -324,9 +332,6 @@ namespace Quasar.Server.Networking
                 Client client = new Client(_bufferPool, con.Stream, con.EndPoint);
                 AddClient(client);
                 OnClientState(client, true);
-            }
-            catch (ObjectDisposedException)
-            {
             }
             catch (Exception)
             {
