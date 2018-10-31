@@ -144,7 +144,7 @@
     <Compile Include="Utilities\NativeMethods.cs" />
     <Compile Include="Networking\Client.cs" />
     <Compile Include="Build\ClientBuilder.cs" />
-    <Compile Include="Networking\UPnP.cs" />
+    <Compile Include="Networking\UPnPService.cs" />
     <Compile Include="Controls\InputBox.cs" />
     <Compile Include="Utilities\ListViewColumnSorter.cs" />
     <Compile Include="Extensions\ListViewExtensions.cs" />

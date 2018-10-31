@@ -195,6 +195,11 @@ namespace Quasar.Server.Networking
         private readonly List<Client> _clients = new List<Client>();
 
         /// <summary>
+        /// The UPnP service used to discover, create and delete port mappings.
+        /// </summary>
+        private UPnPService _UPnPService;
+
+        /// <summary>
         /// Lock object for the list of clients.
         /// </summary>
         private readonly object _clientsLock = new object();
@@ -219,16 +224,14 @@ namespace Quasar.Server.Networking
         /// </summary>
         /// <param name="port">Port to listen for clients on.</param>
         /// <param name="ipv6">If set to true, use a dual-stack socket to allow IPv4/6 connections. Otherwise use IPv4-only socket.</param>
-        public void Listen(ushort port, bool ipv6)
+        /// <param name="enableUPnP">Enables the automatic UPnP port forwarding.</param>
+        public void Listen(ushort port, bool ipv6, bool enableUPnP)
         {
             if (Listening) return;
             this.Port = port;
-            
-            if (_handle != null)
-            {
-                _handle.Close();
-                _handle = null;
-            }
+
+            if (enableUPnP)
+                _UPnPService = new UPnPService(port);
 
             if (Socket.OSSupportsIPv6 && ipv6)
             {
@@ -242,15 +245,8 @@ namespace Quasar.Server.Networking
                 _handle.Bind(new IPEndPoint(IPAddress.Any, port));
             }
             _handle.Listen(1000);
-            ProcessingDisconnect = false;
 
             OnServerState(true);
-
-            if (_item != null)
-            {
-                _item.Dispose();
-                _item = null;
-            }
 
             _item = new SocketAsyncEventArgs();
             _item.Completed += AcceptClient;
@@ -440,6 +436,12 @@ namespace Quasar.Server.Networking
             {
                 _item.Dispose();
                 _item = null;
+            }
+
+            if (_UPnPService != null)
+            {
+                _UPnPService.DeletePortMap(Port);
+                _UPnPService = null;
             }
 
             lock (_clientsLock)

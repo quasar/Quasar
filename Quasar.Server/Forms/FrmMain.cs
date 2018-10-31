@@ -106,7 +106,7 @@ namespace Quasar.Server.Forms
         {
             try
             {
-                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support);
+                ListenServer.Listen(Settings.ListenPort, Settings.IPv6Support, Settings.UseUPnP);
             }
             catch (SocketException ex)
             {
@@ -128,19 +128,9 @@ namespace Quasar.Server.Forms
 
         private void AutostartListening()
         {
-            if (Settings.AutoListen && Settings.UseUPnP)
+            if (Settings.AutoListen)
             {
-                UPnP.Initialize(Settings.ListenPort);
                 StartConnectionListener();
-            }
-            else if (Settings.AutoListen)
-            {
-                UPnP.Initialize();
-                StartConnectionListener();
-            }
-            else
-            {
-                UPnP.Initialize();
             }
 
             if (Settings.EnableNoIPUpdater)
@@ -158,7 +148,6 @@ namespace Quasar.Server.Forms
         private void FrmMain_FormClosing(object sender, FormClosingEventArgs e)
         {
             ListenServer.Disconnect();
-            UPnP.DeletePortMap(Settings.ListenPort);
             UnregisterMessageHandler();
             _clientStatusHandler.Dispose();
             notifyIcon.Visible = false;

@@ -18,12 +18,7 @@ namespace Quasar.Server.Forms
 
             InitializeComponent();
 
-            if (listenServer.Listening)
-            {
-                btnListen.Text = "Stop listening";
-                ncPort.Enabled = false;
-                chkIPv6Support.Enabled = false;
-            }
+            ToggleListenerSettings(!listenServer.Listening);
 
             ShowPassword(false);
         }
@@ -64,27 +59,10 @@ namespace Quasar.Server.Forms
             {
                 try
                 {
-                    if (chkUseUpnp.Checked)
-                    {
-                        if (!UPnP.IsDeviceFound)
-                        {
-                            MessageBox.Show(this, "No available UPnP device found!", "No UPnP device", MessageBoxButtons.OK,
-                                MessageBoxIcon.Information);
-                        }
-                        else
-                        {
-                            int outPort;
-                            UPnP.CreatePortMap(port, out outPort);
-                            if (port != outPort)
-                            {
-                                MessageBox.Show(this, "Creating a port map with the UPnP device failed!\nPlease check if your device allows to create new port maps.", "Creating port map failed", MessageBoxButtons.OK,
-                                    MessageBoxIcon.Warning);
-                            }
-                        }
-                    }
                     if(chkNoIPIntegration.Checked)
                         NoIpUpdater.Start();
-                    _listenServer.Listen(port, chkIPv6Support.Checked);
+                    _listenServer.Listen(port, chkIPv6Support.Checked, chkUseUpnp.Checked);
+                    ToggleListenerSettings(false);
                 }
                 catch (SocketException ex)
                 {
@@ -102,26 +80,11 @@ namespace Quasar.Server.Forms
                 {
                     _listenServer.Disconnect();
                 }
-                finally
-                {
-                    btnListen.Text = "Stop listening";
-                    ncPort.Enabled = false;
-                    chkIPv6Support.Enabled = false;
-                }
             }
             else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
             {
-                try
-                {
-                    _listenServer.Disconnect();
-                    UPnP.DeletePortMap(port);
-                }
-                finally
-                {
-                    btnListen.Text = "Start listening";
-                    ncPort.Enabled = true;
-                    chkIPv6Support.Enabled = true;
-                }
+                _listenServer.Disconnect();
+                ToggleListenerSettings(true);
             }
         }
 
@@ -159,6 +122,14 @@ namespace Quasar.Server.Forms
         private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e)
         {
             NoIPControlHandler(chkNoIPIntegration.Checked);
+        }
+
+        private void ToggleListenerSettings(bool enabled)
+        {
+            btnListen.Text = enabled ? "Start listening" : "Stop listening";
+            ncPort.Enabled = enabled;
+            chkIPv6Support.Enabled = enabled;
+            chkUseUpnp.Enabled = enabled;
         }
 
         private void NoIPControlHandler(bool enable)

@@ -136,9 +136,9 @@
             this.chkUseUpnp.AutoSize = true;
             this.chkUseUpnp.Location = new System.Drawing.Point(12, 114);
             this.chkUseUpnp.Name = "chkUseUpnp";
-            this.chkUseUpnp.Size = new System.Drawing.Size(229, 17);
+            this.chkUseUpnp.Size = new System.Drawing.Size(249, 17);
             this.chkUseUpnp.TabIndex = 8;
-            this.chkUseUpnp.Text = "Try to automatically port forward (UPnP)";
+            this.chkUseUpnp.Text = "Try to automatically forward the port (UPnP)";
             this.chkUseUpnp.UseVisualStyleBackColor = true;
             // 
             // chkShowTooltip
@@ -156,9 +156,9 @@
             this.chkNoIPIntegration.AutoSize = true;
             this.chkNoIPIntegration.Location = new System.Drawing.Point(12, 177);
             this.chkNoIPIntegration.Name = "chkNoIPIntegration";
-            this.chkNoIPIntegration.Size = new System.Drawing.Size(192, 17);
+            this.chkNoIPIntegration.Size = new System.Drawing.Size(187, 17);
             this.chkNoIPIntegration.TabIndex = 10;
-            this.chkNoIPIntegration.Text = "Activate No-Ip.com DNS Updater";
+            this.chkNoIPIntegration.Text = "Enable No-Ip.com DNS Updater";
             this.chkNoIPIntegration.UseVisualStyleBackColor = true;
             this.chkNoIPIntegration.CheckedChanged += new System.EventHandler(this.chkNoIPIntegration_CheckedChanged);
             // 
