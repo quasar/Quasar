@@ -283,7 +283,7 @@ namespace Quasar.Server.Networking
                         case SocketError.ConnectionReset:
                             break;
                         default:
-                            throw new Exception("SocketError");
+                            throw new SocketException((int) e.SocketError);
                     }
 
                     e.AcceptSocket = null; // enable reuse
@@ -310,9 +310,9 @@ namespace Quasar.Server.Networking
         /// <param name="ar">The status of the asynchronous operation.</param>
         private void EndAuthenticateClient(IAsyncResult ar)
         {
+            var con = (PendingClient)ar.AsyncState;
             try
             {
-                var con = (PendingClient) ar.AsyncState;
                 con.Stream.EndAuthenticateAsServer(ar);
 
                 // only allow connection which are authenticated on both sides
@@ -330,7 +330,7 @@ namespace Quasar.Server.Networking
             }
             catch (Exception)
             {
-                Disconnect();
+                con.Stream.Close();
             }
         }
 
