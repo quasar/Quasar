@@ -17,10 +17,16 @@ namespace Quasar.Server.Forms
             InitializeComponent();
         }
 
+        private void SetCertificate(X509Certificate2 certificate)
+        {
+            _certificate = certificate;
+            txtDetails.Text = _certificate.ToString(false);
+            btnSave.Enabled = true;
+        }
+
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            _certificate = CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 4096);
-            txtDetails.Text = _certificate.ToString(false);
+            SetCertificate(CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 4096));
         }
 
         private void btnImport_Click(object sender, EventArgs e)
@@ -35,8 +41,7 @@ namespace Quasar.Server.Forms
                 {
                     try
                     {
-                        _certificate = new X509Certificate2(ofd.FileName, "", X509KeyStorageFlags.Exportable);
-                        txtDetails.Text = _certificate.ToString(false);
+                        SetCertificate(new X509Certificate2(ofd.FileName, "", X509KeyStorageFlags.Exportable));
                     }
                     catch (Exception ex)
                     {
@@ -85,6 +90,11 @@ namespace Quasar.Server.Forms
                     "There was an error saving the certificate, please make sure you have write access to the Quasar directory.",
                     "Save error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

@@ -36,6 +36,7 @@
             this.btnImport = new System.Windows.Forms.Button();
             this.btnSave = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.btnExit = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // lblInfo
@@ -75,12 +76,12 @@
             this.txtDetails.Name = "txtDetails";
             this.txtDetails.ReadOnly = true;
             this.txtDetails.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.txtDetails.Size = new System.Drawing.Size(488, 230);
+            this.txtDetails.Size = new System.Drawing.Size(517, 230);
             this.txtDetails.TabIndex = 4;
             // 
             // btnImport
             // 
-            this.btnImport.Location = new System.Drawing.Point(148, 27);
+            this.btnImport.Location = new System.Drawing.Point(93, 27);
             this.btnImport.Name = "btnImport";
             this.btnImport.Size = new System.Drawing.Size(130, 23);
             this.btnImport.TabIndex = 2;
@@ -90,10 +91,11 @@
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(425, 306);
+            this.btnSave.Enabled = false;
+            this.btnSave.Location = new System.Drawing.Point(373, 305);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
-            this.btnSave.TabIndex = 5;
+            this.btnSave.TabIndex = 6;
             this.btnSave.Text = "Save";
             this.btnSave.UseVisualStyleBackColor = true;
             this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
@@ -101,18 +103,29 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Font = new System.Drawing.Font("Segoe UI Semibold", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.label1.Location = new System.Drawing.Point(22, 308);
+            this.label1.Font = new System.Drawing.Font("Segoe UI", 9F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label1.Location = new System.Drawing.Point(12, 310);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(384, 17);
-            this.label1.TabIndex = 6;
+            this.label1.Size = new System.Drawing.Size(355, 15);
+            this.label1.TabIndex = 5;
             this.label1.Text = "KEEP THIS FILE SAFE! LOSS RESULTS IN LOOSING ALL CLIENTS!";
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(454, 306);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.TabIndex = 7;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
             // 
             // FrmCertificate
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(512, 341);
+            this.ClientSize = new System.Drawing.Size(541, 341);
+            this.Controls.Add(this.btnExit);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.btnSave);
             this.Controls.Add(this.lblDescription);
@@ -141,5 +154,6 @@
         private System.Windows.Forms.Button btnImport;
         private System.Windows.Forms.Button btnSave;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Button btnExit;
     }
 }
