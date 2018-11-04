@@ -378,15 +378,33 @@ namespace Quasar.Server.Forms
 
                 builder.Build();
 
-                MessageBox.Show(this,
-                    $"Successfully built client!\nSaved to: {options.OutputPath}\n\nOnly install it on computers where you have the permission to do so!",
-                    "Build Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    this.Invoke((MethodInvoker) delegate
+                    {
+                        MessageBox.Show(this,
+                            $"Successfully built client!\nSaved to: {options.OutputPath}\n\nOnly install it on computers where you have the permission to do so!",
+                            "Build Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    });
+                }
+                catch (Exception)
+                {
+                }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this,
-                    $"An error occurred!\n\nError Message: {ex.Message}\nStack Trace:\n{ex.StackTrace}", "Build failed",
-                    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                try
+                {
+                    this.Invoke((MethodInvoker)delegate
+                    {
+                        MessageBox.Show(this,
+                            $"An error occurred!\n\nError Message: {ex.Message}\nStack Trace:\n{ex.StackTrace}", "Build failed",
+                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    });
+                }
+                catch (Exception)
+                {
+                }
             }
             SetBuildState(true);
         }

@@ -1,6 +1,10 @@
-﻿using Quasar.Common.Messages;
+﻿using System;
+using Quasar.Common.Messages;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
+using Quasar.Common.Cryptography;
 
 namespace Quasar.Server.Networking
 {
@@ -143,7 +147,20 @@ namespace Quasar.Server.Networking
             //if (Settings.ShowToolTip)
             //    client.Send(new GetSystemInfo());
 
+#if !DEBUG
+            try
+            {
+                var csp = (RSACryptoServiceProvider)ServerCertificate.PublicKey.Key;
+                return csp.VerifyHash(Sha256.ComputeHash(Encoding.UTF8.GetBytes(packet.EncryptionKey)),
+                    CryptoConfig.MapNameToOID("SHA256"), packet.Signature);
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+#else
             return true;
+#endif
         }
     }
 }

@@ -182,7 +182,7 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// The server certificate.
         /// </summary>
-        private readonly X509Certificate2 _serverCertificate;
+        protected readonly X509Certificate2 ServerCertificate;
 
         /// <summary>
         /// The event to accept new connections asynchronously.
@@ -215,7 +215,7 @@ namespace Quasar.Server.Networking
         /// <param name="serverCertificate">The server certificate.</param>
         protected Server(X509Certificate2 serverCertificate)
         {
-            _serverCertificate = serverCertificate;
+            ServerCertificate = serverCertificate;
             TypeRegistry.AddTypesToSerializer(typeof(IMessage), TypeRegistry.GetPacketTypes(typeof(IMessage)).ToArray());
         }
 
@@ -274,9 +274,9 @@ namespace Quasar.Server.Networking
                             {
                                 Socket clientSocket = e.AcceptSocket;
                                 clientSocket.SetKeepAliveEx(KeepAliveInterval, KeepAliveTime);
-                                sslStream = new SslStream(new NetworkStream(clientSocket, true), false, ValidateClientCertificate);
+                                sslStream = new SslStream(new NetworkStream(clientSocket, true), false);
                                 // the SslStream owns the socket and on disposing also disposes the NetworkStream and Socket
-                                sslStream.BeginAuthenticateAsServer(_serverCertificate, true, SslProtocols.Tls, false, EndAuthenticateClient,
+                                sslStream.BeginAuthenticateAsServer(ServerCertificate, false, SslProtocols.Tls, false, EndAuthenticateClient,
                                     new PendingClient {Stream = sslStream, EndPoint = (IPEndPoint) clientSocket.RemoteEndPoint});
                             }
                             catch (Exception)
@@ -319,12 +319,6 @@ namespace Quasar.Server.Networking
             {
                 con.Stream.EndAuthenticateAsServer(ar);
 
-                // only allow connection which are authenticated on both sides
-                if (!con.Stream.IsMutuallyAuthenticated)
-                {
-                    throw new AuthenticationException("Client did not provide a client certificate.");
-                }
-
                 Client client = new Client(_bufferPool, con.Stream, con.EndPoint);
                 AddClient(client);
                 OnClientState(client, true);
@@ -333,54 +327,6 @@ namespace Quasar.Server.Networking
             {
                 con.Stream.Close();
             }
-        }
-
-        /// <summary>
-        /// Validates the client certificate by checking whether it has been signed by the server.
-        /// </summary>
-        /// <param name="sender">The sender of the callback.</param>
-        /// <param name="certificate">The client certificate to validate.</param>
-        /// <param name="chain">The X.509 chain.</param>
-        /// <param name="sslPolicyErrors">The SSL policy errors.</param>
-        /// <returns>Returns <value>true</value> when the validation was successful, otherwise <value>false</value>.</returns>
-        public bool ValidateClientCertificate(object sender, X509Certificate certificate, X509Chain chain, SslPolicyErrors sslPolicyErrors)
-        {
-#if DEBUG
-            // for debugging don't validate client certificate
-            return true;
-#else
-            // if client does not provide a certificate, don't accept connection
-            if (certificate == null) return false;
-
-            chain.Reset();
-            chain.ChainPolicy.RevocationMode = X509RevocationMode.NoCheck;
-            chain.ChainPolicy.VerificationFlags = X509VerificationFlags.AllowUnknownCertificateAuthority;
-            chain.ChainPolicy.VerificationTime = DateTime.UtcNow;
-            chain.ChainPolicy.ExtraStore.Add(_serverCertificate);
-
-            chain.Build(new X509Certificate2(certificate));
-
-            bool result = true;
-
-            foreach (var status in chain.ChainStatus)
-            {
-                if (status.Status == X509ChainStatusFlags.UntrustedRoot)
-                {
-                    // self-signed certificates with an untrusted root are valid.
-                    continue;
-                }
-                else
-                {
-                    if (status.Status != X509ChainStatusFlags.NoError)
-                    {
-                        // if there are any other errors in the certificate chain, the certificate is invalid.
-                        result = false;
-                    }
-                }
-            }
-
-            return result;
-#endif
         }
 
         /// <summary>

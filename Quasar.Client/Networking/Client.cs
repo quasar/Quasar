@@ -176,12 +176,10 @@ namespace Quasar.Client.Networking
             }
         }
 
-        private SslStream _stream;
-
         /// <summary>
-        /// The client certificate.
+        /// The stream used for communication.
         /// </summary>
-        private readonly X509Certificate2 _clientCertificate;
+        private SslStream _stream;
 
         /// <summary>
         /// The server certificate.
@@ -276,11 +274,9 @@ namespace Quasar.Client.Networking
         /// <summary>
         /// Constructor of the client, initializes serializer types.
         /// </summary>
-        /// <param name="clientCertificate">The client certificate.</param>
         /// <param name="serverCertificate">The server certificate.</param>
-        protected Client(X509Certificate2 clientCertificate, X509Certificate2 serverCertificate)
+        protected Client(X509Certificate2 serverCertificate)
         {
-            _clientCertificate = clientCertificate;
             _serverCertificate = serverCertificate;
             _readBuffer = new byte[BUFFER_SIZE];
             _tempHeader = new byte[HEADER_SIZE];
@@ -306,8 +302,7 @@ namespace Quasar.Client.Networking
                 if (handle.Connected)
                 {
                     _stream = new SslStream(new NetworkStream(handle, true), false, ValidateServerCertificate);
-                    X509CertificateCollection col = new X509CertificateCollection {_clientCertificate};
-                    _stream.AuthenticateAsClient(ip.ToString(), col, SslProtocols.Tls, false);
+                    _stream.AuthenticateAsClient(ip.ToString(), null, SslProtocols.Tls, false);
                     _stream.BeginRead(_readBuffer, 0, _readBuffer.Length, AsyncReceive, null);
                     OnClientState(true);
                 }

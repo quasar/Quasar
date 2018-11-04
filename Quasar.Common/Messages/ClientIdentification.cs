@@ -43,5 +43,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(13)]
         public string EncryptionKey { get; set; }
+
+        [ProtoMember(14)]
+        public byte[] Signature { get; set; }
     }
 }

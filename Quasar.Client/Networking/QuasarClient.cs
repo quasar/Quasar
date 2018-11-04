@@ -24,8 +24,8 @@ namespace Quasar.Client.Networking
         private readonly HostsManager _hosts;
         private readonly SafeRandom _random;
 
-        public QuasarClient(HostsManager hostsManager, X509Certificate2 clientCertificate, X509Certificate2 serverCertificate)
-            : base(clientCertificate, serverCertificate)
+        public QuasarClient(HostsManager hostsManager, X509Certificate2 serverCertificate)
+            : base(serverCertificate)
         {
             this._hosts = hostsManager;
             this._random = new SafeRandom();
@@ -112,7 +112,8 @@ namespace Quasar.Client.Networking
                     Username = WindowsAccountHelper.GetName(),
                     PcName = SystemHelper.GetPcName(),
                     Tag = Settings.TAG,
-                    EncryptionKey = Settings.ENCRYPTIONKEY
+                    EncryptionKey = Settings.ENCRYPTIONKEY,
+                    Signature = Convert.FromBase64String(Settings.SERVERSIGNATURE)
                 });
 
                 if (ClientData.AddToStartupFailed)

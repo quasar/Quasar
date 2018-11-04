@@ -11,7 +11,7 @@ namespace Quasar.Common.Cryptography
 
             using (SHA256Managed sha = new SHA256Managed())
             {
-                data = sha.ComputeHash(data, 0, data.Length);
+                data = sha.ComputeHash(data);
             }
 
             StringBuilder hash = new StringBuilder();
@@ -20,6 +20,14 @@ namespace Quasar.Common.Cryptography
                 hash.Append(_byte.ToString("X2"));
 
             return hash.ToString().ToUpper();
+        }
+
+        public static byte[] ComputeHash(byte[] input)
+        {
+            using (SHA256Managed sha = new SHA256Managed())
+            {
+                return sha.ComputeHash(input);
+            }
         }
     }
 }
