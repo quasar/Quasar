@@ -44,12 +44,12 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
   * Windows 10
 
 ## Compiling
-Open the project in Visual Studio 2017+ and click build. See below which build configuration to choose.
+Open the project in Visual Studio 2017+ and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` on the top or by pressing `F6`. See below which build configuration to choose from.
 
 ## Building a client
 | Build configuration         | Usage scenario | Description
 | ----------------------------|----------------|--------------
-| Debug configuration         | Testing        | The pre-defined [Settings.cs](/Client/Config/Settings.cs) will be used, so edit this file before compiling the client. You can execute the client directly with the specified settings.
+| Debug configuration         | Testing        | The pre-defined [Settings.cs](/Quasar.Client/Config/Settings.cs) will be used, so edit this file before compiling the client. You can execute the client directly with the specified settings.
 | Release configuration       | Live use       | Start `Quasar.exe` and use the client builder.
 
 ## Contributing
