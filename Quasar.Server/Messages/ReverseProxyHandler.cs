@@ -17,7 +17,7 @@ namespace Quasar.Server.Messages
         /// <summary>
         /// The reverse proxy server to accept & serve SOCKS5 connections.
         /// </summary>
-        private ReverseProxyServer _socksServer;
+        private readonly ReverseProxyServer _socksServer;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ReverseProxyHandler"/> class using the given clients.
@@ -25,6 +25,7 @@ namespace Quasar.Server.Messages
         /// <param name="clients">The associated clients.</param>
         public ReverseProxyHandler(Client[] clients) : base(true)
         {
+            _socksServer = new ReverseProxyServer();
             _clients = clients;
         }
 
@@ -59,7 +60,6 @@ namespace Quasar.Server.Messages
         /// <param name="port">The port to listen on.</param>
         public void StartReverseProxyServer(ushort port)
         {
-            _socksServer = new ReverseProxyServer();
             _socksServer.OnConnectionEstablished += socksServer_onConnectionEstablished;
             _socksServer.OnUpdateConnection += socksServer_onUpdateConnection;
             _socksServer.StartServer(_clients, "0.0.0.0", port);
