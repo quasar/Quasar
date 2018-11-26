@@ -361,7 +361,7 @@ namespace Quasar.Server.Forms
                     var valueItem = lstRegistryValues.Items.Cast<RegistryValueLstItem>()
                                                      .SingleOrDefault(item => item.Name == value.Name);
                     if (valueItem != null)
-                        valueItem.Data = RegistryValueToString(value);
+                        valueItem.Data = RegValueHelper.RegistryValueToString(value);
                 }
 
                 tvRegistryDirectory.SelectedNode = key;
@@ -372,26 +372,6 @@ namespace Quasar.Server.Forms
         {
             if (source.Kind != dest.Kind) return;
             dest.Data = source.Data;
-        }
-
-        private string RegistryValueToString(RegValueData value)
-        {
-            switch (value.Kind)
-            {
-                case RegistryValueKind.Binary:
-                    return value.Data.Length > 0 ? BitConverter.ToString(value.Data).Replace("-", " ").ToLower() : "(zero-length binary value)";
-                case RegistryValueKind.MultiString:
-                    return string.Join(" ", ByteConverter.ToStringArray(value.Data));
-                case RegistryValueKind.DWord: // show hexadecimal and decimal
-                    return $"0x{value.Data:x8} ({ByteConverter.ToUInt32(value.Data).ToString()})";
-                case RegistryValueKind.QWord: // show hexadecimal and decimal
-                    return $"0x{value.Data:x8} ({ByteConverter.ToUInt64(value.Data).ToString()})";
-                case RegistryValueKind.String:
-                case RegistryValueKind.ExpandString:
-                    return ByteConverter.ToString(value.Data);
-                default:
-                    return string.Empty;
-            }
         }
 
         private void UpdateLstRegistryValues(TreeNode node)

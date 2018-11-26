@@ -1,7 +1,7 @@
-﻿using System;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Quasar.Common.Models;
 using Quasar.Common.Utilities;
+using System;
 
 namespace Quasar.Server.Registry
 {
@@ -29,10 +29,10 @@ namespace Quasar.Server.Registry
                     return string.Join(" ", ByteConverter.ToStringArray(value.Data));
                 case RegistryValueKind.DWord:
                     var dword = ByteConverter.ToUInt32(value.Data);
-                    return $"0x{dword:x8} ({dword.ToString()})"; // show hexadecimal and decimal
+                    return $"0x{dword:x8} ({dword})"; // show hexadecimal and decimal
                 case RegistryValueKind.QWord:
                     var qword = ByteConverter.ToUInt64(value.Data);
-                    return $"0x{qword:x8} ({qword.ToString()})"; // show hexadecimal and decimal
+                    return $"0x{qword:x8} ({qword})"; // show hexadecimal and decimal
                 case RegistryValueKind.String:
                 case RegistryValueKind.ExpandString:
                     return ByteConverter.ToString(value.Data);
