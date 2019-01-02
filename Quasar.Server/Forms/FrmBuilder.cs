@@ -415,7 +415,7 @@ namespace Quasar.Server.Forms
             if (rbAppdata.Checked)
                 path =
                     Path.Combine(
-                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
+                        Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonApplicationData),
                             txtInstallSubDirectory.Text), txtInstallName.Text);
             else if (rbProgramFiles.Checked)
                 path =
