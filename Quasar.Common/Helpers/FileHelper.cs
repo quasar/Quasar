@@ -75,14 +75,13 @@ namespace Quasar.Common.Helpers
         /// </summary>
         /// <param name="filename">The filename of the log.</param>
         /// <param name="appendText">The text to append.</param>
-        /// <param name="encryptionKey">The encryption key.</param>
-        public static void WriteLogFile(string filename, string appendText, string encryptionKey)
+        /// <param name="aes">The AES instance.</param>
+        public static void WriteLogFile(string filename, string appendText, Aes256 aes)
         {
-            appendText = ReadLogFile(filename, encryptionKey) + appendText;
+            appendText = ReadLogFile(filename, aes) + appendText;
 
             using (FileStream fStream = File.Open(filename, FileMode.Create, FileAccess.Write))
             {
-                var aes = new Aes256(encryptionKey);
                 byte[] data = aes.Encrypt(Encoding.UTF8.GetBytes(appendText));
                 fStream.Seek(0, SeekOrigin.Begin);
                 fStream.Write(data, 0, data.Length);
@@ -93,10 +92,9 @@ namespace Quasar.Common.Helpers
         /// Reads a log file.
         /// </summary>
         /// <param name="filename">The filename of the log.</param>
-        /// <param name="encryptionKey">The encryption key.</param>
-        public static string ReadLogFile(string filename, string encryptionKey)
+        /// <param name="aes">The AES instance.</param>
+        public static string ReadLogFile(string filename, Aes256 aes)
         {
-            var aes = new Aes256(encryptionKey);
             return File.Exists(filename) ? Encoding.UTF8.GetString(aes.Decrypt(File.ReadAllBytes(filename))) : string.Empty;
         }
     }

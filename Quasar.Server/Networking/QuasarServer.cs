@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Cryptography;
 using Quasar.Common.Messages;
+using System;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
-using Quasar.Common.Cryptography;
 
 namespace Quasar.Server.Networking
 {
