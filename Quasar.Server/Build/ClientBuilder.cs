@@ -170,7 +170,7 @@ namespace Quasar.Server.Build
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideInstallSubdirectory));
                                             break;
                                         case 7: // RequestElevationOnExecution
-                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.RequestElevationOnExecution));
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.RequestElevationOnExecution));
                                             break;
                                     }
                                     bools++;

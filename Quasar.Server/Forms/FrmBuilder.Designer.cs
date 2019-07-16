@@ -121,7 +121,7 @@ namespace Quasar.Server.Forms
             this.line10 = new Quasar.Server.Controls.Line();
             this.label14 = new System.Windows.Forms.Label();
             this.chkKeylogger = new System.Windows.Forms.CheckBox();
-            this.line11 = new xServer.Controls.Line();
+            this.line11 = new Quasar.Server.Controls.Line();
             this.label13 = new System.Windows.Forms.Label();
             this.chkRequestElevationOnExecution = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.picUAC2)).BeginInit();
@@ -1067,7 +1067,7 @@ namespace Quasar.Server.Forms
             // 
             // line11
             // 
-            this.line11.LineAlignment = xServer.Controls.Line.Alignment.Horizontal;
+            this.line11.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
             this.line11.Location = new System.Drawing.Point(84, 192);
             this.line11.Name = "line11";
             this.line11.Size = new System.Drawing.Size(300, 13);
