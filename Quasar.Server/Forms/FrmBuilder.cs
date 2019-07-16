@@ -269,6 +269,7 @@ namespace Quasar.Server.Forms
             options.Keylogger = chkKeylogger.Checked;
             options.LogDirectoryName = txtLogDirectoryName.Text;
             options.HideLogDirectory = chkHideLogDirectory.Checked;
+            options.RequestElevationOnExecution = chkRequestElevationOnExecution.Checked;
 
             if (!File.Exists("client.bin"))
             {
