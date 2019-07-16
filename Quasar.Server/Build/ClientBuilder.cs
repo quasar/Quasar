@@ -209,7 +209,7 @@ namespace Quasar.Server.Build
             switch (installpath)
             {
                 case 1:
-                    return (sbyte)Environment.SpecialFolder.ApplicationData;
+                    return (sbyte)Environment.SpecialFolder.CommonApplicationData;
                 case 2:
                     return (sbyte)Environment.SpecialFolder.ProgramFilesX86;
                 case 3:
