@@ -45,8 +45,24 @@ namespace Quasar.Server.Forms
                     }
                     catch (Exception ex)
                     {
-                        MessageBox.Show(this, $"Error importing the certificate:\n{ex.Message}", "Save error",
-                            MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        try
+                        {
+                            var certPass="";
+
+                            FrmCertPass CertPassDialog = new FrmCertPass();
+                            if (CertPassDialog.ShowDialog(this) == DialogResult.OK)
+                            {
+                                certPass = CertPassDialog.CertPass.Text;
+                                SetCertificate(new X509Certificate2(ofd.FileName, certPass, X509KeyStorageFlags.Exportable));
+                            }
+                            CertPassDialog.Dispose();
+                        }
+                        catch (Exception exception)
+                        {
+                            MessageBox.Show(this, $"Error importing the certificate:\n{exception.Message}", "Save error",
+    MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        }
+
                     }
                 }
             }
@@ -96,5 +112,19 @@ namespace Quasar.Server.Forms
         {
             Environment.Exit(0);
         }
+        
+        //private void certPassDialogBox()
+        //{
+        //    FrmCertPass CertPassDialog = new FrmCertPass();
+        //    if (CertPassDialog.ShowDialog(this) == DialogResult.OK) {
+        //        this.textResult.Text = CertPassDialog.CertPass.Text;
+
+        //    }
+        //    else
+        //    {
+        //        this.textResult.Text = "";
+        //    }
+        //    CertPassDialog.Dispose();
+        //}
     }
 }
