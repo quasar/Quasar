@@ -83,15 +83,22 @@ namespace Quasar.Server.Build
         {
             var key = StringHelper.GetRandomString(32);
             var aes = new Aes256(key);
-
-            var caCertificate = new X509Certificate2(Settings.CertificatePath, "", X509KeyStorageFlags.Exportable);
+            var caCertificate = new X509Certificate2(Settings.CertificatePath, Settings.CertificatePassword, X509KeyStorageFlags.Exportable);
             var serverCertificate = new X509Certificate2(caCertificate.Export(X509ContentType.Cert)); // export without private key, very important!
-
             byte[] signature;
             using (var csp = (RSACryptoServiceProvider) caCertificate.PrivateKey)
             {
                 var hash = Sha256.ComputeHash(Encoding.UTF8.GetBytes(key));
-                signature = csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA256"));
+                try
+                {
+                    signature = csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA256"));
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Attempting to sign SHA1 Hash instead of SHA256 since certificate doesn't support SHA256");
+                    hash = Sha1.ComputeHash(Encoding.UTF8.GetBytes(key));
+                    signature = csp.SignHash(hash, CryptoConfig.MapNameToOID("SHA1"));
+                }
             }
 
             foreach (var typeDef in asmDef.Modules[0].Types)

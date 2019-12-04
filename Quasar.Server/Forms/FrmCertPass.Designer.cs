@@ -28,9 +28,10 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmCertPass));
             this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
-            this.CertPassSubmit = new System.Windows.Forms.Button();
             this.CertPass = new System.Windows.Forms.TextBox();
+            this.CertPassSubmit = new System.Windows.Forms.Button();
             this.flowLayoutPanel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -44,6 +45,13 @@
             this.flowLayoutPanel1.Size = new System.Drawing.Size(299, 31);
             this.flowLayoutPanel1.TabIndex = 2;
             // 
+            // CertPass
+            // 
+            this.CertPass.Location = new System.Drawing.Point(3, 3);
+            this.CertPass.Name = "CertPass";
+            this.CertPass.Size = new System.Drawing.Size(206, 20);
+            this.CertPass.TabIndex = 2;
+            // 
             // CertPassSubmit
             // 
             this.CertPassSubmit.DialogResult = System.Windows.Forms.DialogResult.OK;
@@ -54,23 +62,16 @@
             this.CertPassSubmit.Text = "Submit";
             this.CertPassSubmit.UseVisualStyleBackColor = true;
             // 
-            // CertPass
-            // 
-            this.CertPass.Location = new System.Drawing.Point(3, 3);
-            this.CertPass.Name = "CertPass";
-            this.CertPass.Size = new System.Drawing.Size(206, 20);
-            this.CertPass.TabIndex = 2;
-            this.CertPass.TextChanged += new System.EventHandler(this.CertPass_TextChanged);
-            // 
             // FrmCertPass
             // 
+            this.AcceptButton = this.CertPassSubmit;
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(299, 31);
             this.Controls.Add(this.flowLayoutPanel1);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmCertPass";
-            this.Text = "FrmCertPass";
-            this.Load += new System.EventHandler(this.FrmCertPass_Load);
+            this.Text = "Quasar Certificate Password";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.ResumeLayout(false);

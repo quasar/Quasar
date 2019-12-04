@@ -15,15 +15,5 @@ namespace Quasar.Server.Forms
         {
             InitializeComponent();
         }
-
-        private void FrmCertPass_Load(object sender, EventArgs e)
-        {
-
-        }
-
-        private void CertPass_TextChanged(object sender, EventArgs e)
-        {
-
-        }
     }
 }

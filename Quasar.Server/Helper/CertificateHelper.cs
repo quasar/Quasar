@@ -8,6 +8,7 @@ using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
 using Org.BouncyCastle.X509.Extension;
+using Quasar.Server.Models;
 using System;
 using System.Security.Cryptography.X509Certificates;
 
@@ -45,7 +46,9 @@ namespace Quasar.Server.Helper
 
             certificate.Verify(caCert.GetPublicKey());
 
-            var certificate2 = new X509Certificate2(DotNetUtilities.ToX509Certificate(certificate));
+            byte[] pkcs12Bytes = DotNetUtilities.ToX509Certificate(certificate).Export(X509ContentType.Pkcs12, Settings.CertificatePassword);
+
+            var certificate2 = new X509Certificate2(pkcs12Bytes, Settings.CertificatePassword);
             certificate2.PrivateKey = DotNetUtilities.ToRSA(keyPair.Private as RsaPrivateCrtKeyParameters);
 
             return certificate2;
@@ -76,7 +79,9 @@ namespace Quasar.Server.Helper
 
             var certificate = certificateGenerator.Generate(signatureFactory);
 
-            var certificate2 = new X509Certificate2(DotNetUtilities.ToX509Certificate(certificate));
+            byte[] pkcs12Bytes = DotNetUtilities.ToX509Certificate(certificate).Export(X509ContentType.Pkcs12,Settings.CertificatePassword);
+
+            var certificate2 = new X509Certificate2(pkcs12Bytes,Settings.CertificatePassword);
             certificate2.PrivateKey = DotNetUtilities.ToRSA(keypair.Private as RsaPrivateCrtKeyParameters);
 
             return certificate2;

@@ -26,6 +26,12 @@ namespace Quasar.Server.Forms
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
+            FrmCertPass CertPassDialog = new FrmCertPass();
+            if (CertPassDialog.ShowDialog(this) == DialogResult.OK)
+            {
+                Settings.CertificatePassword = CertPassDialog.CertPass.Text;
+            }
+            CertPassDialog.Dispose();
             SetCertificate(CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 4096));
         }
 
@@ -41,19 +47,18 @@ namespace Quasar.Server.Forms
                 {
                     try
                     {
-                        SetCertificate(new X509Certificate2(ofd.FileName, "", X509KeyStorageFlags.Exportable));
+                        SetCertificate(new X509Certificate2(ofd.FileName, Settings.CertificatePassword, X509KeyStorageFlags.Exportable));
                     }
-                    catch (Exception ex)
+                    catch (Exception)
                     {
                         try
                         {
-                            var certPass="";
 
                             FrmCertPass CertPassDialog = new FrmCertPass();
                             if (CertPassDialog.ShowDialog(this) == DialogResult.OK)
                             {
-                                certPass = CertPassDialog.CertPass.Text;
-                                SetCertificate(new X509Certificate2(ofd.FileName, certPass, X509KeyStorageFlags.Exportable));
+                                Settings.CertificatePassword = CertPassDialog.CertPass.Text;
+                                SetCertificate(new X509Certificate2(ofd.FileName, Settings.CertificatePassword, X509KeyStorageFlags.Exportable));
                             }
                             CertPassDialog.Dispose();
                         }
@@ -77,9 +82,7 @@ namespace Quasar.Server.Forms
 
                 if (!_certificate.HasPrivateKey)
                     throw new ArgumentException();
-
-                File.WriteAllBytes(Settings.CertificatePath, _certificate.Export(X509ContentType.Pkcs12));
-
+                File.WriteAllBytes(Settings.CertificatePath, _certificate.Export(X509ContentType.Pkcs12, Settings.CertificatePassword));
                 MessageBox.Show(this,
                     "Please backup the certificate now. Loss of the certificate results in loosing all clients!",
                     "Certificate backup", MessageBoxButtons.OK, MessageBoxIcon.Information);
@@ -113,18 +116,5 @@ namespace Quasar.Server.Forms
             Environment.Exit(0);
         }
         
-        //private void certPassDialogBox()
-        //{
-        //    FrmCertPass CertPassDialog = new FrmCertPass();
-        //    if (CertPassDialog.ShowDialog(this) == DialogResult.OK) {
-        //        this.textResult.Text = CertPassDialog.CertPass.Text;
-
-        //    }
-        //    else
-        //    {
-        //        this.textResult.Text = "";
-        //    }
-        //    CertPassDialog.Dispose();
-        //}
     }
 }

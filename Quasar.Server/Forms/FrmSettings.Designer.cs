@@ -47,12 +47,14 @@
             this.txtNoIPHost = new System.Windows.Forms.TextBox();
             this.chkShowPassword = new System.Windows.Forms.CheckBox();
             this.chkIPv6Support = new System.Windows.Forms.CheckBox();
+            this.txtCertPass = new System.Windows.Forms.TextBox();
+            this.lblCertPass = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.ncPort)).BeginInit();
             this.SuspendLayout();
             // 
             // btnSave
             // 
-            this.btnSave.Location = new System.Drawing.Point(227, 298);
+            this.btnSave.Location = new System.Drawing.Point(227, 317);
             this.btnSave.Name = "btnSave";
             this.btnSave.Size = new System.Drawing.Size(75, 23);
             this.btnSave.TabIndex = 19;
@@ -94,7 +96,7 @@
             // chkAutoListen
             // 
             this.chkAutoListen.AutoSize = true;
-            this.chkAutoListen.Location = new System.Drawing.Point(12, 68);
+            this.chkAutoListen.Location = new System.Drawing.Point(10, 68);
             this.chkAutoListen.Name = "chkAutoListen";
             this.chkAutoListen.Size = new System.Drawing.Size(222, 17);
             this.chkAutoListen.TabIndex = 6;
@@ -104,7 +106,7 @@
             // chkPopup
             // 
             this.chkPopup.AutoSize = true;
-            this.chkPopup.Location = new System.Drawing.Point(12, 91);
+            this.chkPopup.Location = new System.Drawing.Point(10, 91);
             this.chkPopup.Name = "chkPopup";
             this.chkPopup.Size = new System.Drawing.Size(259, 17);
             this.chkPopup.TabIndex = 7;
@@ -123,7 +125,7 @@
             // 
             // btnCancel
             // 
-            this.btnCancel.Location = new System.Drawing.Point(146, 298);
+            this.btnCancel.Location = new System.Drawing.Point(146, 317);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 18;
@@ -134,7 +136,7 @@
             // chkUseUpnp
             // 
             this.chkUseUpnp.AutoSize = true;
-            this.chkUseUpnp.Location = new System.Drawing.Point(12, 114);
+            this.chkUseUpnp.Location = new System.Drawing.Point(10, 114);
             this.chkUseUpnp.Name = "chkUseUpnp";
             this.chkUseUpnp.Size = new System.Drawing.Size(249, 17);
             this.chkUseUpnp.TabIndex = 8;
@@ -144,7 +146,7 @@
             // chkShowTooltip
             // 
             this.chkShowTooltip.AutoSize = true;
-            this.chkShowTooltip.Location = new System.Drawing.Point(12, 137);
+            this.chkShowTooltip.Location = new System.Drawing.Point(10, 137);
             this.chkShowTooltip.Name = "chkShowTooltip";
             this.chkShowTooltip.Size = new System.Drawing.Size(268, 17);
             this.chkShowTooltip.TabIndex = 9;
@@ -154,7 +156,7 @@
             // chkNoIPIntegration
             // 
             this.chkNoIPIntegration.AutoSize = true;
-            this.chkNoIPIntegration.Location = new System.Drawing.Point(12, 177);
+            this.chkNoIPIntegration.Location = new System.Drawing.Point(13, 215);
             this.chkNoIPIntegration.Name = "chkNoIPIntegration";
             this.chkNoIPIntegration.Size = new System.Drawing.Size(187, 17);
             this.chkNoIPIntegration.TabIndex = 10;
@@ -166,7 +168,7 @@
             // 
             this.lblHost.AutoSize = true;
             this.lblHost.Enabled = false;
-            this.lblHost.Location = new System.Drawing.Point(30, 203);
+            this.lblHost.Location = new System.Drawing.Point(35, 241);
             this.lblHost.Name = "lblHost";
             this.lblHost.Size = new System.Drawing.Size(34, 13);
             this.lblHost.TabIndex = 11;
@@ -176,7 +178,7 @@
             // 
             this.lblPass.AutoSize = true;
             this.lblPass.Enabled = false;
-            this.lblPass.Location = new System.Drawing.Point(167, 231);
+            this.lblPass.Location = new System.Drawing.Point(168, 269);
             this.lblPass.Name = "lblPass";
             this.lblPass.Size = new System.Drawing.Size(32, 13);
             this.lblPass.TabIndex = 15;
@@ -186,7 +188,7 @@
             // 
             this.lblUser.AutoSize = true;
             this.lblUser.Enabled = false;
-            this.lblUser.Location = new System.Drawing.Point(30, 231);
+            this.lblUser.Location = new System.Drawing.Point(35, 269);
             this.lblUser.Name = "lblUser";
             this.lblUser.Size = new System.Drawing.Size(32, 13);
             this.lblUser.TabIndex = 13;
@@ -195,7 +197,7 @@
             // txtNoIPPass
             // 
             this.txtNoIPPass.Enabled = false;
-            this.txtNoIPPass.Location = new System.Drawing.Point(199, 228);
+            this.txtNoIPPass.Location = new System.Drawing.Point(202, 266);
             this.txtNoIPPass.Name = "txtNoIPPass";
             this.txtNoIPPass.Size = new System.Drawing.Size(100, 22);
             this.txtNoIPPass.TabIndex = 16;
@@ -203,7 +205,7 @@
             // txtNoIPUser
             // 
             this.txtNoIPUser.Enabled = false;
-            this.txtNoIPUser.Location = new System.Drawing.Point(70, 228);
+            this.txtNoIPUser.Location = new System.Drawing.Point(73, 266);
             this.txtNoIPUser.Name = "txtNoIPUser";
             this.txtNoIPUser.Size = new System.Drawing.Size(91, 22);
             this.txtNoIPUser.TabIndex = 14;
@@ -211,7 +213,7 @@
             // txtNoIPHost
             // 
             this.txtNoIPHost.Enabled = false;
-            this.txtNoIPHost.Location = new System.Drawing.Point(70, 200);
+            this.txtNoIPHost.Location = new System.Drawing.Point(73, 238);
             this.txtNoIPHost.Name = "txtNoIPHost";
             this.txtNoIPHost.Size = new System.Drawing.Size(229, 22);
             this.txtNoIPHost.TabIndex = 12;
@@ -220,29 +222,49 @@
             // 
             this.chkShowPassword.AutoSize = true;
             this.chkShowPassword.Enabled = false;
-            this.chkShowPassword.Location = new System.Drawing.Point(192, 256);
+            this.chkShowPassword.Location = new System.Drawing.Point(195, 294);
             this.chkShowPassword.Name = "chkShowPassword";
-            this.chkShowPassword.Size = new System.Drawing.Size(107, 17);
+            this.chkShowPassword.Size = new System.Drawing.Size(112, 17);
             this.chkShowPassword.TabIndex = 17;
-            this.chkShowPassword.Text = "Show Password";
+            this.chkShowPassword.Text = "Show Passwords";
             this.chkShowPassword.UseVisualStyleBackColor = true;
             this.chkShowPassword.CheckedChanged += new System.EventHandler(this.chkShowPassword_CheckedChanged);
             // 
             // chkIPv6Support
             // 
             this.chkIPv6Support.AutoSize = true;
-            this.chkIPv6Support.Location = new System.Drawing.Point(12, 45);
+            this.chkIPv6Support.Location = new System.Drawing.Point(10, 45);
             this.chkIPv6Support.Name = "chkIPv6Support";
             this.chkIPv6Support.Size = new System.Drawing.Size(128, 17);
             this.chkIPv6Support.TabIndex = 5;
             this.chkIPv6Support.Text = "Enable IPv6 support";
             this.chkIPv6Support.UseVisualStyleBackColor = true;
             // 
+            // txtCertPass
+            // 
+            this.txtCertPass.Enabled = false;
+            this.txtCertPass.Location = new System.Drawing.Point(10, 187);
+            this.txtCertPass.Name = "txtCertPass";
+            this.txtCertPass.Size = new System.Drawing.Size(289, 22);
+            this.txtCertPass.TabIndex = 20;
+            this.txtCertPass.TextChanged += new System.EventHandler(this.txtCertPass_TextChanged);
+            // 
+            // lblCertPass
+            // 
+            this.lblCertPass.AutoSize = true;
+            this.lblCertPass.Location = new System.Drawing.Point(7, 171);
+            this.lblCertPass.Name = "lblCertPass";
+            this.lblCertPass.Size = new System.Drawing.Size(111, 13);
+            this.lblCertPass.TabIndex = 21;
+            this.lblCertPass.Text = "Certificate Password";
+            // 
             // FrmSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(314, 333);
+            this.ClientSize = new System.Drawing.Size(314, 352);
+            this.Controls.Add(this.lblCertPass);
+            this.Controls.Add(this.txtCertPass);
             this.Controls.Add(this.chkIPv6Support);
             this.Controls.Add(this.chkShowPassword);
             this.Controls.Add(this.txtNoIPHost);
@@ -296,5 +318,7 @@
         private System.Windows.Forms.TextBox txtNoIPHost;
         private System.Windows.Forms.CheckBox chkShowPassword;
         private System.Windows.Forms.CheckBox chkIPv6Support;
+        private System.Windows.Forms.Label lblCertPass;
+        public System.Windows.Forms.TextBox txtCertPass;
     }
 }
