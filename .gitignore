@@ -202,3 +202,9 @@ FakesAssemblies/
 
 # Visual Studio 6 workspace options file
 *.opt
+
+# Executable files
+*.exe
+
+# Certificate files
+*.p12

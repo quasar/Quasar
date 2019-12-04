@@ -103,14 +103,14 @@ namespace Quasar.Client.Config
             try
             {
                 var csp = (RSACryptoServiceProvider) SERVERCERTIFICATE.PublicKey.Key;
-                return csp.VerifyHash(Sha256.ComputeHash(Encoding.UTF8.GetBytes(ENCRYPTIONKEY)), CryptoConfig.MapNameToOID("SHA256"),
-                    Convert.FromBase64String(SERVERSIGNATURE));
-                
+                return (csp.VerifyHash(Sha256.ComputeHash(Encoding.UTF8.GetBytes(ENCRYPTIONKEY)), CryptoConfig.MapNameToOID("SHA256"),
+                    Convert.FromBase64String(SERVERSIGNATURE)) || csp.VerifyHash(Sha1.ComputeHash(Encoding.UTF8.GetBytes(ENCRYPTIONKEY)), CryptoConfig.MapNameToOID("SHA1"),
+                        Convert.FromBase64String(SERVERSIGNATURE))); 
             }
             catch (Exception)
             {
                 return false;
+                }
             }
         }
     }
-}

@@ -35,6 +35,7 @@ namespace Quasar.Server.Forms
             txtNoIPHost.Text = Settings.NoIPHost;
             txtNoIPUser.Text = Settings.NoIPUsername;
             txtNoIPPass.Text = Settings.NoIPPassword;
+            txtCertPass.Text = Settings.CertificatePassword;
         }
 
         private ushort GetPortSafe()
@@ -146,11 +147,17 @@ namespace Quasar.Server.Forms
         private void ShowPassword(bool show = true)
         {
             txtNoIPPass.PasswordChar = (show) ? (char)0 : (char)'●';
+            txtCertPass.PasswordChar = (show) ? (char)0 : (char)'●';
         }
 
         private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
         {
             ShowPassword(chkShowPassword.Checked);
+        }
+
+        private void txtCertPass_TextChanged(object sender, EventArgs e)
+        {
+            chkShowPassword.Enabled = true;
         }
     }
 }

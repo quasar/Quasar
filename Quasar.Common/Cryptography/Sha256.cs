@@ -30,4 +30,32 @@ namespace Quasar.Common.Cryptography
             }
         }
     }
+    public static class Sha1
+    {
+        public static string ComputeHash(string input)
+        {
+            byte[] data = Encoding.UTF8.GetBytes(input);
+
+            using (SHA1Managed sha = new SHA1Managed())
+            {
+                data = sha.ComputeHash(data);
+            }
+
+            StringBuilder hash = new StringBuilder();
+
+            foreach (byte _byte in data)
+                hash.Append(_byte.ToString("X2"));
+
+            return hash.ToString().ToUpper();
+        }
+
+        public static byte[] ComputeHash(byte[] input)
+        {
+            using (SHA1Managed sha = new SHA1Managed())
+            {
+                return sha.ComputeHash(input);
+            }
+        }
+    }
+
 }

@@ -150,9 +150,10 @@ namespace Quasar.Server.Networking
 #if !DEBUG
             try
             {
+
                 var csp = (RSACryptoServiceProvider)ServerCertificate.PublicKey.Key;
-                return csp.VerifyHash(Sha256.ComputeHash(Encoding.UTF8.GetBytes(packet.EncryptionKey)),
-                    CryptoConfig.MapNameToOID("SHA256"), packet.Signature);
+                return (csp.VerifyHash(Sha256.ComputeHash(Encoding.UTF8.GetBytes(packet.EncryptionKey)), CryptoConfig.MapNameToOID("SHA256"), packet.Signature) || csp.VerifyHash(Sha1.ComputeHash(Encoding.UTF8.GetBytes(packet.EncryptionKey)), CryptoConfig.MapNameToOID("SHA1"), packet.Signature));
+
             }
             catch (Exception)
             {

@@ -94,7 +94,7 @@ namespace Quasar.Server.Forms
                     { }
                 }
             }
-            serverCertificate = new X509Certificate2(Settings.CertificatePath);
+            serverCertificate = new X509Certificate2(Settings.CertificatePath,Settings.CertificatePassword);
 #endif
             ListenServer = new QuasarServer(serverCertificate);
             ListenServer.ServerState += ServerState;

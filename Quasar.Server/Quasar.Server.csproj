@@ -119,6 +119,12 @@
     <Compile Include="Forms\FrmCertificate.Designer.cs">
       <DependentUpon>FrmCertificate.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\FrmCertPass.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmCertPass.Designer.cs">
+      <DependentUpon>FrmCertPass.cs</DependentUpon>
+    </Compile>
     <Compile Include="Helper\CertificateHelper.cs" />
     <Compile Include="Messages\ClientStatusHandler.cs" />
     <Compile Include="Messages\FileManagerHandler.cs" />
@@ -321,6 +327,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmCertificate.resx">
       <DependentUpon>FrmCertificate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmCertPass.resx">
+      <DependentUpon>FrmCertPass.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\FrmStartupAdd.resx">
       <DependentUpon>FrmStartupAdd.cs</DependentUpon>

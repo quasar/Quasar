@@ -11,6 +11,18 @@ namespace Quasar.Server.Models
 
         public static readonly string CertificatePath = Path.Combine(Application.StartupPath, "quasar.p12");
 
+        public static string CertificatePassword
+        {
+            get
+            {
+                return ReadValueSafe("CertificatePassword", "");
+            }
+            set
+            {
+                WriteValue("CertificatePassword", value);
+            }
+        }
+
         public static ushort ListenPort
         {
             get
