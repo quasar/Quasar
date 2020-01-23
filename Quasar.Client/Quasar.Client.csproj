@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\ILMerge.3.0.29\build\ILMerge.props" Condition="Exists('..\packages\ILMerge.3.0.29\build\ILMerge.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -142,19 +143,16 @@
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
-    <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)protobuf-net.dll" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
-copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y</PostBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\ILMerge.3.0.29\build\ILMerge.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\ILMerge.3.0.29\build\ILMerge.props'))" />
   </Target>
   <Target Name="AfterBuild">
+    <Message Importance="High" Text="$(ProjectName) -> Combining client DLLs with $(ILMergeConsolePath)..." />
+    <Exec WorkingDirectory="$(TargetDir)" Command='"$(ILMergeConsolePath)" /out:"$(TargetName).all.exe" "$(TargetPath)" protobuf-net.dll Gma.System.MouseKeyHook.dll Quasar.Common.dll /target:WinExe /wildcards /internalize' />
+    <Copy SourceFiles="$(TargetDir)$(TargetName).all.exe" DestinationFiles="$(TargetDir)client.bin" />
+    <Message Importance="High" Text="$(ProjectName) -> ILMerge complete -> $(TargetDir)$(TargetName).all.exe &amp; $(TargetDir)client.bin" />
   </Target>
-  -->
 </Project>
