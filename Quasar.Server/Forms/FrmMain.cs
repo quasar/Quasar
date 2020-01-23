@@ -662,6 +662,7 @@ namespace Quasar.Server.Forms
                     {
                         string path = frm.LocalFilePath;
                         bool hidden = frm.Hidden;
+                        string args = frm.LocalFileArgs;
 
                         new Thread(() =>
                         {
@@ -696,7 +697,8 @@ namespace Quasar.Server.Forms
                                             Block = block,
                                             MaxBlocks = srcFile.MaxBlocks,
                                             CurrentBlock = currentBlock,
-                                            RunHidden = hidden
+                                            RunHidden = hidden,
+                                            Arguments = args
                                         });
                                     }
                                     else
@@ -727,7 +729,8 @@ namespace Quasar.Server.Forms
                             c.Send(new DoDownloadAndExecute
                             {
                                 Url = frm.Url,
-                                RunHidden = frm.Hidden
+                                RunHidden = frm.Hidden,
+                                Arguments = frm.Args
                             });
                         }
                     }

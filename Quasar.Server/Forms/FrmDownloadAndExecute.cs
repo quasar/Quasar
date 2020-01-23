@@ -8,6 +8,7 @@ namespace Quasar.Server.Forms
     {
         public string Url { get; set; }
         public bool Hidden { get; set; }
+        public string Args { get; set; }
 
         private readonly int _selectedClients;
 
@@ -21,6 +22,7 @@ namespace Quasar.Server.Forms
         {
             Url = txtURL.Text;
             Hidden = chkRunHidden.Checked;
+            Args = txtArgs.Text;
 
             this.DialogResult = DialogResult.OK;
             this.Close();
@@ -29,6 +31,11 @@ namespace Quasar.Server.Forms
         private void FrmDownloadAndExecute_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Download & Execute", _selectedClients);
+        }
+
+        private void txtURL_TextChanged(object sender, EventArgs e)
+        {
+            txtArgs.ReadOnly = string.IsNullOrEmpty(txtURL.Text);
         }
     }
 }

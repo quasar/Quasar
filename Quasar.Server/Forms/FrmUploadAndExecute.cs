@@ -9,6 +9,7 @@ namespace Quasar.Server.Forms
     {
         public string LocalFilePath { get; set; }
         public bool Hidden { get; set; }
+        public string LocalFileArgs { get; set; }
 
         private readonly int _selectedClients;
 
@@ -40,9 +41,15 @@ namespace Quasar.Server.Forms
         {
             LocalFilePath = File.Exists(txtPath.Text) ? txtPath.Text : string.Empty;
             Hidden = chkRunHidden.Checked;
+            LocalFileArgs = txtArgs.Text;
 
             this.DialogResult = DialogResult.OK;
             this.Close();
+        }
+
+        private void txtPath_TextChanged(object sender, EventArgs e)
+        {
+            txtArgs.ReadOnly = string.IsNullOrEmpty(txtPath.Text);
         }
     }
 }

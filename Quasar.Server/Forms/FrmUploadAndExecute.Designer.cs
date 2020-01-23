@@ -34,13 +34,16 @@
             this.lblPath = new System.Windows.Forms.Label();
             this.txtPath = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.txtArgs = new System.Windows.Forms.TextBox();
+            this.lblArgs = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // btnUploadAndExecute
             // 
-            this.btnUploadAndExecute.Location = new System.Drawing.Point(273, 37);
+            this.btnUploadAndExecute.Location = new System.Drawing.Point(408, 83);
+            this.btnUploadAndExecute.Margin = new System.Windows.Forms.Padding(4);
             this.btnUploadAndExecute.Name = "btnUploadAndExecute";
-            this.btnUploadAndExecute.Size = new System.Drawing.Size(111, 23);
+            this.btnUploadAndExecute.Size = new System.Drawing.Size(166, 34);
             this.btnUploadAndExecute.TabIndex = 4;
             this.btnUploadAndExecute.Text = "Upload && Execute";
             this.btnUploadAndExecute.UseVisualStyleBackColor = true;
@@ -49,9 +52,10 @@
             // chkRunHidden
             // 
             this.chkRunHidden.AutoSize = true;
-            this.chkRunHidden.Location = new System.Drawing.Point(48, 41);
+            this.chkRunHidden.Location = new System.Drawing.Point(70, 89);
+            this.chkRunHidden.Margin = new System.Windows.Forms.Padding(4);
             this.chkRunHidden.Name = "chkRunHidden";
-            this.chkRunHidden.Size = new System.Drawing.Size(106, 17);
+            this.chkRunHidden.Size = new System.Drawing.Size(151, 27);
             this.chkRunHidden.TabIndex = 2;
             this.chkRunHidden.Text = "Run file hidden";
             this.chkRunHidden.UseVisualStyleBackColor = true;
@@ -59,36 +63,62 @@
             // lblPath
             // 
             this.lblPath.AutoSize = true;
-            this.lblPath.Location = new System.Drawing.Point(12, 9);
+            this.lblPath.Location = new System.Drawing.Point(18, 14);
+            this.lblPath.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
             this.lblPath.Name = "lblPath";
-            this.lblPath.Size = new System.Drawing.Size(33, 13);
+            this.lblPath.Size = new System.Drawing.Size(48, 23);
             this.lblPath.TabIndex = 0;
             this.lblPath.Text = "Path:";
             // 
             // txtPath
             // 
-            this.txtPath.Location = new System.Drawing.Point(51, 6);
+            this.txtPath.Location = new System.Drawing.Point(76, 9);
+            this.txtPath.Margin = new System.Windows.Forms.Padding(4);
             this.txtPath.MaxLength = 300;
             this.txtPath.Name = "txtPath";
             this.txtPath.ReadOnly = true;
-            this.txtPath.Size = new System.Drawing.Size(333, 22);
+            this.txtPath.Size = new System.Drawing.Size(498, 29);
             this.txtPath.TabIndex = 1;
+            this.txtPath.TextChanged += new System.EventHandler(this.txtPath_TextChanged);
             // 
             // btnBrowse
             // 
-            this.btnBrowse.Location = new System.Drawing.Point(184, 37);
+            this.btnBrowse.Location = new System.Drawing.Point(274, 83);
+            this.btnBrowse.Margin = new System.Windows.Forms.Padding(4);
             this.btnBrowse.Name = "btnBrowse";
-            this.btnBrowse.Size = new System.Drawing.Size(83, 23);
+            this.btnBrowse.Size = new System.Drawing.Size(124, 34);
             this.btnBrowse.TabIndex = 3;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
             // 
+            // txtArgs
+            // 
+            this.txtArgs.Location = new System.Drawing.Point(76, 46);
+            this.txtArgs.Margin = new System.Windows.Forms.Padding(4);
+            this.txtArgs.MaxLength = 300;
+            this.txtArgs.Name = "txtArgs";
+            this.txtArgs.ReadOnly = true;
+            this.txtArgs.Size = new System.Drawing.Size(498, 29);
+            this.txtArgs.TabIndex = 5;
+            // 
+            // lblArgs
+            // 
+            this.lblArgs.AutoSize = true;
+            this.lblArgs.Location = new System.Drawing.Point(18, 49);
+            this.lblArgs.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
+            this.lblArgs.Name = "lblArgs";
+            this.lblArgs.Size = new System.Drawing.Size(48, 23);
+            this.lblArgs.TabIndex = 6;
+            this.lblArgs.Text = "Args:";
+            // 
             // FrmUploadAndExecute
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(96F, 96F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(144F, 144F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Dpi;
-            this.ClientSize = new System.Drawing.Size(396, 72);
+            this.ClientSize = new System.Drawing.Size(594, 139);
+            this.Controls.Add(this.lblArgs);
+            this.Controls.Add(this.txtArgs);
             this.Controls.Add(this.btnBrowse);
             this.Controls.Add(this.txtPath);
             this.Controls.Add(this.lblPath);
@@ -97,6 +127,7 @@
             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.Margin = new System.Windows.Forms.Padding(4);
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "FrmUploadAndExecute";
@@ -115,5 +146,7 @@
         private System.Windows.Forms.Label lblPath;
         private System.Windows.Forms.TextBox txtPath;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.TextBox txtArgs;
+        private System.Windows.Forms.Label lblArgs;
     }
 }

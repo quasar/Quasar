@@ -10,5 +10,8 @@ namespace Quasar.Common.Messages
 
         [ProtoMember(2)]
         public bool RunHidden { get; set; }
+
+        [ProtoMember(3)]
+        public string Arguments { get; set; }
     }
 }
