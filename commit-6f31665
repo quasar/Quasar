@@ -1,0 +1,132 @@
+From 6f316655dd3ffc36b573223b8a00d38547b5bf1c Mon Sep 17 00:00:00 2001
+From: UbbeLoL <ubbelolhf@gmail.com>
+Date: Thu, 21 May 2015 10:32:24 +0200
+Subject: Add support for mouse input for multiple monitors
+
+
+diff --git a/Client/Core/Commands/SurveillanceHandler.cs b/Client/Core/Commands/SurveillanceHandler.cs
+index f77e4bc..0d2885f 100644
+--- a/Client/Core/Commands/SurveillanceHandler.cs
++++ b/Client/Core/Commands/SurveillanceHandler.cs
+@@ -66,26 +66,31 @@ public static void HandleGetProcesses(Packets.ServerPackets.GetProcesses command
+ 
+         public static void HandleMouseClick(Packets.ServerPackets.MouseClick command, Client client)
+         {
++            int offsetX = 0;
++            Screen[] allScreens = Screen.AllScreens;
++            for (int i = 0; i < command.MonitorIndex; i++)
++                offsetX += allScreens[i].Bounds.Width;
++
+             if (command.LeftClick)
+             {
+-                SetCursorPos(command.X, command.Y);
+-                mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
+-                mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
++                SetCursorPos(command.X + offsetX, command.Y);
++                mouse_event(MOUSEEVENTF_LEFTDOWN, command.X + offsetX, command.Y, 0, 0);
++                mouse_event(MOUSEEVENTF_LEFTUP, command.X + offsetX, command.Y, 0, 0);
+                 if (command.DoubleClick)
+                 {
+-                    mouse_event(MOUSEEVENTF_LEFTDOWN, command.X, command.Y, 0, 0);
+-                    mouse_event(MOUSEEVENTF_LEFTUP, command.X, command.Y, 0, 0);
++                    mouse_event(MOUSEEVENTF_LEFTDOWN, command.X + offsetX, command.Y, 0, 0);
++                    mouse_event(MOUSEEVENTF_LEFTUP, command.X + offsetX, command.Y, 0, 0);
+                 }
+             }
+             else
+             {
+-                SetCursorPos(command.X, command.Y);
+-                mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
+-                mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
++                SetCursorPos(command.X + offsetX, command.Y);
++                mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X + offsetX, command.Y, 0, 0);
++                mouse_event(MOUSEEVENTF_RIGHTUP, command.X + offsetX, command.Y, 0, 0);
+                 if (command.DoubleClick)
+                 {
+-                    mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X, command.Y, 0, 0);
+-                    mouse_event(MOUSEEVENTF_RIGHTUP, command.X, command.Y, 0, 0);
++                    mouse_event(MOUSEEVENTF_RIGHTDOWN, command.X + offsetX, command.Y, 0, 0);
++                    mouse_event(MOUSEEVENTF_RIGHTUP, command.X + offsetX, command.Y, 0, 0);
+                 }
+             }
+         }
+diff --git a/Client/Core/Packets/ServerPackets/MouseClick.cs b/Client/Core/Packets/ServerPackets/MouseClick.cs
+index 531471c..9fe5a0c 100644
+--- a/Client/Core/Packets/ServerPackets/MouseClick.cs
++++ b/Client/Core/Packets/ServerPackets/MouseClick.cs
+@@ -17,16 +17,20 @@ public class MouseClick : IPacket
+         [ProtoMember(4)]
+         public int Y { get; set; }
+ 
++        [ProtoMember(5)]
++        public int MonitorIndex { get; set; }
++
+         public MouseClick()
+         {
+         }
+ 
+-        public MouseClick(bool leftclick, bool doubleclick, int x, int y)
++        public MouseClick(bool leftclick, bool doubleclick, int x, int y, int monitorIndex)
+         {
+             this.LeftClick = leftclick;
+             this.DoubleClick = doubleclick;
+             this.X = x;
+             this.Y = y;
++            this.MonitorIndex = monitorIndex;
+         }
+ 
+         public void Execute(Client client)
+diff --git a/Server/Core/Packets/ServerPackets/MouseClick.cs b/Server/Core/Packets/ServerPackets/MouseClick.cs
+index 5d82188..bf64956 100644
+--- a/Server/Core/Packets/ServerPackets/MouseClick.cs
++++ b/Server/Core/Packets/ServerPackets/MouseClick.cs
+@@ -17,16 +17,20 @@ public class MouseClick : IPacket
+         [ProtoMember(4)]
+         public int Y { get; set; }
+ 
++        [ProtoMember(5)]
++        public int MonitorIndex { get; set; }
++
+         public MouseClick()
+         {
+         }
+ 
+-        public MouseClick(bool leftclick, bool doubleclick, int x, int y)
++        public MouseClick(bool leftclick, bool doubleclick, int x, int y, int monitorIndex)
+         {
+             this.LeftClick = leftclick;
+             this.DoubleClick = doubleclick;
+             this.X = x;
+             this.Y = y;
++            this.MonitorIndex = monitorIndex;
+         }
+ 
+         public void Execute(Client client)
+diff --git a/Server/Forms/FrmRemoteDesktop.cs b/Server/Forms/FrmRemoteDesktop.cs
+index f6b72bf..19b3d38 100644
+--- a/Server/Forms/FrmRemoteDesktop.cs
++++ b/Server/Forms/FrmRemoteDesktop.cs
+@@ -164,8 +164,10 @@ private void picDesktop_MouseClick(object sender, MouseEventArgs e)
+ 
+                 bool left = (e.Button == MouseButtons.Left);
+ 
++                int selectedMonitorIndex = cbMonitors.SelectedIndex;
++
+                 if (_connectClient != null)
+-                    new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y).Execute(_connectClient);
++                    new Core.Packets.ServerPackets.MouseClick(left, false, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+             }
+         }
+ 
+@@ -181,8 +183,10 @@ private void picDesktop_MouseDoubleClick(object sender, MouseEventArgs e)
+ 
+                 bool left = (e.Button == MouseButtons.Left);
+ 
++                int selectedMonitorIndex = cbMonitors.SelectedIndex;
++
+                 if (_connectClient != null)
+-                    new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y).Execute(_connectClient);
++                    new Core.Packets.ServerPackets.MouseClick(left, true, remote_x, remote_y, selectedMonitorIndex).Execute(_connectClient);
+             }
+         }
+ 

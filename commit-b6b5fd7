@@ -1,0 +1,52 @@
+From b6b5fd75f625770d80c492f98af78490c32f4ee8 Mon Sep 17 00:00:00 2001
+From: MaxXor <admin@maxxor.org>
+Date: Fri, 18 Jul 2014 10:12:24 +0200
+Subject: Improved Remote Shell Input
+
+
+diff --git a/Client/Config/Settings.cs b/Client/Config/Settings.cs
+index 9e5427d..851c469 100644
+--- a/Client/Config/Settings.cs
++++ b/Client/Config/Settings.cs
+@@ -7,7 +7,7 @@ public class Settings
+     {
+ #if DEBUG
+         public static string VERSION = "1.0.0.0d";
+-        public static string HOST = "me.maxxor.org";
++        public static string HOST = "localhost";
+         public static ushort PORT = 4782;
+         public static int RECONNECTDELAY = 5000;
+         public static string PASSWORD = "1234";
+diff --git a/Server/Forms/frmRemoteShell.Designer.cs b/Server/Forms/frmRemoteShell.Designer.cs
+index 41e1cc1..a44ca66 100644
+--- a/Server/Forms/frmRemoteShell.Designer.cs
++++ b/Server/Forms/frmRemoteShell.Designer.cs
+@@ -48,6 +48,7 @@ private void InitializeComponent()
+             this.txtConsoleOutput.Size = new System.Drawing.Size(637, 307);
+             this.txtConsoleOutput.TabIndex = 1;
+             this.txtConsoleOutput.TextChanged += new System.EventHandler(this.txtConsoleOutput_TextChanged);
++            this.txtConsoleOutput.KeyPress += new System.Windows.Forms.KeyPressEventHandler(this.txtConsoleOutput_KeyPress);
+             // 
+             // txtConsoleInput
+             // 
+diff --git a/Server/Forms/frmRemoteShell.cs b/Server/Forms/frmRemoteShell.cs
+index 1d1caae..f6687dc 100644
+--- a/Server/Forms/frmRemoteShell.cs
++++ b/Server/Forms/frmRemoteShell.cs
+@@ -58,5 +58,16 @@ private void txtConsoleInput_KeyDown(object sender, KeyEventArgs e)
+                 e.SuppressKeyPress = true;
+             }
+         }
++
++        private void txtConsoleOutput_KeyPress(object sender, KeyPressEventArgs e)
++        {
++            if (e.KeyChar != (char)2)
++            {
++                txtConsoleInput.Text += e.KeyChar.ToString();
++                txtConsoleInput.Focus();
++                txtConsoleInput.SelectionStart = txtConsoleOutput.TextLength;
++                txtConsoleInput.ScrollToCaret();
++            }
++        }
+     }
+ }

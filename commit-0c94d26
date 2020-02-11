@@ -1,0 +1,21 @@
+From 0c94d26698bedb8f2c736cd962711ba42a7744a8 Mon Sep 17 00:00:00 2001
+From: MaxXor <MaxXor@users.noreply.github.com>
+Date: Wed, 23 Jul 2014 20:44:14 +0200
+Subject: Update README.md
+
+
+diff --git a/README.md b/README.md
+index 9bf202e..c42ba46 100644
+--- a/README.md
++++ b/README.md
+@@ -39,4 +39,8 @@ BTC: `1EWgMfBw1fUSWMfat9oY8t8qRjCRiMEbET`
+ 
+ Credits
+ ---
+-**[protobuf](https://code.google.com/p/protobuf/)** - Protocol Buffers
+\ No newline at end of file
++Protocol Buffers - Google's data interchange format
++
++Copyright 2008 Google Inc.
++
++http://code.google.com/apis/protocolbuffers/

