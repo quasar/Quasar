@@ -5,6 +5,33 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach",
+            "port": 9229,
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Attach to Remote",
+            "address": "TCP/IP address of process to be debugged",
+            "port": 9229,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "Absolute path to the remote directory containing the program",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
+        },
+        {
             "name": "(Windows) Attach",
             "type": "cppvsdbg",
             "request": "attach",
