@@ -11,6 +11,12 @@
             "processId": "${command:pickProcess}"
         },
         {
+            "name": ".NET Core Attach",
+            "type": "coreclr",
+            "request": "attach",
+            "processId": "${command:pickProcess}"
+        },
+        {
             "type": "node",
             "request": "attach",
             "name": "Attach",
