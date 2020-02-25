@@ -1,0 +1,20 @@
+version: BUILD{build}
+
+image: Visual Studio 2017
+shallow_clone: true
+
+configuration:
+- Debug
+- Release
+
+before_build:
+  - nuget restore
+
+build:
+  project: QuasarRAT.sln
+  parallel: true
+  verbosity: minimal
+
+artifacts:
+- path: Bin
+  name: binaries

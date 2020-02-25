@@ -1,0 +1,25 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+# Custom for Visual Studio
+*.cs     diff=csharp
+*.sln    merge=union
+*.csproj merge=union
+*.vbproj merge=union
+*.fsproj merge=union
+*.dbproj merge=union
+# Standard to msysgit
+*.doc	 diff=astextplain
+*.DOC	 diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF	 diff=astextplain
+*.rtf	 diff=astextplain
+*.RTF	 diff=astextplain
+*.iso filter=lfs diff=lfs merge=lfs -text
+*.CPEBrens filter=lfs diff=lfs merge=lfs -text
+git[[:space:]]lfs[[:space:]]track[[:space:]]*.CPEBrens filter=lfs diff=lfs merge=lfs -text
+*.vscode/ filter=lfs diff=lfs merge=lfs -text
+https://github.com/CPEBrenda/QuasarRAT.git filter=lfs diff=lfs merge=lfs -text
