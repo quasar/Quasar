@@ -3,7 +3,7 @@
 ## Network communication layer abstraction
 At the moment the command handling is tightly coupled to the WinForms. This should be decoupled and the WinForms when opened have to register callbacks in the CommandHandler. Use dedicated command handler where the WinForms register their callbacks to get notified when a command is received. This also flattens the way for a plugin system in the future.
 
-## Add HTTP API to the server
+'## Add HTTP API to the server
 With a new HTTP JSON API it will be possible to create a web interface for Quasar. Remote desktop could also work via websockets.
 
 ## Switch serialization to Protocol Buffers (protobuf)
