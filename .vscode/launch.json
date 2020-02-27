@@ -38,7 +38,7 @@
                 "/Views": "${workspaceFolder}/Views"
             }
         },
-        {
+    {
             "name": ".NET Core Launch (console)",
             "type": "coreclr",
             "request": "launch",
