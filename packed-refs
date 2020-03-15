@@ -1,0 +1,15 @@
+# pack-refs with: peeled fully-peeled sorted 
+13172613f86c9701a0c3d2c88437609e455e2fac refs/heads/CPEBrenda-patch-1
+4abbbdc85303bc854f46d3af726668194a7d049a refs/heads/dev
+ae42f30c2d2cd0657b7ab0a27962f3857d124495 refs/heads/master
+0fce5d201e92ff481c4f88e916e18faaae644985 refs/heads/my-new-feature
+034b6242f4a6d8f5d6247044cd2900f4d26eeaf6 refs/tags/RELEASE1
+6681b8b50f3afbe82a03b28f612554ed89318a9a refs/tags/RELEASE2
+1d31008e57a5a85532f5100d53061a62c27d050f refs/tags/RELEASE3
+bda6bedfee92af5ff9716648394f62e6274042ca refs/tags/RELEASE4
+^927982d49307b87178cf49c2683c487342ec1799
+cda31acef34a56b9450c389b75f85b42ae4760b7 refs/tags/RELEASE4.1
+8aa84a5ea3b761a82b118cc3bdb0b952f782c93a refs/tags/v1.0.0.0
+7f013a505edaa98938da02bbda3296aac684874c refs/tags/v1.1.0.0
+63a63419a7f7ccbc6543bb943366e4963bb17d2c refs/tags/v1.2.0.0
+2564b2f137e03e1823c1acf252036921f243941b refs/tags/v1.3.0.0
