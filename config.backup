@@ -1,0 +1,15 @@
+[core]
+	repositoryformatversion = 0
+	filemode = false
+	bare = true
+	symlinks = false
+	ignorecase = true
+[submodule]
+	active = .
+[remote "origin"]
+	url = https://github.com/CPEBrenda/QuasarRAT.git
+[branch "CPEBrenda-patch-1"]
+	remote = origin
+	merge = refs/heads/CPEBrenda-patch-1
+[lfs "https://github.com/CPEBrenda/QuasarRAT.git/info/lfs"]
+	access = basic

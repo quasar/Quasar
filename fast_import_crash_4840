@@ -1,0 +1,25 @@
+fast-import crash report:
+    fast-import process: 4840
+    parent process     : 1
+    at 2020-03-15 10:34:51 +0000
+
+fatal: unknown option --work-tree
+
+Most Recent Commands Before Crash
+---------------------------------
+
+Active Branch LRU
+-----------------
+    active_branches = 0 cur, 5 max
+
+  pos  clock name
+  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Inactive Branches
+-----------------
+
+Marks
+-----
+
+-------------------
+END OF CRASH REPORT
