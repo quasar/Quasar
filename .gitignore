@@ -207,3 +207,4 @@ FakesAssemblies/
 # Visual Studio 6 workspace options file
 *.opt
 >>>>>>> CPEBrenda-patch-1/my-new-feature
+/.vscode/.github/workflows/
