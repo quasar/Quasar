@@ -1,0 +1,38 @@
+[
+  {
+    "key": "name",
+    "value": ".NET Core"
+  },
+  {
+    "key": "on.0",
+    "value": "push"
+  },
+  {
+    "key": "jobs.build.runs-on",
+    "value": "ubuntu-latest"
+  },
+  {
+    "key": "jobs.build.steps.0.uses",
+    "value": "actions/checkout@v1"
+  },
+  {
+    "key": "jobs.build.steps.1.name",
+    "value": "Setup .NET Core"
+  },
+  {
+    "key": "jobs.build.steps.1.uses",
+    "value": "actions/setup-dotnet@v1"
+  },
+  {
+    "key": "jobs.build.steps.1.with.dotnet-version",
+    "value": "2.2.108"
+  },
+  {
+    "key": "jobs.build.steps.2.name",
+    "value": "Build with dotnet"
+  },
+  {
+    "key": "jobs.build.steps.2.run",
+    "value": "dotnet build --configuration Release"
+  }
+]
