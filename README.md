@@ -12,45 +12,42 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 * TCP network stream (IPv4 & IPv6 support)
 * Fast network serialization (Protocol Buffers)
 * Compressed (QuickLZ) & Encrypted (TLS) communication
-* Multi-Threaded
 * UPnP Support
-* No-Ip.com Support
-* Visit Website (hidden & visible)
-* Show Messagebox
 * Task Manager
 * File Manager
 * Startup Manager
 * Remote Desktop
 * Remote Shell
-* Download & Execute
-* Upload & Execute
+* Remote Execution
 * System Information
-* Computer Commands (Restart, Shutdown, Standby)
+* Registry Editor
+* System Power Commands (Restart, Shutdown, Standby)
 * Keylogger (Unicode Support)
 * Reverse Proxy (SOCKS5)
 * Password Recovery (Common Browsers and FTP Clients)
-* Registry Editor
+* ... and many more!
 
 ## Supported runtimes and operating systems
-* .NET Framework 4.0 Client Profile or higher ([Download](https://www.microsoft.com/en-us/download/details.aspx?id=24872))
+* .NET Framework 4.5.2 or higher
 * Supported operating systems (32- and 64-bit)
-  * Windows XP SP3
-  * Windows Server 2003
-  * Windows Vista
-  * Windows Server 2008
-  * Windows 7
-  * Windows Server 2012
-  * Windows 8/8.1
   * Windows 10
+  * Windows Server 2019
+  * Windows Server 2016
+  * Windows 8/8.1
+  * Windows Server 2012
+  * Windows 7
+  * Windows Server 2008
+  * Windows Vista
+* For older systems please use [Quasar version 1.3.0](https://github.com/quasar/QuasarRAT/releases/tag/v1.3.0.0)
 
 ## Compiling
-Open the project in Visual Studio 2017+ and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` on the top or by pressing `F6`. See below which build configuration to choose from.
+Open the project in Visual Studio 2019+ and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` on the top or by pressing `F6`. See below which build configuration to choose from.
 
 ## Building a client
 | Build configuration         | Usage scenario | Description
 | ----------------------------|----------------|--------------
 | Debug configuration         | Testing        | The pre-defined [Settings.cs](/Quasar.Client/Config/Settings.cs) will be used, so edit this file before compiling the client. You can execute the client directly with the specified settings.
-| Release configuration       | Live use       | Start `Quasar.exe` and use the client builder.
+| Release configuration       | Production     | Start `Quasar.exe` and use the client builder.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md)

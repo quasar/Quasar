@@ -1,6 +1,7 @@
-﻿using Mono.Nat;
+﻿using Open.Nat;
 using System;
 using System.Collections.Generic;
+using System.Threading;
 
 namespace Quasar.Server.Networking
 {
@@ -14,112 +15,63 @@ namespace Quasar.Server.Networking
         /// <summary>
         /// The discovered UPnP device.
         /// </summary>
-        private INatDevice _device;
+        private NatDevice _device;
 
         /// <summary>
-        /// The port used to create an mapping once a UPnP device was found.
+        /// The NAT discoverer used to discover NAT-UPnP devices.
         /// </summary>
-        private readonly int _port;
-
-        /// <summary>
-        /// Initializes the discovery of new UPnP devices and creates a port mapping using the given port
-        /// once a suitable device was found.
-        /// </summary>
-        /// <param name="port">The port to map.</param>
-        public UPnPService(int port) : this()
-        {
-            _port = port;
-        }
+        private NatDiscoverer _discoverer;
 
         /// <summary>
         /// Initializes the discovery of new UPnP devices.
         /// </summary>
         public UPnPService()
         {
-            NatUtility.DeviceFound += DeviceFound;
-            NatUtility.DeviceLost += DeviceLost;
-            NatUtility.StartDiscovery();
+            _discoverer = new NatDiscoverer();
         }
-
-        /// <summary>
-        /// States if an UPnP device was found.
-        /// </summary>
-        public bool DiscoveryCompleted => _device != null;
 
         /// <summary>
         /// Creates a new port mapping on the UPnP device.
         /// </summary>
         /// <param name="port">The port to map.</param>
-        public void CreatePortMap(int port)
+        public async void CreatePortMapAsync(int port)
         {
-            if (!DiscoveryCompleted)
-                return;
-
             try
             {
+                var cts = new CancellationTokenSource(10000);
+                _device = await _discoverer.DiscoverDeviceAsync(PortMapper.Upnp, cts);
+
                 Mapping mapping = new Mapping(Protocol.Tcp, port, port);
 
-                _device.BeginCreatePortMap(mapping, EndCreateAsync, mapping);
+                await _device.CreatePortMapAsync(mapping);
+
+                if (_mappings.ContainsKey(mapping.PrivatePort))
+                    _mappings[mapping.PrivatePort] = mapping;
+                else
+                    _mappings.Add(mapping.PrivatePort, mapping);
             }
-            catch (MappingException)
+            catch (Exception ex) when (ex is MappingException || ex is NatDeviceNotFoundException)
             {
             }
-        }
-
-        private void EndCreateAsync(IAsyncResult ar)
-        {
-            var mapping = (Mapping) ar.AsyncState;
-
-            _device?.EndCreatePortMap(ar);
-
-            if (_mappings.ContainsKey(mapping.PrivatePort))
-                _mappings[mapping.PrivatePort] = mapping;
-            else
-                _mappings.Add(mapping.PrivatePort, mapping);
-        }
-
-        private void EndDeleteAsync(IAsyncResult ar)
-        {
-            var mapping = (Mapping)ar.AsyncState;
-
-            _device?.EndDeletePortMap(ar);
-
-            _mappings.Remove(mapping.PrivatePort);
         }
 
         /// <summary>
-        /// Deletes an existing port map.
+        /// Deletes an existing port mapping.
         /// </summary>
-        /// <param name="port">The port to delete.</param>
-        public void DeletePortMap(int port)
+        /// <param name="port">The port mapping to delete.</param>
+        public async void DeletePortMapAsync(int port)
         {
-            if (!DiscoveryCompleted)
-                return;
-
             if (_mappings.TryGetValue(port, out var mapping))
             {
                 try
                 {
-                    _device.BeginDeletePortMap(mapping, EndDeleteAsync, mapping);
+                    await _device.DeletePortMapAsync(mapping);
+                    _mappings.Remove(mapping.PrivatePort);
                 }
-                catch (MappingException)
+                catch (Exception ex) when (ex is MappingException || ex is NatDeviceNotFoundException)
                 {
                 }
             }
-        }
-
-        private void DeviceFound(object sender, DeviceEventArgs args)
-        {
-            _device = args.Device;
-            NatUtility.StopDiscovery();
-
-            if (_port > 0)
-                CreatePortMap(_port);
-        }
-
-        private void DeviceLost(object sender, DeviceEventArgs args)
-        {
-            _device = null;
         }
     }
 }

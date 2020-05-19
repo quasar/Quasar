@@ -1,171 +1,37 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C7C363BA-E5B6-4E18-9224-39BC8DA73172}</ProjectGuid>
+    <TargetFrameworks>net452</TargetFrameworks>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Quasar.Common</RootNamespace>
-    <AssemblyName>Quasar.Common</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <Deterministic>true</Deterministic>
-    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
     <OutputPath>..\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DocumentationFile>
-    </DocumentationFile>
+    <DocumentationFile></DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
-    <Optimize>true</Optimize>
     <OutputPath>..\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
-      <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
-    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.ServiceModel" />
-    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Cryptography\Aes256.cs" />
-    <Compile Include="Cryptography\Sha256.cs" />
-    <Compile Include="Extensions\DriveTypeExtensions.cs" />
-    <Compile Include="Extensions\SocketExtensions.cs" />
-    <Compile Include="Extensions\StringExtensions.cs" />
-    <Compile Include="Helpers\FileHelper.cs" />
-    <Compile Include="Helpers\PlatformHelper.cs" />
-    <Compile Include="Helpers\StringHelper.cs" />
-    <Compile Include="IO\Compression\SafeQuickLZ.cs" />
-    <Compile Include="Enums\ConnectionState.cs" />
-    <Compile Include="Enums\ContentType.cs" />
-    <Compile Include="Enums\StartupType.cs" />
-    <Compile Include="IO\FileSplitLegacy.cs" />
-    <Compile Include="Messages\ClientIdentification.cs" />
-    <Compile Include="Messages\ClientIdentificationResult.cs" />
-    <Compile Include="Messages\FileTransferChunk.cs" />
-    <Compile Include="Messages\TypeRegistry.cs" />
-    <Compile Include="Models\Drive.cs" />
-    <Compile Include="Messages\MessageProcessorBase.cs" />
-    <Compile Include="Messages\IProgress.cs" />
-    <Compile Include="Messages\MessageHandler.cs" />
-    <Compile Include="Messages\ICommandExecutor.cs" />
-    <Compile Include="Enums\MouseAction.cs" />
-    <Compile Include="Enums\FileType.cs" />
-    <Compile Include="Enums\ShutdownAction.cs" />
-    <Compile Include="Enums\UserStatus.cs" />
-    <Compile Include="Models\FileChunk.cs" />
-    <Compile Include="Models\FileSystemEntry.cs" />
-    <Compile Include="Models\Process.cs" />
-    <Compile Include="Models\RecoveredAccount.cs" />
-    <Compile Include="Models\StartupItem.cs" />
-    <Compile Include="Models\TcpConnection.cs" />
-    <Compile Include="NativeMethods.cs" />
-    <Compile Include="Messages\DoShellExecuteResponse.cs" />
-    <Compile Include="Messages\GetChangeRegistryValueResponse.cs" />
-    <Compile Include="Messages\GetConnectionsResponse.cs" />
-    <Compile Include="Messages\GetCreateRegistryKeyResponse.cs" />
-    <Compile Include="Messages\GetCreateRegistryValueResponse.cs" />
-    <Compile Include="Messages\GetDeleteRegistryKeyResponse.cs" />
-    <Compile Include="Messages\GetDeleteRegistryValueResponse.cs" />
-    <Compile Include="Messages\GetDesktopResponse.cs" />
-    <Compile Include="Messages\GetDirectoryResponse.cs" />
-    <Compile Include="Messages\GetDrivesResponse.cs" />
-    <Compile Include="Messages\GetKeyloggerLogsResponse.cs" />
-    <Compile Include="Messages\GetMonitorsResponse.cs" />
-    <Compile Include="Messages\GetPasswordsResponse.cs" />
-    <Compile Include="Messages\GetProcessesResponse.cs" />
-    <Compile Include="Messages\GetRegistryKeysResponse.cs" />
-    <Compile Include="Messages\GetRenameRegistryKeyResponse.cs" />
-    <Compile Include="Messages\GetRenameRegistryValueResponse.cs" />
-    <Compile Include="Messages\GetStartupItemsResponse.cs" />
-    <Compile Include="Messages\GetSystemInfoResponse.cs" />
-    <Compile Include="Messages\SetStatus.cs" />
-    <Compile Include="Messages\SetStatusFileManager.cs" />
-    <Compile Include="Messages\SetUserStatus.cs" />
-    <Compile Include="Messages\IMessage.cs" />
-    <Compile Include="Messages\ReverseProxy\ReverseProxyConnect.cs" />
-    <Compile Include="Messages\ReverseProxy\ReverseProxyConnectResponse.cs" />
-    <Compile Include="Messages\ReverseProxy\ReverseProxyData.cs" />
-    <Compile Include="Messages\ReverseProxy\ReverseProxyDisconnect.cs" />
-    <Compile Include="Messages\DoAskElevate.cs" />
-    <Compile Include="Messages\DoChangeRegistryValue.cs" />
-    <Compile Include="Messages\DoClientDisconnect.cs" />
-    <Compile Include="Messages\DoClientReconnect.cs" />
-    <Compile Include="Messages\DoClientUninstall.cs" />
-    <Compile Include="Messages\DoClientUpdate.cs" />
-    <Compile Include="Messages\DoCloseConnection.cs" />
-    <Compile Include="Messages\DoCreateRegistryKey.cs" />
-    <Compile Include="Messages\DoCreateRegistryValue.cs" />
-    <Compile Include="Messages\DoDeleteRegistryKey.cs" />
-    <Compile Include="Messages\DoDeleteRegistryValue.cs" />
-    <Compile Include="Messages\DoDownloadAndExecute.cs" />
-    <Compile Include="Messages\FileTransferRequest.cs" />
-    <Compile Include="Messages\FileTransferCancel.cs" />
-    <Compile Include="Messages\DoKeyboardEvent.cs" />
-    <Compile Include="Messages\DoLoadRegistryKey.cs" />
-    <Compile Include="Messages\DoMouseEvent.cs" />
-    <Compile Include="Messages\DoPathDelete.cs" />
-    <Compile Include="Messages\DoPathRename.cs" />
-    <Compile Include="Messages\DoProcessKill.cs" />
-    <Compile Include="Messages\DoProcessStart.cs" />
-    <Compile Include="Messages\DoRenameRegistryKey.cs" />
-    <Compile Include="Messages\DoRenameRegistryValue.cs" />
-    <Compile Include="Messages\DoShellExecute.cs" />
-    <Compile Include="Messages\DoShowMessageBox.cs" />
-    <Compile Include="Messages\DoShutdownAction.cs" />
-    <Compile Include="Messages\DoStartupItemAdd.cs" />
-    <Compile Include="Messages\DoStartupItemRemove.cs" />
-    <Compile Include="Messages\DoUploadAndExecute.cs" />
-    <Compile Include="Messages\DoVisitWebsite.cs" />
-    <Compile Include="Messages\DoWebcamStop.cs" />
-    <Compile Include="Messages\GetConnections.cs" />
-    <Compile Include="Messages\GetDesktop.cs" />
-    <Compile Include="Messages\GetDirectory.cs" />
-    <Compile Include="Messages\GetDrives.cs" />
-    <Compile Include="Messages\GetKeyloggerLogs.cs" />
-    <Compile Include="Messages\GetMonitors.cs" />
-    <Compile Include="Messages\GetPasswords.cs" />
-    <Compile Include="Messages\GetProcesses.cs" />
-    <Compile Include="Messages\GetStartupItems.cs" />
-    <Compile Include="Messages\GetSystemInfo.cs" />
-    <Compile Include="Networking\ISender.cs" />
-    <Compile Include="Networking\PayloadReader.cs" />
-    <Compile Include="Networking\PayloadWriter.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Models\RegSeekerMatch.cs" />
-    <Compile Include="Models\RegValueData.cs" />
-    <Compile Include="IO\FileSplit.cs" />
-    <Compile Include="Utilities\ByteConverter.cs" />
-    <Compile Include="Utilities\SafeRandom.cs" />
-    <Compile Include="Video\Codecs\UnsafeStreamCodec.cs" />
-    <Compile Include="Video\Compression\JpgCompression.cs" />
-    <Compile Include="Video\Resolution.cs" />
+    <PackageReference Include="protobuf-net">
+      <Version>2.4.6</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="packages.config" />
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
+    <PackageReference Include="Microsoft.Win32.Registry">
+      <Version>4.7.0</Version>
+    </PackageReference>
+    <PackageReference Include="System.Drawing.Common">
+      <Version>4.7.0</Version>
+    </PackageReference>
+	<PackageReference Include="System.Management">
+      <Version>4.7.0</Version>
+    </PackageReference>
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
