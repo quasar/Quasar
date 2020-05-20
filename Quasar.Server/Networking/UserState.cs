@@ -16,8 +16,6 @@ namespace Quasar.Server.Networking
         public int ImageIndex { get; set; }
         public string Country { get; set; }
         public string CountryCode { get; set; }
-        public string Region { get; set; }
-        public string City { get; set; }
         public string Id { get; set; }
         public string Username { get; set; }
         public string PcName { get; set; }

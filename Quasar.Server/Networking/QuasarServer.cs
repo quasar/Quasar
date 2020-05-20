@@ -134,8 +134,6 @@ namespace Quasar.Server.Networking
             client.Value.AccountType = packet.AccountType;
             client.Value.Country = packet.Country;
             client.Value.CountryCode = packet.CountryCode;
-            client.Value.Region = packet.Region;
-            client.Value.City = packet.City;
             client.Value.Id = packet.Id;
             client.Value.Username = packet.Username;
             client.Value.PcName = packet.PcName;

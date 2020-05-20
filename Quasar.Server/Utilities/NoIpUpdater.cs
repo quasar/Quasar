@@ -24,7 +24,7 @@ namespace Quasar.Server.Utilities
             {
                 try
                 {
-                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("http://dynupdate.no-ip.com/nic/update?hostname={0}", Settings.NoIPHost));
+                    HttpWebRequest request = (HttpWebRequest)HttpWebRequest.Create(string.Format("https://dynupdate.no-ip.com/nic/update?hostname={0}", Settings.NoIPHost));
                     request.Proxy = null;
                     request.UserAgent = string.Format("Quasar No-Ip Updater/2.0 {0}", Settings.NoIPUsername);
                     request.Timeout = 10000;

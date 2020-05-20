@@ -279,7 +279,7 @@ namespace Quasar.Server.Networking
                                 clientSocket.SetKeepAliveEx(KeepAliveInterval, KeepAliveTime);
                                 sslStream = new SslStream(new NetworkStream(clientSocket, true), false);
                                 // the SslStream owns the socket and on disposing also disposes the NetworkStream and Socket
-                                sslStream.BeginAuthenticateAsServer(ServerCertificate, false, SslProtocols.Tls, false, EndAuthenticateClient,
+                                sslStream.BeginAuthenticateAsServer(ServerCertificate, false, SslProtocols.Tls12, false, EndAuthenticateClient,
                                     new PendingClient {Stream = sslStream, EndPoint = (IPEndPoint) clientSocket.RemoteEndPoint});
                             }
                             catch (Exception)

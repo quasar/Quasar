@@ -21,30 +21,24 @@ namespace Quasar.Common.Messages
         public string CountryCode { get; set; }
 
         [ProtoMember(6)]
-        public string Region { get; set; }
-
-        [ProtoMember(7)]
-        public string City { get; set; }
-
-        [ProtoMember(8)]
         public int ImageIndex { get; set; }
 
-        [ProtoMember(9)]
+        [ProtoMember(7)]
         public string Id { get; set; }
 
-        [ProtoMember(10)]
+        [ProtoMember(8)]
         public string Username { get; set; }
 
-        [ProtoMember(11)]
+        [ProtoMember(9)]
         public string PcName { get; set; }
 
-        [ProtoMember(12)]
+        [ProtoMember(10)]
         public string Tag { get; set; }
 
-        [ProtoMember(13)]
+        [ProtoMember(11)]
         public string EncryptionKey { get; set; }
 
-        [ProtoMember(14)]
+        [ProtoMember(12)]
         public byte[] Signature { get; set; }
     }
 }
