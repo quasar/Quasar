@@ -23,7 +23,10 @@ If applicable, add screenshots to help explain your problem.
 **System**
  - Server OS: [e.g. Windows 10]
  - Client OS: [e.g. Windows 7]
- - Quasar Version: [e.g. 1.3.0, commit-id]
+ - Server installed .NET Framework version: [e.g. v4.8]
+ - Client installed .NET Framework version: [e.g. v4.8]
+ - Quasar Version: [e.g. 1.3.0 or commit-id]
+ - Build configuration: [e.g. Debug/Release]
 
 **Additional context**
 Add any other context about the problem here.

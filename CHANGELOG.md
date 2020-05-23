@@ -1,4 +1,4 @@
-# QuasarRAT Changelog
+# Quasar Changelog
 
 ## Quasar v1.3.0.0 [28.09.2016]
 * Added Registry Editor
