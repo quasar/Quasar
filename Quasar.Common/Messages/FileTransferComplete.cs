@@ -3,12 +3,12 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class DoDownloadAndExecute : IMessage
+    public class FileTransferComplete : IMessage
     {
         [ProtoMember(1)]
-        public string Url { get; set; }
+        public int Id { get; set; }
 
         [ProtoMember(2)]
-        public bool RunHidden { get; set; }
+        public string FilePath { get; set; }
     }
 }

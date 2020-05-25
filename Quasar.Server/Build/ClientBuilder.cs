@@ -88,6 +88,7 @@ namespace Quasar.Server.Build
             var serverCertificate = new X509Certificate2(caCertificate.Export(X509ContentType.Cert)); // export without private key, very important!
 
             byte[] signature;
+            // https://stackoverflow.com/a/49777672 RSACryptoServiceProvider must be changed with .NET 4.6
             using (var csp = (RSACryptoServiceProvider) caCertificate.PrivateKey)
             {
                 var hash = Sha256.ComputeHash(Encoding.UTF8.GetBytes(key));

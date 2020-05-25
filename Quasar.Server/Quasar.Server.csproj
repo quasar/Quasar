@@ -85,12 +85,6 @@
     <Compile Update="Forms\FrmConnections.Designer.cs">
       <DependentUpon>FrmConnections.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\FrmDownloadAndExecute.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FrmDownloadAndExecute.Designer.cs">
-      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
-    </Compile>
     <Compile Update="Forms\FrmFileManager.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -196,23 +190,17 @@
     <Compile Update="Forms\FrmTaskManager.Designer.cs">
       <DependentUpon>FrmTaskManager.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\FrmUploadAndExecute.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Update="Forms\FrmUploadAndExecute.Designer.cs">
-      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
-    </Compile>
     <Compile Update="Forms\FrmVisitWebsite.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="Forms\FrmVisitWebsite.Designer.cs">
       <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
     </Compile>
-    <Compile Update="Forms\FrmUpdate.cs">
+    <Compile Update="Forms\FrmRemoteExecution.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Forms\FrmUpdate.Designer.cs">
-      <DependentUpon>FrmUpdate.cs</DependentUpon>
+    <Compile Update="Forms\FrmRemoteExecution.Designer.cs">
+      <DependentUpon>FrmRemoteExecution.cs</DependentUpon>
     </Compile>
     <EmbeddedResource Update="Forms\FrmAbout.resx">
       <DependentUpon>FrmAbout.cs</DependentUpon>
@@ -228,9 +216,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\FrmConnections.resx">
       <DependentUpon>FrmConnections.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Forms\FrmDownloadAndExecute.resx">
-      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Forms\FrmFileManager.resx">
       <DependentUpon>FrmFileManager.cs</DependentUpon>
@@ -285,14 +270,11 @@
     <EmbeddedResource Update="Forms\FrmTaskManager.resx">
       <DependentUpon>FrmTaskManager.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\FrmUploadAndExecute.resx">
-      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Forms\FrmVisitWebsite.resx">
       <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Forms\FrmUpdate.resx">
-      <DependentUpon>FrmUpdate.cs</DependentUpon>
+    <EmbeddedResource Update="Forms\FrmRemoteExecution.resx">
+      <DependentUpon>FrmRemoteExecution.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

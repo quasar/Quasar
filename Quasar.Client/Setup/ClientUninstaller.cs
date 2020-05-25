@@ -3,14 +3,15 @@ using Quasar.Client.Data;
 using Quasar.Client.IO;
 using Quasar.Client.Utilities;
 using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 
-namespace Quasar.Client.Installation
+namespace Quasar.Client.Setup
 {
-    public static class ClientUninstaller
+    public class ClientUninstaller
     {
-        public static void Uninstall(Networking.Client client)
+        public bool Uninstall(ISender client)
         {
             try
             {
@@ -30,11 +31,12 @@ namespace Quasar.Client.Installation
                 };
                 Process.Start(startInfo);
 
-                Program.ConnectClient.Exit();
+                return true;
             }
             catch (Exception ex)
             {
                 client.Send(new SetStatus {Message = $"Uninstall failed: {ex.Message}"});
+                return false;
             }
         }
     }

@@ -106,6 +106,16 @@ namespace Quasar.Server.Forms
             processesToolStripStatusLabel.Text = $"Processes: {processes.Length}";
         }
 
+        /// <summary>
+        /// Called whenever a result of a started process is received.
+        /// </summary>
+        /// <param name="sender">The message handler which raised the event.</param>
+        /// <param name="result">The result of the started process.</param>
+        private void ProcessStarted(object sender, string result)
+        {
+            processesToolStripStatusLabel.Text = $"{processesToolStripStatusLabel.Text} | {result}";
+        }
+
         private void FrmTaskManager_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("Task Manager", _connectClient);

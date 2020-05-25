@@ -10,6 +10,7 @@ using System.Net;
 using System.Net.Security;
 using System.Net.Sockets;
 using System.Security.Authentication;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 
@@ -303,6 +304,8 @@ namespace Quasar.Client.Networking
             // for debugging don't validate server certificate
             return true;
 #else
+            var serverCsp = (RSACryptoServiceProvider)_serverCertificate.PublicKey.Key;
+            var connectedCsp = (RSACryptoServiceProvider)new X509Certificate2(certificate).PublicKey.Key;
             // compare the received server certificate with the included server certificate to validate we are connected to the correct server
             return _serverCertificate.Equals(certificate);
 #endif
@@ -629,7 +632,7 @@ namespace Quasar.Client.Networking
                 _payloadLen = 0;
                 _payloadBuffer = null;
                 _receiveState = ReceiveType.Header;
-                _singleWriteMutex.Dispose();
+                //_singleWriteMutex.Dispose(); TODO: fix socket re-use
 
                 if (_proxyClients != null)
                 {

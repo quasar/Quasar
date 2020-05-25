@@ -1,8 +1,9 @@
-﻿using Quasar.Common.Networking;
+﻿using System;
+using Quasar.Common.Networking;
 
 namespace Quasar.Common.Messages
 {
-    public interface IMessageProcessor
+    public interface IMessageProcessor : IDisposable
     {
         bool CanExecute(IMessage message);
         bool CanExecuteFrom(ISender sender);

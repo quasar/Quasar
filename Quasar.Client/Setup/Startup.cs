@@ -5,7 +5,7 @@ using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Client.Helper;
 
-namespace Quasar.Client.Installation
+namespace Quasar.Client.Setup
 {
     public static class Startup
     {

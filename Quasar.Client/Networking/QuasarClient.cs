@@ -37,6 +37,8 @@ namespace Quasar.Client.Networking
 
         public void Connect()
         {
+            // TODO: move connect loop to QuasarApplication
+            // TODO: do not re-use object
             while (!Exiting) // Main Connect Loop
             {
                 if (!Connected)
@@ -80,6 +82,7 @@ namespace Quasar.Client.Networking
                 return;
             }
 
+            MessageHandler.Process(client, message);
             PacketHandler.HandlePacket(client, message);
         }
 
@@ -124,7 +127,6 @@ namespace Quasar.Client.Networking
                     });
                 }
             }
-            
 
             if (!connected && !Exiting)
                 LostConnection();

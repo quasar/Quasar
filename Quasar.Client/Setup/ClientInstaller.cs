@@ -1,16 +1,17 @@
 ﻿using Quasar.Client.Config;
 using Quasar.Client.Data;
 using Quasar.Common.Helpers;
+using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
 
-namespace Quasar.Client.Installation
+namespace Quasar.Client.Setup
 {
-    public static class ClientInstaller
+    public class ClientInstaller
     {
-        public static void Install(Networking.Client client)
+        public void Install(ISender client)
         {
             bool isKilled = false;
 

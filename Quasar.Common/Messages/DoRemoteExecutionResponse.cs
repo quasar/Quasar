@@ -3,9 +3,9 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class DoProcessStart : IMessage
+    public class DoRemoteExecutionResponse : IMessage
     {
         [ProtoMember(1)]
-        public string ApplicationName { get; set; }
+        public bool Success { get; set; }
     }
 }

