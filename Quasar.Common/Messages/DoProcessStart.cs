@@ -3,7 +3,7 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class DoRemoteExecution : IMessage
+    public class DoProcessStart : IMessage
     {
         [ProtoMember(1)]
         public string DownloadUrl { get; set; }

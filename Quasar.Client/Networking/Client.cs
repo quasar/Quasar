@@ -632,7 +632,7 @@ namespace Quasar.Client.Networking
                 _payloadLen = 0;
                 _payloadBuffer = null;
                 _receiveState = ReceiveType.Header;
-                //_singleWriteMutex.Dispose(); TODO: fix socket re-use
+                //_singleWriteMutex.Dispose(); TODO: fix socket re-use by creating new client on disconnect
 
                 if (_proxyClients != null)
                 {
@@ -647,12 +647,6 @@ namespace Quasar.Client.Networking
                         {
                         }
                     }
-                }
-
-                if (Commands.CommandHandler.StreamCodec != null)
-                {
-                    Commands.CommandHandler.StreamCodec.Dispose();
-                    Commands.CommandHandler.StreamCodec = null;
                 }
             }
 

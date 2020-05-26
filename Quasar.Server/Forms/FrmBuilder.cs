@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.DNS;
 
 namespace Quasar.Server.Forms
 {
@@ -19,6 +20,7 @@ namespace Quasar.Server.Forms
         private bool _profileLoaded;
         private bool _changed;
         private readonly BindingList<Host> _hosts = new BindingList<Host>();
+        private readonly HostsConverter _hostsConverter = new HostsConverter();
 
         public FrmBuilder()
         {
@@ -30,7 +32,7 @@ namespace Quasar.Server.Forms
             var profile = new BuilderProfile(profileName);
 
             _hosts.Clear();
-            foreach (var host in HostHelper.GetHostsList(profile.Hosts))
+            foreach (var host in _hostsConverter.RawHostsToList(profile.Hosts))
                 _hosts.Add(host);
 
             txtTag.Text = profile.Tag;
@@ -67,7 +69,7 @@ namespace Quasar.Server.Forms
             var profile = new BuilderProfile(profileName);
 
             profile.Tag = txtTag.Text;
-            profile.Hosts = HostHelper.GetRawHosts(_hosts);
+            profile.Hosts = _hostsConverter.ListToRawHosts(_hosts);
             profile.Delay = (int) numericUpDownDelay.Value;
             profile.Mutex = txtMutex.Text;
             profile.InstallClient = chkInstall.Checked;
@@ -254,7 +256,7 @@ namespace Quasar.Server.Forms
 
             options.Tag = txtTag.Text;
             options.Mutex = txtMutex.Text;
-            options.RawHosts = HostHelper.GetRawHosts(_hosts);
+            options.RawHosts = _hostsConverter.ListToRawHosts(_hosts);
             options.Delay = (int) numericUpDownDelay.Value;
             options.IconPath = txtIconPath.Text;
             options.Version = Application.ProductVersion;

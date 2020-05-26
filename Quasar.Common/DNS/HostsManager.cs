@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Net;
 using System.Net.Sockets;
-using Quasar.Client.Data;
 
-namespace Quasar.Client.Utilities
+namespace Quasar.Common.DNS
 {
     public class HostsManager
     {
-        public bool IsEmpty { get { return _hosts.Count == 0; } }
+        public bool IsEmpty => _hosts.Count == 0;
 
         private readonly Queue<Host> _hosts = new Queue<Host>();
 
@@ -22,11 +21,11 @@ namespace Quasar.Client.Utilities
             var temp = _hosts.Dequeue();
             _hosts.Enqueue(temp); // add to the end of the queue
 
-            temp.IpAddress = GetIp(temp);
+            temp.IpAddress = ResolveHostname(temp);
             return temp;
         }
 
-        private static IPAddress GetIp(Host host)
+        private static IPAddress ResolveHostname(Host host)
         {
             if (string.IsNullOrEmpty(host.Hostname)) return null;
 

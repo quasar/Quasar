@@ -27,6 +27,19 @@ namespace Quasar.Server.Models
                    string.Equals(RemotePath, other.RemotePath) && string.Equals(Status, other.Status);
         }
 
+        /// <summary>
+        /// Creates a new object that is a copy of the current instance.
+        /// </summary>
+        /// <returns>A new object that is a copy of this instance.</returns>
+        public FileTransfer Clone()
+        {
+            return new FileTransfer()
+            {
+                Id = Id, Type = Type, Size = Size, TransferredSize = TransferredSize, LocalPath = LocalPath,
+                RemotePath = RemotePath, Status = Status, FileSplit = FileSplit
+            };
+        }
+
         public static bool operator ==(FileTransfer f1, FileTransfer f2)
         {
             if (ReferenceEquals(f1, null))

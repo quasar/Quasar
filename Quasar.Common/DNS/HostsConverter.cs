@@ -1,13 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using Quasar.Client.Data;
 
-namespace Quasar.Client.Helper
+namespace Quasar.Common.DNS
 {
-    public static class HostHelper
+    public class HostsConverter
     {
-        public static List<Host> GetHostsList(string rawHosts)
+        public List<Host> RawHostsToList(string rawHosts)
         {
             List<Host> hostsList = new List<Host>();
 
@@ -17,19 +16,18 @@ namespace Quasar.Client.Helper
 
             foreach (var host in hosts)
             {
-                // invalid host, ignore
-                if ((string.IsNullOrEmpty(host) || !host.Contains(':'))) continue;
+                if ((string.IsNullOrEmpty(host) || !host.Contains(':'))) continue; // invalid host, ignore
 
                 ushort port;
                 if (!ushort.TryParse(host.Substring(host.LastIndexOf(':') + 1), out port)) continue; // invalid, ignore host
 
-                hostsList.Add(new Host {Hostname = host.Substring(0, host.LastIndexOf(':')), Port = port});
+                hostsList.Add(new Host { Hostname = host.Substring(0, host.LastIndexOf(':')), Port = port });
             }
 
             return hostsList;
         }
 
-        public static string GetRawHosts(List<Host> hosts)
+        public  string ListToRawHosts(IList<Host> hosts)
         {
             StringBuilder rawHosts = new StringBuilder();
 

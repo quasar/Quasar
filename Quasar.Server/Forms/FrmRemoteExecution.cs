@@ -1,4 +1,5 @@
-﻿using Quasar.Common.Messages;
+﻿using Quasar.Common.Enums;
+using Quasar.Common.Messages;
 using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Models;
@@ -15,7 +16,7 @@ namespace Quasar.Server.Forms
         private class RemoteExecutionMessageHandler
         {
             public FileManagerHandler FileHandler;
-            public RemoteExecutionHandler ExecutionHandler;
+            public TaskManagerHandler TaskHandler;
         }
 
         /// <summary>
@@ -44,7 +45,7 @@ namespace Quasar.Server.Forms
             {
                 var remoteExecutionMessageHandler = new RemoteExecutionMessageHandler
                 {
-                    FileHandler = new FileManagerHandler(client), ExecutionHandler = new RemoteExecutionHandler(client)
+                    FileHandler = new FileManagerHandler(client), TaskHandler = new TaskManagerHandler(client)
                 };
 
                 var lvi = new ListViewItem(new[]
@@ -65,11 +66,11 @@ namespace Quasar.Server.Forms
         private void RegisterMessageHandler(RemoteExecutionMessageHandler remoteExecutionMessageHandler)
         {
             // TODO handle disconnects
-            remoteExecutionMessageHandler.ExecutionHandler.ProgressChanged += SetStatusMessage;
+            remoteExecutionMessageHandler.TaskHandler.ProcessActionPerformed += ProcessActionPerformed;
             remoteExecutionMessageHandler.FileHandler.ProgressChanged += SetStatusMessage;
             remoteExecutionMessageHandler.FileHandler.FileTransferUpdated += FileTransferUpdated;
             MessageHandler.Register(remoteExecutionMessageHandler.FileHandler);
-            MessageHandler.Register(remoteExecutionMessageHandler.ExecutionHandler);
+            MessageHandler.Register(remoteExecutionMessageHandler.TaskHandler);
         }
 
         /// <summary>
@@ -77,11 +78,11 @@ namespace Quasar.Server.Forms
         /// </summary>
         private void UnregisterMessageHandler(RemoteExecutionMessageHandler remoteExecutionMessageHandler)
         {
-            MessageHandler.Unregister(remoteExecutionMessageHandler.ExecutionHandler);
+            MessageHandler.Unregister(remoteExecutionMessageHandler.TaskHandler);
             MessageHandler.Unregister(remoteExecutionMessageHandler.FileHandler);
             remoteExecutionMessageHandler.FileHandler.ProgressChanged -= SetStatusMessage;
             remoteExecutionMessageHandler.FileHandler.FileTransferUpdated -= FileTransferUpdated;
-            remoteExecutionMessageHandler.ExecutionHandler.ProgressChanged -= SetStatusMessage;
+            remoteExecutionMessageHandler.TaskHandler.ProcessActionPerformed -= ProcessActionPerformed;
         }
 
         private void FrmRemoteExecution_Load(object sender, EventArgs e)
@@ -94,7 +95,7 @@ namespace Quasar.Server.Forms
             foreach (var handler in _remoteExecutionMessageHandlers)
             {
                 UnregisterMessageHandler(handler);
-                handler.ExecutionHandler.Dispose();
+                handler.TaskHandler.Dispose();
                 handler.FileHandler.Dispose();
             }
 
@@ -113,7 +114,7 @@ namespace Quasar.Server.Forms
                     if (!txtURL.Text.StartsWith("http"))
                         txtURL.Text = "http://" + txtURL.Text;
 
-                    handler.ExecutionHandler.StartProcessFromWeb(txtURL.Text, _isUpdate);
+                    handler.TaskHandler.StartProcessFromWeb(txtURL.Text, _isUpdate);
                 }
             }
             else
@@ -161,19 +162,20 @@ namespace Quasar.Server.Forms
             {
                 var handler = (RemoteExecutionMessageHandler) lstTransfers.Items[i].Tag;
 
-                if (handler.FileHandler.Equals(sender as FileManagerHandler) || handler.ExecutionHandler.Equals(sender as RemoteExecutionHandler))
+                if (handler.FileHandler.Equals(sender as FileManagerHandler) || handler.TaskHandler.Equals(sender as TaskManagerHandler))
                 {
                     lstTransfers.Items[i].SubItems[(int) TransferColumn.Status].Text = transfer.Status;
 
                     if (transfer.Status == "Completed")
                     {
-                        handler.ExecutionHandler.StartProcess(transfer.RemotePath, _isUpdate);
+                        handler.TaskHandler.StartProcess(transfer.RemotePath, _isUpdate);
                     }
                     return;
                 }
             }
         }
 
+        // TODO: update documentation
         /// <summary>
         /// Sets the status of the file manager.
         /// </summary>
@@ -185,9 +187,25 @@ namespace Quasar.Server.Forms
             {
                 var handler = (RemoteExecutionMessageHandler)lstTransfers.Items[i].Tag;
 
-                if (handler.FileHandler.Equals(sender as FileManagerHandler) || handler.ExecutionHandler.Equals(sender as RemoteExecutionHandler))
+                if (handler.FileHandler.Equals(sender as FileManagerHandler) || handler.TaskHandler.Equals(sender as TaskManagerHandler))
                 {
                     lstTransfers.Items[i].SubItems[(int) TransferColumn.Status].Text = message;
+                    return;
+                }
+            }
+        }
+
+        private void ProcessActionPerformed(object sender, ProcessAction action, bool result)
+        {
+            if (action != ProcessAction.Start) return;
+
+            for (var i = 0; i < lstTransfers.Items.Count; i++)
+            {
+                var handler = (RemoteExecutionMessageHandler)lstTransfers.Items[i].Tag;
+
+                if (handler.FileHandler.Equals(sender as FileManagerHandler) || handler.TaskHandler.Equals(sender as TaskManagerHandler))
+                {
+                    lstTransfers.Items[i].SubItems[(int)TransferColumn.Status].Text = result ? "Successfully started process" : "Failed to start process";
                     return;
                 }
             }

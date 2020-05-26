@@ -107,7 +107,7 @@ namespace Quasar.Server.Forms
         {
             RefreshLogsDirectory();
             btnGetLogs.Enabled = true;
-            statusStrip.Text = "Status: " + message;
+            stripLblStatus.Text = "Status: " + message;
         }
 
         private void FrmKeylogger_Load(object sender, EventArgs e)
@@ -132,7 +132,7 @@ namespace Quasar.Server.Forms
         private void btnGetLogs_Click(object sender, EventArgs e)
         {
             btnGetLogs.Enabled = false;
-            statusStrip.Text = "Status: Retrieving logs...";
+            stripLblStatus.Text = "Status: Retrieving logs...";
             _keyloggerHandler.RetrieveLogs();
         }
 

