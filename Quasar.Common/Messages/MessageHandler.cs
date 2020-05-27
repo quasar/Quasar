@@ -5,7 +5,7 @@ using System.Linq;
 namespace Quasar.Common.Messages
 {
     /// <summary>
-    /// Handles registration of <see cref="IMessageProcessor"/>s and processing of <see cref="IMessage"/>s.
+    /// Handles registrations of <see cref="IMessageProcessor"/>s and processing of <see cref="IMessage"/>s.
     /// </summary>
     public static class MessageHandler
     {

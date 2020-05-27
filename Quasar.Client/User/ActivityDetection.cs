@@ -2,13 +2,12 @@
 using Quasar.Client.Networking;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
-using Quasar.Common.Networking;
-using System.Diagnostics;
+using System;
 using System.Threading;
 
-namespace Quasar.Client.Messages
+namespace Quasar.Client.User
 {
-    public class UserStatusHandler : MessageProcessorBase<object>
+    public class ActivityDetection : IDisposable
     {
         public UserStatus LastUserStatus { get; private set; }
 
@@ -18,36 +17,39 @@ namespace Quasar.Client.Messages
 
         private readonly CancellationToken _token;
 
-        public UserStatusHandler(QuasarClient client) : base(false)
+        public ActivityDetection(QuasarClient client)
         {
-            // TODO: handle disconnect
             _client = client;
             _tokenSource = new CancellationTokenSource();
             _token = _tokenSource.Token;
+            client.ClientState += OnClientStateChange;
+        }
+
+        private void OnClientStateChange(Networking.Client s, bool connected)
+        {
+            // reset user status
+            if (connected)
+                LastUserStatus = UserStatus.Active;
+        }
+
+        public void Start()
+        {
             new Thread(UserIdleThread) { IsBackground = true }.Start();
         }
 
-        public override bool CanExecute(IMessage message) => false;
-
-        public override bool CanExecuteFrom(ISender sender) => false;
-
-        public override void Execute(ISender sender, IMessage message)
+        public void Dispose()
         {
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                _tokenSource.Cancel();
-            }
+            _client.ClientState -= OnClientStateChange;
+            _tokenSource.Cancel();
         }
 
         private void UserIdleThread()
         {
             while (!_token.IsCancellationRequested)
             {
-                Thread.Sleep(1000);
+                if (_token.WaitHandle.WaitOne(1000))
+                    break;
+
                 if (IsUserIdle())
                 {
                     if (LastUserStatus != UserStatus.Idle)
@@ -65,14 +67,13 @@ namespace Quasar.Client.Messages
                     }
                 }
             }
-
         }
 
         private bool IsUserIdle()
         {
-            long ticks = Stopwatch.GetTimestamp();
+            var ticks = Environment.TickCount;
 
-            long idleTime = ticks - NativeMethodsHelper.GetLastInputInfoTickCount();
+            var idleTime = ticks - NativeMethodsHelper.GetLastInputInfoTickCount();
 
             idleTime = ((idleTime > 0) ? (idleTime / 1000) : 0);
 

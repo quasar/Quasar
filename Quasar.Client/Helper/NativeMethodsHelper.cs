@@ -1,8 +1,8 @@
-﻿using System;
+﻿using Quasar.Client.Utilities;
+using System;
 using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text;
-using Quasar.Client.Utilities;
 
 namespace Quasar.Client.Helper
 {
@@ -21,8 +21,8 @@ namespace Quasar.Client.Helper
             NativeMethods.LASTINPUTINFO lastInputInfo = new NativeMethods.LASTINPUTINFO();
             lastInputInfo.cbSize = (uint) Marshal.SizeOf(lastInputInfo);
             lastInputInfo.dwTime = 0;
-
-            return NativeMethods.GetLastInputInfo(ref lastInputInfo) ? lastInputInfo.dwTime : 0;
+            NativeMethods.GetLastInputInfo(ref lastInputInfo);
+            return lastInputInfo.dwTime;
         }
 
         public static void DoMouseLeftClick(Point p, bool isMouseDown)

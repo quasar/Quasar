@@ -1,9 +1,6 @@
 ﻿using Quasar.Client.Config;
 using Quasar.Client.IO;
-using Quasar.Client.Utilities;
 using Quasar.Common.Helpers;
-using Quasar.Common.Messages;
-using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -11,41 +8,33 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Setup
 {
-    public static class ClientUpdater
+    public class ClientUpdater : ClientSetupBase
     {
-        public static bool Update(ISender client, string newFilePath)
+        public void Update(string newFilePath)
         {
-            try
+            FileHelper.DeleteZoneIdentifier(newFilePath);
+
+            var bytes = File.ReadAllBytes(newFilePath);
+            if (!FileHelper.HasExecutableIdentifier(bytes))
+                throw new Exception("No executable file.");
+
+            string batchFile = BatchFile.CreateUpdateBatch(Application.ExecutablePath, newFilePath);
+
+            if (string.IsNullOrEmpty(batchFile))
+                throw new Exception("Could not create update batch file.");
+
+            ProcessStartInfo startInfo = new ProcessStartInfo
             {
-                FileHelper.DeleteZoneIdentifier(newFilePath);
+                WindowStyle = ProcessWindowStyle.Hidden,
+                UseShellExecute = true,
+                FileName = batchFile
+            };
+            Process.Start(startInfo);
 
-                var bytes = File.ReadAllBytes(newFilePath);
-                if (!FileHelper.HasExecutableIdentifier(bytes))
-                    throw new Exception("no pe file");
-
-                string batchFile = BatchFile.CreateUpdateBatch(Application.ExecutablePath, newFilePath);
-
-                if (string.IsNullOrEmpty(batchFile))
-                    throw new Exception("Could not create update batch file.");
-
-                ProcessStartInfo startInfo = new ProcessStartInfo
-                {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = true,
-                    FileName = batchFile
-                };
-                Process.Start(startInfo);
-
-                if (Settings.STARTUP)
-                    Startup.RemoveFromStartup();
-
-                return true;
-            }
-            catch (Exception ex)
+            if (Settings.STARTUP)
             {
-                NativeMethods.DeleteFile(newFilePath);
-                client.Send(new SetStatus {Message = $"Update failed: {ex.Message}"});
-                return false;
+                var clientStartup = new ClientStartup();
+                clientStartup.RemoveFromStartup(Settings.STARTUPKEY);
             }
         }
     }

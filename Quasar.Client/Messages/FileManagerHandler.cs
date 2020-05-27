@@ -1,5 +1,5 @@
 ﻿using Quasar.Client.Networking;
-using Quasar.Client.Utilities;
+using Quasar.Common;
 using Quasar.Common.Enums;
 using Quasar.Common.Extensions;
 using Quasar.Common.Helpers;

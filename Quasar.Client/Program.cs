@@ -14,7 +14,10 @@ namespace Quasar.Client
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            new QuasarApplication().Run();
+            using (var app = new QuasarApplication())
+            {
+                app.Run();
+            }
         }
     }
 }

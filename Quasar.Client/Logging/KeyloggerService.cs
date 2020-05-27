@@ -21,7 +21,7 @@ namespace Quasar.Client.Logging
             });
         }
 
-        public void StartService()
+        public void Start()
         {
             _msgLoopThread.Start();
         }

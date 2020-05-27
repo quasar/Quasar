@@ -6,18 +6,85 @@ using System.Management;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
 
-namespace Quasar.Client.Helper
+namespace Quasar.Client.IO
 {
-    public static class DevicesHelper
+    /// <summary>
+    /// Provides access to retrieve information about the used hardware devices.
+    /// </summary>
+    /// <remarks>Caches the retrieved information to reduce the slowdown of the slow WMI queries.</remarks>
+    public static class HardwareDevices
     {
-        public static string HardwareId { get; private set; }
+        /// <summary>
+        /// Gets a unique hardware id as a combination of various hardware components.
+        /// </summary>
+        public static string HardwareId => _hardwareId ?? (_hardwareId = Sha256.ComputeHash(CpuName + MainboardName + BiosManufacturer));
 
-        static DevicesHelper()
-        {
-            HardwareId = Sha256.ComputeHash(GetCpuName() + GetMainboardIdentifier() + GetBiosIdentifier());
-        }
+        /// <summary>
+        /// Used to cache the hardware id.
+        /// </summary>
+        private static string _hardwareId;
 
-        public static string GetBiosIdentifier()
+        /// <summary>
+        /// Gets the name of the system CPU.
+        /// </summary>
+        public static string CpuName => _cpuName ?? (_cpuName = GetCpuName());
+
+        /// <summary>
+        /// Used to cache the CPU name.
+        /// </summary>
+        private static string _cpuName;
+
+        /// <summary>
+        /// Gets the name of the GPU.
+        /// </summary>
+        public static string GpuName => _gpuName ?? (_gpuName = GetGpuName());
+
+        /// <summary>
+        /// Used to cache the GPU name.
+        /// </summary>
+        private static string _gpuName;
+
+        /// <summary>
+        /// Gets the name of the BIOS manufacturer.
+        /// </summary>
+        public static string BiosManufacturer => _biosManufacturer ?? (_biosManufacturer = GetBiosManufacturer());
+
+        /// <summary>
+        /// Used to cache the BIOS manufacturer.
+        /// </summary>
+        private static string _biosManufacturer;
+
+        /// <summary>
+        /// Gets the name of the mainboard.
+        /// </summary>
+        public static string MainboardName => _mainboardName ?? (_mainboardName = GetMainboardName());
+
+        /// <summary>
+        /// Used to cache the mainboard name.
+        /// </summary>
+        private static string _mainboardName;
+
+        /// <summary>
+        /// Gets the total physical memory of the system in megabytes (MB).
+        /// </summary>
+        public static int? TotalPhysicalMemory => _totalPhysicalMemory ?? (_totalPhysicalMemory = GetTotalPhysicalMemoryInMb());
+
+        /// <summary>
+        /// Used to cache the total physical memory.
+        /// </summary>
+        private static int? _totalPhysicalMemory;
+
+        /// <summary>
+        /// Gets the LAN IP address of the network interface.
+        /// </summary>
+        public static string LanIpAddress => GetLanIpAddress();
+
+        /// <summary>
+        /// Gets the MAC address of the network interface.
+        /// </summary>
+        public static string MacAddress => GetMacAddress();
+
+        private static string GetBiosManufacturer()
         {
             try
             {
@@ -42,7 +109,7 @@ namespace Quasar.Client.Helper
             return "Unknown";
         }
 
-        public static string GetMainboardIdentifier()
+        private static string GetMainboardName()
         {
             try
             {
@@ -53,7 +120,7 @@ namespace Quasar.Client.Helper
                 {
                     foreach (ManagementObject mObject in searcher.Get())
                     {
-                        mainboardIdentifier = mObject["Manufacturer"].ToString() + mObject["SerialNumber"].ToString();
+                        mainboardIdentifier = mObject["Manufacturer"].ToString() + " " + mObject["Product"].ToString();
                         break;
                     }
                 }
@@ -67,7 +134,7 @@ namespace Quasar.Client.Helper
             return "Unknown";
         }
 
-        public static string GetCpuName()
+        private static string GetCpuName()
         {
             try
             {
@@ -92,7 +159,7 @@ namespace Quasar.Client.Helper
             return "Unknown";
         }
 
-        public static int GetTotalRamAmount()
+        private static int GetTotalPhysicalMemoryInMb()
         {
             try
             {
@@ -104,7 +171,7 @@ namespace Quasar.Client.Helper
                     foreach (ManagementObject mObject in searcher.Get())
                     {
                         double bytes = (Convert.ToDouble(mObject["TotalPhysicalMemory"]));
-                        installedRAM = (int)(bytes / 1048576);
+                        installedRAM = (int)(bytes / 1048576); // bytes to MB
                         break;
                     }
                 }
@@ -117,7 +184,7 @@ namespace Quasar.Client.Helper
             }
         }
 
-        public static string GetGpuName()
+        private static string GetGpuName()
         {
             try
             {
@@ -141,8 +208,9 @@ namespace Quasar.Client.Helper
             }
         }
 
-        public static string GetLanIp()
+        private static string GetLanIpAddress()
         {
+            // TODO: support multiple network interfaces
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
                 GatewayIPAddressInformation gatewayAddress = ni.GetIPProperties().GatewayAddresses.FirstOrDefault();
@@ -167,7 +235,7 @@ namespace Quasar.Client.Helper
             return "-";
         }
 
-        public static string GetMacAddress()
+        private static string GetMacAddress()
         {
             foreach (NetworkInterface ni in NetworkInterface.GetAllNetworkInterfaces())
             {
@@ -182,7 +250,7 @@ namespace Quasar.Client.Helper
                             ip.AddressPreferredLifetime == UInt32.MaxValue) // exclude virtual network addresses
                             continue;
 
-                        foundCorrect = (ip.Address.ToString() == GetLanIp());
+                        foundCorrect = (ip.Address.ToString() == GetLanIpAddress());
                     }
 
                     if (foundCorrect)
