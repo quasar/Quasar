@@ -10,7 +10,7 @@
     <StartupObject>Quasar.Server.Program</StartupObject>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>icons\Quasar_Server.ico</ApplicationIcon>
+    <ApplicationIcon>Images\Icons\Quasar_Server.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationManifest>app.manifest</ApplicationManifest>
