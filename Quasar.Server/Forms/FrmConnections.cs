@@ -137,7 +137,6 @@ namespace Quasar.Server.Forms
         private void FrmConnections_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            _connectionsHandler.Dispose();
         }
 
         private void refreshToolStripMenuItem_Click(object sender, EventArgs e)

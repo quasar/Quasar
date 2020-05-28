@@ -34,22 +34,20 @@ namespace Quasar.Client.User
 
         public void Start()
         {
-            new Thread(UserIdleThread) { IsBackground = true }.Start();
+            new Thread(UserIdleThread).Start();
         }
 
         public void Dispose()
         {
             _client.ClientState -= OnClientStateChange;
             _tokenSource.Cancel();
+            _tokenSource.Dispose();
         }
 
         private void UserIdleThread()
         {
-            while (!_token.IsCancellationRequested)
+            while (!_token.WaitHandle.WaitOne(1000))
             {
-                if (_token.WaitHandle.WaitOne(1000))
-                    break;
-
                 if (IsUserIdle())
                 {
                     if (LastUserStatus != UserStatus.Idle)

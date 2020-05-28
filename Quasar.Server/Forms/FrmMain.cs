@@ -163,7 +163,6 @@ namespace Quasar.Server.Forms
         {
             ListenServer.Disconnect();
             UnregisterMessageHandler();
-            _clientStatusHandler.Dispose();
             notifyIcon.Visible = false;
             notifyIcon.Dispose();
         }

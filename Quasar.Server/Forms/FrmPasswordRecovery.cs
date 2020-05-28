@@ -94,7 +94,6 @@ namespace Quasar.Server.Forms
         {
             Settings.SaveFormat = txtFormat.Text;
             UnregisterMessageHandler();
-            _recoveryHandler.Dispose();
         }
 
         private void RecoverPasswords()

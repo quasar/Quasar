@@ -6,6 +6,9 @@ using Quasar.Server.Networking;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote registry.
+    /// </summary>
     public class RegistryHandler : MessageProcessorBase<string>
     {
         /// <summary>
@@ -405,10 +408,6 @@ namespace Quasar.Server.Messages
             {
                 OnReport(message.ErrorMsg);
             }
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

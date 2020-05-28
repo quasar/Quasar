@@ -3,10 +3,14 @@ using Quasar.Common.Messages.ReverseProxy;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
 using Quasar.Server.ReverseProxy;
+using System;
 using System.Linq;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote reverse proxy.
+    /// </summary>
     public class ReverseProxyHandler : MessageProcessorBase<ReverseProxyClient[]>
     {
         /// <summary>
@@ -103,7 +107,16 @@ namespace Quasar.Server.Messages
             OnReport(_socksServer.OpenConnections);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

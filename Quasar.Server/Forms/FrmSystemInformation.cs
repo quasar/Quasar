@@ -102,7 +102,6 @@ namespace Quasar.Server.Forms
         private void FrmSystemInformation_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            _sysInfoHandler.Dispose();
         }
 
         private void SystemInformationChanged(object sender, List<Tuple<string, string>> infos)

@@ -134,7 +134,6 @@ namespace Quasar.Server.Forms
         private void FrmTaskManager_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            _taskManagerHandler.Dispose();
         }
 
         private void killProcessToolStripMenuItem_Click(object sender, EventArgs e)

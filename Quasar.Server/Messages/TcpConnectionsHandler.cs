@@ -5,6 +5,9 @@ using Quasar.Server.Networking;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with remote TCP connections.
+    /// </summary>
     public class TcpConnectionsHandler : MessageProcessorBase<TcpConnection[]>
     {
         /// <summary>
@@ -68,10 +71,6 @@ namespace Quasar.Server.Messages
         private void Execute(ISender client, GetConnectionsResponse message)
         {
             OnReport(message.Connections);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

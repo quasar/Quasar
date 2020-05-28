@@ -14,7 +14,10 @@ using System.Threading;
 
 namespace Quasar.Server.Messages
 {
-    public class FileManagerHandler : MessageProcessorBase<string>
+    /// <summary>
+    /// Handles messages for the interaction with remote files and directories.
+    /// </summary>
+    public class FileManagerHandler : MessageProcessorBase<string>, IDisposable
     {
         /// <summary>
         /// Represents the method that will handle drive changes.
@@ -540,7 +543,16 @@ namespace Quasar.Server.Messages
             return id;
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -559,7 +571,6 @@ namespace Quasar.Server.Messages
 
                 MessageHandler.Unregister(_taskManagerHandler);
                 _taskManagerHandler.ProcessActionPerformed -= ProcessActionPerformed;
-                _taskManagerHandler.Dispose();
             }
         }
     }

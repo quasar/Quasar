@@ -6,6 +6,9 @@ using Quasar.Server.Networking;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with remote tasks.
+    /// </summary>
     public class TaskManagerHandler : MessageProcessorBase<Process[]>
     {
         /// <summary>
@@ -116,11 +119,6 @@ namespace Quasar.Server.Messages
         private void Execute(ISender client, GetProcessesResponse message)
         {
             OnReport(message.Processes);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            
         }
     }
 }

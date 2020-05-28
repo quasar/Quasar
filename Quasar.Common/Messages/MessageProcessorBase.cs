@@ -79,37 +79,15 @@ namespace Quasar.Common.Messages
             handler?.Invoke(this, (T)state);
         }
 
-        /// <summary>
-        /// Disposes all managed and unmanaged resources associated with this message processor.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        /// <summary>
-        /// Decides whether this message processor can execute the specified message.
-        /// </summary>
-        /// <param name="message">The message to execute.</param>
-        /// <returns><c>True</c> if the message can be executed by this message processor, otherwise <c>false</c>.</returns>
+        /// <inheritdoc />
         public abstract bool CanExecute(IMessage message);
 
-        /// <summary>
-        /// Decides whether this message processor can execute messages received from the sender.
-        /// </summary>
-        /// <param name="sender">The sender of a message.</param>
-        /// <returns><c>True</c> if this message processor can execute messages from the sender, otherwise <c>false</c>.</returns>
+        /// <inheritdoc />
         public abstract bool CanExecuteFrom(ISender sender);
 
-        /// <summary>
-        /// Executes the received message.
-        /// </summary>
-        /// <param name="sender">The sender of this message.</param>
-        /// <param name="message">The received message.</param>
+        /// <inheritdoc />
         public abstract void Execute(ISender sender, IMessage message);
 
-        protected abstract void Dispose(bool disposing);
         void IProgress<T>.Report(T value) => OnReport(value);
     }
 
@@ -122,7 +100,7 @@ namespace Quasar.Common.Messages
     internal static class ProgressStatics
     {
         /// <summary>
-        /// A default synchronization context that targets the ThreadPool.
+        /// A default synchronization context that targets the <see cref="ThreadPool"/>.
         /// </summary>
         internal static readonly SynchronizationContext DefaultContext = new SynchronizationContext();
     }

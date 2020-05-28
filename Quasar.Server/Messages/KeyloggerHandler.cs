@@ -9,7 +9,10 @@ using System.IO;
 
 namespace Quasar.Server.Messages
 {
-    public class KeyloggerHandler : MessageProcessorBase<string>
+    /// <summary>
+    /// Handles messages for the interaction with the remote keylogger.
+    /// </summary>
+    public class KeyloggerHandler : MessageProcessorBase<string>, IDisposable
     {
         /// <summary>
         /// The client which is associated with this keylogger handler.
@@ -131,7 +134,16 @@ namespace Quasar.Server.Messages
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

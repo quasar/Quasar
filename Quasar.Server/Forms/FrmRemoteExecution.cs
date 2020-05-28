@@ -95,7 +95,6 @@ namespace Quasar.Server.Forms
             foreach (var handler in _remoteExecutionMessageHandlers)
             {
                 UnregisterMessageHandler(handler);
-                handler.TaskHandler.Dispose();
                 handler.FileHandler.Dispose();
             }
 

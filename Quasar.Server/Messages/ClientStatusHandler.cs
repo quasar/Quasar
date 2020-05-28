@@ -5,6 +5,9 @@ using Quasar.Server.Networking;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote client status.
+    /// </summary>
     public class ClientStatusHandler : MessageProcessorBase<object>
     {
         /// <summary>
@@ -104,10 +107,6 @@ namespace Quasar.Server.Messages
         private void Execute(Client client, SetUserStatus message)
         {
             OnUserStatusUpdated(client, message.Message);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

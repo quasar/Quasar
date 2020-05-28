@@ -1,14 +1,18 @@
-﻿using System.Drawing;
-using System.IO;
-using Quasar.Common.Enums;
+﻿using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using Quasar.Common.Video.Codecs;
 using Quasar.Server.Networking;
+using System;
+using System.Drawing;
+using System.IO;
 
 namespace Quasar.Server.Messages
 {
-    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>
+    /// <summary>
+    /// Handles messages for the interaction with the remote desktop.
+    /// </summary>
+    public class RemoteDesktopHandler : MessageProcessorBase<Bitmap>, IDisposable
     {
         /// <summary>
         /// States if the client is currently streaming desktop frames.
@@ -221,7 +225,16 @@ namespace Quasar.Server.Messages
             OnDisplaysChanged(message.Number);
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

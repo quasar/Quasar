@@ -142,7 +142,6 @@ namespace Quasar.Server.Forms
         private void FrmRegistryEditor_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            _registryHandler.Dispose();
         }
         
         private void ShowErrorMessage(object sender, string errorMsg)

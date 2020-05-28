@@ -1,4 +1,5 @@
 ﻿using Quasar.Common.Enums;
+using System;
 using System.Security.Principal;
 
 namespace Quasar.Client.User
@@ -11,9 +12,9 @@ namespace Quasar.Client.User
 
         public UserAccount()
         {
+            UserName = Environment.UserName;
             using (WindowsIdentity identity = WindowsIdentity.GetCurrent())
             {
-                UserName = identity.Name;
                 WindowsPrincipal principal = new WindowsPrincipal(identity);
 
                 if (principal.IsInRole(WindowsBuiltInRole.Administrator))

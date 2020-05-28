@@ -1,12 +1,10 @@
-﻿using System;
-using System.Net;
+﻿using System.Net;
 using System.Windows.Forms;
 
 namespace Quasar.Client
 {
     internal static class Program
     {
-        [STAThread]
         private static void Main(string[] args)
         {
             // enable TLS 1.2

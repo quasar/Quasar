@@ -126,7 +126,8 @@ namespace Quasar.Server.Forms
         private void FrmRemoteShell_FormClosing(object sender, FormClosingEventArgs e)
         {
             UnregisterMessageHandler();
-            RemoteShellHandler.Dispose();
+            if (_connectClient.Connected)
+                RemoteShellHandler.SendCommand("exit");
         }
 
         private void txtConsoleOutput_TextChanged(object sender, EventArgs e)

