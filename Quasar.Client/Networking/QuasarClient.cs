@@ -14,16 +14,38 @@ using System.Threading;
 
 namespace Quasar.Client.Networking
 {
-    public class QuasarClient : Client
+    public class QuasarClient : Client, IDisposable
     {
         /// <summary>
-        /// When Exiting is true, stop all running threads and exit.
+        /// Used to keep track if the client has been identified by the server.
         /// </summary>
-        public bool Exiting { get; private set; }
-        public bool Identified { get; private set; }
+        private bool _identified;
+
+        /// <summary>
+        /// The hosts manager which contains the available hosts to connect to.
+        /// </summary>
         private readonly HostsManager _hosts;
+
+        /// <summary>
+        /// Random number generator to slightly randomize the reconnection delay.
+        /// </summary>
         private readonly SafeRandom _random;
 
+        /// <summary>
+        /// Create a <see cref="_token"/> and signals cancellation.
+        /// </summary>
+        private readonly CancellationTokenSource _tokenSource;
+
+        /// <summary>
+        /// The token to check for cancellation.
+        /// </summary>
+        private readonly CancellationToken _token;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="QuasarClient"/> class.
+        /// </summary>
+        /// <param name="hostsManager">The hosts manager which contains the available hosts to connect to.</param>
+        /// <param name="serverCertificate">The server certificate.</param>
         public QuasarClient(HostsManager hostsManager, X509Certificate2 serverCertificate)
             : base(serverCertificate)
         {
@@ -32,12 +54,17 @@ namespace Quasar.Client.Networking
             base.ClientState += OnClientState;
             base.ClientRead += OnClientRead;
             base.ClientFail += OnClientFail;
+            this._tokenSource = new CancellationTokenSource();
+            this._token = _tokenSource.Token;
         }
 
+        /// <summary>
+        /// Connection loop used to reconnect and keep the connection open.
+        /// </summary>
         public void ConnectLoop()
         {
             // TODO: do not re-use object
-            while (!Exiting) // Main Connect Loop
+            while (!_token.IsCancellationRequested)
             {
                 if (!Connected)
                 {
@@ -48,10 +75,10 @@ namespace Quasar.Client.Networking
 
                 while (Connected) // hold client open
                 {
-                    Thread.Sleep(1000);
+                    _token.WaitHandle.WaitOne(1000);
                 }
 
-                if (Exiting)
+                if (_token.IsCancellationRequested)
                 {
                     Disconnect();
                     return;
@@ -63,12 +90,12 @@ namespace Quasar.Client.Networking
 
         private void OnClientRead(Client client, IMessage message, int messageLength)
         {
-            if (!Identified)
+            if (!_identified)
             {
                 if (message.GetType() == typeof(ClientIdentificationResult))
                 {
                     var reply = (ClientIdentificationResult) message;
-                    Identified = reply.Result;
+                    _identified = reply.Result;
                 }
                 return;
             }
@@ -84,7 +111,7 @@ namespace Quasar.Client.Networking
 
         private void OnClientState(Client client, bool connected)
         {
-            Identified = false; // always reset identification
+            _identified = false; // always reset identification
 
             if (connected)
             {
@@ -111,10 +138,31 @@ namespace Quasar.Client.Networking
             }
         }
 
+        /// <summary>
+        /// Stops the connection loop and disconnects the connection.
+        /// </summary>
         public void Exit()
         {
-            Exiting = true;
+            _tokenSource.Cancel();
             Disconnect();
+        }
+
+        /// <summary>
+        /// Disposes all managed and unmanaged resources associated with this activity detection service.
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                _tokenSource.Cancel();
+                _tokenSource.Dispose();
+            }
         }
     }
 }

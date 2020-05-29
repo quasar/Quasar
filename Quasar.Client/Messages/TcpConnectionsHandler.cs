@@ -74,11 +74,12 @@ namespace Quasar.Client.Messages
                     message.RemotePort == table[i].RemotePort)
                 {
                     // it will close the connection only if client run as admin
-                    //table[i].state = (byte)ConnectionStates.Delete_TCB;
-                    table[i].state = 12; // 12 for Delete_TCB state
+                    table[i].state = (byte) ConnectionState.Delete_TCB;
                     var ptr = Marshal.AllocCoTaskMem(Marshal.SizeOf(table[i]));
                     Marshal.StructureToPtr(table[i], ptr, false);
                     NativeMethods.SetTcpEntry(ptr);
+                    Execute(client, new GetConnections());
+                    return;
                 }
             }
         }
@@ -88,11 +89,12 @@ namespace Quasar.Client.Messages
             NativeMethods.MibTcprowOwnerPid[] tTable;
             var afInet = 2;
             var buffSize = 0;
-            var ret = NativeMethods.GetExtendedTcpTable(IntPtr.Zero, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
+            // retrieve correct pTcpTable size
+            NativeMethods.GetExtendedTcpTable(IntPtr.Zero, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
             var buffTable = Marshal.AllocHGlobal(buffSize);
             try
             {
-                ret = NativeMethods.GetExtendedTcpTable(buffTable, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
+                var ret = NativeMethods.GetExtendedTcpTable(buffTable, ref buffSize, true, afInet, NativeMethods.TcpTableClass.TcpTableOwnerPidAll);
                 if (ret != 0)
                     return null;
                 var tab = (NativeMethods.MibTcptableOwnerPid)Marshal.PtrToStructure(buffTable, typeof(NativeMethods.MibTcptableOwnerPid));

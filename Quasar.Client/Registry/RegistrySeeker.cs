@@ -1,42 +1,24 @@
-﻿using System;
-using System.Collections.Generic;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
+using System;
+using System.Collections.Generic;
 
 namespace Quasar.Client.Registry
 {
     public class RegistrySeeker
     {
-
-        #region Fields
-
-        /// <summary>
-        /// The lock used to ensure thread safety.
-        /// </summary>
-        private readonly object locker = new object();
-
         /// <summary>
         /// The list containing the matches found during the search.
         /// </summary>
-        private List<RegSeekerMatch> matches;
+        private readonly List<RegSeekerMatch> _matches;
 
-        public RegSeekerMatch[] Matches
-        {
-            get
-            {
-                if (matches != null)
-                    return matches.ToArray();
-                return null;
-            }
-        }
-
-        #endregion
+        public RegSeekerMatch[] Matches => _matches?.ToArray();
 
         public RegistrySeeker()
         {
-            matches = new List<RegSeekerMatch>();
+            _matches = new List<RegSeekerMatch>();
         }
 
         public void BeginSeeking(string rootKeyName)
@@ -112,14 +94,13 @@ namespace Quasar.Client.Registry
             {
                 AddMatch(keyName, RegistryKeyHelper.GetDefaultValues(), 0);
             }
-
         }
 
         private void AddMatch(string key, RegValueData[] values, int subkeycount)
         {
             RegSeekerMatch match = new RegSeekerMatch {Key = key, Data = values, HasSubKeys = subkeycount > 0};
 
-            matches.Add(match);
+            _matches.Add(match);
         }
 
         public static RegistryKey GetRootKey(string subkeyFullPath)

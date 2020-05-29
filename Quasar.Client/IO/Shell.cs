@@ -1,6 +1,5 @@
 ﻿using Quasar.Client.Networking;
 using Quasar.Common.Messages;
-using Quasar.Common.Networking;
 using System;
 using System.Diagnostics;
 using System.Globalization;
@@ -48,25 +47,18 @@ namespace Quasar.Client.IO
         /// </summary>
         private StreamWriter _inputWriter;
 
+        /// <summary>
+        /// The client to sends responses to.
+        /// </summary>
         private readonly QuasarClient _client;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Shell"/> class using a given client.
+        /// </summary>
+        /// <param name="client">The client to send shell responses to.</param>
         public Shell(QuasarClient client)
         {
             _client = client;
-        }
-
-
-
-        private void Execute(ISender client, DoShellExecute message)
-        {
-            string input = message.Command;
-
-            if ((_prc == null || _prc.HasExited) && input == "exit") return;
-
-            if (input == "exit")
-                Dispose();
-            else
-                ExecuteCommand(input);
         }
 
         /// <summary>

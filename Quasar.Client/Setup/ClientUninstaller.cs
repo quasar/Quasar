@@ -1,6 +1,5 @@
 ﻿using Quasar.Client.Config;
 using Quasar.Client.IO;
-using System;
 using System.Diagnostics;
 using System.Windows.Forms;
 
@@ -17,9 +16,6 @@ namespace Quasar.Client.Setup
             }
 
             string batchFile = BatchFile.CreateUninstallBatch(Application.ExecutablePath, Settings.LOGSPATH);
-
-            if (string.IsNullOrEmpty(batchFile))
-                throw new Exception("Could not create uninstall-batch file.");
 
             ProcessStartInfo startInfo = new ProcessStartInfo
             {

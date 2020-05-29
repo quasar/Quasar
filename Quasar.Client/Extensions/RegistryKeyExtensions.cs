@@ -1,11 +1,14 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Common.Utilities;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.Win32;
-using Quasar.Common.Utilities;
 
 namespace Quasar.Client.Extensions
 {
+    /// <summary>
+    /// Provides extensions for registry key and value operations.
+    /// </summary>
     public static class RegistryKeyExtensions
     {
         /// <summary>
@@ -25,7 +28,7 @@ namespace Quasar.Client.Extensions
         /// </summary>
         /// <param name="key">The key of which we obtain the value of.</param>
         /// <param name="keyName">The name of the key.</param>
-        /// <param name="defaultValue">The default value if value can not be determinated.</param>
+        /// <param name="defaultValue">The default value if value can not be determined.</param>
         /// <returns>Returns the value of the key using the specified key name. If unable to do so,
         /// defaultValue will be returned instead.</returns>
         public static string GetValueSafe(this RegistryKey key, string keyName, string defaultValue = "")
@@ -107,8 +110,7 @@ namespace Quasar.Client.Extensions
         /// </summary>
         /// <param name="key">The key of which the sub-key is to be deleted from.</param>
         /// <param name="name">The name of the sub-key.</param>
-        /// <returns>Returns boolean value if the action succeded or failed
-        /// </returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool DeleteSubKeyTreeSafe(this RegistryKey key, string name)
         {
             try
@@ -121,8 +123,6 @@ namespace Quasar.Client.Extensions
                 return false;
             }
         }
-
-        #region Rename Key
 
         /*
         * Derived and Adapted from drdandle's article, 
@@ -146,21 +146,20 @@ namespace Quasar.Client.Extensions
         /// <param name="key">The key of which the subkey is to be renamed from.</param>
         /// <param name="oldName">The old name of the sub-key.</param>
         /// <param name="newName">The new name of the sub-key.</param>
-        /// <returns>Returns boolean value if the action succeded or failed; Returns 
-        /// </returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool RenameSubKeySafe(this RegistryKey key, string oldName, string newName)
         {
             try
             {
                 //Copy from old to new
                 key.CopyKey(oldName, newName);
-                //Despose of the old key
+                //Dispose of the old key
                 key.DeleteSubKeyTree(oldName);
                 return true;
             }
             catch
             {
-                //Try to despose of the newKey (The rename failed)
+                //Try to dispose of the newKey (The rename failed)
                 key.DeleteSubKeyTreeSafe(newName);
                 return false;
             }
@@ -173,8 +172,6 @@ namespace Quasar.Client.Extensions
         /// <param name="key">The key of which the subkey is to be deleted from.</param>
         /// <param name="oldName">The old name of the sub-key.</param>
         /// <param name="newName">The new name of the sub-key.</param>
-        /// <returns>Returns nothing 
-        /// </returns>
         public static void CopyKey(this RegistryKey key, string oldName, string newName)
         {
             //Create a new key
@@ -195,8 +192,6 @@ namespace Quasar.Client.Extensions
         /// </summary>
         /// <param name="sourceKey">The source key to copy from.</param>
         /// <param name="destKey">The destination key to copy to.</param>
-        /// <returns>Returns nothing 
-        /// </returns>
         private static void RecursiveCopyKey(RegistryKey sourceKey, RegistryKey destKey)
         {
 
@@ -222,10 +217,6 @@ namespace Quasar.Client.Extensions
             }
         }
 
-        #endregion
-
-        #region Region Value
-
         /// <summary>
         /// Attempts to set a registry value for the key provided using the specified
         /// name, data and kind. If the registry value does not exist it will be created
@@ -234,7 +225,7 @@ namespace Quasar.Client.Extensions
         /// <param name="name">The name of the value.</param>
         /// <param name="data">The data of the value</param>
         /// <param name="kind">The value kind of the value</param>
-        /// <returns>Returns a boolean value if the action succeeded or failed.</returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool SetValueSafe(this RegistryKey key, string name, object data, RegistryValueKind kind)
         {
             try
@@ -274,7 +265,7 @@ namespace Quasar.Client.Extensions
         /// </summary>
         /// <param name="key">The key of which the value is to be delete from.</param>
         /// <param name="name">The name of the value.</param>
-        /// <returns>Returns a boolean value if the action succeded or failed.</returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool DeleteValueSafe(this RegistryKey key, string name)
         {
             try
@@ -288,8 +279,6 @@ namespace Quasar.Client.Extensions
             }
         }
 
-        #region Rename Value
-
         /// <summary>
         /// Attempts to rename a registry value to the key provided using the specified old
         /// name and new name.
@@ -297,21 +286,20 @@ namespace Quasar.Client.Extensions
         /// <param name="key">The key of which the registry value is to be renamed from.</param>
         /// <param name="oldName">The old name of the registry value.</param>
         /// <param name="newName">The new name of the registry value.</param>
-        /// <returns>Returns boolean value if the action succeded or failed; Returns 
-        /// </returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool RenameValueSafe(this RegistryKey key, string oldName, string newName)
         {
             try
             {
                 //Copy from old to new
                 key.CopyValue(oldName, newName);
-                //Despose of the old value
+                //Dispose of the old value
                 key.DeleteValue(oldName);
                 return true;
             }
             catch
             {
-                //Try to despose of the newKey (The rename failed)
+                //Try to dispose of the newKey (The rename failed)
                 key.DeleteValueSafe(newName);
                 return false;
             }
@@ -324,8 +312,6 @@ namespace Quasar.Client.Extensions
         /// <param name="key">The key of which the registry value is to be copied.</param>
         /// <param name="oldName">The old name of the registry value.</param>
         /// <param name="newName">The new name of the registry value.</param>
-        /// <returns>Returns nothing 
-        /// </returns>
         public static void CopyValue(this RegistryKey key, string oldName, string newName)
         {
             RegistryValueKind valueKind = key.GetValueKind(oldName);
@@ -334,19 +320,12 @@ namespace Quasar.Client.Extensions
             key.SetValue(newName, valueData, valueKind);
         }
 
-        #endregion
-
-        #endregion
-
-        #region Find
-
         /// <summary>
         /// Checks if the specified subkey exists in the key
         /// </summary>
         /// <param name="key">The key of which to search.</param>
         /// <param name="name">The name of the sub-key to find.</param>
-        /// <returns>Returns boolean value if the action succeded or failed
-        /// </returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool ContainsSubKey(this RegistryKey key, string name)
         {
             foreach (string subkey in key.GetSubKeyNames())
@@ -364,8 +343,7 @@ namespace Quasar.Client.Extensions
         /// </summary>
         /// <param name="key">The key of which to search.</param>
         /// <param name="name">The name of the registry value to find.</param>
-        /// <returns>Returns boolean value if the action succeded or failed
-        /// </returns>
+        /// <returns>Returns <c>true</c> if the action succeeded, otherwise <c>false</c>.</returns>
         public static bool ContainsValue(this RegistryKey key, string name)
         {
             foreach (string value in key.GetValueNames())
@@ -377,8 +355,6 @@ namespace Quasar.Client.Extensions
             }
             return false;
         }
-
-        #endregion
 
         /// <summary>
         /// Gets all of the value names associated with the registry key and returns
@@ -396,6 +372,11 @@ namespace Quasar.Client.Extensions
             }
         }
 
+        /// <summary>
+        /// Gets the default value for a given data type of a registry value.
+        /// </summary>
+        /// <param name="valueKind">The data type of the registry value.</param>
+        /// <returns>The default value for the given <see cref="valueKind"/>.</returns>
         public static object GetDefault(this RegistryValueKind valueKind)
         {
             switch (valueKind)

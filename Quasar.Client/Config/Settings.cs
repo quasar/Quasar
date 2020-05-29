@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Config
 {
+    /// <summary>
+    /// Stores the configuration of the client.
+    /// </summary>
     public static class Settings
     {
 #if DEBUG
