@@ -6,7 +6,7 @@ using System.Text;
 namespace Quasar.Client.Utilities
 {
     /// <summary>
-    /// Provides access to Win32 API and Microsoft C Runtime Library (msvcrt.dll).
+    /// Provides access to the Win32 API.
     /// </summary>
     public static class NativeMethods
     {
@@ -26,18 +26,6 @@ namespace Quasar.Client.Utilities
 
         [DllImport("kernel32.dll", SetLastError = true)]
         internal static extern bool QueryFullProcessImageName([In] IntPtr hProcess, [In] uint dwFlags, [Out] StringBuilder lpExeName, [In, Out] ref uint lpdwSize);
-
-        [DllImport("user32.dll")]
-        internal static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
-
-        [DllImport("user32.dll")]
-        internal static extern bool SetCursorPos(int x, int y);
-
-        [DllImport("user32.dll")]
-        internal static extern void mouse_event(uint dwFlags, int dx, int dy, int dwData, UIntPtr dwExtraInfo);
-
-        [DllImport("user32.dll")]
-        internal static extern bool keybd_event(byte bVk, byte bScan, uint dwFlags, UIntPtr dwExtraInfo);
 
         /// <summary>
         ///    Performs a bit-block transfer of the color data corresponding to a
@@ -67,26 +55,74 @@ namespace Quasar.Client.Utilities
         [DllImport("gdi32.dll")]
         internal static extern bool DeleteDC([In] IntPtr hdc);
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern unsafe int memcmp(byte* ptr1, byte* ptr2, uint count);
+        [DllImport("user32.dll")]
+        internal static extern bool GetLastInputInfo(ref LASTINPUTINFO plii);
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int memcmp(IntPtr ptr1, IntPtr ptr2, uint count);
+        [DllImport("user32.dll")]
+        internal static extern bool SetCursorPos(int x, int y);
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern int memcpy(IntPtr dst, IntPtr src, uint count);
+        [DllImport("user32.dll", SetLastError = false)]
+        internal static extern IntPtr GetMessageExtraInfo();
 
-        [DllImport("msvcrt.dll", CallingConvention = CallingConvention.Cdecl)]
-        internal static extern unsafe int memcpy(void* dst, void* src, uint count);
+        /// <summary>
+        /// Synthesizes keystrokes, mouse motions, and button clicks.
+        /// </summary>
+        [DllImport("user32.dll")]
+        internal static extern uint SendInput(uint nInputs,
+            [MarshalAs(UnmanagedType.LPArray), In] INPUT[] pInputs,
+            int cbSize);
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct INPUT
+        {
+            internal uint type;
+            internal InputUnion u;
+            internal static int Size => Marshal.SizeOf(typeof(INPUT));
+        }
+
+        [StructLayout(LayoutKind.Explicit)]
+        internal struct InputUnion
+        {
+            [FieldOffset(0)]
+            internal MOUSEINPUT mi;
+            [FieldOffset(0)]
+            internal KEYBDINPUT ki;
+            [FieldOffset(0)]
+            internal HARDWAREINPUT hi;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct MOUSEINPUT
+        {
+            internal int dx;
+            internal int dy;
+            internal int mouseData;
+            internal uint dwFlags;
+            internal uint time;
+            internal IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct KEYBDINPUT
+        {
+            internal ushort wVk;
+            internal ushort wScan;
+            internal uint dwFlags;
+            internal uint time;
+            internal IntPtr dwExtraInfo;
+        }
+
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct HARDWAREINPUT
+        {
+            public uint uMsg;
+            public ushort wParamL;
+            public ushort wParamH;
+        }
 
         [DllImport("user32.dll")]
         internal static extern bool SystemParametersInfo(
             uint uAction, uint uParam, ref IntPtr lpvParam,
-            uint flags);
-
-        [DllImport("user32.dll")]
-        internal static extern bool SystemParametersInfo(
-            uint uAction, uint uParam, ref bool lpvParam,
             uint flags);
 
         [DllImport("user32.dll")]
@@ -135,7 +171,6 @@ namespace Quasar.Client.Utilities
             public uint remoteAddr;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 4)] public byte[] remotePort;
             public uint owningPid;
-
             public IPAddress LocalAddress
             {
                 get { return new IPAddress(localAddr); }

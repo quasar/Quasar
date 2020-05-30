@@ -8,6 +8,9 @@ namespace Quasar.Client.Helper
 {
     public static class NativeMethodsHelper
     {
+        private const int INPUT_MOUSE = 0;
+        private const int INPUT_KEYBOARD = 1;
+
         private const uint MOUSEEVENTF_LEFTDOWN = 0x0002;
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
         private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
@@ -27,12 +30,50 @@ namespace Quasar.Client.Helper
 
         public static void DoMouseLeftClick(Point p, bool isMouseDown)
         {
-            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP, p.X, p.Y, 0, UIntPtr.Zero);
+            NativeMethods.INPUT[] inputs = {
+                new NativeMethods.INPUT
+                {
+                    type = INPUT_MOUSE,
+                    u = new NativeMethods.InputUnion
+                    {
+                        mi = new NativeMethods.MOUSEINPUT
+                        {
+                            dx = p.X,
+                            dy = p.Y,
+                            mouseData = 0,
+                            dwFlags = isMouseDown ? MOUSEEVENTF_LEFTDOWN : MOUSEEVENTF_LEFTUP,
+                            time = 0,
+                            dwExtraInfo = NativeMethods.GetMessageExtraInfo()
+                        }
+                    }
+                }
+            };
+
+            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
         }
 
         public static void DoMouseRightClick(Point p, bool isMouseDown)
         {
-            NativeMethods.mouse_event(isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP, p.X, p.Y, 0, UIntPtr.Zero);
+            NativeMethods.INPUT[] inputs = {
+                new NativeMethods.INPUT
+                {
+                    type = INPUT_MOUSE,
+                    u = new NativeMethods.InputUnion
+                    {
+                        mi = new NativeMethods.MOUSEINPUT
+                        {
+                            dx = p.X,
+                            dy = p.Y,
+                            mouseData = 0,
+                            dwFlags = isMouseDown ? MOUSEEVENTF_RIGHTDOWN : MOUSEEVENTF_RIGHTUP,
+                            time = 0,
+                            dwExtraInfo = NativeMethods.GetMessageExtraInfo()
+                        }
+                    }
+                }
+            };
+
+            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
         }
 
         public static void DoMouseMove(Point p)
@@ -42,12 +83,48 @@ namespace Quasar.Client.Helper
 
         public static void DoMouseScroll(Point p, bool scrollDown)
         {
-            NativeMethods.mouse_event(MOUSEEVENTF_WHEEL, p.X, p.Y, scrollDown ? -120 : 120, UIntPtr.Zero);
+            NativeMethods.INPUT[] inputs = {
+                new NativeMethods.INPUT
+                {
+                    type = INPUT_MOUSE,
+                    u = new NativeMethods.InputUnion
+                    {
+                        mi = new NativeMethods.MOUSEINPUT
+                        {
+                            dx = p.X,
+                            dy = p.Y,
+                            mouseData = scrollDown ? -120 : 120,
+                            dwFlags = MOUSEEVENTF_WHEEL,
+                            time = 0,
+                            dwExtraInfo = NativeMethods.GetMessageExtraInfo()
+                        }
+                    }
+                }
+            };
+
+            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
         }
 
         public static void DoKeyPress(byte key, bool keyDown)
         {
-            NativeMethods.keybd_event(key, 0, keyDown ? KEYEVENTF_KEYDOWN : KEYEVENTF_KEYUP, UIntPtr.Zero);
+            NativeMethods.INPUT[] inputs = {
+                new NativeMethods.INPUT
+                {
+                    type = INPUT_KEYBOARD,
+                    u = new NativeMethods.InputUnion
+                    {
+                        ki = new NativeMethods.KEYBDINPUT
+                        {
+                            wVk = key,
+                            wScan = 0,
+                            dwFlags = keyDown ? KEYEVENTF_KEYDOWN : KEYEVENTF_KEYUP,
+                            dwExtraInfo = NativeMethods.GetMessageExtraInfo()
+                        }
+                    }
+                }
+            };
+
+            NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf(typeof(NativeMethods.INPUT)));
         }
 
         private const int SPI_GETSCREENSAVERRUNNING = 114;
