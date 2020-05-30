@@ -35,19 +35,5 @@ namespace Quasar.Client.Messages
 
             client.Send(new SetStatus { Message = "Successfully displayed MessageBox" });
         }
-
-        /// <summary>
-        /// Disposes all managed and unmanaged resources associated with this message processor.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            
-        }
     }
 }

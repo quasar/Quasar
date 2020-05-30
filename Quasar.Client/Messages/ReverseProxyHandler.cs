@@ -3,7 +3,6 @@ using Quasar.Client.ReverseProxy;
 using Quasar.Common.Messages;
 using Quasar.Common.Messages.ReverseProxy;
 using Quasar.Common.Networking;
-using System;
 
 namespace Quasar.Client.Messages
 {
@@ -54,20 +53,6 @@ namespace Quasar.Client.Messages
             ReverseProxyClient socksClient = _client.GetReverseProxyByConnectionId(message.ConnectionId);
 
             socksClient?.Disconnect();
-        }
-
-        /// <summary>
-        /// Disposes all managed and unmanaged resources associated with this message processor.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            
         }
     }
 }

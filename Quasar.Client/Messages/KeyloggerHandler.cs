@@ -1,7 +1,6 @@
 ﻿using Quasar.Client.Config;
 using Quasar.Common.Messages;
 using Quasar.Common.Networking;
-using System;
 
 namespace Quasar.Client.Messages
 {
@@ -24,20 +23,6 @@ namespace Quasar.Client.Messages
         public void Execute(ISender client, GetKeyloggerLogsDirectory message)
         {
             client.Send(new GetKeyloggerLogsDirectoryResponse {LogsDirectory = Settings.LOGSPATH });
-        }
-
-        /// <summary>
-        /// Disposes all managed and unmanaged resources associated with this message processor.
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
-
-        protected virtual void Dispose(bool disposing)
-        {
-            
         }
     }
 }
