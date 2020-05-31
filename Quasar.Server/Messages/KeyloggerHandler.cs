@@ -49,6 +49,7 @@ namespace Quasar.Server.Messages
             _fileManagerHandler = new FileManagerHandler(client, "Logs\\");
             _fileManagerHandler.DirectoryChanged += DirectoryChanged;
             _fileManagerHandler.FileTransferUpdated += FileTransferUpdated;
+            _fileManagerHandler.ProgressChanged += StatusUpdated;
             MessageHandler.Register(_fileManagerHandler);
         }
 
@@ -89,11 +90,17 @@ namespace Quasar.Server.Messages
             return $"Downloading...({progress}%)";
         }
 
+        private void StatusUpdated(object sender, string value)
+        {
+            // called when directory does not exist or access is denied
+            OnReport($"No logs found ({value})");
+        }
+
         private void DirectoryChanged(object sender, string remotePath, FileSystemEntry[] items)
         {
             if (items.Length == 0)
             {
-                OnReport("Ready");
+                OnReport("No logs found");
                 return;
             }
 
@@ -148,6 +155,7 @@ namespace Quasar.Server.Messages
             if (disposing)
             {
                 MessageHandler.Unregister(_fileManagerHandler);
+                _fileManagerHandler.ProgressChanged -= StatusUpdated;
                 _fileManagerHandler.FileTransferUpdated -= FileTransferUpdated;
                 _fileManagerHandler.DirectoryChanged -= DirectoryChanged;
                 _fileManagerHandler.Dispose();
