@@ -202,19 +202,19 @@ namespace Quasar.Server.Build
         /// <summary>
         /// Attempts to obtain the signed-byte value of a special folder from the install path value provided.
         /// </summary>
-        /// <param name="installpath">The integer value of the install path.</param>
+        /// <param name="installPath">The integer value of the install path.</param>
         /// <returns>Returns the signed-byte value of the special folder.</returns>
-        /// <exception cref="System.ArgumentException">Thrown if the path to the special folder was invalid.</exception>
-        private sbyte GetSpecialFolder(int installpath)
+        /// <exception cref="ArgumentException">Thrown if the path to the special folder was invalid.</exception>
+        private sbyte GetSpecialFolder(int installPath)
         {
-            switch (installpath)
+            switch (installPath)
             {
                 case 1:
                     return (sbyte)Environment.SpecialFolder.ApplicationData;
                 case 2:
-                    return (sbyte)Environment.SpecialFolder.ProgramFilesX86;
+                    return (sbyte)Environment.SpecialFolder.ProgramFiles;
                 case 3:
-                    return (sbyte)Environment.SpecialFolder.SystemX86;
+                    return (sbyte)Environment.SpecialFolder.System;
                 default:
                     throw new ArgumentException("InstallPath");
             }
