@@ -1,8 +1,6 @@
 ﻿using Quasar.Common.Enums;
-using Quasar.Common.IO;
 using Quasar.Common.Messages;
 using Quasar.Server.Extensions;
-using Quasar.Server.Helper;
 using Quasar.Server.Messages;
 using Quasar.Server.Models;
 using Quasar.Server.Networking;
@@ -12,11 +10,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Net.Sockets;
-using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Common.Cryptography;
 
 namespace Quasar.Server.Forms
 {
@@ -86,7 +82,7 @@ namespace Quasar.Server.Forms
         {
             X509Certificate2 serverCertificate;
 #if DEBUG
-            serverCertificate = CertificateHelper.CreateCertificateAuthority("Quasar Server CA", 2048);
+            serverCertificate = new DummyCertificate();
 #else
             if (!File.Exists(Settings.CertificatePath))
             {

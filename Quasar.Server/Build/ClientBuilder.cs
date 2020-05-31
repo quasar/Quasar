@@ -81,11 +81,11 @@ namespace Quasar.Server.Build
 
         private void WriteSettings(AssemblyDefinition asmDef)
         {
-            var key = StringHelper.GetRandomString(32);
-            var aes = new Aes256(key);
-
             var caCertificate = new X509Certificate2(Settings.CertificatePath, "", X509KeyStorageFlags.Exportable);
             var serverCertificate = new X509Certificate2(caCertificate.Export(X509ContentType.Cert)); // export without private key, very important!
+
+            var key = serverCertificate.Thumbprint;
+            var aes = new Aes256(key);
 
             byte[] signature;
             // https://stackoverflow.com/a/49777672 RSACryptoServiceProvider must be changed with .NET 4.6

