@@ -84,7 +84,17 @@ namespace Quasar.Common.Video.Codecs
         {
             lock (_imageProcessLock)
             {
-                byte* pScan0 = (byte*)scan0.ToInt32();
+                byte* pScan0;
+                if (IntPtr.Size == 8)
+                {
+                    // 64 bit process
+                    pScan0 = (byte*) scan0.ToInt64();
+                }
+                else
+                {
+                    // 32 bit process
+                    pScan0 = (byte*)scan0.ToInt32();
+                }
 
                 if (!outStream.CanWrite)
                 {

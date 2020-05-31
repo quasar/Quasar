@@ -6,8 +6,6 @@
         LocalMachineRunOnce,
         CurrentUserRun,
         CurrentUserRunOnce,
-        LocalMachineWoW64Run,
-        LocalMachineWoW64RunOnce,
         StartMenu
     }
 }

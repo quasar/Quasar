@@ -423,16 +423,12 @@ namespace Quasar.Server.Forms
                 path =
                     Path.Combine(
                         Path.Combine(
-                            Environment.GetFolderPath(PlatformHelper.Is64Bit
-                                ? Environment.SpecialFolder.ProgramFilesX86
-                                : Environment.SpecialFolder.ProgramFiles), txtInstallSubDirectory.Text), txtInstallName.Text);
+                            Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), txtInstallSubDirectory.Text), txtInstallName.Text);
             else if (rbSystem.Checked)
                 path =
                     Path.Combine(
                         Path.Combine(
-                            Environment.GetFolderPath(PlatformHelper.Is64Bit
-                                ? Environment.SpecialFolder.SystemX86
-                                : Environment.SpecialFolder.System), txtInstallSubDirectory.Text), txtInstallName.Text);
+                            Environment.GetFolderPath(Environment.SpecialFolder.System), txtInstallSubDirectory.Text), txtInstallName.Text);
 
             this.Invoke((MethodInvoker)delegate { txtPreviewPath.Text = path + ".exe"; });
         }
