@@ -124,7 +124,7 @@ namespace Quasar.Client.Networking
                 {
                     Version = Settings.VERSION,
                     OperatingSystem = PlatformHelper.FullName,
-                    AccountType = nameof(userAccount.Type),
+                    AccountType = userAccount.Type.ToString(),
                     Country = geoInfo.Country,
                     CountryCode = geoInfo.CountryCode,
                     ImageIndex = geoInfo.ImageIndex,
