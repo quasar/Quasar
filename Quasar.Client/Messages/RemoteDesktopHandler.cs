@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
-    public class RemoteDesktopHandler : IMessageProcessor
+    public class RemoteDesktopHandler : IMessageProcessor, IDisposable
     {
         private UnsafeStreamCodec _streamCodec;
 

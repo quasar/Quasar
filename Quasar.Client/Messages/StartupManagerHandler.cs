@@ -86,35 +86,6 @@ namespace Quasar.Client.Messages
                         }
                     }
                 }
-                if (PlatformHelper.Is64Bit)
-                {
-                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
-                    {
-                        if (key != null)
-                        {
-                            foreach (var item in key.GetKeyValues())
-                            {
-                                startupItems.Add(new Common.Models.StartupItem
-                                { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineWoW64Run });
-                            }
-                        }
-                    }
-                    using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
-                    {
-                        if (key != null)
-                        {
-                            foreach (var item in key.GetKeyValues())
-                            {
-                                startupItems.Add(new Common.Models.StartupItem
-                                {
-                                    Name = item.Item1,
-                                    Path = item.Item2,
-                                    Type = StartupType.LocalMachineWoW64RunOnce
-                                });
-                            }
-                        }
-                    }
-                }
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
@@ -161,26 +132,6 @@ namespace Quasar.Client.Messages
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name, message.StartupItem.Path, true))
-                        {
-                            throw new Exception("Could not add value");
-                        }
-                        break;
-                    case StartupType.LocalMachineWoW64Run:
-                        if (!PlatformHelper.Is64Bit)
-                            throw new NotSupportedException("Only on 64-bit systems supported");
-
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", message.StartupItem.Name, message.StartupItem.Path, true))
-                        {
-                            throw new Exception("Could not add value");
-                        }
-                        break;
-                    case StartupType.LocalMachineWoW64RunOnce:
-                        if (!PlatformHelper.Is64Bit)
-                            throw new NotSupportedException("Only on 64-bit systems supported");
-
-                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name, message.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
@@ -241,26 +192,6 @@ namespace Quasar.Client.Messages
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name))
-                        {
-                            throw new Exception("Could not remove value");
-                        }
-                        break;
-                    case StartupType.LocalMachineWoW64Run:
-                        if (!PlatformHelper.Is64Bit)
-                            throw new NotSupportedException("Only on 64-bit systems supported");
-
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", message.StartupItem.Name))
-                        {
-                            throw new Exception("Could not remove value");
-                        }
-                        break;
-                    case StartupType.LocalMachineWoW64RunOnce:
-                        if (!PlatformHelper.Is64Bit)
-                            throw new NotSupportedException("Only on 64-bit systems supported");
-
-                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
-                            "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }

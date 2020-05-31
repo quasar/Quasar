@@ -16,7 +16,7 @@ namespace Quasar.Client.Messages
     /// <summary>
     /// Handles messages for the interaction with tasks.
     /// </summary>
-    public class TaskManagerHandler : IMessageProcessor
+    public class TaskManagerHandler : IMessageProcessor, IDisposable
     {
         private readonly QuasarClient _client;
 

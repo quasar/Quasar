@@ -9,7 +9,7 @@ namespace Quasar.Client.Messages
     /// <summary>
     /// Handles messages for the interaction with the remote shell.
     /// </summary>
-    public class RemoteShellHandler : IMessageProcessor
+    public class RemoteShellHandler : IMessageProcessor, IDisposable
     {
         /// <summary>
         /// The current remote shell instance.
