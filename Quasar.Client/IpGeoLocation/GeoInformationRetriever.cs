@@ -2,8 +2,6 @@
 using System.Globalization;
 using System.IO;
 using System.Net;
-using System.Runtime.Serialization.Json;
-using System.Text;
 
 namespace Quasar.Client.IpGeoLocation
 {
@@ -83,8 +81,6 @@ namespace Quasar.Client.IpGeoLocation
         {
             try
             {
-                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(GeoResponse));
-
                 HttpWebRequest request = (HttpWebRequest)WebRequest.Create("https://tools.keycdn.com/geo.json");
                 request.UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:76.0) Gecko/20100101 Firefox/76.0";
                 request.Proxy = null;
@@ -94,27 +90,19 @@ namespace Quasar.Client.IpGeoLocation
                 {
                     using (Stream dataStream = response.GetResponseStream())
                     {
-                        using (StreamReader reader = new StreamReader(dataStream))
+                        var geoInfo = JsonHelper.Deserialize<GeoResponse>(dataStream);
+
+                        GeoInformation g = new GeoInformation
                         {
-                            string responseString = reader.ReadToEnd();
+                            IpAddress = geoInfo.Data.Geo.Ip,
+                            Country = geoInfo.Data.Geo.CountryName,
+                            CountryCode = geoInfo.Data.Geo.CountryCode,
+                            Timezone = geoInfo.Data.Geo.Timezone,
+                            Asn = geoInfo.Data.Geo.Asn.ToString(),
+                            Isp = geoInfo.Data.Geo.Isp
+                        };
 
-                            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(responseString)))
-                            {
-                                var geoInfo = (GeoResponse)jsonSerializer.ReadObject(ms);
-
-                                GeoInformation g = new GeoInformation
-                                {
-                                    IpAddress = geoInfo.Data.Geo.Ip,
-                                    Country = geoInfo.Data.Geo.CountryName,
-                                    CountryCode = geoInfo.Data.Geo.CountryCode,
-                                    Timezone = geoInfo.Data.Geo.Timezone,
-                                    Asn = geoInfo.Data.Geo.Asn.ToString(),
-                                    Isp = geoInfo.Data.Geo.Isp
-                                };
-
-                                return g;
-                            }
-                        }
+                        return g;
                     }
                 }
             }

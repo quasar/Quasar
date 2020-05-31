@@ -15,14 +15,14 @@ namespace Quasar.Client.IpGeoLocation
         public DataObject Data { get; set; }
     }
 
-    [DataContract()]
+    [DataContract]
     public class DataObject
     {
         [DataMember(Name = "geo")]
         public LocationData Geo { get; set; }
     }
 
-    [DataContract()]
+    [DataContract]
     public class LocationData
     {
         [DataMember(Name = "host")]

