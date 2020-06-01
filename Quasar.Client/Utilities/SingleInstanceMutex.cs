@@ -4,7 +4,7 @@ using System.Threading;
 namespace Quasar.Client.Utilities
 {
     /// <summary>
-    /// A system-wide mutex that ensures that only one instance runs at a time.
+    /// A user-wide mutex that ensures that only one instance runs at a time.
     /// </summary>
     public class SingleInstanceMutex : IDisposable
     {
@@ -29,7 +29,7 @@ namespace Quasar.Client.Utilities
         /// <param name="name">The name of the mutex.</param>
         public SingleInstanceMutex(string name)
         {
-            _appMutex = new Mutex(false, name, out var createdNew);
+            _appMutex = new Mutex(false, $"Local\\{name}", out var createdNew);
             CreatedNew = createdNew;
         }
 
