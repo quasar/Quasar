@@ -36,15 +36,6 @@ namespace Quasar.Common.Helpers
         }
 
         /// <summary>
-        /// Gets a random mutex.
-        /// </summary>
-        /// <returns>A random mutex.</returns>
-        public static string GetRandomMutex()
-        {
-            return "QSR_MUTEX_" + GetRandomString(18);
-        }
-
-        /// <summary>
         /// Gets the human readable file size for a given size.
         /// </summary>
         /// <param name="size">The file size in bytes.</param>

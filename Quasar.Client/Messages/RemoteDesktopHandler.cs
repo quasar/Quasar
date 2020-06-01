@@ -12,18 +12,18 @@ using System.Windows.Forms;
 
 namespace Quasar.Client.Messages
 {
-    public class RemoteDesktopHandler : IMessageProcessor, IDisposable
+    public class RemoteDesktopHandler : NotificationMessageProcessor, IDisposable
     {
         private UnsafeStreamCodec _streamCodec;
 
-        public bool CanExecute(IMessage message) => message is GetDesktop ||
+        public override bool CanExecute(IMessage message) => message is GetDesktop ||
                                                              message is DoMouseEvent ||
                                                              message is DoKeyboardEvent ||
                                                              message is GetMonitors;
 
-        public bool CanExecuteFrom(ISender sender) => true;
+        public override bool CanExecuteFrom(ISender sender) => true;
 
-        public void Execute(ISender sender, IMessage message)
+        public override void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -52,8 +52,14 @@ namespace Quasar.Client.Messages
             if (_streamCodec == null)
                 _streamCodec = new UnsafeStreamCodec(message.Quality, message.DisplayIndex, resolution);
 
-            if (message.CreateNew || _streamCodec.ImageQuality != message.Quality || _streamCodec.Monitor != message.DisplayIndex
-                || _streamCodec.Resolution != resolution)
+            if (message.CreateNew)
+            {
+                _streamCodec?.Dispose();
+                _streamCodec = new UnsafeStreamCodec(message.Quality, message.DisplayIndex, resolution);
+                OnReport("Remote desktop session started");
+            }
+
+            if (_streamCodec.ImageQuality != message.Quality || _streamCodec.Monitor != message.DisplayIndex || _streamCodec.Resolution != resolution)
             {
                 _streamCodec?.Dispose();
 

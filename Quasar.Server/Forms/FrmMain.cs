@@ -438,7 +438,7 @@ namespace Quasar.Server.Forms
                 {
                     if (c == null || c.Value == null) return;
                     
-                    notifyIcon.ShowBalloonTip(30, string.Format("Client connected from {0}!", c.Value.Country),
+                    notifyIcon.ShowBalloonTip(4000, string.Format("Client connected from {0}!", c.Value.Country),
                         string.Format("IP Address: {0}\nOperating System: {1}", c.EndPoint.Address.ToString(),
                         c.Value.OperatingSystem), ToolTipIcon.Info);
                 });
@@ -492,7 +492,7 @@ namespace Quasar.Server.Forms
             if (
                 MessageBox.Show(
                     string.Format(
-                        "Are you sure you want to uninstall the client on {0} computer\\s?\nThe clients won't come back!",
+                        "Are you sure you want to uninstall the client on {0} computer\\s?",
                         lstClients.SelectedItems.Count), "Uninstall Confirmation", MessageBoxButtons.YesNo,
                     MessageBoxIcon.Question) == DialogResult.Yes)
             {

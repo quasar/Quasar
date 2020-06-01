@@ -37,6 +37,7 @@ namespace Quasar.Client.Config
         public static bool HIDEINSTALLSUBDIRECTORY = false;
         public static string INSTALLPATH = "";
         public static string LOGSPATH = "";
+        public static bool UNATTENDEDMODE = true;
 
         public static bool Initialize()
         {
@@ -67,6 +68,7 @@ namespace Quasar.Client.Config
         public static bool HIDEINSTALLSUBDIRECTORY = false;
         public static string INSTALLPATH = "";
         public static string LOGSPATH = "";
+        public static bool UNATTENDEDMODE = false;
 
         public static bool Initialize()
         {

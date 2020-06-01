@@ -43,6 +43,10 @@ namespace Quasar.Server.Forms
             this.clearToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.builderTabs = new Quasar.Server.Controls.DotNetBarTabControl();
             this.generalPage = new System.Windows.Forms.TabPage();
+            this.label3 = new System.Windows.Forms.Label();
+            this.chkUnattendedMode = new System.Windows.Forms.CheckBox();
+            this.line2 = new Quasar.Server.Controls.Line();
+            this.label2 = new System.Windows.Forms.Label();
             this.label9 = new System.Windows.Forms.Label();
             this.line6 = new Quasar.Server.Controls.Line();
             this.label8 = new System.Windows.Forms.Label();
@@ -114,7 +118,7 @@ namespace Quasar.Server.Forms
             this.lblCopyright = new System.Windows.Forms.Label();
             this.lblTrademarks = new System.Windows.Forms.Label();
             this.txtCopyright = new System.Windows.Forms.TextBox();
-            this.surveillanceTab = new System.Windows.Forms.TabPage();
+            this.monitoringTab = new System.Windows.Forms.TabPage();
             this.chkHideLogDirectory = new System.Windows.Forms.CheckBox();
             this.txtLogDirectoryName = new System.Windows.Forms.TextBox();
             this.lblLogDirectory = new System.Windows.Forms.Label();
@@ -132,7 +136,7 @@ namespace Quasar.Server.Forms
             this.installationPage.SuspendLayout();
             this.assemblyPage.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).BeginInit();
-            this.surveillanceTab.SuspendLayout();
+            this.monitoringTab.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnBuild
@@ -224,7 +228,7 @@ namespace Quasar.Server.Forms
             this.builderTabs.Controls.Add(this.connectionPage);
             this.builderTabs.Controls.Add(this.installationPage);
             this.builderTabs.Controls.Add(this.assemblyPage);
-            this.builderTabs.Controls.Add(this.surveillanceTab);
+            this.builderTabs.Controls.Add(this.monitoringTab);
             this.builderTabs.Dock = System.Windows.Forms.DockStyle.Top;
             this.builderTabs.ItemSize = new System.Drawing.Size(44, 136);
             this.builderTabs.Location = new System.Drawing.Point(0, 0);
@@ -238,6 +242,10 @@ namespace Quasar.Server.Forms
             // generalPage
             // 
             this.generalPage.BackColor = System.Drawing.SystemColors.Control;
+            this.generalPage.Controls.Add(this.label3);
+            this.generalPage.Controls.Add(this.chkUnattendedMode);
+            this.generalPage.Controls.Add(this.line2);
+            this.generalPage.Controls.Add(this.label2);
             this.generalPage.Controls.Add(this.label9);
             this.generalPage.Controls.Add(this.line6);
             this.generalPage.Controls.Add(this.label8);
@@ -256,6 +264,45 @@ namespace Quasar.Server.Forms
             this.generalPage.TabIndex = 4;
             this.generalPage.Text = "Basic Settings";
             // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(17, 214);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(354, 26);
+            this.label3.TabIndex = 24;
+            this.label3.Text = "Activating the unattended mode allows remote control of the client\r\nwithout user " +
+    "interaction.";
+            // 
+            // chkUnattendedMode
+            // 
+            this.chkUnattendedMode.AutoSize = true;
+            this.chkUnattendedMode.Location = new System.Drawing.Point(20, 252);
+            this.chkUnattendedMode.Name = "chkUnattendedMode";
+            this.chkUnattendedMode.Size = new System.Drawing.Size(157, 17);
+            this.chkUnattendedMode.TabIndex = 23;
+            this.chkUnattendedMode.Text = "Enable unattended mode";
+            this.chkUnattendedMode.UseVisualStyleBackColor = true;
+            this.chkUnattendedMode.CheckedChanged += new System.EventHandler(this.HasChangedSetting);
+            // 
+            // line2
+            // 
+            this.line2.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
+            this.line2.Location = new System.Drawing.Point(115, 196);
+            this.line2.Name = "line2";
+            this.line2.Size = new System.Drawing.Size(270, 13);
+            this.line2.TabIndex = 22;
+            this.line2.TabStop = false;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 196);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(101, 13);
+            this.label2.TabIndex = 21;
+            this.label2.Text = "Unattended mode";
+            // 
             // label9
             // 
             this.label9.AutoSize = true;
@@ -269,7 +316,7 @@ namespace Quasar.Server.Forms
             // line6
             // 
             this.line6.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
-            this.line6.Location = new System.Drawing.Point(83, 78);
+            this.line6.Location = new System.Drawing.Point(85, 78);
             this.line6.Name = "line6";
             this.line6.Size = new System.Drawing.Size(300, 13);
             this.line6.TabIndex = 20;
@@ -286,9 +333,9 @@ namespace Quasar.Server.Forms
             // 
             // txtTag
             // 
-            this.txtTag.Location = new System.Drawing.Point(182, 40);
+            this.txtTag.Location = new System.Drawing.Point(130, 40);
             this.txtTag.Name = "txtTag";
-            this.txtTag.Size = new System.Drawing.Size(203, 22);
+            this.txtTag.Size = new System.Drawing.Size(255, 22);
             this.txtTag.TabIndex = 3;
             this.txtTag.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
@@ -306,16 +353,16 @@ namespace Quasar.Server.Forms
             this.lblTag.AutoSize = true;
             this.lblTag.Location = new System.Drawing.Point(17, 43);
             this.lblTag.Name = "lblTag";
-            this.lblTag.Size = new System.Drawing.Size(60, 13);
+            this.lblTag.Size = new System.Drawing.Size(61, 13);
             this.lblTag.TabIndex = 2;
             this.lblTag.Text = "Client Tag:";
             // 
             // txtMutex
             // 
-            this.txtMutex.Location = new System.Drawing.Point(182, 130);
+            this.txtMutex.Location = new System.Drawing.Point(130, 130);
             this.txtMutex.MaxLength = 64;
             this.txtMutex.Name = "txtMutex";
-            this.txtMutex.Size = new System.Drawing.Size(201, 22);
+            this.txtMutex.Size = new System.Drawing.Size(253, 22);
             this.txtMutex.TabIndex = 7;
             this.txtMutex.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
@@ -505,7 +552,7 @@ namespace Quasar.Server.Forms
             this.lblDelay.AutoSize = true;
             this.lblDelay.Location = new System.Drawing.Point(17, 182);
             this.lblDelay.Name = "lblDelay";
-            this.lblDelay.Size = new System.Drawing.Size(199, 13);
+            this.lblDelay.Size = new System.Drawing.Size(200, 13);
             this.lblDelay.TabIndex = 9;
             this.lblDelay.Text = "Time to wait between reconnect tries:";
             // 
@@ -974,7 +1021,7 @@ namespace Quasar.Server.Forms
             this.lblTrademarks.AutoSize = true;
             this.lblTrademarks.Location = new System.Drawing.Point(17, 159);
             this.lblTrademarks.Name = "lblTrademarks";
-            this.lblTrademarks.Size = new System.Drawing.Size(67, 13);
+            this.lblTrademarks.Size = new System.Drawing.Size(68, 13);
             this.lblTrademarks.TabIndex = 9;
             this.lblTrademarks.Text = "Trademarks:";
             // 
@@ -986,20 +1033,20 @@ namespace Quasar.Server.Forms
             this.txtCopyright.TabIndex = 8;
             this.txtCopyright.TextChanged += new System.EventHandler(this.HasChangedSetting);
             // 
-            // surveillanceTab
+            // monitoringTab
             // 
-            this.surveillanceTab.BackColor = System.Drawing.SystemColors.Control;
-            this.surveillanceTab.Controls.Add(this.chkHideLogDirectory);
-            this.surveillanceTab.Controls.Add(this.txtLogDirectoryName);
-            this.surveillanceTab.Controls.Add(this.lblLogDirectory);
-            this.surveillanceTab.Controls.Add(this.line10);
-            this.surveillanceTab.Controls.Add(this.label14);
-            this.surveillanceTab.Controls.Add(this.chkKeylogger);
-            this.surveillanceTab.Location = new System.Drawing.Point(140, 4);
-            this.surveillanceTab.Name = "surveillanceTab";
-            this.surveillanceTab.Size = new System.Drawing.Size(391, 376);
-            this.surveillanceTab.TabIndex = 3;
-            this.surveillanceTab.Text = "Surveillance Settings";
+            this.monitoringTab.BackColor = System.Drawing.SystemColors.Control;
+            this.monitoringTab.Controls.Add(this.chkHideLogDirectory);
+            this.monitoringTab.Controls.Add(this.txtLogDirectoryName);
+            this.monitoringTab.Controls.Add(this.lblLogDirectory);
+            this.monitoringTab.Controls.Add(this.line10);
+            this.monitoringTab.Controls.Add(this.label14);
+            this.monitoringTab.Controls.Add(this.chkKeylogger);
+            this.monitoringTab.Location = new System.Drawing.Point(140, 4);
+            this.monitoringTab.Name = "monitoringTab";
+            this.monitoringTab.Size = new System.Drawing.Size(391, 376);
+            this.monitoringTab.TabIndex = 3;
+            this.monitoringTab.Text = "Monitoring Settings";
             // 
             // chkHideLogDirectory
             // 
@@ -1033,9 +1080,9 @@ namespace Quasar.Server.Forms
             // line10
             // 
             this.line10.LineAlignment = Quasar.Server.Controls.Line.Alignment.Horizontal;
-            this.line10.Location = new System.Drawing.Point(72, 5);
+            this.line10.Location = new System.Drawing.Point(78, 5);
             this.line10.Name = "line10";
-            this.line10.Size = new System.Drawing.Size(308, 13);
+            this.line10.Size = new System.Drawing.Size(302, 13);
             this.line10.TabIndex = 41;
             this.line10.TabStop = false;
             // 
@@ -1044,9 +1091,9 @@ namespace Quasar.Server.Forms
             this.label14.AutoSize = true;
             this.label14.Location = new System.Drawing.Point(6, 5);
             this.label14.Name = "label14";
-            this.label14.Size = new System.Drawing.Size(68, 13);
+            this.label14.Size = new System.Drawing.Size(66, 13);
             this.label14.TabIndex = 3;
-            this.label14.Text = "Surveillance";
+            this.label14.Text = "Monitoring";
             // 
             // chkKeylogger
             // 
@@ -1092,8 +1139,8 @@ namespace Quasar.Server.Forms
             this.assemblyPage.ResumeLayout(false);
             this.assemblyPage.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.iconPreview)).EndInit();
-            this.surveillanceTab.ResumeLayout(false);
-            this.surveillanceTab.PerformLayout();
+            this.monitoringTab.ResumeLayout(false);
+            this.monitoringTab.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -1150,7 +1197,7 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.TabPage connectionPage;
         private System.Windows.Forms.TabPage installationPage;
         private System.Windows.Forms.TabPage assemblyPage;
-        private System.Windows.Forms.TabPage surveillanceTab;
+        private System.Windows.Forms.TabPage monitoringTab;
         private System.Windows.Forms.ListBox lstHosts;
         private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
         private System.Windows.Forms.Button btnAddHost;
@@ -1188,5 +1235,9 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.NumericUpDown numericUpDownDelay;
         private System.Windows.Forms.NumericUpDown numericUpDownPort;
         private System.Windows.Forms.CheckBox chkHideSubDirectory;
+        private System.Windows.Forms.CheckBox chkUnattendedMode;
+        private Line line2;
+        private System.Windows.Forms.Label label2;
+        private System.Windows.Forms.Label label3;
     }
 }

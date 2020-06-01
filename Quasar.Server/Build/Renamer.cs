@@ -57,7 +57,7 @@ namespace Quasar.Server.Build
 
         private void RenameInType(TypeDefinition typeDef)
         {
-            if (!typeDef.Namespace.StartsWith("Quasar") || typeDef.Namespace.StartsWith("Quasar.Common.Messages") /* || typeDef.HasInterfaces */)
+            if (!typeDef.Namespace.StartsWith("Quasar") || typeDef.Namespace.StartsWith("Quasar.Common.Messages") || typeDef.IsEnum /* || typeDef.HasInterfaces */)
                 return;
 
             _typeOverloader.GiveName(typeDef);

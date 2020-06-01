@@ -1,5 +1,4 @@
-﻿using Quasar.Common.Helpers;
-using System;
+﻿using System;
 using System.IO;
 using System.Windows.Forms;
 using System.Xml;
@@ -51,11 +50,23 @@ namespace Quasar.Server.Models
         {
             get
             {
-                return ReadValueSafe("Mutex", StringHelper.GetRandomMutex());
+                return ReadValueSafe("Mutex", Guid.NewGuid().ToString());
             }
             set
             {
                 WriteValue("Mutex", value);
+            }
+        }
+
+        public bool UnattendedMode
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("UnattendedMode", "False"));
+            }
+            set
+            {
+                WriteValue("UnattendedMode", value.ToString());
             }
         }
 
