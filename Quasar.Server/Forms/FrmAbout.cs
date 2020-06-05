@@ -6,7 +6,7 @@ namespace Quasar.Server.Forms
 {
     public partial class FrmAbout : Form
     {
-        private readonly string _repositoryUrl = @"https://github.com/quasar/QuasarRAT";
+        private readonly string _repositoryUrl = @"https://github.com/quasar/Quasar";
 
         public FrmAbout()
         {

@@ -12,7 +12,7 @@
 * Updated dependencies
 * Updated message processing in client and server
 * Updated mouse and keyboard input to SendInput API
-* Fixed file transfer vulnerbilities (#623)
+* Fixed file transfer vulnerbilities ([#623](https://github.com/quasar/Quasar/issues/623))
 * Lots of under the hood changes for an upcoming plugin system
 
 ## Quasar v1.3.0.0 [28.09.2016]

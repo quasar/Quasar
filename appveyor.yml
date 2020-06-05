@@ -11,7 +11,7 @@ before_build:
   - nuget restore
 
 build:
-  project: QuasarRAT.sln
+  project: Quasar.sln
   parallel: true
   verbosity: minimal
 
