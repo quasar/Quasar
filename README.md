@@ -53,7 +53,7 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 * For older systems please use [Quasar version 1.3.0](https://github.com/quasar/QuasarRAT/releases/tag/v1.3.0.0)
 
 ## Compiling
-Open the project in Visual Studio 2019+ with installed .NET desktop development features and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` at the top or by pressing `F6`. See below which build configuration to choose from.
+Open the project in Visual Studio 2019+ with installed .NET desktop development features and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` at the top or by pressing `F6`. The resulting executables can be found in the `Bin` directory. See below which build configuration to choose from.
 
 ## Building a client
 | Build configuration         | Usage scenario | Description

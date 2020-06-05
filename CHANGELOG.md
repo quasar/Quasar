@@ -1,5 +1,20 @@
 # Quasar Changelog
 
+## Quasar v1.4.0 [05.06.2020]
+* **Changed target framework to .NET Framework 4.5.2**
+* **Changed license to MIT**
+* Changed message serializer to Protobuf
+* Changed versioning scheme to Semantic Versioning (https://semver.org/)
+* Added attended/unattended client modes
+* Added TLS 1.2 as transport encryption
+* Added UTC timestamps to log files
+* Added dependencies as NuGet packages
+* Updated dependencies
+* Updated message processing in client and server
+* Updated mouse and keyboard input to SendInput API
+* Fixed file transfer vulnerbilities (#623)
+* Lots of under the hood changes for an upcoming plugin system
+
 ## Quasar v1.3.0.0 [28.09.2016]
 * Added Registry Editor
 * Added Remote Webcam
