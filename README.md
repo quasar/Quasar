@@ -1,6 +1,6 @@
 # Quasar
 
-[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat)
+[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasar)
 [![Downloads](https://img.shields.io/github/downloads/quasar/Quasar/total.svg)](https://github.com/quasar/Quasar/releases)
 [![License](https://img.shields.io/github/license/quasar/Quasar.svg)](LICENSE)
 
@@ -37,7 +37,7 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 
 ## Download
 * [Latest stable release](https://github.com/quasar/Quasar/releases) (recommended)
-* [Latest development snapshot](https://ci.appveyor.com/project/MaxXor/quasarrat)
+* [Latest development snapshot](https://ci.appveyor.com/project/MaxXor/quasar)
 
 ## Supported runtimes and operating systems
 * .NET Framework 4.5.2 or higher
