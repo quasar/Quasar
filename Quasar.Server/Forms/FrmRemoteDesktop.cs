@@ -280,6 +280,9 @@ namespace Quasar.Server.Forms
 
         private void FrmRemoteDesktop_Resize(object sender, EventArgs e)
         {
+            if (WindowState == FormWindowState.Minimized)
+                return;
+
             _remoteDesktopHandler.LocalResolution = picDesktop.Size;
             panelTop.Left = (this.Width - panelTop.Width) / 2;
             btnShow.Left = (this.Width - btnShow.Width) / 2;
