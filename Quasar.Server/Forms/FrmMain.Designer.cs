@@ -51,6 +51,11 @@ namespace Quasar.Server.Forms
             this.restartToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.standbyToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.surveillanceToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
+=======
+            this.remoteDesktopToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.remoteWebcamToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             this.passwordRecoveryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.keyloggerToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.remoteDesktopToolStripMenuItem2 = new System.Windows.Forms.ToolStripMenuItem();
@@ -103,7 +108,55 @@ namespace Quasar.Server.Forms
             this.lineToolStripMenuItem,
             this.selectAllToolStripMenuItem});
             this.contextMenuStrip.Name = "ctxtMenu";
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.contextMenuStrip.Size = new System.Drawing.Size(181, 142);
+=======
+            this.contextMenuStrip.Size = new System.Drawing.Size(153, 142);
+            // 
+            // connectionToolStripMenuItem
+            // 
+            this.connectionToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.updateToolStripMenuItem,
+            this.reconnectToolStripMenuItem,
+            this.disconnectToolStripMenuItem,
+            this.uninstallToolStripMenuItem});
+            this.connectionToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("connectionToolStripMenuItem.Image")));
+            this.connectionToolStripMenuItem.Name = "connectionToolStripMenuItem";
+            this.connectionToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.connectionToolStripMenuItem.Text = "Connection";
+            // 
+            // updateToolStripMenuItem
+            // 
+            this.updateToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("updateToolStripMenuItem.Image")));
+            this.updateToolStripMenuItem.Name = "updateToolStripMenuItem";
+            this.updateToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.updateToolStripMenuItem.Text = "Update";
+            this.updateToolStripMenuItem.Click += new System.EventHandler(this.updateToolStripMenuItem_Click);
+            // 
+            // reconnectToolStripMenuItem
+            // 
+            this.reconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("reconnectToolStripMenuItem.Image")));
+            this.reconnectToolStripMenuItem.Name = "reconnectToolStripMenuItem";
+            this.reconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.reconnectToolStripMenuItem.Text = "Reconnect";
+            this.reconnectToolStripMenuItem.Click += new System.EventHandler(this.reconnectToolStripMenuItem_Click);
+            // 
+            // disconnectToolStripMenuItem
+            // 
+            this.disconnectToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("disconnectToolStripMenuItem.Image")));
+            this.disconnectToolStripMenuItem.Name = "disconnectToolStripMenuItem";
+            this.disconnectToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.disconnectToolStripMenuItem.Text = "Disconnect";
+            this.disconnectToolStripMenuItem.Click += new System.EventHandler(this.disconnectToolStripMenuItem_Click);
+            // 
+            // uninstallToolStripMenuItem
+            // 
+            this.uninstallToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("uninstallToolStripMenuItem.Image")));
+            this.uninstallToolStripMenuItem.Name = "uninstallToolStripMenuItem";
+            this.uninstallToolStripMenuItem.Size = new System.Drawing.Size(133, 22);
+            this.uninstallToolStripMenuItem.Text = "Uninstall";
+            this.uninstallToolStripMenuItem.Click += new System.EventHandler(this.uninstallToolStripMenuItem_Click);
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             // 
             // systemToolStripMenuItem
             // 
@@ -121,8 +174,13 @@ namespace Quasar.Server.Forms
             this.actionsToolStripMenuItem});
             this.systemToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.cog;
             this.systemToolStripMenuItem.Name = "systemToolStripMenuItem";
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.systemToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.systemToolStripMenuItem.Text = "Administration";
+=======
+            this.systemToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.systemToolStripMenuItem.Text = "System";
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             // 
             // systemInformationToolStripMenuItem
             // 
@@ -257,19 +315,45 @@ namespace Quasar.Server.Forms
             // surveillanceToolStripMenuItem
             // 
             this.surveillanceToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
+=======
+            this.remoteDesktopToolStripMenuItem,
+            this.remoteWebcamToolStripMenuItem,
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             this.passwordRecoveryToolStripMenuItem,
             this.keyloggerToolStripMenuItem,
             this.remoteDesktopToolStripMenuItem2});
             this.surveillanceToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.monitoring;
             this.surveillanceToolStripMenuItem.Name = "surveillanceToolStripMenuItem";
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.surveillanceToolStripMenuItem.Text = "Monitoring";
+=======
+            this.surveillanceToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.surveillanceToolStripMenuItem.Text = "Surveillance";
+            // 
+            // remoteDesktopToolStripMenuItem
+            // 
+            this.remoteDesktopToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteDesktopToolStripMenuItem.Image")));
+            this.remoteDesktopToolStripMenuItem.Name = "remoteDesktopToolStripMenuItem";
+            this.remoteDesktopToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteDesktopToolStripMenuItem.Text = "Remote Desktop";
+            this.remoteDesktopToolStripMenuItem.Click += new System.EventHandler(this.remoteDesktopToolStripMenuItem_Click);
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
+            // 
+            // remoteWebcamToolStripMenuItem
+            // 
+            this.remoteWebcamToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("remoteWebcamToolStripMenuItem.Image")));
+            this.remoteWebcamToolStripMenuItem.Name = "remoteWebcamToolStripMenuItem";
+            this.remoteWebcamToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
+            this.remoteWebcamToolStripMenuItem.Text = "Remote Webcam";
+            this.remoteWebcamToolStripMenuItem.Click += new System.EventHandler(this.remoteWebcamToolStripMenuItem_Click);
             // 
             // passwordRecoveryToolStripMenuItem
             // 
             this.passwordRecoveryToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("passwordRecoveryToolStripMenuItem.Image")));
             this.passwordRecoveryToolStripMenuItem.Name = "passwordRecoveryToolStripMenuItem";
-            this.passwordRecoveryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.passwordRecoveryToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.passwordRecoveryToolStripMenuItem.Text = "Password Recovery";
             this.passwordRecoveryToolStripMenuItem.Click += new System.EventHandler(this.passwordRecoveryToolStripMenuItem_Click);
             // 
@@ -277,17 +361,28 @@ namespace Quasar.Server.Forms
             // 
             this.keyloggerToolStripMenuItem.Image = global::Quasar.Server.Properties.Resources.keyboard_magnify;
             this.keyloggerToolStripMenuItem.Name = "keyloggerToolStripMenuItem";
-            this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.keyloggerToolStripMenuItem.Size = new System.Drawing.Size(175, 22);
             this.keyloggerToolStripMenuItem.Text = "Keylogger";
             this.keyloggerToolStripMenuItem.Click += new System.EventHandler(this.keyloggerToolStripMenuItem_Click);
             // 
             // remoteDesktopToolStripMenuItem2
             // 
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.remoteDesktopToolStripMenuItem2.Image = ((System.Drawing.Image)(resources.GetObject("remoteDesktopToolStripMenuItem2.Image")));
             this.remoteDesktopToolStripMenuItem2.Name = "remoteDesktopToolStripMenuItem2";
             this.remoteDesktopToolStripMenuItem2.Size = new System.Drawing.Size(180, 22);
             this.remoteDesktopToolStripMenuItem2.Text = "Remote Desktop";
             this.remoteDesktopToolStripMenuItem2.Click += new System.EventHandler(this.remoteDesktopToolStripMenuItem_Click);
+=======
+            this.miscellaneousToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.remoteExecuteToolStripMenuItem,
+            this.visitWebsiteToolStripMenuItem,
+            this.showMessageboxToolStripMenuItem});
+            this.miscellaneousToolStripMenuItem.Image = ((System.Drawing.Image)(resources.GetObject("miscellaneousToolStripMenuItem.Image")));
+            this.miscellaneousToolStripMenuItem.Name = "miscellaneousToolStripMenuItem";
+            this.miscellaneousToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+            this.miscellaneousToolStripMenuItem.Text = "Miscellaneous";
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             // 
             // userSupportToolStripMenuItem
             // 
@@ -380,12 +475,20 @@ namespace Quasar.Server.Forms
             // lineToolStripMenuItem
             // 
             this.lineToolStripMenuItem.Name = "lineToolStripMenuItem";
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.lineToolStripMenuItem.Size = new System.Drawing.Size(177, 6);
+=======
+            this.lineToolStripMenuItem.Size = new System.Drawing.Size(149, 6);
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             // 
             // selectAllToolStripMenuItem
             // 
             this.selectAllToolStripMenuItem.Name = "selectAllToolStripMenuItem";
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
             this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+=======
+            this.selectAllToolStripMenuItem.Size = new System.Drawing.Size(152, 22);
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
             this.selectAllToolStripMenuItem.Text = "Select All";
             this.selectAllToolStripMenuItem.Click += new System.EventHandler(this.selectAllToolStripMenuItem_Click);
             // 
@@ -882,6 +985,7 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.StatusStrip statusStrip;
         private System.Windows.Forms.ToolStripStatusLabel listenToolStripStatusLabel;
         private System.Windows.Forms.ToolStripMenuItem connectionsToolStripMenuItem;
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.Designer.cs
         private System.Windows.Forms.ToolStripMenuItem userSupportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showMessageboxToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem visitWebsiteToolStripMenuItem;
@@ -890,6 +994,9 @@ namespace Quasar.Server.Forms
         private System.Windows.Forms.ToolStripMenuItem webFileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem elevateClientPermissionsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem remoteDesktopToolStripMenuItem2;
+=======
+        private System.Windows.Forms.ToolStripMenuItem remoteWebcamToolStripMenuItem;
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.Designer.cs
     }
 }
 

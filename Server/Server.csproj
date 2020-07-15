@@ -1,0 +1,450 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>8.0.30703</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{14CA405B-8BAC-48AB-9FBA-8FB5DF88FD0D}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>xServer</RootNamespace>
+    <AssemblyName>Quasar</AssemblyName>
+    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile>Client</TargetFrameworkProfile>
+  </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>xServer.Program</StartupObject>
+  </PropertyGroup>
+  <PropertyGroup />
+  <PropertyGroup>
+    <ApplicationIcon>Quasar_Server.ico</ApplicationIcon>
+  </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>..\Bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <OutputPath>..\Bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <DebugSymbols>false</DebugSymbols>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Gma.System.MouseKeyHook, Version=5.6.130.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MouseKeyHook.5.6.0\lib\net40\Gma.System.MouseKeyHook.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Mdb, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Mdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Pdb, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Pdb.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Cecil.Rocks, Version=0.10.0.0, Culture=neutral, PublicKeyToken=50cebf1cceb9d05e, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Cecil.0.10.0\lib\net40\Mono.Cecil.Rocks.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Nat, Version=1.2.24.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Mono.Nat.1.2.24.0\lib\net40\Mono.Nat.dll</HintPath>
+    </Reference>
+    <Reference Include="protobuf-net, Version=2.4.0.0, Culture=neutral, PublicKeyToken=257b51d87d2e4d67, processorArchitecture=MSIL">
+      <HintPath>..\packages\protobuf-net.2.4.0\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
+    <Reference Include="ResourceLib, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Vestris.ResourceLib.2.0.0\lib\net40\ResourceLib.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Controls\DotNetBarTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HexEditor\ByteCollection.cs" />
+    <Compile Include="Controls\HexEditor\Caret.cs" />
+    <Compile Include="Controls\HexEditor\EditView.cs" />
+    <Compile Include="Controls\HexEditor\HexEditor.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\HexEditor\HexViewHandler.cs" />
+    <Compile Include="Controls\HexEditor\IKeyMouseEventHandler.cs" />
+    <Compile Include="Controls\HexEditor\StringViewHandler.cs" />
+    <Compile Include="Controls\Line.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RapidPictureBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RegistryTreeView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\RegistryValueLstItem.cs" />
+    <Compile Include="Controls\WordTextBox.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Controls\WordTextBox.Designer.cs">
+      <DependentUpon>WordTextBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Core\Build\IconInjector.cs" />
+    <Compile Include="Core\Commands\CommandHandler.cs" />
+    <Compile Include="Core\Commands\FileManagerHandler.cs" />
+    <Compile Include="Core\Commands\KeyloggerHandler.cs" />
+    <Compile Include="Core\Commands\RegistryHandler.cs" />
+    <Compile Include="Core\Commands\RemoteDesktopHandler.cs" />
+    <Compile Include="Core\Commands\RemoteShellHandler.cs" />
+    <Compile Include="Core\Commands\ReverseProxyHandler.cs" />
+    <Compile Include="Core\Commands\StartupManagerHandler.cs" />
+    <Compile Include="Core\Commands\SystemInformationHandler.cs" />
+    <Compile Include="Core\Commands\TaskManagerHandler.cs" />
+    <Compile Include="Core\Commands\TcpConnectionsHandler.cs" />
+    <Compile Include="Core\Data\BuildOptions.cs" />
+    <Compile Include="Core\Extensions\RegistryKeyExtensions.cs" />
+    <Compile Include="Core\Helper\ClipboardHelper.cs" />
+    <Compile Include="Core\Helper\CryptographyHelper.cs" />
+    <Compile Include="Core\Helper\FileHelper.cs" />
+    <Compile Include="Core\Helper\FormatHelper.cs" />
+    <Compile Include="Core\Helper\HostHelper.cs" />
+    <Compile Include="Core\Networking\PacketHandler.cs" />
+    <Compile Include="Core\Registry\RegValueHelper.cs" />
+    <Compile Include="Core\Utilities\FrameCounter.cs" />
+    <Compile Include="Core\Helper\NativeMethodsHelper.cs" />
+    <Compile Include="Core\Helper\PlatformHelper.cs" />
+    <Compile Include="Core\Helper\RemoteDesktopHelper.cs" />
+    <Compile Include="Core\Helper\WindowHelper.cs" />
+    <Compile Include="Core\Data\Host.cs" />
+    <Compile Include="Core\Utilities\NativeMethods.cs" />
+    <Compile Include="Core\Networking\Client.cs" />
+    <Compile Include="Core\Build\ClientBuilder.cs" />
+    <Compile Include="Core\Commands\ConnectionHandler.cs" />
+    <Compile Include="Core\Commands\SurveillanceHandler.cs" />
+    <Compile Include="Core\Compression\SafeQuickLZ.cs" />
+    <Compile Include="Core\Cryptography\AES.cs" />
+    <Compile Include="Core\Networking\Utilities\UPnP.cs" />
+    <Compile Include="Controls\InputBox.cs" />
+    <Compile Include="Core\Utilities\ListViewColumnSorter.cs" />
+    <Compile Include="Core\Extensions\ListViewExtensions.cs" />
+    <Compile Include="Core\Utilities\NoIpUpdater.cs" />
+    <Compile Include="Core\Networking\QuasarServer.cs" />
+    <Compile Include="Core\Networking\Utilities\PooledBufferManager.cs" />
+    <Compile Include="Core\Build\Renamer.cs" />
+    <Compile Include="Core\Data\RecoveredAccount.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyClient.cs" />
+    <Compile Include="Core\ReverseProxy\ReverseProxyServer.cs" />
+    <Compile Include="Core\Networking\Server.cs" />
+    <Compile Include="Core\Networking\UserState.cs" />
+    <Compile Include="Enums\TransferType.cs" />
+    <Compile Include="Enums\WordType.cs" />
+    <Compile Include="Forms\FrmRemoteWebcam.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteWebcam.Designer.cs">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmAbout.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmAbout.Designer.cs">
+      <DependentUpon>FrmAbout.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmStartupAdd.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmStartupAdd.Designer.cs">
+      <DependentUpon>FrmStartupAdd.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmBuilder.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmBuilder.Designer.cs">
+      <DependentUpon>FrmBuilder.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmConnections.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmConnections.Designer.cs">
+      <DependentUpon>FrmConnections.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmDownloadAndExecute.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmDownloadAndExecute.Designer.cs">
+      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmFileManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmFileManager.Designer.cs">
+      <DependentUpon>FrmFileManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmKeylogger.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmKeylogger.Designer.cs">
+      <DependentUpon>FrmKeylogger.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmMain.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmMain.Designer.cs">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Controls\ListViewEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmPasswordRecovery.Designer.cs">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegistryEditor.Designer.cs">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditBinary.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditBinary.Designer.cs">
+      <DependentUpon>FrmRegValueEditBinary.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditMultiString.Designer.cs">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditString.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditString.Designer.cs">
+      <DependentUpon>FrmRegValueEditString.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditWord.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRegValueEditWord.Designer.cs">
+      <DependentUpon>FrmRegValueEditWord.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteDesktop.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteDesktop.Designer.cs">
+      <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteShell.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmRemoteShell.Designer.cs">
+      <DependentUpon>FrmRemoteShell.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmReverseProxy.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmReverseProxy.Designer.cs">
+      <DependentUpon>FrmReverseProxy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmSettings.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmSettings.Designer.cs">
+      <DependentUpon>FrmSettings.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmShowMessagebox.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmShowMessagebox.Designer.cs">
+      <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmStartupManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmStartupManager.Designer.cs">
+      <DependentUpon>FrmStartupManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmSystemInformation.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmSystemInformation.Designer.cs">
+      <DependentUpon>FrmSystemInformation.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmTaskManager.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmTaskManager.Designer.cs">
+      <DependentUpon>FrmTaskManager.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmUploadAndExecute.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmUploadAndExecute.Designer.cs">
+      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmVisitWebsite.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmVisitWebsite.Designer.cs">
+      <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Forms\FrmUpdate.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\FrmUpdate.Designer.cs">
+      <DependentUpon>FrmUpdate.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Models\FileTransfer.cs" />
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Core\Data\BuilderProfile.cs" />
+    <Compile Include="Core\Data\Settings.cs" />
+    <EmbeddedResource Include="Forms\FrmRemoteWebcam.resx">
+      <DependentUpon>FrmRemoteWebcam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmAbout.resx">
+      <DependentUpon>FrmAbout.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmStartupAdd.resx">
+      <DependentUpon>FrmStartupAdd.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmBuilder.resx">
+      <DependentUpon>FrmBuilder.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmConnections.resx">
+      <DependentUpon>FrmConnections.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmDownloadAndExecute.resx">
+      <DependentUpon>FrmDownloadAndExecute.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmFileManager.resx">
+      <DependentUpon>FrmFileManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmKeylogger.resx">
+      <DependentUpon>FrmKeylogger.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmMain.resx">
+      <DependentUpon>FrmMain.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmPasswordRecovery.resx">
+      <DependentUpon>FrmPasswordRecovery.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegistryEditor.resx">
+      <DependentUpon>FrmRegistryEditor.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditBinary.resx">
+      <DependentUpon>FrmRegValueEditBinary.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditMultiString.resx">
+      <DependentUpon>FrmRegValueEditMultiString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditString.resx">
+      <DependentUpon>FrmRegValueEditString.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRegValueEditWord.resx">
+      <DependentUpon>FrmRegValueEditWord.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRemoteDesktop.resx">
+      <DependentUpon>FrmRemoteDesktop.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmRemoteShell.resx">
+      <DependentUpon>FrmRemoteShell.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmReverseProxy.resx">
+      <DependentUpon>FrmReverseProxy.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmSettings.resx">
+      <DependentUpon>FrmSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmShowMessagebox.resx">
+      <DependentUpon>FrmShowMessagebox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmStartupManager.resx">
+      <DependentUpon>FrmStartupManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmSystemInformation.resx">
+      <DependentUpon>FrmSystemInformation.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmTaskManager.resx">
+      <DependentUpon>FrmTaskManager.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmUploadAndExecute.resx">
+      <DependentUpon>FrmUploadAndExecute.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmVisitWebsite.resx">
+      <DependentUpon>FrmVisitWebsite.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\FrmUpdate.resx">
+      <DependentUpon>FrmUpdate.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <SubType>Designer</SubType>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Include="Core\Extensions\SocketExtensions.cs" />
+    <None Include="app.manifest" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Quasar_Server.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj">
+      <Project>{c7c363ba-e5b6-4e18-9224-39bc8da73172}</Project>
+      <Name>Quasar.Common</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>"$(SolutionDir)packages\ILMerge.2.14.1208\tools\ILMerge.exe" /out:"$(TargetDir)$(TargetName).all.exe" "$(TargetPath)" "$(TargetDir)*.dll" /target:WinExe /wildcards /internalize</PostBuildEvent>
+  </PropertyGroup>
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

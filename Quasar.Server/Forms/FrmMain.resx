@@ -198,7 +198,29 @@
         y8XRlRWXLRYLjEYjdDodtFotFhYWmlfr54L/FzS/AGH28noQqAdLAAAAAElFTkSuQmCC
 </value>
   </data>
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.resx
   <data name="showMessageboxToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+=======
+  <data name="remoteWebcamToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAK4SURBVDhPbZFfSFNxHMV/OOvuEpQIlQbD0qkQbv1BelBENu+SKDAqSOlBCAo1RRPtoaCC/hNU
+        WlT4p7ewOfG/YtuDmu5P0S2aIbblQL1TaW4horlevt3zc0YPXTjcwzmfc393d2zzKjRZGBGxjjftyfJH
+        uTIwPT0YVIJTEDwym9qBKTRJsVXsunPzFr+PvxsrCCqKc3V19Xc0GqX19XUueGTowPy7YTUVVfxk17jz
+        WCgUUtbW1mh5efm/QgcGLDbV6pbZh96y3q6eFPVVP6+srFAkEgFEHo+HrFYrFzwydGDA9nZ1p2DLT/d+
+        8dajXFpaooWFBWpqaqYLVbV08epdLnhk6MCAxQZb9uD2vW2B6YAdRTgcps7OTjpRXErnG6z0cGSKCx4Z
+        OjBgscGW2dradX6ffyoYDNLc3BzVVNeQ8dxlOm6bIMn2lQseGTowYLGxtVl1zPq6be+E1/tdfSL5fD4q
+        KS6hxNO1JD5xk/jIuSHVI0MHBiw22LLmF02Jk5OTnsXFRYKu1NfR9oNm0tR1UNx1Oxc8MnSbHDbY8r/y
+        g+d9I14NxfDwMB3OPkKC0ULxp25wwSNDBwYsNnw8OjLKBvsHctUnhhRF4b+vr6+PThYVkT5zPxc8MnRg
+        wGKDLXv57DkrLjoT5xwbv+b75ov+/Uh+P7lcLi74zY8MBiw22PJrYGCI5eebTA0NT+dlWaZAIECzs7M0
+        MzPDBY9Mlj9Ro8rk5eWbunv6N8bVtXVMn55hLpCO+iVLIZWVV1BLSys57A5yu91cDoeDWltfUXn5JQJj
+        liz+falp5rKKSsYEQdAZjEZZr0+nnbt2/0pK3vMzNU3/w2Awzufk5CqQwXBgHhk6MOkZmZSVZZDj47fo
+        mCiKSTsSEh6r9/taUTy7VRAkjUaTo75ctqpDMWUjUw+TwIDFRtBqk/4AyHJvzhoJdeoAAAAASUVORK5C
+        YII=
+</value>
+  </data>
+  <data name="passwordRecoveryToolStripMenuItem.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.resx
     <value>
         iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAABGdBTUEAAK/INwWK6QAAABl0RVh0U29m
         dHdhcmUAQWRvYmUgSW1hZ2VSZWFkeXHJZTwAAAKoSURBVDhPpZPtT1JRHMf9W/RP6N7etDZ90VybDZK0
@@ -347,7 +369,11 @@
         AAEAAAD/////AQAAAAAAAAAMAgAAAFdTeXN0ZW0uV2luZG93cy5Gb3JtcywgVmVyc2lvbj00LjAuMC4w
         LCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODkFAQAAACZTeXN0
         ZW0uV2luZG93cy5Gb3Jtcy5JbWFnZUxpc3RTdHJlYW1lcgEAAAAERGF0YQcCAgAAAAkDAAAADwMAAADY
+<<<<<<< HEAD:Quasar.Server/Forms/FrmMain.resx
         sQAAAk1TRnQBSQFMAgEB+AEAAfgBCAH4AQgBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+=======
+        sQAAAk1TRnQBSQFMAgEB+AEAAcgBCAHIAQgBEAEAAQsBAAT/AQkBAAj/AUIBTQE2AQQGAAE2AQQCAAEo
+>>>>>>> parent of ff99158... Remove Webcam functionality:Server/Forms/FrmMain.resx
         AwABQAMAAbUBAgIAAQEBAAEIBQABQAGtGAABgAIAAYADAAKAAQABgAMAAYABAAGAAQACgAIAA8ABAAHA
         AdwBwAEAAfABygGmAQABMwUAATMBAAEzAQABMwEAAjMCAAMWAQADHAEAAyIBAAMpAQADVQEAA00BAANC
         AQADOQEAAYABfAH/AQACUAH/AQABkwEAAdYBAAH/AewBzAEAAcYB1gHvAQAB1gLnAQABkAGpAa0CAAH/
