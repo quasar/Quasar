@@ -1,104 +1,81 @@
-QuasarRAT
-=========
-[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasarrat) [![Join the chat at https://gitter.im/quasar/QuasarRAT](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/quasar/QuasarRAT)
+# Quasar
+
+[![Build status](https://ci.appveyor.com/api/projects/status/5857hfy6r1ltb5f2?svg=true)](https://ci.appveyor.com/project/MaxXor/quasar)
+[![Downloads](https://img.shields.io/github/downloads/quasar/Quasar/total.svg)](https://github.com/quasar/Quasar/releases)
+[![License](https://img.shields.io/github/license/quasar/Quasar.svg)](LICENSE)
 
 **Free, Open-Source Remote Administration Tool for Windows**
 
-Quasar is a fast and light-weight remote administration tool coded in C#. Providing high stability and an easy-to-use user interface, Quasar is the perfect remote administration solution for you.
+Quasar is a fast and light-weight remote administration tool coded in C#. The usage ranges from user support through day-to-day administrative work to employee monitoring. Providing high stability and an easy-to-use user interface, Quasar is the perfect remote administration solution for you.
 
-Features
----
-* Buffered TCP/IP network stream
-* Fast network serialization (NetSerializer)
-* Compressed (QuickLZ) & Encrypted (AES-128) communication
-* Multi-Threaded
+## Screenshots
+
+![remote-shell](Images/remote-shell.png)
+
+![remote-desktop](Images/remote-desktop.png)
+
+![remote-files](Images/remote-files.png)
+
+## Features
+* TCP network stream (IPv4 & IPv6 support)
+* Fast network serialization (Protocol Buffers)
+* Compressed (QuickLZ) & Encrypted (TLS) communication
 * UPnP Support
-* No-Ip.com Support
-* Visit Website (hidden & visible)
-* Show Messagebox
 * Task Manager
 * File Manager
 * Startup Manager
 * Remote Desktop
-* Remote Webcam
 * Remote Shell
 * Remote Chat
 * Download & Execute
 * Upload & Execute
+* Remote Execution
 * System Information
-* Computer Commands (Restart, Shutdown, Standby)
+* Registry Editor
+* System Power Commands (Restart, Shutdown, Standby)
 * Keylogger (Unicode Support)
 * Reverse Proxy (SOCKS5)
 * Password Recovery (Common Browsers and FTP Clients)
-* Registry Editor
+* ... and many more!
 
-Requirements
----
-* .NET Framework 4.0 Client Profile ([Download](https://www.microsoft.com/en-us/download/details.aspx?id=24872))
-* Supported Operating Systems (32- and 64-bit)
-  * Windows XP SP3
-  * Windows Server 2003
-  * Windows Vista
-  * Windows Server 2008
-  * Windows 7
-  * Windows Server 2012
-  * Windows 8/8.1
+## Download
+* [Latest stable release](https://github.com/quasar/Quasar/releases) (recommended)
+* [Latest development snapshot](https://ci.appveyor.com/project/MaxXor/quasar)
+
+## Supported runtimes and operating systems
+* .NET Framework 4.5.2 or higher
+* Supported operating systems (32- and 64-bit)
   * Windows 10
+  * Windows Server 2019
+  * Windows Server 2016
+  * Windows 8/8.1
+  * Windows Server 2012
+  * Windows 7
+  * Windows Server 2008
+  * Windows Vista
+* For older systems please use [Quasar version 1.3.0](https://github.com/quasar/Quasar/releases/tag/v1.3.0.0)
 
-Compiling
----
-Open the project in Visual Studio and click build, or use one of the batch files included in the root directory.
+## Compiling
+Open the project `Quasar.sln` in Visual Studio 2019+ with installed .NET desktop development features and [restore the NuGET packages](https://docs.microsoft.com/en-us/nuget/consume-packages/package-restore). Once all packages are installed the project can be compiled as usual by clicking `Build` at the top or by pressing `F6`. The resulting executables can be found in the `Bin` directory. See below which build configuration to choose from.
 
-| Batch file        | Description
-| ----------------- |:-------------
-| build-debug.bat   | Builds the application using the debug configuration (for testing)
-| build-release.bat | Builds the application using the release configuration  (for publishing)
+## Building a client
+| Build configuration         | Usage scenario | Description
+| ----------------------------|----------------|--------------
+| Debug configuration         | Testing        | The pre-defined [Settings.cs](/Quasar.Client/Config/Settings.cs) will be used, so edit this file before compiling the client. You can execute the client directly with the specified settings.
+| Release configuration       | Production     | Start `Quasar.exe` and use the client builder.
 
-Building a client
----
-| Build configuration         | Description
-| ----------------------------|:-------------
-| debug configuration         | The pre-defined [Settings.cs](/Client/Config/Settings.cs) will be used. The client builder does not work in this configuration. You can execute the client directly with the specified settings.
-| release configuration       | Use the client builder to build your client otherwise it is going to crash.
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md)
 
-ToDo
----
-* [Open Issues](https://github.com/quasar/QuasarRAT/issues)
+## Roadmap
+See [ROADMAP.md](ROADMAP.md)
 
-Contributing
----
-See [CONTRIBUTING.md](/CONTRIBUTING.md)
+## Documentation
+See the [wiki](https://github.com/quasar/Quasar/wiki) for usage instructions and other documentation.
 
-License
----
-See [LICENSE.md](/LICENSE.md)
+## License
+Quasar is distributed under the [MIT License](LICENSE).  
+Third-party licenses are located [here](Licenses).
 
-Donate
----
-Bitcoin: `1M18ncC8yGRXG6vRTfj2hJENLfx46ipw2d`
-
-Credits
----
-NetSerializer  
-Copyright (c) 2015 Tomi Valkeinen  
-https://github.com/tomba/netserializer
-
-ResourceLib  
-Copyright (c) 2008-2013 Daniel Doubrovkine, Vestris Inc.  
-https://github.com/dblock/resourcelib
-
-GlobalMouseKeyHook  
-Copyright (c) 2004-2015 George Mamaladze  
-https://github.com/gmamaladze/globalmousekeyhook
-
-Mono.Cecil  
-Copyright (c) 2008 - 2015 Jb Evain, Copyright (c) 2008 - 2011 Novell, Inc.  
-https://github.com/jbevain/cecil
-
-Mono.Nat  
-Copyright (c) 2006 Alan McGovern, Copyright (c) 2007 Ben Motmans  
-https://github.com/nterry/Mono.Nat
-
-Thank you!
----
+## Thank you!
 I really appreciate all kinds of feedback and contributions. Thanks for using and supporting Quasar!

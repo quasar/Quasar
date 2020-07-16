@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="ILRepacker" AfterTargets="PostBuildEvent" Condition="'$(Configuration)' == 'Release'">
+
+  <ItemGroup>
+    <InputAssemblies Include="$(TargetPath)"/>
+    <InputAssemblies Include="$(TargetDir)protobuf-net.dll"/>
+    <InputAssemblies Include="$(TargetDir)Gma.System.MouseKeyHook.dll"/>
+    <InputAssemblies Include="$(TargetDir)Quasar.Common.dll"/>
+    <InputAssemblies Include="$(TargetDir)BouncyCastle.Crypto.dll"/>
+  </ItemGroup>
+
+  <ILRepack
+    Parallel="true"
+    Internalize="true"
+    InputAssemblies="@(InputAssemblies)"
+    TargetKind="SameAsPrimaryAssembly"
+    OutputFile="$(TargetPath)"/>
+  </Target>
+  <Target Name="CopyWindows" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT' ">
+    <Exec Command="copy $(TargetPath) $(TargetDir)client.bin /Y" />
+  </Target>
+  <Target Name="CopyUnix" AfterTargets="PostBuildEvent" Condition="'$(OS)' != 'Windows_NT' ">
+    <Exec Command="cp $(TargetPath) $(TargetDir)client.bin" />
+  </Target>
+</Project>
