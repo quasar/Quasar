@@ -92,7 +92,7 @@ namespace Quasar.Common.IO
         /// <returns>An <see cref="IEnumerator"/> object that can be used to iterate through the file chunks.</returns>
         public IEnumerator<FileChunk> GetEnumerator()
         {
-            for (int currentChunk = 0; currentChunk <= _fileStream.Length / MaxChunkSize; currentChunk++)
+            for (long currentChunk = 0; currentChunk <= _fileStream.Length / MaxChunkSize; currentChunk++)
             {
                 yield return ReadChunk(currentChunk * MaxChunkSize);
             }
