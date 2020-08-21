@@ -18,9 +18,9 @@
     OutputFile="$(TargetPath)"/>
   </Target>
   <Target Name="CopyWindows" AfterTargets="PostBuildEvent" Condition="'$(OS)' == 'Windows_NT' ">
-    <Exec Command="copy $(TargetPath) $(TargetDir)client.bin /Y" />
+    <Exec Command='copy "$(TargetPath)" "$(TargetDir)client.bin" /Y' />
   </Target>
   <Target Name="CopyUnix" AfterTargets="PostBuildEvent" Condition="'$(OS)' != 'Windows_NT' ">
-    <Exec Command="cp $(TargetPath) $(TargetDir)client.bin" />
+    <Exec Command='cp "$(TargetPath)" "$(TargetDir)client.bin"' />
   </Target>
 </Project>
