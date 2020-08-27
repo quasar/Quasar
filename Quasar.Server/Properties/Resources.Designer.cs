@@ -208,11 +208,12 @@ namespace Quasar.Server.Properties {
         ///Imports System.Linq
         ///Imports System.Text
         ///Imports System.Threading.Tasks
+        ///Imports System.Windows.Forms
         ///
         ///Module QuasarCode
         ///
         ///    Sub Main()
-        ///        &apos; Write your code!
+        ///        MessageBox.Show("Write your code!")
         ///    End Sub
         ///
         ///End Module.
