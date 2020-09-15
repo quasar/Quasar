@@ -229,7 +229,7 @@ namespace Quasar.Client.Messages
                     using (var srcFile = new FileSplit(message.RemotePath, FileAccess.Read))
                     {
                         _activeTransfers[message.Id] = srcFile;
-                        OnReport("File upload started");
+                        
                         foreach (var chunk in srcFile)
                         {
                             if (_token.IsCancellationRequested || !_activeTransfers.ContainsKey(message.Id))
@@ -302,7 +302,7 @@ namespace Quasar.Client.Messages
                     }
 
                     _activeTransfers[message.Id] = new FileSplit(filePath, FileAccess.Write);
-                    OnReport("File download started");
+                    
                 }
 
                 if (!_activeTransfers.ContainsKey(message.Id))
