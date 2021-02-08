@@ -64,14 +64,14 @@ namespace Quasar.Client.User
         /// </summary>
         private void UserActivityThread()
         {
-            while (!_token.WaitHandle.WaitOne(10))
+            try
             {
                 if (IsUserIdle())
                 {
                     if (_lastUserStatus != UserStatus.Idle)
                     {
                         _lastUserStatus = UserStatus.Idle;
-                        _client.Send(new SetUserStatus {Message = _lastUserStatus});
+                        _client.Send(new SetUserStatus { Message = _lastUserStatus });
                     }
                 }
                 else
@@ -79,9 +79,12 @@ namespace Quasar.Client.User
                     if (_lastUserStatus != UserStatus.Active)
                     {
                         _lastUserStatus = UserStatus.Active;
-                        _client.Send(new SetUserStatus {Message = _lastUserStatus});
+                        _client.Send(new SetUserStatus { Message = _lastUserStatus });
                     }
                 }
+            }
+            catch (Exception e) when (e is NullReferenceException || e is ObjectDisposedException)
+            {
             }
         }
 

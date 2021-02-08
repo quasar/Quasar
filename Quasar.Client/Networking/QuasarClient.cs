@@ -75,7 +75,15 @@ namespace Quasar.Client.Networking
 
                 while (Connected) // hold client open
                 {
-                    _token.WaitHandle.WaitOne(1000);
+                    try
+                    {
+                        _token.WaitHandle.WaitOne(1000);
+                    }
+                    catch (Exception e) when (e is NullReferenceException || e is ObjectDisposedException)
+                    {
+                        Disconnect();
+                        return;
+                    }
                 }
 
                 if (_token.IsCancellationRequested)

