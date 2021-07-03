@@ -1,6 +1,6 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
     <OutputType>WinExe</OutputType>
     <AssemblyName>Client</AssemblyName>
     <UseWindowsForms>true</UseWindowsForms>
@@ -57,15 +57,13 @@
     <ProjectReference Include="..\Quasar.Common\Quasar.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="ILRepack.Lib.MSBuild.Task">
-      <Version>2.0.18.1</Version>
-    </PackageReference>
     <PackageReference Include="MouseKeyHook">
       <Version>5.6.0</Version>
     </PackageReference>
-    <PackageReference Include="Portable.BouncyCastle" Version="1.8.6.7" />
+    <PackageReference Include="Portable.BouncyCastle" Version="1.8.10" />
     <PackageReference Include="protobuf-net">
-      <Version>2.4.6</Version>
+      <Version>3.0.101</Version>
     </PackageReference>
+    <PackageReference Include="System.Management" Version="5.0.0" />
   </ItemGroup>
 </Project>
