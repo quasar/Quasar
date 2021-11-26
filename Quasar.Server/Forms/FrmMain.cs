@@ -1,4 +1,4 @@
-﻿using Quasar.Common.Enums;
+using Quasar.Common.Enums;
 using Quasar.Common.Messages;
 using Quasar.Server.Extensions;
 using Quasar.Server.Messages;
@@ -9,9 +9,12 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Security.Cryptography.X509Certificates;
+using System.Text.RegularExpressions;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Forms
