@@ -1,156 +1,225 @@
-﻿using Quasar.Server.Networking;
-using Quasar.Server.Utilities;
-using System;
-using System.Globalization;
-using System.Net.Sockets;
+﻿using System.IO;
 using System.Windows.Forms;
-using Quasar.Server.Models;
+using System.Xml;
+using System.Xml.XPath;
 
-namespace Quasar.Server.Forms
+namespace Quasar.Server.Models
 {
-    public partial class FrmSettings : Form
+    public static class Settings
     {
-        private readonly QuasarServer _listenServer;
+        private static readonly string SettingsPath = Path.Combine(Application.StartupPath, "settings.xml");
 
-        public FrmSettings(QuasarServer listenServer)
+        public static readonly string CertificatePath = Path.Combine(Application.StartupPath, "quasar.p12");
+
+        public static ushort ListenPort
         {
-            this._listenServer = listenServer;
-
-            InitializeComponent();
-
-            ToggleListenerSettings(!listenServer.Listening);
-
-            ShowPassword(false);
-        }
-
-        private void FrmSettings_Load(object sender, EventArgs e)
-        {
-            ncPort.Value = Settings.ListenPort;
-            chkIPv6Support.Checked = Settings.IPv6Support;
-            chkAutoListen.Checked = Settings.AutoListen;
-            chkPopup.Checked = Settings.ShowPopup;
-            chkUseUpnp.Checked = Settings.UseUPnP;
-            chkShowTooltip.Checked = Settings.ShowToolTip;
-            chkNoIPIntegration.Checked = Settings.EnableNoIPUpdater;
-            txtNoIPHost.Text = Settings.NoIPHost;
-            txtNoIPUser.Text = Settings.NoIPUsername;
-            txtNoIPPass.Text = Settings.NoIPPassword;
-        }
-
-        private ushort GetPortSafe()
-        {
-            var portValue = ncPort.Value.ToString(CultureInfo.InvariantCulture);
-            ushort port;
-            return (!ushort.TryParse(portValue, out port)) ? (ushort)0 : port;
-        }
-
-        private void btnListen_Click(object sender, EventArgs e)
-        {
-            ushort port = GetPortSafe();
-
-            if (port == 0)
+            get
             {
-                MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
+                return ushort.Parse(ReadValueSafe("ListenPort", "4782"));
             }
-
-            if (btnListen.Text == "Start listening" && !_listenServer.Listening)
+            set
             {
-                try
+                WriteValue("ListenPort", value.ToString());
+            }
+        }
+
+        public static bool IPv6Support
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("IPv6Support", "False"));
+            }
+            set
+            {
+                WriteValue("IPv6Support", value.ToString());
+            }
+        }
+
+        public static bool AutoListen
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("AutoListen", "False"));
+            }
+            set
+            {
+                WriteValue("AutoListen", value.ToString());
+            }
+        }
+
+        public static bool ShowPopup
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("ShowPopup", "False"));
+            }
+            set
+            {
+                WriteValue("ShowPopup", value.ToString());
+            }
+        }
+
+        public static bool UseUPnP
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("UseUPnP", "False"));
+            }
+            set
+            {
+                WriteValue("UseUPnP", value.ToString());
+            }
+        }
+
+        public static bool ShowToolTip
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("ShowToolTip", "False"));
+            }
+            set
+            {
+                WriteValue("ShowToolTip", value.ToString());
+            }
+        }
+
+        public static bool EnableNoIPUpdater
+        {
+            get
+            {
+                return bool.Parse(ReadValueSafe("EnableNoIPUpdater", "False"));
+            }
+            set
+            {
+                WriteValue("EnableNoIPUpdater", value.ToString());
+            }
+        }
+
+        public static string NoIPHost
+        {
+            get
+            {
+                return ReadValueSafe("NoIPHost");
+            }
+            set
+            {
+                WriteValue("NoIPHost", value);
+            }
+        }
+
+        public static string NoIPUsername
+        {
+            get
+            {
+                return ReadValueSafe("NoIPUsername");
+            }
+            set
+            {
+                WriteValue("NoIPUsername", value);
+            }
+        }
+
+        public static string NoIPPassword
+        {
+            get
+            {
+                return ReadValueSafe("NoIPPassword");
+            }
+            set
+            {
+                WriteValue("NoIPPassword", value);
+            }
+        }
+
+        public static string SaveFormat
+        {
+            get
+            {
+                return ReadValueSafe("SaveFormat", "APP - URL - USER:PASS");
+            }
+            set
+            {
+                WriteValue("SaveFormat", value);
+            }
+        }
+
+        public static ushort ReverseProxyPort
+        {
+            get
+            {
+                return ushort.Parse(ReadValueSafe("ReverseProxyPort", "3128"));
+            }
+            set
+            {
+                WriteValue("ReverseProxyPort", value.ToString());
+            }
+        }
+
+        private static string ReadValue(string pstrValueToRead)
+        {
+            try
+            {
+                XPathDocument doc = new XPathDocument(SettingsPath);
+                XPathNavigator nav = doc.CreateNavigator();
+                XPathExpression expr = nav.Compile(@"/settings/" + pstrValueToRead);
+                XPathNodeIterator iterator = nav.Select(expr);
+                while (iterator.MoveNext())
                 {
-                    if(chkNoIPIntegration.Checked)
-                        NoIpUpdater.Start();
-                    _listenServer.Listen(port, chkIPv6Support.Checked, chkUseUpnp.Checked);
-                    ToggleListenerSettings(false);
+                    return iterator.Current.Value;
                 }
-                catch (SocketException ex)
+
+                return string.Empty;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        private static string ReadValueSafe(string pstrValueToRead, string defaultValue = "")
+        {
+            string value = ReadValue(pstrValueToRead);
+            return (!string.IsNullOrEmpty(value)) ? value: defaultValue;
+        }
+
+        private static void WriteValue(string pstrValueToRead, string pstrValueToWrite)
+        {
+            try
+            {
+                XmlDocument doc = new XmlDocument();
+
+                if (File.Exists(SettingsPath))
                 {
-                    if (ex.ErrorCode == 10048)
+                    using (var reader = new XmlTextReader(SettingsPath))
                     {
-                        MessageBox.Show(this, "The port is already in use.", "Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        doc.Load(reader);
                     }
-                    else
-                    {
-                        MessageBox.Show(this, $"An unexpected socket error occurred: {ex.Message}\n\nError Code: {ex.ErrorCode}\n\n", "Unexpected Socket Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-                    }
-                    _listenServer.Disconnect();
                 }
-                catch (Exception)
+                else
                 {
-                    _listenServer.Disconnect();
+                    var dir = Path.GetDirectoryName(SettingsPath);
+                    if (!Directory.Exists(dir))
+                    {
+                        Directory.CreateDirectory(dir);
+                    }
+                    doc.AppendChild(doc.CreateElement("settings"));
                 }
+
+                XmlElement root = doc.DocumentElement;
+                XmlNode oldNode = root.SelectSingleNode(@"/settings/" + pstrValueToRead);
+                if (oldNode == null) // create if not exist
+                {
+                    oldNode = doc.SelectSingleNode("settings");
+                    oldNode.AppendChild(doc.CreateElement(pstrValueToRead)).InnerText = pstrValueToWrite;
+                    doc.Save(SettingsPath);
+                    return;
+                }
+                oldNode.InnerText = pstrValueToWrite;
+                doc.Save(SettingsPath);
             }
-            else if (btnListen.Text == "Stop listening" && _listenServer.Listening)
+            catch
             {
-                _listenServer.Disconnect();
-                ToggleListenerSettings(true);
             }
-        }
-
-        private void btnSave_Click(object sender, EventArgs e)
-        {
-            ushort port = GetPortSafe();
-
-            if (port == 0)
-            {
-                MessageBox.Show("Please enter a valid port > 0.", "Please enter a valid port", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-                return;
-            }
-
-            Settings.ListenPort = port;
-            Settings.IPv6Support = chkIPv6Support.Checked;
-            Settings.AutoListen = chkAutoListen.Checked;
-            Settings.ShowPopup = chkPopup.Checked;
-            Settings.UseUPnP = chkUseUpnp.Checked;
-            Settings.ShowToolTip = chkShowTooltip.Checked;
-            Settings.EnableNoIPUpdater = chkNoIPIntegration.Checked;
-            Settings.NoIPHost = txtNoIPHost.Text;
-            Settings.NoIPUsername = txtNoIPUser.Text;
-            Settings.NoIPPassword = txtNoIPPass.Text;
-            this.Close();
-        }
-
-        private void btnCancel_Click(object sender, EventArgs e)
-        {
-            if (MessageBox.Show("Discard your changes?", "Cancel", MessageBoxButtons.YesNo, MessageBoxIcon.Question) ==
-                DialogResult.Yes)
-                this.Close();
-        }
-
-        private void chkNoIPIntegration_CheckedChanged(object sender, EventArgs e)
-        {
-            NoIPControlHandler(chkNoIPIntegration.Checked);
-        }
-
-        private void ToggleListenerSettings(bool enabled)
-        {
-            btnListen.Text = enabled ? "Start listening" : "Stop listening";
-            ncPort.Enabled = enabled;
-            chkIPv6Support.Enabled = enabled;
-            chkUseUpnp.Enabled = enabled;
-        }
-
-        private void NoIPControlHandler(bool enable)
-        {
-            lblHost.Enabled = enable;
-            lblUser.Enabled = enable;
-            lblPass.Enabled = enable;
-            txtNoIPHost.Enabled = enable;
-            txtNoIPUser.Enabled = enable;
-            txtNoIPPass.Enabled = enable;
-            chkShowPassword.Enabled = enable;
-        }
-
-        private void ShowPassword(bool show = true)
-        {
-            txtNoIPPass.PasswordChar = (show) ? (char)0 : (char)'●';
-        }
-
-        private void chkShowPassword_CheckedChanged(object sender, EventArgs e)
-        {
-            ShowPassword(chkShowPassword.Checked);
         }
     }
 }
