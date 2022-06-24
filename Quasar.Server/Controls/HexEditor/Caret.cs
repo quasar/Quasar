@@ -162,11 +162,13 @@ namespace Quasar.Server.Controls.HexEditor
             _startIndex = index;
             _endIndex = _startIndex;
 
-            if (SelectionStartChanged != null)
-                SelectionStartChanged(this, EventArgs.Empty);
+            EventHandler handlerSelectionStart = SelectionStartChanged;
+            if (handlerSelectionStart != null)
+                handlerSelectionStart(this, EventArgs.Empty);
 
-            if (SelectionLengthChanged != null)
-                SelectionLengthChanged(this, EventArgs.Empty);
+            EventHandler handlerSelectionLength = SelectionLengthChanged;
+            if (handlerSelectionLength != null)
+                handlerSelectionLength(this, EventArgs.Empty);
 
         }
 
@@ -174,11 +176,13 @@ namespace Quasar.Server.Controls.HexEditor
         {
             _endIndex = index;
 
-            if (SelectionStartChanged != null)
-                SelectionStartChanged(this, EventArgs.Empty);
+            EventHandler handlerSelectionStart = SelectionStartChanged;
+            if (handlerSelectionStart != null)
+                handlerSelectionStart(this, EventArgs.Empty);
 
-            if (SelectionLengthChanged != null)
-                SelectionLengthChanged(this, EventArgs.Empty);
+            EventHandler handlerSelectionLength = SelectionLengthChanged;
+            if (handlerSelectionLength != null)
+                handlerSelectionLength(this, EventArgs.Empty);
         }
 
         public void SetCaretLocation(Point start)

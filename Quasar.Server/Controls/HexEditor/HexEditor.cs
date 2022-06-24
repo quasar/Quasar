@@ -290,8 +290,9 @@ namespace Quasar.Server.Controls.HexEditor
 
                 _charSize = value;
 
-                if (CharSizeChanged != null)
-                    CharSizeChanged(this, EventArgs.Empty);
+                EventHandler handlerCharSize = CharSizeChanged;
+                if (handlerCharSize != null)
+                    handlerCharSize(this, EventArgs.Empty);
             }
         }SizeF _charSize;
 
@@ -568,14 +569,16 @@ namespace Quasar.Server.Controls.HexEditor
 
         protected void CaretSelectionStartChanged(object sender, EventArgs e)
         {
-            if (SelectionStartChanged != null)
-                SelectionStartChanged(this, e);
+            EventHandler handlerSelectionStart = SelectionStartChanged;
+            if (handlerSelectionStart != null)
+                handlerSelectionStart(this, e);
         }
 
         protected void CaretSelectionLengthChanged(object sender, EventArgs e)
         {
-            if (SelectionLengthChanged != null)
-                SelectionLengthChanged(this, e);
+            EventHandler handlerSelectionLength = SelectionLengthChanged;
+            if (handlerSelectionLength != null)
+                handlerSelectionLength(this, e);
         }
 
         #region Overriden
@@ -893,8 +896,9 @@ namespace Quasar.Server.Controls.HexEditor
                 UpdateRectanglePositioning();
                 Invalidate();
 
-                if (HexTableChanged != null)
-                    HexTableChanged(this, EventArgs.Empty);
+                EventHandler handlerHexTable = HexTableChanged;
+                if (handlerHexTable != null)
+                    handlerHexTable(this, EventArgs.Empty);
             }
         }
 

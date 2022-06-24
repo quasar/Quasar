@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace Quasar.Server.Controls.HexEditor
 {
-    public class StringViewHandler
+    public class StringViewHandler : IDisposable
     {
         #region Field
 
@@ -378,5 +378,10 @@ namespace Quasar.Server.Controls.HexEditor
         }
 
         #endregion
+
+        public void Dispose()
+        {
+            _stringFormat.Dispose();
+        }
     }
 }

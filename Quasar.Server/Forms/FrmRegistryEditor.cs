@@ -161,7 +161,8 @@ namespace Quasar.Server.Forms
         private TreeNode AddKeyToTree(TreeNode parent, RegSeekerMatch subKey)
         {
             TreeNode node = CreateNode(subKey.Key, subKey.Key, subKey.Data);
-            parent.Nodes.Add(node);
+            if (parent != null)
+                parent.Nodes.Add(node);
             if (subKey.HasSubKeys)
                 node.Nodes.Add(new TreeNode());
             return node;
@@ -225,7 +226,7 @@ namespace Quasar.Server.Forms
         {
             TreeNode parent = GetTreeNode(rootKey);
 
-            if (parent.Nodes.ContainsKey(subKey)) {
+            if (parent != null && parent.Nodes.ContainsKey(subKey)) {
                 parent.Nodes.RemoveByKey(subKey);
             }
         }
@@ -234,7 +235,7 @@ namespace Quasar.Server.Forms
         {
             TreeNode parent = GetTreeNode(rootKey);
 
-            if (parent.Nodes.ContainsKey(oldName))
+            if (parent != null && parent.Nodes.ContainsKey(oldName))
             {
                 parent.Nodes[oldName].Text = newName;
                 parent.Nodes[oldName].Name = newName;
@@ -822,7 +823,7 @@ namespace Quasar.Server.Forms
 
             using (var frm = GetEditForm(value, kind))
             {
-                if (frm.ShowDialog() == DialogResult.OK)
+                if (frm != null && frm.ShowDialog() == DialogResult.OK)
                 {
                     _registryHandler.ChangeRegistryValue(keyPath, (RegValueData) frm.Tag);
                 }

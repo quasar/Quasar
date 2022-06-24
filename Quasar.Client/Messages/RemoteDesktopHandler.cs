@@ -54,14 +54,14 @@ namespace Quasar.Client.Messages
 
             if (message.CreateNew)
             {
-                _streamCodec?.Dispose();
+                _streamCodec.Dispose();
                 _streamCodec = new UnsafeStreamCodec(message.Quality, message.DisplayIndex, resolution);
                 OnReport("Remote desktop session started");
             }
 
-            if (_streamCodec.ImageQuality != message.Quality || _streamCodec.Monitor != message.DisplayIndex || _streamCodec.Resolution != resolution)
+            if (_streamCodec != null && (_streamCodec.ImageQuality != message.Quality || _streamCodec.Monitor != message.DisplayIndex || _streamCodec.Resolution != resolution))
             {
-                _streamCodec?.Dispose();
+                _streamCodec.Dispose();
 
                 _streamCodec = new UnsafeStreamCodec(message.Quality, message.DisplayIndex, resolution);
             }

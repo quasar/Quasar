@@ -125,8 +125,9 @@ namespace Quasar.Server.ReverseProxy
         {
             try
             {
-                if (OnConnectionEstablished != null)
-                    OnConnectionEstablished(proxyClient);
+                EventHandler handlerOnConnectionEstablished = OnConnectionEstablished;
+                if (handlerOnConnectionEstablished != null)
+                    handlerOnConnectionEstablished(proxyClient);
             }
             catch
             {
@@ -159,8 +160,9 @@ namespace Quasar.Server.ReverseProxy
 
             try
             {
-                if (OnUpdateConnection != null)
-                    OnUpdateConnection(proxyClient);
+                EventHandler handlerOnUpdateConnection = OnUpdateConnection;
+                if (handlerOnUpdateConnection != null)
+                    handlerOnUpdateConnection(proxyClient);
             }
             catch
             {
