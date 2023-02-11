@@ -19,8 +19,8 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 ## Features
 * TCP network stream (IPv4 & IPv6 support)
 * Fast network serialization (Protocol Buffers)
-* Compressed (QuickLZ) & Encrypted (TLS) communication
-* UPnP Support
+* Encrypted communication (TLS)
+* UPnP Support (automatic port forwarding)
 * Task Manager
 * File Manager
 * Startup Manager
@@ -42,14 +42,15 @@ Quasar is a fast and light-weight remote administration tool coded in C#. The us
 ## Supported runtimes and operating systems
 * .NET Framework 4.5.2 or higher
 * Supported operating systems (32- and 64-bit)
+  * Windows 11
+  * Windows Server 2022
   * Windows 10
   * Windows Server 2019
   * Windows Server 2016
   * Windows 8/8.1
   * Windows Server 2012
   * Windows 7
-  * Windows Server 2008
-  * Windows Vista
+  * Windows Server 2008 R2
 * For older systems please use [Quasar version 1.3.0](https://github.com/quasar/Quasar/releases/tag/v1.3.0.0)
 
 ## Compiling
