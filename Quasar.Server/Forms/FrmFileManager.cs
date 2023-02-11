@@ -250,7 +250,6 @@ namespace Quasar.Server.Forms
         private void FrmFileManager_Load(object sender, EventArgs e)
         {
             this.Text = WindowHelper.GetWindowTitle("File Manager", _connectClient);
-
             _fileManagerHandler.RefreshDrives();
         }
 
@@ -269,9 +268,9 @@ namespace Quasar.Server.Forms
         {
             if (lstDirectory.SelectedItems.Count > 0)
             {
-                FileType type = (FileType) lstDirectory.SelectedItems[0].Tag;
+                FileManagerListTag tag = (FileManagerListTag) lstDirectory.SelectedItems[0].Tag;
 
-                switch (type)
+                switch (tag.Type)
                 {
                     case FileType.Back:
                         SwitchDirectory(NavigateUp());
@@ -283,13 +282,18 @@ namespace Quasar.Server.Forms
             }
         }
 
+        private void lstDirectory_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            lstDirectory.LvwColumnSorter.NeedNumberCompare = (e.Column == 1);
+        }
+
         private void downloadToolStripMenuItem_Click(object sender, EventArgs e)
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                FileType type = (FileType)files.Tag;
+                FileManagerListTag tag = (FileManagerListTag)files.Tag;
 
-                if (type == FileType.File)
+                if (tag.Type == FileType.File)
                 {
                     string remotePath = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -324,9 +328,9 @@ namespace Quasar.Server.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                FileType type = (FileType) files.Tag;
+                FileManagerListTag tag = (FileManagerListTag) files.Tag;
 
-                if (type == FileType.File)
+                if (tag.Type == FileType.File)
                 {
                     string remotePath = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -339,9 +343,9 @@ namespace Quasar.Server.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                FileType type = (FileType)files.Tag;
+                FileManagerListTag tag = (FileManagerListTag)files.Tag;
 
-                switch (type)
+                switch (tag.Type)
                 {
                     case FileType.Directory:
                     case FileType.File:
@@ -351,7 +355,7 @@ namespace Quasar.Server.Forms
                         if (InputBox.Show("New name", "Enter new name:", ref newName) == DialogResult.OK)
                         {
                             newName = GetAbsolutePath(newName);
-                            _fileManagerHandler.RenameFile(path, newName, type);
+                            _fileManagerHandler.RenameFile(path, newName, tag.Type);
                         }
                         break;
                 }
@@ -367,14 +371,14 @@ namespace Quasar.Server.Forms
             {
                 foreach (ListViewItem files in lstDirectory.SelectedItems)
                 {
-                    FileType type = (FileType)files.Tag;
+                    FileManagerListTag tag = (FileManagerListTag)files.Tag;
 
-                    switch (type)
+                    switch (tag.Type)
                     {
                         case FileType.Directory:
                         case FileType.File:
                             string path = GetAbsolutePath(files.SubItems[0].Text);
-                            _fileManagerHandler.DeleteFile(path, type);
+                            _fileManagerHandler.DeleteFile(path, tag.Type);
                             break;
                     }
                 }
@@ -385,9 +389,9 @@ namespace Quasar.Server.Forms
         {
             foreach (ListViewItem files in lstDirectory.SelectedItems)
             {
-                FileType type = (FileType)files.Tag;
+                FileManagerListTag tag = (FileManagerListTag)files.Tag;
 
-                if (type == FileType.File)
+                if (tag.Type == FileType.File)
                 {
                     string path = GetAbsolutePath(files.SubItems[0].Text);
 
@@ -413,9 +417,9 @@ namespace Quasar.Server.Forms
             if (lstDirectory.SelectedItems.Count == 1)
             {
                 var item = lstDirectory.SelectedItems[0];
-                FileType type = (FileType)item.Tag;
+                FileManagerListTag tag = (FileManagerListTag)item.Tag;
 
-                if (type == FileType.Directory)
+                if (tag.Type == FileType.Directory)
                 {
                     path = GetAbsolutePath(item.SubItems[0].Text);
                 }
@@ -513,7 +517,7 @@ namespace Quasar.Server.Forms
                 (type != FileType.Back) ? type.ToString() : string.Empty
             })
             {
-                Tag = type,
+                Tag = new FileManagerListTag(type, size),
                 ImageIndex = imageIndex
             };
 

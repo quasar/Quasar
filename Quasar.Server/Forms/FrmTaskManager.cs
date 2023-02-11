@@ -157,5 +157,10 @@ namespace Quasar.Server.Forms
         {
             _taskManagerHandler.RefreshProcesses();
         }
+
+        private void lstTasks_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            lstTasks.LvwColumnSorter.NeedNumberCompare = (e.Column == 1);
+        }
     }
 }

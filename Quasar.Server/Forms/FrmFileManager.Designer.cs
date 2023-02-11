@@ -332,6 +332,7 @@ namespace Quasar.Server.Forms
             this.lstDirectory.DragDrop += new System.Windows.Forms.DragEventHandler(this.lstDirectory_DragDrop);
             this.lstDirectory.DragEnter += new System.Windows.Forms.DragEventHandler(this.lstDirectory_DragEnter);
             this.lstDirectory.DoubleClick += new System.EventHandler(this.lstDirectory_DoubleClick);
+            this.lstDirectory.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstDirectory_ColumnClick);
             // 
             // hName
             // 

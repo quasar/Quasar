@@ -14,7 +14,7 @@ namespace Quasar.Server.Controls
         private const short UISF_HIDEFOCUS = 0x1;
         private readonly IntPtr _removeDots = new IntPtr(NativeMethodsHelper.MakeWin32Long(UIS_SET, UISF_HIDEFOCUS));
 
-        private ListViewColumnSorter LvwColumnSorter { get; set; }
+        public ListViewColumnSorter LvwColumnSorter { get; set; }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AeroListView"/> class.

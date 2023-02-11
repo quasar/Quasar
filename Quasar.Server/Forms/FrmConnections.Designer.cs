@@ -87,6 +87,7 @@ namespace Quasar.Server.Forms
             this.lstConnections.TabIndex = 0;
             this.lstConnections.UseCompatibleStateImageBehavior = false;
             this.lstConnections.View = System.Windows.Forms.View.Details;
+            this.lstConnections.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstConnections_ColumnClick);
             // 
             // columnHeader1
             // 

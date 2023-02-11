@@ -160,5 +160,10 @@ namespace Quasar.Server.Forms
                 _connectionsHandler.RefreshTcpConnections();
             }
         }
+
+        private void lstConnections_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            lstConnections.LvwColumnSorter.NeedNumberCompare = (e.Column == 2 || e.Column == 4);
+        }
     }
 }

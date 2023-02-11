@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using Quasar.Server.Models;
+using System.Collections;
 using System.Windows.Forms;
 
 namespace Quasar.Server.Utilities
@@ -21,6 +22,11 @@ namespace Quasar.Server.Utilities
         private readonly CaseInsensitiveComparer _objectCompare;
 
         /// <summary>
+        /// Specifies if number or text comparision is needed
+        /// </summary>
+        private bool _needNumberCompare;
+
+        /// <summary>
         /// Class constructor.  Initializes various elements
         /// </summary>
         public ListViewColumnSorter()
@@ -33,6 +39,8 @@ namespace Quasar.Server.Utilities
 
             // Initialize the CaseInsensitiveComparer object
             _objectCompare = new CaseInsensitiveComparer();
+
+            _needNumberCompare = false;
         }
 
         /// <summary>
@@ -51,8 +59,39 @@ namespace Quasar.Server.Utilities
                 return 0;
 
             // Compare the two items
-            var compareResult = _objectCompare.Compare(listviewX.SubItems[_columnToSort].Text,
-                listviewY.SubItems[_columnToSort].Text);
+            int compareResult;
+
+            if (_needNumberCompare)
+            {
+                long a, b;
+
+                if (listviewX.Tag is FileManagerListTag)
+                {
+                    // fileSize to be compared
+                    a = (listviewX.Tag as FileManagerListTag).FileSize;
+                    b = (listviewY.Tag as FileManagerListTag).FileSize;
+                    compareResult = a >= b ? (a == b ? 0 : 1) : -1;
+
+                }
+                else
+                {
+                    if (long.TryParse(listviewX.SubItems[_columnToSort].Text, out a)
+                        && long.TryParse(listviewY.SubItems[_columnToSort].Text, out b))
+                    {
+                        compareResult = a >= b ? (a == b ? 0 : 1) : -1;
+                    }
+                    else
+                    {
+                        compareResult = _objectCompare.Compare(listviewX.SubItems[_columnToSort].Text,
+                     listviewY.SubItems[_columnToSort].Text);
+                    }
+                }
+            }
+            else
+            {
+                compareResult = _objectCompare.Compare(listviewX.SubItems[_columnToSort].Text,
+                    listviewY.SubItems[_columnToSort].Text);
+            }
 
             // Calculate correct return value based on object comparison
             if (_orderOfSort == SortOrder.Ascending)
@@ -88,6 +127,15 @@ namespace Quasar.Server.Utilities
         {
             set { _orderOfSort = value; }
             get { return _orderOfSort; }
+        }
+
+        /// <summary>
+        /// Specifies if number or text comparision is needed.
+        /// </summary>
+        public bool NeedNumberCompare
+        {
+            set { _needNumberCompare = value; }
+            get { return _needNumberCompare; }
         }
     }
 }

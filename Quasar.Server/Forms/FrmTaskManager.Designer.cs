@@ -119,6 +119,7 @@ namespace Quasar.Server.Forms
             this.lstTasks.TabIndex = 1;
             this.lstTasks.UseCompatibleStateImageBehavior = false;
             this.lstTasks.View = System.Windows.Forms.View.Details;
+            this.lstTasks.ColumnClick += new System.Windows.Forms.ColumnClickEventHandler(this.lstTasks_ColumnClick);
             // 
             // hProcessname
             // 
