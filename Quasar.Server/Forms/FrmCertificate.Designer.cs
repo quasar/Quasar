@@ -66,7 +66,7 @@
             this.lblDescription.Name = "lblDescription";
             this.lblDescription.Size = new System.Drawing.Size(493, 15);
             this.lblDescription.TabIndex = 0;
-            this.lblDescription.Text = "To use Quasar create a new certificate or import an exisiting one from a previous" +
+            this.lblDescription.Text = "To use Quasar create a new certificate or import an existing one from a previous" +
     " installation.";
             // 
             // txtDetails
