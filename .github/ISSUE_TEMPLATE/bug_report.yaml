@@ -1,0 +1,75 @@
+name: Bug report
+description: Create a bug or crash report
+labels: ["bug"]
+body:
+  - type: input
+    attributes:
+      label: Quasar version
+      placeholder: 1.4.0 or commit-id
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Server installed .NET version
+      placeholder: .NET 6.0
+  - type: dropdown
+    attributes:
+      label: Server operating system
+      options:
+        - Windows 11/Server 2022
+        - Windows 10/Server 2019/2016
+        - Windows 8/8.1/Server 2012
+        - Windows 7/Server 2008 R2
+        - Other
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Client installed .NET version
+      placeholder: .NET 6.0
+  - type: dropdown
+    attributes:
+      label: Client operating system
+      options:
+        - Windows 11/Server 2022
+        - Windows 10/Server 2019/2016
+        - Windows 8/8.1/Server 2012
+        - Windows 7/Server 2008 R2
+        - Other
+    validations:
+      required: true
+  - type: dropdown
+    attributes:
+      label: Build configuration
+      options:
+        - Debug
+        - Release
+  - type: textarea
+    attributes:
+      label: Describe the bug
+      description: A clear and concise description of what the bug is.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: How to reproduce
+      description: The steps on how to reproduce the bug.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Expected Behavior
+      description: Describe the result that you expect to get after performing the steps.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Actual Behavior
+      description: Describe the actual behavior that you observed after performing the steps.
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Additional Context
+      description: Any other information that may help us fix the issue goes here (e.g. screenshots).
+
