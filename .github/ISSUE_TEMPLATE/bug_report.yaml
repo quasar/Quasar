@@ -44,6 +44,8 @@ body:
       options:
         - Debug
         - Release
+    validations:
+      required: true
   - type: textarea
     attributes:
       label: Describe the bug
@@ -58,18 +60,18 @@ body:
       required: true
   - type: textarea
     attributes:
-      label: Expected Behavior
+      label: Expected behavior
       description: Describe the result that you expect to get after performing the steps.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Actual Behavior
+      label: Actual behavior
       description: Describe the actual behavior that you observed after performing the steps.
     validations:
       required: true
   - type: textarea
     attributes:
-      label: Additional Context
+      label: Additional context
       description: Any other information that may help us fix the issue goes here (e.g. screenshots).
 
