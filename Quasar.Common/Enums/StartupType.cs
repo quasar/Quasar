@@ -6,6 +6,8 @@
         LocalMachineRunOnce,
         CurrentUserRun,
         CurrentUserRunOnce,
-        StartMenu
+        StartMenu,
+        LocalMachineRunX86,
+        LocalMachineRunOnceX86
     }
 }

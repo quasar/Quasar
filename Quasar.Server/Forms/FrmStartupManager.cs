@@ -123,6 +123,12 @@ namespace Quasar.Server.Forms
             lstStartupItems.Groups.Add(
                 new ListViewGroup("HKEY_CURRENT_USER\\SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
                     {Tag = StartupType.CurrentUserRunOnce});
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\Run")
+                { Tag = StartupType.LocalMachineRunX86 });
+            lstStartupItems.Groups.Add(
+                new ListViewGroup("HKEY_LOCAL_MACHINE\\SOFTWARE\\WOW6432Node\\Microsoft\\Windows\\CurrentVersion\\RunOnce")
+                { Tag = StartupType.LocalMachineRunOnceX86 });
             lstStartupItems.Groups.Add(new ListViewGroup("%APPDATA%\\Microsoft\\Windows\\Start Menu\\Programs\\Startup")
                 {Tag = StartupType.StartMenu});
         }
