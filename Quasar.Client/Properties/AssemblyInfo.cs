@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("Quasar")]
-[assembly: AssemblyCopyright("Copyright © MaxXor 2020")]
+[assembly: AssemblyCopyright("Copyright © MaxXor 2023")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 [assembly: InternalsVisibleTo("Client.Tests")]

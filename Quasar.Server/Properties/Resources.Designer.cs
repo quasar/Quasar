@@ -273,7 +273,7 @@ namespace Quasar.Server.Properties {
         /// <summary>
         ///   Looks up a localized string similar to MIT License
         ///
-        ///Copyright (c) 2020 MaxXor
+        ///Copyright (c) 2023 MaxXor
         ///
         ///Permission is hereby granted, free of charge, to any person obtaining a copy
         ///of this software and associated documentation files (the &quot;Software&quot;), to deal
