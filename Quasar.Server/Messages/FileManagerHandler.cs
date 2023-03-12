@@ -294,7 +294,7 @@ namespace Quasar.Server.Messages
                     foreach (var chunk in transfer.FileSplit)
                     {
                         transfer.TransferredSize += chunk.Data.Length;
-                        decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
+                        decimal progress = transfer.Size == 0 ? 100 : Math.Round((decimal)((double)transfer.TransferredSize / (double)transfer.Size * 100.0), 2);
                         transfer.Status = $"Uploading...({progress}%)";
                         OnFileTransferUpdated(transfer);
 
@@ -440,7 +440,7 @@ namespace Quasar.Server.Messages
                 return;
             }
 
-            decimal progress = Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
+            decimal progress = transfer.Size == 0 ? 100 : Math.Round((decimal) ((double) transfer.TransferredSize / (double) transfer.Size * 100.0), 2);
             transfer.Status = $"Downloading...({progress}%)";
 
             OnFileTransferUpdated(transfer);
