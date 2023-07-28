@@ -25,6 +25,10 @@ namespace Quasar.Client.Helper
 
                 NativeMethods.DeleteDC(srcDeviceContext);
                 g.ReleaseHdc(destDeviceContext);
+                
+                Cursor currentCursor = Cursors.Default;
+                Rectangle cursorBounds = new Rectangle(Cursor.Position, currentCursor.Size);
+                currentCursor.Draw(g, cursorBounds);
             }
 
             return screen;
