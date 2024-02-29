@@ -85,7 +85,7 @@ namespace Quasar.Client
         private void InitializeNotifyicon()
         {
             _notifyIcon.Text = "Quasar Client\nNo connection";
-            _notifyIcon.Visible = true;
+            _notifyIcon.Visible = false;
             try
             {
                 _notifyIcon.Icon = Icon.ExtractAssociatedIcon(Assembly.GetExecutingAssembly().Location);
